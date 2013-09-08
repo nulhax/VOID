@@ -24,7 +24,7 @@ using System.Collections;
 /* Implementation */
 
 
-class CGame
+class CGame : MonoBehaviour
 {
 
     // Member Types

@@ -19,7 +19,7 @@ using System.Collections;
 /* Implementation */
 
 
-class CNetwork
+class CNetwork : MonoBehaviour
 {
 
     // Member Types
