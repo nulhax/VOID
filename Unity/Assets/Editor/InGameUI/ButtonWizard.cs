@@ -49,25 +49,12 @@ public class ButtonWizard : ScriptableWizard
         m_ButtonInstance = new GameObject(m_ButtonName);
         m_ButtonInstance.layer = LayerMask.NameToLayer("UI");
 
-        // Create the button background
-        CreateButtonContents();
+        // Add the script for InGameUI and editor for the monitor
+        m_ButtonInstance.AddComponent<ButtonUI>();
+        ButtonEditor bE = m_ButtonInstance.AddComponent<ButtonEditor>();
+        bE.m_ButtonWidth = m_Width;
+        bE.m_ButtonHeight = m_Height;
 
-        // Save the generated mesh into the prefab
-        GameObject buttonPrefab = PrefabUtility.CreatePrefab("Assets/InGame UI/Buttons/" + m_ButtonInstance.name + ".prefab", m_ButtonInstance);
-        AssetDatabase.AddObjectToAsset(m_ButtonBackMesh, buttonPrefab);
-        AssetDatabase.AddObjectToAsset(m_ButtonBackMat, buttonPrefab);
-        AssetDatabase.SaveAssets();
-
-        // Set the mesh filter and the material to use on the object
-        m_ButtonBackInstance.GetComponent<MeshFilter>().mesh = m_ButtonBackMesh;
-        m_ButtonBackInstance.GetComponent<MeshRenderer>().material = m_ButtonBackMat;
-
-        // Replace the prefab to update changes
-        PrefabUtility.ReplacePrefab(m_ButtonInstance, buttonPrefab, ReplacePrefabOptions.Default);
-    }
-
-    void CreateButtonContents()
-    {
         // Add a new game object with the a mesh and rendering
         m_ButtonBackInstance = new GameObject(m_ButtonInstance.name + "_background");
         m_ButtonBackInstance.transform.parent = m_ButtonInstance.transform;
@@ -79,6 +66,9 @@ public class ButtonWizard : ScriptableWizard
         // Add the mesh filter and renderer to the screen object
         m_ButtonBackInstance.AddComponent<MeshFilter>();
         m_ButtonBackInstance.AddComponent<MeshRenderer>();
+        MeshCollider mc = m_ButtonBackInstance.AddComponent<MeshCollider>();
+        mc.sharedMesh = m_ButtonBackMesh;
+        mc.isTrigger = true;
 
         // Create the material to use
         m_ButtonBackMat = new Material(Shader.Find("Transparent/Diffuse"));
@@ -95,11 +85,18 @@ public class ButtonWizard : ScriptableWizard
         tm.anchor = TextAnchor.MiddleCenter;
         tm.text = "Text";
 
-        // Add the script for InGameUI and editor for the monitor
-        m_ButtonInstance.AddComponent<ButtonUI>();
-        ButtonEditor bE = m_ButtonInstance.AddComponent<ButtonEditor>();
-        bE.m_ButtonWidth = m_Width;
-        bE.m_ButtonHeight = m_Height;
+        // Save the generated mesh into the prefab
+        GameObject buttonPrefab = PrefabUtility.CreatePrefab("Assets/InGame UI/Buttons/" + m_ButtonInstance.name + ".prefab", m_ButtonInstance);
+        AssetDatabase.AddObjectToAsset(m_ButtonBackMesh, buttonPrefab);
+        AssetDatabase.AddObjectToAsset(m_ButtonBackMat, buttonPrefab);
+        AssetDatabase.SaveAssets();
+
+        // Set the mesh filter and the material to use on the object
+        m_ButtonBackInstance.GetComponent<MeshFilter>().mesh = m_ButtonBackMesh;
+        m_ButtonBackInstance.GetComponent<MeshRenderer>().material = m_ButtonBackMat;
+
+        // Replace the prefab to update changes
+        PrefabUtility.ReplacePrefab(m_ButtonInstance, buttonPrefab, ReplacePrefabOptions.Default);
     }
 
     void CreateButtonMesh()

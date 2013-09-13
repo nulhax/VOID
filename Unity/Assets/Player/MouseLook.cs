@@ -19,8 +19,8 @@ public class MouseLook : MonoBehaviour
 {
 	public enum RotationAxes { MouseXAndY = 0, MouseX = 1, MouseY = 2 }
 	public RotationAxes axes = RotationAxes.MouseXAndY;
-	public float sensitivityX = 15F;
-	public float sensitivityY = 15F;
+	public float sensitivityX = 0.5f;
+	public float sensitivityY = 0.5f;
 
 	public float minimumX = -360F;
 	public float maximumX = 360F;
@@ -65,29 +65,29 @@ public class MouseLook : MonoBehaviour
 			
 			if(Input.GetKey(KeyCode.W))
 			{
-				transform.position += transform.forward * 10.0f * Time.deltaTime;
+                transform.position += transform.forward * 2.0f * Time.deltaTime;
 			}
 			else if(Input.GetKey(KeyCode.S))
 			{
-				transform.position -= transform.forward * 10.0f * Time.deltaTime;
+                transform.position -= transform.forward * 2.0f * Time.deltaTime;
 			}
 			
 			if(Input.GetKey(KeyCode.A))
 			{
-				transform.position -= transform.right * 10.0f * Time.deltaTime;
+                transform.position -= transform.right * 2.0f * Time.deltaTime;
 			}
 			else if(Input.GetKey(KeyCode.D))
 			{
-				transform.position += transform.right * 10.0f * Time.deltaTime;
+				transform.position += transform.right * 2.0f * Time.deltaTime;
 			}
 			
 			if(Input.GetKey(KeyCode.E))
 			{
-				transform.position += transform.up * 10.0f * Time.deltaTime;
+                transform.position += transform.up * 2.0f * Time.deltaTime;
 			}
 			else if(Input.GetKey(KeyCode.Q))
 			{
-				transform.position -= transform.up * 10.0f * Time.deltaTime;
+                transform.position -= transform.up * 2.0f * Time.deltaTime;
 			}
 			
 			if(Input.GetMouseButtonDown(0))

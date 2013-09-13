@@ -13,6 +13,10 @@ public class TestScript : MonoBehaviour
 
         buttons[0].RegisterListener(StartBouncing);
         buttons[1].RegisterListener(StopBounching);
+        buttons[2].RegisterListener(() => renderer.material.color = Color.red);
+        buttons[3].RegisterListener(() => renderer.material.color = Color.green);
+        buttons[4].RegisterListener(() => renderer.material.color = Color.blue);
+        buttons[5].RegisterListener(() => renderer.material.color = Color.yellow);
     }
 
     public void StartBouncing()
@@ -27,10 +31,10 @@ public class TestScript : MonoBehaviour
 
     private IEnumerator Bounce()
     {
-        while (true)
+        while(true)
         {
             Vector3 pos = transform.position;
-            pos.y = Mathf.PingPong(Time.time, 0.25f);
+            pos.y = Mathf.PingPong(Time.time, 0.5f);
             transform.position = pos;
 
             yield return null;

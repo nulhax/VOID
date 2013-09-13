@@ -27,6 +27,7 @@ GameObject:
   - 4: {fileID: 400002}
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300002}
+  - 64: {fileID: 6400000}
   m_Layer: 9
   m_Name: SimpleButton_background
   m_TagString: Untagged
@@ -105,12 +106,28 @@ Material:
           m_Texture: {fileID: 2800000, guid: 0021ca65695b4ee4c8a7d850049a8837, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats: {}
+    m_Floats:
+      data:
+        first:
+          name: _Cutoff
+        second: .231343284
+      data:
+        first:
+          name: _Shininess
+        second: .699999988
     m_Colors:
       data:
         first:
           name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: 1, g: 1, b: 1, a: 0}
+      data:
+        first:
+          name: _Emission
+        second: {r: 0, g: 0, b: 0, a: 0}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -292,6 +309,19 @@ Mesh:
     m_Extent: {x: .200000003, y: .150000006, z: 0}
   m_MeshUsageFlags: 0
   m_MeshOptimized: 0
+--- !u!64 &6400000
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000}
 --- !u!102 &10200000
 TextMesh:
   serializedVersion: 3
@@ -324,10 +354,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7af4bca2d7c34429c57e5df2d946cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Text: Text
-  m_Font: {fileID: 12800000, guid: 68be3f69b9aded74e8cd341e1c7da58e, type: 3}
-  m_CharacterSize: .0250000004
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_ButtonWidth: .400000006
   m_ButtonHeight: .300000012
 --- !u!114 &11400002

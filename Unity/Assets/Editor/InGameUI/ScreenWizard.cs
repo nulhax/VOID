@@ -9,6 +9,7 @@ public class ScreenWizard : ScriptableWizard
     public GameObject m_Monitor = null;
     public float m_Width = 0.5f;
     public float m_Height = 0.5f;
+    public ScreenEditor.Quality m_Quality = ScreenEditor.Quality.Good; 
 
     private GameObject m_MonitorInstance = null;
 
@@ -50,28 +51,35 @@ public class ScreenWizard : ScriptableWizard
     {
         // Create the screen
         GameObject screen = new GameObject(m_MonitorInstance.name + "_Screen");
-
-        // Set to the center
+        screen.layer = LayerMask.NameToLayer("Screen");
         screen.transform.parent = m_MonitorInstance.transform;
         screen.transform.localPosition = Vector3.zero;
         screen.transform.localRotation = Quaternion.identity;
+
+        // Add the script for InGameUI and editor for the monitor
+        ScreenEditor sE = screen.gameObject.AddComponent<ScreenEditor>();
+        sE.m_Width = m_Width;
+        sE.m_Height = m_Height;
+        sE.m_Quality = m_Quality;
+        screen.gameObject.AddComponent<ScreenUI>();
 
         // Create the mesh that will be the screen
         Mesh mesh = new Mesh();
         mesh.name = screen.name + "_mesh";
         CreateScreenMesh(ref mesh);
 
-        // Add the mesh filter and renderer to the screen object and create the material
+        // Add the mesh filter and renderer to the screen object
         MeshFilter meshFilter = screen.AddComponent<MeshFilter>();
         MeshRenderer meshRender = screen.AddComponent<MeshRenderer>();
+		
+		// Add the mesh collider to the screen object
+		MeshCollider mc = screen.AddComponent<MeshCollider>();
+        mc.sharedMesh = mesh;
+        mc.isTrigger = true;
+		
+		// Create the material
         Material material = new Material(Shader.Find("Diffuse"));
         material.name = screen.name + "_mat";
-
-        // Add the script for InGameUI and editor for the monitor
-        ScreenEditor sE = screen.gameObject.AddComponent<ScreenEditor>();
-        sE.m_ScreenWidth = m_Width;
-        sE.m_ScreenHeight = m_Height;
-        screen.gameObject.AddComponent<ScreenUI>();
 
         // Create the screen camera object
         CreateScreenCamera(screen.gameObject);
@@ -92,24 +100,31 @@ public class ScreenWizard : ScriptableWizard
 
     void CreateScreenMesh(ref Mesh _Mesh)
     {
-        int hCount2 = 2;
-        int vCount2 = 2;
-        int numTriangles = 6;
-        int numVertices = hCount2 * vCount2;
+        int numTriangles = 12;
+        int numVertices = 8;
 
         Vector3[] vertices = new Vector3[numVertices];
+        Vector3[] normals = new Vector3[numVertices];
         Vector2[] uvs = new Vector2[numVertices];
         int[] triangles = new int[numTriangles];
 
         int index = 0;
-        float uvFactorX = 1.0f;
-        float uvFactorY = 1.0f;
-        for (float y = 0.0f; y < hCount2; y++)
+        for (float y = 0.0f; y < 2; y++)
         {
-            for (float x = 0.0f; x < vCount2; x++)
+            for (float x = 0.0f; x < 2; x++)
             {
                 vertices[index] = new Vector3(x * m_Width - m_Width / 2.0f, y * m_Height - m_Height / 2.0f);
-                uvs[index++] = new Vector2(x * uvFactorX, y * uvFactorY);
+                normals[index] = -1.0f * Vector3.forward;
+                uvs[index++] = new Vector2(x, y);
+            }
+        }
+        for (float y = 0.0f; y < 2; y++)
+        {
+            for (float x = 0.0f; x < 2; x++)
+            {
+                vertices[index] = new Vector3(x * m_Width - m_Width / 2.0f, y * m_Height - m_Height / 2.0f);
+                normals[index] = Vector3.forward;
+                uvs[index++] = new Vector2(x, y);
             }
         }
 
@@ -118,21 +133,34 @@ public class ScreenWizard : ScriptableWizard
         {
             for (int x = 0; x < 1; x++)
             {
-                triangles[index] = (y * hCount2) + x;
-                triangles[index + 1] = ((y + 1) * hCount2) + x;
-                triangles[index + 2] = (y * hCount2) + x + 1;
+                triangles[index] = (y * 2) + x;
+                triangles[index + 1] = ((y + 1) * 2) + x;
+                triangles[index + 2] = (y * 2) + x + 1;
 
-                triangles[index + 3] = ((y + 1) * hCount2) + x;
-                triangles[index + 4] = ((y + 1) * hCount2) + x + 1;
-                triangles[index + 5] = (y * hCount2) + x + 1;
+                triangles[index + 3] = ((y + 1) * 2) + x;
+                triangles[index + 4] = ((y + 1) * 2) + x + 1;
+                triangles[index + 5] = (y * 2) + x + 1;
                 index += 6;
+            }
+        }
+        for (int y = 0; y < 1; y++)
+        {
+            for (int x = 0; x < 1; x++)
+            {
+                triangles[index] = (y * 2) + x;
+                triangles[index + 1] = (y * 2) + x + 1;
+                triangles[index + 2] = ((y + 1) * 2) + x;
+
+                triangles[index + 3] = ((y + 1) * 2) + x;
+                triangles[index + 4]  = (y * 2) + x + 1;
+                triangles[index + 5]  = ((y + 1) * 2) + x + 1;
             }
         }
 
         _Mesh.vertices = vertices;
+        _Mesh.normals = normals;
         _Mesh.uv = uvs;
         _Mesh.triangles = triangles;
-        _Mesh.RecalculateNormals();
         _Mesh.RecalculateBounds();
     }
 
@@ -149,5 +177,8 @@ public class ScreenWizard : ScriptableWizard
         RenderCamera.orthographic = true;
         RenderCamera.orthographicSize = m_Height * 0.5f;
         RenderCamera.backgroundColor = Color.black;
+        RenderCamera.nearClipPlane = 0.0f;
+        RenderCamera.farClipPlane = 2.0f;
+        RenderCamera.enabled = false;
     }
 }
