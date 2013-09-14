@@ -32,7 +32,7 @@ public class ScreenEditor : MonoBehaviour
 
     void Update()
     {
-        if (m_ScreenMesh.bounds.extents.x != m_Width || m_ScreenMesh.bounds.extents.y != m_Height)
+        if (m_ScreenMesh.bounds.extents.x != m_Width || m_ScreenMesh.bounds.extents.y != m_Height && enabled)
         {
             // Update the screen meshes verts
             Vector3[] verts = m_ScreenMesh.vertices;

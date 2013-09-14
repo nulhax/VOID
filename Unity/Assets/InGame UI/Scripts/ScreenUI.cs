@@ -127,8 +127,16 @@ public class ScreenUI : MonoBehaviour
 
     public void CheckButtonCollision(RaycastHit _rh)
     {
-        Ray ray = new Ray(_rh.point + transform.forward * -1.0f, transform.forward);
-		RaycastHit hit;
+        ScreenEditor sE = GetComponent<ScreenEditor>();
+        Vector3 offset = new Vector3(_rh.textureCoord.x * sE.m_Width - sE.m_Width * 0.5f,
+                                     _rh.textureCoord.y * sE.m_Height - sE.m_Height * 0.5f,
+                                     0.0f);
+
+        offset = transform.rotation * offset;
+        Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
+
+        Ray ray = new Ray(rayOrigin, transform.forward);
+        RaycastHit hit;
         float rayLength = 2.0f;
 
         if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("UI")))

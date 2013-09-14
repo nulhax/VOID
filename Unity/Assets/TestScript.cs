@@ -4,19 +4,22 @@ using System.Collections.Generic;
 
 public class TestScript : MonoBehaviour
 {
-    public GameObject m_Screen;
+    public GameObject[] m_Screens;
 
     // Use this for initialization
     void Start()
     {
-        ButtonUI[] buttons = m_Screen.transform.FindChild(m_Screen.name + "_UI").GetComponentsInChildren<ButtonUI>();
+        foreach (GameObject screen in m_Screens)
+        {
+            ButtonUI[] buttons = screen.transform.FindChild(screen.name + "_UI").GetComponentsInChildren<ButtonUI>();
 
-        buttons[0].RegisterListener(StartBouncing);
-        buttons[1].RegisterListener(StopBounching);
-        buttons[2].RegisterListener(() => renderer.material.color = Color.red);
-        buttons[3].RegisterListener(() => renderer.material.color = Color.green);
-        buttons[4].RegisterListener(() => renderer.material.color = Color.blue);
-        buttons[5].RegisterListener(() => renderer.material.color = Color.yellow);
+            buttons[0].RegisterListener(StartBouncing);
+            buttons[1].RegisterListener(StopBounching);
+            buttons[2].RegisterListener(() => renderer.material.color = Color.red);
+            buttons[3].RegisterListener(() => renderer.material.color = Color.green);
+            buttons[4].RegisterListener(() => renderer.material.color = Color.blue);
+            buttons[5].RegisterListener(() => renderer.material.color = Color.yellow); 
+        }
     }
 
     public void StartBouncing()
