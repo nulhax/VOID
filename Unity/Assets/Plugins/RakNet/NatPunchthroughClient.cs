@@ -10,10 +10,6 @@ namespace RakNet {
 
 using System;
 using System.Runtime.InteropServices;
- 
-
-
-    
 
 public class NatPunchthroughClient : PluginInterface2 {
   private HandleRef swigCPtr;
@@ -87,14 +83,13 @@ public class NatPunchthroughClient : PluginInterface2 {
     RakNetPINVOKE.NatPunchthroughClient_Clear(swigCPtr);
   }
 
-  public NatPunchthroughClient sp
-  {
+  public SWIGTYPE_p_RakNet__NatPunchthroughClient__SendPing sp {
     set {
-        RakNetPINVOKE.NatPunchthroughClient_sp_set(swigCPtr, NatPunchthroughClient.getCPtr(value));
+      RakNetPINVOKE.NatPunchthroughClient_sp_set(swigCPtr, SWIGTYPE_p_RakNet__NatPunchthroughClient__SendPing.getCPtr(value));
     } 
     get {
       IntPtr cPtr = RakNetPINVOKE.NatPunchthroughClient_sp_get(swigCPtr);
-      NatPunchthroughClient ret = (cPtr == IntPtr.Zero) ? null : new NatPunchthroughClient(cPtr, false);
+      SWIGTYPE_p_RakNet__NatPunchthroughClient__SendPing ret = (cPtr == IntPtr.Zero) ? null : new SWIGTYPE_p_RakNet__NatPunchthroughClient__SendPing(cPtr, false);
       return ret;
     } 
   }
