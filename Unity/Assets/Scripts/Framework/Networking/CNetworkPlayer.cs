@@ -31,36 +31,94 @@ public class CNetworkPlayer : MonoBehaviour
     // public:
 
 
-    public void OnAwake()
+    public void Awake()
     {
         // Assign first avaiable network player id
-        for (uint i = 0; i < uint.MaxValue; ++ i)
+        for (uint i = 1; i < uint.MaxValue; ++ i)
         {
             if (!s_mNetworkPlayers.ContainsKey(i))
             {
                 s_mNetworkPlayers.Add(i, this);
                 m_uiPlayerId = i;
+                break;
             }
         }
+
+        // Initial reset of stream
+        ResetPacketStream();
     }
 
 
-    public void SendNetworkViewData(ushort _usNetworkViewId, CPacketStream _cStream)
+    public void ResetPacketStream()
     {
-        CGame.Server.GetPeer().Send(_cStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cSystemAddress, false);
+        m_cStream.Clear();
+
+        // Set packet identifier
+        m_cStream.Write((byte)CNetworkConnection.EPacketId.NetworkView);
     }
 
 
-    uint PlayerId
+    public uint PlayerId
     {
         get { return (m_uiPlayerId); }
     }
 
 
-    RakNet.SystemAddress SystemAddress
+    public uint AccountId
+    {
+        set
+        {
+            if (m_uiAccountId != 0)
+            {
+                Debug.LogError(string.Format("The account id of network players cannot be changed once set"));
+            }
+            else
+            {
+                m_uiAccountId = value;
+            }
+        }
+
+        get { return (m_uiAccountId); }
+    }
+
+
+    public ushort ActorNetworkViewId
+    {
+        set
+        {
+            if (m_usActorNetworkViewId != 0)
+            {
+                Debug.LogError(string.Format("Actor network view id ({0}) for player id ({1}) cannot be change once set", m_usActorNetworkViewId, this.PlayerId));
+            }
+            else
+            {
+                m_usActorNetworkViewId = value;
+            }
+        }
+
+        get { return (m_usActorNetworkViewId); }
+    }
+
+
+    public GameObject ActorGameObject
+    {
+        get
+        {
+            return (CNetworkView.FindUsingViewId(m_usActorNetworkViewId).gameObject);
+        }
+    }
+
+
+    public RakNet.SystemAddress SystemAddress
     {
         set { m_cSystemAddress = value; }
         get { return (m_cSystemAddress); }
+    }
+
+
+    public CPacketStream PacketStream
+    {
+        get { return (m_cStream); }
     }
 
 
@@ -91,12 +149,16 @@ public class CNetworkPlayer : MonoBehaviour
 
 
     uint m_uiPlayerId = 0;
+    uint m_uiAccountId = 0;
 
 
-    RakNet.SystemAddress m_cSystemAddress = new RakNet.SystemAddress();
-    CPacketStream m_cTransmissionStream = new CPacketStream();
-    
-    
+    ushort  m_usActorNetworkViewId = 0;
+
+
+    RakNet.SystemAddress m_cSystemAddress = null;
+    CPacketStream m_cStream = new CPacketStream();
+
+
     static Dictionary<uint, CNetworkPlayer> s_mNetworkPlayers = new Dictionary<uint, CNetworkPlayer>();
 
 

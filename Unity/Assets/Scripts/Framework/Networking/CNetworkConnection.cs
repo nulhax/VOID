@@ -15,6 +15,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 
@@ -208,11 +209,10 @@ public class CNetworkConnection : MonoBehaviour
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.NetworkView:
                     {
-						CPacketStream cTransmissionStream = new CPacketStream(cRnPacket.data);
-						cTransmissionStream.IgnoreBytes(1); // Ignore packet id
+						CPacketStream cPacketStream = new CPacketStream(cRnPacket.data);
+						cPacketStream.IgnoreBytes(1); // Ignore packet id
 
-
-                        CNetworkView.HandleInboundData(cTransmissionStream);
+                        CNetworkView.ProcessInboundNetworkData(cPacketStream);
                     }
                     break;
 
@@ -234,6 +234,8 @@ public class CNetworkConnection : MonoBehaviour
 
         if (m_fPacketOutboundTimer > m_fPacketOutboundInterval)
         {
+
+            /*
             if (CNetworkView.HasOutboundData())
             {
                 CPacketStream cNetworkViewStream = new CPacketStream(new RakNet.BitStream());
@@ -244,7 +246,7 @@ public class CNetworkConnection : MonoBehaviour
                     CGame.PlayerController.CompileOutboundData(cNetworkViewStream);
                 }
             }
-
+            */
 
             m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
         }

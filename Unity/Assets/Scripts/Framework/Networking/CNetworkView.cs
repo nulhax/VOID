@@ -11,9 +11,6 @@
 //
 
 
-#pragma warning disable 0649
-
-
 // Namespaces
 using UnityEngine;
 using System.Collections;
@@ -32,10 +29,10 @@ public class CNetworkView : MonoBehaviour
 // Member Types
 
 
-    public struct TRpc
+    public enum EProdecure : byte
     {
-        public byte bMethodId;
-        public object[] caParameterData;
+        InvokeNetworkRpc,
+        SyncNetworkVar
     }
 
 
@@ -51,23 +48,20 @@ public class CNetworkView : MonoBehaviour
     // public:
 
 
+    public void Awake()
+    {
+        InitialiseNetworkVars();
+		InitialiseNetworkRpcs();
+    }
+
+
     public void Start()
     {
         // Generate static view id if server did not provide one
         if (m_usViewId == 0)
         {
-            SetViewId(GenerateStaticViewId());
+            this.ViewId = GenerateStaticViewId();
         }
-        
-
-        InitialiseNetworkVars();
-		InitialiseNetworkRpcs();
-    }
-    
-    
-    public void OnDestroy()
-    {
-		// Empty
     }
 
 
@@ -77,45 +71,93 @@ public class CNetworkView : MonoBehaviour
     }
 
 
-	public void InvokeRpc(Component _cComponent, string _sFunction, params object[] _caParameters)
+    public void InvokeRpc(Component _cComponent, string _sFunction, params object[] _caParameters)
+    {
+        InvokeRpc(0, _cComponent, _sFunction, _caParameters);
+    }
+
+
+    public void InvokeRpc(uint _uiPlayerId, Component _cComponent, string _sFunction, params object[] _caParameterValues)
 	{
+        // Make sure only servers can invoke rpcs
         if (!CGame.IsServer())
         {
             Debug.LogError("Only servers can invoke RPCs  douche");
         }
         else
         {
+            // Extract method from component using its name
             MethodInfo tMethodInfo = _cComponent.GetType().GetMethod(_sFunction, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-
+            // Ensure the method exists
             if (tMethodInfo == null)
             {
                 Debug.LogError(string.Format("Could not find method ({0}) in component ({1})", _sFunction, _cComponent.GetType().Name));
             }
             else
             {
-                byte bNetworkRpcId = GetNetworkRpcIndexByMethodInfo(tMethodInfo);
+                // Find network rpc index using the method info
+                byte bNetworkRpcId = FindNetworkRpcIndexUsingMethodInfo(tMethodInfo);
 
-
+                // Ensure the network rpc is found
                 if (bNetworkRpcId == 0)
                 {
                     Debug.LogError(string.Format("The network rpc method ({0}) in component ({1}) is not connected to this network view id({2})", _sFunction, _cComponent.GetType().Name, m_usViewId));
                 }
                 else
                 {
-                    TRpc tRpc = new TRpc();
-                    tRpc.bMethodId = bNetworkRpcId;
-                    tRpc.caParameterData = _caParameters;
+                    // Send to all players
+                    if (_uiPlayerId == 0)
+                    {
+                        foreach (KeyValuePair<uint, CNetworkPlayer> tEntry in CNetworkPlayer.FindAll())
+                        {
+                            // Network player instance
+                            CNetworkPlayer cNetworkPlayer = tEntry.Value;
 
+                            SendPlayerInvokeRpc(cNetworkPlayer.PlayerId, bNetworkRpcId, _caParameterValues);
+                        }
 
-                    m_aRemoteProcedureCalls.Add(tRpc);
-                    SetDirty();
+                        //Debug.Log(string.Format("Sent RPC call for ({0}) to all players", _sFunction));
+                    }
 
+                    // Send to individual player
+                    else
+                    {
+                        SendPlayerInvokeRpc(_uiPlayerId, bNetworkRpcId, _caParameterValues);
 
-                    //Debug.Log("Sent RPC call for " + _sFunction);
+                        Debug.Log(string.Format("Sent RPC call for ({0}) to player id ({1})", _sFunction, _uiPlayerId));
+                    }
                 }
             }
         }
+	}
+
+
+    public void SendPlayerAllNetworkVarValues(uint _uiPlayerId)
+    {
+        // Retieve player instance
+        CNetworkPlayer cNetworkPlayer = CNetworkPlayer.FindUsingPlayerId(_uiPlayerId);
+
+        // Send all current network variable values to player
+        foreach (KeyValuePair<byte, INetworkVar> tEntry in m_mNetworkVars)
+        {
+            INetworkVar cNetworkVar = tEntry.Value;
+ 
+            SendPlayerVarSync(_uiPlayerId, tEntry.Key);
+        }
+
+        //Debug.LogError(string.Format("Sent player id ({0}) all network var values from network view id ({1})", _uiPlayerId, this.ViewId));
+    }
+     
+
+	public void OnNetworkVarChange(byte _bNetworkVarId)
+	{
+        foreach (KeyValuePair<uint, CNetworkPlayer> tEntry in CNetworkPlayer.FindAll())
+        {
+            SendPlayerVarSync(tEntry.Key, _bNetworkVarId);
+        }
+
+        //Debug.Log(string.Format("Sent network var id ({0}) change to all players", _bNetworkVarId));
 	}
 
 
@@ -151,19 +193,6 @@ public class CNetworkView : MonoBehaviour
 
         get { return (m_usViewId); }
     }
-     
-
-	public void OnNetworkVarChange(byte _bNetworkVarId)
-	{
-		if (!m_aDirtyNetworkVariableIds.Contains(_bNetworkVarId))
-		{
-			m_aDirtyNetworkVariableIds.Add(_bNetworkVarId);
-            SetDirty();
-
-
-			//Debug.Log(string.Format("Added network variable id ({0}) to network view id's ({1}) dirty container", _bNetworkVarId, m_usViewId));
-		}
-	}
 
 
     public static ushort GenerateDynamicViewId()
@@ -225,192 +254,6 @@ public class CNetworkView : MonoBehaviour
     }
 
 
-	public static void CompileOutboundData(CPacketStream _cTransmission)
-	{
-		// Loop through all network views
-		foreach(KeyValuePair<ushort, CNetworkView> tEntry in s_cNetworkViews)
-		{
-            // Skip undefined entries
-            if (tEntry.Value == null)
-                continue;
-
-
-            // Extract the network view instance
-			CNetworkView cNetworkView = tEntry.Value;
-
-
-			// Check is dirty
-            if (cNetworkView.m_bDirty)
-			{
-				// Write in network view id - To identify on clients
-				_cTransmission.Write(cNetworkView.GetViewId()); // 2 Bytes
-
-                // Write in the number of dirty variables
-                _cTransmission.Write((byte)cNetworkView.m_aDirtyNetworkVariableIds.Count); // 1 Byte
-
-                // Write the number of RPC's
-                _cTransmission.Write((byte)cNetworkView.m_aRemoteProcedureCalls.Count); // 1 Byte
-
-
-                // Write dirty variables data
-				foreach (byte bDirtyNetworkVarId in cNetworkView.m_aDirtyNetworkVariableIds)
-				{
-                    // Extract dirty variable
-					INetworkVar cNetworkVar = cNetworkView.m_cNetworkVariables[bDirtyNetworkVarId];
-
-					// Write in network var identifier
-                    _cTransmission.Write(bDirtyNetworkVarId); // 1 Byte
-
-                    // Get network var vlaue serialized
-                    byte[] baVarSerialized = cNetworkVar.GetSerialized();
-
-                    // String types will need to insert their length as their size is undefined
-                    if (cNetworkVar.GetVarType() == ENetworkVarType.String)
-                    {
-                        _cTransmission.Write((byte)baVarSerialized.Length); // 1 Bytes
-                    }
-
-                    // Finally write the value into the transmission
-                    _cTransmission.Write(baVarSerialized); // Unknown number of bytes
-                   
-                    //Debug.LogError(string.Format("Size ({0}) Data({1})", cNetworkVar.GetSize(), cNetworkVar.GetSerialized()));
-				}
-
-
-                // Loop through Romote Procedure Calls
-                foreach (TRpc tRpc in cNetworkView.m_aRemoteProcedureCalls)
-                {
-                    // Write the RPC identifier
-                    _cTransmission.Write(tRpc.bMethodId);
-
-                    // Get method parameters
-                    ParameterInfo[] caParameters = cNetworkView.m_cNetworkRpcs[tRpc.bMethodId].cMethodInfo.GetParameters();
-
-                    // Write RPC parameters
-                    for (int j = 0; j < caParameters.Length; ++ j)
-                    {
-                        // Serialize the parameter value
-                        byte[] baValueSerialized = Converter.ToByteArray(tRpc.caParameterData[j], caParameters[j].ParameterType);
-
-                        if (caParameters[j].ParameterType == typeof(string))
-                        {
-                            _cTransmission.Write((byte)baValueSerialized.Length);
-                        }
-
-                        // Write parameter value
-                        _cTransmission.Write(baValueSerialized);
-                        //Debug.LogError(string.Format("Write: Index ({0}) Type ({1}) Size ({2})", j, caParameters[j].ParameterType, baValueSerialized.Length));
-                    }
-                }
-
-
-                // Clear queued RPC & dirty network variable lists
-                cNetworkView.m_aRemoteProcedureCalls.Clear();
-				cNetworkView.m_aDirtyNetworkVariableIds.Clear();
-			}
-		}
-
-
-		s_bHasOutboundData = false;
-	}
-
-
-    public static void HandleInboundData(CPacketStream _cTransmission)
-    {
-		// Loop until all the data has been read
-		while (_cTransmission.HasUnreadData())
-		{
-			// Rewad owner network view id for this segment
-			ushort usNetworkViewId = _cTransmission.ReadUShort();
-			
-			// Read the number of variable changes in this segment
-			byte bNumNetworkVarChanges = _cTransmission.ReadByte();
-
-            // Read the number of RPCs in this segment
-            byte bRpcCount = _cTransmission.ReadByte();
-
-            // Retrieve network view instance based on the network view id
-            CNetworkView cNetworkView = FindUsingViewId(usNetworkViewId);
-            
-
-			// Process the variable changes
-            for (byte i = 0; i < bNumNetworkVarChanges; ++i)
-			{
-				// Retrieve the target network var id
-				byte bNetworkVarId = _cTransmission.ReadByte();
-
-                // Extract network var instance base on network var id
-                INetworkVar cNetworkVariable = cNetworkView.m_cNetworkVariables[bNetworkVarId];
-
-                // Get network var value size so we know much to read from the transmission
-                int iNetworkVarValueSize = cNetworkVariable.GetSize();
-
-                // Strings have their size stored inside the transmission as a byte
-                if (cNetworkVariable.GetVarType() == ENetworkVarType.String)
-                {
-                    iNetworkVarValueSize = _cTransmission.ReadByte();
-                }
-
-				// Read out the network var value data
-                byte[] baNewValue = _cTransmission.ReadBytes(iNetworkVarValueSize);
-
-				// Sync the new value for the network var
-                cNetworkVariable.SyncSerialized(baNewValue);
-			}
-
-
-            // Process RPCs
-            for (byte i = 0; i < bRpcCount; ++ i)
-            {
-                // Read the RPC method identifier
-                byte bRpcMethodId = _cTransmission.ReadByte();
-
-                // Retrieve the RPC method info base on the RPC method identifier
-                TRpcMethod tRpcMethodInfo = cNetworkView.m_cNetworkRpcs[bRpcMethodId];
-
-                // Extract the parameters from the method
-                ParameterInfo[] caParameters = tRpcMethodInfo.cMethodInfo.GetParameters();
-
-                // Instance a array of parameter objects
-                object[] caParameterValues = new object[caParameters.Length];
-
-
-                // Read parameter values from the transmission
-                for (int j = 0; j < caParameters.Length; ++ j)
-                {
-                    // Read the size of the parameter type so we know how much to read from the transmission
-                    int iParameterTypeSize = Converter.GetSizeOf(caParameters[j].ParameterType);
-
-
-                    if (caParameters[j].ParameterType == typeof(string))
-                    {
-                        iParameterTypeSize = _cTransmission.ReadByte();
-                    }
-
-                    if (iParameterTypeSize > 0)
-                    {
-                        // Read the parameter value
-                        byte[] baParameterValueSerialized = _cTransmission.ReadBytes(iParameterTypeSize);
-
-                        caParameterValues[j] = Converter.ToType(baParameterValueSerialized, caParameters[j].ParameterType);
-                        //Debug.LogError(string.Format("Index ({0}) Type ({1}) Size ({2})", j, caParameters[j].ParameterType, iParameterTypeSize));
-                    }
-                }
-
-
-                // Finally invoke the function on the client with the extracted parameter values
-                tRpcMethodInfo.cMethodInfo.Invoke(tRpcMethodInfo.cUnityComponent, caParameterValues);
-            }
-		}
-    }
-
-
-	public static bool HasOutboundData()
-	{
-		return (s_bHasOutboundData);
-	}
-
-
     public static CNetworkView FindUsingViewId(ushort _usViewId)
     {
 		CNetworkView cNetworkView = null;
@@ -430,6 +273,64 @@ public class CNetworkView : MonoBehaviour
     }
 
 
+    public static void ProcessInboundNetworkData(CPacketStream _cStream)
+    {
+        while (_cStream.HasUnreadData())
+        {
+            // Extract owner network view id
+            ushort usNetworkViewId = _cStream.ReadUShort();
+
+            // Extract procedure type
+            EProdecure eProcedure = (EProdecure)_cStream.ReadByte();
+
+            // Retrieve network view instance
+            CNetworkView cNetworkView = CNetworkView.FindUsingViewId(usNetworkViewId);
+
+
+            // Process network var sync procedure
+            if (eProcedure == EProdecure.SyncNetworkVar)
+            {
+                // Extract network var identifier
+                byte bNetworkVarIdentifier = _cStream.ReadByte();
+
+                // Retrieve network var instance
+                INetworkVar cNetworkVar = cNetworkView.m_mNetworkVars[bNetworkVarIdentifier];
+
+                // Retrieve network var type
+                Type cVarType = cNetworkVar.GetValueType();
+
+                // Extract value serialized
+                byte[] baVarValue = _cStream.ReadType(cVarType);
+
+                // Convert serialized data to object
+                object cNewVarValue = Converter.ToObject(baVarValue, cVarType);
+
+                // Sync with new value
+                cNetworkVar.Sync(cNewVarValue);
+            }
+
+            // Process network rpc procedure
+            else if (eProcedure == EProdecure.InvokeNetworkRpc)
+            {
+                // Extract rpc method identifier
+                byte bMethodIdentifier = _cStream.ReadByte();
+
+                // Retrieve method owner instance
+                Component cParentComponent = cNetworkView.m_mNetworkRpcs[bMethodIdentifier].cUnityComponent;
+
+                // Retrieve method info
+                MethodInfo cMethodInfo = cNetworkView.m_mNetworkRpcs[bMethodIdentifier].cMethodInfo;
+
+                // Extract method parameters
+                object[] caParameterValues = _cStream.ReadMethodParameters(cMethodInfo);
+
+                // Invoke the rpc method
+                cMethodInfo.Invoke(cParentComponent, caParameterValues);
+            }
+        }
+    }
+
+
     // protected:
 
 
@@ -446,24 +347,30 @@ public class CNetworkView : MonoBehaviour
             if (cComponent == this)
 				continue;
 
+            INetworkComponent cNetworkComponent = cComponent as INetworkComponent;
 
-            FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-		
-            foreach (FieldInfo cFieldInfo in aFieldInfos)
+            if (cNetworkComponent != null)
             {
-				if (cFieldInfo.FieldType.GetInterface(typeof(INetworkVar).Name, false) != null)
-				{
-					INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
-					byte bId = (byte)(m_cNetworkVariables.Count + 1);
+                cNetworkComponent.InitialiseNetworkVars();
+                FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
 
-					m_cNetworkVariables.Add(bId, cNetworkVar);
-					cNetworkVar.SetNetworkViewOwner(this, bId);
+                foreach (FieldInfo cFieldInfo in aFieldInfos)
+                {
+                    if (cFieldInfo.FieldType.GetInterface(typeof(INetworkVar).Name, false) != null)
+                    {
+                        INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
+                        byte bId = (byte)(m_mNetworkVars.Count + 1);
 
 
-					//Debug.Log("Added network var to list");
-				}
+                        m_mNetworkVars.Add(bId, cNetworkVar);
+                        cNetworkVar.SetNetworkViewOwner(this, bId);
+
+
+                        //Debug.Log("Added network var to list");
+                    }
+                }
             }
         }
     }
@@ -487,7 +394,7 @@ public class CNetworkView : MonoBehaviour
             {
 				foreach (ANetworkRpc cAttribute in cMethodInfo.GetCustomAttributes(typeof(ANetworkRpc), false))
 				{
-					byte bId = (byte)(m_cNetworkRpcs.Count + 1);
+					byte bId = (byte)(m_mNetworkRpcs.Count + 1);
 
 
                     TRpcMethod tRpcMethodInfo = new TRpcMethod();
@@ -495,7 +402,7 @@ public class CNetworkView : MonoBehaviour
                     tRpcMethodInfo.cMethodInfo = cMethodInfo;
                     
                     
-                    m_cNetworkRpcs.Add(bId, tRpcMethodInfo);
+                    m_mNetworkRpcs.Add(bId, tRpcMethodInfo);
 
 
 					//Debug.Log(string.Format("Added network rpc ({0}) to list. Method name ({1})", bId, cMethodInfo.Name));
@@ -505,12 +412,12 @@ public class CNetworkView : MonoBehaviour
 	}
 
 
-	byte GetNetworkRpcIndexByMethodInfo(MethodInfo _tMethodInfo)
+	byte FindNetworkRpcIndexUsingMethodInfo(MethodInfo _tMethodInfo)
 	{
 		byte bNetworkRpcId = 0;
 
 
-        foreach (KeyValuePair<byte, TRpcMethod> tEntry in m_cNetworkRpcs)
+        foreach (KeyValuePair<byte, TRpcMethod> tEntry in m_mNetworkRpcs)
 		{
 			if (tEntry.Value.cMethodInfo == _tMethodInfo)
 			{
@@ -524,60 +431,62 @@ public class CNetworkView : MonoBehaviour
 	}
 
 
-    void SetDirty()
+    void SendPlayerInvokeRpc(uint _uiPlayerId, byte _bRpcIdentifier, object[] _acParameterValues)
     {
-        m_bDirty = true;
-        s_bHasOutboundData = true;
+        // Retrieve player instance
+        CNetworkPlayer cNetworkPlayer = CNetworkPlayer.FindUsingPlayerId(_uiPlayerId);
+
+        // View id
+        cNetworkPlayer.PacketStream.Write(this.ViewId);
+
+        // Prodecure type
+        cNetworkPlayer.PacketStream.Write((byte)EProdecure.InvokeNetworkRpc);
+
+        // Rpc identifier
+        cNetworkPlayer.PacketStream.Write(_bRpcIdentifier);
+
+        // Method parameters
+        cNetworkPlayer.PacketStream.Write(m_mNetworkRpcs[_bRpcIdentifier].cMethodInfo, _acParameterValues);
+    }
+
+
+    void SendPlayerVarSync(uint _uiPlayerId, byte _bVarIdentifier)
+    {
+        INetworkVar cNetworkVar = m_mNetworkVars[_bVarIdentifier];
+
+        // Retrieve player instance
+        CNetworkPlayer cNetworkPlayer = CNetworkPlayer.FindUsingPlayerId(_uiPlayerId);
+
+        // View id
+        cNetworkPlayer.PacketStream.Write(this.ViewId);
+
+        // Prodecure type
+        cNetworkPlayer.PacketStream.Write((byte)EProdecure.SyncNetworkVar);
+
+        // Var identifier
+        cNetworkPlayer.PacketStream.Write(_bVarIdentifier);
+
+        // Value
+        cNetworkPlayer.PacketStream.Write(cNetworkVar.GetAsObject(), cNetworkVar.GetValueType());
     }
 
 
 // Member Variables
     
-    // public:
+    // protected:
 
 
     // private:
 
 
-	List<byte> m_aDirtyNetworkVariableIds = new List<byte>();
-    List<TRpc> m_aRemoteProcedureCalls = new List<TRpc>();
-    Dictionary<byte, INetworkVar> m_cNetworkVariables = new Dictionary<byte, INetworkVar>();
-    Dictionary<byte, TRpcMethod> m_cNetworkRpcs = new Dictionary<byte, TRpcMethod>();
-
-
     ushort m_usViewId = 0;
 
-
-    bool m_bDirty;
+    
+    Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();
+    Dictionary<byte, TRpcMethod> m_mNetworkRpcs = new Dictionary<byte, TRpcMethod>();
 
 
     static Dictionary<ushort, CNetworkView> s_cNetworkViews = new Dictionary<ushort, CNetworkView>();
-	static bool s_bHasOutboundData = false;
 
 
 };
-
-
-/*
-void RegisterComponent(MonoBehaviour _cComponent)
-{
-    MemberInfo[] aMethodInfos = _cComponent.GetType().GetMethods();
-
-
-    foreach (MemberInfo cMethodInfo in aMethodInfos)
-    {
-        NetworkRpc[] cAttribrutes = cMethodInfo.GetCustomAttributes(typeof(NetworkRpc), false) as NetworkRpc[];
-
-
-        foreach (NetworkRpc cAttribute in cAttribrutes)
-        {
-            TRpcMethod cRpcMethod = new TRpcMethod();
-            cRpcMethod.cComponent = _cComponent;
-            cRpcMethod.sName = cMethodInfo.Name;
-
-
-            m_mRpcMethods.Add(cAttribute.GetUniqueId(), cRpcMethod);
-        }
-    }
-}
- * */

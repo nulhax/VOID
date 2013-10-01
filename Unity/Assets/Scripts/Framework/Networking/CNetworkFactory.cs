@@ -37,6 +37,19 @@ public class CNetworkFactory : MonoBehaviour
     }
 
 
+    public struct TObjectInfo
+    {
+        public TObjectInfo(EPrefab _ePrefab, ushort _usNetworkViewId)
+        {
+            ePrefab = _ePrefab;
+            usNetworkViewId = _usNetworkViewId;
+        }
+
+        public EPrefab ePrefab;
+        public ushort usNetworkViewId;
+    }
+
+
 // Member Functions
 
     // public:
@@ -73,7 +86,7 @@ public class CNetworkFactory : MonoBehaviour
         else
         {
             usObjectViewId = CNetworkView.GenerateDynamicViewId();
-            m_iGameObjectNetworkViewIds.Add(usObjectViewId);
+            m_aCreatedObjects.Add(new TObjectInfo(_ePrefab, usObjectViewId));
 
 
             GetComponent<CNetworkView>().InvokeRpc(this, "InstantiateGameObject", _ePrefab, usObjectViewId);
@@ -96,12 +109,19 @@ public class CNetworkFactory : MonoBehaviour
 
     void OnNetworkPlayerJoin(CNetworkPlayer _cNetworkPlayer)
     {
-        // Compile objects
+        Debug.LogError("A Player joined. Sending them the objects and states");
 
 
+        foreach (TObjectInfo tObjectInfo in m_aCreatedObjects)
+        {
+            GetComponent<CNetworkView>().InvokeRpc(_cNetworkPlayer.PlayerId, this, "InstantiateGameObject", tObjectInfo.ePrefab, tObjectInfo.usNetworkViewId);
 
-        // Compile states
+            CNetworkView cNetworkView = CNetworkView.FindUsingViewId(tObjectInfo.usNetworkViewId);
+            cNetworkView.SendPlayerAllNetworkVarValues(_cNetworkPlayer.PlayerId);
+        }
 
+
+        _cNetworkPlayer.ActorNetworkViewId = CreateGameObject(EPrefab.Player1);
     }
 
 
@@ -128,7 +148,7 @@ public class CNetworkFactory : MonoBehaviour
         }
         else
         {
-            cNetworkView.SetViewId(_usNetworkViewId);
+            cNetworkView.ViewId = _usNetworkViewId;
 
 
             Debug.LogError(string.Format("Created new game object with prefab ({0}) and network view id ({1})", _ePrefab, _usNetworkViewId));
@@ -151,7 +171,7 @@ public class CNetworkFactory : MonoBehaviour
     // private:
 
 
-    List<ushort> m_iGameObjectNetworkViewIds = new List<ushort>();
+    List<TObjectInfo> m_aCreatedObjects = new List<TObjectInfo>();
 
 
 };

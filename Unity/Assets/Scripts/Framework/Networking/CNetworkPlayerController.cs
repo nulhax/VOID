@@ -109,7 +109,7 @@ public class CNetworkPlayerController : MonoBehaviour
     }
 
 
-    public static void HandlePlayerInboundData(CNetworkPlayer _cPlayer, CPacketStream _cTransmissionStream)
+    public static void ProcessNetworkInboundData(CNetworkPlayer _cPlayer, CPacketStream _cStream)
     {
     }
 

@@ -197,16 +197,26 @@ public class CNetworkServer : MonoBehaviour
                 case RakNet.DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                     {
                         Debug.Log("A client has connected");
+
+                        // Create network player instance for new player
                         CNetworkPlayer cNetworkPlayer = gameObject.AddComponent<CNetworkPlayer>();
-                        cNetworkPlayer.Initialise(cRnPacket.systemAddress);
-                        OnPlayerConnect(cNetworkPlayer);
+                        cNetworkPlayer.SystemAddress = new RakNet.SystemAddress(cRnPacket.systemAddress.ToString());
+
+                        // Notify other components
+                        if (EventPlayerConnect != null)
+                        {
+                            EventPlayerConnect(cNetworkPlayer);
+                        }
+
+                        Debug.LogError(string.Format("Added player instance id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cRnPacket.systemAddress));
                     }
                     break;
 
-                //case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerState:
-                    //{
-                    //}//HandleApplicationPacket(&pRnPacket->data[1], pRnPacket->length - 1);
-                    //break;
+                case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerController:
+                    {
+                    }
+                //HandleApplicationPacket(&pRnPacket->data[1], pRnPacket->length - 1);
+                    break;
 
                 default:
                     Debug.LogError(string.Format("Receieved unknown network message id ({0})", cRnPacket.data[0]));
@@ -230,44 +240,21 @@ public class CNetworkServer : MonoBehaviour
             // Decrement timer
             m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
 
-            // Check network view has outbound data
-            if (CNetworkView.HasOutboundData())
+            // Send player packets out
+            foreach (KeyValuePair<uint, CNetworkPlayer> tEntry in CNetworkPlayer.FindAll())
             {
-                CPacketStream cNetworkViewStream = new CPacketStream();
-                cNetworkViewStream.Write((byte)CNetworkConnection.EPacketId.NetworkView);
-
-                CNetworkView.CompileOutboundData(cNetworkViewStream);
-
-                // Send outbound data to all players
-                m_cRnPeer.Send(cNetworkViewStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, new RakNet.SystemAddress(), true);
-
-                //Debug.Log(string.Format("Sent outbound packet with size of ({0})", cNetworkViewStream.GetSize()));
-            }
-
-            /*
-            // Retrieve network players
-            Dictionary<byte, CNetworkPlayer> aNetworkPlayers = CNetworkPlayer.GetAllPlayers();
-
-            // Sendout player unique packets
-            foreach (KeyValuePair<byte, CNetworkPlayer> tEntry in aNetworkPlayers)
-            {
-                // Extract network player
                 CNetworkPlayer cNetworkPlayer = tEntry.Value;
- 
-                // Get transitions
-                List<CTransmissionStream> aTransmissionStreams = cNetworkPlayer.GetTransmissionStreams();
 
-
-                foreach (CTransmissionStream cStream in aTransmissionStreams)
+                // Send out packet if stream contains more then the identifier
+                if (cNetworkPlayer.PacketStream.GetSize() > 1)
                 {
-                    m_cRnPeer.Send(cStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, cNetworkPlayer.GetSystemAddress(), false);
-                }
+                    m_cRnPeer.Send(cNetworkPlayer.PacketStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, cNetworkPlayer.SystemAddress, false);
 
-                //CTransmissionStream cNetworkViewStream = new CTransmissionStream(new RakNet.BitStream());
-                //cNetworkViewStream.Write((byte)CNetworkConnection.EPacketId.NetworkView); // Packet Id
-				//
+                    cNetworkPlayer.ResetPacketStream();
+
+                    //Debug.LogError(string.Format("Sent packet to player id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress));
+                }
             }
-            */
 		}
     }
 

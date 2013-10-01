@@ -44,16 +44,17 @@ public interface INetworkVar
     // public:
 
 
-	void SyncSerialized(byte[] _baValueSerialized);
+	void Sync(object _cValue);
 
 
     void Set(object _cNewValue);
 	void SetNetworkViewOwner(CNetworkView _cNetworkView, byte _bNetworkVarId);
 
 
+    object GetAsObject();
 	int GetSize();
     ENetworkVarType GetVarType();
-	byte[] GetSerialized();
+    Type GetValueType();
 
 
     // protected:

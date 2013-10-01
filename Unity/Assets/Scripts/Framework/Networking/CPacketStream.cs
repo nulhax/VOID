@@ -13,7 +13,13 @@
 
 // Namespaces
 using UnityEngine;
+using System;
 using System.Collections;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
 
 
 /* Implementation */
@@ -57,6 +63,35 @@ public class CPacketStream
     public void Write(CPacketStream _cStream)
     {
         m_cBitStream.Write(_cStream.GetBitStream());
+    }
+
+
+    public void Write(object _cObject, Type _cType)
+    {
+        // Serialize the parameter value
+        byte[] baValueSerialized = Converter.ToByteArray(_cObject, _cType);
+
+        // Write string length if type is string
+        if (_cType == typeof(string))
+        {
+            this.Write((byte)((string)_cObject).Length);
+        }
+
+        // Write parameter value
+        this.Write(baValueSerialized);
+    }
+
+
+    public void Write(MethodInfo _tMethodInfo, object[] _caParameterValues)
+    {
+        // Extract the parameters from the method
+        ParameterInfo[] caParameters = _tMethodInfo.GetParameters();
+
+
+        for (int i = 0; i < caParameters.Length; ++i)
+        {
+            Write(_caParameterValues[i], caParameters[i].ParameterType);
+        }
     }
 
 
@@ -106,6 +141,49 @@ public class CPacketStream
 	{
 		m_cBitStream.IgnoreBytes(_uiNumBytes);
 	}
+
+
+    public object[] ReadMethodParameters(MethodInfo _tMethodInfo)
+    {
+        // Extract the parameters from the method
+        ParameterInfo[] caParameters = _tMethodInfo.GetParameters();
+
+
+        object[] caParameterValues = new object[caParameters.Length];
+
+
+        for (int i = 0; i < caParameters.Length; ++i)
+        {
+            int iSize = Converter.GetSizeOf(caParameters[i].ParameterType);
+
+            // Read string length if type is string
+            if (caParameters[i].ParameterType == typeof(string))
+            {
+                iSize = this.ReadByte();
+            }
+
+            byte[] baSerializedValue = this.ReadBytes(iSize);
+
+            caParameterValues[i] = Converter.ToObject(baSerializedValue, caParameters[i].ParameterType);
+        }
+
+
+        return (caParameterValues);
+    }
+
+
+    public byte[] ReadType(Type _cType)
+    {
+        int iSize = Converter.GetSizeOf(_cType);
+
+        if (_cType == typeof(string))
+        {
+            iSize = ReadByte();
+        }
+
+
+        return (ReadBytes(iSize));
+    }
 
 
 	public byte[] ReadBytes(int _iSize)

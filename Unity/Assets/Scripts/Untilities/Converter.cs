@@ -18,6 +18,9 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 
 
 /* Implementation */
@@ -112,62 +115,21 @@ public class Converter
         }
         else
         {
-            string sStringValue = _cObject as string;
-            iObjectSize = sStringValue.Length * sizeof(char);
-            baByteData = new byte[iObjectSize];
+            //string sStringValue = _cObject as string;
+            //iObjectSize = sStringValue.Length * sizeof(char);
+            //baByteData = new byte[iObjectSize];
 
 
-            System.Buffer.BlockCopy(sStringValue.ToCharArray(), 0, baByteData, 0, baByteData.Length);
+            //System.Buffer.BlockCopy(sStringValue.ToCharArray(), 0, baByteData, 0, baByteData.Length);
+
+            baByteData = Encoding.ASCII.GetBytes((string)_cObject);
         }
 
         return (baByteData);
     }
 
 
-    public static byte[] ToByteArray<TYPE>(TYPE _tStruct) where TYPE : struct
-    {
-        int iObjectSize = Marshal.SizeOf(typeof(TYPE));
-        Byte[] baByteData = new Byte[iObjectSize];
-        
-        
-		// Create buffer
-        IntPtr ipBuffer = Marshal.AllocHGlobal(iObjectSize);
-
-
-		// Copy structure to buffer
-        Marshal.StructureToPtr(_tStruct, ipBuffer, true);
-
-		
-		// Copy buffer to byte array
-        Marshal.Copy(ipBuffer, baByteData, 0, iObjectSize);
-
-
-		// Free buffer
-        Marshal.FreeHGlobal(ipBuffer);
-
-
-        return (baByteData);
-    }
-
-
-    public static TYPE ToStruct<TYPE>(byte[] _bData) where TYPE : struct
-    {
-        int iObjectSize = Marshal.SizeOf(typeof(TYPE));
-        IntPtr ipBuffer = Marshal.AllocHGlobal(iObjectSize);
-        
-       
-        Marshal.Copy(_bData, 0, ipBuffer, iObjectSize);
-        TYPE tStruct = (TYPE)Marshal.PtrToStructure(ipBuffer, typeof(TYPE));
-        
-        
-        Marshal.FreeHGlobal(ipBuffer);
-
-
-        return (tStruct);
-    }
-
-
-    public static object ToType(byte[] _baByteArray, Type _cType)
+    public static object ToObject(byte[] _baByteArray, Type _cType)
     {
         object cConvertedObject = null;
 
@@ -188,27 +150,20 @@ public class Converter
         }
         else
         {
-            char[] chars = new char[_baByteArray.Length / sizeof(char)];
-            System.Buffer.BlockCopy(_baByteArray, 0, chars, 0, _baByteArray.Length);
+            //int iStringLength = _baByteArray.Length;
+            //Debug.LogError(iStringLength / sizeof(char));
+
+            //char[] chars = new char[iStringLength / sizeof(char)];
+            //System.Buffer.BlockCopy(_baByteArray, 0, chars, 0, iStringLength);
 
 
-            cConvertedObject = Convert.ChangeType(new string(chars), typeof(string));
+            //cConvertedObject = Convert.ChangeType(new string(chars), typeof(string));
+            cConvertedObject = Encoding.UTF8.GetString(_baByteArray, 0, _baByteArray.Length);
         }
 
 
         return (cConvertedObject);
     }
-
-
-	private byte[] ObjectToByteArray(object source)
-	{
-		var formatter = new BinaryFormatter();
-		using (var stream = new MemoryStream())
-		{
-			formatter.Serialize(stream, source);                
-			return stream.ToArray();
-		}
-	}
 
 
     // protected:

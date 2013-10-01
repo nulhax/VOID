@@ -57,36 +57,9 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public void SyncSerialized(byte[] _baValueSerialized)
+    public void Sync(object _cValue)
 	{
-        if (m_eType != ENetworkVarType.String)
-        {
-            int iValueSize = GetSize();
-
-
-            // Allocate raw buffer
-            IntPtr ipRawBuffer = Marshal.AllocHGlobal(iValueSize);
-
-
-            // Copy byte array into raw buffer
-            Marshal.Copy(_baValueSerialized, 0, ipRawBuffer, iValueSize);
-
-
-            // Copy value to raw buffer
-            m_Value = (TYPE)Marshal.PtrToStructure(ipRawBuffer, typeof(TYPE));
-
-
-            // Free raw buffer
-            Marshal.FreeHGlobal(ipRawBuffer);
-        }
-        else
-        {
-            char[] chars = new char[_baValueSerialized.Length / sizeof(char)];
-            System.Buffer.BlockCopy(_baValueSerialized, 0, chars, 0, _baValueSerialized.Length);
-
-
-            m_Value = (TYPE)Convert.ChangeType(new string(chars), typeof(TYPE));
-        }
+        m_Value = (TYPE)_cValue;
 
 
         // Notify observers
@@ -136,44 +109,15 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public byte[] GetSerialized()
-	{
-		int iValueSize = GetSize();
-        byte[] baSerializedValue = null;
+    public object GetAsObject()
+    {
+        return (m_Value);
+    }
 
-
-        if (m_eType != ENetworkVarType.String)
-        {
-            baSerializedValue = new byte[iValueSize];
-
-
-            // Allocate raw buffer
-            IntPtr ipRawBuffer = Marshal.AllocHGlobal(iValueSize);
-
-
-            // Copy value to raw buffer
-            Marshal.StructureToPtr(m_Value, ipRawBuffer, true);
-
-
-            // Copy raw buffer contents to byte array
-            Marshal.Copy(ipRawBuffer, baSerializedValue, 0, iValueSize);
-
-
-            // Free raw buffer
-            Marshal.FreeHGlobal(ipRawBuffer);
-        }
-        else
-        {
-            string sValue = m_Value as string;
-
-
-            baSerializedValue = new byte[sValue.Length * sizeof(char)];
-            System.Buffer.BlockCopy(sValue.ToCharArray(), 0, baSerializedValue, 0, baSerializedValue.Length);
-        }
-
-
-		return (baSerializedValue);
-	}
+    public Type GetValueType()
+    {
+        return (m_Value.GetType());
+    }
 
 
     // protected:
