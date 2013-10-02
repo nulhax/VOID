@@ -213,6 +213,9 @@ public class CNetworkConnection : MonoBehaviour
 						cPacketStream.IgnoreBytes(1); // Ignore packet id
 
                         CNetworkView.ProcessInboundNetworkData(cPacketStream);
+
+
+                        Debug.LogError(string.Format("Processed Inbound Data of size ({0})", cPacketStream.GetSize()));
                     }
                     break;
 

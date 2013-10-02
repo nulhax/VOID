@@ -60,9 +60,16 @@ public class CPacketStream
 	}
 
 
+    public void SetReadOffset(uint _uiBytes)
+    {
+        m_cBitStream.SetReadOffset(_uiBytes * 8);
+    }
+
+
     public void Write(CPacketStream _cStream)
     {
         m_cBitStream.Write(_cStream.GetBitStream());
+        _cStream.SetReadOffset(0);
     }
 
 

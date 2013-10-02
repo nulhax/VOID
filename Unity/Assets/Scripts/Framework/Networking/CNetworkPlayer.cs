@@ -58,6 +58,12 @@ public class CNetworkPlayer : MonoBehaviour
     }
 
 
+    public bool IsHost()
+    {
+        return (m_uiPlayerId == 1);
+    }
+
+
     public uint PlayerId
     {
         get { return (m_uiPlayerId); }
@@ -152,7 +158,7 @@ public class CNetworkPlayer : MonoBehaviour
     uint m_uiAccountId = 0;
 
 
-    ushort  m_usActorNetworkViewId = 0;
+    ushort m_usActorNetworkViewId = 0;
 
 
     RakNet.SystemAddress m_cSystemAddress = null;

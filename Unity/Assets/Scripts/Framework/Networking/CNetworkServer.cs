@@ -246,13 +246,18 @@ public class CNetworkServer : MonoBehaviour
                 CNetworkPlayer cNetworkPlayer = tEntry.Value;
 
                 // Send out packet if stream contains more then the identifier
-                if (cNetworkPlayer.PacketStream.GetSize() > 1)
+                if (!cNetworkPlayer.IsHost())
                 {
-                    m_cRnPeer.Send(cNetworkPlayer.PacketStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, cNetworkPlayer.SystemAddress, false);
+                    if (cNetworkPlayer.PacketStream.GetSize() > 1)
+                    {
+                        Debug.LogError(string.Format("Sending pack of size ({0}) to player id ({1})", cNetworkPlayer.PacketStream.GetSize(), cNetworkPlayer.PlayerId));
 
-                    cNetworkPlayer.ResetPacketStream();
+                        m_cRnPeer.Send(cNetworkPlayer.PacketStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_SEQUENCED, (char)0, cNetworkPlayer.SystemAddress, false);
 
-                    //Debug.LogError(string.Format("Sent packet to player id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress));
+                        cNetworkPlayer.ResetPacketStream();
+
+                        Debug.LogError(string.Format("Sent packet to player id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress));
+                    }
                 }
             }
 		}

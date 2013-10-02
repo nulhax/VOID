@@ -77,7 +77,7 @@ class CGame : MonoBehaviour
 
         if (GUI.Button(new Rect(Screen.width / 2 - fWidth / 2, Screen.height / 2 + fHeight, fWidth, fHeight), "Join Server"))
         {
-            CGame.Connection.ConnectToServer((ushort)Random.Range(10000, 20000), "127.0.0.1", 30001, "");
+            CGame.Connection.ConnectToServer((ushort)Random.Range(10000, 20000), "1916C013", 30001, "");
         }
     }
 
