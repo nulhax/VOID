@@ -50,16 +50,16 @@ public class CNetworkConnection : MonoBehaviour
     }
 
 
-    public delegate void HandleConnect(object _cSender, params object[] _caParams);
-    public event HandleConnect EventClientConnect;
+    public delegate void OnConnect(object _cSender, params object[] _caParams);
+    public event OnConnect EventPlayerConnect;
 
 
-    public delegate void HandleDisconnect(object _cSender, params object[] _caParams);
-    public event HandleDisconnect EventClientDisconnect;
+    public delegate void OnDisconnect(object _cSender, params object[] _caParams);
+    public event OnDisconnect EventPlayerDisconnect;
 
 
-    public delegate void HandleShutdown(object _cSender, params object[] _caParams);
-    public event HandleShutdown EventShutdown;
+    public delegate void OnShutdown(object _cSender, params object[] _caParams);
+    public event OnShutdown EventShutdown;
 
 
 // Member Functions
@@ -81,21 +81,18 @@ public class CNetworkConnection : MonoBehaviour
 
     public void Update()
     {
+        // Process packets
         if (IsConnected())
         {
             ProcessIncomingPackets();
             ProcessOutgoingPackets();
-        }
-
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            Disconnect();
         }
     }
 
 
     public bool ConnectToServer(uint _uiListenPort, string _sServerIp, ushort _usServerPort, string _sServerPassword)
     {
+        // Terminate current connection
         Disconnect();
 
 
@@ -109,14 +106,14 @@ public class CNetworkConnection : MonoBehaviour
 
             if (eConnectionAttempResult != RakNet.ConnectionAttemptResult.CONNECTION_ATTEMPT_STARTED)
             {
-                Debug.LogError(string.Format("Connection to server attempt failed. ErrorCode({0})", eConnectionAttempResult));
+                Logger.WriteError("Connection to server attempt failed. ErrorCode({0})", eConnectionAttempResult);
             }
             else
             {
                 bConnectionStarted = true;
 
 
-                Debug.Log(string.Format("Connection request sent. ServerIp({0}) ServerPort({1}) ServerPassword({2})", _sServerIp, _usServerPort, _sServerPassword));
+                Logger.Write("Connection request sent. ServerIp({0}) ServerPort({1}) ServerPassword({2})", _sServerIp, _usServerPort, _sServerPassword);
             }
         }
 
@@ -134,7 +131,7 @@ public class CNetworkConnection : MonoBehaviour
             //RakNet.RakPeerInterface.DestroyInstance(m_cRnPeer);
 
 
-            Debug.LogError("Connection disconnected");
+            Logger.WriteError("Connection disconnected");
         }
     }
 
@@ -179,48 +176,43 @@ public class CNetworkConnection : MonoBehaviour
             {
                 case RakNet.DefaultMessageIDTypes.ID_CONNECTION_REQUEST_ACCEPTED:
                     {
-                        Debug.Log("Connection established with server");
-                    }//HandleConnectSuccess(pRnPacket->systemAddress);
+                        m_cServerSystemAddress = new RakNet.SystemAddress(cRnPacket.systemAddress.ToString());
+                        Logger.Write("Connection established with server");
+                    }
                     break;
 
                 case RakNet.DefaultMessageIDTypes.ID_NO_FREE_INCOMING_CONNECTIONS:
                     {
-                        Debug.Log("No free incoming connects");
-                    }//HandleConnectFailServerFull();
+                        Logger.Write("No free incoming connects");
+                    }
                     break;
 
                 case RakNet.DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                     {
-                        Debug.Log("Disconnect notification");
-                    }//HandleDisconnectServerShutdown();
+                        Logger.Write("Disconnect notification");
+                    }
                     break;
 
                 case RakNet.DefaultMessageIDTypes.ID_CONNECTION_LOST:
                     {
-                        Debug.Log("Connection lost");
-                    }//HandleTimout();
+                        Logger.Write("Connection lost");
+                    }
                     break;
 
                 case RakNet.DefaultMessageIDTypes.ID_CONNECTION_ATTEMPT_FAILED:
                     {
-                        Debug.Log("Failed to connect to server");
+                        Logger.Write("Failed to connect to server");
                     }
                     break;
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.NetworkView:
                     {
-						CPacketStream cPacketStream = new CPacketStream(cRnPacket.data);
-						cPacketStream.IgnoreBytes(1); // Ignore packet id
-
-                        CNetworkView.ProcessInboundNetworkData(cPacketStream);
-
-
-                        Debug.LogError(string.Format("Processed Inbound Data of size ({0})", cPacketStream.GetSize()));
+                        HandleNetworkViewPacket(cRnPacket.data);
                     }
                     break;
 
                 default:
-                    Debug.LogError(string.Format("Receieved unknown network message id ({0})", cRnPacket.data[0]));
+                    Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
                     break;
             }
 
@@ -237,28 +229,38 @@ public class CNetworkConnection : MonoBehaviour
 
         if (m_fPacketOutboundTimer > m_fPacketOutboundInterval)
         {
+            CNetworkPlayerController cPlayerController = CGame.PlayerController;
 
-            /*
-            if (CNetworkView.HasOutboundData())
+
+            if (cPlayerController.HasOutboundData())
             {
-                CPacketStream cNetworkViewStream = new CPacketStream(new RakNet.BitStream());
+                Logger.Write("Sent player controller to server of size ({0})", cPlayerController.PacketStream.GetSize());
 
 
-                if (CGame.PlayerController.HasOutboundData())
-                {
-                    CGame.PlayerController.CompileOutboundData(cNetworkViewStream);
-                }
+                m_cRnPeer.Send(cPlayerController.PacketStream.GetBitStream(), RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cServerSystemAddress, false);
+
+
+                cPlayerController.ClearOutboundData();
             }
-            */
+
 
             m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
         }
     }
 
 
-    public void HandleNetworkViewPacket()
+    public void HandleNetworkViewPacket(byte[] _baData)
     {
+        // Create stream with data
+        CPacketStream cPacketStream = new CPacketStream(_baData);
 
+        // Ignore packet id
+        cPacketStream.IgnoreBytes(1);
+
+        // Process packet data
+        CNetworkView.ProcessInboundNetworkData(cPacketStream);
+
+        Logger.Write("Processed Inbound Data of size ({0})", cPacketStream.GetSize());
     }
 
 
@@ -279,14 +281,14 @@ public class CNetworkConnection : MonoBehaviour
 
         if (eStartupResult != RakNet.StartupResult.RAKNET_STARTED)
         {
-            Debug.LogError(string.Format("Raknet peer failed to start. ErrorCode({0}) Port({1})", eStartupResult, _uiPort));
+            Logger.WriteError("Raknet peer failed to start. ErrorCode({0}) Port({1})", eStartupResult, _uiPort);
         }
         else
         {
             bPeerStarted = true;
 
 
-            Debug.Log(string.Format("Raknet peer started. Port({0})", _uiPort));
+            Logger.Write("Raknet peer started. Port({0})", _uiPort);
         }
 
 
@@ -303,11 +305,12 @@ public class CNetworkConnection : MonoBehaviour
 
 
     RakNet.RakPeer m_cRnPeer = null;
+    RakNet.SystemAddress m_cServerSystemAddress = null;
     CTimer m_cPacketOutgoingTimer = new CTimer();
 
 
     float m_fPacketOutboundTimer = 0.0f;
-    float m_fPacketOutboundInterval = 1.0f / 10.0f;
+    float m_fPacketOutboundInterval = 1.0f / 30.0f;
 
 
     uint m_uiPort = 0;

@@ -21,7 +21,7 @@ using System.Runtime.InteropServices;
 /* Implementation */
 
 
-public class CNetworkFactory : MonoBehaviour
+public class CNetworkFactory : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -55,6 +55,12 @@ public class CNetworkFactory : MonoBehaviour
     // public:
 
 
+    public override void InitialiseNetworkVars()
+    {
+        // Empty
+    }
+
+
     public void Start()
     {
         CGame.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnNetworkPlayerJoin);
@@ -74,14 +80,14 @@ public class CNetworkFactory : MonoBehaviour
 
 
     /* Used by the server to create game objects that will also be created on all the clients */
-    public ushort CreateGameObject(EPrefab _ePrefab)
+    public GameObject CreateGameObject(EPrefab _ePrefab)
     {
         ushort usObjectViewId = 0;
 
 
         if (!CGame.IsServer())
         {
-            Debug.LogError(string.Format("Only the server is allowed to create objects fool!!! Prefab({0})", _ePrefab));
+            Logger.WriteError("Only the server is allowed to create objects fool!!! Prefab({0})", _ePrefab);
         }
         else
         {
@@ -89,11 +95,11 @@ public class CNetworkFactory : MonoBehaviour
             m_aCreatedObjects.Add(new TCreatedObject(_ePrefab, usObjectViewId));
 
 
-            GetComponent<CNetworkView>().InvokeRpcAll(this, "InstantiateGameObject", _ePrefab, usObjectViewId);
+            InvokeRpcAll("InstantiateGameObject", _ePrefab, usObjectViewId);
         }
 
 
-        return (usObjectViewId);
+        return (CNetworkView.FindUsingViewId(usObjectViewId).gameObject);
     }
 
 
@@ -112,7 +118,7 @@ public class CNetworkFactory : MonoBehaviour
         // Sync new player with all the current game objects are their network var values
         if (!_cNetworkPlayer.IsHost())
         {
-            Debug.LogError("A Player joined. Sending them the objects and states");
+            Logger.WriteError("A Player joined. Sending them the objects and states");
 
 
             foreach (TCreatedObject tObjectInfo in m_aCreatedObjects)
@@ -130,11 +136,8 @@ public class CNetworkFactory : MonoBehaviour
 
 
         // Create the new game object with the player
-        _cNetworkPlayer.ActorNetworkViewId = CreateGameObject(EPrefab.Player1);
-
-
-        GameObject cGameObject = CNetworkView.FindUsingViewId(_cNetworkPlayer.ActorNetworkViewId).gameObject;
-        cGameObject.GetComponent<CActorMotor>().PositionZ = 2 * _cNetworkPlayer.PlayerId;
+        _cNetworkPlayer.Actor = CreateGameObject(EPrefab.Player1);
+        _cNetworkPlayer.Actor.GetComponent<CActorMotor>().PositionZ = -6 + 2 * _cNetworkPlayer.PlayerId;
     }
 
 
@@ -157,14 +160,14 @@ public class CNetworkFactory : MonoBehaviour
 
         if (cNetworkView == null)
         {
-            Debug.LogError(string.Format("The created prefab ({0}) does not have a network view!!!", _usNetworkViewId));
+            Logger.WriteError("The created prefab ({0}) does not have a network view!!!", _usNetworkViewId);
         }
         else
         {
             cNetworkView.ViewId = _usNetworkViewId;
 
 
-            Debug.LogError(string.Format("Created new game object with prefab ({0}) and network view id ({1})", _ePrefab, _usNetworkViewId));
+            Logger.WriteError("Created new game object with prefab ({0}) and network view id ({1})", _ePrefab, _usNetworkViewId);
         }
     }
 

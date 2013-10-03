@@ -37,6 +37,15 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
+    public enum EDisconnectType
+    {
+        Invoked,
+        Timeout,
+        Kicked,
+        Banned
+    }
+
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TServerInfo
     {
@@ -78,8 +87,7 @@ public class CNetworkServer : MonoBehaviour
 
     public void Start()
     {
-        EventPlayerConnect += new NotifyPlayerConnect(OnPlayerConnect);
-        EventPlayerDisconnect += new NotifyPlayerDisconnect(OnPlayerDisconnect);
+        // Empty
     }
 
 
@@ -93,7 +101,7 @@ public class CNetworkServer : MonoBehaviour
     {
         if (IsActive())
         {
-            ProcessIncomingPackets();
+            ProcessInboundPackets();
             ProcessOutgoingPackets();
         }
     }
@@ -137,7 +145,7 @@ public class CNetworkServer : MonoBehaviour
             //RakNet.RakPeerInterface.DestroyInstance(m_cRnPeer);
 
 
-            Debug.Log("Server shutdown");
+            Logger.Write("Server shutdown");
         }
     }
 
@@ -166,60 +174,48 @@ public class CNetworkServer : MonoBehaviour
     // protected:
 
 
-    protected void ProcessIncomingPackets()
+    protected void ProcessInboundPackets()
     {
         RakNet.Packet cRnPacket = null;
 
-
+        // Iterate through every packet in queue
         while ((cRnPacket = m_cRnPeer.Receive()) != null)
         {
+            // Extract packet id
             int iPacketId = cRnPacket.data[0];
-            RakNet.DefaultMessageIDTypes eMessageId = (RakNet.DefaultMessageIDTypes)iPacketId;
 
-
-            switch (eMessageId)
+            // Handle packet
+            switch ((RakNet.DefaultMessageIDTypes)iPacketId)
             {
-                case RakNet.DefaultMessageIDTypes.ID_REMOTE_CONNECTION_LOST:
+                case RakNet.DefaultMessageIDTypes.ID_REMOTE_CONNECTION_LOST: // Fall through
                 case RakNet.DefaultMessageIDTypes.ID_CONNECTION_LOST:
                     {
-                        Debug.Log("A client has timeout");
-                    }//HandleClientTimeout();
+                        HandlePlayerDisconnect(CNetworkPlayer.FindUsingGuid(cRnPacket.guid), EDisconnectType.Timeout);
+                    }
                     break;
 
-                case RakNet.DefaultMessageIDTypes.ID_REMOTE_DISCONNECTION_NOTIFICATION:
+                case RakNet.DefaultMessageIDTypes.ID_REMOTE_DISCONNECTION_NOTIFICATION: // Fall through
                 case RakNet.DefaultMessageIDTypes.ID_DISCONNECTION_NOTIFICATION:
                     {
-                        Debug.Log("A client has disconnected");
-                    }// HandleClientDisconnect();
+                        HandlePlayerDisconnect(CNetworkPlayer.FindUsingGuid(cRnPacket.guid), EDisconnectType.Invoked);
+                    }
                     break;
 
                 case RakNet.DefaultMessageIDTypes.ID_REMOTE_NEW_INCOMING_CONNECTION:
                 case RakNet.DefaultMessageIDTypes.ID_NEW_INCOMING_CONNECTION:
                     {
-                        Debug.Log("A client has connected");
-
-                        // Create network player instance for new player
-                        CNetworkPlayer cNetworkPlayer = gameObject.AddComponent<CNetworkPlayer>();
-                        cNetworkPlayer.SystemAddress = new RakNet.SystemAddress(cRnPacket.systemAddress.ToString());
-
-                        // Notify other components
-                        if (EventPlayerConnect != null)
-                        {
-                            EventPlayerConnect(cNetworkPlayer);
-                        }
-
-                        Debug.LogError(string.Format("Added player instance id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cRnPacket.systemAddress));
+                        HandlePlayerConnect(cRnPacket.systemAddress, cRnPacket.guid);
                     }
                     break;
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerController:
                     {
+                        HandlePlayerControllerPacket(CNetworkPlayer.FindUsingGuid(cRnPacket.guid), cRnPacket.data);
                     }
-                //HandleApplicationPacket(&pRnPacket->data[1], pRnPacket->length - 1);
                     break;
 
                 default:
-                    Debug.LogError(string.Format("Receieved unknown network message id ({0})", cRnPacket.data[0]));
+                    Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
                     break;
             }
 
@@ -248,19 +244,53 @@ public class CNetworkServer : MonoBehaviour
                 // Send out packet if stream contains more then the identifier
                 if (!cNetworkPlayer.IsHost())
                 {
-                    if (cNetworkPlayer.PacketStream.GetSize() > 1)
+                    if (cNetworkPlayer.HasOutboundData())
                     {
-                        Debug.LogError(string.Format("Sending pack of size ({0}) to player id ({1})", cNetworkPlayer.PacketStream.GetSize(), cNetworkPlayer.PlayerId));
+                        Logger.Write("Sent packet to player id ({0}) system address ({1}) of size ({2})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkPlayer.PacketStream.GetSize());
 
-                        m_cRnPeer.Send(cNetworkPlayer.PacketStream.GetBitStream(), RakNet.PacketPriority.HIGH_PRIORITY, RakNet.PacketReliability.RELIABLE_SEQUENCED, (char)0, cNetworkPlayer.SystemAddress, false);
+                        m_cRnPeer.Send(cNetworkPlayer.PacketStream.GetBitStream(), RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_SEQUENCED, (char)0, cNetworkPlayer.SystemAddress, false);
 
                         cNetworkPlayer.ResetPacketStream();
-
-                        Debug.LogError(string.Format("Sent packet to player id ({0}) system address ({1})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress));
                     }
                 }
             }
 		}
+    }
+
+
+    protected void HandlePlayerConnect(RakNet.SystemAddress _cSystemAddress, RakNet.RakNetGUID _cGuid)
+    {
+        // Create network player instance for new player
+        CNetworkPlayer cNetworkPlayer = gameObject.AddComponent<CNetworkPlayer>();
+        cNetworkPlayer.SystemAddress = new RakNet.SystemAddress(_cSystemAddress.ToString());
+        cNetworkPlayer.Guid = new RakNet.RakNetGUID(_cGuid.g);
+
+        // Notify other components
+        if (EventPlayerConnect != null)
+        {
+            EventPlayerConnect(cNetworkPlayer);
+        }
+
+        Logger.Write("A player has joined. Instance id ({0}) System address ({1}) Guid ({2})", cNetworkPlayer.PlayerId, _cSystemAddress, _cGuid);
+    }
+
+
+    protected void HandlePlayerDisconnect(CNetworkPlayer _cPlayer, EDisconnectType _eDisconnectType)
+    {
+        Logger.Write("A client has disconnected");
+    }
+
+
+    protected void HandlePlayerControllerPacket(CNetworkPlayer _cPlayer, byte[] _baData)
+    {
+        // Create packet stream
+        CPacketStream cPacketStream = new CPacketStream(_baData);
+
+        // Ignore packet id
+        cPacketStream.IgnoreBytes(1);
+
+        // Have the network player controller process the data
+        CNetworkPlayerController.ProcessNetworkInboundData(_cPlayer, cPacketStream);
     }
 
 
@@ -281,7 +311,7 @@ public class CNetworkServer : MonoBehaviour
 
         if (eStartupResult != RakNet.StartupResult.RAKNET_STARTED)
         {
-            Debug.LogError(string.Format("Raknet peer failed to start. ErrorCode({0})", eStartupResult));
+            Logger.WriteError("Raknet peer failed to start. ErrorCode({0})", eStartupResult);
         }
         else
         {
@@ -289,23 +319,11 @@ public class CNetworkServer : MonoBehaviour
             bPeerStarted = true;
 
 
-            Debug.Log(string.Format("Server started with port ({0}) NumSlots({1})", _uiPort, _uiNumSlots));
+            Logger.Write("Server started with port ({0}) NumSlots({1})", _uiPort, _uiNumSlots);
         }
 
 
         return (bPeerStarted);
-    }
-
-
-    void OnPlayerConnect(CNetworkPlayer _cPlayer)
-    {
-        
-    }
-
-
-    void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
-    {
-
     }
 
 
@@ -321,7 +339,7 @@ public class CNetworkServer : MonoBehaviour
 
 
 	float m_fPacketOutboundTimer = 0.0f;
-	float m_fPacketOutboundInterval = 1.0f / 10.0f;
+	float m_fPacketOutboundInterval = 1.0f / 100.0f;
 
 
     string m_sTitle = "Untitled";

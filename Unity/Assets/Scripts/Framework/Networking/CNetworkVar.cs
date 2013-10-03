@@ -66,7 +66,7 @@ public class CNetworkVar<TYPE> : INetworkVar
         m_cSyncObserver.Notify(this, (short)ESubject.OnSync, null);
 
 
-        Debug.LogError(string.Format("Network var was synced with value ({0})", m_Value));
+        Logger.WriteError("Network var was synced with value ({0})", m_Value);
 	}
 
 
@@ -74,7 +74,7 @@ public class CNetworkVar<TYPE> : INetworkVar
     {
         if (!CGame.IsServer())
         {
-			Debug.LogError("Clients are not allowed to set network variables!");
+			Logger.WriteError("Clients are not allowed to set network variables!");
         }
         else
         {
@@ -148,7 +148,7 @@ public class CNetworkVar<TYPE> : INetworkVar
                 break;
 
             default:
-                Debug.LogError(string.Format("Could not validate the actual size of Network Var value type ({0})", typeof(TYPE)));
+                Logger.WriteError("Could not validate the actual size of Network Var value type ({0})", typeof(TYPE));
                 break;
             }
         }
@@ -169,12 +169,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 
         else
         {
-            Debug.LogError(string.Format("Network var type ({0}) is invalid. Type must be a value type or string.", typeof(TYPE).Name));
+            Logger.WriteError("Network var type ({0}) is invalid. Type must be a value type or string.", typeof(TYPE).Name);
         }
 
 
 
-        //Debug.LogError(m_eType);
+        //Logger.WriteError(m_eType);
     }
 
 

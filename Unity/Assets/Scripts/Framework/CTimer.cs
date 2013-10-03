@@ -41,7 +41,7 @@ public class CTimer
         }
         else
         {
-            Debug.LogError("The interval is too small. This could lead to unwanted behavior");
+            Logger.WriteError("The interval is too small. This could lead to unwanted behavior");
         }
     }
 

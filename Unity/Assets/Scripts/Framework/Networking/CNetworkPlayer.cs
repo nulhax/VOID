@@ -64,6 +64,12 @@ public class CNetworkPlayer : MonoBehaviour
     }
 
 
+    public bool HasOutboundData()
+    {
+        return (m_cStream.GetSize() > 1);
+    }
+
+
     public uint PlayerId
     {
         get { return (m_uiPlayerId); }
@@ -76,7 +82,7 @@ public class CNetworkPlayer : MonoBehaviour
         {
             if (m_uiAccountId != 0)
             {
-                Debug.LogError(string.Format("The account id of network players cannot be changed once set"));
+                Logger.WriteError("The account id of network players cannot be changed once set");
             }
             else
             {
@@ -88,26 +94,13 @@ public class CNetworkPlayer : MonoBehaviour
     }
 
 
-    public ushort ActorNetworkViewId
+    public GameObject Actor
     {
         set
         {
-            if (m_usActorNetworkViewId != 0)
-            {
-                Debug.LogError(string.Format("Actor network view id ({0}) for player id ({1}) cannot be change once set", m_usActorNetworkViewId, this.PlayerId));
-            }
-            else
-            {
-                m_usActorNetworkViewId = value;
-            }
+            m_usActorNetworkViewId = value.GetComponent<CNetworkView>().ViewId;
         }
 
-        get { return (m_usActorNetworkViewId); }
-    }
-
-
-    public GameObject ActorGameObject
-    {
         get
         {
             return (CNetworkView.FindUsingViewId(m_usActorNetworkViewId).gameObject);
@@ -119,6 +112,25 @@ public class CNetworkPlayer : MonoBehaviour
     {
         set { m_cSystemAddress = value; }
         get { return (m_cSystemAddress); }
+    }
+
+
+    public RakNet.RakNetGUID Guid
+    {
+        set
+        {
+            if (m_cGuid != null)
+            {
+                Logger.WriteError("Player GUIDs cannot be changed once set. Player id ({0})", this.PlayerId);
+            }
+            else
+            {
+                m_cGuid = value;
+                s_mGuidNetworkPlayers.Add(m_cGuid.g, this);
+            }
+        }
+
+        get { return (m_cGuid); }
     }
 
 
@@ -139,6 +151,11 @@ public class CNetworkPlayer : MonoBehaviour
         return (s_mNetworkPlayers[_uiPlayerId]);
     }
 
+
+    public static CNetworkPlayer FindUsingGuid(RakNet.RakNetGUID _cGuid)
+    {
+        return (s_mGuidNetworkPlayers[_cGuid.g]);
+    }
 
     // protected:
 
@@ -162,10 +179,12 @@ public class CNetworkPlayer : MonoBehaviour
 
 
     RakNet.SystemAddress m_cSystemAddress = null;
+    RakNet.RakNetGUID m_cGuid = null;
     CPacketStream m_cStream = new CPacketStream();
 
 
     static Dictionary<uint, CNetworkPlayer> s_mNetworkPlayers = new Dictionary<uint, CNetworkPlayer>();
+    static Dictionary<ulong, CNetworkPlayer> s_mGuidNetworkPlayers = new Dictionary<ulong, CNetworkPlayer>();
 
 
 };

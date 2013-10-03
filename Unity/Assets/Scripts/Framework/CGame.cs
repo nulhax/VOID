@@ -69,13 +69,16 @@ class CGame : MonoBehaviour
         float fHeight = 100;
 
 
-        if (GUI.Button(new Rect(Screen.width / 2 - fWidth / 2, Screen.height / 2 - fHeight, fWidth, fHeight), "Start Server"))
+        if (!CGame.Connection.IsConnected() && 
+            !CGame.Server.IsActive() &&
+            GUI.Button(new Rect(Screen.width / 2 - fWidth / 2, Screen.height / 2 - fHeight, fWidth, fHeight), "Start Server"))
         {
             CGame.Server.HostServer("My Awesome Server", 20, 30001);
         }
 
 
-        if (GUI.Button(new Rect(Screen.width / 2 - fWidth / 2, Screen.height / 2 + fHeight, fWidth, fHeight), "Join Server"))
+        if (!CGame.Connection.IsConnected() &&
+            GUI.Button(new Rect(Screen.width / 2 - fWidth / 2, Screen.height / 2 + fHeight, fWidth, fHeight), "Join Server"))
         {
             CGame.Connection.ConnectToServer((ushort)Random.Range(10000, 20000), "1916C013", 30001, "");
         }

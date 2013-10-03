@@ -151,7 +151,7 @@ public class Converter
         else
         {
             //int iStringLength = _baByteArray.Length;
-            //Debug.LogError(iStringLength / sizeof(char));
+            //Logger.WriteError(iStringLength / sizeof(char));
 
             //char[] chars = new char[iStringLength / sizeof(char)];
             //System.Buffer.BlockCopy(_baByteArray, 0, chars, 0, iStringLength);

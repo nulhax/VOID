@@ -89,7 +89,7 @@ public class CNetworkView : MonoBehaviour
         // Ensure sure only servers can invoke rpcs
         if (!CGame.IsServer())
         {
-            Debug.LogError("Only servers can invoke RPCs douche");
+            Logger.WriteError("Only servers can invoke RPCs douche");
         }
         else
         {
@@ -99,7 +99,7 @@ public class CNetworkView : MonoBehaviour
             // Ensure the method exists
             if (tMethodInfo == null)
             {
-                Debug.LogError(string.Format("Could not find method ({0}) in component ({1})", _sFunction, _cComponent.GetType().Name));
+                Logger.WriteError("Could not find method ({0}) in component ({1})", _sFunction, _cComponent.GetType().Name);
             }
             else
             {
@@ -109,7 +109,7 @@ public class CNetworkView : MonoBehaviour
                 // Ensure the network rpc was found
                 if (bNetworkRpcId == 0)
                 {
-                    Debug.LogError(string.Format("The network rpc method ({0}) in component ({1}) is not connected to this network view id ({2})", _sFunction, _cComponent.GetType().Name, this.ViewId));
+                    Logger.WriteError("The network rpc method ({0}) in component ({1}) is not connected to this network view id ({2})", _sFunction, _cComponent.GetType().Name, this.ViewId);
                 }
                 else
                 {
@@ -145,11 +145,11 @@ public class CNetworkView : MonoBehaviour
                                 // Append packet data
                                 tEntry.Value.PacketStream.Write(cRpcStream);
 
-                                Debug.LogError(string.Format("Written {0} bytes into player ({1})", cRpcStream.GetSize(), tEntry.Value.PlayerId));
+                                Logger.WriteError("Written {0} bytes into player ({1})", cRpcStream.GetSize(), tEntry.Value.PlayerId);
                             }
                         }
 
-                        Debug.Log(string.Format("Sent RPC call for ({0}) to all players", _sFunction));
+                        Logger.Write("Sent RPC call for ({0}) to all players", _sFunction);
                     }
 
                     // Send to individual player
@@ -170,7 +170,7 @@ public class CNetworkView : MonoBehaviour
                             cNetworkPlayer.PacketStream.Write(cRpcStream);
                         }
 
-                        Debug.Log(string.Format("Sent RPC call for ({0}) to player id ({1})", _sFunction, _uiPlayerId));
+                        Logger.Write("Sent RPC call for ({0}) to player id ({1})", _sFunction, _uiPlayerId);
                     }
                 }
             }
@@ -188,7 +188,7 @@ public class CNetworkView : MonoBehaviour
     {
         if (!CGame.IsServer())
         {
-            Debug.LogError("Clients cannot sync network vars fool!");
+            Logger.WriteError("Clients cannot sync network vars fool!");
             return;
         }
 
@@ -225,7 +225,7 @@ public class CNetworkView : MonoBehaviour
                 }
             }
 
-            Debug.Log(string.Format("Sent network var sync (id {0}) to all players", _bNetworkVarId));
+            Logger.Write("Sent network var sync (id {0}) to all players", _bNetworkVarId);
         }
 
         // Send to individual player
@@ -246,7 +246,7 @@ public class CNetworkView : MonoBehaviour
                 cNetworkPlayer.PacketStream.Write(cVarStream);
             }
 
-            Debug.Log(string.Format("Sent network var sync id ({0}) to player id ({1})", _bNetworkVarId, _uiPlayerId));
+            Logger.Write("Sent network var sync id ({0}) to player id ({1})", _bNetworkVarId, _uiPlayerId);
         }
     }
 
@@ -264,7 +264,7 @@ public class CNetworkView : MonoBehaviour
             SyncNetworkVar(_uiPlayerId, tEntry.Key);
         }
 
-        Debug.LogError(string.Format("Sent player id ({0}) all network var values from network view id ({1})", _uiPlayerId, this.ViewId));
+        Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1})", _uiPlayerId, this.ViewId);
     }
      
 
@@ -281,7 +281,7 @@ public class CNetworkView : MonoBehaviour
             // Ensure network view id cannot change once set
             if (m_usViewId != 0)
             {
-                Debug.LogError(string.Format("The network view id cannot be changed once set. CurrentViewId({0}) TargetViewId({1})", m_usViewId, value));
+                Logger.WriteError("The network view id cannot be changed once set. CurrentViewId({0}) TargetViewId({1})", m_usViewId, value);
             }
             else
             {
@@ -291,7 +291,7 @@ public class CNetworkView : MonoBehaviour
                     // Ensure there is not network view attached to this view id yet
                     if (s_cNetworkViews[value] != null)
                     {
-                        Debug.LogError(string.Format("Unable to assign GameObject ({0}) network view id ({1}) because its already in use!", gameObject.name, value));
+                        Logger.WriteError("Unable to assign GameObject ({0}) network view id ({1}) because its already in use!", gameObject.name, value);
                     }
 
                     // Take ownership of this network view id
@@ -312,7 +312,7 @@ public class CNetworkView : MonoBehaviour
                 }
                 else
                 {
-                    Debug.LogError(string.Format("Somethign went wrong when setting the network view id ({0})", value));
+                    Logger.WriteError("Somethign went wrong when setting the network view id ({0})", value);
                 }
             }
         }
@@ -328,7 +328,7 @@ public class CNetworkView : MonoBehaviour
         // Ensure servers only generate dynamic view ids
         if (!CGame.IsServer())
         {
-            Debug.LogError(string.Format("Clients cannot generate network view ids!!!"));
+            Logger.WriteError("Clients cannot generate network view ids!!!");
         }
         else
         {
@@ -348,7 +348,7 @@ public class CNetworkView : MonoBehaviour
                 // Check reached maximum number of dynamic view ids
                 if (i == ushort.MaxValue - 1)
                 {
-                    Debug.LogError(string.Format("Oh shit, the network view id generator ran out of ids. The game is now broken. GG"));
+                    Logger.WriteError("Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
                 }
             }
         }
@@ -378,7 +378,7 @@ public class CNetworkView : MonoBehaviour
             // Check reached maximum number of static view ids
             if (i == k_usMaxStaticViewId - 1)
             {
-                Debug.LogError(string.Format("Oh shit, the network view id generator ran out of ids. The game is now broken. GG"));
+                Logger.WriteError("Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
             }
         }
 
@@ -394,7 +394,7 @@ public class CNetworkView : MonoBehaviour
 
 		if (!s_cNetworkViews.ContainsKey(_usViewId))
 		{
-			Debug.LogError(string.Format("Cannot find network view with id ({0})", _usViewId));
+			Logger.WriteError("Cannot find network view with id ({0})", _usViewId);
 		}
 		else
 		{
@@ -473,46 +473,36 @@ public class CNetworkView : MonoBehaviour
     void InitialiseNetworkVars()
     {
         // Extract components from game object
-        MonoBehaviour[] aComponents = gameObject.GetComponents<MonoBehaviour>();
+        CNetworkMonoBehaviour[] aComponents = gameObject.GetComponents<CNetworkMonoBehaviour>();
 
 
-        foreach (MonoBehaviour cComponent in aComponents)
+        foreach (CNetworkMonoBehaviour cComponent in aComponents)
         {
-            // Skip this component
-            if (cComponent == this)
-				continue;
+            // Initialise the network vars within network component
+            cComponent.InitialiseNetworkVars();
 
-            // Check the component is network component
-            INetworkComponent cNetworkComponent = cComponent as INetworkComponent;
+            // Extract fields from component
+            FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            if (cNetworkComponent != null)
+
+            foreach (FieldInfo cFieldInfo in aFieldInfos)
             {
-                // Initialise the network vars within network component
-                cNetworkComponent.InitialiseNetworkVars();
-
-                // Extract fields from component
-                FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-
-                foreach (FieldInfo cFieldInfo in aFieldInfos)
+                // Check this is a network var
+                if (cFieldInfo.FieldType.GetInterface(typeof(INetworkVar).Name, false) != null)
                 {
-                    // Check this is a network var
-                    if (cFieldInfo.FieldType.GetInterface(typeof(INetworkVar).Name, false) != null)
-                    {
-                        // Extract network var instance
-                        INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
+                    // Extract network var instance
+                    INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
 
-                        // Generate network var id, 1-byte.MAX
-                        byte bId = (byte)(m_mNetworkVars.Count + 1);
+                    // Generate network var id, 1-byte.MAX
+                    byte bId = (byte)(m_mNetworkVars.Count + 1);
 
-                        // Store network var instance towards ids
-                        m_mNetworkVars.Add(bId, cNetworkVar);
+                    // Store network var instance towards ids
+                    m_mNetworkVars.Add(bId, cNetworkVar);
 
-                        // Set the network view owner of the network var
-                        cNetworkVar.SetNetworkViewOwner(this, bId);
+                    // Set the network view owner of the network var
+                    cNetworkVar.SetNetworkViewOwner(this, bId);
 
-                        //Debug.Log("Added network var to list");
-                    }
+                    Logger.Write("Added network var to list");
                 }
             }
         }
@@ -520,17 +510,13 @@ public class CNetworkView : MonoBehaviour
 
 
 	void InitialiseNetworkRpcs()
-	{
+    {
         // Extract components from game object
-        MonoBehaviour[] aComponents = gameObject.GetComponents<MonoBehaviour>();
+        CNetworkMonoBehaviour[] aComponents = gameObject.GetComponents<CNetworkMonoBehaviour>();
 
 
-        foreach (MonoBehaviour cComponent in aComponents)
+        foreach (CNetworkMonoBehaviour cComponent in aComponents)
         {
-            // Skip this component
-			if (cComponent == this)
-				continue;
-
             // Extract methods from component
             MethodInfo[] caMethodInfos = cComponent.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
@@ -550,7 +536,7 @@ public class CNetworkView : MonoBehaviour
                     // Store the rpc info towards the id
                     m_mNetworkRpcs.Add(bId, tRpcMethodInfo);
 
-					//Debug.Log(string.Format("Added network rpc ({0}) to list. Method name ({1})", bId, cMethodInfo.Name));
+					Logger.Write("Added network rpc ({0}) to list. Method name ({1})", bId, cMethodInfo.Name);
 				}
 			}
 		}

@@ -68,7 +68,14 @@ public class RakNetGUID : IDisposable {
 
 	public static bool operator !=(RakNetGUID a, RakNetGUID b)
 	{
-   		 return a.OpNotEqual(b);
+        if (a == null)
+        {
+            return (false);
+        }
+        else
+        {
+            return a.OpNotEqual(b);
+        }
 	}
 
 	public static bool operator < (RakNetGUID a, RakNetGUID b)

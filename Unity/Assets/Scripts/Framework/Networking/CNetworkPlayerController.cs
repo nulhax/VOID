@@ -15,7 +15,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Reflection;
 
 /* Implementation */
 
@@ -26,45 +26,17 @@ public class CNetworkPlayerController : MonoBehaviour
 // Member Types
 
 
-    public enum EActionType : byte
+    delegate void CompilePlayerControllerOutput(CPacketStream _cStream);
+    delegate void ProcessPlayerControllerInput(CNetworkPlayer _cNetworkPlayer, CPacketStream _cStream);
+
+
+    public enum ETarget : byte
     {
-        Camera_RotationX,
-        Camera_RotationY,
-        Camera_RotationZ,
+        INVALID,
 
-        Actor_MoveForward,
-        Actor_MoveForwardStop,
-        Actor_MoveBackward,
-        Actor_MoveBackwardStop,
-        Actor_MoveLeft,
-        Actor_MoveLeftStop,
-        Actor_MoveRight,
-        Actor_MoveRightStop,
+        ActorMotor,
 
-        Monitor_Interaction,
-
-        Component_Build,
-
-        Tool_Change,
-    }
-
-
-    public struct TAction
-    {
-        public TAction(EActionType _eType)
-        {
-            eType = _eType;
-            caParameters = null;
-        }
-
-        public TAction(EActionType _eType, object[] _caParameters)
-        {
-            eType = _eType;
-            caParameters = _caParameters;
-        }
-
-        public EActionType eType;
-        public object[] caParameters;
+        MAX
     }
 
 
@@ -73,8 +45,16 @@ public class CNetworkPlayerController : MonoBehaviour
     // public:
 
 
+    static CNetworkPlayerController()
+    {
+        s_mCompileDelegates.Add(ETarget.ActorMotor, CActorMotor.CompilePlayerControllerOutput);
+        s_mProcessDelegates.Add(ETarget.ActorMotor, CActorMotor.ProcessPlayerControllerInput);
+    }
+
+
     public void Start()
     {
+        ClearOutboundData();
     }
 
 
@@ -85,106 +65,65 @@ public class CNetworkPlayerController : MonoBehaviour
 
     public void Update()
     {
-        if (CGame.IsConnectedToServer())
+        CPacketStream cTargetStream = new CPacketStream();
+
+
+        for (ETarget i = ETarget.INVALID + 1; i < ETarget.MAX; ++i)
         {
-            ProcessMovement();
+            s_mCompileDelegates[i](cTargetStream);
+
+
+            if (cTargetStream.GetSize() > 0)
+            {
+                PacketStream.Write((byte)i);
+                PacketStream.Write((byte)cTargetStream.GetSize());
+                PacketStream.Write(cTargetStream);
+
+
+                cTargetStream.Clear();
+            }
         }
-    }
-
-
-    public void CompileOutboundData(CPacketStream _cTransmissionStream)
-    {
-        foreach (TAction tAction in m_aQueuedActions)
-        {
-            _cTransmissionStream.Write((byte)tAction.eType);
-        }
-
-        m_aQueuedActions.Clear();
     }
 
 
     public bool HasOutboundData()
     {
-        return (m_bOutboundData);
+        return (PacketStream.GetSize() > 1);
+    }
+
+
+    public void ClearOutboundData()
+    {
+        PacketStream.Clear();
+        PacketStream.Write((byte)CNetworkServer.EPacketId.PlayerController);
+    }
+
+
+    public CPacketStream PacketStream
+    {
+        get { return (m_cPacketStream); }
     }
 
 
     public static void ProcessNetworkInboundData(CNetworkPlayer _cPlayer, CPacketStream _cStream)
     {
+        while (_cStream.HasUnreadData())
+        {
+            ETarget eTarget = (ETarget)_cStream.ReadByte();
+            byte bSize = _cStream.ReadByte();
+            byte[] baData = _cStream.ReadBytes(bSize);
+
+
+            CPacketStream cTargetStream = new CPacketStream();
+            cTargetStream.Write(baData);
+
+
+            s_mProcessDelegates[eTarget](_cPlayer, cTargetStream);
+        }
     }
 
 
     // protected:
-
-
-    public void ProcessMovement()
-    {
-        // Start moving forward
-        if ( Input.GetKeyDown(m_eMoveForwardKey) &&
-            !Input.GetKey(m_eMoveBackwardsKey))
-        {
-            m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveForward));
-            m_bMovingForwards = true;
-        }
-
-        // Start moving backwards
-        else if (!Input.GetKey(m_eMoveForwardKey) &&
-                  Input.GetKeyDown(m_eMoveBackwardsKey))
-        {
-            m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveBackward));
-            m_bMovingBackwards = true;
-        }
-        else
-        {
-            // Stop moving forward
-            if (m_bMovingForwards)
-            {
-                m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveForwardStop));
-                m_bMovingForwards = false;
-            }
-
-            // Stop moving backwards
-            else if (m_bMovingBackwards)
-            {
-                m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveBackwardStop));
-                m_bMovingBackwards = false;
-            }
-        }
-
-
-        // Start moving reft
-        if ( Input.GetKeyDown(m_eMoveLeftKey) &&
-            !Input.GetKey(m_eMoveRightKey))
-        {
-            m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveLeft));
-            m_bMovingLeft = true;
-        }
-
-        // Start moving right
-        else if (!Input.GetKey(m_eMoveLeftKey) &&
-                  Input.GetKeyDown(m_eMoveRightKey))
-        {
-            m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveRight));
-            m_bMovingRight = true;
-        }
-        else if (m_bMovingLeft ||
-                 m_bMovingRight)
-        {
-            // Stop moving left
-            if (m_bMovingLeft)
-            {
-                m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveLeftStop));
-                m_bMovingLeft = false;
-            }
-
-            // Stop moving right
-            else if (m_bMovingRight)
-            {
-                m_aQueuedActions.Add(new TAction(EActionType.Actor_MoveRightStop));
-                m_bMovingRight = false;
-            }
-        }
-    }
 
 
     // private:
@@ -198,20 +137,11 @@ public class CNetworkPlayerController : MonoBehaviour
     // private:
 
 
-    KeyCode m_eMoveForwardKey = KeyCode.W;
-    KeyCode m_eMoveBackwardsKey = KeyCode.S;
-    KeyCode m_eMoveLeftKey = KeyCode.A;
-    KeyCode m_eMoveRightKey = KeyCode.D;
+    CPacketStream m_cPacketStream = new CPacketStream();
 
 
-    bool m_bMovingForwards = false;
-    bool m_bMovingBackwards = false;
-    bool m_bMovingLeft = false;
-    bool m_bMovingRight = false;
-    bool m_bOutboundData = false;
-
-
-    List<TAction> m_aQueuedActions = new List<TAction>();
+    static Dictionary<ETarget, CompilePlayerControllerOutput> s_mCompileDelegates = new Dictionary<ETarget, CompilePlayerControllerOutput>();
+    static Dictionary<ETarget, ProcessPlayerControllerInput> s_mProcessDelegates = new Dictionary<ETarget, ProcessPlayerControllerInput>();
 
 
 };

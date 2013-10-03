@@ -206,7 +206,7 @@ public class CPacketStream
 
 		if (!m_cBitStream.Read(baBytes, _uiSize))
 		{
-			Debug.LogError("Could not read bytes");
+			Logger.WriteError("Could not read bytes");
 		}
 
 
@@ -221,7 +221,7 @@ public class CPacketStream
 
 		if (!m_cBitStream.Read(out bByte))
 		{
-			Debug.LogError("Could not read byte");
+			Logger.WriteError("Could not read byte");
 		}
 
 
@@ -236,7 +236,7 @@ public class CPacketStream
 
 		if (!m_cBitStream.Read(out sValue))
 		{
-			Debug.LogError("Could not read short");
+			Logger.WriteError("Could not read short");
 		}
 
 
@@ -257,7 +257,7 @@ public class CPacketStream
 
 		if (!m_cBitStream.Read(out iValue))
 		{
-			Debug.LogError("Could not read int");
+			Logger.WriteError("Could not read int");
 		}
 
 		
