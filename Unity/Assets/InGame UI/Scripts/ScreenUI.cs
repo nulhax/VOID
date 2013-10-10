@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Xml;
+using System.Reflection;
 
 public class ScreenUI : MonoBehaviour
 {
@@ -110,14 +111,14 @@ public class ScreenUI : MonoBehaviour
 
 
 
-        var Buttons =
-            from XmlNode b in doc.LastChild.ChildNodes
+        var buttons =
+            from XmlNode b in doc.ChildNodes.Item(1)
             where b.Name == "button"
             select b;
 
 
 
-        foreach (XmlNode button in Buttons)
+        foreach (XmlNode button in buttons)
         {
             // Create the button game object
             string asset = "Assets/InGame UI/Buttons/" + button.Attributes["type"].Value + ".prefab";
@@ -138,10 +139,48 @@ public class ScreenUI : MonoBehaviour
             // Set the text
             if (button.Attributes["text"] != null)
                 buttonGo.GetComponentInChildren<TextMesh>().text = button.Attributes["text"].Value;
+
+            // Select the actions
+            var actions =
+                from XmlNode a in button.ChildNodes
+                where a.Name == "action"
+                select a;
+            
+            // Set the targets 
+            foreach (XmlNode action in actions)
+            {
+                string eventName = string.Empty;
+                string targetName = string.Empty;
+                string componentName = string.Empty;
+                string actionName = string.Empty;
+
+                if (action.Attributes["event"] != null)
+                    eventName = action.Attributes["event"].Value;
+
+                if (action.Attributes["target"] != null)
+                    targetName = action.Attributes["target"].Value;
+
+                if (action.Attributes["component"] != null)
+                    componentName = action.Attributes["component"].Value;
+
+                if (action.Attributes["method"] != null)
+                    actionName = action.Attributes["method"].Value;
+
+                // Find the game object
+                GameObject go = GameObject.Find(targetName);
+
+                // Find the component
+                var component = go.GetComponent(componentName);
+                System.Type type = System.Type.GetType(componentName);
+
+                // Find the method
+                MethodInfo mi = type.GetMethod(actionName);
+
+                // Find and Register the action on the target
+                EventInfo ei = typeof(ButtonUI).GetEvent("m_" + eventName);
+                ei.AddEventHandler(buttonGo.GetComponent<ButtonUI>(), System.Delegate.CreateDelegate(typeof(System.Action), component, mi));     
+            }
         }
-
-
-
 
 
 
@@ -214,7 +253,7 @@ public class ScreenUI : MonoBehaviour
             if (bUI)
             {
                 Debug.Log("Button Hit: " + hit.transform.parent.name);
-                bUI.ButtonActivated();
+                bUI.ButtonClicked();
             }
             else
             {

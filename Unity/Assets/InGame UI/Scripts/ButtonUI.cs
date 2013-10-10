@@ -6,27 +6,12 @@ using System.Collections.Generic;
 public class ButtonUI : MonoBehaviour 
 {
     // Member Variables
-    private Action m_ButtonClicked;
+    public event Action m_OnClick;
 
     // Member Methods
-    void Awake()
+    public void ButtonClicked()
     {
-        
-    }
-
-    void Update()
-    {
-        
-    }
-
-    public void RegisterListener(Action _Action)
-    {
-        m_ButtonClicked += _Action;
-    }
-
-    public void ButtonActivated()
-    {
-        if (m_ButtonClicked != null)
-            m_ButtonClicked();
+        if (m_OnClick != null)
+            m_OnClick();
     }
 }

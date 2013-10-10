@@ -1,9 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UI>
-  <button type="SimpleButton" pos="0.0,0.2" text="Bouce"/>
-  <button type="SimpleButton" pos="0.0,-0.2" text="Stop"/>
-  <button type="SimpleButton1" pos="0.4,0.4" />
-  <button type="SimpleButton1" pos="-0.4,0.4" />
-  <button type="SimpleButton1" pos="0.4,-0.4" />
-  <button type="SimpleButton1" pos="-0.4,-0.4" />
-</UI> 
+  <button type="SimpleButton" pos="0.0,0.2" text="Bounce">
+    <action event="OnClick" target="Cube" component="TestScript" method="StartBouncing" />
+  </button>
+  <button type="SimpleButton" pos="0.0,-0.2" text="Stop">
+    <action event="OnClick" target="Cube" component="TestScript" method="StopBouncing" />
+  </button>
+  <button type="SimpleButton1" pos="0.4,0.4" >
+    <action event="OnClick" target="Cube" component="TestScript" method="SetColorRed" />
+  </button>
+  <button type="SimpleButton1" pos="-0.4,0.4" >
+    <action event="OnClick" target="Cube" component="TestScript" method="SetColorGreen" />
+  </button>
+  <button type="SimpleButton1" pos="0.4,-0.4" >
+    <action event="OnClick" target="Cube" component="TestScript" method="SetColorBlue" />
+  </button>
+  <button type="SimpleButton1" pos="-0.4,-0.4" >
+    <action event="OnClick" target="Cube" component="TestScript" method="SetColorYellow" />
+  </button>
+</UI>
+
+<!--TODO-->
+<!--<button type="SimpleButton" pos="vec3(0, 0, 0.2)" text="Bounce">
+    <event name="OnClick" >
+      <argument value="float(0.0f)" />
+      <handler target="Cube" component="TestScript" method="StartBouncing" />
+    </event>
+  </button>-->

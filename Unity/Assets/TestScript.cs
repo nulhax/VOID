@@ -4,32 +4,34 @@ using System.Collections.Generic;
 
 public class TestScript : MonoBehaviour
 {
-    public GameObject[] m_Screens;
-
-    // Use this for initialization
-    void Start()
-    {
-        foreach (GameObject screen in m_Screens)
-        {
-            ButtonUI[] buttons = screen.GetComponent<ScreenUI>().m_UI.GetComponentsInChildren<ButtonUI>();
-
-            buttons[0].RegisterListener(StartBouncing);
-            buttons[1].RegisterListener(StopBounching);
-            buttons[2].RegisterListener(() => renderer.material.color = Color.red);
-            buttons[3].RegisterListener(() => renderer.material.color = Color.green);
-            buttons[4].RegisterListener(() => renderer.material.color = Color.blue);
-            buttons[5].RegisterListener(() => renderer.material.color = Color.yellow); 
-        }
-    }
-
     public void StartBouncing()
     {
         StartCoroutine("Bounce");
     }
 
-    public void StopBounching()
+    public void StopBouncing()
     {
         StopCoroutine("Bounce");
+    }
+
+    public void SetColorRed()
+    {
+        renderer.material.color = Color.red;
+    }
+
+    public void SetColorBlue()
+    {
+        renderer.material.color = Color.blue;
+    }
+
+    public void SetColorGreen()
+    {
+        renderer.material.color = Color.green;
+    }
+
+    public void SetColorYellow()
+    {
+        renderer.material.color = Color.yellow;
     }
 
     private IEnumerator Bounce()
