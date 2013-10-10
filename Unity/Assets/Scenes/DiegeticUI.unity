@@ -355,9 +355,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49386f2780e07e040adcc51f8546fc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderTex: {fileID: 0}
-  m_RenderCamera: {fileID: 0}
-  m_UI: {fileID: 0}
 --- !u!114 &663929354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,7 +368,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Width: .800000012
-  m_Height: .5
+  m_Height: 1.20000005
   m_Quality: 1
 --- !u!4 &663929355
 Transform:
@@ -852,9 +849,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49386f2780e07e040adcc51f8546fc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderTex: {fileID: 0}
-  m_RenderCamera: {fileID: 0}
-  m_UI: {fileID: 0}
 --- !u!114 &1347390327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -974,11 +968,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
       propertyPath: orthographic size
-      value: .25
+      value: .600000024
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
       propertyPath: m_Height
-      value: .5
+      value: 1.20000005
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
@@ -1033,7 +1027,7 @@ Camera:
   far clip plane: 2
   field of view: 60
   orthographic: 1
-  orthographic size: .25
+  orthographic size: .600000024
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

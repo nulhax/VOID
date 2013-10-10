@@ -49,8 +49,7 @@ public class ScreenEditor : MonoBehaviour
             m_ScreenMesh.RecalculateBounds();
 
             // Reset the camera ortho size
-            float smallerDimension = (m_Width > m_Height) ? m_Height : m_Width;
-            m_ScreenRenderCamera.orthographicSize = smallerDimension * 0.5f;
+            m_ScreenRenderCamera.orthographicSize = m_Height * 0.5f;
         }
     }
 }

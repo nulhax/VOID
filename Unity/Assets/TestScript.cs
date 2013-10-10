@@ -11,7 +11,7 @@ public class TestScript : MonoBehaviour
     {
         foreach (GameObject screen in m_Screens)
         {
-            ButtonUI[] buttons = screen.transform.FindChild(screen.name + "_UI").GetComponentsInChildren<ButtonUI>();
+            ButtonUI[] buttons = screen.GetComponent<ScreenUI>().m_UI.GetComponentsInChildren<ButtonUI>();
 
             buttons[0].RegisterListener(StartBouncing);
             buttons[1].RegisterListener(StopBounching);
