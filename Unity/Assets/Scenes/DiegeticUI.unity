@@ -220,7 +220,24 @@ Prefab:
       propertyPath: m_LocalPosition.z
       value: -2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 11400000, guid: 200cfe107b35936408d16946611bd673, type: 2}
+      propertyPath: m_XMLFile
+      value: 
+      objectReference: {fileID: 4900000, guid: f8a3bd8e58a6fea42a55771621480bc1, type: 3}
+    - target: {fileID: 11400000, guid: 200cfe107b35936408d16946611bd673, type: 2}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 200cfe107b35936408d16946611bd673, type: 2}
+      propertyPath: m_Width
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 200cfe107b35936408d16946611bd673, type: 2}
+      propertyPath: m_Layout
+      value: 
+      objectReference: {fileID: 4900000, guid: f8a3bd8e58a6fea42a55771621480bc1, type: 3}
+    m_RemovedComponents:
+    - {fileID: 11400002, guid: 200cfe107b35936408d16946611bd673, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 200cfe107b35936408d16946611bd673, type: 2}
   m_RootGameObject: {fileID: 1104948898}
   m_IsPrefabParent: 0
@@ -355,6 +372,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49386f2780e07e040adcc51f8546fc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Layout: {fileID: 4900000, guid: cecbf12bdc974114093602a67fe17a3f, type: 3}
+  m_Quality: 1
+  m_Width: 2
+  m_Height: 1
 --- !u!114 &663929354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -367,9 +388,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb395f94562761f4994f81e9ef23cc6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Width: .800000012
-  m_Height: 1.20000005
-  m_Quality: 1
+  m_Width: 1
+  m_Height: .5
 --- !u!4 &663929355
 Transform:
   m_ObjectHideFlags: 0
@@ -772,7 +792,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1347390322}
-  - 114: {fileID: 1347390327}
   - 114: {fileID: 1347390326}
   - 33: {fileID: 1347390325}
   - 23: {fileID: 1347390324}
@@ -849,21 +868,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49386f2780e07e040adcc51f8546fc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1347390327
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400002, guid: 200cfe107b35936408d16946611bd673,
-    type: 2}
-  m_PrefabInternal: {fileID: 315236797}
-  m_GameObject: {fileID: 1347390321}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb395f94562761f4994f81e9ef23cc6a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Width: .800000012
-  m_Height: .800000012
+  m_Layout: {fileID: 4900000, guid: f8a3bd8e58a6fea42a55771621480bc1, type: 3}
   m_Quality: 1
+  m_Width: 2
+  m_Height: 1
 --- !u!1 &1713245969
 GameObject:
   m_ObjectHideFlags: 0
@@ -964,16 +972,36 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
       propertyPath: m_Width
-      value: .800000012
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2000000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
       propertyPath: orthographic size
-      value: .600000024
+      value: .200000003
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
       propertyPath: m_Height
-      value: 1.20000005
+      value: .5
       objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
+      propertyPath: m_XMLFile
+      value: 
+      objectReference: {fileID: 4900000, guid: cecbf12bdc974114093602a67fe17a3f, type: 3}
+    - target: {fileID: 11400000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
+      propertyPath: m_Height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
+      propertyPath: m_Width
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
+      propertyPath: m_NormalizedViewPortRect.height
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
+      propertyPath: m_Layout
+      value: 
+      objectReference: {fileID: 4900000, guid: cecbf12bdc974114093602a67fe17a3f, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 83b54ba239337b44880e2752f3d06777, type: 2}
   m_RootGameObject: {fileID: 1168168903}
@@ -1027,7 +1055,7 @@ Camera:
   far clip plane: 2
   field of view: 60
   orthographic: 1
-  orthographic size: .600000024
+  orthographic size: .200000003
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2

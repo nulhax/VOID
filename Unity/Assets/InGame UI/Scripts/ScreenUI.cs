@@ -8,12 +8,23 @@ using System.Reflection;
 
 public class ScreenUI : MonoBehaviour
 {
-    // Member Variables
-    public RenderTexture m_RenderTex    { get; set; }
-    public Camera m_RenderCamera        { get; set; }
-    public GameObject m_UI              { get; set; }
+    public enum Quality
+    {
+        Excelent,
+        Good,
+        Average,
+        Bad,
+    }
 
-    private ScreenEditor m_ScreenEditor;
+    // Member Variables 
+    public TextAsset m_Layout;
+    public Quality m_Quality            = Quality.Good;
+    public float m_Width                = 1.0f;
+    public float m_Height               = 0.5f;
+
+    public Camera m_RenderCamera        { get; set; }
+    public RenderTexture m_RenderTex    { get; set; }
+    public GameObject m_UI              { get; set; }
 
     public Vector3 StringToVector3(string rString)
     {
@@ -36,29 +47,27 @@ public class ScreenUI : MonoBehaviour
     // Member Methods
     void Start()
     {
-        m_ScreenEditor = GetComponent<ScreenEditor>();
-
         float ppm = 0.0f;
-        switch (m_ScreenEditor.m_Quality)
+        switch (m_Quality)
         {
-            case ScreenEditor.Quality.Excelent:
+            case Quality.Excelent:
                 ppm = 1024;
                 break;
-            case ScreenEditor.Quality.Good:
+            case Quality.Good:
                 ppm = 512;
                 break;
-            case ScreenEditor.Quality.Average:
+            case Quality.Average:
                 ppm = 256;
                 break;
-            case ScreenEditor.Quality.Bad:
+            case Quality.Bad:
                 ppm = 128;
                 break;
             default:
                 break;
         }
 
-        int rtWidth = (int)(m_ScreenEditor.m_Width * ppm);
-        int rtHeight = (int)(m_ScreenEditor.m_Height * ppm);
+        int rtWidth = (int)(m_Width * ppm);
+        int rtHeight = (int)(m_Height * ppm);
 
         // Create a new render texture
         m_RenderTex = new RenderTexture(rtWidth, rtHeight, 16);
@@ -69,11 +78,11 @@ public class ScreenUI : MonoBehaviour
         m_RenderCamera = GetComponentInChildren<Camera>();
         m_RenderCamera.targetTexture = m_RenderTex;
 
+        // Reset the camera ortho size
+        m_RenderCamera.orthographicSize = m_Height * 0.5f;
+
         // Set it onto the material
         renderer.sharedMaterial.SetTexture("_MainTex", m_RenderTex);
-
-        // Disable the Screen Editor
-        m_ScreenEditor.enabled = false;
 
         SetupHardcodedUI();
     }
@@ -90,8 +99,6 @@ public class ScreenUI : MonoBehaviour
 
     void SetupHardcodedUI()
     {
-        ScreenEditor sE = GetComponent<ScreenEditor>();
-
         m_UI = new GameObject();
         m_UI.name = transform.name + "_UI";
         m_UI.transform.parent = m_RenderCamera.transform;
@@ -101,12 +108,8 @@ public class ScreenUI : MonoBehaviour
 
 
 
-        TextAsset ta = Resources.Load("test", typeof(TextAsset)) as TextAsset;
-        
-
-
         XmlDocument doc = new XmlDocument();
-        XmlTextReader reader = new XmlTextReader(new StringReader(ta.text));
+        XmlTextReader reader = new XmlTextReader(new StringReader(m_Layout.text));
         doc.Load(reader);
 
 
@@ -133,7 +136,7 @@ public class ScreenUI : MonoBehaviour
             if (button.Attributes["pos"] != null)
             {
                 Vector3 pos = StringToVector3(button.Attributes["pos"].Value);
-                buttonGo.transform.localPosition = new Vector3(pos.x * sE.m_Width, pos.y * sE.m_Height);
+                buttonGo.transform.localPosition = new Vector3(pos.x * m_Width - (m_Width * 0.5f), pos.y * m_Height - (m_Height * 0.5f));
             }
 
             // Set the text
@@ -167,7 +170,11 @@ public class ScreenUI : MonoBehaviour
                     actionName = action.Attributes["method"].Value;
 
                 // Find the game object
-                GameObject go = GameObject.Find(targetName);
+                GameObject go = null;
+                if (targetName != "this")
+                    GameObject.Find(targetName);
+                else
+                    go = gameObject;
 
                 // Find the component
                 var component = go.GetComponent(componentName);
@@ -235,9 +242,9 @@ public class ScreenUI : MonoBehaviour
 
     public void CheckButtonCollision(RaycastHit _rh)
     {
-        ScreenEditor sE = GetComponent<ScreenEditor>();
-        Vector3 offset = new Vector3(_rh.textureCoord.x * sE.m_Width - sE.m_Width * 0.5f,
-                                     _rh.textureCoord.y * sE.m_Height - sE.m_Height * 0.5f,
+        ScreenUI sUI = GetComponent<ScreenUI>();
+        Vector3 offset = new Vector3(_rh.textureCoord.x * sUI.m_Width - sUI.m_Width * 0.5f,
+                                     _rh.textureCoord.y * sUI.m_Height - sUI.m_Height * 0.5f,
                                      0.0f);
 
         offset = transform.rotation * offset;

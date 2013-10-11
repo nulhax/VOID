@@ -353,6 +353,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49386f2780e07e040adcc51f8546fc5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Layout: {fileID: 0}
+  m_Quality: 1
+  m_Width: 1
+  m_Height: .5
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -366,7 +370,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Width: .5
   m_Height: .5
-  m_Quality: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

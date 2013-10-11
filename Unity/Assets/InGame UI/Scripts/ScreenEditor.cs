@@ -4,21 +4,11 @@ using System.Collections;
 [ExecuteInEditMode]
 public class ScreenEditor : MonoBehaviour 
 {
-    public enum Quality
-    { 
-        Excelent,
-        Good,
-        Average,
-        Bad,
-    }
-
     // Member Variables
     public float m_Width;
     public float m_Height;
-    public Quality m_Quality;
 
     private Mesh m_ScreenMesh;
-    private Camera m_ScreenRenderCamera;
 
     // Member Methods
     void OnEnable()
@@ -27,7 +17,6 @@ public class ScreenEditor : MonoBehaviour
             return;
         
         m_ScreenMesh = GetComponent<MeshFilter>().sharedMesh;
-        m_ScreenRenderCamera = GetComponentInChildren<Camera>();
     }
 
     void Update()
@@ -47,9 +36,6 @@ public class ScreenEditor : MonoBehaviour
 
             m_ScreenMesh.vertices = verts;
             m_ScreenMesh.RecalculateBounds();
-
-            // Reset the camera ortho size
-            m_ScreenRenderCamera.orthographicSize = m_Height * 0.5f;
         }
     }
 }

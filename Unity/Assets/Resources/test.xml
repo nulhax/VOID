@@ -1,22 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <UI>
-  <button type="SimpleButton" pos="0.0,0.2" text="Bounce">
-    <action event="OnClick" target="Cube" component="TestScript" method="StartBouncing" />
+  <button type="SimpleButton" pos="0.2,0.7" text="Stuff">
+    <action event="OnClick" target="this" component="TestScript" method="OpenWindow" />
   </button>
-  <button type="SimpleButton" pos="0.0,-0.2" text="Stop">
-    <action event="OnClick" target="Cube" component="TestScript" method="StopBouncing" />
-  </button>
-  <button type="SimpleButton1" pos="0.4,0.4" >
-    <action event="OnClick" target="Cube" component="TestScript" method="SetColorRed" />
-  </button>
-  <button type="SimpleButton1" pos="-0.4,0.4" >
-    <action event="OnClick" target="Cube" component="TestScript" method="SetColorGreen" />
-  </button>
-  <button type="SimpleButton1" pos="0.4,-0.4" >
-    <action event="OnClick" target="Cube" component="TestScript" method="SetColorBlue" />
-  </button>
-  <button type="SimpleButton1" pos="-0.4,-0.4" >
-    <action event="OnClick" target="Cube" component="TestScript" method="SetColorYellow" />
+  <button type="SimpleButton" pos="0.2,0.3" text="Colors">
+    <action event="OnClick" target="this" component="TestScript" method="OpenWindow" />
   </button>
 </UI>
 

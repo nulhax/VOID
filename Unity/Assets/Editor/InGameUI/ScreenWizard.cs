@@ -9,7 +9,7 @@ public class ScreenWizard : ScriptableWizard
     public GameObject m_Monitor = null;
     public float m_Width = 0.5f;
     public float m_Height = 0.5f;
-    public ScreenEditor.Quality m_Quality = ScreenEditor.Quality.Good; 
+    public ScreenUI.Quality m_Quality = ScreenUI.Quality.Good; 
 
     private GameObject m_MonitorInstance = null;
 
@@ -57,10 +57,10 @@ public class ScreenWizard : ScriptableWizard
         screen.transform.localRotation = Quaternion.identity;
 
         // Add the script for InGameUI and editor for the monitor
-        ScreenEditor sE = screen.gameObject.AddComponent<ScreenEditor>();
-        sE.m_Width = m_Width;
-        sE.m_Height = m_Height;
-        sE.m_Quality = m_Quality;
+        //ScreenEditor sE = screen.gameObject.AddComponent<ScreenEditor>();
+        //sE.m_Width = m_Width;
+        //sE.m_Height = m_Height;
+        //sE.m_Quality = m_Quality;
         screen.gameObject.AddComponent<ScreenUI>();
 
         // Create the mesh that will be the screen
