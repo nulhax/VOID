@@ -6,12 +6,12 @@ using System.Collections.Generic;
 public class ButtonUI : MonoBehaviour 
 {
     // Member Variables
-    public event Action m_OnClick;
+    public event Action m_OnPress;
 
     // Member Methods
-    public void ButtonClicked()
+    public void ButtonPressed()
     {
-        if (m_OnClick != null)
-            m_OnClick();
+        if (m_OnPress != null)
+            m_OnPress();
     }
 }

@@ -9,7 +9,7 @@ public class ScreenWizard : ScriptableWizard
     public GameObject m_Monitor = null;
     public float m_Width = 0.5f;
     public float m_Height = 0.5f;
-    public ScreenUI.Quality m_Quality = ScreenUI.Quality.Good; 
+    public MonitorScreen.Quality m_Quality = MonitorScreen.Quality.Good; 
 
     private GameObject m_MonitorInstance = null;
 
@@ -61,7 +61,7 @@ public class ScreenWizard : ScriptableWizard
         //sE.m_Width = m_Width;
         //sE.m_Height = m_Height;
         //sE.m_Quality = m_Quality;
-        screen.gameObject.AddComponent<ScreenUI>();
+        screen.gameObject.AddComponent<MonitorScreen>();
 
         // Create the mesh that will be the screen
         Mesh mesh = new Mesh();
