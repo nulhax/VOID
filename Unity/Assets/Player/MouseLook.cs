@@ -97,7 +97,7 @@ public class MouseLook : MonoBehaviour
 				
 				if(Physics.Raycast(ray, out hit, 2.0f, 1 << LayerMask.NameToLayer("Screen")))
 				{
-                    hit.transform.gameObject.GetComponentInChildren<DUIScreen>().CheckUICollisions(hit);
+                    hit.transform.gameObject.GetComponentInChildren<DUIScreen>().CheckDUICollisions(hit);
 				}
 		    }
 		}

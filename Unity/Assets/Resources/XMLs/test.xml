@@ -1,24 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 
 <!-- UI implementation-->
-<ui width="1.0" height="0.5" quality="Good">
+<dui quality="Good">
 
   <!--Main View--> 
-  <mainview>
-    <button type="SimpleButton" pos="0.2,0.3" text="Actions">
-      <event name="OnPress">
-        <action target="::ui" component="DUI" method="OpenWindow" arg1="actions" />
-      </event>
-    </button>
-    <button type="SimpleButton" pos="0.2,0.7" text="Colors">
-      <event name="OnPress">
-        <action target="::ui" component="DUI" method="OpenWindow" arg1="colors" />
+  <mainview width="1.0" height="0.5">
+    <button prefab="SimpleButton" pos="0.2,0.3" text="Actions">
+      <event name="Press">
+        <!--<action target="{DUI}" component="DUI" method="OpenWindow" />-->
       </event>
     </button>
   </mainview>
 
   <!--Actions Window--> 
-  <subview name="actions">
+  <view name="actions">
     <button type="SimpleButton" pos="0.5,0.2" text="Bounce">
       <event name="OnPress">
         <action target="Cube" component="TestScript" method="StartBouncing" />
@@ -29,10 +24,10 @@
         <action target="Cube" component="TestScript" method="StopBouncing" />
       </event>
     </button>
-  </subview>
+  </view>
   
   <!--Colors Window-->
-  <subview name="colors">
+  <view name="colors">
     <button type="SimpleButton" pos="0.3,0.2" text="Red">
       <event name="OnPress">
         <action target="Cube" component="TestScript" method="SetColorRed" />
@@ -53,8 +48,8 @@
         <action target="Cube" component="TestScript" method="SetColorYellow" />
       </event>
     </button>
-  </subview>
-</ui>
+  </view>
+</dui>
 
 
 

@@ -15,85 +15,43 @@ public enum EScreenQuality
 
 public class DUI : MonoBehaviour
 {
-    private TextAsset m_DUIXML;
+    private EScreenQuality m_DUIQuality;
+    private XmlNode m_xmlDUI;
 
-    private float m_MainViewWidth;
-    private float m_MainViewHeight;
-    private EScreenQuality m_ScreenQuality;
+    private DUIView m_mainView;
+    private Camera m_renderCamera;
+    private RenderTexture m_renderTex;
 
-    private Camera m_RenderCamera;
-    private RenderTexture m_RenderTex;
-
-    Vector3 StringToVector3(string rString)
+    public void Initialise(XmlDocument _xDoc, Material _sharedScreenMat)
     {
-        float x = 0.0f;
-        float y = 0.0f;
-        float z = 0.0f;
+        m_xmlDUI = _xDoc.SelectSingleNode("dui");
 
-        var temp = rString.Substring(0, rString.Length).Split(',');
-        if (temp.Length > 0)
-            x = float.Parse(temp[0]);
-        if (temp.Length > 1)
-            y = float.Parse(temp[1]);
-        if (temp.Length > 2)
-            z = float.Parse(temp[2]);
-        Vector3 rValue = new Vector3(x, y, z);
+        // Get the quality
+        m_DUIQuality = (EScreenQuality)System.Enum.Parse(typeof(EScreenQuality), m_xmlDUI.Attributes["quality"].Value);
 
-        return rValue;
+        // Create the main view
+        m_mainView = CreateView(m_xmlDUI.SelectSingleNode("mainview"));
+
+        // Setup the render texture and camera
+        SetupRenderTex(_sharedScreenMat);
+        SetupRenderCamera();
     }
-
-    void Start()
+    private void Update()
     {
-        // Get the component responsibile for creating this script
-        string screenName = name.Substring(0, name.Length - 4) + "_Screen";
-        DUIScreen duiScreen = GameObject.Find(screenName).GetComponent<DUIScreen>();
+        // Update the render texture and camera
+        m_renderTex.DiscardContents(true, true);
+        RenderTexture.active = m_renderTex;
 
-        // Get the initial variables from the screen
-        m_DUIXML = duiScreen.m_DUIXML;
-
-        SetupDUIXML();
-        SetupRenderTex(duiScreen.renderer.sharedMaterial);
-        SetupDUICamera();
-    }
-
-    void Update()
-    {
-        // Update the render texture
-        m_RenderTex.DiscardContents(true, true);
-        RenderTexture.active = m_RenderTex;
-
-        m_RenderCamera.Render();
+        m_renderCamera.Render();
 
         RenderTexture.active = null;
-
-        // Check for reseting the UI
-        CheckResetUI();
     }
 
-    void SetupDUIXML()
-    {
-        // Load the XML reader and document for parsing information
-        XmlDocument xDoc = new XmlDocument();
-        XmlTextReader xReader = new XmlTextReader(new StringReader(m_DUIXML.text));
-        xDoc.Load(xReader);
-
-        // Initialise the default values
-        XmlNode xUI = xDoc.SelectSingleNode("ui");
-        m_MainViewWidth = float.Parse(xUI.Attributes["width"].Value);
-        m_MainViewHeight = float.Parse(xUI.Attributes["height"].Value);
-        m_ScreenQuality = (EScreenQuality)System.Enum.Parse(typeof(EScreenQuality), xUI.Attributes["quality"].Value); 
-
-        // Create the buttons
-        foreach (XmlNode button in xUI.SelectSingleNode("mainview").SelectNodes("button"))
-        {
-            CreateButton(button, gameObject);
-        }
-    }
-    void SetupRenderTex(Material _sharedScreenMat)
+    private void SetupRenderTex(Material _sharedScreenMat)
     {
         // Figure out the pixels per meter for the screen based on quality setting
         float ppm = 0.0f;
-        switch (m_ScreenQuality)
+        switch (m_DUIQuality)
         {
             case EScreenQuality.Excelent:
                 ppm = 1024;
@@ -111,18 +69,18 @@ public class DUI : MonoBehaviour
                 break;
         }
 
-        int width = (int)(m_MainViewWidth * ppm);
-        int height = (int)(m_MainViewHeight * ppm);
+        int width = (int)(m_mainView.m_width * ppm);
+        int height = (int)(m_mainView.m_height * ppm);
 
         // Create a new render texture
-        m_RenderTex = new RenderTexture(width, height, 16);
-        m_RenderTex.name = name + " RT";
-        m_RenderTex.Create();
+        m_renderTex = new RenderTexture(width, height, 16);
+        m_renderTex.name = name + " RT";
+        m_renderTex.Create();
 
         // Set it onto the material of the screen
-        _sharedScreenMat.SetTexture("_MainTex", m_RenderTex);
+        _sharedScreenMat.SetTexture("_MainTex", m_renderTex);
     }
-    void SetupDUICamera()
+    private void SetupRenderCamera()
     {
         // Create the camera game object
         GameObject go = new GameObject();
@@ -133,105 +91,42 @@ public class DUI : MonoBehaviour
         go.layer = LayerMask.NameToLayer("DUI");
 
         // Get the render camera and set its target as the render texture
-        m_RenderCamera = go.AddComponent<Camera>();
-        m_RenderCamera.cullingMask = 1 << LayerMask.NameToLayer("DUI");
-        m_RenderCamera.orthographic = true;
-        m_RenderCamera.backgroundColor = Color.black;
-        m_RenderCamera.nearClipPlane = 0.0f;
-        m_RenderCamera.farClipPlane = 2.0f;
-        m_RenderCamera.targetTexture = m_RenderTex;
-        m_RenderCamera.orthographicSize = m_MainViewHeight * 0.5f;
+        m_renderCamera = go.AddComponent<Camera>();
+        m_renderCamera.cullingMask = 1 << LayerMask.NameToLayer("DUI");
+        m_renderCamera.orthographic = true;
+        m_renderCamera.backgroundColor = Color.black;
+        m_renderCamera.nearClipPlane = 0.0f;
+        m_renderCamera.farClipPlane = 2.0f;
+        m_renderCamera.targetTexture = m_renderTex;
+        m_renderCamera.orthographicSize = m_mainView.m_height * 0.5f;
     }
 
-    void CreateButton(XmlNode _xButton, GameObject _partentWindow)
+    private DUIView CreateView(XmlNode _xView)
     {
-        // Create the button game object
-        string asset = "Assets/Resources/Prefabs/DUI/Buttons/" + _xButton.Attributes["type"].Value + ".prefab";
-        GameObject buttonGo = (GameObject)Instantiate(Resources.LoadAssetAtPath(asset, typeof(GameObject)));
+        // Create the view game object
+        GameObject viewGo = new GameObject();
+        viewGo.name = transform.name + "_MainView";
+        viewGo.layer = LayerMask.NameToLayer("DUI");
+        viewGo.transform.parent = transform;
+        viewGo.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+        viewGo.transform.localRotation = Quaternion.identity;
 
-        // Set the default values
-        buttonGo.transform.parent = _partentWindow.transform;
-        buttonGo.transform.localPosition = Vector3.zero;
-        buttonGo.transform.localRotation = Quaternion.identity;
-
-        // Set the position
-        if (_xButton.Attributes["pos"] != null)
-        {
-            Vector3 pos = StringToVector3(_xButton.Attributes["pos"].Value);
-            buttonGo.transform.localPosition = new Vector3(pos.x * m_MainViewWidth - (m_MainViewWidth * 0.5f), pos.y * m_MainViewHeight - (m_MainViewHeight * 0.5f));
-        }
-
-        // Set the text
-        if (_xButton.Attributes["text"] != null)
-            buttonGo.GetComponentInChildren<TextMesh>().text = _xButton.Attributes["text"].Value;
-
-        foreach (XmlNode xEvent in _xButton.SelectNodes("event"))
-        {
-            string eventName = string.Empty;
-
-            if (xEvent.Attributes["name"] != null)
-                eventName = xEvent.Attributes["name"].Value;
-
-            foreach (XmlNode xAction in xEvent.SelectNodes("action"))
-            {
-                string targetName = string.Empty;
-                string componentName = string.Empty;
-                string actionName = string.Empty;
-
-                if (xAction.Attributes["target"] != null)
-                    targetName = xAction.Attributes["target"].Value;
-
-                if (xAction.Attributes["component"] != null)
-                    componentName = xAction.Attributes["component"].Value;
-
-                if (xAction.Attributes["method"] != null)
-                    actionName = xAction.Attributes["method"].Value;
-
-                // Find the game object target
-                GameObject targetGo = null;
-                if (targetName == "::ui")
-                    targetGo = gameObject;
-                else if (targetName == "::self")
-                    targetGo = buttonGo;
-                else
-                    targetGo = GameObject.Find(targetName);
-
-                // Find the component
-                Component component = targetGo.GetComponent(componentName);
-                System.Type type = System.Type.GetType(componentName);
-
-                // Find the method
-                MethodInfo mi = type.GetMethod(actionName);
-
-                // Find and Register the action on the target
-                EventInfo ei = typeof(DUIButton).GetEvent("m_" + eventName);
-                ei.AddEventHandler(buttonGo.GetComponent<DUIButton>(), System.Delegate.CreateDelegate(typeof(System.Action), component, mi));
-            }
-        }
+        // Add the DUIView component and initialise
+        DUIView duiView = viewGo.AddComponent<DUIView>();
+        duiView.Initialise(_xView);
+        
+        return (duiView);
     }
 
-    void CheckResetUI()
+    public void OpenView()
     {
-        // Check for resetting the UI
-        if(Input.GetKeyUp(KeyCode.F1))
-        {
-            for(int i = 0; i < transform.childCount; i++)
-            {
-                Destroy(transform.GetChild(i).gameObject);
-            }
 
-            // Release the render texture
-            m_RenderTex.Release();
-
-            // Call start to reset
-            Start();
-        }
     }
 
     public void CheckButtonCollisions(RaycastHit _rh)
     {
-        Vector3 offset = new Vector3(_rh.textureCoord.x * m_MainViewWidth - m_MainViewWidth * 0.5f,
-                                     _rh.textureCoord.y * m_MainViewHeight - m_MainViewHeight * 0.5f,
+        Vector3 offset = new Vector3(_rh.textureCoord.x * m_mainView.m_width - m_mainView.m_width * 0.5f,
+                                     _rh.textureCoord.y * m_mainView.m_height - m_mainView.m_height * 0.5f,
                                              0.0f);
 
         offset = transform.rotation * offset;
@@ -260,5 +155,9 @@ public class DUI : MonoBehaviour
         {
             Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.red, 0.5f);
         }
+    }
+    public void ReleaseRenderTex()
+    {
+        m_renderTex.Release();
     }
 }
