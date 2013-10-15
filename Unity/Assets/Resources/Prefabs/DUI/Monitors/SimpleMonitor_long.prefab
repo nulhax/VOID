@@ -11,7 +11,7 @@ GameObject:
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
   - 64: {fileID: 6400000}
-  - 114: {fileID: 11400000}
+  - 114: {fileID: 11400002}
   m_Layer: 8
   m_Name: SimpleMonitor_Screen
   m_TagString: Untagged
@@ -127,8 +127,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400016}
+  - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: SimpleMonitor
+  m_Name: SimpleMonitor_long
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -222,8 +223,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
-  m_LocalRotation: {x: .173648193, y: 0, z: 0, w: .984807789}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -.0436193869, y: 0, z: 0, w: .999048233}
+  m_LocalPosition: {x: 1.98979688, y: 1.03981853, z: 4.88598299}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400014}
@@ -465,7 +466,7 @@ Mesh:
     vertexCount: 4
     localAABB:
       m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: .5, y: .25, z: 0}
+      m_Extent: {x: .375, y: .5, z: 0}
   m_Shapes: []
   m_ShapeVertices: []
   m_MeshCompression: 0
@@ -526,7 +527,7 @@ Mesh:
       dividerOp: 0
       frequency: 0
     m_DataSize: 288
-    _typelessdata: 000000bf000080be000000000000008000000080000080bfffffffff00000000000000000000003f000080be000000000000008000000080000080bfffffffff0000803f00000000000000bf0000803e000000000000008000000080000080bfffffffff000000000000803f0000003f0000803e000000000000008000000080000080bfffffffff0000803f0000803f000000bf000080be0000000000000000000000000000803fffffffff00000000000000000000003f000080be0000000000000000000000000000803fffffffff0000803f00000000000000bf0000803e0000000000000000000000000000803fffffffff000000000000803f0000003f0000803e0000000000000000000000000000803fffffffff0000803f0000803f
+    _typelessdata: 0000c0be000000bf000000000000008000000080000080bfffffffff00000000000000000000c03e000000bf000000000000008000000080000080bfffffffff0000803f000000000000c0be0000003f000000000000008000000080000080bfffffffff000000000000803f0000c03e0000003f000000000000008000000080000080bfffffffff0000803f0000803f0000c0be000000bf0000000000000000000000000000803fffffffff00000000000000000000c03e000000bf0000000000000000000000000000803fffffffff0000803f000000000000c0be0000003f0000000000000000000000000000803fffffffff000000000000803f0000c03e0000003f0000000000000000000000000000803fffffffff0000803f0000803f
   m_CompressedMesh:
     m_Vertices:
       m_NumItems: 0
@@ -584,7 +585,7 @@ Mesh:
       m_BitSize: 0
   m_LocalAABB:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: .5, y: .25, z: 0}
+    m_Extent: {x: .375, y: .5, z: 0}
   m_MeshUsageFlags: 0
   m_MeshOptimized: 0
 --- !u!64 &6400000
@@ -605,13 +606,27 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f977ccdd795e064fb2247d448e05863, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_consoleXML: {fileID: 4900000, guid: 321c69f1335fb7c48815a0986a700a84, type: 3}
+  m_screenObject: {fileID: 100002}
+--- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4175ff6b1dbb6964fa84d5ce48448032, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e1cd2517b0eca44ebc41bab7fd63d0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DUIXML: {fileID: 4900000, guid: fe15fbce6f7b1ad49923972cf3499c1a, type: 3}
+  m_Width: .5
+  m_Height: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- DUI -->
+<dui quality="High" dimensions="2.0, 1.0" >
+
+  <!-- Main View -->
+  <mainview>
+    
+    <title rect="0.0, 0.8, 1.0, 0.2" text="Room Control 1916 : Console 11" />
+    <navarea rect="0.0, 0.0, 0.2, 0.8" butdir="Vertical"/>
+    <subviewarea rect="0.2, 0.0, 0.8, 0.8" />
+    
+  </mainview>
+
+  <!-- Sub View -->
+  <subview name="DoorControl" >
+    
+    <navbutton prefab="SimpleButton" text="Door" />
+    
+  </subview>
+
+  <!-- Sub View -->
+  <subview name="AtmosphereControl" >
+
+    <navbutton prefab="SimpleButton" text="Atmosphere" />
+
+  </subview>
+
+  <!-- Sub View -->
+  <subview name="MonitorControl" >
+
+    <navbutton prefab="SimpleButton" text="Configure" />
+
+  </subview>
+  
+</dui>

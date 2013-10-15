@@ -9,7 +9,7 @@ public class DUIScreenWizard : ScriptableWizard
     public GameObject m_Monitor = null;
     public float m_Width = 0.5f;
     public float m_Height = 0.5f;
-    public EScreenQuality m_Quality = EScreenQuality.Good; 
+    public EQuality m_Quality = EQuality.High; 
 
     private GameObject m_MonitorInstance = null;
 

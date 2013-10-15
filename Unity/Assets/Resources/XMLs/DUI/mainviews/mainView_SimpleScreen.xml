@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Main View -->
+<mainview>
+
+  <!-- Title -->
+  <title rect="0.0, 0.8, 1.0, 0.2" />
+  
+  <!-- Navigation Area -->
+  <navarea rect="0.0, 0.0, 0.2, 0.8" />
+  
+  <!-- Subview Area -->
+  <subviewarea rect="0.2, 0.0, 0.8, 1.0" />
+  
+</mainview>
