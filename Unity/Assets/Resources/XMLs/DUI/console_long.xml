@@ -9,6 +9,6 @@
   <!-- Areas -->
   <title rect="0.0, 0.9, 1.0, 0.1" text="Room 1916 : Console 12" />
   <navarea rect="0.0, 0.0, 1.0, 0.2" butdir="Horizontal" />
-  <subviewarea rect="0.0, 0.0, 1.0, 0.9" />
+  <subviewarea rect="0.0, 0.2, 1.0, 0.7" />
   
 </mainview>

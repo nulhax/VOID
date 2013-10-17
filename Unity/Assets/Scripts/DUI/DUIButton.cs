@@ -7,18 +7,21 @@ using System.Xml;
 
 public class DUIButton : MonoBehaviour 
 {
-    // Fields
+    // Member Delegates
+    public delegate void PressHandler(DUIButton _sender);
+    public event PressHandler Press;
+
+
+    // Member Fields
     private TextMesh m_textMesh;
 
-    // Events
-    public event EventHandler eventPress;
 
-    // Properties
-    public string m_Text
+    // Member Properties
+    public string m_text
     {
         get
         {
-            return GetComponentInChildren<TextMesh>().text;
+            return m_textMesh.text;
         }
         set
         {
@@ -26,7 +29,39 @@ public class DUIButton : MonoBehaviour
         }
     }
 
-    // Methods
+    public Vector2 m_viewPos
+    {
+        get
+        {
+            DUIView parentView = transform.parent.GetComponent<DUIView>();
+
+            Vector2 viewPos = transform.localPosition;
+            Vector2 parentDimensions = parentView.m_dimensions;
+
+            viewPos += (parentDimensions * 0.5f);
+            viewPos.x /= parentDimensions.x;
+            viewPos.y /= parentDimensions.y;
+
+            return (viewPos);
+        }
+
+        set 
+        {
+            DUIView parentView = transform.parent.GetComponent<DUIView>();
+
+            Vector2 localPos = value;
+            Vector2 parentDimensions = parentView.m_dimensions;
+
+            localPos.x *= parentDimensions.x;
+            localPos.y *= parentDimensions.y;
+            localPos -= (parentDimensions * 0.5f);
+
+            transform.localPosition = localPos;
+        }
+    }
+
+
+    // Member Methods
     private void Awake()
     {
         m_textMesh = GetComponentInChildren<TextMesh>();
@@ -124,9 +159,9 @@ public class DUIButton : MonoBehaviour
 
     public void OnPress()
     {
-        if (eventPress != null)
+        if (Press != null)
         {
-            eventPress(this, null);
+            Press(this);
         }
     }
 }

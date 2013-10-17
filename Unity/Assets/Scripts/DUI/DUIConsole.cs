@@ -5,12 +5,23 @@ using System.Xml;
 
 public class DUIConsole : MonoBehaviour 
 {
-    // Member Variables 
+    // Member Fields 
     public TextAsset m_consoleXML;
     public GameObject m_screenObject;
-
-    public DUIMainView m_DUIMV        { get; set; }
+    
     private Material m_screenMat;
+
+
+    // Member Properties
+    public DUIMainView m_DUIMV        { get; set; }
+
+
+    // Member Methods
+    private void Update()
+    {
+        // Check the button collisions
+        CheckScreenCollision();
+    }
 
     public void Initialise()
     {
@@ -24,16 +35,10 @@ public class DUIConsole : MonoBehaviour
     public void Deinitialise()
     {
         // Release the render texture
-        ((RenderTexture)m_screenMat.GetTexture("_MainTex")).Release();
+        m_DUIMV.m_renderTex.Release();
 
         // Destroy the game object
         Destroy(m_DUIMV.gameObject);
-    }
-
-    private void Update()
-    {
-        // Check the button collisions
-        CheckScreenCollision();
     }
 
     private void SetupDUI()
@@ -51,7 +56,7 @@ public class DUIConsole : MonoBehaviour
         // Initialise the DUI Component
         m_DUIMV.Initialise(m_consoleXML);
 
-        // Attatch the render texture
+        // Attach the render texture
         m_DUIMV.AttatchRenderTexture(m_screenMat);
     }
 

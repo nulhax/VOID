@@ -4,14 +4,29 @@ using System.Collections.Generic;
 
 public class TestDoor : MonoBehaviour
 {
-    public void StartBouncing()
+    public enum EState
     {
-        StartCoroutine("Bounce");
+        Opened,
+        Opening,
+        Closed,
+        Closing
     }
 
-    public void StopBouncing()
+    public EState m_state { get; set; }
+
+    private void Awake()
     {
-        StopCoroutine("Bounce");
+        m_state = EState.Closed;
+    }
+
+    public void OpenDoor()
+    {
+        StartCoroutine("Open");
+    }
+
+    public void CloseDoor()
+    {
+        StartCoroutine("Close");
     }
 
     public void SetColorRed()
@@ -34,15 +49,51 @@ public class TestDoor : MonoBehaviour
         renderer.material.color = Color.yellow;
     }
 
-    private IEnumerator Bounce()
+    private IEnumerator Open()
     {
-        while(true)
+        float d = 0.0f;
+        Vector3 pos = transform.position;
+
+        m_state = EState.Opening;
+
+        while (d < 2.0f)
         {
-            Vector3 pos = transform.position;
-            pos.y = Mathf.PingPong(Time.time, 0.5f);
-            transform.position = pos;
+            d += Time.deltaTime;
+            if (d > 2.0f)
+                d = 2.0f;
+
+            Vector3 newPos = pos;
+            newPos.y += d;
+
+            transform.position = newPos;
 
             yield return null;
         }
+
+        m_state = EState.Opened;
+    }
+
+    private IEnumerator Close()
+    {
+        float d = 0.0f;
+        Vector3 pos = transform.position;
+
+        m_state = EState.Closing;
+
+        while (d < 2.0f)
+        {
+            d += Time.deltaTime;
+            if (d > 2.0f)
+                d = 2.0f;
+
+            Vector3 newPos = pos;
+            newPos.y -= d;
+
+            transform.position = newPos;
+
+            yield return null;
+        }
+
+        m_state = EState.Closed;
     }
 }

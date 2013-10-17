@@ -6,29 +6,79 @@ using System.Reflection;
 
 public class DUISubView : DUIView
 {
+    // Member Fields
+
+
+    // Member Properties
     public DUIButton m_navButton { get; set; }
 
-    public void Initialise(TextAsset _uiXmlDoc, Vector2 _subViewDimensions)
+
+    // Member Methods
+    private void Update()
+    {
+        DebugRenderRects();
+    }
+
+    public void Initialise(TextAsset _uiXmlDoc, Vector2 _subViewAreaDimensions)
     {
         // Load the XML file for the UI and save the base node for the ui
         m_uiXmlNode = LoadXML(_uiXmlDoc).SelectSingleNode("subview");
 
         // Get the window details
         XmlNode windowNode = m_uiXmlNode.SelectSingleNode("window");
-        Vector2 windowRatio = StringToVector2(windowNode.Attributes["xyratio"].Value);
-        Vector2 subViewRatio = _subViewDimensions;
+        
+        // Get the normalised ratio of the subview and the subviewarea
+        Vector2 subviewRatio = StringToVector2(windowNode.Attributes["xyratio"].Value);
+        Vector2 subViewAreaRatio = _subViewAreaDimensions;
+        subviewRatio /= subviewRatio.x > subviewRatio.y ? subviewRatio.x : subviewRatio.y;
+        subViewAreaRatio /= subViewAreaRatio.x > subViewAreaRatio.y ? subViewAreaRatio.x : subViewAreaRatio.y;
 
-        // Calc the normalized width/height of the view
-        windowRatio /= windowRatio.x > windowRatio.y ? windowRatio.x : windowRatio.y;
-        subViewRatio /= subViewRatio.x > subViewRatio.y ? subViewRatio.x : subViewRatio.y;
+        Vector2 dimensions = Vector2.zero;
+        if (subViewAreaRatio.x == subviewRatio.y || subViewAreaRatio.y == subviewRatio.x)
+        {
+            dimensions.x = subViewAreaRatio.y * subviewRatio.x * _subViewAreaDimensions.x;
+            dimensions.y = subViewAreaRatio.x * subviewRatio.y * _subViewAreaDimensions.y;
+        }
+        else if (subViewAreaRatio.x == subviewRatio.x || subViewAreaRatio.y == subviewRatio.y)
+        {
+            if (subViewAreaRatio.y > subviewRatio.y)
+            {
+                dimensions.x = subViewAreaRatio.x / subviewRatio.x * _subViewAreaDimensions.x;
+                dimensions.y = subviewRatio.y / subViewAreaRatio.y * _subViewAreaDimensions.y;
+            }
+            else
+            {
+                dimensions.x = subViewAreaRatio.y / subviewRatio.y * _subViewAreaDimensions.x;
+                dimensions.y = subViewAreaRatio.x / subviewRatio.x * _subViewAreaDimensions.y;
+            }
+        }
 
-        if (windowRatio.x > windowRatio.y)
-            m_dimensions = windowRatio * (_subViewDimensions.x > _subViewDimensions.y ? _subViewDimensions.x : _subViewDimensions.y);
-        else
-            m_dimensions = windowRatio * (_subViewDimensions.x > _subViewDimensions.y ? _subViewDimensions.y : _subViewDimensions.x);
+        m_dimensions = dimensions;
 
         // Create the navigation button
         CreateNavButton();
+    }
+
+    public DUIButton AddButton(string _prefabButton)
+    {
+        string prefabPath = "Assets/Resources/Prefabs/DUI/Buttons/" + _prefabButton + ".prefab";
+
+        // Create the game object
+        GameObject buttonGo = (GameObject)Instantiate(Resources.LoadAssetAtPath(prefabPath, typeof(GameObject)));
+
+        // Set the default values
+        buttonGo.layer = gameObject.layer;
+        buttonGo.transform.parent = transform;
+        buttonGo.transform.localPosition = Vector3.zero;
+        buttonGo.transform.localRotation = Quaternion.identity;
+
+        // Add the DUIbutton
+        DUIButton duiButton = buttonGo.AddComponent<DUIButton>();
+
+        // Initialise the button
+        duiButton.Initialise();
+
+        return (duiButton);
     }
 
     private void CreateNavButton()
@@ -52,39 +102,13 @@ public class DUISubView : DUIView
 
         // Initialise the button
         m_navButton.Initialise();
-        m_navButton.m_Text = text;
-    }
-
-    private void Update()
-    {
-        DebugRenderRects();
+        m_navButton.m_text = text;
     }
 
     // Debug Functions
     private void DebugRenderRects()
     {
-        // Test for rendering title, nav and content areas
-        Vector3 start = Vector3.zero;
-        Vector3 end = Vector3.zero;
-
-        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
+        // Render self rect
+        DebugDrawRect(new Rect(0.0f, 0.0f, 1.0f, 1.0f), Color.green, 0.005f);
     }
 }

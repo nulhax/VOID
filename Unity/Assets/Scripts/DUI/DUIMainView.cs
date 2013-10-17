@@ -13,19 +13,39 @@ public class DUIMainView : DUIView
         Vertical
     }
 
+    // Member Fields
     private Dictionary<string, DUISubView> m_subViews;
-    
+    private EQuality m_quality;
+    private ENavButDirection m_navButtonDirection;
+
+
+    // Member Properties
     public Rect m_titleRect             { get; set; }
     public Rect m_navAreaRect           { get; set; }
     public Rect m_subViewAreaRect       { get; set; }
+    public Camera m_renderCamera        { get; set; }
+    public RenderTexture m_renderTex    { get; set; }
 
-    private EQuality m_quality;
-    private ENavButDirection m_navButtonDirection;
-    
-    private Camera m_renderCamera;
-    private RenderTexture m_renderTex;
 
     // Member Methods
+    private void Awake()
+    {
+        m_subViews = new Dictionary<string, DUISubView>();
+    }
+
+    private void Update()
+    {
+        DebugRenderRects();
+
+        // Update the render texture and camera
+        m_renderTex.DiscardContents(true, true);
+        RenderTexture.active = m_renderTex;
+
+        m_renderCamera.Render();
+
+        RenderTexture.active = null;
+    }
+
     public void Initialise(TextAsset _uiXmlDoc)
     {
         // Load the XML file for the UI and save the base node for the ui
@@ -52,7 +72,7 @@ public class DUIMainView : DUIView
         _sharedScreenMat.SetTexture("_MainTex", m_renderTex); 
     }
 
-    public void AddSubview(string _subViewName)
+    public DUISubView AddSubview(string _subViewName)
     {
         TextAsset ta = (TextAsset)Resources.Load("XMLs/DUI/subviews/" + _subViewName);
 
@@ -62,6 +82,11 @@ public class DUIMainView : DUIView
         duiGo.name = name + "_SubView_" + _subViewName;
         duiGo.layer = gameObject.layer;
         duiGo.transform.localRotation = Quaternion.identity;
+
+        // Place it in the middle
+        float x = m_subViewAreaRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f);
+        float y = m_subViewAreaRect.center.y * m_dimensions.y - (m_dimensions.y * 0.5f);
+        duiGo.transform.localPosition = new Vector3(x, y);
         
         // Add the DUI component
         DUISubView DUISV = duiGo.AddComponent<DUISubView>();
@@ -70,34 +95,31 @@ public class DUIMainView : DUIView
         DUISV.Initialise(ta, new Vector2(m_subViewAreaRect.width * m_dimensions.x, m_subViewAreaRect.height * m_dimensions.y));
 
         // Register the button for the event
-        DUISV.m_navButton.eventPress += NavigationButtonPressed;
+        DUISV.m_navButton.Press += NavButtonPressed;
 
-        // Deavtivate the game object
-        DUISV.gameObject.SetActive(false);
+        // Deactivate the game object
+        //DUISV.gameObject.SetActive(false);
 
         // Add to the dictionary
         m_subViews[_subViewName] = DUISV;
 
         // Reposition the buttons
         RepositionButtons();
+
+        return (DUISV);
     }
 
-    private void Awake()
+    public DUISubView GetSubView(string _subViewName)
     {
-        m_subViews = new Dictionary<string, DUISubView>();
-    }
+        DUISubView returnSV = null;
 
-    private void Update()
-    {
-        DebugRenderRects();
+        if (!m_subViews.TryGetValue(_subViewName, out returnSV))
+        {
+            Debug.LogError(string.Format("DUISubView: Getting SubView [{0}] failed!", _subViewName));
+            Debug.Break();
+        }
 
-        // Update the render texture and camera
-        m_renderTex.DiscardContents(true, true);
-        RenderTexture.active = m_renderTex;
-
-        m_renderCamera.Render();
-
-        RenderTexture.active = null;
+        return(returnSV);
     }
 
     private void SetupMainView()
@@ -197,17 +219,6 @@ public class DUIMainView : DUIView
         tm.text = _text;
     }
 
-    private void ShowSubView(DUISubView _subView)
-    {
-        // Place it in the middle
-        float x = m_subViewAreaRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f);
-        float y = m_subViewAreaRect.center.y * m_dimensions.y - (m_dimensions.y * 0.5f);
-        _subView.transform.position = new Vector3(x, y) + transform.position;
-
-        // Make it active
-        _subView.gameObject.SetActive(true);
-    }
-
     private void RepositionButtons()
     {
         int numSubViews = m_subViews.Count;
@@ -268,16 +279,17 @@ public class DUIMainView : DUIView
     }
 
     // Event handler functions
-    private void NavigationButtonPressed(object _sender, EventArgs _eventArgs)
+    private void NavButtonPressed(DUIButton _sender)
     {
         foreach(DUISubView subView in m_subViews.Values)
         {
             DUIButton button = subView.m_navButton;
 
+            // If the button belongs to the subview
             if (button == _sender)
             {
-                // Create the subview
-                ShowSubView(subView);
+                // Toggle its activity
+                subView.gameObject.SetActive(!subView.gameObject.activeSelf);
                 break;
             }
         }
@@ -286,100 +298,16 @@ public class DUIMainView : DUIView
     // Debug functions
     private void DebugRenderRects()
     {
-        // Test for rendering title, nav and content areas
-        Vector3 start = Vector3.zero;
-        Vector3 end = Vector3.zero;
+        // Render self rect
+        DebugDrawRect(new Rect(0.0f, 0.0f, 1.0f, 1.0f), Color.white, 0);
 
-        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
+        // Title rect
+        DebugDrawRect(m_titleRect, Color.cyan, 0.005f);
 
-        Debug.DrawLine(start, end, Color.green);
+        // Nav area rect
+        DebugDrawRect(m_navAreaRect, Color.yellow, 0.005f);
 
-        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end, Color.green);
-
-
-
-
-        start = new Vector3(m_titleRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_titleRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_titleRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_titleRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_titleRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_titleRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_titleRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_titleRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-
-
-
-
-
-        start = new Vector3(m_navAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_navAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_navAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_navAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_navAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_navAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_navAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_navAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_navAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-
-
-
-
-        start = new Vector3(m_subViewAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_subViewAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_subViewAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_subViewAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_subViewAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_subViewAreaRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
-
-        start = new Vector3(m_subViewAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-        end = new Vector3(m_subViewAreaRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_subViewAreaRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
-
-        Debug.DrawLine(start, end);
+        // Subview area rect
+        DebugDrawRect(m_subViewAreaRect, Color.red, 0.005f);   
     }
 }

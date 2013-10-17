@@ -14,10 +14,45 @@ public enum EQuality
 
 public class DUIView : MonoBehaviour
 {
+    // Member Fields
     protected XmlNode m_uiXmlNode;
-    protected Vector2 m_dimensions;
 
-    // Helper functions
+
+    // Member Properties
+    public Vector2 m_dimensions { get; set; }
+
+
+    // Member Methods
+    protected void DebugDrawRect(Rect _rect, Color _color, float _offset)
+    {
+        Vector3 start = Vector3.zero;
+        Vector3 end = Vector3.zero;
+        Rect rect = _rect;
+
+        rect.x += _offset; rect.y += _offset; rect.width -= _offset * 2; rect.height -= _offset * 2;
+
+        start = new Vector3(rect.x * m_dimensions.x - (m_dimensions.x * 0.5f), rect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(rect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), rect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, _color);
+
+        start = new Vector3(rect.x * m_dimensions.x - (m_dimensions.x * 0.5f), rect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(rect.x * m_dimensions.x - (m_dimensions.x * 0.5f), rect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, _color);
+
+        start = new Vector3(rect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), rect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(rect.x * m_dimensions.x - (m_dimensions.x * 0.5f), rect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, _color);
+
+        start = new Vector3(rect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), rect.yMax * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(rect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), rect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, _color);
+    }
+
+    // Helper Methods
     protected static XmlDocument LoadXML(TextAsset _uiXmlDoc)
     {
         // Load the XML reader and document for parsing information
