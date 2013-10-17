@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Sub View -->
+<subview>
+
+  <!-- Window -->
+  <window xyratio="5.0, 3.0" />
+  
+  <!-- Navigation Button -->
+  <navbutton prefab="SimpleButton" text="Room Control" />
+  
+</subview>

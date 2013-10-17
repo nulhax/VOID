@@ -56,13 +56,6 @@ public class DUIScreenWizard : ScriptableWizard
         screen.transform.localPosition = Vector3.zero;
         screen.transform.localRotation = Quaternion.identity;
 
-        // Add the script for InGameUI and editor for the monitor
-        //ScreenEditor sE = screen.gameObject.AddComponent<ScreenEditor>();
-        //sE.m_Width = m_Width;
-        //sE.m_Height = m_Height;
-        //sE.m_Quality = m_Quality;
-        screen.gameObject.AddComponent<DUIScreen>();
-
         // Create the mesh that will be the screen
         Mesh mesh = new Mesh();
         mesh.name = screen.name + "_mesh";

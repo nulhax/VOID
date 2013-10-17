@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;
@@ -12,9 +13,7 @@ public class DUIMainView : DUIView
         Vertical
     }
 
-    private XmlNode m_uiXmlNode;
-
-    public Vector2 m_dimensions         { get; set; }
+    private Dictionary<string, DUISubView> m_subViews;
     
     public Rect m_titleRect             { get; set; }
     public Rect m_navAreaRect           { get; set; }
@@ -27,25 +26,65 @@ public class DUIMainView : DUIView
     private RenderTexture m_renderTex;
 
     // Member Methods
-    public void Initialise(TextAsset _uiXmlDoc, Material _sharedScreenMat)
+    public void Initialise(TextAsset _uiXmlDoc)
     {
         // Load the XML file for the UI and save the base node for the ui
-        m_uiXmlNode = LoadXML(_uiXmlDoc).SelectSingleNode("dui");
+        m_uiXmlNode = LoadXML(_uiXmlDoc).SelectSingleNode("mainview");
 
-        // Get the UI quality
-        m_quality = (EQuality)System.Enum.Parse(typeof(EQuality), m_uiXmlNode.Attributes["quality"].Value);
-
-        // Get the UI dimensions
-        m_dimensions = StringToVector2(m_uiXmlNode.Attributes["dimensions"].Value);
+        // Get the screen details
+        XmlNode screenNode = m_uiXmlNode.SelectSingleNode("screen");
+        m_quality = (EQuality)System.Enum.Parse(typeof(EQuality), screenNode.Attributes["quality"].Value);
+        m_dimensions = StringToVector2(screenNode.Attributes["dimensions"].Value);
 
         // Setup the main view
         SetupMainView();
 
         // Setup the render texture
-        SetupRenderTex(_sharedScreenMat);
+        SetupRenderTex();
 
         // Setup the render camera
         SetupRenderCamera();
+    }
+
+    public void AttatchRenderTexture(Material _sharedScreenMat)
+    {
+        // Set the render text onto the material of the screen
+        _sharedScreenMat.SetTexture("_MainTex", m_renderTex); 
+    }
+
+    public void AddSubview(string _subViewName)
+    {
+        TextAsset ta = (TextAsset)Resources.Load("XMLs/DUI/subviews/" + _subViewName);
+
+        // Create the DUI game object
+        GameObject duiGo = new GameObject();
+        duiGo.transform.parent = transform;
+        duiGo.name = name + "_SubView_" + _subViewName;
+        duiGo.layer = gameObject.layer;
+        duiGo.transform.localRotation = Quaternion.identity;
+        
+        // Add the DUI component
+        DUISubView DUISV = duiGo.AddComponent<DUISubView>();
+
+        // Initialise the DUI Component
+        DUISV.Initialise(ta, new Vector2(m_subViewAreaRect.width * m_dimensions.x, m_subViewAreaRect.height * m_dimensions.y));
+
+        // Register the button for the event
+        DUISV.m_navButton.eventPress += NavigationButtonPressed;
+
+        // Deavtivate the game object
+        DUISV.gameObject.SetActive(false);
+
+        // Add to the dictionary
+        m_subViews[_subViewName] = DUISV;
+
+        // Reposition the buttons
+        RepositionButtons();
+    }
+
+    private void Awake()
+    {
+        m_subViews = new Dictionary<string, DUISubView>();
     }
 
     private void Update()
@@ -63,29 +102,25 @@ public class DUIMainView : DUIView
 
     private void SetupMainView()
     {
-        XmlNode mainViewNode = m_uiXmlNode.SelectSingleNode("mainview");
-
         // Get the Title info
-        m_titleRect = DUIMainView.StringToRect(mainViewNode.SelectSingleNode("title").Attributes["rect"].Value);
+        m_titleRect = DUIMainView.StringToRect(m_uiXmlNode.SelectSingleNode("title").Attributes["rect"].Value);
 
         // Get the Navigation Area info
-        m_navAreaRect = DUIMainView.StringToRect(mainViewNode.SelectSingleNode("navarea").Attributes["rect"].Value);
-        m_navButtonDirection = (ENavButDirection)System.Enum.Parse(typeof(ENavButDirection), mainViewNode.SelectSingleNode("navarea").Attributes["butdir"].Value);
+        XmlNode navViewNode = m_uiXmlNode.SelectSingleNode("navarea");
+        m_navAreaRect = DUIMainView.StringToRect(navViewNode.Attributes["rect"].Value);
+        m_navButtonDirection = (ENavButDirection)System.Enum.Parse(typeof(ENavButDirection), navViewNode.Attributes["butdir"].Value);
 
         // Get the Subview Area info
-        m_subViewAreaRect = DUIMainView.StringToRect(mainViewNode.SelectSingleNode("subviewarea").Attributes["rect"].Value);
+        m_subViewAreaRect = DUIMainView.StringToRect(m_uiXmlNode.SelectSingleNode("subviewarea").Attributes["rect"].Value);
 
         // Setup the title
         SetupTitle();
-
-        // Setup the navigation buttons
-        SetupNavButtons();
     }
 
     private void SetupTitle()
     {
         // Get the title node
-        XmlNode titleNode = m_uiXmlNode.SelectSingleNode("mainview").SelectSingleNode("title");
+        XmlNode titleNode = m_uiXmlNode.SelectSingleNode("title");
 
         string text = titleNode.Attributes["text"].Value;
         Vector3 localPos = new Vector3(m_titleRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f),
@@ -95,34 +130,7 @@ public class DUIMainView : DUIView
         CreateTitle(text, localPos);
     }
 
-    private void SetupNavButtons()
-    {
-        // Get the count to space the nav buttons out evenly
-        XmlNodeList subViews = m_uiXmlNode.SelectNodes("subview");
-        int subViewCount = subViews.Count;
-
-        // Iterate through the subviews and create the nav buttons
-        for (int i = 0; i < subViewCount; ++i)
-        {
-            XmlNode navButtonNode = subViews[i].SelectSingleNode("navbutton");
-
-            string prefabPath = "Assets/Resources/Prefabs/DUI/Buttons/" + navButtonNode.Attributes["prefab"].Value + ".prefab";
-            string text = navButtonNode.Attributes["text"].Value;
-            Vector3 localPos = Vector3.zero;
-
-            if (m_navButtonDirection == ENavButDirection.Vertical)
-                localPos = new Vector3(m_navAreaRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f),
-                                      (m_navAreaRect.yMax - m_navAreaRect.y) * (i + 0.5f)/subViewCount * m_dimensions.y - (m_dimensions.y * 0.5f));
-            else
-                localPos = new Vector3((m_navAreaRect.xMax - m_navAreaRect.x) * (i + 0.5f) / subViewCount * m_dimensions.x - (m_dimensions.x * 0.5f),
-                                      (m_navAreaRect.center.y * m_dimensions.y - (m_dimensions.y * 0.5f)));
-
-            // Create the navigation button
-            CreateNavButton(prefabPath, text, localPos);
-        }
-    }
-
-    private void SetupRenderTex(Material _sharedScreenMat)
+    private void SetupRenderTex()
     {
         // Figure out the pixels per meter for the screen based on quality setting
         float ppm = 0.0f;
@@ -144,9 +152,6 @@ public class DUIMainView : DUIView
         m_renderTex = new RenderTexture(width, height, 16);
         m_renderTex.name = name + " RT";
         m_renderTex.Create();
-
-        // Set it onto the material of the screen
-        _sharedScreenMat.SetTexture("_MainTex", m_renderTex);
     }
 
     private void SetupRenderCamera()
@@ -175,6 +180,7 @@ public class DUIMainView : DUIView
         GameObject titleGo = new GameObject();
 
         // Set the default values
+        titleGo.name = name + "_Title";
         titleGo.layer = gameObject.layer;
         titleGo.transform.parent = transform;
         titleGo.transform.localPosition = _localPos;
@@ -191,20 +197,47 @@ public class DUIMainView : DUIView
         tm.text = _text;
     }
 
-    private void CreateNavButton(string _prefabPath, string _text, Vector3 _localPos)
+    private void ShowSubView(DUISubView _subView)
     {
-        GameObject buttonGo = (GameObject)Instantiate(Resources.LoadAssetAtPath(_prefabPath, typeof(GameObject)));
+        // Place it in the middle
+        float x = m_subViewAreaRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f);
+        float y = m_subViewAreaRect.center.y * m_dimensions.y - (m_dimensions.y * 0.5f);
+        _subView.transform.position = new Vector3(x, y) + transform.position;
 
-        // Set the default values
-        buttonGo.layer = gameObject.layer;
-        buttonGo.transform.parent = transform;
-        buttonGo.transform.localPosition = _localPos;
-        buttonGo.transform.localRotation = Quaternion.identity;
-
-        buttonGo.GetComponentInChildren<TextMesh>().text = _text;
+        // Make it active
+        _subView.gameObject.SetActive(true);
     }
 
-    public void CheckButtonCollisions(RaycastHit _rh)
+    private void RepositionButtons()
+    {
+        int numSubViews = m_subViews.Count;
+        int count = 0;
+
+        foreach (DUISubView subView in m_subViews.Values)
+        {
+            DUIButton navButton = subView.m_navButton;
+           
+            // Calculate the position for the nav button to go
+            if (m_navButtonDirection == ENavButDirection.Vertical)
+            {
+                float x = m_navAreaRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f);
+                float y = ((m_navAreaRect.yMax - m_navAreaRect.y) * (count + 0.5f) / numSubViews) * m_dimensions.y - (m_dimensions.y * 0.5f);
+
+                navButton.transform.localPosition = new Vector3(x, y);
+            }
+            else if (m_navButtonDirection == ENavButDirection.Horizontal)
+            {
+                float x = (m_navAreaRect.xMax - m_navAreaRect.x) * (count + 0.5f) / numSubViews * m_dimensions.x - (m_dimensions.x * 0.5f);
+                float y = m_navAreaRect.center.y * m_dimensions.y - (m_dimensions.y * 0.5f);
+
+                navButton.transform.localPosition = new Vector3(x, y);
+            }
+
+            count += 1;
+        }
+    }
+
+    public void CheckDGUICollisions(RaycastHit _rh)
     {
         Vector3 offset = new Vector3(_rh.textureCoord.x * m_dimensions.x - m_dimensions.x * 0.5f,
                                      _rh.textureCoord.y * m_dimensions.y - m_dimensions.y * 0.5f,
@@ -223,11 +256,7 @@ public class DUIMainView : DUIView
             if (bUI)
             {
                 Debug.Log("Button Hit: " + hit.transform.parent.name);
-                bUI.ButtonPressed();
-            }
-            else
-            {
-                Debug.Log("Button Hit: " + hit.transform.name);
+                bUI.OnPress();
             }
 
             Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
@@ -238,12 +267,51 @@ public class DUIMainView : DUIView
         }
     }
 
-    // Debug Functions
+    // Event handler functions
+    private void NavigationButtonPressed(object _sender, EventArgs _eventArgs)
+    {
+        foreach(DUISubView subView in m_subViews.Values)
+        {
+            DUIButton button = subView.m_navButton;
+
+            if (button == _sender)
+            {
+                // Create the subview
+                ShowSubView(subView);
+                break;
+            }
+        }
+    }
+
+    // Debug functions
     private void DebugRenderRects()
     {
         // Test for rendering title, nav and content areas
         Vector3 start = Vector3.zero;
         Vector3 end = Vector3.zero;
+
+        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, Color.green);
+
+        start = new Vector3(-(m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, Color.green);
+
+        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3((m_dimensions.x * 0.5f), -(m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, Color.green);
+
+        start = new Vector3((m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
+        end = new Vector3(-(m_dimensions.x * 0.5f), (m_dimensions.y * 0.5f)) + transform.position;
+
+        Debug.DrawLine(start, end, Color.green);
+
+
+
 
         start = new Vector3(m_titleRect.x * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;
         end = new Vector3(m_titleRect.xMax * m_dimensions.x - (m_dimensions.x * 0.5f), m_titleRect.y * m_dimensions.y - (m_dimensions.y * 0.5f)) + transform.position;

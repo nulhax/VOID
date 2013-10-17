@@ -14,6 +14,9 @@ public enum EQuality
 
 public class DUIView : MonoBehaviour
 {
+    protected XmlNode m_uiXmlNode;
+    protected Vector2 m_dimensions;
+
     // Helper functions
     protected static XmlDocument LoadXML(TextAsset _uiXmlDoc)
     {
@@ -42,6 +45,7 @@ public class DUIView : MonoBehaviour
 
         return rValue;
     }
+
     public static Vector2 StringToVector2(string rString)
     {
         float x = 0.0f;
@@ -56,6 +60,7 @@ public class DUIView : MonoBehaviour
 
         return rValue;
     }
+
     public static Rect StringToRect(string rString)
     {
         float x = 0.0f;

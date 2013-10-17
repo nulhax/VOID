@@ -5,13 +5,34 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 
-public delegate void OnPressDel(params object[] args);
-
 public class DUIButton : MonoBehaviour 
 {
-    public event OnPressDel eventPress;
+    // Fields
+    private TextMesh m_textMesh;
 
-    public void Initialise(XmlNode _xButton, float _viewWidth, float _viewHeight)
+    // Events
+    public event EventHandler eventPress;
+
+    // Properties
+    public string m_Text
+    {
+        get
+        {
+            return GetComponentInChildren<TextMesh>().text;
+        }
+        set
+        {
+            m_textMesh.text = value;
+        }
+    }
+
+    // Methods
+    private void Awake()
+    {
+        m_textMesh = GetComponentInChildren<TextMesh>();
+    }
+
+    public void Initialise()
     {
         //// Set the position (optional)
         //if (_xButton.Attributes["pos"] != null)
@@ -101,11 +122,11 @@ public class DUIButton : MonoBehaviour
         //}
     }
 
-    public void ButtonPressed()
+    public void OnPress()
     {
         if (eventPress != null)
         {
-            eventPress();
+            eventPress(this, null);
         }
     }
 }
