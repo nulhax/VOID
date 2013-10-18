@@ -14,17 +14,18 @@ public class DUIMainView : DUIView
     }
 
     // Member Fields
-    private Dictionary<string, DUISubView> m_subViews;
+    
     private EQuality m_quality;
     private ENavButDirection m_navButtonDirection;
 
 
     // Member Properties
-    public Rect m_titleRect             { get; set; }
-    public Rect m_navAreaRect           { get; set; }
-    public Rect m_subViewAreaRect       { get; set; }
-    public Camera m_renderCamera        { get; set; }
-    public RenderTexture m_renderTex    { get; set; }
+    public Rect m_titleRect                             { get; set; }
+    public Rect m_navAreaRect                           { get; set; }
+    public Rect m_subViewAreaRect                       { get; set; }
+    public Camera m_renderCamera                        { get; set; }
+    public RenderTexture m_renderTex                    { get; set; }
+    public Dictionary<string, DUISubView> m_subViews    { get; set; }
 
 
     // Member Methods
@@ -94,11 +95,11 @@ public class DUIMainView : DUIView
         // Initialise the DUI Component
         DUISV.Initialise(ta, new Vector2(m_subViewAreaRect.width * m_dimensions.x, m_subViewAreaRect.height * m_dimensions.y));
 
+        // Set the button as beloning to this view object as the partent
+        DUISV.m_navButton.transform.parent = transform;
+
         // Register the button for the event
         DUISV.m_navButton.Press += NavButtonPressed;
-
-        // Deactivate the game object
-        //DUISV.gameObject.SetActive(false);
 
         // Add to the dictionary
         m_subViews[_subViewName] = DUISV;
@@ -107,19 +108,6 @@ public class DUIMainView : DUIView
         RepositionButtons();
 
         return (DUISV);
-    }
-
-    public DUISubView GetSubView(string _subViewName)
-    {
-        DUISubView returnSV = null;
-
-        if (!m_subViews.TryGetValue(_subViewName, out returnSV))
-        {
-            Debug.LogError(string.Format("DUISubView: Getting SubView [{0}] failed!", _subViewName));
-            Debug.Break();
-        }
-
-        return(returnSV);
     }
 
     private void SetupMainView()

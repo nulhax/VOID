@@ -50,7 +50,7 @@ public class DUIButtonWizard : ScriptableWizard
         m_ButtonInstance.layer = LayerMask.NameToLayer("DUI");
 
         // Add the script for InGameUI and editor for the monitor
-        m_ButtonInstance.AddComponent<DUIButton>();
+        //m_ButtonInstance.AddComponent<DUIButton>();
         //ButtonEditor bE = m_ButtonInstance.AddComponent<ButtonEditor>();
         //bE.m_ButtonWidth = m_Width;
         //bE.m_ButtonHeight = m_Height;

@@ -8,8 +8,8 @@ using System.Xml;
 public class DUIButton : MonoBehaviour 
 {
     // Member Delegates
-    public delegate void PressHandler(DUIButton _sender);
-    public event PressHandler Press;
+    public delegate void ButtonPressHandler(DUIButton _sender);
+    public event ButtonPressHandler Press;
 
 
     // Member Fields
@@ -28,7 +28,6 @@ public class DUIButton : MonoBehaviour
             m_textMesh.text = value;
         }
     }
-
     public Vector2 m_viewPos
     {
         get
@@ -59,102 +58,112 @@ public class DUIButton : MonoBehaviour
             transform.localPosition = localPos;
         }
     }
+    public Vector2 m_dimensions { get; set; }
 
 
     // Member Methods
-    private void Awake()
+    public void Initialise(Vector2 _dimensions)
     {
-        m_textMesh = GetComponentInChildren<TextMesh>();
+        m_dimensions = _dimensions;
+
+        InitialiseText();
+        InitialiseBackground();
     }
 
-    public void Initialise()
+    private void InitialiseBackground()
     {
-        //// Set the position (optional)
-        //if (_xButton.Attributes["pos"] != null)
-        //{
-        //    Vector3 pos = DUIView.StringToVector3(_xButton.Attributes["pos"].Value);
-        //    transform.localPosition = new Vector3(pos.x * _viewWidth - (_viewWidth * 0.5f), pos.y * _viewHeight - (_viewHeight * 0.5f));
-        //}
+        // Create the background
+        GameObject background = new GameObject(name + "_background");
+        background.transform.parent = transform;
+        background.transform.localPosition = Vector3.zero;
+        background.transform.localRotation = Quaternion.identity;
+        background.layer = gameObject.layer;
 
-        //// Set the text (optional)
-        //if (_xButton.Attributes["text"] != null)
-        //    GetComponentInChildren<TextMesh>().text = _xButton.Attributes["text"].Value;
+        // Create the mesh
+        Mesh backMesh = CreateButtonMesh(m_dimensions);
 
-        //// Find the events handle
-        //foreach (XmlNode xEvent in _xButton.SelectNodes("event"))
-        //{
-        //    string eventName = string.Empty;
+        // Create the material
+        Material backMat = new Material(Shader.Find("Transparent/Diffuse"));
+        //m_ButtonBackMat.SetTexture("_MainTex", m_ButtonTexture);
+        backMat.name = background.name + "_mat";
+        backMat.color = Color.black;
 
-        //    if (xEvent.Attributes["name"] != null)
-        //        eventName = xEvent.Attributes["name"].Value;
-        //    else
-        //    {
-        //        Debug.LogError(string.Format("DUI: XML Button event attribute [name] not found!"));
-        //        Debug.Break();
-        //    }
+        // Add the mesh filter
+        MeshFilter mf = background.AddComponent<MeshFilter>();
+        mf.mesh = backMesh;
 
-        //    // Find the event
-        //    EventInfo ei = typeof(DUIButton).GetEvent(eventName);
-        //    if (ei == null)
-        //    {
-        //        Debug.LogError(string.Format("DUIButton: Event [{0}] not found within this component!", eventName), gameObject);
-        //        Debug.Break();
-        //    }
+        // Add the mesh renderer
+        MeshRenderer mr = background.AddComponent<MeshRenderer>();
+        mr.material = backMat;
 
-        //    // Find the actions to register to events
-        //    foreach (XmlNode xAction in xEvent.SelectNodes("action"))
-        //    {
-        //        string targetName = string.Empty;
-        //        string componentName = string.Empty;
-        //        string actionName = string.Empty;
+        // Add the mesh collider
+        MeshCollider mc = background.AddComponent<MeshCollider>();
+        mc.sharedMesh = backMesh;
+        mc.isTrigger = true;
+    }
 
-        //        if (xAction.Attributes["target"] != null)
-        //            targetName = xAction.Attributes["target"].Value;
+    private void InitialiseText()
+    {
+        // Create the text object
+        GameObject text = new GameObject(name + "_text");
+        text.transform.parent = transform;
+        text.transform.localPosition = Vector3.zero;
+        text.transform.localRotation = Quaternion.identity;
+        text.layer = gameObject.layer;
 
-        //        if (xAction.Attributes["component"] != null)
-        //            componentName = xAction.Attributes["component"].Value;
+        // Add the mesh renderer
+        MeshRenderer mr = text.AddComponent<MeshRenderer>();
+        mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
 
-        //        if (xAction.Attributes["method"] != null)
-        //            actionName = xAction.Attributes["method"].Value;
+        // Add the text mesh
+        m_textMesh = text.AddComponent<TextMesh>();
+        m_textMesh.fontSize = 0;
+        m_textMesh.color = Color.white;
+        m_textMesh.characterSize = 0.05f;
+        m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
+        m_textMesh.anchor = TextAnchor.MiddleCenter;
+        m_textMesh.offsetZ = -0.01f;
+        m_textMesh.text = "";
+    }
 
-        //        // Find the game object target
-        //        GameObject targetGo = null;
-        //        switch (targetName)
-        //        {
-        //            case "{DUI}":
-        //                targetGo = transform.parent.parent.gameObject;
-        //                break;
+    private Mesh CreateButtonMesh(Vector2 _dimensions)
+    {
+        Mesh buttonBackMesh = new Mesh();
+        buttonBackMesh.name = name + "_mesh";
+        buttonBackMesh.Clear();
 
-        //            default:
-        //                targetGo = GameObject.Find(targetName);
-        //                break;
-        //        }
-        //        if (targetGo == null)
-        //        {
-        //            Debug.LogError(string.Format("DUI: Target [{0}] not found!", targetName));
-        //            Debug.Break();
-        //        }
+        int numVertices = 4;
+        int numTriangles = 6;
 
-        //        // Find the component
-        //        Component component = targetGo.GetComponent(componentName);
-        //        if (component == null)
-        //        {
-        //            Debug.LogError(string.Format("DUIButton: Component [{0}] not found within target [{1}]!", componentName, targetName), targetGo);
-        //            Debug.Break();
-        //        }
+        Vector3[] vertices = new Vector3[numVertices];
+        Vector2[] uvs = new Vector2[numVertices];
+        int[] triangles = new int[numTriangles];
 
-        //        // Find the method
-        //        MethodInfo mi = System.Type.GetType(componentName).GetMethod(actionName);
-        //        if (mi == null)
-        //        {
-        //            Debug.LogError(string.Format("DUIButton: Action [{0}] not found within component [{1}], within target [{2}]! Perhaps it is not set to public", actionName, componentName, targetName), targetGo);
-        //            Debug.Break();
-        //        }
+        vertices[0] = new Vector3(-(_dimensions.x * 0.5f), -(_dimensions.y * 0.5f));
+        vertices[1] = new Vector3((_dimensions.x * 0.5f), -(_dimensions.y * 0.5f));
+        vertices[2] = new Vector3(-(_dimensions.x * 0.5f), (_dimensions.y * 0.5f));
+        vertices[3] = new Vector3((_dimensions.x * 0.5f), (_dimensions.y * 0.5f));
 
-        //        // Register the action on the target
-        //        ei.AddEventHandler(this, System.Delegate.CreateDelegate(typeof(System.Action), component, mi));
-        //    }
-        //}
+        uvs[0] = new Vector2(0.0f, 0.0f);
+        uvs[1] = new Vector2(1.0f, 0.0f);
+        uvs[2] = new Vector2(0.0f, 1.0f);
+        uvs[3] = new Vector2(1.0f, 1.0f);
+
+        triangles[0] = 0;
+        triangles[1] = 2;
+        triangles[2] = 1;
+
+        triangles[3] = 2;
+        triangles[4] = 3;
+        triangles[5] = 1;
+
+        buttonBackMesh.vertices = vertices;
+        buttonBackMesh.uv = uvs;
+        buttonBackMesh.triangles = triangles;
+        buttonBackMesh.RecalculateNormals();
+        buttonBackMesh.RecalculateBounds();
+
+        return (buttonBackMesh);
     }
 
     public void OnPress()
@@ -164,4 +173,91 @@ public class DUIButton : MonoBehaviour
             Press(this);
         }
     }
+
+        //// Set the position (optional)
+    //if (_xButton.Attributes["pos"] != null)
+    //{
+    //    Vector3 pos = DUIView.StringToVector3(_xButton.Attributes["pos"].Value);
+    //    transform.localPosition = new Vector3(pos.x * _viewWidth - (_viewWidth * 0.5f), pos.y * _viewHeight - (_viewHeight * 0.5f));
+    //}
+
+    //// Set the text (optional)
+    //if (_xButton.Attributes["text"] != null)
+    //    GetComponentInChildren<TextMesh>().text = _xButton.Attributes["text"].Value;
+
+    //// Find the events handle
+    //foreach (XmlNode xEvent in _xButton.SelectNodes("event"))
+    //{
+    //    string eventName = string.Empty;
+
+    //    if (xEvent.Attributes["name"] != null)
+    //        eventName = xEvent.Attributes["name"].Value;
+    //    else
+    //    {
+    //        Debug.LogError(string.Format("DUI: XML Button event attribute [name] not found!"));
+    //        Debug.Break();
+    //    }
+
+    //    // Find the event
+    //    EventInfo ei = typeof(DUIButton).GetEvent(eventName);
+    //    if (ei == null)
+    //    {
+    //        Debug.LogError(string.Format("DUIButton: Event [{0}] not found within this component!", eventName), gameObject);
+    //        Debug.Break();
+    //    }
+
+    //    // Find the actions to register to events
+    //    foreach (XmlNode xAction in xEvent.SelectNodes("action"))
+    //    {
+    //        string targetName = string.Empty;
+    //        string componentName = string.Empty;
+    //        string actionName = string.Empty;
+
+    //        if (xAction.Attributes["target"] != null)
+    //            targetName = xAction.Attributes["target"].Value;
+
+    //        if (xAction.Attributes["component"] != null)
+    //            componentName = xAction.Attributes["component"].Value;
+
+    //        if (xAction.Attributes["method"] != null)
+    //            actionName = xAction.Attributes["method"].Value;
+
+    //        // Find the game object target
+    //        GameObject targetGo = null;
+    //        switch (targetName)
+    //        {
+    //            case "{DUI}":
+    //                targetGo = transform.parent.parent.gameObject;
+    //                break;
+
+    //            default:
+    //                targetGo = GameObject.Find(targetName);
+    //                break;
+    //        }
+    //        if (targetGo == null)
+    //        {
+    //            Debug.LogError(string.Format("DUI: Target [{0}] not found!", targetName));
+    //            Debug.Break();
+    //        }
+
+    //        // Find the component
+    //        Component component = targetGo.GetComponent(componentName);
+    //        if (component == null)
+    //        {
+    //            Debug.LogError(string.Format("DUIButton: Component [{0}] not found within target [{1}]!", componentName, targetName), targetGo);
+    //            Debug.Break();
+    //        }
+
+    //        // Find the method
+    //        MethodInfo mi = System.Type.GetType(componentName).GetMethod(actionName);
+    //        if (mi == null)
+    //        {
+    //            Debug.LogError(string.Format("DUIButton: Action [{0}] not found within component [{1}], within target [{2}]! Perhaps it is not set to public", actionName, componentName, targetName), targetGo);
+    //            Debug.Break();
+    //        }
+
+    //        // Register the action on the target
+    //        ei.AddEventHandler(this, System.Delegate.CreateDelegate(typeof(System.Action), component, mi));
+    //    }
+    //}
 }

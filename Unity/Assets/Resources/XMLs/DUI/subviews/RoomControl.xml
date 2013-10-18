@@ -7,6 +7,6 @@
   <window xyratio="1.0, 1.0" />
   
   <!-- Navigation Button -->
-  <navbutton prefab="SimpleButton" text="Room Control" />
-  
+  <navbutton prefab="SimpleButton" text="Doors" />
+
 </subview>

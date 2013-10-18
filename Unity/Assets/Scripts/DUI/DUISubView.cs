@@ -11,7 +11,13 @@ public class DUISubView : DUIView
 
     // Member Properties
     public DUIButton m_navButton { get; set; }
-
+    public DUIButton[] m_buttons
+    {
+        get
+        {
+            return (transform.GetComponentsInChildren<DUIButton>());
+        }
+    }
 
     // Member Methods
     private void Update()
@@ -56,53 +62,41 @@ public class DUISubView : DUIView
         m_dimensions = dimensions;
 
         // Create the navigation button
-        CreateNavButton();
+        InitialiseNavButton();
     }
 
-    public DUIButton AddButton(string _prefabButton)
+    private void InitialiseNavButton()
     {
-        string prefabPath = "Assets/Resources/Prefabs/DUI/Buttons/" + _prefabButton + ".prefab";
+        XmlNode navButtonNode = m_uiXmlNode.SelectSingleNode("navbutton");
 
+        // Get the data for the nav button
+        string text = navButtonNode.Attributes["text"].Value;
+
+        // Add the button
+        m_navButton = AddButton(new Vector2(0.5f, 0.25f));
+
+        // Set the text
+        m_navButton.m_text = text;
+    }
+
+    public DUIButton AddButton(Vector2 _dimensions)
+    {
         // Create the game object
-        GameObject buttonGo = (GameObject)Instantiate(Resources.LoadAssetAtPath(prefabPath, typeof(GameObject)));
+        GameObject buttonGo = new GameObject(name + "_Button");
 
         // Set the default values
         buttonGo.layer = gameObject.layer;
         buttonGo.transform.parent = transform;
-        buttonGo.transform.localPosition = Vector3.zero;
         buttonGo.transform.localRotation = Quaternion.identity;
+        buttonGo.transform.localPosition = Vector3.zero;
 
         // Add the DUIbutton
         DUIButton duiButton = buttonGo.AddComponent<DUIButton>();
 
         // Initialise the button
-        duiButton.Initialise();
+        duiButton.Initialise(_dimensions);
 
         return (duiButton);
-    }
-
-    private void CreateNavButton()
-    {
-        XmlNode navButtonNode = m_uiXmlNode.SelectSingleNode("navbutton");
-
-        // Get the data for the nav button
-        string prefabPath = "Assets/Resources/Prefabs/DUI/Buttons/" + navButtonNode.Attributes["prefab"].Value + ".prefab";
-        string text = navButtonNode.Attributes["text"].Value;
-
-        // Create the game object
-        GameObject buttonGo = (GameObject)Instantiate(Resources.LoadAssetAtPath(prefabPath, typeof(GameObject)));
-
-        // Set the default values
-        buttonGo.layer = gameObject.layer;
-        buttonGo.transform.parent = transform.parent;
-        buttonGo.transform.localRotation = Quaternion.identity;
-
-        // Add the DUIbutton
-        m_navButton = buttonGo.AddComponent<DUIButton>();
-
-        // Initialise the button
-        m_navButton.Initialise();
-        m_navButton.m_text = text;
     }
 
     // Debug Functions

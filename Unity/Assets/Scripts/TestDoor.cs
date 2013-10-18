@@ -12,8 +12,16 @@ public class TestDoor : MonoBehaviour
         Closing
     }
 
+    // Delegates
+    public delegate void DoorStateHandler(TestDoor _sender);
+    public event DoorStateHandler StateChanged;
+
+
+    // Member Properties
     public EState m_state { get; set; }
 
+
+    // Member Methods
     private void Awake()
     {
         m_state = EState.Closed;
@@ -55,6 +63,7 @@ public class TestDoor : MonoBehaviour
         Vector3 pos = transform.position;
 
         m_state = EState.Opening;
+        OnStateChange();
 
         while (d < 2.0f)
         {
@@ -71,6 +80,7 @@ public class TestDoor : MonoBehaviour
         }
 
         m_state = EState.Opened;
+        OnStateChange();
     }
 
     private IEnumerator Close()
@@ -79,6 +89,7 @@ public class TestDoor : MonoBehaviour
         Vector3 pos = transform.position;
 
         m_state = EState.Closing;
+        OnStateChange();
 
         while (d < 2.0f)
         {
@@ -95,5 +106,12 @@ public class TestDoor : MonoBehaviour
         }
 
         m_state = EState.Closed;
+        OnStateChange();
+    }
+
+    private void OnStateChange()
+    {
+        if (StateChanged != null)
+            StateChanged(this);
     }
 }
