@@ -67,7 +67,7 @@ public class SystemAddress : IDisposable {
 
 	public static bool operator !=(SystemAddress a, SystemAddress b)
 	{
-   		 return a.OpNotEqual(b);
+   		 return !(a == b);
 	}
 
 	public static bool operator < (SystemAddress a, SystemAddress b)
