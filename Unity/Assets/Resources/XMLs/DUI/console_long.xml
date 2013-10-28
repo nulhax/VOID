@@ -4,7 +4,7 @@
 <mainview>
 
   <!-- Screen -->
-  <screen quality="High" dimensions="1.5, 2.0" />
+  <screen quality="VeryHigh" dimensions="1.5, 2.0" />
 
   <!-- Areas -->
   <title rect="0.0, 0.9, 1.0, 0.1" text="Room 1916 : Console 12" />

@@ -5,12 +5,15 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 
-public class DUIButton : MonoBehaviour 
+public class DUIButton : DUIElement 
 {
     // Member Delegates
-    public delegate void ButtonPressHandler(DUIButton _sender);
-    public event ButtonPressHandler Press;
-
+    public delegate void PressHandler(DUIButton _sender);
+    
+	// Member events
+	public event PressHandler PressDown;
+	public event PressHandler PressUp;
+	public event PressHandler PressHold;
 
     // Member Fields
     private TextMesh m_textMesh;
@@ -28,49 +31,43 @@ public class DUIButton : MonoBehaviour
             m_textMesh.text = value;
         }
     }
-    public Vector2 m_viewPos
-    {
-        get
-        {
-            DUIView parentView = transform.parent.GetComponent<DUIView>();
-
-            Vector2 viewPos = transform.localPosition;
-            Vector2 parentDimensions = parentView.m_dimensions;
-
-            viewPos += (parentDimensions * 0.5f);
-            viewPos.x /= parentDimensions.x;
-            viewPos.y /= parentDimensions.y;
-
-            return (viewPos);
-        }
-
-        set 
-        {
-            DUIView parentView = transform.parent.GetComponent<DUIView>();
-
-            Vector2 localPos = value;
-            Vector2 parentDimensions = parentView.m_dimensions;
-
-            localPos.x *= parentDimensions.x;
-            localPos.y *= parentDimensions.y;
-            localPos -= (parentDimensions * 0.5f);
-
-            transform.localPosition = localPos;
-        }
-    }
-    public Vector2 m_dimensions { get; set; }
-
 
     // Member Methods
-    public void Initialise(Vector2 _dimensions)
+    public void Initialise(string _text)
     {
-        m_dimensions = _dimensions;
-
-        InitialiseText();
+        InitialiseText(_text);
         InitialiseBackground();
     }
 
-    private void InitialiseBackground()
+    private void InitialiseText(string _text)
+    {
+        // Create the text object
+        GameObject text = new GameObject(name + "_text");
+        text.transform.parent = transform;
+        text.transform.localPosition = Vector3.zero;
+        text.transform.localRotation = Quaternion.identity;
+        text.layer = gameObject.layer;
+
+        // Add the mesh renderer
+        MeshRenderer mr = text.AddComponent<MeshRenderer>();
+        mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
+
+        // Add the text mesh
+        m_textMesh = text.AddComponent<TextMesh>();
+        m_textMesh.fontSize = 24;
+		m_textMesh.characterSize = 0.025f;
+        m_textMesh.color = Color.white;
+        m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
+        m_textMesh.anchor = TextAnchor.MiddleCenter;
+        m_textMesh.offsetZ = -0.01f;
+        m_textMesh.text = _text;
+		m_textMesh.fontStyle = FontStyle.Bold;
+		
+		// Get the dimensions for the text
+		m_dimensions = new Vector2(mr.bounds.size.x, mr.bounds.size.y);
+    }
+	
+	private void InitialiseBackground()
     {
         // Create the background
         GameObject background = new GameObject(name + "_background");
@@ -100,30 +97,6 @@ public class DUIButton : MonoBehaviour
         MeshCollider mc = background.AddComponent<MeshCollider>();
         mc.sharedMesh = backMesh;
         mc.isTrigger = true;
-    }
-
-    private void InitialiseText()
-    {
-        // Create the text object
-        GameObject text = new GameObject(name + "_text");
-        text.transform.parent = transform;
-        text.transform.localPosition = Vector3.zero;
-        text.transform.localRotation = Quaternion.identity;
-        text.layer = gameObject.layer;
-
-        // Add the mesh renderer
-        MeshRenderer mr = text.AddComponent<MeshRenderer>();
-        mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
-
-        // Add the text mesh
-        m_textMesh = text.AddComponent<TextMesh>();
-        m_textMesh.fontSize = 0;
-        m_textMesh.color = Color.white;
-        m_textMesh.characterSize = 0.05f;
-        m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
-        m_textMesh.anchor = TextAnchor.MiddleCenter;
-        m_textMesh.offsetZ = -0.01f;
-        m_textMesh.text = "";
     }
 
     private Mesh CreateButtonMesh(Vector2 _dimensions)
@@ -165,12 +138,29 @@ public class DUIButton : MonoBehaviour
 
         return (buttonBackMesh);
     }
-
-    public void OnPress()
+	
+	// Event handler methods
+    public void OnPressDown()
     {
-        if (Press != null)
+        if (PressDown != null)
         {
-            Press(this);
+            PressDown(this);
+        }
+    }
+	
+	public void OnPressUp()
+    {
+        if (PressUp != null)
+        {
+            PressUp(this);
+        }
+    }
+	
+	public void OnPressHold()
+    {
+        if (PressHold != null)
+        {
+            PressHold(this);
         }
     }
 

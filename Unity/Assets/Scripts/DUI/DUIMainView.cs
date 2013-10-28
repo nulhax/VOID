@@ -14,7 +14,6 @@ public class DUIMainView : DUIView
     }
 
     // Member Fields
-    
     private EQuality m_quality;
     private ENavButDirection m_navButtonDirection;
 
@@ -29,11 +28,6 @@ public class DUIMainView : DUIView
 
 
     // Member Methods
-    private void Awake()
-    {
-        m_subViews = new Dictionary<string, DUISubView>();
-    }
-
     private void Update()
     {
         DebugRenderRects();
@@ -41,7 +35,7 @@ public class DUIMainView : DUIView
         // Update the render texture and camera
         m_renderTex.DiscardContents(true, true);
         RenderTexture.active = m_renderTex;
-
+		
         m_renderCamera.Render();
 
         RenderTexture.active = null;
@@ -49,6 +43,8 @@ public class DUIMainView : DUIView
 
     public void Initialise(TextAsset _uiXmlDoc)
     {
+		m_subViews = new Dictionary<string, DUISubView>();
+		
         // Load the XML file for the UI and save the base node for the ui
         m_uiXmlNode = LoadXML(_uiXmlDoc).SelectSingleNode("mainview");
 
@@ -80,7 +76,7 @@ public class DUIMainView : DUIView
         // Create the DUI game object
         GameObject duiGo = new GameObject();
         duiGo.transform.parent = transform;
-        duiGo.name = name + "_SubView_" + _subViewName;
+        duiGo.name = "SubView_" + _subViewName;
         duiGo.layer = gameObject.layer;
         duiGo.transform.localRotation = Quaternion.identity;
 
@@ -99,7 +95,7 @@ public class DUIMainView : DUIView
         DUISV.m_navButton.transform.parent = transform;
 
         // Register the button for the event
-        DUISV.m_navButton.Press += NavButtonPressed;
+        DUISV.m_navButton.PressDown += NavButtonPressed;
 
         // Add to the dictionary
         m_subViews[_subViewName] = DUISV;
@@ -108,6 +104,35 @@ public class DUIMainView : DUIView
         RepositionButtons();
 
         return (DUISV);
+    }
+	
+	public DUIButton FindButtonCollisions(RaycastHit _rh)
+    {
+		Vector3 offset = new Vector3(_rh.textureCoord.x * m_dimensions.x - m_dimensions.x * 0.5f,
+                                     _rh.textureCoord.y * m_dimensions.y - m_dimensions.y * 0.5f,
+                                             0.0f);
+
+        offset = transform.rotation * offset;
+        Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
+
+        Ray ray = new Ray(rayOrigin, transform.forward);
+        RaycastHit hit;
+        float rayLength = 2.0f;
+		
+		DUIButton button = null;
+		
+        if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("DUI")))
+        {
+            button = hit.transform.parent.gameObject.GetComponent<DUIButton>();
+			
+            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
+        }
+        else
+        {
+            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.red, 0.5f);
+        }
+		
+		return(button);
     }
 
     private void SetupMainView()
@@ -122,7 +147,7 @@ public class DUIMainView : DUIView
 
         // Get the Subview Area info
         m_subViewAreaRect = DUIMainView.StringToRect(m_uiXmlNode.SelectSingleNode("subviewarea").Attributes["rect"].Value);
-
+		
         // Setup the title
         SetupTitle();
     }
@@ -136,8 +161,11 @@ public class DUIMainView : DUIView
         Vector3 localPos = new Vector3(m_titleRect.center.x * m_dimensions.x - (m_dimensions.x * 0.5f),
                                       m_titleRect.center.y  * m_dimensions.y - (m_dimensions.y * 0.5f));
 
-        // Create the title
-        CreateTitle(text, localPos);
+        // Add a field for the title
+        DUIField duiField = AddField(text);
+		
+		// Position it to the center of the title area
+		duiField.transform.localPosition = localPos;
     }
 
     private void SetupRenderTex()
@@ -168,43 +196,21 @@ public class DUIMainView : DUIView
     {
         // Create the camera game object
         GameObject go = new GameObject();
-        go.name = transform.name + "_RenderCamera";
+        go.name = "RenderCamera";
         go.transform.parent = transform;
-        go.transform.localPosition = new Vector3(0.0f, 0.0f, -1.0f);
+		go.transform.localPosition = new Vector3(0.0f, 0.0f, -1.0f);
         go.transform.localRotation = Quaternion.identity;
-        go.layer = LayerMask.NameToLayer("DUI");
+        go.layer = gameObject.layer;
 
         // Get the render camera and set its target as the render texture
         m_renderCamera = go.AddComponent<Camera>();
-        m_renderCamera.cullingMask = 1 << LayerMask.NameToLayer("DUI");
+        m_renderCamera.cullingMask = 1 << gameObject.layer;
         m_renderCamera.orthographic = true;
         m_renderCamera.backgroundColor = Color.black;
         m_renderCamera.nearClipPlane = 0.0f;
         m_renderCamera.farClipPlane = 2.0f;
         m_renderCamera.targetTexture = m_renderTex;
         m_renderCamera.orthographicSize = m_dimensions.y * 0.5f;
-    }
-
-    private void CreateTitle(string _text, Vector3 _localPos)
-    {
-        GameObject titleGo = new GameObject();
-
-        // Set the default values
-        titleGo.name = name + "_Title";
-        titleGo.layer = gameObject.layer;
-        titleGo.transform.parent = transform;
-        titleGo.transform.localPosition = _localPos;
-        titleGo.transform.localRotation = Quaternion.identity;
-
-        MeshRenderer mr = titleGo.AddComponent<MeshRenderer>();
-        mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
-
-        TextMesh tm = titleGo.AddComponent<TextMesh>();
-        tm.fontSize = 0;
-        tm.characterSize = 0.05f;
-        tm.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
-        tm.anchor = TextAnchor.MiddleCenter;
-        tm.text = _text;
     }
 
     private void RepositionButtons()
@@ -236,36 +242,6 @@ public class DUIMainView : DUIView
         }
     }
 
-    public void CheckDGUICollisions(RaycastHit _rh)
-    {
-        Vector3 offset = new Vector3(_rh.textureCoord.x * m_dimensions.x - m_dimensions.x * 0.5f,
-                                     _rh.textureCoord.y * m_dimensions.y - m_dimensions.y * 0.5f,
-                                             0.0f);
-
-        offset = transform.rotation * offset;
-        Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
-
-        Ray ray = new Ray(rayOrigin, transform.forward);
-        RaycastHit hit;
-        float rayLength = 2.0f;
-
-        if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("DUI")))
-        {
-            DUIButton bUI = hit.transform.parent.gameObject.GetComponent<DUIButton>();
-            if (bUI)
-            {
-                Debug.Log("Button Hit: " + hit.transform.parent.name);
-                bUI.OnPress();
-            }
-
-            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
-        }
-        else
-        {
-            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.red, 0.5f);
-        }
-    }
-
     // Event handler functions
     private void NavButtonPressed(DUIButton _sender)
     {
@@ -278,8 +254,11 @@ public class DUIMainView : DUIView
             {
                 // Toggle its activity
                 subView.gameObject.SetActive(!subView.gameObject.activeSelf);
-                break;
             }
+			else
+			{
+				subView.gameObject.SetActive(false);
+			}
         }
     }
 

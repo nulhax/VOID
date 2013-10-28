@@ -6,10 +6,8 @@ using System.Xml;
 public class DUIConsole : MonoBehaviour 
 {
     // Member Fields 
-    public TextAsset m_consoleXML;
+    public TextAsset m_mainviewXML;
     public GameObject m_screenObject;
-    
-    private Material m_screenMat;
 
 
     // Member Properties
@@ -25,8 +23,8 @@ public class DUIConsole : MonoBehaviour
 
     public void Initialise()
     {
-        // Save the material of the screen
-        m_screenMat = m_screenObject.renderer.sharedMaterial;
+		// Set the screen to be on the right layer
+		m_screenObject.layer = LayerMask.NameToLayer("Screen");
 
         // Set up the Diegetic User interface Object
         SetupDUI();
@@ -47,33 +45,76 @@ public class DUIConsole : MonoBehaviour
         GameObject duiGo = new GameObject();
         duiGo.name = name + "_DUI";
         duiGo.layer = LayerMask.NameToLayer("DUI");
-        duiGo.transform.position = transform.position + new Vector3(0.0f, 0.0f, -2.0f);
-        duiGo.transform.localRotation = Quaternion.identity;
-
+		duiGo.transform.rotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
+        duiGo.transform.position = transform.position + duiGo.transform.rotation * new Vector3(0.0f, 0.0f, -1.0f);
+		duiGo.transform.parent = transform.parent;
+		
         // Add the DUI component
         m_DUIMV = duiGo.AddComponent<DUIMainView>();
 
         // Initialise the DUI Component
-        m_DUIMV.Initialise(m_consoleXML);
+        m_DUIMV.Initialise(m_mainviewXML);
 
         // Attach the render texture
-        m_DUIMV.AttatchRenderTexture(m_screenMat);
+        m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.sharedMaterial);
     }
 
     private void CheckScreenCollision()
     {
+		RaycastHit hit = new RaycastHit();
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		
+		// Mouse Down
         if (Input.GetMouseButtonDown(0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit, 2.0f, 1 << LayerMask.NameToLayer("Screen")))
-            {
-                if (hit.transform.gameObject == m_screenObject)
-                {
-                    m_DUIMV.CheckDGUICollisions(hit);
-                }
-            }
-        }        
+ 			if (DidRayCollideWithScreen(ray, out hit))
+			{
+				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+				
+				if(button)
+				{
+					button.OnPressDown();
+				}
+			}	    
+        }
+		// Mouse Up
+		else if (Input.GetMouseButtonUp(0))
+		{
+			if (DidRayCollideWithScreen(ray, out hit))
+			{
+				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+				
+				if(button)
+				{
+					button.OnPressUp();
+				}
+			}
+		}
+		// Mouse Hold
+		else if (Input.GetMouseButton(0))
+		{
+			if (DidRayCollideWithScreen(ray, out hit))
+			{
+				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+				
+				if(button)
+				{
+					button.OnPressHold();
+				}
+			}
+		}
     }
+	
+	private bool DidRayCollideWithScreen(Ray _ray, out RaycastHit _rh)
+	{
+		if (Physics.Raycast(_ray, out _rh, 2.0f, 1 << LayerMask.NameToLayer("Screen")))
+		{
+			if (_rh.transform.gameObject == m_screenObject)
+			{
+				return(true);
+			}
+		}
+		
+		return(false);
+	}
 }

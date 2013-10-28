@@ -34,11 +34,7 @@ public class MouseLook : MonoBehaviour
 
 	void Update ()
 	{
-		// Toggle Using the FPS mode
-		if (Input.GetKeyUp(KeyCode.Space))
-		{
-       		Screen.lockCursor = !Screen.lockCursor;
-		}
+		Screen.lockCursor = true;
 		
 		if(Screen.lockCursor)
 		{
@@ -90,11 +86,6 @@ public class MouseLook : MonoBehaviour
                 transform.position -= transform.up * 2.0f * Time.deltaTime;
 			}
 		}
-	}
-	
-	void Start()
-	{
-		Screen.lockCursor = true;
 	}
 
     void OnGUI()
