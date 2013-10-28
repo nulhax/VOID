@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Main View -->
+<mainview >
+
+  <!-- Screen -->
+  <screen quality="High" dimensions="2.0, 1.0" />
+
+  <!-- Areas -->
+  <title rect="0.0, 0.8, 1.0, 0.2" text="Room 1916 : Console 11" />
+  <navarea rect="0.0, 0.0, 0.2, 0.8" butdir="Vertical"/>
+  <subviewarea rect="0.2, 0.0, 0.8, 0.8" />
+  
+</mainview>
