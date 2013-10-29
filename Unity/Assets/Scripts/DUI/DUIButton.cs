@@ -64,7 +64,7 @@ public class DUIButton : DUIElement
 		m_textMesh.fontStyle = FontStyle.Bold;
 		
 		// Get the dimensions for the text
-		m_dimensions = new Vector2(mr.bounds.size.x, mr.bounds.size.y);
+		m_dimensions = new Vector2(new Vector2(mr.bounds.size.x, mr.bounds.size.z).magnitude, mr.bounds.size.y);
     }
 	
 	private void InitialiseBackground()

@@ -56,7 +56,7 @@ public class DUIConsole : MonoBehaviour
         m_DUIMV.Initialise(m_mainviewXML);
 
         // Attach the render texture
-        m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.sharedMaterial);
+        m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.material);
     }
 
     private void CheckScreenCollision()

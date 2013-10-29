@@ -276,12 +276,12 @@ Material:
         second: .5
       data:
         first:
-          name: _Shininess
-        second: .0803914145
-      data:
-        first:
           name: _Alpha
         second: .5
+      data:
+        first:
+          name: _Shininess
+        second: .0803914145
       data:
         first:
           name: _EmissivePower

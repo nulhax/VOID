@@ -20,7 +20,7 @@ public class TestRoom : MonoBehaviour
 		
 		m_PEOutputFields = new List<DUIField>();
 		
-        m_doors = transform.FindChild("Doors").GetComponentsInChildren<TestDoor>();
+        //m_doors = transform.FindChild("Doors").GetComponentsInChildren<TestDoor>();
         m_consoles = transform.FindChild("Consoles").GetComponentsInChildren<DUIConsole>();
 
         // Add the subviews for the consoles
@@ -33,7 +33,7 @@ public class TestRoom : MonoBehaviour
             DUISubView duiRC = console.m_DUIMV.AddSubview("DoorControl");
 
             // For each door add a button
-            int count = 0;
+            /*int count = 0;
             foreach (TestDoor door in m_doors)
             {
 				// Add the door buttons
@@ -52,7 +52,7 @@ public class TestRoom : MonoBehaviour
 				duiBut.transform.localPosition = duiDoorState.transform.localPosition - new Vector3(0.0f, duiBut.m_dimensions.y);
                
                 ++count;
-            }
+            }*/
 			
 			// Add the facility Control
 			DUISubView duiFC = console.m_DUIMV.AddSubview("FacilityControl");
@@ -83,10 +83,10 @@ public class TestRoom : MonoBehaviour
 		UpdatePEOutputFields();
 
         // Register the door state change event
-		foreach (TestDoor door in m_doors)
+		/*foreach (TestDoor door in m_doors)
 		{
 		    door.StateChanged += DoorStateChanged;
-		}  
+		}*/ 
 	}
 
     private void Update()
