@@ -61,7 +61,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
-		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player Actor");
+		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player/Player Actor");
 
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerInput, CActorMotor.UnserializePlayerInput);
@@ -213,7 +213,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
 	}
-
+	
 
 	public static GameObject FindPlayerActor(ulong _ulPlayerId)
 	{
@@ -294,8 +294,10 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Notice
 		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
-
-		CNetwork.Factory.FindObject(m_usActorNetworkViewId).AddComponent<CActorCamera>();
+		
+		// Create the camera 
+		GameObject actorObject = CNetwork.Factory.FindObject(m_usActorNetworkViewId);
+		actorObject.AddComponent<CActorHead>();
 	}
 
 
