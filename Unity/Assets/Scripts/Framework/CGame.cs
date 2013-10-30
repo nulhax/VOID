@@ -64,7 +64,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player/Player Actor");
 
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerState, CActorMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
 
 
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -298,8 +298,7 @@ public class CGame : CNetworkMonoBehaviour
 		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
 		
 		// Create the camera 
-		GameObject actorObject = CNetwork.Factory.FindObject(m_usActorNetworkViewId);
-		actorObject.AddComponent<CActorHead>();
+		Actor.GetComponent<ActorMotor>().CreatePlayerClientCamera();
 	}
 
 
