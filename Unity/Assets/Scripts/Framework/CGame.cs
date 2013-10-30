@@ -64,7 +64,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player/Player Actor");
 
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerInput, CActorMotor.UnserializePlayerInput);
+        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerState, CActorMotor.UnserializePlayerState);
 
 
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -214,6 +214,12 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
 	}
 	
+	
+	public static ushort ActorViewId
+	{
+		get { return (s_cInstance.m_usActorNetworkViewId); }
+	}
+	
 
 	public static GameObject FindPlayerActor(ulong _ulPlayerId)
 	{
@@ -234,7 +240,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
-
+		
 		// Create new player's actor
 		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)EPrefab.PlayerActor);
 
@@ -246,10 +252,6 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Tell connecting player to update their network player id 
 		InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
-
-		// Set start position for new player's actor
-		//cPlayerActor.GetComponent<CActorMotor>().PositionX = -14 + 2 * UnityEngine.Random.Range(1, 10);
-
 
 		Logger.Write("Added New Player Actor for Player Id ({0})", _cPlayer.PlayerId);
 	}

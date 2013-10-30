@@ -45,8 +45,10 @@ public class CActorHead : MonoBehaviour
 // Member Methods
     void Start()
     {
+		// Disable the current camera
         Camera.main.enabled = false;
 		
+		// Create te camera object for the camera
 		m_camera = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Camera", typeof(GameObject))) as GameObject;
         m_camera.transform.parent = transform;
         m_camera.transform.localPosition = Vector3.zero;
@@ -54,8 +56,10 @@ public class CActorHead : MonoBehaviour
 
 	void Update ()
 	{
+		// Lock the cursor to the screen
 		Screen.lockCursor = true;
 		
+		// Yaw rotation
 		m_RotationX += Input.GetAxis("Mouse X") * m_SensitivityX;
 		
 		if(m_RotationX > 360.0f)
@@ -65,10 +69,15 @@ public class CActorHead : MonoBehaviour
 			
 		m_RotationX = Mathf.Clamp (m_RotationX, m_MinimumX, m_MaximumX);
 		
+		// Pitch rotation
 		m_RotationY += Input.GetAxis("Mouse Y") * m_SensitivityY;
 		m_RotationY = Mathf.Clamp (m_RotationY, m_MinimumY, m_MaximumY);
 		
-		m_camera.transform.localEulerAngles = new Vector3(-m_RotationY, 0.0f, 0.0f);
+		// Apply the yaw to the camera
+		m_camera.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
+		
+		// Apply the pitch to the actor
+		transform.eulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
 	}
 	
 	void OnGUI()

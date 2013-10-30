@@ -119,7 +119,18 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public GameObject FindObject(ushort _usNetworkViewId)
 	{
-		return (m_mCreatedObjects[_usNetworkViewId].cGameObject);
+		GameObject go = null;
+		
+		if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+		{
+			go = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+		}
+		else
+		{
+			Debug.LogError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
+		}
+		
+		return (go);
 	}
 
 
