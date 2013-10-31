@@ -31,6 +31,8 @@ public class CGame : CNetworkMonoBehaviour
 
 	public enum EPrefab : ushort
 	{
+		INVALID,
+		Ship,
 		PlayerActor,
 		RoomFactory,
 	}
@@ -93,18 +95,22 @@ public class CGame : CNetworkMonoBehaviour
 		// Sign up to events
 		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnPlayerJoin);
 		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
+		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
 		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
+		CNetwork.Factory.RegisterPrefab(EPrefab.Ship, "Ship");
 		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player/Player Actor");
 		CNetwork.Factory.RegisterPrefab(EPrefab.RoomFactory, "Rooms/Room Factory");
 
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
 
-		// Start & join server (For development)
+		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
+
+		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
     
@@ -256,9 +262,24 @@ public class CGame : CNetworkMonoBehaviour
 	void DebugProcessInputs()
 	{
 		// Lock Cursor on/off
-		if(Input.GetKeyUp(KeyCode.F1))
+		if(Input.GetKeyDown(KeyCode.F1))
 		{
 			Screen.lockCursor = !Screen.lockCursor;
+		}
+
+		if (Input.GetKeyDown(KeyCode.P))
+		{
+
+		}
+
+		// Quick quit game
+		if (Input.GetKeyDown(KeyCode.Escape))
+		{
+			Application.Quit();
+
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+			#endif
 		}
 	}
 
@@ -280,7 +301,10 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player to update their network player id 
 		InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
 
-		Logger.Write("Added New Player Actor for Player Id ({0})", _cPlayer.PlayerId);
+		// Tell connecting player which is the ship's network view id
+		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
+
+		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 
 
@@ -299,10 +323,21 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
+	void OnServerStartup()
+	{
+		// Create ship object
+		GameObject cShipObject = CNetwork.Factory.CreateObject(EPrefab.Ship);
+
+		// Save view id
+		m_usShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
+	}
+
+
 	void OnServerShutdown()
 	{
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
+		m_usShipViewId = 0;
 	}
 
 
@@ -313,16 +348,31 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	[ANetworkRpc]
-	void SetActorNetworkViewId(ushort _usActorId)
+	void OnApplicationFocus(bool _bFocused)
 	{
-		m_usActorViewId = _usActorId;
+	}
+
+
+	[ANetworkRpc]
+	void SetActorNetworkViewId(ushort _usActorViewId)
+	{
+		m_usActorViewId = _usActorViewId;
 
 		// Notice
 		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
 		
 		// Create the camera 
 		Actor.GetComponent<ActorMotor>().CreatePlayerClientCamera();
+	}
+
+
+	[ANetworkRpc]
+	void SetShipNetworkViewId(ushort _usShipViewId)
+	{
+		m_usShipViewId = _usShipViewId;
+
+		// Notice
+		Logger.Write("The ship's network view id is ({0})", m_usShipViewId);
 	}
 
 
