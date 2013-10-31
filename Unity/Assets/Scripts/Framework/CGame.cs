@@ -66,7 +66,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(EPrefab.HullPeiceSmall1, "Hull Pieces/HullPeice_Small_1");
 
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerInput, CActorMotor.UnserializePlayerInput);
+        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerState, CActorMotor.UnserializePlayerState);
 
 
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -83,99 +83,9 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	public static GameObject Actor
-	{
-		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
-	}
-
-
 	public static GameObject Ship
 	{
 		get { return (Instance.m_cShip); }
-	}
-
-
-	public static GameObject FindPlayerActor(ulong _ulPlayerId)
-	{
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
-	}
-
-
-	public static CGame Instance
-	{
-		get { return (s_cInstance); }
-	}
-
-
-    // protected:
-
-
-	protected void OnPlayerJoin(CNetworkPlayer _cPlayer)
-	{
-		// Send created objects to new player
-		CNetwork.Factory.SyncPlayer(_cPlayer);
-
-		// Create new player's actor
-		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)EPrefab.PlayerActor);
-
-		// Get actor network view id
-		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
-
-		// Save which player owns which actor
-		m_mPlayersActor.Add(_cPlayer.PlayerId, usActorNetworkViewId);
-
-		// Tell connecting player to update their network player id 
-		InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
-
-		// Set start position for new player's actor
-		//cPlayerActor.GetComponent<CActorMotor>().PositionX = -14 + 2 * UnityEngine.Random.Range(1, 10);
-
-
-		Logger.Write("Added New Player Actor for Player Id ({0})", _cPlayer.PlayerId);
-	}
-
-
-	protected void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
-	{
-		ushort usPlayerActorNetworkViewId = m_mPlayersActor[_cPlayer.PlayerId];
-
-
-		CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
-
-
-		m_mPlayersActor.Remove(_cPlayer.PlayerId);
-
-
-		Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
-	}
-
-
-	protected void OnServerShutdown()
-	{
-		m_mPlayersActor.Clear();
-		m_usActorNetworkViewId = 0;
-	}
-
-
-	protected void OnDisconnect()
-	{
-		GameObject.Find("Main Camera").camera.enabled = true;
-		m_usActorNetworkViewId = 0;
-	}
-
-
-    // private:
-
-
-	[ANetworkRpc]
-	void SetActorNetworkViewId(ushort _usActorId)
-	{
-		m_usActorNetworkViewId = _usActorId;
-
-		// Notice
-		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
-
-		CNetwork.Factory.FindObject(m_usActorNetworkViewId).AddComponent<CActorCamera>();
 	}
 
 
@@ -220,6 +130,100 @@ public class CGame : CNetworkMonoBehaviour
 		{
 			DrawLobbyGui();
 		}
+	}
+
+
+	public static GameObject Actor
+	{
+		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
+	}
+	
+	
+	public static ushort ActorViewId
+	{
+		get { return (s_cInstance.m_usActorNetworkViewId); }
+	}
+	
+
+	public static GameObject FindPlayerActor(ulong _ulPlayerId)
+	{
+		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
+	}
+
+
+	public static CGame Instance
+	{
+		get { return (s_cInstance); }
+	}
+
+
+    // protected:
+
+
+	protected void OnPlayerJoin(CNetworkPlayer _cPlayer)
+	{
+		// Send created objects to new player
+		CNetwork.Factory.SyncPlayer(_cPlayer);
+		
+		// Create new player's actor
+		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)EPrefab.PlayerActor);
+
+		// Get actor network view id
+		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+
+		// Save which player owns which actor
+		m_mPlayersActor.Add(_cPlayer.PlayerId, usActorNetworkViewId);
+
+		// Tell connecting player to update their network player id 
+		InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
+
+		Logger.Write("Added New Player Actor for Player Id ({0})", _cPlayer.PlayerId);
+	}
+
+
+	protected void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
+	{
+		ushort usPlayerActorNetworkViewId = m_mPlayersActor[_cPlayer.PlayerId];
+
+
+		CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
+
+
+		m_mPlayersActor.Remove(_cPlayer.PlayerId);
+
+
+		Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
+	}
+
+
+	protected void OnServerShutdown()
+	{
+		m_mPlayersActor.Clear();
+		m_usActorNetworkViewId = 0;
+	}
+
+
+	protected void OnDisconnect()
+	{
+		GameObject.Find("Main Camera").camera.enabled = true;
+		m_usActorNetworkViewId = 0;
+	}
+
+
+    // private:
+
+
+	[ANetworkRpc]
+	void SetActorNetworkViewId(ushort _usActorId)
+	{
+		m_usActorNetworkViewId = _usActorId;
+
+		// Notice
+		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
+		
+		// Create the camera 
+		GameObject actorObject = CNetwork.Factory.FindObject(m_usActorNetworkViewId);
+		actorObject.AddComponent<CActorHead>();
 	}
 
 
