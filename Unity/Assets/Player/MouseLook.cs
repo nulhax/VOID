@@ -59,20 +59,20 @@ public class MouseLook : MonoBehaviour
 				transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
 			}
 			
-			if(Input.GetKey(KeyCode.W))
+			if(Input.GetKey(KeyCode.UpArrow))
 			{
                 transform.position += transform.forward * 2.0f * Time.deltaTime;
 			}
-			else if(Input.GetKey(KeyCode.S))
+			else if(Input.GetKey(KeyCode.DownArrow))
 			{
                 transform.position -= transform.forward * 2.0f * Time.deltaTime;
 			}
 			
-			if(Input.GetKey(KeyCode.A))
+			if(Input.GetKey(KeyCode.LeftArrow))
 			{
                 transform.position -= transform.right * 2.0f * Time.deltaTime;
 			}
-			else if(Input.GetKey(KeyCode.D))
+			else if(Input.GetKey(KeyCode.RightArrow))
 			{
 				transform.position += transform.right * 2.0f * Time.deltaTime;
 			}
@@ -92,4 +92,4 @@ public class MouseLook : MonoBehaviour
     {
         GUI.DrawTexture(new Rect((Screen.width - CrossHair.width) * 0.5f, (Screen.height * 0.5f - CrossHair.height * 0.75f), CrossHair.width, CrossHair.height), CrossHair);
     }
-}
+};

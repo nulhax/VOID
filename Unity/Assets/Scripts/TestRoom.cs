@@ -95,7 +95,7 @@ public class TestRoom : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.F1))
         {
             ResetMonitors();
-        }
+        }		
     }
 
     private void ResetMonitors()
@@ -111,7 +111,7 @@ public class TestRoom : MonoBehaviour
 
             // Add the general room subview
             console.m_DUIMV.AddSubview("RoomControl");
-        }
+        }		
     }
 	
     private void OpenCloseDoor(DUIButton _sender)

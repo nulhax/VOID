@@ -24,13 +24,14 @@ public class ExpansionPort : MonoBehaviour
     float lastScroll = 0;
 	List<Transform> Ports = new List<Transform>();
     static int NumHullTypes;
+	bool Intersection = false;
 	
 	static bool canBuild = true;
 	
 	// Use this for initialization
 	void Start () 
 	{
-		buildState = BuildState.state_Construction;	
+		buildState = BuildState.state_Construction;	  
 		renderer.material.color = Color.blue;
         portID = 0;	
         SegmentID = 1;
@@ -47,7 +48,7 @@ public class ExpansionPort : MonoBehaviour
 			//Raycast. See if this thing got hit			
 			RaycastHit hit;
 		 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (ray, out hit, 100))
+			if (Physics.Raycast (ray, out hit, 1000))
 			{		
 				if(hit.collider.gameObject == gameObject && canBuild)
 				{
@@ -76,6 +77,8 @@ public class ExpansionPort : MonoBehaviour
 		
 		else if(buildState == BuildState.state_Orientation)
 		{
+			//ReorientHullSegment();
+			
 			if(Input.GetAxis("Mouse ScrollWheel") > 0)
 			{
 				//Select next port and reorient accordingly
@@ -153,7 +156,7 @@ public class ExpansionPort : MonoBehaviour
 
                 CancelConstruction();
                 AttachHullSegment();
-            }
+            }			
 		}
 		
 		RenderNormals();
@@ -167,10 +170,10 @@ public class ExpansionPort : MonoBehaviour
 	
 	void AttachHullSegment()
 	{
-
         //Create new segment
         Debug.Log("HullSegment" + SegmentID.ToString());
         AttachedHull = (GameObject)Instantiate(Resources.Load("HullSegment" + SegmentID.ToString()));          
+		AttachedHull.transform.parent = transform;
         	
 		//Set this position to the position of the selected expansion port
 		AttachedHull.transform.position = transform.position;	
@@ -255,7 +258,56 @@ public class ExpansionPort : MonoBehaviour
         //Apply rotation
         Vector3 rotationPos = transform.position;
         AttachedHull.transform.RotateAround(rotationPos, crossResult, rotationAngle);   
-		Debug.Log(crossResult.ToString());			
+		Debug.Log(crossResult.ToString());
+		
+		//Align the right vector
+		rotationAngle = Vector3.Angle(newPort.transform.right, transform.right);
+		
+		crossResult = Vector3.Cross(newPort.transform.right, transform.right);
+        if (crossResult.y > 0)
+        {
+            Debug.Log("Cross product result is positive");
+            
+        }
+        else if (crossResult.y < 0)
+        {
+            Debug.Log("Cross product result is negative");
+            rotationAngle = 360 - rotationAngle;
+			crossResult *= -1;
+        }
+        else if (crossResult.x == 0 && crossResult.y == 0 && crossResult.z == 0)
+        {
+            Debug.Log("Cross product result is 0");
+            crossResult = newPort.transform.forward;
+        }
+		
+		//Apply rotation
+		AttachedHull.transform.RotateAround(rotationPos, crossResult, rotationAngle);  
+		
+		//Allign the Up vector
+		rotationAngle = Vector3.Angle(newPort.transform.up, transform.up);
+		
+		crossResult = Vector3.Cross(newPort.transform.up, transform.up);
+        if (crossResult.y > 0)
+        {
+            Debug.Log("Cross product result is positive");
+            
+        }
+        else if (crossResult.y < 0)
+        {
+            Debug.Log("Cross product result is negative");
+            rotationAngle = 360 - rotationAngle;
+			crossResult *= -1;
+        }
+        else if (crossResult.x == 0 && crossResult.y == 0 && crossResult.z == 0)
+        {
+            Debug.Log("Cross product result is 0");
+            crossResult = newPort.transform.right;
+        }
+		
+		//Apply rotation
+		AttachedHull.transform.RotateAround(rotationPos, crossResult, rotationAngle);  
+		
 	}
 	
 	void ConfirmCOnstruction()
@@ -274,7 +326,7 @@ public class ExpansionPort : MonoBehaviour
 		buildState = BuildState.state_Construction;
 		canBuild = true;
 	}
-
+	
     void CancelConstruction()
     {
         Destroy(AttachedHull);
@@ -285,4 +337,9 @@ public class ExpansionPort : MonoBehaviour
         hasAttachedHull = false;
 		portID = 0;
     }
-}
+	
+	void OnCollision(Collision collisionInfo)
+	{
+		Debug.Break();
+	}
+};
