@@ -48,7 +48,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void InitialiseNetworkVars()
+    public override void InstanceNetworkVars()
     {
         // Empty
     }
@@ -61,22 +61,22 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     }
 
 
-	public void RegisterPrefab(ushort _usPrefabId, string _sPrefabFilename)
+	public void RegisterPrefab(object _cPrefabId, string _sPrefabFilename)
 	{
-		m_mPrefabs.Add(_usPrefabId, _sPrefabFilename);
+		m_mPrefabs.Add((ushort)_cPrefabId, _sPrefabFilename);
 	}
 
 
-    public GameObject CreateObject(ushort _usPrefabId)
-    {
+	public GameObject CreateObject(object _cPrefabId)
+	{
 		// Ensure only servers call this function
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects", _usPrefabId);
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects", (ushort)_cPrefabId);
 
 		// Generate dynamic network view id for object
 		ushort usObjectViewId = CNetworkView.GenerateDynamicViewId();
 
 		// Invoke create local object call on all connected players
-		InvokeRpcAll("CreateLocalObject", _usPrefabId, usObjectViewId);
+		InvokeRpcAll("CreateLocalObject", (ushort)_cPrefabId, usObjectViewId);
 
         return (CNetworkView.FindUsingViewId(usObjectViewId).gameObject);
     }
@@ -108,11 +108,39 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 InvokeRpc(_cNetworkPlayer.PlayerId, "CreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
 
                 // Extract the network view from this object
-                CNetworkView cNetworkView = CNetworkView.FindUsingViewId(tEntry.Key);
+                CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-                // Tell object to sync all their network vars with the player
-                cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
+				// Sync object's position
+				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
+																						 tEntry.Value.cGameObject.transform.position.x,
+																						 tEntry.Value.cGameObject.transform.position.z);
+
+				// Sync object's rotation
+				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x,
+																						 tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x,
+																						 tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x);
+
+				// Tell object to sync all their network vars with the player
+				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
             }
+
+			// Sync parents for each transform
+			foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
+			{
+				if (tEntry.Value.cGameObject.transform.parent != null)
+				{
+					// Extract parent network view
+					CNetworkView cParentView = tEntry.Value.cGameObject.transform.parent.GetComponent<CNetworkView>();
+
+					Logger.WriteError("Networked object's parent is not a networked object. Wtf are you doing??!?");
+
+					// Extract the network view from this object
+					CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
+
+					// Invoke set parent rpc
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetParent", cParentView.ViewId);
+				}
+			}
         }
     }
 

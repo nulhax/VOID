@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CLASSNAME.cs
+//  File Name   :   CExpansionPortInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,10 +20,13 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CRoomManager : MonoBehaviour
+public class CExpansionPortInterface : MonoBehaviour
 {
 
 // Member Types
+
+
+	public const string ksGameObjectName = "ExpansionPort";
 
 
 // Member Delegates & Events
@@ -37,16 +40,49 @@ public class CRoomManager : MonoBehaviour
 
 	public void Start()
 	{
+		// Empty
 	}
 
 
 	public void OnDestroy()
 	{
+		// Empty
 	}
 
 
 	public void Update()
 	{
+		// Empty
+	}
+
+
+	public void Attach()
+	{
+
+	}
+
+
+	public void Detach()
+	{
+
+	}
+
+
+	public void Orient()
+	{
+
+	}
+
+
+	public void Cancel()
+	{
+
+	}
+
+
+	public void Confirm()
+	{
+
 	}
 
 
