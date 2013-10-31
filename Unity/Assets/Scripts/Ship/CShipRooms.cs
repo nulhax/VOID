@@ -60,7 +60,7 @@ public class CShipRooms : MonoBehaviour
 
 	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
 	{
-		GameObject cRoomGameObject = CNetwork.Factory.CreateObject(CGame.EPrefab.HullPeiceSmall1);
+		GameObject cRoomGameObject = CNetwork.Factory.CreateObject(CGame.EPrefab.RoomFactory);
 		cRoomGameObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", 10.0f, 0.0f, 0.0f);
 
 

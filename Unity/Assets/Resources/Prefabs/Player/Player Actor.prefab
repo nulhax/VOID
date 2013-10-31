@@ -69,8 +69,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_MovementSpeed: 10
   m_JumpSpeed: 10
-  m_SensitivityX: .5
-  m_SensitivityY: .5
+  m_SensitivityX: 2
+  m_SensitivityY: 2
   m_MinimumX: -360
   m_MaximumX: 360
   m_MinimumY: -60

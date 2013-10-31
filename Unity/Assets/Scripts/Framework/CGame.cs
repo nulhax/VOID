@@ -1,13 +1,13 @@
 ﻿//  Auckland
 //  New Zealand
 //
-//  (c) 2013 VOID
+//  (c) 2013
 //
-//  File Name   :   Game.cs
+//  File Name   :   CGame.cs
 //  Description :   --------------------------
 //
-//  Author  	:  Programming Team
-//  Mail    	:  contanct@spaceintransit.co.nz
+//  Author  	:  
+//  Mail    	:  @hotmail.com
 //
 
 
@@ -29,12 +29,15 @@ public class CGame : CNetworkMonoBehaviour
 	public const ushort kusServerPort = 30001;
 
 
-	public enum EPrefab
+	public enum EPrefab : ushort
 	{
 		PlayerActor,
-		HullPeiceSmall1,
+		RoomFactory,
 	}
-	
+
+
+// Member Delegates & Events
+
 
 // Member Properties
 	
@@ -47,23 +50,34 @@ public class CGame : CNetworkMonoBehaviour
 	
 	public static GameObject Actor
 	{
-		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
+		get { return (CNetwork.Factory.FindObject(Instance.m_usActorViewId)); }
 	}
 	
 	
 	public static ushort ActorViewId
 	{
-		get { return (s_cInstance.m_usActorNetworkViewId); }
+		get { return (s_cInstance.m_usActorViewId); }
+	}
+
+
+	public static GameObject Ship
+	{
+		get { return (CNetwork.Factory.FindObject(Instance.m_usShipViewId)); }
+	}
+
+
+	public static ushort ShipViewId
+	{
+		get { return (s_cInstance.m_usShipViewId); }
 	}
 
 
 // Member Functions
-    
-    // public:
 
 
 	public override void InstanceNetworkVars()
 	{
+		// Empty
 	}
 
 
@@ -83,12 +97,13 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
-		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player/Player Actor");
+		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player/Player Actor");
+		CNetwork.Factory.RegisterPrefab(EPrefab.RoomFactory, "Rooms/Room Factory");
 
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
 
-
+		// Start & join server (For development)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
@@ -150,9 +165,7 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-    // protected:
-	
-	protected void DrawLobbyGui()
+	void DrawLobbyGui()
 	{
 		float fViewWidth = 450;
 		float fViewHeight = 150;
@@ -238,9 +251,9 @@ public class CGame : CNetworkMonoBehaviour
 		// End scroll box
 	//GUILayout.EndScrollView(
 	}
-	
-	
-	protected void DebugProcessInputs()
+
+
+	void DebugProcessInputs()
 	{
 		// Lock Cursor on/off
 		if(Input.GetKeyUp(KeyCode.F1))
@@ -248,9 +261,9 @@ public class CGame : CNetworkMonoBehaviour
 			Screen.lockCursor = !Screen.lockCursor;
 		}
 	}
-	
 
-	protected void OnPlayerJoin(CNetworkPlayer _cPlayer)
+
+	void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
@@ -271,7 +284,7 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	protected void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
+	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
 		ushort usPlayerActorNetworkViewId = m_mPlayersActor[_cPlayer.PlayerId];
 
@@ -286,30 +299,27 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	protected void OnServerShutdown()
+	void OnServerShutdown()
 	{
 		m_mPlayersActor.Clear();
-		m_usActorNetworkViewId = 0;
+		m_usActorViewId = 0;
 	}
 
 
-	protected void OnDisconnect()
+	void OnDisconnect()
 	{
 		GameObject.Find("Main Camera").camera.enabled = true;
-		m_usActorNetworkViewId = 0;
+		m_usActorViewId = 0;
 	}
-
-
-    // private:
 
 
 	[ANetworkRpc]
 	void SetActorNetworkViewId(ushort _usActorId)
 	{
-		m_usActorNetworkViewId = _usActorId;
+		m_usActorViewId = _usActorId;
 
 		// Notice
-		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
+		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
 		
 		// Create the camera 
 		Actor.GetComponent<ActorMotor>().CreatePlayerClientCamera();
@@ -317,20 +327,20 @@ public class CGame : CNetworkMonoBehaviour
 
 
 // Member Variables
-    
-    // public:
 
 
-    // private:
-
-
-	float m_fNumSlots = 16.0f;
 	string m_sServerTitle = "Default Title";
-	int m_iActiveTab = 1;
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
 
 
-	ushort m_usActorNetworkViewId = 0;
+	float m_fNumSlots = 16.0f;
+	
+
+	int m_iActiveTab = 1;
+
+
+	ushort m_usActorViewId = 0;
+	ushort m_usShipViewId = 0;
 
 
 	Dictionary<ulong, ushort> m_mPlayersActor = new Dictionary<ulong, ushort>();
