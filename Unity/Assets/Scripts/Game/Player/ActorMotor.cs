@@ -40,7 +40,8 @@ public class ActorMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_cRotationW    = null;
 	
 	
-	public float m_MovementVelocity = 10.0f;
+	public float m_MovementSpeed = 10.0f;
+	public float m_JumpSpeed = 10.0f;
 	
 	public float m_SensitivityX = 0.5f;
 	public float m_SensitivityY = 0.5f;
@@ -149,17 +150,11 @@ public class ActorMotor : CNetworkMonoBehaviour
         if (gameObject == CGame.Actor)
         {
 			UpdatePlayerInput();
-        }
-    }
-	
-	public void FixedUpdate()
-    {
-        if (gameObject == CGame.Actor)
-        {
 			ProcessMovement();
 			ProcessRotations();
         }
     }
+	
 	
 	public void CreatePlayerClientCamera()
     {
@@ -174,18 +169,20 @@ public class ActorMotor : CNetworkMonoBehaviour
 
     public void OnNetworkVarSync(INetworkVar _rSender)
     {
+		//CharacterController charController = GetComponent<CharacterController>();
+		
 		// Position
         if (_rSender == m_cPositionX || _rSender == m_cPositionY || _rSender == m_cPositionZ)
 		{
 			if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
-				rigidbody.position = Position;
+				transform.position = Position;
 		}
 		
 		// Velocity
         else if (_rSender == m_cVelocityX || _rSender == m_cVelocityY || _rSender == m_cVelocityZ)
         {	
-			if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
-            	rigidbody.velocity = Velocity;
+			//if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
+            	//charController.velocity = Velocity;
         }
 		
 		// Rotation
@@ -202,18 +199,20 @@ public class ActorMotor : CNetworkMonoBehaviour
     {
 		if(s_bStateChanged)
 		{	
-			_cStream.Write(CGame.Actor.rigidbody.position.x);
-			_cStream.Write(CGame.Actor.rigidbody.position.y);
-			_cStream.Write(CGame.Actor.rigidbody.position.z);
+			CharacterController charController = CGame.Actor.GetComponent<CharacterController>();
 			
-	        _cStream.Write(CGame.Actor.rigidbody.velocity.x);
-			_cStream.Write(CGame.Actor.rigidbody.velocity.y);
-			_cStream.Write(CGame.Actor.rigidbody.velocity.z);
+			_cStream.Write(CGame.Actor.transform.position.x);
+			_cStream.Write(CGame.Actor.transform.position.y);
+			_cStream.Write(CGame.Actor.transform.position.z);
 			
-			_cStream.Write(CGame.Actor.rigidbody.rotation.x);
-			_cStream.Write(CGame.Actor.rigidbody.rotation.y);
-			_cStream.Write(CGame.Actor.rigidbody.rotation.z);
-			_cStream.Write(CGame.Actor.rigidbody.rotation.w);
+	        _cStream.Write(charController.velocity.x);
+			_cStream.Write(charController.velocity.y);
+			_cStream.Write(charController.velocity.z);
+			
+			_cStream.Write(CGame.Actor.transform.rotation.x);
+			_cStream.Write(CGame.Actor.transform.rotation.y);
+			_cStream.Write(CGame.Actor.transform.rotation.z);
+			_cStream.Write(CGame.Actor.transform.rotation.w);
 		}
     }
 
@@ -322,24 +321,24 @@ public class ActorMotor : CNetworkMonoBehaviour
 	
 	protected void ProcessMovement()
     {
-		Transform cRidgetBodyTrans = gameObject.GetComponent<Rigidbody>().transform;
+		CharacterController charController = GetComponent<CharacterController>();
 			
 
-		Vector3 vDirForward = cRidgetBodyTrans.TransformDirection(Vector3.forward);
-		Vector3 vDirLeft = cRidgetBodyTrans.TransformDirection(Vector3.left);
-        Vector3 vVelocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+		Vector3 vDirForward = transform.TransformDirection(Vector3.forward);
+		Vector3 vDirLeft = transform.TransformDirection(Vector3.left);
+        Vector3 vVelocity = new Vector3(0.0f, charController.velocity.y, 0.0f);
 		
 		
 		// Moving 
         if (m_bMoveForward &&
             !m_bMoveBackward)
         {
-            vVelocity += vDirForward * m_MovementVelocity;
+            vVelocity += vDirForward * m_MovementSpeed;
         }
         else if (m_bMoveBackward &&
                  !m_bMoveForward)
         {
-            vVelocity -= vDirForward * m_MovementVelocity;
+            vVelocity -= vDirForward * m_MovementSpeed;
         }
 
 		
@@ -347,24 +346,25 @@ public class ActorMotor : CNetworkMonoBehaviour
         if (m_bMoveLeft &&
             !m_bMoveRight)
         {
-            vVelocity += vDirLeft * m_MovementVelocity;
+            vVelocity += vDirLeft * m_MovementSpeed;
         }
         else if (m_bMoveRight &&
                 !m_bMoveLeft)
         {
-            vVelocity -= vDirLeft * m_MovementVelocity;
+            vVelocity -= vDirLeft * m_MovementSpeed;
         }
 		
 		// Jumping
 		if(m_bJump)
 		{
-			if (vVelocity.y < 0.1 && vVelocity.y > -0.1) 
-				rigidbody.AddForce(new Vector3(0.0f, 325.0f, 0.0f));
+			
+			
+			
 			
 			m_bJump = false;
 		}
-
-        rigidbody.velocity = vVelocity;
+		
+		charController.SimpleMove(vVelocity);
     }
 	
 	protected void ProcessRotations()
@@ -379,20 +379,31 @@ public class ActorMotor : CNetworkMonoBehaviour
 			else if(m_RotationX < -360.0f)
 				m_RotationX += 360.0f;
 				
-			m_RotationX = Mathf.Clamp (m_RotationX, m_MinimumX, m_MaximumX);	
+			m_RotationX = Mathf.Clamp(m_RotationX, m_MinimumX, m_MaximumX);	
 		}
 		
 		// Pitch rotation
 		m_RotationY += Input.GetAxis("Mouse Y") * m_SensitivityY;
-		m_RotationY = Mathf.Clamp (m_RotationY, m_MinimumY, m_MaximumY);
+		m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
 		
 		// Apply the yaw to the camera
 		m_Camera.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
 		
 		// Apply the pitch to the actor
 		transform.eulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
-		
-		// Lock the cursor to the screen
-		Screen.lockCursor = true;
 	}
+	
+//	IEnumerable Jump()
+//	{
+//		float fTime = 0.0f;
+//		
+//		while(fTime < 0.5f)
+//		{
+//			fTime += Time.deltaTime;
+//			
+//			//charController.SimpleMove(new Vector3(0.0f, m_JumpSpeed * Time.deltaTime, 0.0f));
+//			
+//			//return yield null;
+//		}
+//	}
 };

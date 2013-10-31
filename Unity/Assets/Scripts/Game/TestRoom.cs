@@ -92,10 +92,10 @@ public class TestRoom : MonoBehaviour
     private void Update()
     {
         // Check for resetting the UI
-        if (Input.GetKeyUp(KeyCode.F1))
-        {
-            ResetMonitors();
-        }
+        //if (Input.GetKeyUp(KeyCode.F1))
+        //{
+        //    ResetMonitors();
+        //}
     }
 
     private void ResetMonitors()

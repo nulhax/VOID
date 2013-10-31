@@ -33,6 +33,27 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		PlayerActor,
 	}
+	
+
+// Member Properties
+	
+	
+	public static CGame Instance
+	{
+		get { return (s_cInstance); }
+	}
+	
+	
+	public static GameObject Actor
+	{
+		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
+	}
+	
+	
+	public static ushort ActorViewId
+	{
+		get { return (s_cInstance.m_usActorNetworkViewId); }
+	}
 
 
 // Member Functions
@@ -74,6 +95,7 @@ public class CGame : CNetworkMonoBehaviour
 
 	public void Update()
 	{
+		DebugProcessInputs();
 	}
 
 
@@ -119,9 +141,17 @@ public class CGame : CNetworkMonoBehaviour
 			DrawLobbyGui();
         }
     }
+	
+
+	public static GameObject FindPlayerActor(ulong _ulPlayerId)
+	{
+		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
+	}
 
 
-	void DrawLobbyGui()
+    // protected:
+	
+	protected void DrawLobbyGui()
 	{
 		float fViewWidth = 450;
 		float fViewHeight = 150;
@@ -207,34 +237,17 @@ public class CGame : CNetworkMonoBehaviour
 		// End scroll box
 	//GUILayout.EndScrollView(
 	}
-
-
-	public static GameObject Actor
-	{
-		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
-	}
 	
 	
-	public static ushort ActorViewId
+	protected void DebugProcessInputs()
 	{
-		get { return (s_cInstance.m_usActorNetworkViewId); }
+		// Lock Cursor on/off
+		if(Input.GetKeyUp(KeyCode.F1))
+		{
+			Screen.lockCursor = !Screen.lockCursor;
+		}
 	}
 	
-
-	public static GameObject FindPlayerActor(ulong _ulPlayerId)
-	{
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
-	}
-
-
-	public static CGame Instance
-	{
-		get { return (s_cInstance); }
-	}
-
-
-    // protected:
-
 
 	protected void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
