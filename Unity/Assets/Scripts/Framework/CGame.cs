@@ -29,10 +29,31 @@ public class CGame : CNetworkMonoBehaviour
 	public const ushort kusServerPort = 30001;
 
 
-	public enum EPrefab : ushort
+	public enum EPrefab
 	{
 		PlayerActor,
-		HullPeiceSmall1
+		HullPeiceSmall1,
+	}
+	
+
+// Member Properties
+	
+	
+	public static CGame Instance
+	{
+		get { return (s_cInstance); }
+	}
+	
+	
+	public static GameObject Actor
+	{
+		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
+	}
+	
+	
+	public static ushort ActorViewId
+	{
+		get { return (s_cInstance.m_usActorNetworkViewId); }
 	}
 
 
@@ -62,11 +83,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
-		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player/Player Actor");
-		CNetwork.Factory.RegisterPrefab(EPrefab.HullPeiceSmall1, "Hull Pieces/HullPeice_Small_1");
+		CNetwork.Factory.RegisterPrefab((ushort)EPrefab.PlayerActor, "Player/Player Actor");
 
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(CActorMotor.SerializePlayerState, CActorMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
 
 
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -76,25 +96,16 @@ public class CGame : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			
-		}
+		DebugProcessInputs();
 	}
 
 
-	public static GameObject Ship
-	{
-		get { return (Instance.m_cShip); }
-	}
-
-
-	public void OnGUI()
-	{
-		// Host server
-		if (!CNetwork.Connection.IsConnected &&
-			!CNetwork.Server.IsActive)
-		{
+    public void OnGUI()
+    {
+        // Host server
+		if (!CNetwork.Connection.IsConnected && 
+            !CNetwork.Server.IsActive)
+        {
 			float fScreenCenterX = Screen.width / 2;
 			float fScreenCenterY = Screen.height / 2;
 
@@ -109,40 +120,28 @@ public class CGame : CNetworkMonoBehaviour
 			{
 				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, (uint)m_fNumSlots);
 			}
-		}
+        }
 
-		// Shutdown server
-		if (CNetwork.IsServer &&
-			GUI.Button(new Rect(140, 20, 130, 50), "Shutdown Server"))
-		{
-			CNetwork.Server.Shutdown();
-		}
+        // Shutdown server
+        if (CNetwork.IsServer &&
+            GUI.Button(new Rect(140, 20, 130, 50), "Shutdown Server"))
+        {
+            CNetwork.Server.Shutdown();
+        }
 
-		// Disconnection from server
-		if (CNetwork.Connection.IsConnected &&
-			GUI.Button(new Rect(20, 20, 100, 50), "Disconnect"))
-		{
-			CNetwork.Connection.Disconnect();
-		}
+        // Disconnection from server
+        if (CNetwork.Connection.IsConnected &&
+            GUI.Button(new Rect(20, 20, 100, 50), "Disconnect"))
+        {
+            CNetwork.Connection.Disconnect();
+        }
 
-		// Draw lan server list
+        // Draw lan server list
 		if (!CNetwork.Connection.IsConnected)
-		{
+        {
 			DrawLobbyGui();
-		}
-	}
-
-
-	public static GameObject Actor
-	{
-		get { return (CNetwork.Factory.FindObject(Instance.m_usActorNetworkViewId)); }
-	}
-	
-	
-	public static ushort ActorViewId
-	{
-		get { return (s_cInstance.m_usActorNetworkViewId); }
-	}
+        }
+    }
 	
 
 	public static GameObject FindPlayerActor(ulong _ulPlayerId)
@@ -151,14 +150,105 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	public static CGame Instance
-	{
-		get { return (s_cInstance); }
-	}
-
-
     // protected:
+	
+	protected void DrawLobbyGui()
+	{
+		float fViewWidth = 450;
+		float fViewHeight = 150;
+		float fPositionX = Screen.width / 2 - fViewWidth / 2;
+		float fPositionY = Screen.height / 2 + 50;
 
+		// Tab
+		m_iActiveTab = GUI.Toolbar(new Rect(fPositionX, fPositionY - 30, 250, 30), m_iActiveTab, m_saTabTitles);
+
+		// Set the active server list to draw
+		List<CNetworkScanner.TServer> aServerList = null;
+
+		// Set to online servers
+		if (m_iActiveTab == 0)
+		{
+			aServerList = CNetwork.Scanner.GetOnlineServers();
+
+			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Online Servers"))
+			{
+				CNetwork.Scanner.RefreshOnlineServers();
+			}
+		}
+
+		// Set to lan servers
+		else
+		{
+			aServerList = CNetwork.Scanner.GetLanServers();
+
+			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Lan Servers"))
+			{
+				CNetwork.Scanner.RefreshLanServers(kusServerPort);
+			}
+		}
+
+		// Background image
+		GUI.Box(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), "");
+
+		// Start scroll box
+		//GUI.BeginScrollView(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), Vector2.zero, new Rect(0, 0, fViewWidth - 20, fViewHeight + 1), false, true);
+		//GUILayout.BeginScrollView(new Vector2(fPositionX, fPositionY), GUILayout.Width(fViewWidth), GUILayout.Height(fViewHeight));
+		GUILayout.BeginArea(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight));
+		GUILayout.BeginVertical();
+		GUILayout.Space(14);
+		
+
+		foreach (CNetworkScanner.TServer tServer in aServerList)
+		{
+			GUILayout.Space(10);
+			GUILayout.BeginHorizontal();
+			GUILayout.Space(14);
+
+			// Title
+			GUILayout.Label(tServer.tServerInfo.sTitle);
+			GUILayout.Space(5);
+
+			// Slots
+			GUILayout.Label(tServer.tServerInfo.bNumAvaiableSlots + " / " + tServer.tServerInfo.bNumSlots);
+			GUILayout.Space(5);
+
+			// Latency
+			GUILayout.Label(tServer.uiLatency.ToString());
+			GUILayout.Space(5);
+
+			// Connect button
+			if ((CNetwork.IsServer &&
+				tServer.cGuid.g == CNetwork.Server.RakPeer.GetMyGUID().g ||
+				!CNetwork.IsServer) &&
+				GUILayout.Button("Connect"))
+			{
+				CNetwork.Connection.ConnectToServer(tServer.sIp, tServer.usPort, "");
+			}
+
+			GUILayout.Space(14);
+			GUILayout.EndHorizontal();
+		}
+
+
+
+		GUILayout.Space(14);
+		GUILayout.EndVertical();
+		GUILayout.EndArea();
+
+		// End scroll box
+	//GUILayout.EndScrollView(
+	}
+	
+	
+	protected void DebugProcessInputs()
+	{
+		// Lock Cursor on/off
+		if(Input.GetKeyUp(KeyCode.F1))
+		{
+			Screen.lockCursor = !Screen.lockCursor;
+		}
+	}
+	
 
 	protected void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
@@ -222,96 +312,7 @@ public class CGame : CNetworkMonoBehaviour
 		Logger.Write("My actor network view id is ({0})", m_usActorNetworkViewId);
 		
 		// Create the camera 
-		GameObject actorObject = CNetwork.Factory.FindObject(m_usActorNetworkViewId);
-		actorObject.AddComponent<CActorHead>();
-	}
-
-
-	void DrawLobbyGui()
-	{
-		float fViewWidth = 450;
-		float fViewHeight = 150;
-		float fPositionX = Screen.width / 2 - fViewWidth / 2;
-		float fPositionY = Screen.height / 2 + 50;
-
-		// Tab
-		m_iActiveTab = GUI.Toolbar(new Rect(fPositionX, fPositionY - 30, 250, 30), m_iActiveTab, m_saTabTitles);
-
-		// Set the active server list to draw
-		List<CNetworkScanner.TServer> aServerList = null;
-
-		// Set to online servers
-		if (m_iActiveTab == 0)
-		{
-			aServerList = CNetwork.Scanner.GetOnlineServers();
-
-			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Online Servers"))
-			{
-				CNetwork.Scanner.RefreshOnlineServers();
-			}
-		}
-
-		// Set to lan servers
-		else
-		{
-			aServerList = CNetwork.Scanner.GetLanServers();
-
-			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Lan Servers"))
-			{
-				CNetwork.Scanner.RefreshLanServers(kusServerPort);
-			}
-		}
-
-		// Background image
-		GUI.Box(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), "");
-
-		// Start scroll box
-		//GUI.BeginScrollView(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), Vector2.zero, new Rect(0, 0, fViewWidth - 20, fViewHeight + 1), false, true);
-		//GUILayout.BeginScrollView(new Vector2(fPositionX, fPositionY), GUILayout.Width(fViewWidth), GUILayout.Height(fViewHeight));
-		GUILayout.BeginArea(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight));
-		GUILayout.BeginVertical();
-		GUILayout.Space(14);
-
-
-		foreach (CNetworkScanner.TServer tServer in aServerList)
-		{
-			GUILayout.Space(10);
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(14);
-
-			// Title
-			GUILayout.Label(tServer.tServerInfo.sTitle);
-			GUILayout.Space(5);
-
-			// Slots
-			GUILayout.Label(tServer.tServerInfo.bNumAvaiableSlots + " / " + tServer.tServerInfo.bNumSlots);
-			GUILayout.Space(5);
-
-			// Latency
-			GUILayout.Label(tServer.uiLatency.ToString());
-			GUILayout.Space(5);
-
-			// Connect button
-			if ((CNetwork.IsServer &&
-				tServer.cGuid.g == CNetwork.Server.RakPeer.GetMyGUID().g ||
-				!CNetwork.IsServer) &&
-				GUILayout.Button("Connect"))
-			{
-				CNetwork.Connection.ConnectToServer(tServer.sIp, tServer.usPort, "");
-			}
-
-			GUILayout.Space(14);
-			GUILayout.EndHorizontal();
-		}
-
-
-
-		GUILayout.Space(14);
-		GUILayout.EndVertical();
-		GUILayout.EndArea();
-
-		// End scroll box
-		//GUILayout.EndScrollView(
+		Actor.GetComponent<ActorMotor>().CreatePlayerClientCamera();
 	}
 
 
@@ -327,9 +328,6 @@ public class CGame : CNetworkMonoBehaviour
 	string m_sServerTitle = "Default Title";
 	int m_iActiveTab = 1;
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
-
-
-	GameObject m_cShip;
 
 
 	ushort m_usActorNetworkViewId = 0;
