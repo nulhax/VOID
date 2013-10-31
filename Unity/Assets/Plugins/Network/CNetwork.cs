@@ -49,6 +49,9 @@ public class CNetwork : MonoBehaviour
 		gameObject.AddComponent<CNetworkFactory>();
 		gameObject.AddComponent<CNetworkServer>();
 		gameObject.AddComponent<CNetworkView>();
+
+
+		gameObject.GetComponent<CNetworkView>().ViewId = 1;
 	}
 
 
