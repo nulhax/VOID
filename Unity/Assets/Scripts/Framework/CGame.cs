@@ -62,7 +62,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
-		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player Actor");
+		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player/Player Actor");
 		CNetwork.Factory.RegisterPrefab(EPrefab.HullPeiceSmall1, "Hull Pieces/HullPeice_Small_1");
 
 		// Register serialization targets

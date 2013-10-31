@@ -123,7 +123,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				// Tell object to sync all their network vars with the player
 				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
             }
-
+			
 			// Sync parents for each transform
 			foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
 			{

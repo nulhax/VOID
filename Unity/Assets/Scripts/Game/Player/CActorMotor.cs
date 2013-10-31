@@ -99,7 +99,7 @@ public class CActorMotor : CNetworkMonoBehaviour
     }
 
 // Member Methods
-    public override void InitialiseNetworkVars()
+    public override void InstanceNetworkVars()
     {
 		m_cPositionX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_cPositionY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
