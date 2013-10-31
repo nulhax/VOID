@@ -219,19 +219,22 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 
 
-		// Testing 
-		cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
-
-
-		switch (_usNetworkViewId)
+		// Testing
+		if (_usPrefabId == 2)
 		{
-			case 500: cNewgameObject.renderer.material.color = Color.red; break;
-			case 501: cNewgameObject.renderer.material.color = Color.blue; break;
-			case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
-			case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
-			case 504: cNewgameObject.renderer.material.color = Color.green; break;
-			case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
-			case 506: cNewgameObject.renderer.material.color = Color.black; break;
+			cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
+
+
+			switch (_usNetworkViewId)
+			{
+				case 500: cNewgameObject.renderer.material.color = Color.red; break;
+				case 501: cNewgameObject.renderer.material.color = Color.blue; break;
+				case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
+				case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
+				case 504: cNewgameObject.renderer.material.color = Color.green; break;
+				case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
+				case 506: cNewgameObject.renderer.material.color = Color.black; break;
+			}
 		}
     }
 
