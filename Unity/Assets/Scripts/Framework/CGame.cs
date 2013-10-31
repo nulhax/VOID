@@ -32,6 +32,7 @@ public class CGame : CNetworkMonoBehaviour
 	public enum EPrefab
 	{
 		PlayerActor,
+		HullPeiceSmall1,
 	}
 	
 
@@ -61,7 +62,7 @@ public class CGame : CNetworkMonoBehaviour
     // public:
 
 
-	public override void InitialiseNetworkVars()
+	public override void InstanceNetworkVars()
 	{
 	}
 

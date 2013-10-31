@@ -23,7 +23,7 @@ using System;
 /* Implementation */
 
 
-public class CNetworkView : MonoBehaviour
+public class CNetworkView : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,7 +36,7 @@ public class CNetworkView : MonoBehaviour
     public enum EProdecure : byte
     {
         InvokeNetworkRpc,
-        SyncNetworkVar
+        SyncNetworkVar,
     }
 
 
@@ -50,6 +50,12 @@ public class CNetworkView : MonoBehaviour
 // Member Functions
     
     // public:
+
+
+	public override void InstanceNetworkVars()
+	{
+		// Empty
+	}
 
 
     public void Awake()
@@ -243,6 +249,27 @@ public class CNetworkView : MonoBehaviour
 
         Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1})", _ulPlayerId, this.ViewId);
     }
+
+
+	[ANetworkRpc]
+	public void SetTransformPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+	{
+		transform.position = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
+	}
+
+
+	[ANetworkRpc]
+	public void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	{
+		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+	}
+
+
+	[ANetworkRpc]
+	public void SetParent(ushort _usParentViewId)
+	{
+		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+	}
 
 
     public static ushort GenerateDynamicViewId()
@@ -450,7 +477,7 @@ public class CNetworkView : MonoBehaviour
         foreach (CNetworkMonoBehaviour cComponent in aComponents)
         {
             // Initialise the network vars within network component
-            cComponent.InitialiseNetworkVars();
+            cComponent.InstanceNetworkVars();
 
             // Extract fields from component
             FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
