@@ -97,9 +97,6 @@ public class CExpansionPortInterface : MonoBehaviour
 
 	public void Attach(int _portID, GameObject _objNewRoom)
 	{		
-		//Set this position to the position of the selected expansion port
-		_objNewRoom.transform.position = transform.position;	
-				
 		//Get all the attached expansion ports
 		Transform[] attachedObjects = _objNewRoom.GetComponentsInChildren<Transform>();			
 		foreach(Transform obj in attachedObjects)
@@ -112,9 +109,7 @@ public class CExpansionPortInterface : MonoBehaviour
 				
 				if(obj.name == "ExpansionPort")
 				{
-	                //Only add ports on the same level
-	                ExpansionPort portScript = obj.GetComponent<ExpansionPort>();
-	              	m_attachedPorts.Add(obj);               
+	                m_attachedPorts.Add(obj);               
 				}
 			}
 		}
@@ -149,7 +144,7 @@ public class CExpansionPortInterface : MonoBehaviour
         //The center of rotation should be the currently selected port of the new hull
 		CExpansionPortInterface newPort = (CExpansionPortInterface)m_attachedPorts[_portID].GetComponent("CExpansionPortInterface");
 		
-		//**Forward rotation**//
+		//Forward rotation//
 		
         //The normal of this new port should be the inverse of the normal attached to this port		
         Vector3 inverseNormal = transform.forward * -1;
@@ -226,6 +221,7 @@ public class CExpansionPortInterface : MonoBehaviour
 		
 		//Apply rotation
 		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);  
+		
 	}
 
 
