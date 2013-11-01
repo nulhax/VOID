@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Gravity: 9.81000042
   m_MovementSpeed: 4
   m_SprintSpeed: 7
-  m_JumpSpeed: 3
+  m_JumpSpeed: 4
   m_SensitivityX: 2
   m_SensitivityY: 2
   m_MinimumX: -360

@@ -24,53 +24,14 @@ public class ActorMotor : CNetworkMonoBehaviour
 {
 
 // Member Types
-	public class ActorInputStates
+	public enum InputStates : uint
 	{
-		public bool m_bMoveForward 	= false;
-	    public bool m_bMoveBackward = false;
-	    public bool m_bMoveLeft 	= false;
-	    public bool m_bMoveRight 	= false;
-		public bool m_bJump 		= false;
-		public bool m_bSprint 		= false;
-		public bool m_bRotateYaw 	= false;
-		
-		public ActorInputStates() {}
-		public ActorInputStates(ActorInputStates _other)
-		{
-			m_bMoveForward = _other.m_bMoveForward;
-			m_bMoveBackward = _other.m_bMoveBackward;
-			m_bMoveLeft = _other.m_bMoveLeft;
-			m_bMoveRight = _other.m_bMoveRight;
-			m_bJump = _other.m_bJump;
-			m_bSprint = _other.m_bSprint;
-			m_bRotateYaw = _other.m_bRotateYaw;
-		}
-		
-		public override bool Equals(object _other) 
-		{ 
-			return base.Equals(_other as ActorInputStates); 
-		}
-		
-		public bool Equals(ActorInputStates _other)
-		{
-			bool bReturn = true;
-			
-			if( this.m_bMoveForward != _other.m_bMoveForward ||
-				this.m_bMoveBackward != _other.m_bMoveBackward ||
-				this.m_bMoveLeft != _other.m_bMoveLeft ||
-				this.m_bMoveRight != _other.m_bMoveRight ||
-				this.m_bJump != _other.m_bJump ||
-				this.m_bSprint != _other.m_bSprint ||
-				this.m_bRotateYaw != _other.m_bRotateYaw)
-				bReturn = false;
-			
-			return bReturn;
-		}
-		
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
+		MoveForward 	= 1 << 0,
+		MoveBackward 	= 1 << 1,
+		MoveLeft 		= 1 << 2,
+		MoveRight 		= 1 << 3,
+		Jump 			= 1 << 4,
+		Sprint 			= 1 << 5,
 	}
 	
 // Member Fields
@@ -78,14 +39,15 @@ public class ActorMotor : CNetworkMonoBehaviour
     CNetworkVar<float> m_cPositionY    = null;
     CNetworkVar<float> m_cPositionZ    = null;
 	
-	CNetworkVar<float> m_cVelocityX    = null;
-    CNetworkVar<float> m_cVelocityY    = null;
-    CNetworkVar<float> m_cVelocityZ    = null;
-	
     CNetworkVar<float> m_cRotationX    = null;
     CNetworkVar<float> m_cRotationY    = null;
     CNetworkVar<float> m_cRotationZ    = null;
 	CNetworkVar<float> m_cRotationW    = null;
+	
+	CNetworkVar<float> m_cHeadRotationX    = null;
+    CNetworkVar<float> m_cHeadRotationY    = null;
+    CNetworkVar<float> m_cHeadRotationZ    = null;
+	CNetworkVar<float> m_cHeadRotationW    = null;
 	
 	
 	public float m_Gravity = 9.81f;
@@ -106,20 +68,14 @@ public class ActorMotor : CNetworkMonoBehaviour
 	public float m_RotationY = 0.0f;
 	
 	
-	GameObject m_Camera = null;
+	GameObject m_ActorHead = null;
 
 	
-	ActorInputStates m_PreviousActorState;
-    ActorInputStates m_CurrentActorState;
-	
-	
-	bool m_Jumped = false;
+    uint m_CurrentKeyboardInputState = 0;
+	Vector2 m_CurrentMouseInputState = Vector2.zero;
 	
 	
 	Vector3 m_Velocity = Vector3.zero;
-	
-	
-	static bool s_bStateChanged = false;
 
 
     static KeyCode m_eMoveForwardKey = KeyCode.W;
@@ -131,6 +87,8 @@ public class ActorMotor : CNetworkMonoBehaviour
 	
 	
 // Member Properties	
+	public GameObject ActorHead { get; set; }
+	
 	public Vector3 Position
     {
         set 
@@ -140,18 +98,6 @@ public class ActorMotor : CNetworkMonoBehaviour
         get 
 		{ 
 			return (new Vector3(m_cPositionX.Get(), m_cPositionY.Get(), m_cPositionZ.Get())); 
-		}
-    }
-				
-	public Vector3 Velocity
-    {
-        set 
-		{ 
-			m_cVelocityX.Set(value.x); m_cVelocityY.Set(value.y); m_cVelocityZ.Set(value.z); 
-		}
-        get 
-		{ 
-			return (new Vector3(m_cVelocityX.Get(), m_cVelocityY.Get(), m_cVelocityZ.Get())); 
 		}
     }
 	
@@ -166,6 +112,18 @@ public class ActorMotor : CNetworkMonoBehaviour
 			return (new Quaternion(m_cRotationX.Get(), m_cRotationY.Get(), m_cRotationZ.Get(), m_cRotationW.Get())); 
 		}
     }
+	
+	public Quaternion HeadRotation
+    {
+        set 
+		{ 
+			m_cHeadRotationX.Set(value.x); m_cHeadRotationY.Set(value.y); m_cHeadRotationZ.Set(value.z); m_cHeadRotationW.Set(value.w);
+		}
+        get 
+		{ 
+			return (new Quaternion(m_cHeadRotationX.Get(), m_cHeadRotationY.Get(), m_cHeadRotationZ.Get(), m_cHeadRotationW.Get())); 
+		}
+    }
 
 // Member Methods
     public override void InstanceNetworkVars()
@@ -174,26 +132,24 @@ public class ActorMotor : CNetworkMonoBehaviour
 		m_cPositionY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_cPositionZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
-		m_cVelocityX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cVelocityY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cVelocityZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		
         m_cRotationX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_cRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_cRotationZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_cRotationW = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		
+		m_cHeadRotationX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_cHeadRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_cHeadRotationZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_cHeadRotationW = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
 
-    public void Start()
-	{
-		if (gameObject != CGame.Actor)
-		{
-			//gameObject.GetComponent<Rigidbody>().isKinematic = true;
-		}
-		
-		m_CurrentActorState = new ActorInputStates();
-		m_PreviousActorState = new ActorInputStates();
+    public void Awake()
+	{	
+		// Create the actor head object
+		m_ActorHead = new GameObject(name + "_Head");
+        m_ActorHead.transform.parent = transform;
+        m_ActorHead.transform.localPosition = Vector3.zero;
 	}
 
 
@@ -207,12 +163,18 @@ public class ActorMotor : CNetworkMonoBehaviour
         if (gameObject == CGame.Actor)
         {
 			UpdatePlayerInput();
-			ProcessSelfMovement();
-			ProcessSelfRotations();
         }
-		else
+		
+		if(CNetwork.IsServer)
 		{
-			ProcessOthersMovement();
+			// Process the actor movements and rotations
+			ProcessMovement();
+			ProcessRotations();
+			
+			// Syncronize the movement and rotation variables for all clients
+			Position = transform.position;
+			Rotation = transform.rotation;
+			HeadRotation = m_ActorHead.transform.rotation;
 		}
     }
 	
@@ -222,10 +184,13 @@ public class ActorMotor : CNetworkMonoBehaviour
 		// Disable the current camera
         Camera.main.enabled = false;
 		
-		// Create te camera object for the camera
-		m_Camera = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Camera", typeof(GameObject))) as GameObject;
-        m_Camera.transform.parent = transform;
-        m_Camera.transform.localPosition = Vector3.zero;
+		// Destory the current head
+		Destroy(m_ActorHead);
+		
+		// Create the camera object for the camera
+		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Camera", typeof(GameObject))) as GameObject;
+        m_ActorHead.transform.parent = transform;
+        m_ActorHead.transform.localPosition = Vector3.zero;
     }
 
     public void OnNetworkVarSync(INetworkVar _rSender)
@@ -233,22 +198,19 @@ public class ActorMotor : CNetworkMonoBehaviour
 		// Position
         if (_rSender == m_cPositionX || _rSender == m_cPositionY || _rSender == m_cPositionZ)
 		{
-			if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
-				transform.position = Position;
+			transform.position = Position;
 		}
-		
-		// Velocity
-        else if (_rSender == m_cVelocityX || _rSender == m_cVelocityY || _rSender == m_cVelocityZ)
-        {	
-			if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
-            	m_Velocity = Velocity;
-        }
 		
 		// Rotation
         else if (_rSender == m_cRotationX || _rSender == m_cRotationY || _rSender == m_cRotationZ || _rSender == m_cRotationW)
         {	
-			if(gameObject.GetComponent<CNetworkView>().ViewId != CGame.ActorViewId)
-            	transform.rotation = Rotation;
+            transform.rotation = Rotation;
+        }
+		
+		// Head Rotation
+        else if (_rSender == m_cHeadRotationX || _rSender == m_cHeadRotationY || _rSender == m_cHeadRotationZ || _rSender == m_cHeadRotationW)
+        {	
+            m_ActorHead.transform.rotation = HeadRotation;
         }
 
     }
@@ -256,22 +218,13 @@ public class ActorMotor : CNetworkMonoBehaviour
 
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
-		if(s_bStateChanged)
-		{	
-			CharacterController charController = CGame.Actor.GetComponent<CharacterController>();
+		if(CGame.ActorViewId != 0)
+		{
+			ActorMotor cActorMotor = CGame.Actor.GetComponent<ActorMotor>();
 			
-			_cStream.Write(CGame.Actor.transform.position.x);
-			_cStream.Write(CGame.Actor.transform.position.y);
-			_cStream.Write(CGame.Actor.transform.position.z);
-			
-	        _cStream.Write(charController.velocity.x);
-			_cStream.Write(charController.velocity.y);
-			_cStream.Write(charController.velocity.z);
-			
-			_cStream.Write(CGame.Actor.transform.rotation.x);
-			_cStream.Write(CGame.Actor.transform.rotation.y);
-			_cStream.Write(CGame.Actor.transform.rotation.z);
-			_cStream.Write(CGame.Actor.transform.rotation.w);
+			_cStream.Write(cActorMotor.m_CurrentKeyboardInputState);
+			_cStream.Write(cActorMotor.m_CurrentMouseInputState.x);
+			_cStream.Write(cActorMotor.m_CurrentMouseInputState.y);
 		}
     }
 
@@ -282,123 +235,73 @@ public class ActorMotor : CNetworkMonoBehaviour
         {
 			ActorMotor cActorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<ActorMotor>();
 
-            float x = _cStream.ReadFloat();
+            cActorMotor.m_CurrentKeyboardInputState = _cStream.ReadUInt();
+			
+			float x = _cStream.ReadFloat();
 			float y = _cStream.ReadFloat();
-			float z = _cStream.ReadFloat();
 			
-			cActorMotor.Position = new Vector3(x, y, z);
-			
-			x = _cStream.ReadFloat();
-			y = _cStream.ReadFloat();
-			z = _cStream.ReadFloat();
-			
-			cActorMotor.Velocity = new Vector3(x, y, z);
-			
-			x = _cStream.ReadFloat();
-			y = _cStream.ReadFloat();
-			z = _cStream.ReadFloat();
-			float w = _cStream.ReadFloat();
-			
-			cActorMotor.Rotation = new Quaternion(x, y, z, w);
+			cActorMotor.m_CurrentMouseInputState = new Vector2(x, y);
         }
     }
 	
 	
     protected void UpdatePlayerInput()
 	{
+		// Reset the input states
+		m_CurrentKeyboardInputState = 0;
+		m_CurrentMouseInputState = Vector2.zero;
+		
 		// Move forwards
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKey(m_eMoveForwardKey))
         {
-           m_CurrentActorState.m_bMoveForward = true;
-        }
-        
-        // Stop moving forwards
-        else if (Input.GetKeyUp(m_eMoveForwardKey))
-        {
-            m_CurrentActorState.m_bMoveForward = false;
+			m_CurrentKeyboardInputState |= (uint)InputStates.MoveForward;
         }
 
         // Move backwards
-        if (Input.GetKeyDown(m_eMoveBackwardsKey))
+        if (Input.GetKey(m_eMoveBackwardsKey))
         {
-            m_CurrentActorState.m_bMoveBackward = true;
-        }
-
-        // Stop moving backwards
-        else if (Input.GetKeyUp(m_eMoveBackwardsKey))
-        {
-            m_CurrentActorState.m_bMoveBackward = false;
+			m_CurrentKeyboardInputState |= (uint)InputStates.MoveBackward;
         }
 
         // Move left
-        if ( Input.GetKeyDown(m_eMoveLeftKey))
+        if ( Input.GetKey(m_eMoveLeftKey))
         {
-            m_CurrentActorState.m_bMoveLeft = true;
-        }
-
-        // Stop moving left
-        else if (Input.GetKeyUp(m_eMoveLeftKey))
-        {
-            m_CurrentActorState.m_bMoveLeft = false;
+            m_CurrentKeyboardInputState |= (uint)InputStates.MoveLeft;
         }
 
         // Move right
-        if (Input.GetKeyDown(m_eMoveRightKey))
+        if (Input.GetKey(m_eMoveRightKey))
         {
-            m_CurrentActorState.m_bMoveRight = true;
-        }
-
-        // Stop moving right
-        else if (Input.GetKeyUp(m_eMoveRightKey))
-        {
-            m_CurrentActorState.m_bMoveRight = false;
+             m_CurrentKeyboardInputState |= (uint)InputStates.MoveRight;
         }
 		
-		// Rotate
-		if (Input.GetAxis("Mouse X") != 0.0f)
-        {
-            m_CurrentActorState.m_bRotateYaw = true;
-        }
-		else
-		{
-			 m_CurrentActorState.m_bRotateYaw = false;
-		}
-
 		// Jump
-		if(Input.GetKeyDown(m_eJumpKey))
+		if(Input.GetKey(m_eJumpKey))
 		{
-			m_CurrentActorState.m_bJump = true;
-		}
-		else if(Input.GetKeyUp(m_eJumpKey))
-		{
-			m_CurrentActorState.m_bJump = false;
+			m_CurrentKeyboardInputState |= (uint)InputStates.Jump;
 		}
 		
 		// Sprint
-		if (Input.GetKeyDown(m_eSprintKey))
+		if (Input.GetKey(m_eSprintKey))
 		{
-			m_CurrentActorState.m_bSprint = true;
-		}
-		else if(Input.GetKeyUp(m_eSprintKey))
-		{
-			m_CurrentActorState.m_bSprint = false;
+			m_CurrentKeyboardInputState |= (uint)InputStates.Sprint;
 		}
 		
-		// If any of the above are true, the state will change
-		if(!m_CurrentActorState.Equals(m_PreviousActorState))
-		{
- 			s_bStateChanged = true;
-		}
-		else
-		{
-			s_bStateChanged = false;
-		}
+		// Rotate around Y
+		if (Input.GetAxis("Mouse X") != 0.0f)
+        {
+            m_CurrentMouseInputState.x = Input.GetAxis("Mouse X");
+        }
 		
-		m_PreviousActorState = new ActorInputStates(m_CurrentActorState);
+		// Rotate around X
+		if (Input.GetAxis("Mouse Y") != 0.0f)
+        {
+            m_CurrentMouseInputState.y = Input.GetAxis("Mouse Y");
+        }
 	}
 	
 	
-	protected void ProcessSelfMovement()
+	protected void ProcessMovement()
     {
 		CharacterController charController = GetComponent<CharacterController>();
 		
@@ -407,59 +310,62 @@ public class ActorMotor : CNetworkMonoBehaviour
 		{
 			Vector3 vDirForward = transform.TransformDirection(Vector3.forward);
 			Vector3 vDirLeft = transform.TransformDirection(Vector3.left);
-			float moveSpeed = m_CurrentActorState.m_bSprint ? m_SprintSpeed : m_MovementSpeed;
+			float moveSpeed = m_MovementSpeed;
 			m_Velocity = new Vector3(0.0f, m_Velocity.y, 0.0f);
 			
-			// We jumped, we landed, our state has changed
-			if(m_Jumped)
+			// Sprinting
+			if((m_CurrentKeyboardInputState & (uint)InputStates.Sprint) != 0)
 			{
-				s_bStateChanged = true;
-				m_Jumped = false;
+				moveSpeed = m_SprintSpeed;
 			}
 			
 			// Moving 
-	        if (m_CurrentActorState.m_bMoveForward &&
-	            !m_CurrentActorState.m_bMoveBackward)
+	        if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveForward) != 0 &&
+	            (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveBackward) != 0)
 	        {
 	            m_Velocity += vDirForward * moveSpeed;
 	        }
-	        else if (m_CurrentActorState.m_bMoveBackward &&
-	                 !m_CurrentActorState.m_bMoveForward)
+	        else if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveBackward) != 0 &&
+	            	 (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveForward) != 0)
 	        {
 	            m_Velocity -= vDirForward * moveSpeed;
 	        }
 			
 			// Strafing
-	        if (m_CurrentActorState.m_bMoveLeft &&
-	            !m_CurrentActorState.m_bMoveRight)
+	        if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveLeft) != 0 &&
+	            (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveRight) != 0)
 	        {
 	            m_Velocity += vDirLeft * moveSpeed;
 	        }
-	        else if (m_CurrentActorState.m_bMoveRight &&
-	                !m_CurrentActorState.m_bMoveLeft)
+	        else if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveRight) != 0 &&
+	            	 (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveLeft) != 0)
 	        {
 	            m_Velocity -= vDirLeft * moveSpeed;
 	        }
 			
 			// Jumping
-			if(m_CurrentActorState.m_bJump)
+			if((m_CurrentKeyboardInputState & (uint)InputStates.Jump) != 0)
 			{
 				m_Velocity.y = m_JumpSpeed;
-				m_Jumped = true;
 			}
 		}
+		else
+		{
+			// Apply the gravity
+			m_Velocity.y += -m_Gravity * Time.deltaTime;
+		}
 		
-		m_Velocity.y += -m_Gravity * Time.deltaTime;
+		// Apply the movement
 		charController.Move(m_Velocity * Time.deltaTime);
 	}
 	
 	
-	protected void ProcessSelfRotations()
+	protected void ProcessRotations()
 	{
 		// Yaw rotation
-		if(m_CurrentActorState.m_bRotateYaw)
+		if(m_CurrentMouseInputState.x != 0.0f)
 		{
-			m_RotationX += Input.GetAxis("Mouse X") * m_SensitivityX;
+			m_RotationX += m_CurrentMouseInputState.x * m_SensitivityX;
 			
 			if(m_RotationX > 360.0f)
 				m_RotationX -= 360.0f;
@@ -470,22 +376,16 @@ public class ActorMotor : CNetworkMonoBehaviour
 		}
 		
 		// Pitch rotation
-		m_RotationY += Input.GetAxis("Mouse Y") * m_SensitivityY;
-		m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
-		
-		// Apply the yaw to the camera
-		m_Camera.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
+		if(m_CurrentMouseInputState.y != 0.0f)
+		{
+			m_RotationY += m_CurrentMouseInputState.y * m_SensitivityY;
+			m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
+		}
 		
 		// Apply the pitch to the actor
 		transform.eulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
+		
+		// Apply the yaw to the camera
+		m_ActorHead.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
 	}
-	
-	
-	protected void ProcessOthersMovement()
-    {
-		CharacterController charController = GetComponent<CharacterController>();
-
-		m_Velocity.y += -m_Gravity * Time.deltaTime;
-		charController.Move(m_Velocity * Time.deltaTime);
-    }
 };
