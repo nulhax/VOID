@@ -75,7 +75,13 @@ public class CExpansionPortInterface : MonoBehaviour
 		{		
 			if(hit.collider.gameObject == gameObject)
 			{
-				renderer.material.color = Color.red;				
+				renderer.material.color = Color.red;	
+				
+				/*if(Input.GetMouseButtonDown(0))
+				{
+					AttachedHull = Resources.Load("Prefabs/Rooms/RoomFactory");
+					Attach(0, AttachedHull);
+				}*/
 			}			
 			else
 			{
@@ -95,28 +101,20 @@ public class CExpansionPortInterface : MonoBehaviour
 	}
 
 
-	public void Attach(int _portID, GameObject _objNewRoom)
+	public void Attach(uint _portID, GameObject _objNewRoom)
 	{		
 		//Get all the attached expansion ports
 		Transform[] attachedObjects = _objNewRoom.GetComponentsInChildren<Transform>();			
 		foreach(Transform obj in attachedObjects)
 		{
-			if(obj.renderer != null)
+			if(obj.name == "ExpansionPort")
 			{
-				Color hullColour = obj.renderer.material.color;
-				hullColour.a *= 0.25f;
-				obj.renderer.material.color = hullColour;
-				
-				if(obj.name == "ExpansionPort")
-				{
-	                m_attachedPorts.Add(obj);               
-				}
-			}
+                m_attachedPorts.Add(obj);               
+			}			
 		}
 	
 		//Line up this expansion port with the new expansion port
-		Orient(_portID, _objNewRoom);
-		m_iCurrentPort = _portID;
+		Orient((int)_portID, _objNewRoom);		
 	}
 
 
@@ -260,7 +258,6 @@ public class CExpansionPortInterface : MonoBehaviour
 	bool Intersection = false;
 	
 	static bool canBuild = true;
-	private int m_iCurrentPort = 0;
 	List<Transform> m_attachedPorts = new List<Transform>();
 	
 };

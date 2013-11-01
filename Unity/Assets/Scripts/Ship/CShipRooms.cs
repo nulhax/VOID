@@ -57,7 +57,11 @@ public class CShipRooms : MonoBehaviour
 				{
 					uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
 					uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
-					CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);               
+					CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);  
+					
+					//Test stuff
+					//GameObject AttachedHull = (GameObject)Instantiate (Resources.Load("Prefabs/Rooms/RoomFactory"));
+					//hit.collider.gameObject.GetComponent<CExpansionPortInterface>().Attach(PortId, AttachedHull);
 				}
 			}			
 		}    
@@ -75,28 +79,28 @@ public class CShipRooms : MonoBehaviour
 	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
 	{
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
-		GameObject cRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 		
 		
 		if (_uiRoomId == 0)
 		{
-			cRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
 		}
 		else
 		{
 			//Attach the new room to the expansion port selected
-			cRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);	
-			GameObject cExpansionPort =  cRoomObject.GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
-			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cRoomObject);
+			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);	
+			GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
+			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);
 		}
 		
 		
 		uint uiRoomId = ++m_uiRoomIdCount;
-		m_mRooms.Add(uiRoomId, cRoomObject);
+		m_mRooms.Add(uiRoomId, cNewRoomObject);
 		
-		cRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;		
+		cNewRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;		
 
-		return (cRoomObject);
+		return (cNewRoomObject);
 	}
 
 
