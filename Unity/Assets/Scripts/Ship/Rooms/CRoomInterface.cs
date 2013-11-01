@@ -29,6 +29,7 @@ public class CRoomInterface : MonoBehaviour
 	public enum ERoomType : short
 	{
 		INVALID,
+		Bridge,
 		Factory,
 		LifeSupportDome,
 		GravityGenerator,
@@ -40,6 +41,23 @@ public class CRoomInterface : MonoBehaviour
 
 
 // Member Properties
+	
+	
+	public uint RoomId 
+	{
+		get{return(m_uiRoomID);}			
+		set
+		{
+			if(m_uiRoomID == 0)
+			{
+				m_uiRoomID = value;
+			}
+			else
+			{
+				Debug.LogError("Cannot set ID value twice");
+			}			
+		}			
+	}
 
 
 // Member Functions
@@ -59,7 +77,7 @@ public class CRoomInterface : MonoBehaviour
 
 	public void Update()
 	{
-		// Empty
+		//Update
 	}
 
 
@@ -86,19 +104,33 @@ public class CRoomInterface : MonoBehaviour
 
 	public GameObject GetExpansionPort(uint _uiExpansionPortId)
 	{
-		return (m_aGameObjects[(int)_uiExpansionPortId]);
+		return (m_aExpansionPorts[(int)_uiExpansionPortId]);
 	}
 
 
 	public List<GameObject> ExpansionPorts
 	{
-		get { return (m_aGameObjects); } 
+		get { return (m_aExpansionPorts); } 
 	}
 
 
 	public uint ExpansionPortsCount
 	{
-		get { return ((uint)m_aGameObjects.Count); }
+		get { return ((uint)m_aExpansionPorts.Count); }
+	}
+	
+	
+	public static CGame.ENetworkRegisteredPrefab GetRoomPrefab(ERoomType _eRoomType)
+	{
+		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.INVALID;
+		
+		switch (_eRoomType)
+		{
+		case ERoomType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomBridge; break;
+		case ERoomType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomFactory; break;
+		}
+		
+		return (eRegisteredPrefab);
 	}
 
 
@@ -108,7 +140,8 @@ public class CRoomInterface : MonoBehaviour
 		{
 			if (transform.GetChild(i).name == CExpansionPortInterface.ksGameObjectName)
 			{
-				m_aGameObjects.Add(transform.GetChild(i).gameObject);
+				transform.GetChild(i).gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId = (uint)i;
+				m_aExpansionPorts.Add(transform.GetChild(i).gameObject);
 			}
 		}
 	}
@@ -118,9 +151,8 @@ public class CRoomInterface : MonoBehaviour
 
 
 	ERoomType m_eType = ERoomType.INVALID;
-
-
-	List<GameObject> m_aGameObjects = new List<GameObject>();
+	uint m_uiRoomID = 0;
+	List<GameObject> m_aExpansionPorts = new List<GameObject>();
 
 
 };

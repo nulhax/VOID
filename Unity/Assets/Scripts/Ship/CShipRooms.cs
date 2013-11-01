@@ -47,6 +47,20 @@ public class CShipRooms : MonoBehaviour
 
 	public void Update()
 	{
+		RaycastHit hit;
+	 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		if (Physics.Raycast (ray, out hit, 1000))
+		{		
+			if(hit.collider.gameObject.name == "ExpansionPort")
+			{
+				if(Input.GetMouseButtonDown(0))
+				{
+					uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
+					uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
+					CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);               
+				}
+			}			
+		}    
 	}
 
 
@@ -60,31 +74,43 @@ public class CShipRooms : MonoBehaviour
 
 	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
 	{
-		GameObject cRoomGameObject = CNetwork.Factory.CreateObject(CGame.EPrefab.RoomFactory);
-		cRoomGameObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", 10.0f, 0.0f, 0.0f);
+		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
+		GameObject cRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+		
+		
+		if (_uiRoomId == 0)
+		{
+			cRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+		}
+		else
+		{
+			//Attach the new room to the expansion port selected
+			cRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);	
+			GameObject cExpansionPort =  cRoomObject.GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
+			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cRoomObject);
+		}
+		
+		
+		uint uiRoomId = ++m_uiRoomIdCount;
+		m_mRooms.Add(uiRoomId, cRoomObject);
+		
+		cRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;		
 
-
-		uint uiPieceId = ++m_uiRoomIdCount;
-		m_mRooms.Add(m_uiRoomIdCount, cRoomGameObject);
-
-
-		return (cRoomGameObject);
+		return (cRoomObject);
 	}
 
 
-	public GameObject FindHullPeice(uint _uiId)
+	public GameObject GetRoom(uint _uiRoomId)
 	{
-		return (m_mRooms[_uiId]);
-	}
+		return (m_mRooms[_uiRoomId]);
+	}	
 
 
 // Member Fields
 
 
 	uint m_uiRoomIdCount;
-
-
+	
 	Dictionary<uint, GameObject> m_mRooms = new Dictionary<uint, GameObject>();
-
-
+	
 };

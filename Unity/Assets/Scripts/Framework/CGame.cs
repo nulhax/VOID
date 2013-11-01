@@ -29,12 +29,13 @@ public class CGame : CNetworkMonoBehaviour
 	public const ushort kusServerPort = 30001;
 
 
-	public enum EPrefab : ushort
+	public enum ENetworkRegisteredPrefab : ushort
 	{
 		INVALID,
 		Ship,
-		PlayerActor,
+		RoomBridge,
 		RoomFactory,
+		PlayerActor,
 	}
 
 
@@ -100,10 +101,11 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
-		CNetwork.Factory.RegisterPrefab(EPrefab.Ship, "Ship");
-		CNetwork.Factory.RegisterPrefab(EPrefab.PlayerActor, "Player/Player Actor");
-		CNetwork.Factory.RegisterPrefab(EPrefab.RoomFactory, "Rooms/Room Factory");
-
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Rooms/RoomBridge");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Rooms/RoomFactory");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
+		
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
 
@@ -269,7 +271,7 @@ public class CGame : CNetworkMonoBehaviour
 
 		if (Input.GetKeyDown(KeyCode.P))
 		{
-
+			//Ship.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Factory, )
 		}
 
 		// Quick quit game
@@ -290,7 +292,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.SyncPlayer(_cPlayer);
 		
 		// Create new player's actor
-		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)EPrefab.PlayerActor);
+		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
 
 		// Get actor network view id
 		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
@@ -326,10 +328,12 @@ public class CGame : CNetworkMonoBehaviour
 	void OnServerStartup()
 	{
 		// Create ship object
-		GameObject cShipObject = CNetwork.Factory.CreateObject(EPrefab.Ship);
+		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
 		// Save view id
 		m_usShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
+		
+		cShipObject.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Bridge, 0, 0);
 	}
 
 
