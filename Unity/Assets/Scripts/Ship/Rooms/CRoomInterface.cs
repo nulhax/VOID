@@ -136,11 +136,12 @@ public class CRoomInterface : MonoBehaviour
 
 	private void SearchExpansionPorts()
 	{
+		int iCount = 0;
 		for (int i = 0; i < transform.childCount; ++i)
 		{
 			if (transform.GetChild(i).name == CExpansionPortInterface.ksGameObjectName)
 			{
-				transform.GetChild(i).gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId = (uint)i;
+				transform.GetChild(i).gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId = (uint)iCount++;
 				m_aExpansionPorts.Add(transform.GetChild(i).gameObject);
 			}
 		}

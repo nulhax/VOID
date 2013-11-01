@@ -35,6 +35,7 @@ public class CGame : CNetworkMonoBehaviour
 		Ship,
 		RoomBridge,
 		RoomFactory,
+		Door,
 		PlayerActor,
 	}
 
@@ -54,6 +55,22 @@ public class CGame : CNetworkMonoBehaviour
 	public static GameObject Actor
 	{
 		get { return (CNetwork.Factory.FindObject(Instance.m_usActorViewId)); }
+	}
+	
+	
+	public static List<GameObject> Actors
+	{
+		get 
+		{ 
+			List<GameObject> actors = new List<GameObject>();
+				
+			foreach(ushort playerID in s_cInstance.m_mPlayersActor.Values)
+			{
+				actors.Add(CNetwork.Factory.FindObject(playerID));
+			}
+			
+			return (actors); 
+		}
 	}
 	
 	
@@ -104,6 +121,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Rooms/RoomBridge");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Rooms/RoomFactory");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Rooms/Doors/Door");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
 		
 		// Register serialization targets

@@ -32,6 +32,7 @@ public class ActorMotor : CNetworkMonoBehaviour
 		MoveRight 		= 1 << 3,
 		Jump 			= 1 << 4,
 		Sprint 			= 1 << 5,
+		Action			= 1 << 6
 	}
 	
 // Member Fields
@@ -71,8 +72,11 @@ public class ActorMotor : CNetworkMonoBehaviour
 	GameObject m_ActorHead = null;
 
 	
-    uint m_CurrentKeyboardInputState = 0;
-	Vector2 m_CurrentMouseInputState = Vector2.zero;
+	uint m_PreviousInputState = 0;
+    uint m_CurrentInputState = 0;
+	
+	
+	Vector2 m_CurrentMouseXYState = Vector2.zero;
 	
 	
 	Vector3 m_Velocity = Vector3.zero;
@@ -87,7 +91,11 @@ public class ActorMotor : CNetworkMonoBehaviour
 	
 	
 // Member Properties	
-	public GameObject ActorHead { get; set; }
+	public GameObject ActorHead { get{ return(m_ActorHead); } }
+	
+	public uint PreviousInputState { get{ return(m_PreviousInputState); } }
+	
+	public uint CurrentInputState { get{ return(m_CurrentInputState); } }
 	
 	public Vector3 Position
     {
@@ -222,9 +230,9 @@ public class ActorMotor : CNetworkMonoBehaviour
 		{
 			ActorMotor cActorMotor = CGame.Actor.GetComponent<ActorMotor>();
 			
-			_cStream.Write(cActorMotor.m_CurrentKeyboardInputState);
-			_cStream.Write(cActorMotor.m_CurrentMouseInputState.x);
-			_cStream.Write(cActorMotor.m_CurrentMouseInputState.y);
+			_cStream.Write(cActorMotor.m_CurrentInputState);
+			_cStream.Write(cActorMotor.m_CurrentMouseXYState.x);
+			_cStream.Write(cActorMotor.m_CurrentMouseXYState.y);
 		}
     }
 
@@ -235,12 +243,12 @@ public class ActorMotor : CNetworkMonoBehaviour
         {
 			ActorMotor cActorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<ActorMotor>();
 
-            cActorMotor.m_CurrentKeyboardInputState = _cStream.ReadUInt();
+            cActorMotor.m_CurrentInputState = _cStream.ReadUInt();
 			
 			float x = _cStream.ReadFloat();
 			float y = _cStream.ReadFloat();
 			
-			cActorMotor.m_CurrentMouseInputState = new Vector2(x, y);
+			cActorMotor.m_CurrentMouseXYState = new Vector2(x, y);
         }
     }
 	
@@ -248,55 +256,62 @@ public class ActorMotor : CNetworkMonoBehaviour
     protected void UpdatePlayerInput()
 	{
 		// Reset the input states
-		m_CurrentKeyboardInputState = 0;
-		m_CurrentMouseInputState = Vector2.zero;
+		m_PreviousInputState = m_CurrentInputState;
+		m_CurrentInputState = 0;
+		m_CurrentMouseXYState = Vector2.zero;
 		
 		// Move forwards
         if (Input.GetKey(m_eMoveForwardKey))
         {
-			m_CurrentKeyboardInputState |= (uint)InputStates.MoveForward;
+			m_CurrentInputState |= (uint)InputStates.MoveForward;
         }
 
         // Move backwards
         if (Input.GetKey(m_eMoveBackwardsKey))
         {
-			m_CurrentKeyboardInputState |= (uint)InputStates.MoveBackward;
+			m_CurrentInputState |= (uint)InputStates.MoveBackward;
         }
 
         // Move left
         if ( Input.GetKey(m_eMoveLeftKey))
         {
-            m_CurrentKeyboardInputState |= (uint)InputStates.MoveLeft;
+            m_CurrentInputState |= (uint)InputStates.MoveLeft;
         }
 
         // Move right
         if (Input.GetKey(m_eMoveRightKey))
         {
-             m_CurrentKeyboardInputState |= (uint)InputStates.MoveRight;
+             m_CurrentInputState |= (uint)InputStates.MoveRight;
         }
 		
 		// Jump
 		if(Input.GetKey(m_eJumpKey))
 		{
-			m_CurrentKeyboardInputState |= (uint)InputStates.Jump;
+			m_CurrentInputState |= (uint)InputStates.Jump;
 		}
 		
 		// Sprint
 		if (Input.GetKey(m_eSprintKey))
 		{
-			m_CurrentKeyboardInputState |= (uint)InputStates.Sprint;
+			m_CurrentInputState |= (uint)InputStates.Sprint;
+		}
+		
+		// Action
+		if (Input.GetMouseButton(0))
+		{
+			m_CurrentInputState |= (uint)InputStates.Action;
 		}
 		
 		// Rotate around Y
 		if (Input.GetAxis("Mouse X") != 0.0f)
         {
-            m_CurrentMouseInputState.x = Input.GetAxis("Mouse X");
+            m_CurrentMouseXYState.x = Input.GetAxis("Mouse X");
         }
 		
 		// Rotate around X
 		if (Input.GetAxis("Mouse Y") != 0.0f)
         {
-            m_CurrentMouseInputState.y = Input.GetAxis("Mouse Y");
+            m_CurrentMouseXYState.y = Input.GetAxis("Mouse Y");
         }
 	}
 	
@@ -314,37 +329,37 @@ public class ActorMotor : CNetworkMonoBehaviour
 			m_Velocity = new Vector3(0.0f, m_Velocity.y, 0.0f);
 			
 			// Sprinting
-			if((m_CurrentKeyboardInputState & (uint)InputStates.Sprint) != 0)
+			if((m_CurrentInputState & (uint)InputStates.Sprint) != 0)
 			{
 				moveSpeed = m_SprintSpeed;
 			}
 			
 			// Moving 
-	        if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveForward) != 0 &&
-	            (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveBackward) != 0)
+	        if ((m_CurrentInputState & (uint)InputStates.MoveForward) != 0 &&
+	            (m_CurrentInputState & ~(uint)InputStates.MoveBackward) != 0)
 	        {
 	            m_Velocity += vDirForward * moveSpeed;
 	        }
-	        else if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveBackward) != 0 &&
-	            	 (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveForward) != 0)
+	        else if ((m_CurrentInputState & (uint)InputStates.MoveBackward) != 0 &&
+	            	 (m_CurrentInputState & ~(uint)InputStates.MoveForward) != 0)
 	        {
 	            m_Velocity -= vDirForward * moveSpeed;
 	        }
 			
 			// Strafing
-	        if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveLeft) != 0 &&
-	            (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveRight) != 0)
+	        if ((m_CurrentInputState & (uint)InputStates.MoveLeft) != 0 &&
+	            (m_CurrentInputState & ~(uint)InputStates.MoveRight) != 0)
 	        {
 	            m_Velocity += vDirLeft * moveSpeed;
 	        }
-	        else if ((m_CurrentKeyboardInputState & (uint)InputStates.MoveRight) != 0 &&
-	            	 (m_CurrentKeyboardInputState & ~(uint)InputStates.MoveLeft) != 0)
+	        else if ((m_CurrentInputState & (uint)InputStates.MoveRight) != 0 &&
+	            	 (m_CurrentInputState & ~(uint)InputStates.MoveLeft) != 0)
 	        {
 	            m_Velocity -= vDirLeft * moveSpeed;
 	        }
 			
 			// Jumping
-			if((m_CurrentKeyboardInputState & (uint)InputStates.Jump) != 0)
+			if((m_CurrentInputState & (uint)InputStates.Jump) != 0)
 			{
 				m_Velocity.y = m_JumpSpeed;
 			}
@@ -363,9 +378,9 @@ public class ActorMotor : CNetworkMonoBehaviour
 	protected void ProcessRotations()
 	{
 		// Yaw rotation
-		if(m_CurrentMouseInputState.x != 0.0f)
+		if(m_CurrentMouseXYState.x != 0.0f)
 		{
-			m_RotationX += m_CurrentMouseInputState.x * m_SensitivityX;
+			m_RotationX += m_CurrentMouseXYState.x * m_SensitivityX;
 			
 			if(m_RotationX > 360.0f)
 				m_RotationX -= 360.0f;
@@ -376,9 +391,9 @@ public class ActorMotor : CNetworkMonoBehaviour
 		}
 		
 		// Pitch rotation
-		if(m_CurrentMouseInputState.y != 0.0f)
+		if(m_CurrentMouseXYState.y != 0.0f)
 		{
-			m_RotationY += m_CurrentMouseInputState.y * m_SensitivityY;
+			m_RotationY += m_CurrentMouseXYState.y * m_SensitivityY;
 			m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
 		}
 		

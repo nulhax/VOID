@@ -1,32 +1,60 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CExpansionPortInterface.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class TestDoor : MonoBehaviour
+
+/* Implementation */
+
+
+public class CDoorMotor : MonoBehaviour
 {
-    public enum EState
+	
+// Member Types
+	
+	
+	public enum DoorState
     {
         Opened,
         Opening,
         Closed,
         Closing
     }
-
-    // Delegates
-    public delegate void DoorStateHandler(TestDoor _sender);
+	
+	
+// Member Delegates & Events
+	
+	
+	public delegate void DoorStateHandler(CDoorMotor _sender);
     public event DoorStateHandler StateChanged;
+	
+	
+// Member Fields	
+	DoorState m_State = DoorState.Closed;
+  
+
+// Member Properties
+    public DoorState State 
+	{ 
+		get { return(m_State); }
+		set { m_State = value; }
+	}
 
 
-    // Member Properties
-    public EState m_state { get; set; }
-
-
-    // Member Methods
-    private void Awake()
-    {
-        m_state = EState.Closed;
-    }
-
+// Member Methods
     public void OpenDoor()
     {
         StartCoroutine("Open");
@@ -37,32 +65,12 @@ public class TestDoor : MonoBehaviour
         StartCoroutine("Close");
     }
 
-    public void SetColorRed()
-    {
-        renderer.material.color = Color.red;
-    }
-
-    public void SetColorBlue()
-    {
-        renderer.material.color = Color.blue;
-    }
-
-    public void SetColorGreen()
-    {
-        renderer.material.color = Color.green;
-    }
-
-    public void SetColorYellow()
-    {
-        renderer.material.color = Color.yellow;
-    }
-
     private IEnumerator Open()
     {
         float d = 0.0f;
         Vector3 pos = transform.position;
 
-        m_state = EState.Opening;
+        State = DoorState.Opening;
         OnStateChange();
 
         while (d < 2.0f)
@@ -79,7 +87,7 @@ public class TestDoor : MonoBehaviour
             yield return null;
         }
 
-        m_state = EState.Opened;
+        State = DoorState.Opened;
         OnStateChange();
     }
 
@@ -88,7 +96,7 @@ public class TestDoor : MonoBehaviour
         float d = 0.0f;
         Vector3 pos = transform.position;
 
-        m_state = EState.Closing;
+        State = DoorState.Closing;
         OnStateChange();
 
         while (d < 2.0f)
@@ -105,7 +113,7 @@ public class TestDoor : MonoBehaviour
             yield return null;
         }
 
-        m_state = EState.Closed;
+        State = DoorState.Closed;
         OnStateChange();
     }
 
