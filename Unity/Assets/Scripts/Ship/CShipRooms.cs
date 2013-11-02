@@ -94,6 +94,10 @@ public class CShipRooms : MonoBehaviour
 			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);
 		}
 		
+		// Create the room's doors and initialise the control console
+		CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
+		room.ServerCreateDoors();
+		room.CreateRoomControlConsole();
 		
 		uint uiRoomId = ++m_uiRoomIdCount;
 		m_mRooms.Add(uiRoomId, cNewRoomObject);

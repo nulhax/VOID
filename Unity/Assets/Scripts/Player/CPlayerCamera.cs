@@ -19,7 +19,7 @@ using System.Collections;
 /* Implementation */
 
 
-public class ActorCamera : MonoBehaviour 
+public class CPlayerCamera : MonoBehaviour 
 {
 	
 // Member Fields

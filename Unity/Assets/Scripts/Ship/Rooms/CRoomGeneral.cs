@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CRoomControlConsole : MonoBehaviour
+public class CRoomGeneral : MonoBehaviour
 {
 
 // Member Types
@@ -30,8 +30,8 @@ public class CRoomControlConsole : MonoBehaviour
 	
 	
 // Member Fields
-	public GameObject m_ControlConsole = null;
-	public List<GameObject> m_Doors = new List<GameObject>();
+	private GameObject m_RoomControlConsole = null;
+	private List<GameObject> m_Doors = new List<GameObject>();
 	
     private Dictionary<DUIButton, CDoorMotor> m_buttonDoorPairs = new Dictionary<DUIButton, CDoorMotor>();
 	private Dictionary<DUIField, CDoorMotor> m_fieldDoorPairs = new Dictionary<DUIField, CDoorMotor>();
@@ -40,12 +40,19 @@ public class CRoomControlConsole : MonoBehaviour
 
 
 // Member Methods
-
-
 	public void Start()
 	{
-		// Get the console script from the console object
-		DUIConsole console = m_ControlConsole.GetComponent<DUIConsole>();
+		// Get the console script from the children
+		DUIConsole console = GetComponentInChildren<DUIConsole>();
+		
+		// Store the room control console game object
+		m_RoomControlConsole = console.gameObject;
+		
+		// Get the door interface scripts from the children
+		foreach(CDoorInterface door in GetComponentsInChildren<CDoorInterface>())
+		{
+			m_Doors.Add(door.gameObject);
+		}
 		
 		 // Initialise the console
         console.Initialise();
@@ -79,23 +86,23 @@ public class CRoomControlConsole : MonoBehaviour
         }
 	}
 	
-	private void Update()
+	public void Update()
 	{
 		if(CNetwork.IsServer)
 		{
 			// Get the console script from the console object
-			DUIConsole console = m_ControlConsole.GetComponent<DUIConsole>();
+			DUIConsole console = m_RoomControlConsole.GetComponent<DUIConsole>();
 			
 			// Check all actors for collisions with the screen
 			foreach(GameObject actor in CGame.Actors)
 			{
-				ActorMotor actorMotor = actor.GetComponent<ActorMotor>();
+				CPlayerMotor actorMotor = actor.GetComponent<CPlayerMotor>();
 				
 				Vector3 orig = actorMotor.ActorHead.transform.position;
 				Vector3 direction = actorMotor.ActorHead.transform.TransformDirection(Vector3.forward);
 				
-				if((actorMotor.CurrentInputState & (uint)ActorMotor.InputStates.Action) != 0 && 
-					(actorMotor.PreviousInputState & (uint)ActorMotor.InputStates.Action) == 0)
+				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputStates.Action) != 0 && 
+					(actorMotor.PreviousInputState & (uint)CPlayerMotor.EInputStates.Action) == 0)
 				{
 					console.CheckScreenCollision(orig, direction);
 				}
@@ -103,16 +110,47 @@ public class CRoomControlConsole : MonoBehaviour
 		}
 	}
 	
+	
+	public void ServerCreateDoors()
+	{
+		foreach(GameObject expansionPort in GetComponent<CRoomInterface>().ExpansionPorts)
+		{
+			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Door;
+			GameObject newDoorObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+		
+			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y - expansionPort.collider.bounds.extents.y, 0.0f);
+			newDoorObject.transform.rotation = expansionPort.transform.rotation;
+			
+			newDoorObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+			newDoorObject.GetComponent<CDoorInterface>().DoorId = (uint)m_Doors.Count;
+		}
+	}
+	
+	
+	public void CreateRoomControlConsole()
+	{
+		Transform consoleTransform = transform.FindChild("ControlConsole");
+
+		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.ControlConsole;
+		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+	
+		newConsoleObject.transform.position = consoleTransform.position;
+		newConsoleObject.transform.rotation = consoleTransform.rotation;
+		
+		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+	}
+	
+	
 	private void OpenCloseDoor(DUIButton _sender)
     {
         CDoorMotor door = m_buttonDoorPairs[_sender];
 
-        if (door.State == CDoorMotor.DoorState.Closed)
+        if (door.State == CDoorMotor.EDoorState.Closed)
         {
             m_buttonDoorPairs[_sender].OpenDoor();
             
         }
-        else if (door.State == CDoorMotor.DoorState.Opened)
+        else if (door.State == CDoorMotor.EDoorState.Opened)
         {
             m_buttonDoorPairs[_sender].CloseDoor();
         }
@@ -126,16 +164,16 @@ public class CRoomControlConsole : MonoBehaviour
 			{
 				switch (_sender.State)
                 {
-					case CDoorMotor.DoorState.Opened: 
+					case CDoorMotor.EDoorState.Opened: 
                     	button.m_text = "Close";
                     	break;
                     
-					case CDoorMotor.DoorState.Closed:
+					case CDoorMotor.EDoorState.Closed:
                    	 	button.m_text = "Open";
                     	break;
 					
-					case CDoorMotor.DoorState.Opening:
-                	case CDoorMotor.DoorState.Closing:
+					case CDoorMotor.EDoorState.Opening:
+                	case CDoorMotor.EDoorState.Closing:
                     	button.m_text = "...";
                     	break;
 					
@@ -151,16 +189,16 @@ public class CRoomControlConsole : MonoBehaviour
 			{
 				switch (_sender.State)
                 {
-                    case CDoorMotor.DoorState.Opened: 
+                    case CDoorMotor.EDoorState.Opened: 
                         field.m_text = field.m_text.Replace("Opening...", "Open");
                         break;
-                    case CDoorMotor.DoorState.Opening:
+                    case CDoorMotor.EDoorState.Opening:
                         field.m_text = field.m_text.Replace("Closed", "Opening...");
                         break;
-                    case CDoorMotor.DoorState.Closed:
+                    case CDoorMotor.EDoorState.Closed:
                         field.m_text = field.m_text.Replace("Closing...", "Closed");
                         break;
-                    case CDoorMotor.DoorState.Closing:
+                    case CDoorMotor.EDoorState.Closing:
                         field.m_text = field.m_text.Replace("Open", "Closing...");
                         break;
                     default:

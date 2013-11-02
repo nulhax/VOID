@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CExpansionPortInterface.cs
+//  File Name   :   CDoorInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -19,7 +19,8 @@ using System.Collections;
 /* Implementation */
 
 
-public class CDoorInterface : MonoBehaviour {
+public class CDoorInterface : MonoBehaviour 
+{
 
 // Member Types
 
@@ -28,7 +29,6 @@ public class CDoorInterface : MonoBehaviour {
 	
 	
 // Member Fields	
-	
 	
 	private uint m_uiDoorID = 0;
 	

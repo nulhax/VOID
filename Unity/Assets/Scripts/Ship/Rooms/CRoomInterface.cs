@@ -26,7 +26,7 @@ public class CRoomInterface : MonoBehaviour
 // Member Types
 
 
-	public enum ERoomType : short
+	public enum ERoomType
 	{
 		INVALID,
 		Bridge,
@@ -139,7 +139,7 @@ public class CRoomInterface : MonoBehaviour
 		int iCount = 0;
 		for (int i = 0; i < transform.childCount; ++i)
 		{
-			if (transform.GetChild(i).name == CExpansionPortInterface.ksGameObjectName)
+			if (transform.GetChild(i).name == CExpansionPortInterface.s_GameObjectName)
 			{
 				transform.GetChild(i).gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId = (uint)iCount++;
 				m_aExpansionPorts.Add(transform.GetChild(i).gameObject);
@@ -147,13 +147,12 @@ public class CRoomInterface : MonoBehaviour
 		}
 	}
 
-
 // Member Fields
 
 
 	ERoomType m_eType = ERoomType.INVALID;
 	uint m_uiRoomID = 0;
+	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
-
 
 };
