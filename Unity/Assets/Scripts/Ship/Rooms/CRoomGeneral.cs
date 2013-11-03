@@ -120,9 +120,13 @@ public class CRoomGeneral : MonoBehaviour
 		
 			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y - expansionPort.collider.bounds.extents.y, 0.0f);
 			newDoorObject.transform.rotation = expansionPort.transform.rotation;
+			newDoorObject.transform.parent = transform;	
 			
-			newDoorObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
 			newDoorObject.GetComponent<CDoorInterface>().DoorId = (uint)m_Doors.Count;
+			
+			newDoorObject.GetComponent<CNetworkView>().SyncParent();
+			newDoorObject.GetComponent<CNetworkView>().SyncTransformPosition();
+			newDoorObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		}
 	}
 	
@@ -137,7 +141,11 @@ public class CRoomGeneral : MonoBehaviour
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
 		
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);	
+		
+		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
 	}
 	
 	
