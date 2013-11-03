@@ -83,29 +83,18 @@ public class CShipRooms : MonoBehaviour
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 		
 		
-		if (_uiRoomId == 0)
-		{
-			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
-		}
-		else
+		if (_uiRoomId != 0)
 		{
 			//Attach the new room to the expansion port selected			
 			GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
-			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);
-			//cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);
-			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
+			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);			
 		}
-		
-		
-		// Sync object's position
-		cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", cNewRoomObject.transform.position.x, 
-													 									 cNewRoomObject.transform.position.y, 
-													 									 cNewRoomObject.transform.position.z);
-
-		// Sync object's rotation
-		cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformRotation", cNewRoomObject.transform.eulerAngles.x,
-													 									 cNewRoomObject.transform.eulerAngles.y,
-													 									 cNewRoomObject.transform.eulerAngles.z);
+	
+		cNewRoomObject.transform.parent = transform;
+			
+		cNewRoomObject.GetComponent<CNetworkView>().SyncParent();
+		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformPosition();
+		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformRotation();
 			
 		
 		// Create the room's doors and initialise the control console

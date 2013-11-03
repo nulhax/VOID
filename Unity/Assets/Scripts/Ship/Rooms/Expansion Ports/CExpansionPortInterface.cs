@@ -197,8 +197,7 @@ public class CExpansionPortInterface : MonoBehaviour
         }
 		
 		//Apply rotation
-		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);  
-		
+		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);
 	}
 
 
