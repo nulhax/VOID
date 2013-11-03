@@ -19,17 +19,18 @@ using System.Collections;
 /* Implementation */
 
 
-public class ActorCamera : MonoBehaviour 
+public class CPlayerCamera : MonoBehaviour 
 {
 	
 // Member Fields
 	public Texture m_CrosshairTexture = null;
 	
+	
 		
 // Member Fields
 	void OnGUI()
 	{
-		Rect textureRect = new Rect(Screen.width * 0.5f - (m_CrosshairTexture.width * 0.5f), Screen.height * 0.5f - (m_CrosshairTexture.height * 0.75f), 
+		Rect textureRect = new Rect(Screen.width * 0.5f - (m_CrosshairTexture.width * 0.5f), Screen.height * 0.5f - (m_CrosshairTexture.height * 0.5f), 
 									m_CrosshairTexture.width, m_CrosshairTexture.height);
 		
 		GUI.DrawTexture(textureRect, m_CrosshairTexture);

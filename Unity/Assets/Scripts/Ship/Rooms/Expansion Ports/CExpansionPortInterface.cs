@@ -26,9 +26,6 @@ public class CExpansionPortInterface : MonoBehaviour
 // Member Types
 
 
-	public const string ksGameObjectName = "ExpansionPort";
-
-
 // Member Delegates & Events
 
 
@@ -225,6 +222,8 @@ public class CExpansionPortInterface : MonoBehaviour
 		state_unaviable,
 		state_max
 	};
+	
+	public static string s_GameObjectName = "ExpansionPort";
 	
 	private uint m_uiPortID = 0;
    	bool hasAttachedHull = false; 	

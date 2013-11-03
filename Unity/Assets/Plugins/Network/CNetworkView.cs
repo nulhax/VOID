@@ -242,12 +242,12 @@ public class CNetworkView : CNetworkMonoBehaviour
             INetworkVar cNetworkVar = tEntry.Value;
 
 			if (!cNetworkVar.IsDefault())
-			{
+			{	
 				SyncNetworkVar(_ulPlayerId, tEntry.Key);
 			}
         }
 
-        Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1})", _ulPlayerId, this.ViewId);
+        Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1}), name ({2})", _ulPlayerId, this.ViewId, gameObject.name);
     }
 
 
@@ -261,7 +261,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	public void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
 	{
-		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+		transform.eulerAngles = new Vector3(_fRotationX, _fRotationY, _fRotationZ);
 	}
 
 

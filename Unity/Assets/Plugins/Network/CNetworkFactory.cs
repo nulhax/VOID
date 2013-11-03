@@ -112,13 +112,13 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 				// Sync object's position
 				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
-																						 tEntry.Value.cGameObject.transform.position.x,
+																						 tEntry.Value.cGameObject.transform.position.y,
 																						 tEntry.Value.cGameObject.transform.position.z);
 
 				// Sync object's rotation
-				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x,
-																						 tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x,
-																						 tEntry.Value.cGameObject.transform.localRotation.eulerAngles.x);
+				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.eulerAngles.x,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.y,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.z);
 
 				// Tell object to sync all their network vars with the player
 				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
@@ -155,7 +155,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		}
 		else
 		{
-			Debug.LogError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
+			Logger.WriteError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
 		}
 		
 		return (go);
@@ -209,13 +209,13 @@ public class CNetworkFactory : CNetworkMonoBehaviour
         CNetworkView cNetworkView = cNewgameObject.GetComponent<CNetworkView>();
 
 		// Ensure the created object has a network view component
-		Logger.WriteErrorOn(cNetworkView == null, "The created prefab ({0}) does not have a network view!!!", _usNetworkViewId);
+		Logger.WriteErrorOn(cNetworkView == null, "The created prefab ({0}), name ({1}) does not have a network view!!!", _usNetworkViewId, cNewgameObject.name);
 
         cNetworkView.ViewId = _usNetworkViewId;
 		m_mCreatedObjects.Add(_usNetworkViewId, new TObjectInfo(_usPrefabId, cNewgameObject));
 
 		// Notice
-        Logger.Write("Created new game object with prefab ({0}) and network view id ({1})", _usPrefabId, _usNetworkViewId);
+        Logger.Write("Created new game object with prefab ({0}), name ({1}) and network view id ({2})", _usPrefabId, cNewgameObject.name, _usNetworkViewId);
 
 
 
