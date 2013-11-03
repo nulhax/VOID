@@ -120,19 +120,13 @@ public class CRoomGeneral : MonoBehaviour
 		
 			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y - expansionPort.collider.bounds.extents.y, 0.0f);
 			newDoorObject.transform.rotation = expansionPort.transform.rotation;
+			newDoorObject.transform.parent = transform;	
 			
-			newDoorObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
 			newDoorObject.GetComponent<CDoorInterface>().DoorId = (uint)m_Doors.Count;
 			
-		// Sync object's position
-		newDoorObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", newDoorObject.transform.position.x, 
-													 									 newDoorObject.transform.position.y, 
-													 									 newDoorObject.transform.position.z);
-
-		// Sync object's rotation
-		newDoorObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformRotation", newDoorObject.transform.eulerAngles.x,
-													 									 newDoorObject.transform.eulerAngles.y,
-													 									 newDoorObject.transform.eulerAngles.z);
+			newDoorObject.GetComponent<CNetworkView>().SyncParent();
+			newDoorObject.GetComponent<CNetworkView>().SyncTransformPosition();
+			newDoorObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		}
 	}
 	
@@ -147,17 +141,11 @@ public class CRoomGeneral : MonoBehaviour
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
 		
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);		
+		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);	
 		
-		// Sync object's position
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", newConsoleObject.transform.position.x, 
-													 									 newConsoleObject.transform.position.y, 
-													 									 newConsoleObject.transform.position.z);
-
-		// Sync object's rotation
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformRotation", newConsoleObject.transform.eulerAngles.x,
-													 									 newConsoleObject.transform.eulerAngles.y,
-													 									 newConsoleObject.transform.eulerAngles.z);
+		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
 	}
 	
 	
