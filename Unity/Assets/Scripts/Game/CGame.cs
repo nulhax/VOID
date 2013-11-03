@@ -35,6 +35,8 @@ public class CGame : CNetworkMonoBehaviour
 		Ship,
 		RoomBridge,
 		RoomFactory,
+		Door,
+		ControlConsole,
 		PlayerActor,
 	}
 
@@ -54,6 +56,22 @@ public class CGame : CNetworkMonoBehaviour
 	public static GameObject Actor
 	{
 		get { return (CNetwork.Factory.FindObject(Instance.m_usActorViewId)); }
+	}
+	
+	
+	public static List<GameObject> Actors
+	{
+		get 
+		{ 
+			List<GameObject> actors = new List<GameObject>();
+				
+			foreach(ushort playerID in s_cInstance.m_mPlayersActor.Values)
+			{
+				actors.Add(CNetwork.Factory.FindObject(playerID));
+			}
+			
+			return (actors); 
+		}
 	}
 	
 	
@@ -104,10 +122,12 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Rooms/RoomBridge");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Rooms/RoomFactory");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Rooms/Doors/Door");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
 		
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(ActorMotor.SerializePlayerState, ActorMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
 
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -366,7 +386,7 @@ public class CGame : CNetworkMonoBehaviour
 		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
 		
 		// Create the camera 
-		Actor.GetComponent<ActorMotor>().CreatePlayerClientCamera();
+		Actor.GetComponent<CPlayerMotor>().CreatePlayerClientCamera();
 	}
 
 
