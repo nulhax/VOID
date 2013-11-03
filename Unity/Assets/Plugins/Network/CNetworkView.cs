@@ -251,24 +251,30 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-	[ANetworkRpc]
-	public void SetTransformPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+	public void SyncTransformPosition()
 	{
-		transform.position = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
+		// Ensure servers only sync transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform position!!!");
+
+		InvokeRpcAll("SetTransformPosition", transform.position.x, transform.position.y, transform.position.z);
 	}
 
 
-	[ANetworkRpc]
-	public void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	public void SyncTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
 	{
-		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+		// Ensure servers only sync transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform rotation!!!");
+
+		InvokeRpcAll("SetTransformPosition", transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
 	}
 
 
-	[ANetworkRpc]
-	public void SetParent(ushort _usParentViewId)
+	public void SyncParent()
 	{
-		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+		// Ensure servers only sync parents
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
+
+		InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
 	}
 
 
@@ -556,6 +562,27 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
 		return (bNetworkRpcId);
+	}
+
+
+	[ANetworkRpc]
+	void SetTransformPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+	{
+		transform.position = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
+	}
+
+
+	[ANetworkRpc]
+	void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	{
+		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+	}
+
+
+	[ANetworkRpc]
+	void SetParent(ushort _usParentViewId)
+	{
+		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
 	}
 
 
