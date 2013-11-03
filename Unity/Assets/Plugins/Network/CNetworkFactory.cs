@@ -110,16 +110,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 // Extract the network view from this object
                 CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-				// Sync object's position
-				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
-																						 tEntry.Value.cGameObject.transform.position.y,
-																						 tEntry.Value.cGameObject.transform.position.z);
-
-				// Sync object's rotation
-				cNetworkView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.eulerAngles.x,
-																						 tEntry.Value.cGameObject.transform.eulerAngles.y,
-																						 tEntry.Value.cGameObject.transform.eulerAngles.z);
-
 				// Tell object to sync all their network vars with the player
 				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
             }
@@ -139,6 +129,16 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 					// Invoke set parent rpc
 					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetParent", cParentView.ViewId);
+					
+					// Sync object's position
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
+																						 tEntry.Value.cGameObject.transform.position.y,
+																						 tEntry.Value.cGameObject.transform.position.z);
+
+					// Sync object's rotation
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.eulerAngles.x,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.y,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.z);
 				}
 			}
         }

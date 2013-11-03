@@ -147,7 +147,7 @@ public class CRoomInterface : MonoBehaviour
 		}
 	}
 
-// Member Fields
+	// Member Fields
 
 
 	ERoomType m_eType = ERoomType.INVALID;

@@ -49,6 +49,7 @@ GameObject:
   - 95: {fileID: 9500000}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400006}
+  - 114: {fileID: 11400010}
   m_Layer: 0
   m_Name: RoomFactory
   m_TagString: Untagged
@@ -2164,6 +2165,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100260
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400260}
+  m_Layer: 0
+  m_Name: ControlConsole
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -2193,9 +2209,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 166.534164, y: -3.85975075, z: -1.73213768}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 400260}
   - {fileID: 400006}
   - {fileID: 400002}
   - {fileID: 400000}
@@ -3723,6 +3740,17 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400148}
+--- !u!4 &400260
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100260}
+  m_LocalRotation: {x: 0, y: .999872744, z: 0, w: .015953416}
+  m_LocalPosition: {x: -.54850769, y: .982933044, z: -2.54621077}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400004}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -6384,9 +6412,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6398,9 +6423,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6434,9 +6456,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
+--- !u!114 &11400010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 020a4917a5a96934db9a4189c2646370, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

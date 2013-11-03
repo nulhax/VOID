@@ -114,7 +114,7 @@ public class CExpansionPortInterface : MonoBehaviour
         //Subtract the offset of the selected port from the position of the new object
         Vector3 offset = m_attachedPorts[_portID].localPosition;
         Vector3 currentPos = _objNewRoom.transform.position - offset;
-       // Debug.Log("Offset: " + offset.x + "," + offset.y + "," + offset.z);
+        Debug.Log("Offset: " + offset.x + "," + offset.y + "," + offset.z);
         _objNewRoom.transform.position = currentPos;
 
         //Adjust rotation

@@ -37,41 +37,42 @@ public class CShipRooms : MonoBehaviour
 
 	public void Start()
 	{
+		
 	}
 
 
 	public void OnDestroy()
 	{
+		
 	}
 
 
 	public void Update()
 	{
-		RaycastHit hit;
-	 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-		if (Physics.Raycast (ray, out hit, 1000))
-		{		
-			if(hit.collider.gameObject.name == "ExpansionPort")
-			{
-				if(Input.GetMouseButtonDown(0))
+		if (CNetwork.IsServer)
+		{
+			RaycastHit hit;
+		 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+			if (Physics.Raycast (ray, out hit, 1000))
+			{		
+				if(hit.collider.gameObject.name == "ExpansionPort")
 				{
-					uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
-					uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
-					CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);  
-					
-					//Test stuff
-					//GameObject AttachedHull = (GameObject)Instantiate (Resources.Load("Prefabs/Rooms/RoomFactory"));
-					//hit.collider.gameObject.GetComponent<CExpansionPortInterface>().Attach(PortId, AttachedHull);
-				}
-			}			
-		}    
+					if(Input.GetMouseButtonDown(0))
+					{
+						uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
+						uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
+						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);  				
+					}
+				}			
+			}   
+		}
 	}
 
 
 	public bool ValidateCreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
 	{
-
-
+		
+		
 		return (true);
 	}
 
@@ -88,11 +89,24 @@ public class CShipRooms : MonoBehaviour
 		}
 		else
 		{
-			//Attach the new room to the expansion port selected
-			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);	
+			//Attach the new room to the expansion port selected			
 			GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
 			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);
+			//cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetRoom(_uiRoomId).GetComponent<CNetworkView>().ViewId);
+			cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);			
 		}
+		
+		
+		// Sync object's position
+		cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformPosition", cNewRoomObject.transform.position.x, 
+													 									 cNewRoomObject.transform.position.y, 
+													 									 cNewRoomObject.transform.position.z);
+
+		// Sync object's rotation
+		cNewRoomObject.GetComponent<CNetworkView>().InvokeRpcAll("SetTransformRotation", cNewRoomObject.transform.eulerAngles.x,
+													 									 cNewRoomObject.transform.eulerAngles.y,
+													 									 cNewRoomObject.transform.eulerAngles.z);
+			
 		
 		// Create the room's doors and initialise the control console
 		CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
