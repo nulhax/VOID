@@ -4,10 +4,10 @@
 //  (c) 2013
 //
 //  File Name   :   CExpansionPortInterface.cs
-//  Description :   --------------------------
+//  Description :   This script is used for alligning new hull segments to expansion ports.
 //
-//  Author  	:  
-//  Mail    	:  @hotmail.com
+//  Author  	:  Daniel Langsford
+//  Mail    	:  folduppugg@hotmail.com
 //
 
 
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 
 /* Implementation */
-
+ 
 
 public class CExpansionPortInterface : MonoBehaviour
 {
@@ -67,29 +67,7 @@ public class CExpansionPortInterface : MonoBehaviour
 
 
 	public void Update()
-	{
-		//This is simply for testing purposes.					
-		RaycastHit hit;
-	 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-		if (Physics.Raycast (ray, out hit, 1000))
-		{		
-			if(hit.collider.gameObject == gameObject)
-			{
-				renderer.material.color = Color.red;	
-				
-				/*if(Input.GetMouseButtonDown(0))
-				{
-					AttachedHull = Resources.Load("Prefabs/Rooms/RoomFactory");
-					Attach(0, AttachedHull);
-				}*/
-			}			
-			else
-			{
-				renderer.material.color = Color.blue;
-				infoLogged = false;
-			}
-		}           
-				
+	{		
 		RenderNormals();
 	}
 	
@@ -100,21 +78,25 @@ public class CExpansionPortInterface : MonoBehaviour
 		Debug.DrawRay(transform.position, transform.right, Color.red);
 	}
 
-
 	public void Attach(uint _portID, GameObject _objNewRoom)
-	{		
-		//Get all the attached expansion ports
-		Transform[] attachedObjects = _objNewRoom.GetComponentsInChildren<Transform>();			
-		foreach(Transform obj in attachedObjects)
+	{	
+		if(!hasAttachedHull)
 		{
-			if(obj.name == "ExpansionPort")
+			//Get all the attached expansion ports
+			Transform[] attachedObjects = _objNewRoom.GetComponentsInChildren<Transform>();			
+			foreach(Transform obj in attachedObjects)
 			{
-                m_attachedPorts.Add(obj);               
-			}			
+				if(obj.name == "ExpansionPort")
+				{
+	                m_attachedPorts.Add(obj);               
+				}			
+			}
+		
+			//Line up this expansion port with the new expansion port
+			Orient((int)_portID, _objNewRoom);
+			
+			hasAttachedHull = true;
 		}
-	
-		//Line up this expansion port with the new expansion port
-		Orient((int)_portID, _objNewRoom);		
 	}
 
 
@@ -245,19 +227,7 @@ public class CExpansionPortInterface : MonoBehaviour
 	};
 	
 	private uint m_uiPortID = 0;
-    public int SegmentID = 1;
-    public int portLevel = 0;
-	public BuildState buildState;
-	GameObject AttachedHull;
-	bool infoLogged = false;
-	bool hasAttachedHull = false;
-    float lastClick = 0;
-    float lastScroll = 0;
-	List<Transform> Ports = new List<Transform>();
-    static int NumHullTypes;
-	bool Intersection = false;
-	
-	static bool canBuild = true;
+   	bool hasAttachedHull = false; 	
 	List<Transform> m_attachedPorts = new List<Transform>();
 	
 };
