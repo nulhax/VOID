@@ -138,6 +138,12 @@ public class CNetworkStream
 	{
 		m_cBitStream.Write((int)_uiValue);
 	}
+	
+	
+	public void Write(float _fValue)
+	{
+		m_cBitStream.Write((float)_fValue);
+	}
 
 
 	public void IgnoreBytes(int _iNumBytes)
@@ -270,6 +276,21 @@ public class CNetworkStream
 	public uint ReadUInt()
 	{
 		return ((uint)ReadInt());
+	}
+	
+	
+	public float ReadFloat()
+	{
+		float fValue = 0;
+
+
+		if (!m_cBitStream.Read(out fValue))
+		{
+			Logger.WriteError("Could not read float");
+		}
+
+		
+		return (fValue);
 	}
 
 

@@ -4,7 +4,7 @@
 <subview>
 
   <!-- Window -->
-  <window xyratio="1.0, 1.0" />
+  <window xyratio="2.0, 1.0" />
   
   <!-- Navigation Button -->
   <navbutton text="Doors" />

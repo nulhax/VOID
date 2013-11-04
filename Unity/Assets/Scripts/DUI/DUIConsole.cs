@@ -13,14 +13,6 @@ public class DUIConsole : MonoBehaviour
     // Member Properties
     public DUIMainView m_DUIMV        { get; set; }
 
-
-    // Member Methods
-    private void Update()
-    {
-        // Check the button collisions
-        CheckScreenCollision();
-    }
-
     public void Initialise()
     {
 		// Set the screen to be on the right layer
@@ -37,6 +29,23 @@ public class DUIConsole : MonoBehaviour
 
         // Destroy the game object
         Destroy(m_DUIMV.gameObject);
+    }
+	
+	public void CheckScreenCollision(Vector3 _origin, Vector3 _direction)
+    {
+		RaycastHit hit = new RaycastHit();
+		Ray ray = new Ray(_origin, _direction);
+		
+		// Test Mouse Down
+		if (DidRayCollideWithScreen(ray, out hit))
+		{
+			DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+			
+			if(button)
+			{
+				button.OnPressDown();
+			}
+		}	    
     }
 
     private void SetupDUI()
@@ -57,52 +66,6 @@ public class DUIConsole : MonoBehaviour
 
         // Attach the render texture
         m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.material);
-    }
-
-    private void CheckScreenCollision()
-    {
-		RaycastHit hit = new RaycastHit();
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		
-		// Mouse Down
-        if (Input.GetMouseButtonDown(0))
-        {
- 			if (DidRayCollideWithScreen(ray, out hit))
-			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressDown();
-				}
-			}	    
-        }
-		// Mouse Up
-		else if (Input.GetMouseButtonUp(0))
-		{
-			if (DidRayCollideWithScreen(ray, out hit))
-			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressUp();
-				}
-			}
-		}
-		// Mouse Hold
-		else if (Input.GetMouseButton(0))
-		{
-			if (DidRayCollideWithScreen(ray, out hit))
-			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressHold();
-				}
-			}
-		}
     }
 	
 	private bool DidRayCollideWithScreen(Ray _ray, out RaycastHit _rh)
