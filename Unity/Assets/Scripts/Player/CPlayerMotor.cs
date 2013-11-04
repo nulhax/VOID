@@ -173,7 +173,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
-		if(CGame.ActorViewId != 0)
+		if(CGame.ActorViewId != 0 && !CNetwork.IsServer)
 		{
 			CPlayerMotor cActorMotor = CGame.Actor.GetComponent<CPlayerMotor>();
 			
@@ -188,18 +188,17 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
         while (_cStream.HasUnreadData)
         {
-			CPlayerMotor cActorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerMotor>();
+			CPlayerMotor actorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerMotor>();
 			
-			// Save the previous input
-			cActorMotor.m_PreviousInputState = cActorMotor.m_CurrentInputState;
-			
-			// Retrieve the current input
-            cActorMotor.m_CurrentInputState = _cStream.ReadUInt();
-			
+			uint inputState = _cStream.ReadUInt();
 			float x = _cStream.ReadFloat();
 			float y = _cStream.ReadFloat();
+			Vector2 mouseXYState = new Vector2(x, y);
 			
-			cActorMotor.m_CurrentMouseXYState = new Vector2(x, y);
+			actorMotor.m_PreviousInputState = actorMotor.m_CurrentInputState;
+		
+        	actorMotor.m_CurrentInputState = inputState;
+			actorMotor.m_CurrentMouseXYState = mouseXYState;
         }
     }
 	
@@ -247,7 +246,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 		
 		// Action
-		if (Input.GetMouseButton(0))
+		if (Input.GetMouseButtonDown(0))
 		{
 			m_CurrentInputState |= (uint)EInputStates.Action;
 		}
