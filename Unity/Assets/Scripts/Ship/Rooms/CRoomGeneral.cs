@@ -235,7 +235,7 @@ public class CRoomGeneral : MonoBehaviour
     {
         m_RoomSelected = m_buttonRoomTypePairs[_sender];
 		
-		CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_RoomSelected, GetComponent<CRoomInterface>().RoomId, m_ExpansionPortSelected.ExpansionPortId);
+		CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_RoomSelected, GetComponent<CRoomInterface>().RoomId, m_ExpansionPortSelected.ExpansionPortId, 0);
     }
 	
 	
