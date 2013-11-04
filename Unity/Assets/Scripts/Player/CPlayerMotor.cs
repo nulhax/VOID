@@ -127,7 +127,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Create the actor head object
 		m_ActorHead = new GameObject(name + "_Head");
         m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.zero;
+        m_ActorHead.transform.localPosition = Vector3.up * 0.4f;
 	}
 
 
@@ -137,12 +137,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 
     public void Update()
-    {
-        if (gameObject == CGame.Actor)
-        {
-			// Update the players input
-			UpdatePlayerInput();
-        }
+    {	
+		if(CGame.Actor == gameObject)
+		{
+			ClientUpdatePlayerInput();
+		}
 		
 		if(CNetwork.IsServer)
 		{
@@ -167,7 +166,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Create the camera object for the camera
 		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Camera", typeof(GameObject))) as GameObject;
         m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.zero;
+        m_ActorHead.transform.localPosition = Vector3.up * 0.4f;
     }
 	
 
@@ -190,22 +189,21 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         {
 			CPlayerMotor actorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerMotor>();
 			
-			uint inputState = _cStream.ReadUInt();
+			uint currentInputState = _cStream.ReadUInt();
 			float x = _cStream.ReadFloat();
 			float y = _cStream.ReadFloat();
 			Vector2 mouseXYState = new Vector2(x, y);
 			
 			actorMotor.m_PreviousInputState = actorMotor.m_CurrentInputState;
-		
-        	actorMotor.m_CurrentInputState = inputState;
+        	actorMotor.m_CurrentInputState = currentInputState;
 			actorMotor.m_CurrentMouseXYState = mouseXYState;
         }
     }
 	
 	
-    protected void UpdatePlayerInput()
-	{
-		// Reset the input states
+    protected void ClientUpdatePlayerInput()
+	{	
+		m_PreviousInputState = m_CurrentInputState;
 		m_CurrentInputState = 0;
 		m_CurrentMouseXYState = Vector2.zero;
 		
@@ -254,13 +252,13 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Rotate around Y
 		if (Input.GetAxis("Mouse X") != 0.0f)
         {
-            m_CurrentMouseXYState.x = Input.GetAxis("Mouse X");
+            m_CurrentMouseXYState.x += Input.GetAxis("Mouse X");
         }
 		
 		// Rotate around X
 		if (Input.GetAxis("Mouse Y") != 0.0f)
         {
-            m_CurrentMouseXYState.y = Input.GetAxis("Mouse Y");
+            m_CurrentMouseXYState.y += Input.GetAxis("Mouse Y");
         }
 	}
 	

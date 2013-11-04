@@ -22,7 +22,7 @@ using System;
 /* Implementation */
 
 
-public class CRoomGeneral : MonoBehaviour
+public class CRoomGeneral : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -53,16 +53,47 @@ public class CRoomGeneral : MonoBehaviour
 	private Dictionary<DUIButton, uint> m_buttonOtherPortPairs = new Dictionary<DUIButton, uint>();
 	private Dictionary<DUIButton, CRoomInterface.ERoomType> m_buttonRoomTypePairs = new Dictionary<DUIButton, CRoomInterface.ERoomType>();
 	
-	EExpansionCreatePhase m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
+	private CNetworkVar<int> m_ServerCreateExpansionStage    	 	= null;
+	private EExpansionCreatePhase m_CreateExpansionStage 			= EExpansionCreatePhase.INVALID;
 	
-	uint m_LocalExpansionPortIdSelected = 0;
-	uint m_OtherExpansionPortIdSelected = 0;
-	CRoomInterface.ERoomType m_FacilitySelected = CRoomInterface.ERoomType.INVALID;
+	private uint m_LocalExpansionPortIdSelected = 0;
+	private uint m_OtherExpansionPortIdSelected = 0;
+	private CRoomInterface.ERoomType m_FacilitySelected = CRoomInterface.ERoomType.INVALID;
 	
 // Member Properties
-
+	public EExpansionCreatePhase ServerCreateExpansionStage 
+	{ 
+		get 
+		{ 
+			return((EExpansionCreatePhase)m_ServerCreateExpansionStage.Get()); 
+		}
+		set 
+		{ 
+			m_ServerCreateExpansionStage.Set((int)value);
+			m_CreateExpansionStage = value;
+		}
+	}
 
 // Member Methods
+	public override void InstanceNetworkVars()
+    {
+		m_ServerCreateExpansionStage = new CNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
+	}
+	
+	
+	public void OnNetworkVarSync(INetworkVar _rSender)
+    {
+		if(!Network.isServer)
+		{
+			// Create Expansion State
+			if(_rSender == m_ServerCreateExpansionStage)
+			{
+				m_CreateExpansionStage = ServerCreateExpansionStage;
+			}
+		}
+    }
+	
+
 	public void Start()
 	{
 		// Get the console script from the children
@@ -90,7 +121,8 @@ public class CRoomGeneral : MonoBehaviour
 		
 		SetupExpansionSubviewStageOne();
 	}
-	static int iClicks = 0;
+	
+	static int blah = 0;
 	public void Update()
 	{
 		if(CNetwork.IsServer)
@@ -108,29 +140,12 @@ public class CRoomGeneral : MonoBehaviour
 				
 				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputStates.Action) != 0)
 				{
-					
-					Debug.Log(string.Format("Mouse Clicked. {0}", iClicks++));
-					
+					Debug.Log(string.Format("Click: {0}", blah++));
 					console.CheckScreenCollision(orig, direction);
 				}
 			}
 			
-			if(m_CreateExpansionStage == EExpansionCreatePhase.SelectLocalExpansionPort)
-			{
-				SetupExpansionSubviewStageOne();
-				m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
-			}
-			else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
-			{
-				SetupExpansionSubviewStageTwo();
-				m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
-			}
-			else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectOtherExpansionPort)
-			{
-				SetupExpansionSubviewStageThree();
-				m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
-			}
-			else if(m_CreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
+			if(ServerCreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_FacilitySelected, GetComponent<CRoomInterface>().RoomId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
 				
@@ -138,8 +153,24 @@ public class CRoomGeneral : MonoBehaviour
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
 				
-				m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
+				ServerCreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
 			}
+		}
+		
+		if(m_CreateExpansionStage == EExpansionCreatePhase.SelectLocalExpansionPort)
+		{
+			SetupExpansionSubviewStageOne();
+			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
+		}
+		else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
+		{
+			SetupExpansionSubviewStageTwo();
+			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
+		}
+		else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectOtherExpansionPort)
+		{
+			SetupExpansionSubviewStageThree();
+			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
 		}
 	}
 	
@@ -275,8 +306,12 @@ public class CRoomGeneral : MonoBehaviour
 		DUIField diuField = m_duiExpansionControl.AddField("Select an OTHER expansion port to use.");
 		diuField.m_viewPos = new Vector2(0.5f, 1.0f);
 		
+		// Get the local prefab string
+		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CRoomInterface.GetRoomPrefab(m_FacilitySelected));
+		GameObject tempRoomObject = GameObject.Instantiate(Resources.Load("Prefabs/" + prefabFile, typeof(GameObject))) as GameObject;
+		
 		// For each expansion port add a button
-		List<GameObject> expansionPorts = GetComponent<CRoomInterface>().ExpansionPorts;
+		List<GameObject> expansionPorts = tempRoomObject.GetComponent<CRoomInterface>().ExpansionPorts;
 		for(int i = 0; i < expansionPorts.Count; ++i)
 		{
 			GameObject expansionPort = expansionPorts[i];
@@ -290,6 +325,9 @@ public class CRoomGeneral : MonoBehaviour
 			
 			m_buttonOtherPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
+		
+		// Destory it
+		Destroy(tempRoomObject);
 	}
 	
 	
@@ -297,7 +335,7 @@ public class CRoomGeneral : MonoBehaviour
     {
         m_LocalExpansionPortIdSelected = m_buttonLocalPortPairs[_sender];
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+		ServerCreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
     }
 	
 	
@@ -305,7 +343,7 @@ public class CRoomGeneral : MonoBehaviour
     {
         m_FacilitySelected = m_buttonRoomTypePairs[_sender];
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
+		ServerCreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
     }
 	
 	
@@ -313,7 +351,7 @@ public class CRoomGeneral : MonoBehaviour
     {
         m_OtherExpansionPortIdSelected = m_buttonOtherPortPairs[_sender];
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.CreateExpansion;
+		ServerCreateExpansionStage = EExpansionCreatePhase.CreateExpansion;
     }
 	
 	
