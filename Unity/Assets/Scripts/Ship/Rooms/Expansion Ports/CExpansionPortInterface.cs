@@ -109,7 +109,7 @@ public class CExpansionPortInterface : MonoBehaviour
         _objNewRoom.transform.rotation = Quaternion.identity;
         Debug.Log("Current Port Pos " + transform.position.x + "," + transform.position.y + "," + transform.position.z);
 
-        m_attachedPorts[_portID].renderer.material.color = Color.green;
+        //m_attachedPorts[_portID].renderer.material.color = Color.green;
 
         //Subtract the offset of the selected port from the position of the new object
         Vector3 offset = m_attachedPorts[_portID].localPosition;

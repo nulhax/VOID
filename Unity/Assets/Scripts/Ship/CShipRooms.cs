@@ -49,23 +49,25 @@ public class CShipRooms : MonoBehaviour
 
 	public void Update()
 	{
-		if (CNetwork.IsServer)
-		{
-			RaycastHit hit;
-		 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-			if (Physics.Raycast (ray, out hit, 1000))
-			{		
-				if(hit.collider.gameObject.name == "ExpansionPort")
-				{
-					if(Input.GetMouseButtonDown(0))
-					{
-						uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
-						uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
-						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId, 0);  				
-					}
-				}			
-			}   
-		}
+		// Do it from the control consoles
+		
+//		if (CNetwork.IsServer)
+//		{
+//			RaycastHit hit;
+//		 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+//			if (Physics.Raycast (ray, out hit, 1000))
+//			{		
+//				if(hit.collider.gameObject.name == "ExpansionPort")
+//				{
+//					if(Input.GetMouseButtonDown(0))
+//					{
+//						uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
+//						uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
+//						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId, 0);  				
+//					}
+//				}			
+//			}   
+//		}
 	}
 
 
