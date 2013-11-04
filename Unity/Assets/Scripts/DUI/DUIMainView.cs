@@ -16,7 +16,8 @@ public class DUIMainView : DUIView
     // Member Fields
     private EQuality m_quality;
     private ENavButDirection m_navButtonDirection;
-
+	
+	private DUISubView m_ActiveSubView;
 
     // Member Properties
     public Rect m_titleRect                             { get; set; }
@@ -102,9 +103,25 @@ public class DUIMainView : DUIView
 
         // Reposition the buttons
         RepositionButtons();
+		
+		SetActiveSubView(DUISV);
 
         return (DUISV);
     }
+	
+	public DUISubView GetSubView(string _subView)
+	{
+		return(m_subViews[_subView]);
+	}
+	
+	public void SetActiveSubView(DUISubView _subView)
+	{
+		if(m_ActiveSubView != null)
+			m_ActiveSubView.gameObject.SetActive(false);
+		
+		m_ActiveSubView = _subView;
+		m_ActiveSubView.gameObject.SetActive(true);
+	}
 	
 	public DUIButton FindButtonCollisions(RaycastHit _rh)
     {
@@ -252,12 +269,8 @@ public class DUIMainView : DUIView
             // If the button belongs to the subview
             if (button == _sender)
             {
-                // Toggle its activity
-                subView.gameObject.SetActive(!subView.gameObject.activeSelf);
-            }
-			else
-			{
-				subView.gameObject.SetActive(false);
+                SetActiveSubView(subView);
+				break;
 			}
         }
     }

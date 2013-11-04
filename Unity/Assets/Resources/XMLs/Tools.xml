@@ -1,0 +1,47 @@
+<tools>
+	<blowtorch>
+		<id>0</id>
+		<name>Blowtorch</name>
+		<cost>100</cost>
+	</blowtorch>
+	<detx>
+		<id>1</id>
+		<name>DetX</name>
+		<cost>100</cost>
+	</detx>
+	<extinguisher>
+		<id>2</id>
+		<name>Fire Extinguisher</name>
+		<cost>100</cost>
+	</extinguisher>
+	<medpack>
+		<id>3</id>
+		<name>Med-Pack</name>
+		<cost>100</cost>
+	</medpack>
+	<nanitegun>
+		<id>4</id>
+		<name>Nanite Gun</name>
+		<cost>100</cost>
+	</nanitegun>
+	<pistol>
+		<id>5</id>
+		<name>Pistol</name>
+		<cost>100</cost>
+	</pistol>
+	<sealer>
+		<id>6</id>
+		<name>Sealer</name>
+		<cost>100</cost>
+	</sealer>
+	<techkit>
+		<id>7</id>
+		<name>Tech Kit</name>
+		<cost>100</cost>
+	</techkit>
+	<torch>
+		<id>8</id>
+		<name>Torch</name>
+		<cost>100</cost>
+	</torch>
+</tools>

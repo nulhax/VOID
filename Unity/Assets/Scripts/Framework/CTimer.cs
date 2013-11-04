@@ -31,7 +31,7 @@ public class CTimer
     // public:
 
 
-    public void Start(float _fInitialDelay, float _fInterval, int _iNumRepeats = 0) // _iNumRepeats = -1 = Infinit
+    public void Start(float _fInitialDelay, float _fInterval, int _iNumRepeats) // _iNumRepeats = -1 = Infinit
     {
         if (_fInterval > 1.0f / 30.0f)
         {

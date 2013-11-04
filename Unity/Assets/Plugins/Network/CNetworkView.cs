@@ -23,7 +23,7 @@ using System;
 /* Implementation */
 
 
-public class CNetworkView : MonoBehaviour
+public class CNetworkView : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,7 +36,7 @@ public class CNetworkView : MonoBehaviour
     public enum EProdecure : byte
     {
         InvokeNetworkRpc,
-        SyncNetworkVar
+        SyncNetworkVar,
     }
 
 
@@ -50,6 +50,12 @@ public class CNetworkView : MonoBehaviour
 // Member Functions
     
     // public:
+
+
+	public override void InstanceNetworkVars()
+	{
+		// Empty
+	}
 
 
     public void Awake()
@@ -243,6 +249,33 @@ public class CNetworkView : MonoBehaviour
 
         Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1})", _ulPlayerId, this.ViewId);
     }
+
+
+	public void SyncTransformPosition()
+	{
+		// Ensure servers only sync transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform position!!!");
+
+		InvokeRpcAll("SetTransformPosition", transform.position.x, transform.position.y, transform.position.z);
+	}
+
+
+	public void SyncTransformRotation()
+	{
+		// Ensure servers only sync transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform rotation!!!");
+
+		InvokeRpcAll("SetTransformRotation", transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+	}
+
+
+	public void SyncParent()
+	{
+		// Ensure servers only sync parents
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
+
+		InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
+	}
 
 
     public static ushort GenerateDynamicViewId()
@@ -450,7 +483,7 @@ public class CNetworkView : MonoBehaviour
         foreach (CNetworkMonoBehaviour cComponent in aComponents)
         {
             // Initialise the network vars within network component
-            cComponent.InitialiseNetworkVars();
+            cComponent.InstanceNetworkVars();
 
             // Extract fields from component
             FieldInfo[] aFieldInfos = cComponent.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -529,6 +562,27 @@ public class CNetworkView : MonoBehaviour
 
 
 		return (bNetworkRpcId);
+	}
+
+
+	[ANetworkRpc]
+	void SetTransformPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+	{
+		transform.position = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
+	}
+
+
+	[ANetworkRpc]
+	void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	{
+		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+	}
+
+
+	[ANetworkRpc]
+	void SetParent(ushort _usParentViewId)
+	{
+		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
 	}
 
 

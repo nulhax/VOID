@@ -12,14 +12,7 @@ public class DUIConsole : MonoBehaviour
 
     // Member Properties
     public DUIMainView m_DUIMV        { get; set; }
-
-
-    // Member Methods
-    private void Update()
-    {
-        // Check the button collisions
-        CheckScreenCollision();
-    }
+	
 
     public void Initialise()
     {
@@ -58,51 +51,22 @@ public class DUIConsole : MonoBehaviour
         // Attach the render texture
         m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.material);
     }
-
-    private void CheckScreenCollision()
+	
+	public void CheckScreenCollision(Vector3 _origin, Vector3 _direction)
     {
 		RaycastHit hit = new RaycastHit();
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		Ray ray = new Ray(_origin, _direction);
 		
-		// Mouse Down
-        if (Input.GetMouseButtonDown(0))
-        {
- 			if (DidRayCollideWithScreen(ray, out hit))
-			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressDown();
-				}
-			}	    
-        }
-		// Mouse Up
-		else if (Input.GetMouseButtonUp(0))
+		// Test Mouse Down
+		if (DidRayCollideWithScreen(ray, out hit))
 		{
-			if (DidRayCollideWithScreen(ray, out hit))
+			DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+			
+			if(button)
 			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressUp();
-				}
+				button.OnPressDown();
 			}
-		}
-		// Mouse Hold
-		else if (Input.GetMouseButton(0))
-		{
-			if (DidRayCollideWithScreen(ray, out hit))
-			{
-				DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-				
-				if(button)
-				{
-					button.OnPressHold();
-				}
-			}
-		}
+		}	    
     }
 	
 	private bool DidRayCollideWithScreen(Ray _ray, out RaycastHit _rh)
