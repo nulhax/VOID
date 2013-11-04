@@ -78,6 +78,19 @@ public class DUIView : MonoBehaviour
         return (duiField);
     }
 	
+	public void ClearDUIElements()
+	{
+		foreach(DUIButton but in m_buttons)
+		{
+			Destroy(but.gameObject);
+		}
+		
+		foreach(DUIField field in m_fields)
+		{
+			Destroy(field.gameObject);
+		}
+	}
+	
     protected void DebugDrawRect(Rect _rect, Color _color, float _offset)
     {
         Vector3 start = Vector3.zero;
