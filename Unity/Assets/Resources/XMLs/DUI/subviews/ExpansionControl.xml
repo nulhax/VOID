@@ -7,6 +7,6 @@
   <window xyratio="2.0, 1.0" />
   
   <!-- Navigation Button -->
-  <navbutton text="Facility" />
+  <navbutton text="Expansion" />
 
 </subview>
