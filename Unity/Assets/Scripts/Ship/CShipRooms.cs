@@ -61,7 +61,7 @@ public class CShipRooms : MonoBehaviour
 					{
 						uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
 						uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
-						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId);  				
+						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId, 0);  				
 					}
 				}			
 			}   
