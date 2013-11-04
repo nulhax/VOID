@@ -153,11 +153,11 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
         NetworkState = EDoorState.Closing;
 
-        while (d < 2.0f)
+        while (d < 4.0f)
         {
             d += Time.deltaTime;
-            if (d > 2.0f)
-                d = 2.0f;
+            if (d > 4.0f)
+                d = 4.0f;
 
             Vector3 newPos = pos;
             newPos.y -= d;

@@ -28,12 +28,15 @@ public class CRoomInterface : MonoBehaviour
 
 	public enum ERoomType
 	{
-		INVALID,
+		INVALID = -1,
+		
 		Bridge,
 		Factory,
 		LifeSupportDome,
 		GravityGenerator,
-		Engine
+		Engine,
+		
+		MAX
 	}
 
 

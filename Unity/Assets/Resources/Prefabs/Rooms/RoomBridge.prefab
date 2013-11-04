@@ -9164,9 +9164,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9178,9 +9175,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9192,9 +9186,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SegmentID: 1
-  portLevel: 0
-  buildState: 0
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9203,7 +9194,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100528}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 013387bbaf7c5474088f07e7d43c6356, type: 3}
+  m_Script: {fileID: 11500000, guid: 06b219732ab7a89439aefe0a34944e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400008

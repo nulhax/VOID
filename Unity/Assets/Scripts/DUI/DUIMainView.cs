@@ -106,6 +106,11 @@ public class DUIMainView : DUIView
         return (DUISV);
     }
 	
+	public DUISubView GetSubView(string _subView)
+	{
+		return(m_subViews[_subView]);
+	}
+	
 	public DUIButton FindButtonCollisions(RaycastHit _rh)
     {
 		Vector3 offset = new Vector3(_rh.textureCoord.x * m_dimensions.x - m_dimensions.x * 0.5f,
