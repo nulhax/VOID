@@ -51,11 +51,12 @@ public class CRoomFactory : MonoBehaviour
         XDoc.Load(XReader);
 
         string T = XDoc.Attributes.ToString();
-        Debug.Break();
+        Debug.Log("TESTSTART");
+        Debug.Log("T = " + T);        
 	}
 
 	public void OnDestroy() {}
-	public void Update() {}
+    public void Update() { /*Debug.Log("TEST");*/ }
 
 // Member Fields
 

@@ -88,7 +88,6 @@ public class CRoomInfo : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-
     }
 
 
