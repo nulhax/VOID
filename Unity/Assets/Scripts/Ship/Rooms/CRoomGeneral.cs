@@ -122,8 +122,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		SetupExpansionSubviewStageOne();
 	}
 	
-	static int blah = 0;
-	public void Update()
+	public void LateUpdate()
 	{
 		if(CNetwork.IsServer)
 		{
@@ -138,9 +137,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 				Vector3 orig = actorMotor.ActorHead.transform.position;
 				Vector3 direction = actorMotor.ActorHead.transform.TransformDirection(Vector3.forward);
 				
-				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputStates.Action) != 0)
+				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputState.Action) != 0)
 				{
-					Debug.Log(string.Format("Click: {0}", blah++));
 					console.CheckScreenCollision(orig, direction);
 				}
 			}
