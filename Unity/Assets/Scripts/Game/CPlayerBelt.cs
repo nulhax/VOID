@@ -156,7 +156,11 @@ public class CPlayerBelt : MonoBehaviour
         {
             if (m_cTools[_uiToolId] != null)
             {
+                UnEquipTool(m_uiActiveToolId);
+
                 m_uiActiveToolId = _uiToolId;
+
+                EquipTool(m_uiActiveToolId);
             }
         }
 	}
@@ -195,6 +199,36 @@ public class CPlayerBelt : MonoBehaviour
         if (m_uiActiveToolId == _uiToolId)
         {
 
+        }
+    }
+
+
+    public void EquipTool(uint _uiToolId)
+    {
+        if(_uiToolId == m_uiActiveToolId)
+        {
+            Vector3 ToolOffset = new Vector3(-1, 1, 0);
+
+            //m_cTools[_uiToolId].GetComponent<GameObject>();
+            m_cTools[_uiToolId].transform.rotation = transform.rotation;
+            m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
+            m_cTools[_uiToolId].transform.localPosition = ToolOffset;
+            Debug.Log("Tool set to player position");
+        }
+    }
+
+
+    public void UnEquipTool(uint _uiToolId)
+    {
+        if(_uiToolId != m_uiActiveToolId)
+        {
+            Vector3 ToolOffset2 = new Vector3(1, -1, 0);
+
+            //m_cTools[_uiToolId].GetComponent<GameObject>();
+            m_cTools[_uiToolId].transform.rotation = transform.rotation;
+            m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
+            m_cTools[_uiToolId].transform.localPosition = ToolOffset2;
+            Debug.Log("Tool set to player position");
         }
     }
 
