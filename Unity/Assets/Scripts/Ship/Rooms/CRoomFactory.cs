@@ -10,6 +10,11 @@
 //  Mail    	:  Nathan.Boon@gmail.com
 //
 
+// Notes:
+// About tool storage; once a tool is spawned, can another tool be spawned,
+// or must the factory wait before spawning another tool? Suggestion would be
+// to change the spawn position/rotation to allow for tools to spawn up to a specified limit.
+
 // Namespaces
 using UnityEngine;
 using System.IO;
@@ -17,47 +22,82 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 
-/* Implementation */
-public class CRoomFactory : MonoBehaviour
+// Implementation
+public class CRoomFactory : CNetworkMonoBehaviour
 {
+    // Member Data
+    CNetworkVar<float> m_fHealth;
+    CNetworkVar<float> m_fPowerCost;
+    CNetworkVar<float> m_fRecharge;
+    CNetworkVar<float> m_fRadiationLevel;
+    CNetworkVar<float> m_fRadiationRadius;
 
-// Member Types
-	struct TData
-	{
-		// XML Imports
-		float m_fHealth;
-		float m_fPowerCost;
-		float m_fRecharge;
-		float m_fRadiationLevel;
-		float m_fRadiationRadius;
-		
-		// Class
-		ushort m_sCurrentToolID;
-	};
+    CNetworkVar<ushort> m_sCurrentToolID;
 
-// Member Delegates & Events
+    //////////////////////////////////////
+    // These are not networked, and must be replaced.
+    //////////////////////////////////////
 
-// Member Properties
+    float fRecharge;
+    ushort sToolID;
 
-// Member Functions
-	public void Start()
-	{
-        // Load the XML reader and document for parsing information
-        TextAsset ImportedXml = new TextAsset();
-        ImportedXml.name = Utility.GetXmlPathFacilities();
+    void SpawnTool()
+    {
+        // Create and initialise tool of sToolID at position
+        // and rotation relative to parent object CRoomFactory.
+    }
 
-        XmlTextReader XReader = new XmlTextReader(new StringReader(ImportedXml.text));
-        XmlDocument XDoc = new XmlDocument();
-        XDoc.Load(XReader);
+    public void Update()
+    {
+        if (Recharge >= 2000.0f)
+        {
+            SpawnTool();
+            m_fRecharge.Set(0.0f);
+        }
 
-        string T = XDoc.Attributes.ToString();
-        Debug.Log("TESTSTART");
-        Debug.Log("T = " + T);        
-	}
+        else
+        {
+            m_fRecharge.Set(Recharge + Time.deltaTime);
+        }
+    }
 
-	public void OnDestroy() {}
-    public void Update() { /*Debug.Log("TEST");*/ }
+    //////////////////////////////////////
+    //
+    //////////////////////////////////////
 
-// Member Fields
+    // Member Properties
+    float Health          { get { return (m_fHealth.Get()); } }
+    float PowerCost       { get { return (m_fPowerCost.Get()); } }
+    float Recharge        { get { return (m_fRecharge.Get()); } }
+    float RadiationLevel  { get { return (m_fRadiationLevel.Get()); } }
+    float RadiationRadius { get { return (m_fRadiationRadius.Get()); } }
+    ushort CurrentToolID  { get { return (m_sCurrentToolID.Get()); } }
 
+    // Member Functions
+    public override void InstanceNetworkVars()
+    {
+        m_fHealth          = new CNetworkVar<float>(OnNetworkVarSync);
+        m_fPowerCost       = new CNetworkVar<float>(OnNetworkVarSync);
+        m_fRecharge        = new CNetworkVar<float>(OnNetworkVarSync);
+        m_fRadiationLevel  = new CNetworkVar<float>(OnNetworkVarSync);
+        m_fRadiationRadius = new CNetworkVar<float>(OnNetworkVarSync);
+
+        m_sCurrentToolID   = new CNetworkVar<ushort>(OnNetworkVarSync);
+    }
+
+    //public void Update()
+    //{
+    //    if (Recharge >= 2000.0f) // Magic number
+    //    {
+    //        // Spawn Tool
+    //    }
+    //}
+
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    {
+        // Empty
+    }
+
+    public void Start() {}
+    public void OnDestroy() {}
 };
