@@ -56,7 +56,7 @@ public class CRoomInfo : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InitialiseNetworkVars()
+    public override void InstanceNetworkVars()
     {
         m_fTemperature = new CNetworkVar<float>(OnNetworkVarSync);
         m_fOxygen = new CNetworkVar<float>(OnNetworkVarSync);
