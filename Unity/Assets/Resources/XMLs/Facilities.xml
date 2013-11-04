@@ -1,0 +1,51 @@
+<facilities>
+	<bridge>
+		<id>0</id>
+		<name>Command Bridge</name>
+	</bridge>
+	<factory>
+		<id>1</id>
+		<name>Factory</name>
+		<data>
+			<health>100</health>
+			<powercost>100</powercost>
+			<recharge>60</recharge>
+			<radiation>
+				<level>0</level>
+				<radius>0</radius>
+			</radiation>
+		</data>
+	</factory>
+	<gravitygen>
+		<id>2</id>
+		<name>Gravity Generator</name>
+	</gravitygen>
+	<lifesupport>
+		<id>3</id>
+		<name>Life Support</name>
+	</lifesupport>
+	<medbay>
+		<id>4</id>
+		<name>Medical Bay</name>
+	</medbay>
+	<powergen>
+		<id>5</id>
+		<name>Power Generator</name>
+	</powergen>
+	<replicator>
+		<id>6</id>
+		<name>Replicator</name>
+	</replicator>
+	<scanner>
+		<id>7</id>
+		<name>Scanner</name>
+	</scanner>
+	<shieldgen>
+		<id>8</id>
+		<name>Shield Generator</name>
+	</shieldgen>
+	<turret>
+		<id>9</id>
+		<name>Turret</name>
+	</turret>
+</facilities>
