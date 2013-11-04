@@ -82,7 +82,7 @@ public class Converter
     }
 
 
-    public static byte[] ToByteArray(object _cObject, Type _cType = null)
+    public static byte[] ToByteArray(object _cObject, Type _cType)
     {
         Type cObjectType = _cType;
 

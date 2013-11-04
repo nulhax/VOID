@@ -41,10 +41,14 @@ public class CDoorMotor : CNetworkMonoBehaviour
 	
 // Member Fields
 	EDoorState m_DoorState 					= EDoorState.Closed;
-	bool m_StateChanged						= false;
+	bool m_StateChanged						= true;
 	
 	CNetworkVar<int> m_ServerDoorState    	= null;
   
+	
+// Static Fields
+	float s_OpenAmount						= 4.0f;
+	
 
 // Member Properties
     public EDoorState State 
@@ -128,11 +132,11 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
         NetworkState = EDoorState.Opening;
 
-        while (d < 2.0f)
+        while (d < s_OpenAmount)
         {
             d += Time.deltaTime;
-            if (d > 2.0f)
-                d = 2.0f;
+            if (d > s_OpenAmount)
+                d = s_OpenAmount;
 
             Vector3 newPos = pos;
             newPos.y += d;
@@ -153,11 +157,11 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
         NetworkState = EDoorState.Closing;
 
-        while (d < 4.0f)
+        while (d < s_OpenAmount)
         {
             d += Time.deltaTime;
-            if (d > 4.0f)
-                d = 4.0f;
+            if (d > s_OpenAmount)
+                d = s_OpenAmount;
 
             Vector3 newPos = pos;
             newPos.y -= d;
