@@ -130,7 +130,7 @@ public class CRoomGeneral : MonoBehaviour
 			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Door;
 			GameObject newDoorObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 		
-			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y - expansionPort.collider.bounds.extents.y, 0.0f);
+			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y, 0.0f);
 			newDoorObject.transform.rotation = expansionPort.transform.rotation;
 			newDoorObject.transform.parent = transform;	
 			
@@ -235,7 +235,7 @@ public class CRoomGeneral : MonoBehaviour
     {
         m_RoomSelected = m_buttonRoomTypePairs[_sender];
 		
-		CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_RoomSelected, GetComponent<CRoomInterface>().RoomId, m_ExpansionPortSelected.ExpansionPortId);
+		CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_RoomSelected, GetComponent<CRoomInterface>().RoomId, m_ExpansionPortSelected.ExpansionPortId, 0);
     }
 	
 	

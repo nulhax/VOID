@@ -353,7 +353,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Save view id
 		m_usShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 		
-		cShipObject.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Bridge, 0, 0);
+		cShipObject.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Bridge, 0, 0, 0);
 	}
 
 
