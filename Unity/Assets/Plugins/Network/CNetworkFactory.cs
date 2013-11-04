@@ -48,7 +48,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void InitialiseNetworkVars()
+    public override void InstanceNetworkVars()
     {
         // Empty
     }
@@ -61,22 +61,22 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     }
 
 
-	public void RegisterPrefab(ushort _usPrefabId, string _sPrefabFilename)
+	public void RegisterPrefab(object _cPrefabId, string _sPrefabFilename)
 	{
-		m_mPrefabs.Add(_usPrefabId, _sPrefabFilename);
+		m_mPrefabs.Add((ushort)_cPrefabId, _sPrefabFilename);
 	}
 
 
-    public GameObject CreateObject(ushort _usPrefabId)
-    {
+	public GameObject CreateObject(object _cPrefabId)
+	{
 		// Ensure only servers call this function
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects", _usPrefabId);
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects", (ushort)_cPrefabId);
 
 		// Generate dynamic network view id for object
 		ushort usObjectViewId = CNetworkView.GenerateDynamicViewId();
 
 		// Invoke create local object call on all connected players
-		InvokeRpcAll("CreateLocalObject", _usPrefabId, usObjectViewId);
+		InvokeRpcAll("CreateLocalObject", (ushort)_cPrefabId, usObjectViewId);
 
         return (CNetworkView.FindUsingViewId(usObjectViewId).gameObject);
     }
@@ -108,18 +108,57 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 InvokeRpc(_cNetworkPlayer.PlayerId, "CreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
 
                 // Extract the network view from this object
-                CNetworkView cNetworkView = CNetworkView.FindUsingViewId(tEntry.Key);
+                CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-                // Tell object to sync all their network vars with the player
-                cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
+				// Tell object to sync all their network vars with the player
+				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
             }
+			
+			// Sync parents for each transform
+			foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
+			{
+				if (tEntry.Value.cGameObject.transform.parent != null)
+				{
+					// Extract parent network view
+					CNetworkView cParentView = tEntry.Value.cGameObject.transform.parent.GetComponent<CNetworkView>();
+
+					Logger.WriteError("Networked object's parent is not a networked object. Wtf are you doing??!?");
+
+					// Extract the network view from this object
+					CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
+
+					// Invoke set parent rpc
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetParent", cParentView.ViewId);
+					
+					// Sync object's position
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
+																						 tEntry.Value.cGameObject.transform.position.y,
+																						 tEntry.Value.cGameObject.transform.position.z);
+
+					// Sync object's rotation
+					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.eulerAngles.x,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.y,
+																						 tEntry.Value.cGameObject.transform.eulerAngles.z);
+				}
+			}
         }
     }
 
 
 	public GameObject FindObject(ushort _usNetworkViewId)
 	{
-		return (m_mCreatedObjects[_usNetworkViewId].cGameObject);
+		GameObject go = null;
+		
+		if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+		{
+			go = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+		}
+		else
+		{
+			Logger.WriteError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
+		}
+		
+		return (go);
 	}
 
 
@@ -170,29 +209,33 @@ public class CNetworkFactory : CNetworkMonoBehaviour
         CNetworkView cNetworkView = cNewgameObject.GetComponent<CNetworkView>();
 
 		// Ensure the created object has a network view component
-		Logger.WriteErrorOn(cNetworkView == null, "The created prefab ({0}) does not have a network view!!!", _usNetworkViewId);
+		Logger.WriteErrorOn(cNetworkView == null, "The created prefab ({0}), name ({1}) does not have a network view!!!", _usNetworkViewId, cNewgameObject.name);
 
         cNetworkView.ViewId = _usNetworkViewId;
 		m_mCreatedObjects.Add(_usNetworkViewId, new TObjectInfo(_usPrefabId, cNewgameObject));
 
 		// Notice
-        Logger.Write("Created new game object with prefab ({0}) and network view id ({1})", _usPrefabId, _usNetworkViewId);
+        Logger.Write("Created new game object with prefab ({0}), name ({1}) and network view id ({2})", _usPrefabId, cNewgameObject.name, _usNetworkViewId);
 
 
 
-		// Testing 
-		cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
-
-
-		switch (_usNetworkViewId)
+		// Testing
+		if (_usPrefabId == 2)
 		{
-			case 500: cNewgameObject.renderer.material.color = Color.red; break;
-			case 501: cNewgameObject.renderer.material.color = Color.blue; break;
-			case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
-			case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
-			case 504: cNewgameObject.renderer.material.color = Color.green; break;
-			case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
-			case 506: cNewgameObject.renderer.material.color = Color.black; break;
+			/*
+			cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
+			
+			switch (_usNetworkViewId)
+			{
+				case 500: cNewgameObject.renderer.material.color = Color.red; break;
+				case 501: cNewgameObject.renderer.material.color = Color.blue; break;
+				case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
+				case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
+				case 504: cNewgameObject.renderer.material.color = Color.green; break;
+				case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
+				case 506: cNewgameObject.renderer.material.color = Color.black; break;
+			}
+			*/
 		}
     }
 
