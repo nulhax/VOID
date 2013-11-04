@@ -77,7 +77,7 @@ public class CShipRooms : MonoBehaviour
 	}
 
 
-	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
+	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId, uint _uiAttachToId)
 	{
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
@@ -87,7 +87,7 @@ public class CShipRooms : MonoBehaviour
 		{
 			//Attach the new room to the expansion port selected			
 			GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
-			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(0, cNewRoomObject);			
+			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(_uiAttachToId, cNewRoomObject);			
 		}
 	
 		cNewRoomObject.transform.parent = transform;
