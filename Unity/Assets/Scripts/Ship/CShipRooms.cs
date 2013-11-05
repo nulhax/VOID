@@ -122,8 +122,7 @@ public class CShipRooms : MonoBehaviour
 // Member Fields
 
 
-	uint m_uiRoomIdCount;
-	
+	uint m_uiRoomIdCount;	
 	Dictionary<uint, GameObject> m_mRooms = new Dictionary<uint, GameObject>();
 	
 };
