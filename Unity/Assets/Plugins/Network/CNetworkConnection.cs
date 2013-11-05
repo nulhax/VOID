@@ -50,6 +50,16 @@ public class CNetworkConnection : MonoBehaviour
     }
 
 
+	public struct TRateData
+	{
+		public float fTimer;
+		public uint uiBytes;
+		public uint uiNumEntries;
+		public uint uiLastTotalEntries;
+		public uint uiLastTotalBytes;
+	}
+
+
     public delegate void OnConnect();
     public event OnConnect EventConnectionAccepted;
 
@@ -94,6 +104,8 @@ public class CNetworkConnection : MonoBehaviour
             {
 				ProcessOutboundPackets();
 			}
+
+			ProcessRates();
         }
 
         if (Input.GetKeyDown(KeyCode.F3))
@@ -147,8 +159,10 @@ public class CNetworkConnection : MonoBehaviour
 			sStatistics += string.Format("Server ({0})\n", m_cServerSystemAddress.ToString());
 			sStatistics += string.Format("Ping ({0}) Average ({0})\n", m_cRnPeer.GetLastPing(m_cServerSystemAddress), m_cRnPeer.GetAveragePing(m_cServerSystemAddress));
 			sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", cStatistics.messageInSendBuffer[0], cStatistics.bytesInSendBuffer[0]);
-			sStatistics += string.Format("Recieve Buffer ({0} Messages) ({1}b)\n", cStatistics.messagesInResendBuffer, cStatistics.bytesInResendBuffer);
-			sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond, cStatistics.packetlossTotal);
+			sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", cStatistics.messagesInResendBuffer, cStatistics.bytesInResendBuffer);
+			sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
+			sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
+			sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
 
 
 			GUI.Label(new Rect(Screen.width - 250, 0.0f, 250, 200), sStatistics);
@@ -309,6 +323,10 @@ public class CNetworkConnection : MonoBehaviour
             }
 
 
+			m_tInboundRateData.uiBytes += (uint)cRnPacket.data.Length;
+			m_tInboundRateData.uiNumEntries += 1;
+
+
             m_cRnPeer.DeallocatePacket(cRnPacket);
         }
     }
@@ -326,6 +344,9 @@ public class CNetworkConnection : MonoBehaviour
             // Check player has data to be sent to the server
 			if (m_cSerializationStream.Size > 1)
             {
+				m_tOutboundRateData.uiBytes += m_cSerializationStream.Size;
+				m_tOutboundRateData.uiNumEntries += 1;
+
                 // Dispatch data to the server
 				m_cRnPeer.Send(m_cSerializationStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cServerSystemAddress, false);
 
@@ -338,6 +359,36 @@ public class CNetworkConnection : MonoBehaviour
             m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
 		}
     }
+
+
+	protected void ProcessRates()
+	{
+		// Timer increment
+		m_tInboundRateData.fTimer += Time.deltaTime;
+		m_tOutboundRateData.fTimer += Time.deltaTime;
+
+
+		if (m_tInboundRateData.fTimer > 1.0f)
+		{
+			m_tInboundRateData.uiLastTotalEntries = m_tInboundRateData.uiNumEntries;
+			m_tInboundRateData.uiLastTotalBytes = m_tInboundRateData.uiBytes;
+
+			m_tInboundRateData.uiNumEntries = 0;
+			m_tInboundRateData.uiBytes = 0;
+			m_tInboundRateData.fTimer = 0.0f;
+		}
+
+
+		if (m_tOutboundRateData.fTimer > 1.0f)
+		{
+			m_tOutboundRateData.uiLastTotalEntries = m_tOutboundRateData.uiNumEntries;
+			m_tOutboundRateData.uiLastTotalBytes = m_tOutboundRateData.uiBytes;
+
+			m_tOutboundRateData.uiNumEntries = 0;
+			m_tOutboundRateData.uiBytes = 0;
+			m_tOutboundRateData.fTimer = 0.0f;
+		}
+	}
 
 
     protected void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
@@ -461,6 +512,9 @@ public class CNetworkConnection : MonoBehaviour
 
     RakNet.RakPeer m_cRnPeer = null;
     RakNet.SystemAddress m_cServerSystemAddress = null;
+	CNetworkStream m_cSerializationStream = new CNetworkStream();
+	TRateData m_tInboundRateData = new TRateData();
+	TRateData m_tOutboundRateData = new TRateData();
 
 
     float m_fPacketOutboundTimer = 0.0f;
@@ -472,9 +526,6 @@ public class CNetworkConnection : MonoBehaviour
 
     bool m_bShowStats = true;
 
-
-	CNetworkStream m_cSerializationStream = new CNetworkStream();
-	
 	
 	static Dictionary<byte, SerializeMethod> s_mSerializeDelegates = new Dictionary<byte, SerializeMethod>();
 	static Dictionary<byte, UnserializeMethod> s_mUnserializeDelegates = new Dictionary<byte, UnserializeMethod>();
