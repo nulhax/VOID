@@ -11,7 +11,7 @@ public class CSQLInstance
     public bool openConnection
     {
         get { return connectionOpen; }
-        set { if (value != connectionOpen) { if (value) { connection.Open(); connectionOpen = true; } else { connection.Close(); connectionOpen = false; } } }
+        set { if (value != connectionOpen) { connectionOpen = value; if (value) { connection.Open(); } else { connection.Close(); } } }
     }
     
     public CSQLInstance(string databasePathNameWithoutExtension)
