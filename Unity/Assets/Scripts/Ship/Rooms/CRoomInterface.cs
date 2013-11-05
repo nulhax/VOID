@@ -140,6 +140,7 @@ public class CRoomInterface : MonoBehaviour
 			case ERoomType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomBridge; break;
 			case ERoomType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomFactory; break;
 			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;				
+			case ERoomType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomLifeSupport; break;
 		}
 		
 		return (eRegisteredPrefab);
