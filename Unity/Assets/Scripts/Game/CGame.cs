@@ -39,6 +39,7 @@ public class CGame : CNetworkMonoBehaviour
 		ControlConsole,
 		PlayerActor,
         ToolTorch,
+		Fire,
 	}
 
 
@@ -127,6 +128,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
 		
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
@@ -329,6 +331,9 @@ public class CGame : CNetworkMonoBehaviour
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
         CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
+		
+		// Fire schtuff making on the ramp stuff
+		CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);
 
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
