@@ -73,7 +73,7 @@ public class DUIView : MonoBehaviour
         DUIField duiField = fieldGo.AddComponent<DUIField>();
 
         // Initialise the button
-        duiField.Initialise(_text);
+        duiField.Initialise(_text, Color.white);
 
         return (duiField);
     }
