@@ -52,22 +52,20 @@ public class DUIConsole : MonoBehaviour
         m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.material);
     }
 	
-	public void CheckScreenCollision(Vector3 _origin, Vector3 _direction)
+	public DUIElement CheckScreenCollision(Vector3 _origin, Vector3 _direction)
     {
 		RaycastHit hit = new RaycastHit();
 		Ray ray = new Ray(_origin, _direction);
+		DUIElement element = null;
 		
-		// Test Mouse Down
 		if (DidRayCollideWithScreen(ray, out hit))
 		{
-			DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+			element = m_DUIMV.FindButtonCollisions(hit);
 			
-			if(button)
-			{
-				Debug.Log("ButPressed");
-				button.OnPressDown();
-			}
+			((DUIButton)element).OnPressDown();
 		}	    
+		
+		return(element);
     }
 	
 	private bool DidRayCollideWithScreen(Ray _ray, out RaycastHit _rh)

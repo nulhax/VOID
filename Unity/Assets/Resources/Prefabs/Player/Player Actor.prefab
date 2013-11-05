@@ -15,6 +15,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400008}
+  - 114: {fileID: 11400010}
   - 143: {fileID: 14300000}
   m_Layer: 0
   m_Name: Player Actor
@@ -67,13 +68,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dfa575a7eabf4a4297d02a028962c82, type: 3}
+  m_Script: {fileID: 11500000, guid: bb351171f510b8148970bb05836d98ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Gravity: 9.81000042
   m_MovementSpeed: 4
   m_SprintSpeed: 7
-  m_JumpSpeed: 4
+  m_JumpSpeed: 3
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,9 +124,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25019b851f95b07419d5e81a44f29242, type: 3}
+  m_Script: {fileID: 11500000, guid: 97624a04278de294896f8cf6a783b17c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eeb43f9b71d8cd347afd9820334db5d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fActorHp: 100
+  m_bIsAlive: 1
 --- !u!143 &14300000
 CharacterController:
   m_ObjectHideFlags: 1

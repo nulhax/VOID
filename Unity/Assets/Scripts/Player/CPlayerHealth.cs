@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-public class CActorHealth : MonoBehaviour 
+public class CPlayerHealth : MonoBehaviour 
 {
 
     // Member Types
@@ -54,10 +54,10 @@ public class CActorHealth : MonoBehaviour
 			
 			if(m_bIsAlive == true)
 			{
-				Destroy(CGame.Actor.GetComponent<CharacterController>());
-				CGame.Actor.GetComponent<CPlayerMotor>().enabled = false;
-				CGame.Actor.AddComponent<CapsuleCollider>();
-				Rigidbody ActorDeathBooody = CGame.Actor.AddComponent<Rigidbody>();
+				Destroy(CGame.PlayerActor.GetComponent<CharacterController>());
+				CGame.PlayerActor.GetComponent<CPlayerBodyMotor>().enabled = false;
+				CGame.PlayerActor.AddComponent<CapsuleCollider>();
+				Rigidbody ActorDeathBooody = CGame.PlayerActor.AddComponent<Rigidbody>();
 			
 				ActorDeathBooody.AddTorque(new Vector3(1.0f, 1.0f, 100.0f) );
 				m_bIsAlive = false;

@@ -1,13 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CPlayerConsoleInteraction : CNetworkMonoBehaviour
+public class CPlayerConsoleOperation : CNetworkMonoBehaviour
 {
 	// Member Types
-	
-	// Member Properties
+	public enum EConsolePressState
+	{
+		INVALID = -1,
+		
+		NotPressing,
+		PressDown,
+		PressHold,
+		PressRelease,
+	}
 	
 	// Member Fields
+	private EConsolePressState m_CurrentConsolePressState;
+	
+	
+	// Member Properties
 	
 	// Member Methods
 	public override void InstanceNetworkVars()
@@ -17,11 +28,25 @@ public class CPlayerConsoleInteraction : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-		if(CGame.Actor == gameObject)
+		if(CGame.PlayerActor == gameObject)
 		{
 			if(Input.GetMouseButtonDown(0))
 			{
-				// Check all consoles for collisions with the screen
+				m_CurrentConsolePressState = EConsolePressState.PressDown;
+			}
+			else if(Input.GetMouseButton(0))
+			{
+				m_CurrentConsolePressState = EConsolePressState.PressHold;
+			}
+			else if(Input.GetMouseButtonUp(0))
+			{
+				m_CurrentConsolePressState = EConsolePressState.PressRelease;
+			}
+			
+			// Mouse Down
+			if(m_CurrentConsolePressState == EConsolePressState.PressDown)
+			{
+				// Placeholder: Check all consoles for collisions with the screen
 				foreach(CRoomGeneral roomGeneral in CGame.Ship.GetComponentsInChildren<CRoomGeneral>())
 				{	
 					DUIConsole console = roomGeneral.RoomControlConsole.GetComponent<DUIConsole>();
@@ -32,7 +57,6 @@ public class CPlayerConsoleInteraction : CNetworkMonoBehaviour
 					Vector3 direction = playerHeadMotor.ActorHead.transform.forward;
 					
 					console.CheckScreenCollision(orig, direction);
-					Debug.Log("Checking Console");
 				}
 			}
 		}
@@ -40,7 +64,10 @@ public class CPlayerConsoleInteraction : CNetworkMonoBehaviour
 	
 	public static void SerializePlayerState(CNetworkStream _cStream)
     {
-		
+		if(CGame.PlayerActorViewId != 0)
+		{
+			
+		}
     }
 
 
