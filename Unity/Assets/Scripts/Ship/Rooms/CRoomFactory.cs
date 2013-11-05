@@ -17,8 +17,6 @@
 
 // Namespaces
 using UnityEngine;
-using System.IO;
-using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -31,39 +29,7 @@ public class CRoomFactory : CNetworkMonoBehaviour
     CNetworkVar<float> m_fRecharge;
     CNetworkVar<float> m_fRadiationLevel;
     CNetworkVar<float> m_fRadiationRadius;
-
     CNetworkVar<ushort> m_sCurrentToolID;
-
-    //////////////////////////////////////
-    // These are not networked, and must be replaced.
-    //////////////////////////////////////
-
-    float fRecharge;
-    ushort sToolID;
-
-    void SpawnTool()
-    {
-        // Create and initialise tool of sToolID at position
-        // and rotation relative to parent object CRoomFactory.
-    }
-
-    public void Update()
-    {
-        if (Recharge >= 2000.0f)
-        {
-            SpawnTool();
-            m_fRecharge.Set(0.0f);
-        }
-
-        else
-        {
-            m_fRecharge.Set(Recharge + Time.deltaTime);
-        }
-    }
-
-    //////////////////////////////////////
-    //
-    //////////////////////////////////////
 
     // Member Properties
     float Health          { get { return (m_fHealth.Get()); } }
@@ -81,17 +47,32 @@ public class CRoomFactory : CNetworkMonoBehaviour
         m_fRecharge        = new CNetworkVar<float>(OnNetworkVarSync);
         m_fRadiationLevel  = new CNetworkVar<float>(OnNetworkVarSync);
         m_fRadiationRadius = new CNetworkVar<float>(OnNetworkVarSync);
-
         m_sCurrentToolID   = new CNetworkVar<ushort>(OnNetworkVarSync);
     }
 
-    //public void Update()
-    //{
-    //    if (Recharge >= 2000.0f) // Magic number
-    //    {
-    //        // Spawn Tool
-    //    }
-    //}
+    public void Update()
+    {
+        // If recharge timer is over threshold
+        if (Recharge >= 2.0f) // Magic number
+        {
+            // Reset timer and attempt to spawn a tool
+            m_fRecharge.Set(0.0f);
+            SpawnTool();
+        }
+
+        else
+        {
+            // Increment timer
+          //  m_fRecharge.Set(Recharge + Time.deltaTime);
+        }
+    }
+
+    void SpawnTool()
+    {
+        // Create a new prefab and tool
+        CGame.ENetworkRegisteredPrefab TorchPrefab = CGame.ENetworkRegisteredPrefab.ToolTorch;
+        CNetwork.Factory.CreateObject(TorchPrefab).transform.position.Set(0, 0, 0);
+    }
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {

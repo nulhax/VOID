@@ -39,6 +39,7 @@ public class CGame : CNetworkMonoBehaviour
 		ControlConsole,
 		PlayerActor,
         ToolTorch,
+        TESTFACTORY,
 	}
 
 
@@ -127,6 +128,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "ToolTorch");
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
 		
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
@@ -328,7 +330,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
-        CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
+    //    CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
 
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
