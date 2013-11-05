@@ -73,6 +73,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_CreateExpansionStage = value;
 		}
 	}
+	
+	public GameObject RoomControlConsole { get{ return(m_RoomControlConsole); } }
 
 // Member Methods
 	public override void InstanceNetworkVars()
@@ -100,7 +102,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		DUIConsole console = GetComponentInChildren<DUIConsole>();
 		
 		// Store the room control console game object
-		m_RoomControlConsole = console.gameObject;
+ 		m_RoomControlConsole = console.gameObject;
 		
 		// Get the door interface scripts from the children
 		foreach(CDoorInterface door in GetComponentsInChildren<CDoorInterface>())
@@ -114,35 +116,20 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		// Add the room control subview
         m_duiDoorControl = console.m_DUIMV.AddSubview("DoorControl");
 		
+		// Setup the doors subview
 		SetupDoorsSubview();
 		
 		// Add the expansion control subview
         m_duiExpansionControl = console.m_DUIMV.AddSubview("ExpansionControl");
 		
-		SetupExpansionSubviewStageOne();
+		// Set the initialise create expansion stage.
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
 	}
 	
-	public void LateUpdate()
+	public void Update()
 	{
 		if(CNetwork.IsServer)
-		{
-			// Get the console script from the console object
-			DUIConsole console = m_RoomControlConsole.GetComponent<DUIConsole>();
-			
-			// Check all actors for collisions with the screen
-			foreach(GameObject actor in CGame.Actors)
-			{
-				CPlayerMotor actorMotor = actor.GetComponent<CPlayerMotor>();
-				
-				Vector3 orig = actorMotor.ActorHead.transform.position;
-				Vector3 direction = actorMotor.ActorHead.transform.TransformDirection(Vector3.forward);
-				
-				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputState.Action) != 0)
-				{
-					console.CheckScreenCollision(orig, direction);
-				}
-			}
-			
+		{	
 			if(ServerCreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_FacilitySelected, GetComponent<CRoomInterface>().RoomId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
@@ -195,7 +182,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	public void CreateRoomControlConsole()
+	public void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
 
@@ -204,8 +191,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
-		
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);	
+		newConsoleObject.transform.parent = transform;	
 		
 		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
