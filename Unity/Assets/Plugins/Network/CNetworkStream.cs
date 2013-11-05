@@ -70,6 +70,7 @@ public class CNetworkStream
 
     public void Write(CNetworkStream _cStream)
     {
+		_cStream.SetReadOffset(0);
         m_cBitStream.Write(_cStream.BitStream);
         _cStream.SetReadOffset(0);
     }
