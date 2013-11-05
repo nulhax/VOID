@@ -35,6 +35,7 @@ public class CGame : CNetworkMonoBehaviour
 		Ship,
 		RoomBridge,
 		RoomFactory,
+		HallwayTSection,
 		Door,
 		ControlConsole,
 		PlayerActor,
@@ -127,7 +128,8 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
-		
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
+				
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);

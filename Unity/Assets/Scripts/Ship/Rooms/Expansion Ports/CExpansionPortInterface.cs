@@ -47,6 +47,12 @@ public class CExpansionPortInterface : MonoBehaviour
 			}			
 		}			
 	}
+	
+	public bool HasAttachedRoom
+	{
+		get{return(m_bhasAttachedHull);}
+		set{m_bhasAttachedHull = value;}
+	}
 
 // Member Functions
 
@@ -77,7 +83,7 @@ public class CExpansionPortInterface : MonoBehaviour
 
 	public void Attach(uint _portID, GameObject _objNewRoom)
 	{	
-		if(!hasAttachedHull)
+		if(!m_bhasAttachedHull)
 		{
 			//Get all the attached expansion ports
 			Transform[] attachedObjects = _objNewRoom.GetComponentsInChildren<Transform>();			
@@ -92,7 +98,7 @@ public class CExpansionPortInterface : MonoBehaviour
 			//Line up this expansion port with the new expansion port
 			Orient((int)_portID, _objNewRoom);
 			
-			hasAttachedHull = true;
+			m_bhasAttachedHull = true;
 		}
 	}
 
@@ -120,86 +126,110 @@ public class CExpansionPortInterface : MonoBehaviour
         //Adjust rotation
         //The center of rotation should be the currently selected port of the new hull
 		CExpansionPortInterface newPort = (CExpansionPortInterface)m_attachedPorts[_portID].GetComponent("CExpansionPortInterface");
+		newPort.HasAttachedRoom = true;		
 		
+		AllignForwardVector(newPort, _objNewRoom);
+		//AllignRightVector(newPort, _objNewRoom);
+		//AllignUpVector(newPort, _objNewRoom);
+	}
+	
+	void AllignForwardVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
+	{
 		//Forward rotation//
-		
+					
         //The normal of this new port should be the inverse of the normal attached to this port		
         Vector3 inverseNormal = transform.forward * -1;
-        float rotationAngle = Vector3.Angle(newPort.transform.forward, inverseNormal);
+        float rotationAngle = Vector3.Angle(_newPort.transform.forward, inverseNormal);
 
         //Figure out if this is a left or right rotation
-        Vector3 crossResult = Vector3.Cross(newPort.transform.forward, inverseNormal);
-        if (crossResult.y > 0)
+        Vector3 crossResult = Vector3.Cross(_newPort.transform.forward, inverseNormal);
+        if (crossResult.y > 0.0f)
         {
             Debug.Log("Cross product result is positive");
             
-        }
-        else if (crossResult.y < 0)
+        }       
+		else if (crossResult.y < -0.0001f &&
+				 crossResult.y > -1.0001f)
         {
-            Debug.Log("Cross product result is negative");
+            Debug.Log("Cross product result is negative" + crossResult.ToString("n10"));
             rotationAngle = 360 - rotationAngle;
 			crossResult *= -1;
         }
-        else if (crossResult.x == 0 && crossResult.y == 0 && crossResult.z == 0)
+		//If the result is neither positive nor negative, it is approximately zero.
+		else
         {
-            Debug.Log("Cross product result is 0");
-            crossResult = newPort.transform.up;
+            Debug.Log("Cross product result is zero " + crossResult.ToString("n10"));
+            crossResult = _newPort.transform.up;
+			Debug.Log("Setting result to up vector" + crossResult.ToString("n10"));
         }
-
+		
         //Apply rotation
         Vector3 rotationPos = transform.position;
-        _objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);   
-		Debug.Log(crossResult.ToString());
-		
+        _objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);   	
+		Debug.Log("Rotated " + rotationAngle.ToString() + " around " + crossResult.ToString());
+	}
+	
+	void AllignRightVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
+	{
 		//Align the right vector
-		rotationAngle = Vector3.Angle(newPort.transform.right, transform.right);
+		float rotationAngle = Vector3.Angle(_newPort.transform.right, transform.right);
 		
-		crossResult = Vector3.Cross(newPort.transform.right, transform.right);
-        if (crossResult.y > 0)
+		Vector3 crossResult = Vector3.Cross(_newPort.transform.right, transform.right);
+      
+		if (crossResult.y > 0.0f)
         {
             Debug.Log("Cross product result is positive");
             
-        }
-        else if (crossResult.y < 0)
+        }       
+		else if (crossResult.y < -0.0001f &&
+				 crossResult.y > -1.0001f)
         {
             Debug.Log("Cross product result is negative");
             rotationAngle = 360 - rotationAngle;
 			crossResult *= -1;
         }
-        else if (crossResult.x == 0 && crossResult.y == 0 && crossResult.z == 0)
+		//If the result is neither positive nor negative, it is approximately zero.
+		else 
         {
-            Debug.Log("Cross product result is 0");
-            crossResult = newPort.transform.forward;
+            Debug.Log("Cross product result is zero");
+            crossResult = _newPort.transform.forward;
         }
-		
+        		
 		//Apply rotation
-		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);  
-		
+		Vector3 rotationPos = transform.position;
+		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);  		
+	}
+	
+	void AllignUpVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
+	{
 		//Allign the Up vector
-		rotationAngle = Vector3.Angle(newPort.transform.up, transform.up);
+		float rotationAngle = Vector3.Angle(_newPort.transform.up, transform.up);
 		
-		crossResult = Vector3.Cross(newPort.transform.up, transform.up);
-        if (crossResult.y > 0)
+		Vector3 crossResult = Vector3.Cross(_newPort.transform.up, transform.up);
+      
+		if (crossResult.y > 0.0f)
         {
             Debug.Log("Cross product result is positive");
             
-        }
-        else if (crossResult.y < 0)
+        }       
+		else if (crossResult.y < -0.0001f &&
+				 crossResult.y > -1.0001f)
         {
             Debug.Log("Cross product result is negative");
             rotationAngle = 360 - rotationAngle;
 			crossResult *= -1;
         }
-        else if (crossResult.x == 0 && crossResult.y == 0 && crossResult.z == 0)
+		//If the result is neither positive nor negative, it is approximately zero.
+		else 
         {
-            Debug.Log("Cross product result is 0");
-            crossResult = newPort.transform.right;
+            Debug.Log("Cross product result is zero");
+            crossResult = _newPort.transform.right;
         }
 		
 		//Apply rotation
+		Vector3 rotationPos = transform.position;
 		_objNewRoom.transform.RotateAround(rotationPos, crossResult, rotationAngle);
 	}
-
 
 	public void Cancel()
 	{
@@ -225,7 +255,7 @@ public class CExpansionPortInterface : MonoBehaviour
 	public static string s_GameObjectName = "ExpansionPort";
 	
 	private uint m_uiPortID = 0;
-   	bool hasAttachedHull = false; 	
+   	bool m_bhasAttachedHull = false; 	
 	List<Transform> m_attachedPorts = new List<Transform>();
 	
 };
