@@ -145,7 +145,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 // Member Methods
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.Actor == gameObject)
 		{
 			ClientUpdatePlayerInput();
 		}
@@ -166,7 +166,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
 		if(CGame.ActorViewId != 0)
 		{
-			CPlayerMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerMotor>();
+			CPlayerMotor actorMotor = CGame.Actor.GetComponent<CPlayerMotor>();
 			
 			_cStream.Write(actorMotor.m_MotorState.CurrentState);
 			_cStream.Write(actorMotor.m_MotorState.TimeStamp);

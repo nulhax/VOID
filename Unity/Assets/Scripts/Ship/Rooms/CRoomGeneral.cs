@@ -102,7 +102,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		DUIConsole console = GetComponentInChildren<DUIConsole>();
 		
 		// Store the room control console game object
-		m_RoomControlConsole = console.gameObject;
+ 		m_RoomControlConsole = console.gameObject;
 		
 		// Get the door interface scripts from the children
 		foreach(CDoorInterface door in GetComponentsInChildren<CDoorInterface>())
@@ -189,8 +189,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
-		
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);	
 		
 		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();

@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CLASSNAME.cs
+//  File Name   :   CRoomPower.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CCLASSNAME : MonoBehaviour
+public class CRoomPower : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -32,7 +32,16 @@ public class CCLASSNAME : MonoBehaviour
 // Member Properties
 
 
+	float PowerConsumption { get { return (m_fPowerConsumption.Get()); } }
+
+
 // Member Functions
+
+
+	public override void InstanceNetworkVars()
+	{
+		m_fPowerConsumption = new CNetworkVar<float>(OnNetworkVarSync);
+	}
 
 
 	public void Start()
@@ -50,7 +59,15 @@ public class CCLASSNAME : MonoBehaviour
 	}
 
 
+	void OnNetworkVarSync(INetworkVar _cVarInstance)
+	{
+	}
+
+
 // Member Fields
-	
+
+
+	CNetworkVar<float> m_fPowerConsumption;
+
 
 };

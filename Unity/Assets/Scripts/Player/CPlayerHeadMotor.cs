@@ -137,7 +137,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
     {
 		if(CGame.ActorViewId != 0)
 		{
-			CPlayerHeadMotor actorHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
+			CPlayerHeadMotor actorHeadMotor = CGame.Actor.GetComponent<CPlayerHeadMotor>();
 			
 			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.x);
 			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.y);
@@ -169,7 +169,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.Actor == gameObject)
 		{
 			UpdateHeadMotorInput();
 		}

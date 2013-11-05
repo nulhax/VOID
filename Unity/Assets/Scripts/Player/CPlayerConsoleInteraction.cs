@@ -17,7 +17,7 @@ public class CPlayerConsoleInteraction : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.Actor == gameObject)
 		{
 			if(Input.GetMouseButtonDown(0))
 			{

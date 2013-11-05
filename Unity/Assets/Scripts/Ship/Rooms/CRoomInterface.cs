@@ -69,6 +69,12 @@ public class CRoomInterface : MonoBehaviour
 	public void Awake()
 	{
 		SearchExpansionPorts();
+
+
+		gameObject.AddComponent<CRoomAtmosphere>();
+		gameObject.AddComponent<CRoomPower>();
+		gameObject.AddComponent<CRoomGeneral>();
+		gameObject.AddComponent<CNetworkView>();
 	}
 
 
