@@ -3,8 +3,8 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CRoomInfo.cs
-//  Description :   Information class for rooms
+//  File Name   :   CRoomAtmosphere.cs
+//  Description :   Atmosphere information for rooms
 //
 //  Author  	:  Nathan Boon
 //  Mail    	:  Nathan.BooN@gmail.com
@@ -19,7 +19,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CRoomInfo : CNetworkMonoBehaviour
+public class CRoomAtmosphere : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -46,9 +46,6 @@ public class CRoomInfo : CNetworkMonoBehaviour
     float Oxygen           { get { return (m_fOxygen.Get()); } }
     float Radiation        { get { return (m_fRadiation.Get()); } }
     float Pressure         { get { return (m_fPressure.Get()); } }
-    float PowerConsumption { get { return (m_fPowerConsumption.Get()); } }
-
-    bool HasPowerStorage   { get { return (m_bHasPowerStorage.Get()); } }
 
     EPriority Priority     { get { return (m_ePriority.Get()); } }
 
@@ -62,12 +59,7 @@ public class CRoomInfo : CNetworkMonoBehaviour
         m_fOxygen = new CNetworkVar<float>(OnNetworkVarSync);
         m_fRadiation = new CNetworkVar<float>(OnNetworkVarSync);
         m_fPressure = new CNetworkVar<float>(OnNetworkVarSync);
-        m_fPowerConsumption = new CNetworkVar<float>(OnNetworkVarSync);
-
-        m_bHasPowerStorage = new CNetworkVar<bool>(OnNetworkVarSync);
-
-        m_ePriority = new CNetworkVar<EPriority>(OnNetworkVarSync);
-        m_ePriority.Set(EPriority.Medium);
+		m_ePriority = new CNetworkVar<EPriority>(OnNetworkVarSync, EPriority.Medium);
     }
 
 
@@ -98,9 +90,7 @@ public class CRoomInfo : CNetworkMonoBehaviour
     CNetworkVar<float> m_fOxygen;
     CNetworkVar<float> m_fRadiation;
     CNetworkVar<float> m_fPressure;
-    CNetworkVar<float> m_fPowerConsumption;
 
-    CNetworkVar<bool> m_bHasPowerStorage;
 
     CNetworkVar<EPriority> m_ePriority;
 
