@@ -65,6 +65,12 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	{
 		m_mPrefabs.Add((ushort)_cPrefabId, _sPrefabFilename);
 	}
+	
+	
+	public string GetRegisteredPrefabFile(object _cPrefabId)
+	{
+		return (m_mPrefabs[(ushort)_cPrefabId]);
+	}
 
 
 	public GameObject CreateObject(object _cPrefabId)

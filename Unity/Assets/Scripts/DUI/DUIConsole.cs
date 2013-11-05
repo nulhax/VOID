@@ -12,6 +12,7 @@ public class DUIConsole : MonoBehaviour
 
     // Member Properties
     public DUIMainView m_DUIMV        { get; set; }
+	
 
     public void Initialise()
     {
@@ -29,23 +30,6 @@ public class DUIConsole : MonoBehaviour
 
         // Destroy the game object
         Destroy(m_DUIMV.gameObject);
-    }
-	
-	public void CheckScreenCollision(Vector3 _origin, Vector3 _direction)
-    {
-		RaycastHit hit = new RaycastHit();
-		Ray ray = new Ray(_origin, _direction);
-		
-		// Test Mouse Down
-		if (DidRayCollideWithScreen(ray, out hit))
-		{
-			DUIButton button = m_DUIMV.FindButtonCollisions(hit);
-			
-			if(button)
-			{
-				button.OnPressDown();
-			}
-		}	    
     }
 
     private void SetupDUI()
@@ -66,6 +50,23 @@ public class DUIConsole : MonoBehaviour
 
         // Attach the render texture
         m_DUIMV.AttatchRenderTexture(m_screenObject.renderer.material);
+    }
+	
+	public void CheckScreenCollision(Vector3 _origin, Vector3 _direction)
+    {
+		RaycastHit hit = new RaycastHit();
+		Ray ray = new Ray(_origin, _direction);
+		
+		// Test Mouse Down
+		if (DidRayCollideWithScreen(ray, out hit))
+		{
+			DUIButton button = m_DUIMV.FindButtonCollisions(hit);
+			
+			if(button)
+			{
+				button.OnPressDown();
+			}
+		}	    
     }
 	
 	private bool DidRayCollideWithScreen(Ray _ray, out RaycastHit _rh)
