@@ -20,7 +20,7 @@ using System.Collections.Generic;
 public class Utility
 {
     // Member Types
-    static readonly string s_sXmlPath           = "../../Resources/XMLs/";
+    static readonly string s_sXmlPath           = "C:/VOID/Unity/Assets/Resources/XMLs/";
     static readonly string s_sXmlPathTools      = s_sXmlPath + "Tools.xml";
     static readonly string s_sXmlPathComponents = s_sXmlPath + "Components.xml";
     static readonly string s_sXmlPathFacilities = s_sXmlPath + "Facilities.xml";
