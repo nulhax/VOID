@@ -64,6 +64,7 @@ public class DUIConsole : MonoBehaviour
 			
 			if(button)
 			{
+				Debug.Log("ButPressed");
 				button.OnPressDown();
 			}
 		}	    

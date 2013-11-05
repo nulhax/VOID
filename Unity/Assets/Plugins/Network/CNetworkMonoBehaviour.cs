@@ -19,6 +19,7 @@ using System.Collections;
 /* Implementation */
 
 
+
 public abstract class CNetworkMonoBehaviour : MonoBehaviour
 {
 

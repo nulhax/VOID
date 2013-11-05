@@ -73,6 +73,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_CreateExpansionStage = value;
 		}
 	}
+	
+	public GameObject RoomControlConsole { get{ return(m_RoomControlConsole); } }
 
 // Member Methods
 	public override void InstanceNetworkVars()
@@ -125,24 +127,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	public void LateUpdate()
 	{
 		if(CNetwork.IsServer)
-		{
-			// Get the console script from the console object
-			DUIConsole console = m_RoomControlConsole.GetComponent<DUIConsole>();
-			
-			// Check all actors for collisions with the screen
-			foreach(GameObject actor in CGame.Actors)
-			{
-				CPlayerMotor actorMotor = actor.GetComponent<CPlayerMotor>();
-				
-				Vector3 orig = actorMotor.ActorHead.transform.position;
-				Vector3 direction = actorMotor.ActorHead.transform.TransformDirection(Vector3.forward);
-				
-				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputState.Action) != 0)
-				{
-					console.CheckScreenCollision(orig, direction);
-				}
-			}
-			
+		{	
 			if(ServerCreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_FacilitySelected, GetComponent<CRoomInterface>().RoomId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);

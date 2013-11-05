@@ -53,7 +53,7 @@ public class CGame : CNetworkMonoBehaviour
 	}
 	
 	
-	public static GameObject Actor
+	public static GameObject PlayerActor
 	{
 		get { return (CNetwork.Factory.FindObject(Instance.m_usActorViewId)); }
 	}
@@ -128,7 +128,8 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Register serialization targets
         CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
-
+		CNetworkConnection.RegisterSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
+		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
 
@@ -385,8 +386,8 @@ public class CGame : CNetworkMonoBehaviour
 		// Notice
 		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
 		
-		// Create the camera 
-		Actor.GetComponent<CPlayerMotor>().CreatePlayerClientCamera();
+		// Create the camera for the client
+		PlayerActor.GetComponent<CPlayerHeadMotor>().AttatchPlayerCamera();
 	}
 
 
