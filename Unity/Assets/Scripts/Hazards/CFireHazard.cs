@@ -68,7 +68,7 @@ public class CFireHazard : MonoBehaviour {
             {
                 Debug.Log("Rigid body triggered. ---------------------------");
                 //Get actor health
-                float hp = _Entity.gameObject.GetComponent<CActorHealth>().m_fActorHp;
+                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().m_fActorHp;
 				
 				if(hp <= 0.0f)
 				{
@@ -80,7 +80,7 @@ public class CFireHazard : MonoBehaviour {
                		 Damage = 40.0f * Time.deltaTime;
 
                		 //apply damage
-               		 _Entity.gameObject.GetComponent<CActorHealth>().ApplyDamage(Damage, hp);
+               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage, hp);
 				}
             }
         }

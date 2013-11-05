@@ -19,7 +19,7 @@ using System.Collections;
 /* Implementation */
 
 
-public class CPlayerMotor : CNetworkMonoBehaviour
+public class CPlayerBodyMotor : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -58,38 +58,38 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		
 		public bool MovingForward
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.MoveForward); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.MoveForward)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.MoveForward); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.MoveForward)); }
 		}
 		
 		public bool MovingBackward
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.MoveBackward); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.MoveBackward)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.MoveBackward); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.MoveBackward)); }
 		}
 		
 		public bool MovingLeft
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.MoveLeft); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.MoveLeft)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.MoveLeft); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.MoveLeft)); }
 		}
 		
 		public bool MovingRight
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.MoveRight); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.MoveRight)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.MoveRight); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.MoveRight)); }
 		}
 		
 		public bool Jumping
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.Jump); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.Jump)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.Jump); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.Jump)); }
 		}
 		
 		public bool Sprinting
 		{
-			set { SetState(value, CPlayerMotor.EPlayerMovementState.Sprint); }
-			get { return(GetState(CPlayerMotor.EPlayerMovementState.Sprint)); }
+			set { SetState(value, CPlayerBodyMotor.EPlayerMovementState.Sprint); }
+			get { return(GetState(CPlayerBodyMotor.EPlayerMovementState.Sprint)); }
 		}
 		
 		private void SetState(bool _Value, EPlayerMovementState _State)
@@ -145,9 +145,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 // Member Methods
     public void Update()
     {	
-		if(CGame.Actor == gameObject)
+		if(CGame.PlayerActor == gameObject)
 		{
-			ClientUpdatePlayerInput();
+			UpdatePlayerInput();
 		}
 		
 		if(CNetwork.IsServer)
@@ -164,9 +164,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
-		if(CGame.ActorViewId != 0)
+		if(CGame.PlayerActorViewId != 0)
 		{
-			CPlayerMotor actorMotor = CGame.Actor.GetComponent<CPlayerMotor>();
+			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
 			
 			_cStream.Write(actorMotor.m_MotorState.CurrentState);
 			_cStream.Write(actorMotor.m_MotorState.TimeStamp);
@@ -178,7 +178,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-		CPlayerMotor actorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerMotor>();
+		CPlayerBodyMotor actorMotor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerBodyMotor>();
 		
 		uint motorState = _cStream.ReadUInt();
 		float timeStamp = _cStream.ReadFloat();
@@ -186,7 +186,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		actorMotor.m_MotorState.SetCurrentState(motorState, timeStamp);
     }
 	
-    protected void ClientUpdatePlayerInput()
+    protected void UpdatePlayerInput()
 	{	
 		// Move forwards
         if (Input.GetKey(m_eMoveForwardKey))

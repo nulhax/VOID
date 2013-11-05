@@ -116,15 +116,17 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		// Add the room control subview
         m_duiDoorControl = console.m_DUIMV.AddSubview("DoorControl");
 		
+		// Setup the doors subview
 		SetupDoorsSubview();
 		
 		// Add the expansion control subview
         m_duiExpansionControl = console.m_DUIMV.AddSubview("ExpansionControl");
 		
-		SetupExpansionSubviewStageOne();
+		// Set the initialise create expansion stage.
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
 	}
 	
-	public void LateUpdate()
+	public void Update()
 	{
 		if(CNetwork.IsServer)
 		{	
@@ -180,7 +182,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	public void CreateRoomControlConsole()
+	public void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
 
@@ -189,6 +191,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
+		newConsoleObject.transform.parent = transform;	
 		
 		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
