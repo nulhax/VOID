@@ -115,7 +115,7 @@ public class CShipRooms : MonoBehaviour
 		return(null);
 	}
 	
-	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
+	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId)
 	{
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
