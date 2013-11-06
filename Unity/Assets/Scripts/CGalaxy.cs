@@ -42,7 +42,7 @@ public class CGalaxy : MonoBehaviour
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
     const float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
-    uint muiGridSubsets = 21; // Zero is just the one cell.
+    uint muiGridSubsets = 20; // Zero is just the one cell.
     uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
     bool mbVisualDebug_Internal = false;    // Use mbVisualiseGrid.
     bool mbValidCellValue = false;  // Used for culling cells that are too far away from observers.
