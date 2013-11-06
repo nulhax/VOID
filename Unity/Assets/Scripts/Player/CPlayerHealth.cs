@@ -56,6 +56,7 @@ public class CPlayerHealth : MonoBehaviour
 			{
 				Destroy(CGame.PlayerActor.GetComponent<CharacterController>());
 				CGame.PlayerActor.GetComponent<CPlayerBodyMotor>().enabled = false;
+				CGame.PlayerActor.GetComponent<CPlayerHeadMotor>().enabled = false;
 				CGame.PlayerActor.AddComponent<CapsuleCollider>();
 				Rigidbody ActorDeathBooody = CGame.PlayerActor.AddComponent<Rigidbody>();
 			

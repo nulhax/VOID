@@ -129,8 +129,8 @@ public class CExpansionPortInterface : MonoBehaviour
 		newPort.HasAttachedRoom = true;		
 		
 		AllignForwardVector(newPort, _objNewRoom);
-		//AllignRightVector(newPort, _objNewRoom);
-		//AllignUpVector(newPort, _objNewRoom);
+		AllignRightVector(newPort, _objNewRoom);
+		AllignUpVector(newPort, _objNewRoom);
 	}
 	
 	void AllignForwardVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
@@ -171,10 +171,20 @@ public class CExpansionPortInterface : MonoBehaviour
 	
 	void AllignRightVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
 	{
-		//Align the right vector
-		float rotationAngle = Vector3.Angle(_newPort.transform.right, transform.right);
+		Vector3 RightVector;
 		
-		Vector3 crossResult = Vector3.Cross(_newPort.transform.right, transform.right);
+		if(m_bInvertRightVector)
+		{
+			RightVector = transform.right * -1;
+		}
+		else
+		{
+			RightVector = transform.right; 
+		}
+		
+		//Align the right vector
+		float rotationAngle = Vector3.Angle(_newPort.transform.right, RightVector);		
+		Vector3 crossResult = Vector3.Cross(_newPort.transform.right, RightVector);
       
 		if (crossResult.y > 0.0f)
         {
@@ -202,10 +212,20 @@ public class CExpansionPortInterface : MonoBehaviour
 	
 	void AllignUpVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
 	{
-		//Allign the Up vector
-		float rotationAngle = Vector3.Angle(_newPort.transform.up, transform.up);
+		Vector3 UpVector;
 		
-		Vector3 crossResult = Vector3.Cross(_newPort.transform.up, transform.up);
+		if(m_bInvertUpVector)
+		{
+			UpVector = transform.up * -1;
+		}
+		else
+		{
+			UpVector = transform.up; 
+		}
+		
+		//Allign the Up vector
+		float rotationAngle = Vector3.Angle(_newPort.transform.up, UpVector);		
+		Vector3 crossResult = Vector3.Cross(_newPort.transform.up, UpVector);
       
 		if (crossResult.y > 0.0f)
         {
@@ -253,9 +273,11 @@ public class CExpansionPortInterface : MonoBehaviour
 	};
 	
 	public static string s_GameObjectName = "ExpansionPort";
+	public bool m_bInvertRightVector = false;
+	public bool m_bInvertUpVector = false;
 	
-	private uint m_uiPortID = 0;
-   	bool m_bhasAttachedHull = false; 	
-	List<Transform> m_attachedPorts = new List<Transform>();
+	private uint m_uiPortID = 0;  	
+	private bool m_bhasAttachedHull = false; 	
+	private List<Transform> m_attachedPorts = new List<Transform>();
 	
 };

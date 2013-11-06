@@ -6290,6 +6290,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bInvertRightVector: 1
+  m_bInvertUpVector: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6312,6 +6314,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bInvertRightVector: 1
+  m_bInvertUpVector: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6323,6 +6327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2bda2843d806ff4dbe6d1ea2771d66e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bInvertRightVector: 1
+  m_bInvertUpVector: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
