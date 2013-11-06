@@ -42,6 +42,8 @@ public class CGalaxy : MonoBehaviour
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
     const float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
+    const float mfTimeBetweenProcesses = 1.0f;
+    float mfTimeUntilNextProcess = 0.0f;
     uint muiGridSubsets = 20; // Zero is just the one cell.
     uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
     bool mbVisualDebug_Internal = false;    // Use mbVisualiseGrid.
@@ -134,52 +136,59 @@ public class CGalaxy : MonoBehaviour
 	// Update is called once per frame
 	void Update()
     {
-        mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.
-
-        // Load unloaded grid cells within proximity to observers.
-        foreach (CRegisteredObserver observer in mObservers)
+        // Limit processing.
+        mfTimeUntilNextProcess -= Time.deltaTime;
+        if (mfTimeUntilNextProcess <= 0.0f)
         {
-            Vector3 observerPosition = observer.mObserver.transform.position;
-            SGridCellPos occupiedCell = PointToTransformedCell(observerPosition);
-            int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
+            mfTimeUntilNextProcess = mfTimeBetweenProcesses;    // Drop the remainder as it doesn't matter if there is a lag spike.
 
-            for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
+            mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.
+
+            // Load unloaded grid cells within proximity to observers.
+            foreach (CRegisteredObserver observer in mObservers)
             {
-                for (int y = -((iCellsInARow - 1) / 2); y <= (iCellsInARow - 1) / 2; ++y)
+                Vector3 observerPosition = observer.mObserver.transform.position;
+                SGridCellPos occupiedCell = PointToTransformedCell(observerPosition);
+                int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
+
+                for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
                 {
-                    for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
+                    for (int y = -((iCellsInARow - 1) / 2); y <= (iCellsInARow - 1) / 2; ++y)
                     {
-                        // Check if this cell is loaded.
-                        SGridCellPos cellPos = new SGridCellPos(occupiedCell.x + x - mCentreCell.x, occupiedCell.y + y - mCentreCell.y, occupiedCell.z + z - mCentreCell.z);
-                        if (TransformedCellWithinProximityOfPoint(cellPos, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
+                        for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
                         {
-                            CGridCellContent temp;
-                            if (mGrid.TryGetValue(cellPos, out temp))   // Existing cell...
-                                temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
-                            else    // Not an existing cell...
-                                LoadCell(cellPos);
+                            // Check if this cell is loaded.
+                            SGridCellPos cellPos = new SGridCellPos(occupiedCell.x + x - mCentreCell.x, occupiedCell.y + y - mCentreCell.y, occupiedCell.z + z - mCentreCell.z);
+                            if (TransformedCellWithinProximityOfPoint(cellPos, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
+                            {
+                                CGridCellContent temp;
+                                if (mGrid.TryGetValue(cellPos, out temp))   // Existing cell...
+                                    temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
+                                else    // Not an existing cell...
+                                    LoadCell(cellPos);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // Unload cells that are too far from any observers.
-        bool restart;
-        do
-        {
-            restart = false;
-            foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> cell in mGrid) // For every loaded cell...
+            // Unload cells that are too far from any observers.
+            bool restart;
+            do
             {
-                if (cell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
+                restart = false;
+                foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> cell in mGrid) // For every loaded cell...
                 {
-                    // This cell is not within proximity of any observers.
-                    UnloadCell(cell.Key); // Unload the cell.
-                    restart = true;
-                    break;
+                    if (cell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
+                    {
+                        // This cell is not within proximity of any observers.
+                        UnloadCell(cell.Key); // Unload the cell.
+                        restart = true;
+                        break;
+                    }
                 }
-            }
-        } while (restart);
+            } while (restart);
+        }
 	}
 
     void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/

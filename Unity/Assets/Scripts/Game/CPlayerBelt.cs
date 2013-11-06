@@ -101,14 +101,14 @@ public class CPlayerBelt : MonoBehaviour
         {
             Debug.DrawRay(transform.position, ray.direction, Color.green, 15);
 
-            Debug.Log("Hit " + hit.transform.gameObject.name);
+            Debug.Log("Tried to pick up " + hit.transform.gameObject.name);
 
             //have a check to make sure it is lees than say, 2 meters,
             //so that the player cannot pick up tools across the map.
 
             if (hit.transform.gameObject.GetComponent<CToolInterface>() != null)
             {
-                Debug.Log("HIT A DAMN TOOL");
+                Debug.Log("It's a Tool!");
 
                 for (uint i = 0; i < m_uiToolCapacity; i++)
                 {
@@ -144,6 +144,9 @@ public class CPlayerBelt : MonoBehaviour
             m_cTools[_uiToolId].rigidbody.isKinematic = false;
             m_cTools[_uiToolId] = null;
         }
+
+        //should change the active tool to a new one.
+        DecrementTool();
 		
 		//the dropped tool should always be the currently held tool, except on death
 		//remove the tool from parent, possibly with transfrom.DetachChildren();
@@ -225,8 +228,8 @@ public class CPlayerBelt : MonoBehaviour
             Vector3 ToolOffset2 = new Vector3(1, -1, 0);
 
             //m_cTools[_uiToolId].GetComponent<GameObject>();
-            m_cTools[_uiToolId].transform.rotation = transform.rotation;
-            m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
+            //m_cTools[_uiToolId].transform.rotation = transform.rotation;
+            //m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
             m_cTools[_uiToolId].transform.localPosition = ToolOffset2;
             Debug.Log("Tool set to player position");
         }
