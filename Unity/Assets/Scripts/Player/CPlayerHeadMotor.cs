@@ -84,10 +84,9 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	CHeadMotorState m_HeadMotorState = new CHeadMotorState();
 	
 	
-	CNetworkVar<float> m_cHeadRotationX    = null;
-    CNetworkVar<float> m_cHeadRotationY    = null;
-    CNetworkVar<float> m_cHeadRotationZ    = null;
-	CNetworkVar<float> m_cHeadRotationW    = null;
+	CNetworkVar<float> m_HeadEulerX    = null;
+    CNetworkVar<float> m_HeadEulerY    = null;
+    CNetworkVar<float> m_HeadEulerZ    = null;
 
 	
 // Member Properties	
@@ -99,25 +98,24 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		} 
 	}
 	
-	public Quaternion HeadRotation
+	public Vector3 HeadEuler
     {
         set 
 		{ 
-			m_cHeadRotationX.Set(value.x); m_cHeadRotationY.Set(value.y); m_cHeadRotationZ.Set(value.z); m_cHeadRotationW.Set(value.w);
+			m_HeadEulerX.Set(value.x); m_HeadEulerY.Set(value.y); m_HeadEulerZ.Set(value.z);
 		}
         get 
 		{ 
-			return (new Quaternion(m_cHeadRotationX.Get(), m_cHeadRotationY.Get(), m_cHeadRotationZ.Get(), m_cHeadRotationW.Get())); 
+			return (new Vector3(m_HeadEulerX.Get(), m_HeadEulerY.Get(), m_HeadEulerZ.Get())); 
 		}
     }
 	
 // Member Methods
     public override void InstanceNetworkVars()
     {
-		m_cHeadRotationX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cHeadRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_cHeadRotationZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cHeadRotationW = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_HeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_HeadEulerY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_HeadEulerZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 	
 	
@@ -126,9 +124,9 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		if(!CNetwork.IsServer)
 		{
 			// Head Rotation
-	        if (_rSender == m_cHeadRotationX || _rSender == m_cHeadRotationY || _rSender == m_cHeadRotationZ || _rSender == m_cHeadRotationW)
+	        if (_rSender == m_HeadEulerX || _rSender == m_HeadEulerY || _rSender == m_HeadEulerZ)
 	        {	
-	        	m_ActorHead.transform.rotation = HeadRotation;
+	        	m_ActorHead.transform.eulerAngles = HeadEuler;
 	        }
 		}
     }
@@ -180,7 +178,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 			ProcessRotations();
 			
 			// Syncronize the head rotation
-			HeadRotation = transform.rotation;
+			HeadEuler = m_ActorHead.transform.eulerAngles;
 		}
     }
 	

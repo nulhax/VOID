@@ -137,7 +137,7 @@ public class CNetworkView : CNetworkMonoBehaviour
                     // Append packet data
                     tEntry.Value.NetworkViewStream.Write(cRpcStream);	
 
-                    Logger.WriteError("Written {0} bytes into player ({1})", cRpcStream.Size, tEntry.Value.PlayerId);
+                    //Logger.WriteError("Written {0} bytes into player ({1})", cRpcStream.Size, tEntry.Value.PlayerId);
                 }
             }
 

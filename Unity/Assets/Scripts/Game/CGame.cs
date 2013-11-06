@@ -359,6 +359,12 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnServerStartup()
 	{
+        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
+
+        // DO FIRST (i.e. before anything in the game world is created).
+        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+        gameObject.AddComponent<CGalaxy>();
+
 		// Create ship object
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
@@ -371,9 +377,14 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnServerShutdown()
 	{
+        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
+
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
 		m_usShipViewId = 0;
+
+        // DO LAST (i.e. after everything in the game world is destroyed).
+        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
