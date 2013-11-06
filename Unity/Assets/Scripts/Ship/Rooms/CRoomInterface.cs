@@ -31,10 +31,12 @@ public class CRoomInterface : MonoBehaviour
 		INVALID = -1,
 		
 		Bridge,
-		Factory,
-		LifeSupportDome,
-		GravityGenerator,
 		Engine,
+		Factory,
+		GravityGenerator,
+		LifeSupportDome,
+		Replicator,
+		Scanner,
 		HallwayTSection,
 		
 		MAX
@@ -139,8 +141,12 @@ public class CRoomInterface : MonoBehaviour
 		{
 			case ERoomType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomBridge; break;
 			case ERoomType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomFactory; break;
-			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;				
+			case ERoomType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomGravityGenerator; break;
 			case ERoomType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomLifeSupport; break;
+			case ERoomType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomEngine; break;
+			case ERoomType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomReplicator; break;
+			case ERoomType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomScanner; break;
+			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;				
 		}
 		
 		return (eRegisteredPrefab);
