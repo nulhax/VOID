@@ -31,10 +31,13 @@ public class CRoomInterface : MonoBehaviour
 		INVALID = -1,
 		
 		Bridge,
-		Factory,
-		LifeSupportDome,
-		GravityGenerator,
 		Engine,
+		Factory,
+		GravityGenerator,
+		LifeSupportDome,
+		Replicator,
+		Scanner,
+		HallwayTSection,
 		
 		MAX
 	}
@@ -69,6 +72,13 @@ public class CRoomInterface : MonoBehaviour
 	public void Awake()
 	{
 		SearchExpansionPorts();
+		AddDebugPortNames();
+		
+
+		gameObject.AddComponent<CRoomAtmosphere>();
+		gameObject.AddComponent<CRoomPower>();
+		gameObject.AddComponent<CRoomGeneral>();
+		gameObject.AddComponent<CNetworkView>();		
 	}
 
 
@@ -129,8 +139,14 @@ public class CRoomInterface : MonoBehaviour
 		
 		switch (_eRoomType)
 		{
-		case ERoomType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomBridge; break;
-		case ERoomType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomFactory; break;
+			case ERoomType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomBridge; break;
+			case ERoomType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomFactory; break;
+			case ERoomType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomGravityGenerator; break;
+			case ERoomType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomLifeSupport; break;
+			case ERoomType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomEngine; break;
+			case ERoomType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomReplicator; break;
+			case ERoomType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomScanner; break;
+			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;				
 		}
 		
 		return (eRegisteredPrefab);
@@ -149,12 +165,39 @@ public class CRoomInterface : MonoBehaviour
 			}
 		}
 	}
+	
+	private void AddDebugPortNames()
+	{
+		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
+		{
+			CDUIField debugName = m_aExpansionPorts[i].gameObject.AddComponent<CDUIField>();
+			int PortId = i + 1;
+			debugName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
+		}
+	}
+	
+	private void OnTriggerEnter(Collider _Entity)
+	{
+		//If this room is intersecting another room, panic.
+		if(_Entity.gameObject.tag == "Room")
+		{
+			m_bIntersecting = true;
+		}
+	}   
+	
+	private void OnTriggerExit(Collider _Entity)
+	{
+		if(_Entity.gameObject.tag == "Room")
+		{
+			m_bIntersecting = false;
+		}
+	}
 
 	// Member Fields
 
-
 	ERoomType m_eType = ERoomType.INVALID;
 	uint m_uiRoomID = 0;
+	bool m_bIntersecting = false;
 	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
 

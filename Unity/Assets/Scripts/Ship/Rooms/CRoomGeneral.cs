@@ -42,16 +42,16 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private GameObject m_RoomControlConsole = null;
 	private List<GameObject> m_Doors = new List<GameObject>();
 	
-	private DUISubView m_duiDoorControl;
+	private GameObject m_DoorControlSubView;
 	
-    private Dictionary<DUIButton, CDoorMotor> m_buttonDoorPairs = new Dictionary<DUIButton, CDoorMotor>();
-	private Dictionary<DUIField, CDoorMotor> m_fieldDoorPairs = new Dictionary<DUIField, CDoorMotor>();
+    private Dictionary<CDUIButton, CDoorMotor> m_buttonDoorPairs = new Dictionary<CDUIButton, CDoorMotor>();
+	private Dictionary<CDUIField, CDoorMotor> m_fieldDoorPairs = new Dictionary<CDUIField, CDoorMotor>();
 	
-	private DUISubView m_duiExpansionControl;
+	private GameObject m_ExpansionControlSubView;
 	
-	private Dictionary<DUIButton, uint> m_buttonLocalPortPairs = new Dictionary<DUIButton, uint>();
-	private Dictionary<DUIButton, uint> m_buttonOtherPortPairs = new Dictionary<DUIButton, uint>();
-	private Dictionary<DUIButton, CRoomInterface.ERoomType> m_buttonRoomTypePairs = new Dictionary<DUIButton, CRoomInterface.ERoomType>();
+	private Dictionary<CDUIButton, uint> m_buttonLocalPortPairs = new Dictionary<CDUIButton, uint>();
+	private Dictionary<CDUIButton, uint> m_buttonOtherPortPairs = new Dictionary<CDUIButton, uint>();
+	private Dictionary<CDUIButton, CRoomInterface.ERoomType> m_buttonRoomTypePairs = new Dictionary<CDUIButton, CRoomInterface.ERoomType>();
 	
 	private CNetworkVar<int> m_ServerCreateExpansionStage    	 	= null;
 	private EExpansionCreatePhase m_CreateExpansionStage 			= EExpansionCreatePhase.INVALID;
@@ -73,6 +73,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_CreateExpansionStage = value;
 		}
 	}
+	
+	public GameObject RoomControlConsole { get{ return(m_RoomControlConsole); } }
 
 // Member Methods
 	public override void InstanceNetworkVars()
@@ -97,10 +99,10 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Get the console script from the children
-		DUIConsole console = GetComponentInChildren<DUIConsole>();
+		CDUIConsole console = GetComponentInChildren<CDUIConsole>();
 		
 		// Store the room control console game object
-		m_RoomControlConsole = console.gameObject;
+ 		m_RoomControlConsole = console.gameObject;
 		
 		// Get the door interface scripts from the children
 		foreach(CDoorInterface door in GetComponentsInChildren<CDoorInterface>())
@@ -109,40 +111,25 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 		
 		 // Initialise the console
-        console.Initialise();
+        console.Initialise(EQuality.High, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
 		
 		// Add the room control subview
-        m_duiDoorControl = console.m_DUIMV.AddSubview("DoorControl");
+        m_DoorControlSubView = console.MainView.AddSubView();
 		
+		// Setup the doors subview
 		SetupDoorsSubview();
 		
 		// Add the expansion control subview
-        m_duiExpansionControl = console.m_DUIMV.AddSubview("ExpansionControl");
+        m_ExpansionControlSubView = console.MainView.AddSubView();
 		
-		SetupExpansionSubviewStageOne();
+		// Set the initialise create expansion stage.
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
 	}
 	
-	public void LateUpdate()
+	public void Update()
 	{
 		if(CNetwork.IsServer)
-		{
-			// Get the console script from the console object
-			DUIConsole console = m_RoomControlConsole.GetComponent<DUIConsole>();
-			
-			// Check all actors for collisions with the screen
-			foreach(GameObject actor in CGame.Actors)
-			{
-				CPlayerMotor actorMotor = actor.GetComponent<CPlayerMotor>();
-				
-				Vector3 orig = actorMotor.ActorHead.transform.position;
-				Vector3 direction = actorMotor.ActorHead.transform.TransformDirection(Vector3.forward);
-				
-				if((actorMotor.CurrentInputState & (uint)CPlayerMotor.EInputState.Action) != 0)
-				{
-					console.CheckScreenCollision(orig, direction);
-				}
-			}
-			
+		{	
 			if(ServerCreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_FacilitySelected, GetComponent<CRoomInterface>().RoomId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
@@ -195,7 +182,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	public void CreateRoomControlConsole()
+	public void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
 
@@ -204,8 +191,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 		newConsoleObject.transform.position = consoleTransform.position;
 		newConsoleObject.transform.rotation = consoleTransform.rotation;
-		
-		newConsoleObject.GetComponent<CNetworkView>().InvokeRpcAll("SetParent", GetComponent<CNetworkView>().ViewId);	
+		newConsoleObject.transform.parent = transform;	
 		
 		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
@@ -215,26 +201,28 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 	private void SetupDoorsSubview()
 	{
+		CDUISubView duiDoorControl = m_DoorControlSubView.GetComponent<CDUISubView>();
+		
 		// For each door add a button
         for(int i = 0; i < m_Doors.Count; ++i)
         {
 			CDoorMotor door = m_Doors[i].GetComponent<CDoorMotor>();
 			
 			// Add the door buttons
-            DUIButton duiBut = m_duiDoorControl.AddButton("Open");
+            CDUIButton duiBut = duiDoorControl.AddButton("Open");
             duiBut.PressDown += OpenCloseDoor;
 
             m_buttonDoorPairs[duiBut] = door;
 			
 			// Add the door status field
-			DUIField duiDoorState = m_duiDoorControl.AddField(string.Format("Door {0}: Closed", i + 1));
+			CDUIField duiDoorState = duiDoorControl.AddField(string.Format("Door {0}: Closed", i + 1));
 		
 			m_fieldDoorPairs[duiDoorState] = door;
 			
 			// Set their positions
-			duiDoorState.m_viewPos = new Vector2(0.1f, (float)(i + 1) / (float)(m_Doors.Count + 1));
-			duiBut.transform.localPosition = duiDoorState.transform.localPosition + new Vector3(duiDoorState.m_dimensions.x * 0.5f + duiBut.m_dimensions.x * 0.5f, 0.0f);
-			duiBut.m_viewPos = new Vector2(duiBut.m_viewPos.x + 0.1f, duiBut.m_viewPos.y);
+			duiDoorState.m_ViewPos = new Vector2(0.1f, (float)(i + 1) / (float)(m_Doors.Count + 1));
+			duiBut.transform.localPosition = duiDoorState.transform.localPosition + new Vector3(duiDoorState.Dimensions.x * 0.5f + duiBut.Dimensions.x * 0.5f, 0.0f);
+			duiBut.m_ViewPos = new Vector2(duiBut.m_ViewPos.x + 0.1f, duiBut.m_ViewPos.y);
 			
 			// Register the statechange
 			door.StateChanged += DoorStateChanged;
@@ -245,11 +233,12 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private void SetupExpansionSubviewStageOne()
 	{
 		// Clear the existing elements
-		m_duiExpansionControl.ClearDUIElements();
+		CDUISubView duiExpansionControl = m_ExpansionControlSubView.GetComponent<CDUISubView>();
+		duiExpansionControl.ClearDUIElements();
 		
 		// Add the title field
-		DUIField diuField = m_duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
-		diuField.m_viewPos = new Vector2(0.5f, 1.0f);
+		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
+		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
 		
 		// For each expansion port add a button
 		List<GameObject> expansionPorts = GetComponent<CRoomInterface>().ExpansionPorts;
@@ -258,11 +247,11 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			GameObject expansionPort = expansionPorts[i];
 				
 			// Add the expansion port buttons
-            DUIButton duiBut = m_duiExpansionControl.AddButton(string.Format("Expansion Port: {0}", expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId + 1));
+            CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Expansion Port: {0}", expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId + 1));
             duiBut.PressDown += ExpansionSubviewSelectLocalPort;
 
 			// Set the positions
-			duiBut.m_viewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
+			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
 			
 			m_buttonLocalPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
@@ -272,11 +261,12 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private void SetupExpansionSubviewStageTwo()
 	{
 		// Clear the existing elements
-		m_duiExpansionControl.ClearDUIElements();
+		CDUISubView duiExpansionControl = m_ExpansionControlSubView.GetComponent<CDUISubView>();
+		duiExpansionControl.ClearDUIElements();
 		
 		// Add the title field
-		DUIField diuField = m_duiExpansionControl.AddField("Select a room to create.");
-		diuField.m_viewPos = new Vector2(0.5f, 1.0f);
+		CDUIField diuField = duiExpansionControl.AddField("Select a room to create.");
+		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
 		
 		// For each room type
 		for(int i = 0; i < (int)CRoomInterface.ERoomType.MAX; ++i)
@@ -284,11 +274,11 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			CRoomInterface.ERoomType roomType = (CRoomInterface.ERoomType)i;
 			
 			// Add the expansion port buttons
-            DUIButton duiBut = m_duiExpansionControl.AddButton(string.Format("Room: {0}", roomType.ToString()));
+            CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Room: {0}", roomType.ToString()));
             duiBut.PressDown += ExpansionSubviewSelectFacility;
 
 			// Set the positions
-			duiBut.m_viewPos = new Vector2(0.0f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
+			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
 			
 			m_buttonRoomTypePairs[duiBut] = roomType;
 		}	
@@ -298,11 +288,12 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private void SetupExpansionSubviewStageThree()
 	{
 		// Clear the existing elements
-		m_duiExpansionControl.ClearDUIElements();
+		CDUISubView duiExpansionControl = m_ExpansionControlSubView.GetComponent<CDUISubView>();
+		duiExpansionControl.ClearDUIElements();
 
 		// Add the title field
-		DUIField diuField = m_duiExpansionControl.AddField("Select an OTHER expansion port to use.");
-		diuField.m_viewPos = new Vector2(0.5f, 1.0f);
+		CDUIField diuField = duiExpansionControl.AddField("Select an OTHER expansion port to use.");
+		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
 		
 		// Get the local prefab string
 		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CRoomInterface.GetRoomPrefab(m_FacilitySelected));
@@ -315,11 +306,11 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			GameObject expansionPort = expansionPorts[i];
 				
 			// Add the expansion port buttons
-            DUIButton duiBut = m_duiExpansionControl.AddButton(string.Format("Expansion Port: {0}", expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId + 1));
+            CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Expansion Port: {0}", expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId + 1));
             duiBut.PressDown += ExpansionSubviewSelectOtherPort;
 
 			// Set the positions
-			duiBut.m_viewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
+			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
 			
 			m_buttonOtherPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
@@ -329,7 +320,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	private void ExpansionSubviewSelectLocalPort(DUIButton _sender)
+	private void ExpansionSubviewSelectLocalPort(CDUIButton _sender)
     {
         m_LocalExpansionPortIdSelected = m_buttonLocalPortPairs[_sender];
 		
@@ -337,7 +328,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     }
 	
 	
-	private void ExpansionSubviewSelectFacility(DUIButton _sender)
+	private void ExpansionSubviewSelectFacility(CDUIButton _sender)
     {
         m_FacilitySelected = m_buttonRoomTypePairs[_sender];
 		
@@ -345,7 +336,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     }
 	
 	
-	private void ExpansionSubviewSelectOtherPort(DUIButton _sender)
+	private void ExpansionSubviewSelectOtherPort(CDUIButton _sender)
     {
         m_OtherExpansionPortIdSelected = m_buttonOtherPortPairs[_sender];
 		
@@ -353,7 +344,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     }
 	
 	
-	private void OpenCloseDoor(DUIButton _sender)
+	private void OpenCloseDoor(CDUIButton _sender)
     {
         CDoorMotor door = m_buttonDoorPairs[_sender];
 
@@ -370,7 +361,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 
     private void DoorStateChanged(CDoorMotor _sender)
     {	
-		foreach(DUIButton button in m_buttonDoorPairs.Keys)
+		foreach(CDUIButton button in m_buttonDoorPairs.Keys)
 		{
 			if(m_buttonDoorPairs[button] == _sender)
 			{
@@ -395,7 +386,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			}
 		}
 		
-		foreach(DUIField field in m_fieldDoorPairs.Keys)
+		foreach(CDUIField field in m_fieldDoorPairs.Keys)
 		{
 			if(m_fieldDoorPairs[field] == _sender)
 			{

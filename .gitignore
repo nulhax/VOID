@@ -8,3 +8,4 @@
 *.sln
 /Unity/*.pidb
 /Unity/*.userprefs
+/Unity/Assets/Standard Assers
