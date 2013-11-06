@@ -42,8 +42,8 @@ public class CGalaxy : MonoBehaviour
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
     const float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
-    uint muiGridSubsets = 31; // Zero is just the one cell.
-    //uint muiGridSubsets = 20; // Zero is just the one cell.
+    uint muiGridSubsets = 21; // Zero is just the one cell.
+    uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
     bool mbVisualDebug_Internal = false;    // Use mbVisualiseGrid.
     bool mbValidCellValue = false;  // Used for culling cells that are too far away from observers.
 
@@ -112,6 +112,16 @@ public class CGalaxy : MonoBehaviour
         return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
     }
 
+    void LoadCell(SGridCellPos cell)
+    {
+        mGrid.Add(cell, new CGridCellContent(mbValidCellValue)); // Create cell with updated alternator to indicate cell is within proximity of observer.
+    }
+
+    void UnloadCell(SGridCellPos cell)
+    {
+        mGrid.Remove(cell); // Unload the cell.
+    }
+
 	// Use this for initialization
 	void Start()
     {
@@ -129,8 +139,9 @@ public class CGalaxy : MonoBehaviour
         // Load unloaded grid cells within proximity to observers.
         foreach (CRegisteredObserver observer in mObservers)
         {
-            SGridCellPos occupiedCell = PointToTransformedCell(observer.mObserver.transform.position);
-            int iCellsInARow = 1 + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
+            Vector3 observerPosition = observer.mObserver.transform.position;
+            SGridCellPos occupiedCell = PointToTransformedCell(observerPosition);
+            int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
 
             for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
             {
@@ -139,12 +150,15 @@ public class CGalaxy : MonoBehaviour
                     for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
                     {
                         // Check if this cell is loaded.
-                        SGridCellPos cellPos = new SGridCellPos(occupiedCell.x + x, occupiedCell.y + y, occupiedCell.z + z);
-                        CGridCellContent temp;
-                        if (mGrid.TryGetValue(cellPos, out temp))   // Existing cell...
-                            temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
-                        else    // Not an existing cell...
-                            mGrid.Add(cellPos, new CGridCellContent(mbValidCellValue)); // Create cell with updated alternator to indicate cell is within proximity of observer.
+                        SGridCellPos cellPos = new SGridCellPos(occupiedCell.x + x - mCentreCell.x, occupiedCell.y + y - mCentreCell.y, occupiedCell.z + z - mCentreCell.z);
+                        if (TransformedCellWithinProximityOfPoint(cellPos, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
+                        {
+                            CGridCellContent temp;
+                            if (mGrid.TryGetValue(cellPos, out temp))   // Existing cell...
+                                temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
+                            else    // Not an existing cell...
+                                LoadCell(cellPos);
+                        }
                     }
                 }
             }
@@ -160,7 +174,7 @@ public class CGalaxy : MonoBehaviour
                 if (cell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
                 {
                     // This cell is not within proximity of any observers.
-                    mGrid.Remove(cell.Key); // Unload the cell.
+                    UnloadCell(cell.Key); // Unload the cell.
                     restart = true;
                     break;
                 }
@@ -175,9 +189,6 @@ public class CGalaxy : MonoBehaviour
         {
             foreach (CRegisteredObserver elem in mObservers)
                 Gizmos.DrawWireSphere(elem.mObserver.transform.position, elem.mObservationRadius);
-
-            //GL.PushMatrix();
-            //GL.LoadProjectionMatrix(Camera.main.projectionMatrix);    // This makes the lines always visible (overlap everything in the scene).
             GL.Color(Color.red);
             float fCellDiameter = mfGalaxySize / mNumGridCellsInRow;
             float fCellRadius = fCellDiameter * .5f;
@@ -239,66 +250,6 @@ public class CGalaxy : MonoBehaviour
                 GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
                 GL.End();
             }
-
-            //for (float x = fGalaxyMin + fCellRadius; x <= fGalaxyMax; x += fCellDiameter)
-            //{
-            //    for (float y = fGalaxyMin + fCellRadius; y <= fGalaxyMax; y += fCellDiameter)
-            //    {
-            //        for (float z = fGalaxyMin + fCellRadius; z <= fGalaxyMax; z += fCellDiameter)
-            //        {
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x - fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x - fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y - fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //            GL.Begin(GL.LINES);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z - fCellRadius);
-            //            GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
-            //            GL.End();
-            //        }
-            //    }
-            //}
-
-//            GL.PopMatrix();
         }
     }
 }
