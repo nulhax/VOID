@@ -81,17 +81,45 @@ public class CShipRooms : MonoBehaviour
 
 	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId, uint _uiAttachToId)
 	{
+		GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
+		
+		if(cExpansionPort.GetComponent<CExpansionPortInterface>().HasAttachedRoom == false)
+		{		
+			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
+			GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+					
+			
+			//Attach the new room to the expansion port selected			
+			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(_uiAttachToId, cNewRoomObject);			
+			
+			cNewRoomObject.transform.parent = transform;
+				
+			cNewRoomObject.GetComponent<CNetworkView>().SyncParent();
+			cNewRoomObject.GetComponent<CNetworkView>().SyncTransformPosition();
+			cNewRoomObject.GetComponent<CNetworkView>().SyncTransformRotation();
+				
+			
+			// Create the room's doors and initialise the control console
+			CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
+			room.ServerCreateDoors();
+			room.ServerCreateControlConsole();
+			
+			uint uiRoomId = ++m_uiRoomIdCount;
+			m_mRooms.Add(uiRoomId, cNewRoomObject);
+			
+			cNewRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;
+			
+			return (cNewRoomObject);
+		}
+		Debug.LogWarning("Failed to create new room. Port already in use");
+		return(null);
+	}
+	
+	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
+	{
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-		
-		
-		if (_uiRoomId != 0)
-		{
-			//Attach the new room to the expansion port selected			
-			GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
-			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(_uiAttachToId, cNewRoomObject);			
-		}
-	
+				
 		cNewRoomObject.transform.parent = transform;
 			
 		cNewRoomObject.GetComponent<CNetworkView>().SyncParent();

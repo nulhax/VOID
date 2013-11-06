@@ -76,7 +76,7 @@ public class CRoomInterface : MonoBehaviour
 		gameObject.AddComponent<CRoomAtmosphere>();
 		gameObject.AddComponent<CRoomPower>();
 		gameObject.AddComponent<CRoomGeneral>();
-		gameObject.AddComponent<CNetworkView>();
+		gameObject.AddComponent<CNetworkView>();		
 	}
 
 
@@ -169,12 +169,29 @@ public class CRoomInterface : MonoBehaviour
 			debugName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
 		}
 	}
+	
+	private void OnTriggerEnter(Collider _Entity)
+	{
+		//If this room is intersecting another room, panic.
+		if(_Entity.gameObject.tag == "Room")
+		{
+			m_bIntersecting = true;
+		}
+	}   
+	
+	private void OnTriggerExit(Collider _Entity)
+	{
+		if(_Entity.gameObject.tag == "Room")
+		{
+			m_bIntersecting = false;
+		}
+	}
 
 	// Member Fields
 
-
 	ERoomType m_eType = ERoomType.INVALID;
 	uint m_uiRoomID = 0;
+	bool m_bIntersecting = false;
 	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
 
