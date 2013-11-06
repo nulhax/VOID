@@ -29,8 +29,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	public enum EExpansionCreatePhase
 	{
 		INVALID,
-		SelectLocalExpansionPort,
 		SelectFacilityType,
+		SelectLocalExpansionPort,
 		SelectOtherExpansionPort,
 		CreateExpansion,
 	}
@@ -123,7 +123,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         m_ExpansionControlSubView = console.MainView.AddSubView();
 		
 		// Set the initialise create expansion stage.
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
 	}
 	
 	public void Update()
@@ -138,16 +138,16 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
 				
-				ServerCreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
+				ServerCreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
 			}
 		}
 		
-		if(m_CreateExpansionStage == EExpansionCreatePhase.SelectLocalExpansionPort)
+		if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
 		{
 			SetupExpansionSubviewStageOne();
 			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
 		}
-		else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
+		else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectLocalExpansionPort)
 		{
 			SetupExpansionSubviewStageTwo();
 			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
@@ -237,6 +237,33 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		duiExpansionControl.ClearDUIElements();
 		
 		// Add the title field
+		CDUIField diuField = duiExpansionControl.AddField("Select a room to create.");
+		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		
+		// For each room type
+		for(int i = 0; i < (int)CRoomInterface.ERoomType.MAX; ++i)
+		{
+			CRoomInterface.ERoomType roomType = (CRoomInterface.ERoomType)i;
+			
+			// Add the expansion port buttons
+            CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Room: {0}", roomType.ToString()));
+            duiBut.PressDown += ExpansionSubviewSelectFacility;
+
+			// Set the positions
+			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
+			
+			m_buttonRoomTypePairs[duiBut] = roomType;
+		}
+	}
+	
+	
+	private void SetupExpansionSubviewStageTwo()
+	{
+		// Clear the existing elements
+		CDUISubView duiExpansionControl = m_ExpansionControlSubView.GetComponent<CDUISubView>();
+		duiExpansionControl.ClearDUIElements();
+		
+		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
 		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
 		
@@ -255,33 +282,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			
 			m_buttonLocalPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
-	}
-	
-	
-	private void SetupExpansionSubviewStageTwo()
-	{
-		// Clear the existing elements
-		CDUISubView duiExpansionControl = m_ExpansionControlSubView.GetComponent<CDUISubView>();
-		duiExpansionControl.ClearDUIElements();
-		
-		// Add the title field
-		CDUIField diuField = duiExpansionControl.AddField("Select a room to create.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
-		
-		// For each room type
-		for(int i = 0; i < (int)CRoomInterface.ERoomType.MAX; ++i)
-		{
-			CRoomInterface.ERoomType roomType = (CRoomInterface.ERoomType)i;
-			
-			// Add the expansion port buttons
-            CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Room: {0}", roomType.ToString()));
-            duiBut.PressDown += ExpansionSubviewSelectFacility;
-
-			// Set the positions
-			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
-			
-			m_buttonRoomTypePairs[duiBut] = roomType;
-		}	
 	}
 	
 	
@@ -324,7 +324,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     {
         m_LocalExpansionPortIdSelected = m_buttonLocalPortPairs[_sender];
 		
-		ServerCreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+		ServerCreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
     }
 	
 	
@@ -332,7 +332,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     {
         m_FacilitySelected = m_buttonRoomTypePairs[_sender];
 		
-		ServerCreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
+		ServerCreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
     }
 	
 	
