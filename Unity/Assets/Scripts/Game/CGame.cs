@@ -35,6 +35,8 @@ public class CGame : CNetworkMonoBehaviour
 		Ship,
 		RoomBridge,
 		RoomFactory,
+		RoomLifeSupport,
+		HallwayTSection,
 		Door,
 		ControlConsole,
 		PlayerActor,
@@ -127,10 +129,12 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
-		
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomLifeSupport, "Ship/Rooms/RoomLifeSupport");
+				
 		// Register serialization targets
-        CNetworkConnection.RegisterSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
 		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -355,6 +359,12 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnServerStartup()
 	{
+        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
+
+        // DO FIRST (i.e. before anything in the game world is created).
+        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+        gameObject.AddComponent<CGalaxy>();
+
 		// Create ship object
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
@@ -367,9 +377,14 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnServerShutdown()
 	{
+        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
+
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
 		m_usShipViewId = 0;
+
+        // DO LAST (i.e. after everything in the game world is destroyed).
+        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
