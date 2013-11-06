@@ -54,11 +54,11 @@ public class CPlayerHealth : MonoBehaviour
 			
 			if(m_bIsAlive == true)
 			{
-				Destroy(CGame.PlayerActor.GetComponent<CharacterController>());
-				CGame.PlayerActor.GetComponent<CPlayerBodyMotor>().enabled = false;
-				CGame.PlayerActor.GetComponent<CPlayerHeadMotor>().enabled = false;
-				CGame.PlayerActor.AddComponent<CapsuleCollider>();
-				Rigidbody ActorDeathBooody = CGame.PlayerActor.AddComponent<Rigidbody>();
+				Destroy(gameObject.GetComponent<CharacterController>());
+				gameObject.GetComponent<CPlayerBodyMotor>().enabled = false;
+				gameObject.GetComponent<CPlayerHeadMotor>().enabled = false;
+				gameObject.AddComponent<CapsuleCollider>();
+				Rigidbody ActorDeathBooody = gameObject.AddComponent<Rigidbody>();
 			
 				ActorDeathBooody.AddTorque(new Vector3(1.0f, 1.0f, 100.0f) );
 				m_bIsAlive = false;
