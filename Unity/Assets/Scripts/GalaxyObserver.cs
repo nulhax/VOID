@@ -3,7 +3,7 @@ using System.Collections;
 
 public class GalaxyObserver : MonoBehaviour
 {
-    void Awake()
+    void Start()
     {
         if (CNetwork.IsServer)   // If this is the server...
         {
