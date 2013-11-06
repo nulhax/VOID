@@ -25,7 +25,7 @@ bool bTorchLit;
         if (bTorchLit == false)
         {
             bTorchLit = true;
-            light.intensity = 1;
+            light.intensity = 3;
         }
         else
         {

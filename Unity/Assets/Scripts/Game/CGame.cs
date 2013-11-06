@@ -36,6 +36,10 @@ public class CGame : CNetworkMonoBehaviour
 		RoomBridge,
 		RoomFactory,
 		RoomLifeSupport,
+		RoomScanner,
+		RoomReplicator,
+		RoomEngine,
+		RoomGravityGenerator,
 		HallwayTSection,
 		Door,
 		ControlConsole,
@@ -123,6 +127,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Ship/Rooms/RoomBridge");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Ship/Rooms/RoomFactory");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomScanner, "Ship/Rooms/RoomScanner");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomReplicator, "Ship/Rooms/RoomReplicator");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomEngine, "Ship/Rooms/RoomEngine");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomGravityGenerator, "Ship/Rooms/RoomGravityGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Rooms/Doors/Door");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
