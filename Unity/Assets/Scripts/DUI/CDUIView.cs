@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.IO;
-using System.Xml;
+using System.Collections.Generic;
 
 public enum EQuality
 {
@@ -16,30 +15,22 @@ public enum EQuality
 	MAX
 }
 
-public enum ELayoutStyle
-{
-	INVALID = -1,
-	
-    Layout_1,
-	Layout_2,
-	
-	MAX
-}
-
 public class CDUIView : MonoBehaviour
 {
     // Member Fields
 	protected Vector2 m_Dimensions = Vector2.zero;
-	protected uint m_ViewID = 0;
+	protected uint m_ViewID = uint.MaxValue;
 	
-	private uint m_ElementIds = 0;
+	protected Dictionary<uint, GameObject> m_Elements = new Dictionary<uint, GameObject>();
+	
+	private uint m_ElementIdCount = 0;
 	
     // Member Properties
     public uint ViewID
 	{
 		set
 		{
-			if(m_ViewID == 0)
+			if(m_ViewID == uint.MaxValue)
 			{
 				m_ViewID = value;
 			}
@@ -58,22 +49,6 @@ public class CDUIView : MonoBehaviour
 			return(m_Dimensions);
 		}
 	}
-	
-    public CDUIButton[] Buttons
-    {
-        get
-        {
-            return (transform.GetComponentsInChildren<CDUIButton>());
-        }
-    }
-
-	public CDUIField[] Fields
-    {
-        get
-        {
-            return (transform.GetComponentsInChildren<CDUIField>());
-        }
-    }
 
     // Member Methods
 	public CDUIButton AddButton(string _text)
@@ -89,10 +64,12 @@ public class CDUIView : MonoBehaviour
 
         // Add the DUIbutton
         CDUIButton duiButton = buttonGo.AddComponent<CDUIButton>();
-		duiButton.ElementID = ++m_ElementIds;
+		duiButton.ElementID = ++m_ElementIdCount;
 
         // Initialise the button
         duiButton.Initialise(_text);
+		
+		m_Elements.Add(duiButton.ElementID, buttonGo);
 
         return (duiButton);
     }
@@ -110,24 +87,21 @@ public class CDUIView : MonoBehaviour
 
         // Add the DUIbutton
         CDUIField duiField = fieldGo.AddComponent<CDUIField>();
-		duiField.ElementID = ++m_ElementIds;
+		duiField.ElementID = ++m_ElementIdCount;
 
         // Initialise the button
         duiField.Initialise(_text, Color.white);
+		
+		m_Elements.Add(duiField.ElementID, fieldGo);
 
         return (duiField);
     }
 	
 	public void ClearDUIElements()
 	{
-		foreach(CDUIButton but in Buttons)
+		foreach(GameObject element in m_Elements.Values)
 		{
-			Destroy(but.gameObject);
-		}
-		
-		foreach(CDUIField field in Fields)
-		{
-			Destroy(field.gameObject);
+			Destroy(element);
 		}
 	}
 	

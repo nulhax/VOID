@@ -33,6 +33,11 @@ public class CDUIButton : CDUIElement
     }
 
     // Member Methods
+	public void Awake()
+	{
+		ElementType = CDUIElement.EElementType.Button;
+	}
+	
     public void Initialise(string _text)
     {
         InitialiseText(_text);
@@ -42,7 +47,7 @@ public class CDUIButton : CDUIElement
     private void InitialiseText(string _text)
     {
         // Create the text object
-        GameObject text = new GameObject(name + "_text");
+        GameObject text = new GameObject(name + "_Text");
         text.transform.parent = transform;
         text.transform.localPosition = Vector3.zero;
         text.transform.localRotation = Quaternion.identity;

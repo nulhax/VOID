@@ -114,13 +114,13 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         console.Initialise(EQuality.High, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
 		
 		// Add the room control subview
-        m_DoorControlSubView = console.MainView.AddSubView();
+        m_DoorControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Setup the doors subview
 		SetupDoorsSubview();
 		
 		// Add the expansion control subview
-        m_ExpansionControlSubView = console.MainView.AddSubView();
+        m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Set the initialise create expansion stage.
 		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
@@ -237,8 +237,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		duiExpansionControl.ClearDUIElements();
 		
 		// Add the title field
-		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use. TEAT TEAT TEATATEA");
+		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
 		
 		// For each expansion port add a button
 		List<GameObject> expansionPorts = GetComponent<CRoomInterface>().ExpansionPorts;
@@ -266,7 +266,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select a room to create.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
 		
 		// For each room type
 		for(int i = 0; i < (int)CRoomInterface.ERoomType.MAX; ++i)
@@ -293,7 +293,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select an OTHER expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
 		
 		// Get the local prefab string
 		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CRoomInterface.GetRoomPrefab(m_FacilitySelected));
