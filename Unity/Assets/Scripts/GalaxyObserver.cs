@@ -5,8 +5,37 @@ public class GalaxyObserver : MonoBehaviour
 {
     void Awake()
     {
-        // Find parent galaxy instance and register this object as an observer.
-        CGame.Instance.GetComponent<CGalaxy>().RegisterObserver(this.gameObject, Mathf.Sqrt(this.gameObject.GetComponent<MeshRenderer>().bounds.extents.sqrMagnitude)/*Mathf.Sqrt(this.gameObject.rigidbody.collider.bounds.extents.sqrMagnitude)*/);
+        // If this is the server; find the galaxy instance and register this object as an observer.
+        CNetwork network = CNetwork.Instance; System.Diagnostics.Debug.Assert(network);
+        CGame game = CGame.Instance; System.Diagnostics.Debug.Assert(game);
+        CGalaxy galaxy = game.GetComponent<CGalaxy>(); System.Diagnostics.Debug.Assert(galaxy);
+
+        // Depending on the type of model; it may use a mesh renderer, an animator, or something else.
+        float observationRadius = 1.0f;
+        {
+            Rigidbody body = gameObject.GetComponent<Rigidbody>();
+            if (body)
+                observationRadius = Mathf.Sqrt(body.collider.bounds.extents.sqrMagnitude);
+            else
+            {
+                MeshRenderer mesh = gameObject.GetComponent<MeshRenderer>();
+                if (mesh)
+                    observationRadius = Mathf.Sqrt(mesh.bounds.extents.sqrMagnitude);
+                else
+                {
+                    //Animator anim = gameObject.GetComponent<Animator>();
+                    //if (anim)
+                    //    observationRadius = Mathf.Sqrt(/*anim.renderer.bounds.extents.sqrMagnitude*//*anim.collider.bounds.extents.sqrMagnitude*//*anim.rigidbody.collider.bounds.extents.sqrMagnitude*/);
+                    //else
+                    {
+                        Debug.LogWarning("GalaxyObserver: Can not determine model type for bounding sphere. Radius set to 1");
+                    }
+                }
+            }
+        }
+
+
+        galaxy.RegisterObserver(this.gameObject, observationRadius/*Mathf.Sqrt(this.gameObject.rigidbody.collider.bounds.extents.sqrMagnitude)*/);
 
         //textObject = new GameObject();
         //textObject.transform.parent = this.gameObject.transform;
@@ -44,8 +73,17 @@ public class GalaxyObserver : MonoBehaviour
 
     void OnDestroy()
     {
-        if(CGame.Instance != null)
-            CGame.Instance.GetComponent<CGalaxy>().DeregisterObserver(this.gameObject);
+        CNetwork network = CNetwork.Instance;
+        if(network)
+        {
+            CGame game = CGame.Instance;
+            if(game)
+            {
+                CGalaxy galaxy = game.GetComponent<CGalaxy>();
+                if (galaxy)
+                    galaxy.DeregisterObserver(this.gameObject);
+            }
+        }
     }
 }
 

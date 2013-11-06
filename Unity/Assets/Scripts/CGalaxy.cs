@@ -53,7 +53,7 @@ public class CGalaxy : MonoBehaviour
 
     public bool mbVisualDebug
     {
-        get {return mbVisualDebug_Internal;}
+        get { return mbVisualDebug_Internal; }
 
         set
         {
@@ -166,17 +166,9 @@ public class CGalaxy : MonoBehaviour
                 }
             }
         } while (restart);
-
-        // Shift all objects in the world (but only if necessary).
-        //  Get a list of all GameObjects in the game.
-        //      Occasionally average the position of all observers.
-        //          If the average position is outside a certain proximity to the origin of the world:
-        //              Translate everything by the offset to the centre of the world (thus making the average position of observers (0,0,0)).
-        //      For all observers:
-        //          Ensure all grid cells within a radius are loaded.
 	}
 
-    void OnDrawGizmosSelected()/*OnDrawGizmos & OnDrawGizmosSelected*/
+    void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
     {
         //Debug.LogWarning("88888888888            " + mGrid.Count.ToString());
         if (mbVisualDebug_Internal)

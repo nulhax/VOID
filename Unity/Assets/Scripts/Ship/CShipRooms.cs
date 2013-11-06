@@ -102,7 +102,7 @@ public class CShipRooms : MonoBehaviour
 		// Create the room's doors and initialise the control console
 		CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
 		room.ServerCreateDoors();
-		room.CreateRoomControlConsole();
+		room.ServerCreateControlConsole();
 		
 		uint uiRoomId = ++m_uiRoomIdCount;
 		m_mRooms.Add(uiRoomId, cNewRoomObject);

@@ -21,7 +21,7 @@ bool bTorchLit;
 
     private void ToggleActivate()
     {
-        Debug.LogError("Torch");
+        //Debug.LogError("Torch");
         if (bTorchLit == false)
         {
             bTorchLit = true;

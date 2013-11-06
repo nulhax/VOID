@@ -21,12 +21,12 @@ public class DUIField : DUIElement
     }
 
     // Member Methods
-    public void Initialise(string _text)
+    public void Initialise(string _text, Color _textColor, int _fontSize = 24, float _characterSize = 0.025f)
     {
-        InitialiseText(_text);
+        InitialiseText(_text,_textColor,_fontSize,_characterSize);
     }
 
-    private void InitialiseText(string _text)
+    private void InitialiseText(string _text, Color _textColor, int _fontSize, float _characterSize)
     {
         // Create the text object
         GameObject text = new GameObject(name + "_text");
@@ -41,9 +41,9 @@ public class DUIField : DUIElement
 
         // Add the text mesh
         m_textMesh = text.AddComponent<TextMesh>();
-        m_textMesh.fontSize = 24;
-		m_textMesh.characterSize = 0.025f;
-        m_textMesh.color = Color.white;
+        m_textMesh.fontSize = _fontSize;
+		m_textMesh.characterSize = _characterSize;
+        m_textMesh.color = _textColor;
         m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
         m_textMesh.anchor = TextAnchor.MiddleCenter;
         m_textMesh.offsetZ = -0.01f;
