@@ -129,8 +129,8 @@ public class CExpansionPortInterface : MonoBehaviour
 		newPort.HasAttachedRoom = true;		
 		
 		AllignForwardVector(newPort, _objNewRoom);
-		AllignRightVector(newPort, _objNewRoom);
-		AllignUpVector(newPort, _objNewRoom);
+		//AllignRightVector(newPort, _objNewRoom);
+		//AllignUpVector(newPort, _objNewRoom);
 	}
 	
 	void AllignForwardVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
