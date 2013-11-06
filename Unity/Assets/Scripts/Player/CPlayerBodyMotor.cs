@@ -38,7 +38,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		uint m_CurrentMovementState = 0;
 		float m_LastUpdateTimeStamp = 0.0f;
 		
-		public float CurrentState { get { return(m_CurrentMovementState); } }
+		public uint CurrentState { get { return(m_CurrentMovementState); } }
 		public float TimeStamp { get { return(m_LastUpdateTimeStamp); } }
 		
 		public void SetCurrentState(uint _NewState, float _TimeStamp)
@@ -125,7 +125,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	public float m_JumpSpeed = 3.0f;
 
 	
-	CPlayerMovementState m_MotorState = new CPlayerMovementState();
+	public CPlayerMovementState m_MotorState = new CPlayerMovementState();
 	
 	
 	Vector3 m_Velocity = Vector3.zero;

@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Xml;
 
-public class DUIButton : DUIElement 
+public class CDUIButton : CDUIElement 
 {
     // Member Delegates
-    public delegate void PressHandler(DUIButton _sender);
+    public delegate void PressHandler(CDUIButton _sender);
     
 	// Member events
 	public event PressHandler PressDown;
@@ -64,7 +64,7 @@ public class DUIButton : DUIElement
 		m_textMesh.fontStyle = FontStyle.Bold;
 		
 		// Get the dimensions for the text
-		m_dimensions = new Vector2(new Vector2(mr.bounds.size.x, mr.bounds.size.z).magnitude, mr.bounds.size.y);
+		m_Dimensions = new Vector2(new Vector2(mr.bounds.size.x, mr.bounds.size.z).magnitude, mr.bounds.size.y);
     }
 	
 	private void InitialiseBackground()
@@ -77,7 +77,7 @@ public class DUIButton : DUIElement
         background.layer = gameObject.layer;
 
         // Create the mesh
-        Mesh backMesh = CreateButtonMesh(m_dimensions);
+        Mesh backMesh = CreateButtonMesh(m_Dimensions);
 
         // Create the material
         Material backMat = new Material(Shader.Find("Transparent/Diffuse"));

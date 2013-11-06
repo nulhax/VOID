@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class DUIField : DUIElement 
+public class CDUIField : CDUIElement 
 {
 	// Member Fields
     private TextMesh m_textMesh;
@@ -51,6 +51,6 @@ public class DUIField : DUIElement
 		m_textMesh.fontStyle = FontStyle.Italic;
 		
 		// Get the dimensions for the text
-		m_dimensions = new Vector2(mr.bounds.size.x, mr.bounds.size.y);
+		m_Dimensions = new Vector2(mr.bounds.size.x, mr.bounds.size.y);
     }
 }
