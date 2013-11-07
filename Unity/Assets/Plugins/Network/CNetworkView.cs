@@ -269,6 +269,15 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+	public void SyncTransformScale()
+	{
+		// Ensure servers only sync parents
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform scale!!!");
+
+		InvokeRpcAll("SetTransformScale", transform.localScale.x, transform.localScale.y, transform.localScale.z);
+	}
+
+
 	public void SyncParent()
 	{
 		// Ensure servers only sync parents
@@ -576,6 +585,13 @@ public class CNetworkView : CNetworkMonoBehaviour
 	void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
 	{
 		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+	}
+
+
+	[ANetworkRpc]
+	void SetTransformScale(float _fScaleX, float _fScaleY, float _fScaleZ)
+	{
+		transform.position = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
 	}
 
 
