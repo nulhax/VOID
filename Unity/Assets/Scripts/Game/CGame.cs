@@ -165,7 +165,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerConsoleOperator.SerializePlayerState, CPlayerConsoleOperator.UnserializePlayerState);
 		
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
+		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
 
 		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
@@ -454,7 +454,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Variables
 
 
-	string m_sServerTitle = "Default Title";
+	string m_sServerTitle = System.Environment.UserDomainName + ": " + System.Environment.UserName;
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
 
 
