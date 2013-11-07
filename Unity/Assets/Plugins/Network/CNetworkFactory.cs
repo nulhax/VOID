@@ -123,6 +123,9 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 			// Sync parents for each transform
 			foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
 			{
+				// Extract the network view from this object
+				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
+				
 				if (tEntry.Value.cGameObject.transform.parent != null)
 				{
 					// Extract parent network view
@@ -130,21 +133,18 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 					Logger.WriteError("Networked object's parent is not a networked object. Wtf are you doing??!?");
 
-					// Extract the network view from this object
-					CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
-					
-					// Sync object's position
-                    cSelfView.SyncTransformPosition();
-
-					// Sync object's rotation
-					cSelfView.SyncTransformRotation();
-
-				    // Sync object's scale
-                    cSelfView.SyncTransformScale();
-
                     // Invoke set parent rpc
                     cSelfView.SyncParent();
 				}
+				
+				// Sync object's position
+                cSelfView.SyncTransformPosition();
+
+				// Sync object's rotation
+				cSelfView.SyncTransformRotation();
+
+			    // Sync object's scale
+                cSelfView.SyncTransformScale();
 			}
         }
     }
