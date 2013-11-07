@@ -173,9 +173,9 @@ public class CGalaxy : MonoBehaviour
                 {
                     newAsteroid.transform.position = TransformedCellCentrePoint(cell) + new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius));
                     newAsteroid.transform.rotation = Random.rotationUniform;
-
+                    
                     newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
-                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 5.0f);
+                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 500.0f);
 
                     float uniformScale = Random.RandomRange(10.0f, 100.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
