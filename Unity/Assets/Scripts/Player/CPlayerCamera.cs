@@ -44,6 +44,11 @@ public class CPlayerCamera : MonoBehaviour
         gameObject.camera.farClipPlane = 5000.0f;
 	}
 	
+	void Update() 
+	{
+		
+	}
+	
 	void OnGUI()
 	{
 		Rect textureRect = new Rect(Screen.width * 0.5f - (m_CrosshairTexture.width * 0.5f), Screen.height * 0.5f - (m_CrosshairTexture.height * 0.5f), 
