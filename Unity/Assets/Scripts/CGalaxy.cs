@@ -43,6 +43,7 @@ public class CGalaxy : MonoBehaviour
     ///////////////////////////////////////////////////////////////////////////
     // Variables:
 
+    GameObject mGalaxyParent = null;
     SGridCellPos mCentreCell = new SGridCellPos(0, 0, 0);    // All cells are offset by this cell.
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
@@ -135,8 +136,6 @@ public class CGalaxy : MonoBehaviour
         return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
     }
 
-
-
     // Returns a real from 0 to 1 inclusive.
     float SampleNoise(ENoiseLayer layer, SGridCellPos cell)
     {
@@ -153,7 +152,7 @@ public class CGalaxy : MonoBehaviour
         {
             // TODO: Load content from SQL.
         }
-        else    // This celll is not on file, so it has not been visited...
+        else    // This cell is not on file, so it has not been visited...
         {
             // Generate the content in the cell.
             float fCellRadius = mCellDiameter*0.5f;
@@ -166,6 +165,7 @@ public class CGalaxy : MonoBehaviour
                 ushort lastAstertoid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST;
                 ushort randomRange = (ushort)Random.Range(0, (lastAstertoid+1) - firstAsteroid);
                 GameObject newAsteroid = CNetwork.Factory.CreateObject((ushort)(firstAsteroid + randomRange));
+                newAsteroid.transform.parent = mGalaxyParent.transform;
 
                 // Work out a position where the asteroid fits.
                 int iTries = 5;    // To prevent infinite loops.
@@ -180,9 +180,11 @@ public class CGalaxy : MonoBehaviour
                     float uniformScale = Random.RandomRange(10.0f, 100.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
 
-                    newAsteroid.GetComponent<CNetworkView>().SyncTransformScale();
-
                 } while (--iTries != 0 && false /*newAsteroid.collider.*/);
+
+                //newAsteroid.GetComponent<CNetworkView>().SyncTransformPosition();
+                //newAsteroid.GetComponent<CNetworkView>().SyncTransformRotation();
+                newAsteroid.GetComponent<CNetworkView>().SyncTransformScale();
             }
         }
     }
@@ -196,6 +198,9 @@ public class CGalaxy : MonoBehaviour
 	void Start()
     {
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
+
+        //mGalaxyParent = GameObject.Instantiate(Resources.Load("Prefabs/GalaxyParent")) as GameObject;
+        mGalaxyParent = CNetwork.Factory.CreateObject((ushort)CGame.ENetworkRegisteredPrefab.GalaxyParent);
 
         // Set debugging.
         mbVisualDebug = true;
