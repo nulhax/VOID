@@ -24,8 +24,6 @@ public class CPlayerCamera : MonoBehaviour
 	
 // Member Fields
 	private Texture m_CrosshairTexture = null;
-	
-	
 		
 // Member Methods
 	void Awake()
@@ -41,7 +39,7 @@ public class CPlayerCamera : MonoBehaviour
 		
 		// Configure the camerea
 		gameObject.camera.cullingMask &= ~(1 << LayerMask.NameToLayer("DUI"));
-        gameObject.camera.farClipPlane = 5000.0f;
+		gameObject.camera.farClipPlane = 5000.0f;
 	}
 	
 	void OnGUI()
