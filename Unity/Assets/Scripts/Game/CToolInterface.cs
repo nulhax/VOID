@@ -61,7 +61,13 @@ public class CToolInterface : MonoBehaviour
 	
 	
 // Member Properties
-
+    public bool IsHeldByPlayer
+    {
+        get
+        {
+            return (m_bHeldByPlayer);
+        }
+    }
 
 // Member Functions
 
@@ -78,23 +84,30 @@ public class CToolInterface : MonoBehaviour
 
 	public void Update()
 	{
+        if (m_bHeldByPlayer == false)
+        {
+            gameObject.GetComponent<CNetworkView>().SyncTransformPosition();
+            gameObject.GetComponent<CNetworkView>().SyncTransformRotation();
+        }
 	}
 	
-	public void SetPrimaryActive(bool _bSetActive)
+	public void SetPrimaryActive()
 	{
-		if(_bSetActive == true && m_bPrimaryActive != _bSetActive)
+		if(m_bPrimaryActive == false)//if(_bSetActive == true && m_bPrimaryActive != _bSetActive)
 		{
 			if(EventActivatePrimary != null)
 			{
 				EventActivatePrimary();	
 			}
+            m_bPrimaryActive = true;
 		}
-		if(_bSetActive == false && m_bPrimaryActive != _bSetActive)
+		else if(m_bPrimaryActive == true)//if(_bSetActive == false && m_bPrimaryActive != _bSetActive)
 		{
 			if(EventDeactivatePrimary != null)
 			{
 				EventDeactivatePrimary();	
 			}
+            m_bPrimaryActive = false;
 		}
 	}
 	
@@ -124,10 +137,14 @@ public class CToolInterface : MonoBehaviour
             {
                 EventPickedUp();
             }
+
+            m_bHeldByPlayer = true;
+
+            rigidbody.isKinematic = true;
         }
     }
 
-    public void SetDropped(bool _bSetPickedUp)
+    public void SetDropped()
     {
         if (m_bHeldByPlayer == true)
         {
@@ -135,6 +152,9 @@ public class CToolInterface : MonoBehaviour
             {
                 EventDropped();
             }
+            m_bHeldByPlayer = false;
+
+            rigidbody.isKinematic = false;
         }
     }
 

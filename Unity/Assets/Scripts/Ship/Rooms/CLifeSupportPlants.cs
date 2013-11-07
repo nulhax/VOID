@@ -69,11 +69,20 @@ public class CLifeSupportPlants : MonoBehaviour
 		{
 			if (transform.GetChild(i).name == CLifeSupportPlants.ksPlantObjectName)
 			{
-				TPlant tPlant = new TPlant();
-				tPlant.cObject = transform.GetChild(i).gameObject;
+				GameObject cPlantObject = (GameObject)GameObject.Instantiate(Resources.Load(string.Format("Prefabs/Ship/Rooms/LifeSupportPlant{0}", Random.Range(1,3)), typeof(GameObject)));
+				cPlantObject.transform.position = transform.GetChild(i).gameObject.transform.position;
 
+
+				TPlant tPlant = new TPlant();
+				tPlant.cObject = cPlantObject;
 				m_aPlants.Add(tPlant);
 			}
+		}
+
+
+		foreach (TPlant tPlant in m_aPlants)
+		{
+			tPlant.cObject.transform.parent = transform;
 		}
 	}
 
@@ -81,7 +90,7 @@ public class CLifeSupportPlants : MonoBehaviour
 // Member Fields
 
 
-	List<TPlant> m_aPlants;
+	List<TPlant> m_aPlants = new List<TPlant>();
 
 
 };
