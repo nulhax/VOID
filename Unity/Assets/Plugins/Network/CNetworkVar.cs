@@ -39,6 +39,12 @@ public class CNetworkVar<TYPE> : INetworkVar
     // public:
 
 
+	public CNetworkVar()
+	{
+
+	}
+
+
 	public CNetworkVar(OnSyncCallback _cSyncObserver)
     {
 		m_nSyncNotifyCallback = _cSyncObserver;
@@ -72,6 +78,8 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public void Sync(object _cValue)
 	{
+		Logger.WriteErrorOn(m_nSyncNotifyCallback == null, "This network var does not have a OnSyncCallback defined!!");
+
 		m_Value = (TYPE)_cValue;
 
 		// Notify observer
