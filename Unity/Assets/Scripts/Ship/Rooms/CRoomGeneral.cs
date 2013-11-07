@@ -103,7 +103,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Set the initialise create expansion stage.
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+		SetupExpansionSubviewStageOne();
 	}
 	
 	public void Update()
