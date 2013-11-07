@@ -101,6 +101,7 @@ public class CDUIMainView : CDUIView
 			m_ActiveSubView.SetActive(false);
 		
 		m_ActiveSubView = _SubView;
+		m_ActiveSubView.SetActive(true);
 	}
 	
     private void RepositionNavButtons()

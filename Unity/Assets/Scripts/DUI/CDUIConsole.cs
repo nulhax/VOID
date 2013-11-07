@@ -52,21 +52,6 @@ public class CDUIConsole : MonoBehaviour
 		CreateDUI(_Quality, _Layout, _Dimensions);
     }
 	
-	public bool CheckScreenRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
-    {
-		Ray ray = new Ray(_origin, _direction);
-		
-		if (Physics.Raycast(ray, out _rh, _fDistance, 1 << LayerMask.NameToLayer("Screen")))
-		{
-			if (_rh.transform.gameObject == m_ScreenObject)
-			{
-				return(true);
-			}
-		}
-		
-		return(false); 
-    }
-	
     private void CreateDUI(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
 	{
 		// Create the DUI game object

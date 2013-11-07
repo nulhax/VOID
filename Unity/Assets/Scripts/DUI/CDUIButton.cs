@@ -85,7 +85,7 @@ public class CDUIButton : CDUIElement
         Mesh backMesh = CreateButtonMesh(m_Dimensions);
 
         // Create the material
-        Material backMat = new Material(Shader.Find("Transparent/Diffuse"));
+        Material backMat = new Material(Shader.Find("Diffuse"));
         //m_ButtonBackMat.SetTexture("_MainTex", m_ButtonTexture);
         backMat.name = background.name + "_mat";
         backMat.color = Color.black;

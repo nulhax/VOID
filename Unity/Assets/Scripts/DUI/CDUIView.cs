@@ -65,7 +65,8 @@ public class CDUIView : MonoBehaviour
         // Add the DUIbutton
         CDUIButton duiButton = buttonGo.AddComponent<CDUIButton>();
 		duiButton.ElementID = ++m_ElementIdCount;
-
+		duiButton.ParentViewID = m_ViewID;
+		
         // Initialise the button
         duiButton.Initialise(_text);
 		
@@ -88,6 +89,7 @@ public class CDUIView : MonoBehaviour
         // Add the DUIbutton
         CDUIField duiField = fieldGo.AddComponent<CDUIField>();
 		duiField.ElementID = ++m_ElementIdCount;
+		duiField.ParentViewID = m_ViewID;
 
         // Initialise the button
         duiField.Initialise(_text, Color.white);
@@ -96,6 +98,22 @@ public class CDUIView : MonoBehaviour
 
         return (duiField);
     }
+	
+	public CDUIElement GetDUIElement(uint _ElementId)
+	{
+		CDUIElement duiElement = null;
+		
+		if(m_Elements.ContainsKey(_ElementId))
+		{
+			duiElement = m_Elements[_ElementId].GetComponent<CDUIElement>();
+		}
+		else
+		{
+			Debug.LogError("GetDUIElement, id sent in doesn't exsist!");
+		}
+		
+		return(duiElement);
+	}
 	
 	public void ClearDUIElements()
 	{

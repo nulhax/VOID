@@ -16,7 +16,6 @@ public class CDUI : MonoBehaviour
 	
 	private GameObject m_MainView = null;
 	
-	
 	private Dictionary<uint, GameObject> m_SubViews = new Dictionary<uint, GameObject>();
 	
 	private uint m_ViewIdCount = 0;
@@ -28,6 +27,14 @@ public class CDUI : MonoBehaviour
 		{ 
 			return(m_RenderCamera.camera); 
 		} 
+	}
+	
+	public CDUIMainView DUIMainView
+	{
+		get
+		{
+			return(m_MainView.GetComponent<CDUIMainView>());
+		}
 	}
 
     // Member Methods
@@ -86,7 +93,7 @@ public class CDUI : MonoBehaviour
 		GameObject subView = null;
 			
 		if(m_SubViews.ContainsKey(_SubViewId))
-		{
+		{ 	
 			subView = m_SubViews[_SubViewId];
 		}
 		else
@@ -118,7 +125,7 @@ public class CDUI : MonoBehaviour
 
         // Initialise the DUI Component
         duiMainView.Initialise(_Layout, _Dimensions);
-		duiMainView.ViewID = ++m_ViewIdCount;
+		duiMainView.ViewID = 0;
     }
 	
     private void SetupRenderTex()
