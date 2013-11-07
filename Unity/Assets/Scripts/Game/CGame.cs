@@ -45,6 +45,7 @@ public class CGame : CNetworkMonoBehaviour
 		ControlConsole,
 		PlayerActor,
         ToolTorch,
+        GalaxyParent,
         Asteroid_FIRST,
         // Do not insert anything here.
         Asteroid_LAST = Asteroid_FIRST + 2, // Inclusive, thus 3 total.
@@ -136,8 +137,9 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomGravityGenerator, "Ship/Rooms/RoomGravityGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Rooms/Doors/Door");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
