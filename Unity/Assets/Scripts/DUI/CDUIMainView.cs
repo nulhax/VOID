@@ -228,6 +228,7 @@ public class CDUIMainView : CDUIView
         // Get the render camera and set its target as the render texture
         Camera camera = m_RenderCamera.AddComponent<Camera>();
         camera.cullingMask = 1 << gameObject.layer;
+		camera.clearFlags = CameraClearFlags.SolidColor;
         camera.orthographic = true;
         camera.backgroundColor = Color.black;
         camera.nearClipPlane = 0.0f;
