@@ -117,12 +117,14 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 				m_FacilitySelected = CRoomInterface.ERoomType.INVALID;
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
-				
-				m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
 			}
 		}
 		
-		if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
+		if(m_CreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
+		{
+			m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+		}
+		else if(m_CreateExpansionStage == EExpansionCreatePhase.SelectFacilityType)
 		{
 			SetupExpansionSubviewStageOne();
 			m_CreateExpansionStage = EExpansionCreatePhase.INVALID;
