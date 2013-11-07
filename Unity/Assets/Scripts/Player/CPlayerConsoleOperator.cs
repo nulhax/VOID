@@ -22,7 +22,7 @@ using System.Collections;
 public class CPlayerConsoleOperator : CNetworkMonoBehaviour
 {
 	// Member Types
-	public enum EConsoleEvent : short
+	public enum EConsoleEvent
 	{
 		INVALID = -1,
 		
@@ -108,7 +108,7 @@ public class CPlayerConsoleOperator : CNetworkMonoBehaviour
 			
 			if(actorConsoleOperator.m_CurrentConsoleEvent != EConsoleEvent.Nothing)
 			{
-				_cStream.Write((short)actorConsoleOperator.m_CurrentConsoleEvent);
+				_cStream.Write((int)actorConsoleOperator.m_CurrentConsoleEvent);
 				_cStream.Write(actorConsoleOperator.m_ConsoleNetworkId);
 				_cStream.Write(actorConsoleOperator.m_DUIViewID);
 				_cStream.Write(actorConsoleOperator.m_DUIButtonID);
@@ -126,7 +126,7 @@ public class CPlayerConsoleOperator : CNetworkMonoBehaviour
     {
 		CPlayerConsoleOperator actorConsoleOperator = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerConsoleOperator>();
 		
-		EConsoleEvent consoleEvent = (EConsoleEvent)_cStream.ReadShort();
+		EConsoleEvent consoleEvent = (EConsoleEvent)_cStream.ReadInt();
 		uint consoleViewID = _cStream.ReadUShort();
 		uint duiViewID = _cStream.ReadUInt();
 		uint duiButtonID = _cStream.ReadUInt();
