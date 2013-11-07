@@ -56,10 +56,16 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars()
     {
+        for (int i = 0; i < m_uiToolCapacity; ++i)
+        {
+            m_cToolViewIds[i] = new CNetworkVar<ushort>(OnSyncCallback);
+
+
+        }
     }
 
 
-	public void Start()
+    public void Start()
 	{
         m_uiActiveToolId = 0;
 
@@ -78,6 +84,12 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
+    public void OnSyncCallback(INetworkVar _cVarInstance)
+    {
+
+    }
+
+
     public void NotifyPlayerConnect(CNetworkPlayer _cPlayer)
     {
 
@@ -94,6 +106,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         Tool.transform.parent = gameObject.GetComponent<CPlayerHeadMotor>().ActorHead.transform;//gameObject.GetComponent<>().transform;
 	}
+
 
     [ANetworkRpc]
     public void DropTool(byte _bToolId)
@@ -130,6 +143,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         m_uiToolCapacity = _uiNewCapacity;
     }
 
+
     [ANetworkRpc]
     public void UseTool(byte _bToolId)
     {
@@ -139,6 +153,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         //m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive(true);
     }
+
 
     public static void SerializeBeltState(CNetworkStream _cStream)
     {
@@ -231,7 +246,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 
     // Member Fields
-    CNetworkVar<ushort> m_cToolsViewId = new CNetworkVar<ushort>[k_uiMaxTools];
+    CNetworkVar<ushort>[] m_cToolViewIds = new CNetworkVar<ushort>[k_uiMaxTools];
     GameObject[] m_cTools = new GameObject[k_uiMaxTools];
 
     uint m_uiToolCapacity = 2;
