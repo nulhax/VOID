@@ -199,7 +199,8 @@ public class CGalaxy : MonoBehaviour
     {
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
 
-        mGalaxyParent = GameObject.Instantiate(Resources.Load("Prefabs/GalaxyParent")) as GameObject;
+        //mGalaxyParent = GameObject.Instantiate(Resources.Load("Prefabs/GalaxyParent")) as GameObject;
+        mGalaxyParent = CNetwork.Factory.CreateObject((ushort)CGame.ENetworkRegisteredPrefab.GalaxyParent);
 
         // Set debugging.
         mbVisualDebug = true;
