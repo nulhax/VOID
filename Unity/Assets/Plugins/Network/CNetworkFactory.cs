@@ -106,7 +106,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
         // Sync new player with all the current game objects are their network var values
         if (!_cNetworkPlayer.IsHost)
         {
-            Logger.WriteError("A Player joined. Sending them the objects and states");
+            Logger.Write("A Player joined. Sending them the objects and states");
 
             foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
             {
@@ -126,16 +126,8 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				// Extract the network view from this object
 				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 				
-				if (tEntry.Value.cGameObject.transform.parent != null)
-				{
-					// Extract parent network view
-					CNetworkView cParentView = tEntry.Value.cGameObject.transform.parent.GetComponent<CNetworkView>();
-
-					Logger.WriteError("Networked object's parent is not a networked object. Wtf are you doing??!?");
-
-                    // Invoke set parent rpc
-                    cSelfView.SyncParent();
-				}
+                // Invoke set parent rpc
+                cSelfView.SyncParent();
 				
 				// Sync object's position
                 cSelfView.SyncTransformPosition();

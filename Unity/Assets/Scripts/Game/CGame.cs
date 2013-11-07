@@ -67,7 +67,17 @@ public class CGame : CNetworkMonoBehaviour
 	
 	public static GameObject PlayerActor
 	{
-		get { return (CNetwork.Factory.FindObject(Instance.m_usActorViewId)); }
+		get 
+		{ 
+			GameObject playerActor = null;
+			
+			if(Instance.m_usActorViewId != 0)
+			{
+				playerActor = CNetwork.Factory.FindObject(Instance.m_usActorViewId);
+			}
+			
+			return(playerActor); 
+		}
 	}
 	
 	public static ushort PlayerActorViewId

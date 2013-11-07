@@ -84,14 +84,7 @@ public class CToolInterface : MonoBehaviour
 
 	public void Update()
 	{
-		if(CNetwork.IsServer)
-		{
-       	 	if (m_bHeldByPlayer == false)
-        	{
-            	gameObject.GetComponent<CNetworkView>().SyncTransformPosition();
-            	gameObject.GetComponent<CNetworkView>().SyncTransformRotation();
-        	}
-		}
+		
 	}
 	
 	public void SetPrimaryActive()
