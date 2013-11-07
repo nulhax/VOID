@@ -59,10 +59,10 @@ public class CFireHazard : MonoBehaviour {
     // Send fire damage to player Hp 
     void OnTriggerStay(Collider _Entity)
     {
-        Debug.Log("ontriggerstay function entered.");
+       // Debug.Log("ontriggerstay function entered.");
         if (CNetwork.IsServer)
         {
-            Debug.Log("Server detected in fire hazard");
+            //Debug.Log("Server detected in fire hazard");
              // is player actor, does the object return character motor
             if (_Entity.gameObject.name == "Player Actor(Clone)")
             {

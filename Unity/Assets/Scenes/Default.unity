@@ -13,13 +13,13 @@ SceneSettings:
     memoryUsage: 10485760
 --- !u!104 &2
 RenderSettings:
-  m_Fog: 0
-  m_FogColor: {r: .5, g: .5, b: .5, a: 1}
+  m_Fog: 1
+  m_FogColor: {r: .0647058263, g: 0, b: .323529422, a: 1}
   m_FogMode: 3
   m_FogDensity: .00999999978
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientLight: {r: .345588207, g: .353211462, b: .353211462, a: 1}
+  m_AmbientLight: {r: .227941155, g: .227941155, b: .227941155, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: 33d01ce2669eb8b4e9e56e86e857e8d9, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1

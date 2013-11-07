@@ -76,7 +76,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	public GameObject CreateObject(object _cPrefabId)
 	{
 		// Ensure only servers call this function
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects", (ushort)_cPrefabId);
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects");
 
 		// Generate dynamic network view id for object
 		ushort usObjectViewId = CNetworkView.GenerateDynamicViewId();

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -41,14 +41,14 @@ public class CRoomFactoryToolSpawner : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Placeholder DUI stuff ************************
-		CDUIMainView consoleMainView = GetComponent<CRoomGeneral>().RoomControlConsole.GetComponent<CDUIConsole>().MainView;
-		
-		CDUISubView factory = consoleMainView.AddSubView().GetComponent<CDUISubView>();
-		
-		CDUIButton but = factory.AddButton("SpawnTool");
-		but.PressDown += SpawnTool;
-		
-		but.m_ViewPos = new Vector2(0.5f, 0.5f);
+//		CDUIMainView consoleMainView = GetComponent<CRoomGeneral>().RoomControlConsole.GetComponent<CDUIConsole>().MainView;
+//		
+//		CDUISubView factory = consoleMainView.AddSubView().GetComponent<CDUISubView>();
+//		
+//		CDUIButton but = factory.AddButton("SpawnTool");
+//		but.PressDown += SpawnTool;
+//		
+//		but.m_ViewPos = new Vector2(0.5f, 0.5f);
 	}
 
     public void Update()
