@@ -48,20 +48,21 @@ public class CPlayerHealth : MonoBehaviour
 	// Update is called once per frame
 	void Update () {
 	    // Get the player health from the XML
-		if(m_fActorHp <= 0.0f)
-		{
-			Debug.Log("Player is deaaad");
-			
-			if(m_bIsAlive == true)
+		if (CNetwork.IsServer)
+        {
+			if(m_fActorHp <= 0.0f)
 			{
-				Destroy(gameObject.GetComponent<CharacterController>());
-				gameObject.GetComponent<CPlayerBodyMotor>().enabled = false;
-				gameObject.GetComponent<CPlayerHeadMotor>().enabled = false;
-				gameObject.AddComponent<CapsuleCollider>();
-				Rigidbody ActorDeathBooody = gameObject.AddComponent<Rigidbody>();
-			
-				ActorDeathBooody.AddTorque(new Vector3(1.0f, 1.0f, 100.0f) );
-				m_bIsAlive = false;
+				if(m_bIsAlive == true)
+				{
+					Destroy(gameObject.GetComponent<CharacterController>());
+					gameObject.GetComponent<CPlayerBodyMotor>().enabled = false;
+					gameObject.GetComponent<CPlayerHeadMotor>().enabled = false;
+					gameObject.AddComponent<CapsuleCollider>();
+					Rigidbody ActorDeathBooody = gameObject.AddComponent<Rigidbody>();
+				
+					ActorDeathBooody.AddTorque(new Vector3(1.0f, 1.0f, 100.0f) );
+					m_bIsAlive = false;
+				}
 			}
 		}
 		else
@@ -91,7 +92,6 @@ public class CPlayerHealth : MonoBehaviour
     public void ApplyDamage(float _fDamage, float _fPlayerHealth)
     {
         m_fActorHp = _fPlayerHealth - _fDamage;
-        Debug.Log("Player Health is" + m_fActorHp);
     }
     // Member Fields
 	
