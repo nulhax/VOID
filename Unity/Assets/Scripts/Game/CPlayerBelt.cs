@@ -127,8 +127,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     public void UseTool(byte _bToolId)
     {
         //if (m_cTools[_bToolId].GetComponent<CToolInterface>())
-
-        m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive();
+		
+		if(m_cTools[_bToolId] != null)
+        	m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive();
 
         //m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive(true);
     }
