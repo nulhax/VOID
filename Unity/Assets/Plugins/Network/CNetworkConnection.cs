@@ -476,7 +476,7 @@ public class CNetworkConnection : MonoBehaviour
             EventDisconnect();
         }
 
-        Logger.WriteError("Disconnect notification ({0})", _eDisconnectType);
+        Logger.Write("Disconnect notification ({0})", _eDisconnectType);
     }
 
 
