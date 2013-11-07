@@ -54,7 +54,7 @@ public class CRoomInterface : MonoBehaviour
 		get{return(m_uiRoomID);}			
 		set
 		{
-			if(m_uiRoomID == 0)
+			if(m_uiRoomID == uint.MaxValue)
 			{
 				m_uiRoomID = value;
 			}
@@ -196,7 +196,7 @@ public class CRoomInterface : MonoBehaviour
 	// Member Fields
 
 	ERoomType m_eType = ERoomType.INVALID;
-	uint m_uiRoomID = 0;
+	uint m_uiRoomID = uint.MaxValue;
 	bool m_bIntersecting = false;
 	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
