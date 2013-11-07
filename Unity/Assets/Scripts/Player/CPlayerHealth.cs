@@ -72,70 +72,90 @@ public class CPlayerHealth : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-	    // Get the player health from the XML
-		if(m_bIsAlive == true)
+		if(CNetwork.IsServer)
 		{
-			if(m_fActorHp <= 0.0f || Input.GetKeyDown(KeyCode.Q))
-			{			
-				Debug.Log("Player is deaaad");
-				
-				foreach(Transform child in transform.GetComponentsInChildren<Transform>())
-				{
-					Rigidbody rigidBody;
-					if(child.GetComponent<Rigidbody>() != null)
+		    // Get the player health from the XML
+			if(m_bIsAlive == true)
+			{
+				if(m_fActorHp <= 0.0f || Input.GetKeyDown(KeyCode.Q))
+				{			
+					Debug.Log("Player is deaaad");
+					
+					foreach(Transform child in transform.GetComponentsInChildren<Transform>())
 					{
-						rigidBody = child.GetComponent<Rigidbody>();
-						rigidBody.isKinematic = false;	
-					}
+						Rigidbody rigidBody;
+						if(child.GetComponent<Rigidbody>() != null)
+						{
+							rigidBody = child.GetComponent<Rigidbody>();
+							rigidBody.isKinematic = false;	
+						}
+						
+						CapsuleCollider capCollider;
+						if(child.GetComponent<CapsuleCollider>() != null)
+						{
+							capCollider = child.GetComponent<CapsuleCollider>();
+							capCollider.isTrigger = false;	
+						}
+						
+						BoxCollider boxCollider;
+						if(child.GetComponent<BoxCollider>() != null)
+						{
+							boxCollider = child.GetComponent<BoxCollider>();
+							boxCollider.isTrigger = false;	
+						}
+						
+						
+						// Below needs to be syncronized to the clients not only the server. Otherwise the clients will never get these changes.
+						// Use CNetworkVars to do this - not RPC calls. As RPC calls will not be queued up when a new player joins.
+						
+						transform.GetComponent<CharacterController>().enabled = false;
+						transform.GetComponent<CPlayerBodyMotor>().enabled = false;
+						transform.GetComponent<CPlayerHeadMotor>().enabled = false;
+						
+						// CPlayerCamera only exists on the CLIENT player actor. This will only exist on the server if this gameObject == CGame.PlayerActor.
+						// In other words the below stuff needs to be syncronized to each client indivisually. 
+						// See InvokeRPC() and CNetworkView.ViewID to send just to the lient to modify their camera.
+						
+						/*
+						Camera headCam = transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera;
+						Vector3 pos = headCam.transform.localPosition;
+						pos.z -= 0.05f;
+						headCam.transform.localPosition = pos;
+						*/					
+					}	
 					
-					CapsuleCollider capCollider;
-					if(child.GetComponent<CapsuleCollider>() != null)
-					{
-						capCollider = child.GetComponent<CapsuleCollider>();
-						capCollider.isTrigger = false;	
-					}
-					
-					BoxCollider boxCollider;
-					if(child.GetComponent<BoxCollider>() != null)
-					{
-						boxCollider = child.GetComponent<BoxCollider>();
-						boxCollider.isTrigger = false;	
-					}
-					
-					transform.GetComponent<CharacterController>().enabled = false;
-					transform.GetComponent<CPlayerBodyMotor>().enabled = false;
-					transform.GetComponent<CPlayerHeadMotor>().enabled = false;
-					
-					Camera headCam = transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera;
-					Vector3 pos = headCam.transform.localPosition;
-					pos.z -= 0.05f;
-					headCam.transform.localPosition = pos;					
+					m_bIsAlive = false;
 				}	
+			}
+			else
+			{
 				
-				m_bIsAlive = false;
-			}	
+				// Same deal as above
+				
+				/*
+				transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera.transform.LookAt(transform);
+				*/
+				
+				
+				// Do nothing at the moment
+			}
+	        // Check if the player is in harmful atmosphere leading to suffocation
+	            // Decrease stamina first and incrimenting rate
+	            // Then decrease health
+	
+	        // Check if player has been shot
+	            // Bullet does initial amount of damage but also applies more over time.
+	            // Head shot is 80-105% damage
+	            // Heart damage is 50% damage 50% damage applied over time
+	            // Knee damage is 10% but movement slowed 
+	
+	        // Physical trauma of a projectile
+	            // Damage applied to player in relevence to the velocity travelling
+	            
+	        // Check health points
+	
+	        // Send a complete loss of health to manager that handles death screen
 		}
-		else
-		{
-			transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera.transform.LookAt(transform);
-		// Do nothing at the moment
-		}
-        // Check if the player is in harmful atmosphere leading to suffocation
-            // Decrease stamina first and incrimenting rate
-            // Then decrease health
-
-        // Check if player has been shot
-            // Bullet does initial amount of damage but also applies more over time.
-            // Head shot is 80-105% damage
-            // Heart damage is 50% damage 50% damage applied over time
-            // Knee damage is 10% but movement slowed 
-
-        // Physical trauma of a projectile
-            // Damage applied to player in relevence to the velocity travelling
-            
-        // Check health points
-
-        // Send a complete loss of health to manager that handles death screen
 }
 
 
