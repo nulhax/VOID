@@ -591,7 +591,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void SetTransformScale(float _fScaleX, float _fScaleY, float _fScaleZ)
 	{
-		transform.position = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
+		transform.localScale = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
 	}
 
 

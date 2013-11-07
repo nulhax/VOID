@@ -175,10 +175,12 @@ public class CGalaxy : MonoBehaviour
                     newAsteroid.transform.rotation = Random.rotationUniform;
                     
                     newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
-                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 500.0f);
+                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 50.0f);
 
                     float uniformScale = Random.RandomRange(10.0f, 100.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
+
+                    newAsteroid.GetComponent<CNetworkView>().SyncTransformScale();
 
                 } while (--iTries != 0 && false /*newAsteroid.collider.*/);
             }
