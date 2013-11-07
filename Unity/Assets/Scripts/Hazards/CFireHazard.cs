@@ -59,7 +59,7 @@ public class CFireHazard : MonoBehaviour {
     // Send fire damage to player Hp 
     void OnTriggerStay(Collider _Entity)
     {
-        Debug.Log("ontriggerstay function entered.");
+       // Debug.Log("ontriggerstay function entered.");
         if (CNetwork.IsServer)
         {
             Debug.Log("Server detected in fire hazard");
