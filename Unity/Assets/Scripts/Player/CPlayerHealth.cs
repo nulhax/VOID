@@ -70,12 +70,13 @@ public class CPlayerHealth : MonoBehaviour
     }
 
 	// Update is called once per frame
-	void Update () {
+	void Update () 
+	{
 	    // Get the player health from the XML
-		if(m_fActorHp <= 0.0f)
-		{		
-			if(m_bIsAlive == true)
-			{
+		if(m_bIsAlive == true)
+		{
+			if(m_fActorHp <= 0.0f || Input.GetKeyDown(KeyCode.Q))
+			{			
 				Debug.Log("Player is deaaad");
 				
 				foreach(Transform child in transform.GetComponentsInChildren<Transform>())
@@ -112,11 +113,11 @@ public class CPlayerHealth : MonoBehaviour
 				}	
 				
 				m_bIsAlive = false;
-			}			
+			}	
 		}
 		else
 		{
-			
+			transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera.transform.LookAt(transform);
 		// Do nothing at the moment
 		}
         // Check if the player is in harmful atmosphere leading to suffocation
