@@ -35,6 +35,11 @@ public class CGalaxy : MonoBehaviour
         public CRegisteredObserver(GameObject observer, float observationRadius) { mObserver = observer; mObservationRadius = observationRadius; }
     }
 
+    enum ENoiseLayer
+    {
+        AsteroidDensity
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Variables:
 
@@ -97,6 +102,21 @@ public class CGalaxy : MonoBehaviour
         }
     }
 
+    public Vector3 TransformedCellCentrePoint(SGridCellPos transformedCell)
+    {
+        return new Vector3(transformedCell.x * mCellDiameter, transformedCell.y * mCellDiameter, transformedCell.z * mCellDiameter);
+    }
+
+    public SGridCellPos PointToCell(Vector3 point)
+    {
+        float cellRadius = mCellDiameter * 0.5f;
+        point.x += cellRadius;
+        point.y += cellRadius;
+        point.z += cellRadius;
+        point /= mCellDiameter;
+        return new SGridCellPos(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+    }
+
     public SGridCellPos PointToTransformedCell(Vector3 point)
     {
         float cellRadius = mCellDiameter * 0.5f;
@@ -114,9 +134,54 @@ public class CGalaxy : MonoBehaviour
         return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
     }
 
+
+
+    // Returns a real from 0 to 1 inclusive.
+    float SampleNoise(ENoiseLayer layer, SGridCellPos cell)
+    {
+        // X, Y, and Z coordinates in 'cell' specify the sample location of the noise.
+        return Random.value;
+    }
+
     void LoadCell(SGridCellPos cell)
     {
         mGrid.Add(cell, new CGridCellContent(mbValidCellValue)); // Create cell with updated alternator to indicate cell is within proximity of observer.
+
+        // Load the content for the cell.
+        if (false)   // TODO: If the content for the cell is on file...
+        {
+            // TODO: Load content from SQL.
+        }
+        else    // This celll is not on file, so it has not been visited...
+        {
+            // Generate the content in the cell.
+            float fCellRadius = mCellDiameter*0.5f;
+
+            // 1) For asteroids.
+            float noiseSample = SampleNoise(ENoiseLayer.AsteroidDensity, cell);
+            for (int i = 0; i < 50 * noiseSample; ++i)  // Max asteroids per cell.
+            {
+                ushort firstAsteroid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST;
+                ushort lastAstertoid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST;
+                ushort randomRange = (ushort)Random.Range(0, (lastAstertoid+1) - firstAsteroid);
+                GameObject newAsteroid = CNetwork.Factory.CreateObject((ushort)(firstAsteroid + randomRange));
+
+                // Work out a position where the asteroid fits.
+                int iTries = 5;    // To prevent infinite loops.
+                do
+                {
+                    newAsteroid.transform.position = TransformedCellCentrePoint(cell) + new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius));
+                    newAsteroid.transform.rotation = Random.rotationUniform;
+
+                    newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
+                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 5.0f);
+
+                    float uniformScale = Random.RandomRange(10.0f, 100.0f);
+                    newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
+
+                } while (--iTries != 0 && false /*newAsteroid.collider.*/);
+            }
+        }
     }
 
     void UnloadCell(SGridCellPos cell)
