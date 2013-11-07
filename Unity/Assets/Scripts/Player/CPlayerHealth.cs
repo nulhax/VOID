@@ -36,9 +36,33 @@ public class CPlayerHealth : MonoBehaviour
     // Get player HP from XML
     public float m_fActorHp = 100.0f;
 	public bool m_bIsAlive = true;
+	
 	void Start () 
     {
-	
+		//Set everything to kinematic
+		foreach(Transform child in transform.GetComponentsInChildren<Transform>())
+		{		
+			Rigidbody rigidBody;
+			if(child.GetComponent<Rigidbody>() != null)
+			{
+				rigidBody = child.GetComponent<Rigidbody>();
+				rigidBody.isKinematic = true;	
+			}
+			
+			CapsuleCollider capCollider;
+			if(child.GetComponent<CapsuleCollider>() != null)
+			{
+				capCollider = child.GetComponent<CapsuleCollider>();
+				capCollider.isTrigger = true;	
+			}
+			
+			BoxCollider boxCollider;
+			if(child.GetComponent<BoxCollider>() != null)
+			{
+				boxCollider = child.GetComponent<BoxCollider>();
+				boxCollider.isTrigger = true;	
+			}			
+		}			
 	}
 
     public void OnDestroy()
@@ -49,20 +73,46 @@ public class CPlayerHealth : MonoBehaviour
 	void Update () {
 	    // Get the player health from the XML
 		if(m_fActorHp <= 0.0f)
-		{
-			Debug.Log("Player is deaaad");
-			
+		{		
 			if(m_bIsAlive == true)
 			{
-				Destroy(CGame.PlayerActor.GetComponent<CharacterController>());
-				CGame.PlayerActor.GetComponent<CPlayerBodyMotor>().enabled = false;
-				CGame.PlayerActor.GetComponent<CPlayerHeadMotor>().enabled = false;
-				CGame.PlayerActor.AddComponent<CapsuleCollider>();
-				Rigidbody ActorDeathBooody = CGame.PlayerActor.AddComponent<Rigidbody>();
-			
-				ActorDeathBooody.AddTorque(new Vector3(1.0f, 1.0f, 100.0f) );
+				Debug.Log("Player is deaaad");
+				
+				foreach(Transform child in transform.GetComponentsInChildren<Transform>())
+				{
+					Rigidbody rigidBody;
+					if(child.GetComponent<Rigidbody>() != null)
+					{
+						rigidBody = child.GetComponent<Rigidbody>();
+						rigidBody.isKinematic = false;	
+					}
+					
+					CapsuleCollider capCollider;
+					if(child.GetComponent<CapsuleCollider>() != null)
+					{
+						capCollider = child.GetComponent<CapsuleCollider>();
+						capCollider.isTrigger = false;	
+					}
+					
+					BoxCollider boxCollider;
+					if(child.GetComponent<BoxCollider>() != null)
+					{
+						boxCollider = child.GetComponent<BoxCollider>();
+						boxCollider.isTrigger = false;	
+					}
+					
+					transform.GetComponent<CharacterController>().enabled = false;
+					transform.GetComponent<CPlayerBodyMotor>().enabled = false;
+					transform.GetComponent<CPlayerHeadMotor>().enabled = false;
+					
+					Camera headCam = transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera;
+					Vector3 pos = headCam.transform.localPosition;
+					pos.z -= 0.05f;
+					headCam.transform.localPosition = pos;					
+				}	
+				
 				m_bIsAlive = false;
-			}
+			}			
 		}
 		else
 		{
@@ -91,7 +141,6 @@ public class CPlayerHealth : MonoBehaviour
     public void ApplyDamage(float _fDamage, float _fPlayerHealth)
     {
         m_fActorHp = _fPlayerHealth - _fDamage;
-        Debug.Log("Player Health is" + m_fActorHp);
     }
     // Member Fields
 	
