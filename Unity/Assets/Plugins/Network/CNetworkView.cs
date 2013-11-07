@@ -280,10 +280,13 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public void SyncParent()
 	{
-		// Ensure servers only sync parents
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
-
-		InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
+		if (transform.parent != null)
+		{
+			// Ensure servers only sync parents
+			Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
+	
+			InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
+		}
 	}
 
 
