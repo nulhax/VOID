@@ -47,6 +47,7 @@ public class CGalaxy : MonoBehaviour
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
     const float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
+    const uint muiMaxAsteroidsPerCell = 1;
     const float mfTimeBetweenProcesses = 1.0f;
     float mfTimeUntilNextProcess = 0.0f;
     uint muiGridSubsets = 20; // Zero is just the one cell.
@@ -158,8 +159,8 @@ public class CGalaxy : MonoBehaviour
             float fCellRadius = mCellDiameter*0.5f;
 
             // 1) For asteroids.
-            float noiseSample = SampleNoise(ENoiseLayer.AsteroidDensity, cell);
-            for (int i = 0; i < 50 * noiseSample; ++i)  // Max asteroids per cell.
+            int noiseSample = Mathf.RoundToInt(SampleNoise(ENoiseLayer.AsteroidDensity, cell));
+            for (int i = 0; i < muiMaxAsteroidsPerCell * noiseSample; ++i)
             {
                 ushort firstAsteroid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST;
                 ushort lastAstertoid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST;
