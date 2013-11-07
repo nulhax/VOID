@@ -3,27 +3,87 @@ using System.Collections;
 
 public class CDUIElement : MonoBehaviour 
 {
+	// Member Types
+	public enum EElementType
+	{
+		INVALID = -1,
+		
+		Button,
+		Field,
+		
+		MAX
+	}
+	
 	// Member Fields
 	protected Vector2 m_Dimensions = Vector2.zero;
-	protected uint m_ElementID = 0;
+	
+	protected uint m_ElementID = uint.MaxValue;
+	protected uint m_ParentViewID = uint.MaxValue;
+	
+	protected EElementType m_ElementType = EElementType.INVALID;
 	
     // Member Properties
-	public Vector2 Dimensions { get { return(m_Dimensions); } }
+	public EElementType ElementType
+	{
+		protected set
+		{
+			if(m_ElementType == EElementType.INVALID)
+			{
+				m_ElementType = value;
+			}
+			else
+			{
+				Debug.Log("ElementType set cannot be set twice!");
+			}
+		}
+		get
+		{
+			return(m_ElementType);
+		}
+	}
+	
+	public Vector2 Dimensions 
+	{ 
+		private set
+		{
+			m_Dimensions = value;
+		}
+		get 
+		{ 
+			return(m_Dimensions); 
+		} 
+	}
 	
     public uint ElementID
 	{
 		set
 		{
-			if(m_ElementID == 0)
+			if(m_ElementID == uint.MaxValue)
 			{
 				m_ElementID = value;
 			}
 			else
 			{
-				Debug.LogError("You cannot set a subview ID twice!");
+				Debug.LogError("You cannot set the element ID twice!");
 			}
 		}
 		get{ return(m_ElementID); }
+	}
+	
+	public uint ParentViewID
+	{
+		set
+		{
+			if(m_ParentViewID == uint.MaxValue)
+			{
+				m_ParentViewID = value;
+			}
+			else
+			{
+				Debug.LogError("You cannot set the parent subview ID twice!");
+			}
+		}
+		get{ return(m_ParentViewID); }
 	}
 	
 	public Vector2 m_ViewPos

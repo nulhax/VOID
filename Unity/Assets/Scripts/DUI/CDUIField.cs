@@ -21,6 +21,11 @@ public class CDUIField : CDUIElement
     }
 
     // Member Methods
+	public void Awake()
+	{
+		ElementType = CDUIElement.EElementType.Field;
+	}
+	
     public void Initialise(string _text, Color _textColor, int _fontSize = 24, float _characterSize = 0.025f)
     {
         InitialiseText(_text,_textColor,_fontSize,_characterSize);
@@ -29,7 +34,7 @@ public class CDUIField : CDUIElement
     private void InitialiseText(string _text, Color _textColor, int _fontSize, float _characterSize)
     {
         // Create the text object
-        GameObject text = new GameObject(name + "_text");
+        GameObject text = new GameObject(name + "_Text");
         text.transform.parent = transform;
         text.transform.localPosition = Vector3.zero;
         text.transform.localRotation = Quaternion.identity;

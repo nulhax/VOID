@@ -7,9 +7,8 @@ using System.Reflection;
 public class CDUISubView : CDUIView
 {
     // Member Fields
-
+	
     // Member Properties
-	public CDUIButton m_NavButton { get; set; }
 
     // Member Methods
     private void Update()
@@ -19,6 +18,19 @@ public class CDUISubView : CDUIView
 
     public void Initialise(Vector2 _Dimensions)
     {
+        m_Dimensions = _Dimensions;
+    }
+
+    // Debug Functions
+    private void DebugRenderRects()
+    {
+        // Render self rect
+        DebugDrawRect(new Rect(0.0f, 0.0f, 1.0f, 1.0f), Color.green, 0.005f);
+    }
+}
+
+/***************************** CODE THAT COULD BE USEFUOL IN THE FUTURE ****************************/
+
 //        // Get the normalised ratio of the subview and the subviewarea
 //        Vector2 subviewRatio = StringToVector2(windowNode.Attributes["xyratio"].Value);
 //        Vector2 subViewAreaRatio = _subViewAreaDimensions;
@@ -44,23 +56,3 @@ public class CDUISubView : CDUIView
 //                dimensions.y = subViewAreaRatio.x / subviewRatio.x * _subViewAreaDimensions.y;
 //            }
 //        }
-
-        m_Dimensions = _Dimensions;
-
-        // Create the navigation button
-        InitialiseNavButton();
-    }
-
-    private void InitialiseNavButton()
-    {
-        // Add the button
-        m_NavButton = AddButton("Test");
-    }
-
-    // Debug Functions
-    private void DebugRenderRects()
-    {
-        // Render self rect
-        DebugDrawRect(new Rect(0.0f, 0.0f, 1.0f, 1.0f), Color.green, 0.005f);
-    }
-}

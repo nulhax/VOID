@@ -61,19 +61,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private CRoomInterface.ERoomType m_FacilitySelected = CRoomInterface.ERoomType.INVALID;
 	
 // Member Properties
-	public EExpansionCreatePhase ServerCreateExpansionStage 
-	{ 
-		get 
-		{ 
-			return((EExpansionCreatePhase)m_ServerCreateExpansionStage.Get()); 
-		}
-		set 
-		{ 
-			m_ServerCreateExpansionStage.Set((int)value);
-			m_CreateExpansionStage = value;
-		}
-	}
-	
 	public GameObject RoomControlConsole { get{ return(m_RoomControlConsole); } }
 
 // Member Methods
@@ -85,14 +72,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
     {
-		if(!Network.isServer)
-		{
-			// Create Expansion State
-			if(_rSender == m_ServerCreateExpansionStage)
-			{
-				m_CreateExpansionStage = ServerCreateExpansionStage;
-			}
-		}
+		
     }
 	
 
@@ -114,13 +94,13 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         console.Initialise(EQuality.High, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
 		
 		// Add the room control subview
-        m_DoorControlSubView = console.MainView.AddSubView();
+        m_DoorControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Setup the doors subview
 		SetupDoorsSubview();
 		
 		// Add the expansion control subview
-        m_ExpansionControlSubView = console.MainView.AddSubView();
+        m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Set the initialise create expansion stage.
 		m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
@@ -130,7 +110,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{	
-			if(ServerCreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
+			if(m_CreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				CGame.Ship.GetComponent<CShipRooms>().CreateRoom(m_FacilitySelected, GetComponent<CRoomInterface>().RoomId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
 				
@@ -138,7 +118,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
 				
-				ServerCreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+				m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
 			}
 		}
 		
@@ -265,7 +245,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
 		
 		// For each expansion port add a button
 		List<GameObject> expansionPorts = GetComponent<CRoomInterface>().ExpansionPorts;
@@ -293,7 +273,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select an OTHER expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
 		
 		// Get the local prefab string
 		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CRoomInterface.GetRoomPrefab(m_FacilitySelected));
@@ -324,7 +304,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     {
         m_LocalExpansionPortIdSelected = m_buttonLocalPortPairs[_sender];
 		
-		ServerCreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
     }
 	
 	
@@ -332,7 +312,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     {
         m_FacilitySelected = m_buttonRoomTypePairs[_sender];
 		
-		ServerCreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
+		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
     }
 	
 	
@@ -340,7 +320,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
     {
         m_OtherExpansionPortIdSelected = m_buttonOtherPortPairs[_sender];
 		
-		ServerCreateExpansionStage = EExpansionCreatePhase.CreateExpansion;
+		m_CreateExpansionStage = EExpansionCreatePhase.CreateExpansion;
     }
 	
 	
