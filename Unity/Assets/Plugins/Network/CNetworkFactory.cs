@@ -132,19 +132,18 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 					// Extract the network view from this object
 					CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
-
-					// Invoke set parent rpc
-					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetParent", cParentView.ViewId);
 					
 					// Sync object's position
-					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformPosition", tEntry.Value.cGameObject.transform.position.x,
-																						 tEntry.Value.cGameObject.transform.position.y,
-																						 tEntry.Value.cGameObject.transform.position.z);
+                    cSelfView.SyncTransformPosition();
 
 					// Sync object's rotation
-					cSelfView.InvokeRpc(_cNetworkPlayer.PlayerId, "SetTransformRotation", tEntry.Value.cGameObject.transform.eulerAngles.x,
-																						 tEntry.Value.cGameObject.transform.eulerAngles.y,
-																						 tEntry.Value.cGameObject.transform.eulerAngles.z);
+					cSelfView.SyncTransformRotation();
+
+				    // Sync object's scale
+                    cSelfView.SyncTransformScale();
+
+                    // Invoke set parent rpc
+                    cSelfView.SyncParent();
 				}
 			}
         }
