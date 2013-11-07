@@ -62,6 +62,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void Start()
 	{
         m_uiActiveToolId = 0;
+
+        CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(NotifyPlayerConnect);
 	}
 
 
@@ -74,6 +76,12 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	{
 
 	}
+
+
+    public void NotifyPlayerConnect(CNetworkPlayer _cPlayer)
+    {
+
+    }
 	
 
     [ANetworkRpc]
@@ -96,7 +104,6 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             m_cTools[_bToolId].transform.parent = null;
             m_cTools[_bToolId].GetComponent<CToolInterface>().SetDropped();
             m_cTools[_bToolId] = null;
-
         }
 	}
 	
@@ -220,11 +227,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         {
             Debug.LogError("This should NOT BE HAPPENING");
         }
-
     }
 
 
     // Member Fields
+    CNetworkVar<ushort> m_cToolsViewId = new CNetworkVar<ushort>[k_uiMaxTools];
     GameObject[] m_cTools = new GameObject[k_uiMaxTools];
 
     uint m_uiToolCapacity = 2;
