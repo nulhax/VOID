@@ -31,11 +31,20 @@ using System.Collections.Generic;
 //		
 
 
-public class CPlayerBelt : MonoBehaviour
+public class CPlayerBelt : CNetworkMonoBehaviour
 {
 
 // Member Types
     const uint k_uiMaxTools = 3;
+
+    public enum ENetworkAction
+    {
+        PickupTool,
+        DropTool,
+        ChangeTool,
+        UseTool,
+        ReloadTool
+    }
 
 // Member Delegates & Events
 	
@@ -44,6 +53,10 @@ public class CPlayerBelt : MonoBehaviour
 	
 	
 // Member Functions
+
+    public override void InstanceNetworkVars()
+    {
+    }
 
 
 	public void Start()
@@ -59,180 +72,155 @@ public class CPlayerBelt : MonoBehaviour
 
 	public void Update()
 	{
-        if (Input.GetMouseButtonDown(1))
-        {
-            m_cTools[m_uiActiveToolId].GetComponent<CToolInterface>().SetPrimaryActive(true);
-        }
-        else if(Input.GetKeyDown("f"))
-        {
-            Debug.LogError("F Key Pressed");
-            PickUpTool();
-        }
-        else if (Input.GetKeyDown("g"))
-        {
-            DropTool(m_uiActiveToolId);
-        }
-        else if (Input.GetKeyDown("e"))
-        {
-            IncrementTool();
-        }
-        else if (Input.GetKeyDown("r"))
-        {
-            DecrementTool();
-        }
+
 	}
 	
 
-	public void PickUpTool()
+    [ANetworkRpc]
+	public void PickUpTool(byte _bToolSlotId, ushort _usToolViewId, ushort _usPlayerActorViewId)
 	{
-		//check if targeted GameObject is a tool
-		//check if there is a free inventory slot
-		//if not, then swap currently held tool for tool on ground
+        GameObject Tool = CNetwork.Factory.FindObject(_usToolViewId);
 
-		//ray casting
+        m_cTools[_bToolSlotId] = Tool;
+        m_cTools[_bToolSlotId].GetComponent<CToolInterface>().SetPickedUp();
 
-        RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        Debug.DrawRay(transform.position, ray.direction, Color.blue, 30);
-        Debug.DrawRay(transform.position, transform.forward, Color.red, 30);
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            Debug.DrawRay(transform.position, ray.direction, Color.green, 15);
-
-            Debug.Log("Tried to pick up " + hit.transform.gameObject.name);
-
-            //have a check to make sure it is lees than say, 2 meters,
-            //so that the player cannot pick up tools across the map.
-
-            if (hit.transform.gameObject.GetComponent<CToolInterface>() != null)
-            {
-                Debug.Log("It's a Tool!");
-
-                for (uint i = 0; i < m_uiToolCapacity; i++)
-                {
-                    if (m_cTools[i] == null)
-                    {
-                        m_cTools[i] = hit.transform.gameObject;
-                        m_cTools[i].GetComponent<CToolInterface>().SetPickedUp();
-                        m_cTools[i].rigidbody.isKinematic = true;
-
-                        //make Tool a child of the Player, maybe change it's position to the camera or some such.
-                        hit.transform.parent = transform;
-
-                        //tell Tool it is now being held
-                        ChangeTool(i);
-
-                        break;
-                    }
-                }
-
-                //if not, do nothing
-                //if yes to either, add Tool to m_cTools[]
-            }
-		}
+        Tool.transform.parent = gameObject.GetComponent<CPlayerHeadMotor>().ActorHead.transform;//gameObject.GetComponent<>().transform;
 	}
 
-
-    public void DropTool(uint _uiToolId)
+    [ANetworkRpc]
+    public void DropTool(byte _bToolId)
 	{
         //if there is a tool in the slot, drop it, activating physics
-        if (m_cTools[_uiToolId] != null)
+        if (m_cTools[_bToolId] != null)
         {
-            m_cTools[_uiToolId].transform.parent = null;
-            m_cTools[_uiToolId].rigidbody.isKinematic = false;
-            m_cTools[_uiToolId] = null;
-        }
+            m_cTools[_bToolId].transform.parent = null;
+            m_cTools[_bToolId].GetComponent<CToolInterface>().SetDropped();
+            m_cTools[_bToolId] = null;
 
-        //should change the active tool to a new one.
-        DecrementTool();
-		
-		//the dropped tool should always be the currently held tool, except on death
-		//remove the tool from parent, possibly with transfrom.DetachChildren();
+        }
 	}
 	
 
-	public void ChangeTool(uint _uiToolId)
+    [ANetworkRpc]
+	public void ChangeTool(byte _uiToolId)
 	{
-        if (_uiToolId >= 0 && _uiToolId <= (m_uiToolCapacity - 1))
-        {
-            if (m_cTools[_uiToolId] != null)
-            {
-                UnEquipTool(m_uiActiveToolId);
+        Vector3 ToolOffset = new Vector3(1, -1, 0);
+        m_cTools[_uiToolId].transform.rotation = gameObject.GetComponent<CPlayerHeadMotor>().ActorHead.transform.rotation;
+        m_cTools[_uiToolId].transform.position = gameObject.GetComponent<CPlayerHeadMotor>().ActorHead.transform.position + (transform.forward);
+        m_cTools[_uiToolId].transform.localPosition = ToolOffset;
 
-                m_uiActiveToolId = _uiToolId;
-
-                EquipTool(m_uiActiveToolId);
-            }
-        }
-	}
-
-
-    public void IncrementTool()
-    {
-        if ((m_uiActiveToolId + 1) <= (m_uiToolCapacity - 1))
-        {
-            ChangeTool(m_uiActiveToolId + 1);
-        }
+        m_uiActiveToolId = _uiToolId;
     }
 
 
-    public void DecrementTool()
-    {
-        if (m_uiActiveToolId != 0)
-        {
-            ChangeTool(m_uiActiveToolId - 1);
-        }
-    }
-
-
+    [ANetworkRpc]
     public void SetToolCapacity(uint _uiNewCapacity)
     {
         for (uint i = _uiNewCapacity; i < m_uiToolCapacity; i++)
         {
-            DropTool(i);
+            DropTool((byte)i);
         }
         m_uiToolCapacity = _uiNewCapacity;
     }
 
-
-    public void StoreTool(uint _uiToolId)
+    [ANetworkRpc]
+    public void UseTool(byte _bToolId)
     {
-        if (m_uiActiveToolId == _uiToolId)
-        {
+        //if (m_cTools[_bToolId].GetComponent<CToolInterface>())
 
+        m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive();
+
+        //m_cTools[_bToolId].GetComponent<CToolInterface>().SetPrimaryActive(true);
+    }
+
+    public static void SerializeBeltState(CNetworkStream _cStream)
+    {
+        if (Input.GetKeyDown("f"))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit) && (hit.transform.gameObject.GetComponent<CToolInterface>() != null))
+            {
+                _cStream.Write((byte)ENetworkAction.PickupTool);
+                _cStream.Write(hit.transform.gameObject.GetComponent<CNetworkView>().ViewId);
+            }
+        }
+        else if(Input.GetKeyDown("g"))
+        {
+            _cStream.Write((byte)ENetworkAction.DropTool);
+            _cStream.Write((uint)CGame.PlayerActor.GetComponent<CPlayerBelt>().m_uiActiveToolId);
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            _cStream.Write((byte)ENetworkAction.UseTool);
+            _cStream.Write((uint)CGame.PlayerActor.GetComponent<CPlayerBelt>().m_uiActiveToolId);
         }
     }
 
 
-    public void EquipTool(uint _uiToolId)
+    public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        if(_uiToolId == m_uiActiveToolId)
+        ENetworkAction ToolAction = (ENetworkAction)_cStream.ReadByte();
+
+        if (ToolAction == ENetworkAction.PickupTool)
         {
-            Vector3 ToolOffset = new Vector3(-1, 1, 0);
+            ushort ToolViewId = _cStream.ReadUShort();
 
-            //m_cTools[_uiToolId].GetComponent<GameObject>();
-            m_cTools[_uiToolId].transform.rotation = transform.rotation;
-            m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
-            m_cTools[_uiToolId].transform.localPosition = ToolOffset;
-            Debug.Log("Tool set to player position");
+            GameObject Tool = CNetwork.Factory.FindObject(ToolViewId);
+
+            if (Tool.GetComponent<CToolInterface>() != null)
+            {
+                if (Tool.GetComponent<CToolInterface>().IsHeldByPlayer == false)
+                {
+                    GameObject PlayerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+
+                    CPlayerBelt PlayerAcotrsBelt = PlayerActor.GetComponent<CPlayerBelt>();
+
+                    for (uint i = 0; i < PlayerAcotrsBelt.m_uiToolCapacity; i++)
+                    {
+                        if (PlayerAcotrsBelt.m_cTools[i] == null)
+                        {
+                            PlayerAcotrsBelt.InvokeRpcAll("PickUpTool", (byte)i, ToolViewId, PlayerActor.GetComponent<CNetworkView>().ViewId);
+                            PlayerAcotrsBelt.InvokeRpcAll("ChangeTool", (byte)i);
+
+                            break;
+                        }
+                    }
+                }
+            }
         }
-    }
 
-
-    public void UnEquipTool(uint _uiToolId)
-    {
-        if(_uiToolId != m_uiActiveToolId)
+        else if (ToolAction == ENetworkAction.DropTool)
         {
-            Vector3 ToolOffset2 = new Vector3(1, -1, 0);
+            ushort ToolId = _cStream.ReadUShort();
 
-            //m_cTools[_uiToolId].GetComponent<GameObject>();
-            //m_cTools[_uiToolId].transform.rotation = transform.rotation;
-            //m_cTools[_uiToolId].transform.position = transform.position + (transform.forward);
-            m_cTools[_uiToolId].transform.localPosition = ToolOffset2;
-            Debug.Log("Tool set to player position");
+            GameObject PlayerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+
+            PlayerActor.GetComponent<CPlayerBelt>().InvokeRpcAll("DropTool", (byte)ToolId);
+            //PlayerAcotrsBelt.InvokeRpcAll("PickUpTool", (byte)i, ToolViewId, PlayerActor.GetComponent<CNetworkView>().ViewId);
         }
+        else if (ToolAction == ENetworkAction.ChangeTool)
+        {
+
+        }
+        else if (ToolAction == ENetworkAction.UseTool)
+        {
+            ushort ToolId = _cStream.ReadUShort();
+
+            GameObject PlayerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+
+            PlayerActor.GetComponent<CPlayerBelt>().InvokeRpcAll("UseTool", (byte)ToolId);
+        }
+        else if (ToolAction == ENetworkAction.ReloadTool)
+        {
+
+        }
+        else
+        {
+            Debug.LogError("This should NOT BE HAPPENING");
+        }
+
     }
 
 

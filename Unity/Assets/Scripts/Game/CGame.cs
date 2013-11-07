@@ -139,10 +139,12 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomLifeSupport, "Ship/Rooms/RoomLifeSupport");
-				
+
 		// Register serialization targets
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
+
 		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, "Developer Server", 8);
@@ -341,7 +343,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
-    //    CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
+        CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
 		
 		// Fire schtuff making on the ramp stuff
 		CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);

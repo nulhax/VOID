@@ -21,11 +21,10 @@ bool bTorchLit;
 
     private void ToggleActivate()
     {
-        //Debug.LogError("Torch");
         if (bTorchLit == false)
         {
             bTorchLit = true;
-            light.intensity = 3;
+            light.intensity = 2;
         }
         else
         {
