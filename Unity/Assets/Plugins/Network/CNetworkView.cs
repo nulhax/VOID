@@ -247,7 +247,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 			}
         }
 
-        Logger.WriteError("Sent player id ({0}) all network var values from network view id ({1})", _ulPlayerId, this.ViewId);
+        Logger.Write("Sent player id ({0}) all network var values from network view id ({1})", _ulPlayerId, this.ViewId);
     }
 
 
@@ -285,6 +285,9 @@ public class CNetworkView : CNetworkMonoBehaviour
 			// Ensure servers only sync parents
 			Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
 	
+			// Ensure transform has a network view for parent
+			Logger.WriteErrorOn(transform.parent.GetComponent<CNetworkView>() == null, "Syncing to a parent requires a parent with a network view!!!");
+			
 			InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
 		}
 	}
