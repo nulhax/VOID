@@ -176,6 +176,7 @@ public class CGalaxy : MonoBehaviour
                     
                     newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
                     newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 50.0f);
+                    newAsteroid.GetComponent<NetworkedEntity>().UpdateNetworkVars();
 
                     float uniformScale = Random.RandomRange(10.0f, 100.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);

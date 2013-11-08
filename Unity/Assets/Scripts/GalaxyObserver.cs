@@ -85,7 +85,6 @@ public class GalaxyObserver : MonoBehaviour
                 }
             }
 
-
             galaxy.RegisterObserver(this.gameObject, observationRadius/*Mathf.Sqrt(this.gameObject.rigidbody.collider.bounds.extents.sqrMagnitude)*/);
 
             //textObject = new GameObject();
