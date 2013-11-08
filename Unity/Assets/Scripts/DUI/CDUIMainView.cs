@@ -113,7 +113,7 @@ public class CDUIMainView : CDUIView
 			float x = m_SubViewAreaRect.center.x * m_Dimensions.x - (m_Dimensions.x * 0.5f);
         	float y = m_SubViewAreaRect.center.y * m_Dimensions.y - (m_Dimensions.y * 0.5f);
 			
-			subView.transform.localPosition = new Vector3(x, y, -1.0f);
+			subView.transform.localPosition = new Vector3(x, y, -1.5f);
 		}
 		
 		// Move this subview back into view
