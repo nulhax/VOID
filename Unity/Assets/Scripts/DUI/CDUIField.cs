@@ -1,22 +1,40 @@
+//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
 using UnityEngine;
 using System.Collections;
+
+
+/* Implementation */
+
 
 public class CDUIField : CDUIElement 
 {
 	// Member Fields
-    private TextMesh m_textMesh;
-
+	private GameObject m_TextField = null;
 
     // Member Properties
-    public string m_text
+    public string Text
     {
         get
         {
-            return m_textMesh.text;
+            return m_TextField.GetComponent<TextMesh>().text;
         }
         set
         {
-            m_textMesh.text = value;
+            m_TextField.GetComponent<TextMesh>().text = value;
+			RecalculateDimensions();
         }
     }
 
@@ -26,36 +44,38 @@ public class CDUIField : CDUIElement
 		ElementType = CDUIElement.EElementType.Field;
 	}
 	
-    public void Initialise(string _text, Color _textColor, int _fontSize = 24, float _characterSize = 0.025f)
+    public void Initialise(string _text, Color _textColor, int _fontSize = 96, float _characterSize = 0.00625f)
     {
         InitialiseText(_text,_textColor,_fontSize,_characterSize);
     }
 
     private void InitialiseText(string _text, Color _textColor, int _fontSize, float _characterSize)
     {
-        // Create the text object
-        GameObject text = new GameObject(name + "_Text");
-        text.transform.parent = transform;
-        text.transform.localPosition = Vector3.zero;
-        text.transform.localRotation = Quaternion.identity;
-        text.layer = gameObject.layer;
+        // Create the text field object
+        m_TextField = new GameObject(name + "_Text");
+        m_TextField.transform.parent = transform;
+        m_TextField.transform.localPosition = Vector3.zero;
+        m_TextField.transform.localRotation = Quaternion.identity;
+        m_TextField.layer = gameObject.layer;
 
         // Add the mesh renderer
-        MeshRenderer mr = text.AddComponent<MeshRenderer>();
+        MeshRenderer mr = m_TextField.AddComponent<MeshRenderer>();
         mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
 
         // Add the text mesh
-        m_textMesh = text.AddComponent<TextMesh>();
-        m_textMesh.fontSize = _fontSize;
-		m_textMesh.characterSize = _characterSize;
-        m_textMesh.color = _textColor;
-        m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
-        m_textMesh.anchor = TextAnchor.MiddleCenter;
-        m_textMesh.offsetZ = -0.01f;
-        m_textMesh.text = _text;
-		m_textMesh.fontStyle = FontStyle.Italic;
-		
-		// Get the dimensions for the text
-		m_Dimensions = new Vector2(mr.bounds.size.x, mr.bounds.size.y);
+        TextMesh textMesh = m_TextField.AddComponent<TextMesh>();
+        textMesh.fontSize = _fontSize;
+		textMesh.characterSize = _characterSize;
+        textMesh.color = _textColor;
+        textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
+        textMesh.anchor = TextAnchor.MiddleCenter;
+        textMesh.offsetZ = -0.01f;
+		textMesh.fontStyle = FontStyle.Italic;
+		Text = _text;
     }
+	
+	private void RecalculateDimensions()
+	{
+		m_Dimensions = m_TextField.GetComponent<MeshRenderer>().bounds.size;
+	}
 }
