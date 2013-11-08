@@ -69,6 +69,9 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	
 	public string GetRegisteredPrefabFile(object _cPrefabId)
 	{
+		// Ensure the prefab file exists
+		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!!");
+			
 		return (m_mPrefabs[(ushort)_cPrefabId]);
 	}
 

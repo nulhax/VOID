@@ -37,7 +37,10 @@ public class CRoomInterface : MonoBehaviour
 		LifeSupportDome,
 		Replicator,
 		Scanner,
+		HallwayStraight,
+		HallwayCorner,
 		HallwayTSection,
+		HallwayXSection,
 		
 		MAX
 	}
@@ -146,7 +149,10 @@ public class CRoomInterface : MonoBehaviour
 			case ERoomType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomEngine; break;
 			case ERoomType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomReplicator; break;
 			case ERoomType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.RoomScanner; break;
-			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;				
+			case ERoomType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
+			case ERoomType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
+			case ERoomType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
+			case ERoomType.HallwayXSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayXSection; break;			
 		}
 		
 		return (eRegisteredPrefab);
