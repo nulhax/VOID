@@ -1,9 +1,24 @@
-﻿using UnityEngine;
-using System;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using System.Reflection;
+
+
+/* Implementation */
+
 
 public class CDUI : MonoBehaviour
 {
@@ -29,7 +44,7 @@ public class CDUI : MonoBehaviour
 		} 
 	}
 	
-	public CDUIMainView DUIMainView
+	public CDUIMainView MainView
 	{
 		get
 		{
@@ -136,9 +151,9 @@ public class CDUI : MonoBehaviour
         float ppm = 0.0f;
         switch (m_Quality)
         {
-            case EQuality.VeryHigh: ppm = 500; break;
-            case EQuality.High: ppm = 400; break;
-            case EQuality.Medium: ppm = 300; break;
+            case EQuality.VeryHigh: ppm = 1000; break;
+            case EQuality.High: ppm = 600; break;
+            case EQuality.Medium: ppm = 350; break;
             case EQuality.Low: ppm = 200; break;
             case EQuality.VeryLow: ppm = 100; break;
             
@@ -196,7 +211,7 @@ public class CDUI : MonoBehaviour
 		
         if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("DUI")))
         {
-            element = hit.transform.parent.gameObject;
+            element = hit.transform.gameObject;
 			
             Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
         }

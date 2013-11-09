@@ -1,9 +1,23 @@
-﻿using UnityEngine;
-using System;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Xml;
+
+
+/* Implementation */
+
 
 public class CDUIButton : CDUIElement 
 {
@@ -16,19 +30,19 @@ public class CDUIButton : CDUIElement
 	public event PressHandler PressHold;
 
     // Member Fields
-    private TextMesh m_textMesh;
-
+	private GameObject m_TextField = null;
 
     // Member Properties
-    public string m_text
+    public string Text
     {
         get
         {
-            return m_textMesh.text;
+            return m_TextField.GetComponent<TextMesh>().text;
         }
         set
         {
-            m_textMesh.text = value;
+            m_TextField.GetComponent<TextMesh>().text = value;
+			RecalculateDimensions();
         }
     }
 
@@ -46,103 +60,57 @@ public class CDUIButton : CDUIElement
 
     private void InitialiseText(string _text)
     {
-        // Create the text object
-        GameObject text = new GameObject(name + "_Text");
-        text.transform.parent = transform;
-        text.transform.localPosition = Vector3.zero;
-        text.transform.localRotation = Quaternion.identity;
-        text.layer = gameObject.layer;
+        // Create the text field object
+        m_TextField = new GameObject(name + "_Text");
+        m_TextField.transform.parent = transform;
+        m_TextField.transform.localPosition = Vector3.zero;
+        m_TextField.transform.localRotation = Quaternion.identity;
+        m_TextField.layer = gameObject.layer;
 
         // Add the mesh renderer
-        MeshRenderer mr = text.AddComponent<MeshRenderer>();
+        MeshRenderer mr = m_TextField.AddComponent<MeshRenderer>();
         mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
 
         // Add the text mesh
-        m_textMesh = text.AddComponent<TextMesh>();
-        m_textMesh.fontSize = 24;
-		m_textMesh.characterSize = 0.025f;
-        m_textMesh.color = Color.white;
-        m_textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
-        m_textMesh.anchor = TextAnchor.MiddleCenter;
-        m_textMesh.offsetZ = -0.01f;
-        m_textMesh.text = _text;
-		m_textMesh.fontStyle = FontStyle.Bold;
-		
-		// Get the dimensions for the text
-		m_Dimensions = new Vector2(new Vector2(mr.bounds.size.x, mr.bounds.size.z).magnitude, mr.bounds.size.y);
+        TextMesh textMesh = m_TextField.AddComponent<TextMesh>();
+        textMesh.fontSize = 96;
+		textMesh.characterSize = 0.00625f;
+        textMesh.color = Color.white;
+        textMesh.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
+        textMesh.anchor = TextAnchor.MiddleCenter;
+        textMesh.offsetZ = -0.01f;
+		textMesh.fontStyle = FontStyle.Bold;
+		Text = _text;
     }
 	
 	private void InitialiseBackground()
     {
-        // Create the background
-        GameObject background = new GameObject(name + "_background");
-        background.transform.parent = transform;
-        background.transform.localPosition = Vector3.zero;
-        background.transform.localRotation = Quaternion.identity;
-        background.layer = gameObject.layer;
-
         // Create the mesh
-        Mesh backMesh = CreateButtonMesh(m_Dimensions);
+        Mesh backMesh = CreatePlaneMesh(m_Dimensions);
 
         // Create the material
-        Material backMat = new Material(Shader.Find("Diffuse"));
-        //m_ButtonBackMat.SetTexture("_MainTex", m_ButtonTexture);
-        backMat.name = background.name + "_mat";
-        backMat.color = Color.black;
+        Material backMat = new Material(Shader.Find("Transparent/VertexLit"));
+        backMat.name = gameObject.name + "_mat";
+        backMat.color = Color.clear;
 
         // Add the mesh filter
-        MeshFilter mf = background.AddComponent<MeshFilter>();
+        MeshFilter mf = gameObject.AddComponent<MeshFilter>();
         mf.mesh = backMesh;
 
         // Add the mesh renderer
-        MeshRenderer mr = background.AddComponent<MeshRenderer>();
+        MeshRenderer mr = gameObject.AddComponent<MeshRenderer>();
         mr.material = backMat;
 
         // Add the mesh collider
-        MeshCollider mc = background.AddComponent<MeshCollider>();
+        MeshCollider mc = gameObject.AddComponent<MeshCollider>();
         mc.sharedMesh = backMesh;
         mc.isTrigger = true;
     }
-
-    private Mesh CreateButtonMesh(Vector2 _dimensions)
-    {
-        Mesh buttonBackMesh = new Mesh();
-        buttonBackMesh.name = name + "_mesh";
-        buttonBackMesh.Clear();
-
-        int numVertices = 4;
-        int numTriangles = 6;
-
-        Vector3[] vertices = new Vector3[numVertices];
-        Vector2[] uvs = new Vector2[numVertices];
-        int[] triangles = new int[numTriangles];
-
-        vertices[0] = new Vector3(-(_dimensions.x * 0.5f), -(_dimensions.y * 0.5f));
-        vertices[1] = new Vector3((_dimensions.x * 0.5f), -(_dimensions.y * 0.5f));
-        vertices[2] = new Vector3(-(_dimensions.x * 0.5f), (_dimensions.y * 0.5f));
-        vertices[3] = new Vector3((_dimensions.x * 0.5f), (_dimensions.y * 0.5f));
-
-        uvs[0] = new Vector2(0.0f, 0.0f);
-        uvs[1] = new Vector2(1.0f, 0.0f);
-        uvs[2] = new Vector2(0.0f, 1.0f);
-        uvs[3] = new Vector2(1.0f, 1.0f);
-
-        triangles[0] = 0;
-        triangles[1] = 2;
-        triangles[2] = 1;
-
-        triangles[3] = 2;
-        triangles[4] = 3;
-        triangles[5] = 1;
-
-        buttonBackMesh.vertices = vertices;
-        buttonBackMesh.uv = uvs;
-        buttonBackMesh.triangles = triangles;
-        buttonBackMesh.RecalculateNormals();
-        buttonBackMesh.RecalculateBounds();
-
-        return (buttonBackMesh);
-    }
+	
+	private void RecalculateDimensions()
+	{
+		m_Dimensions = m_TextField.GetComponent<MeshRenderer>().bounds.size;
+	}
 	
 	// Event handler methods
     public void OnPressDown()

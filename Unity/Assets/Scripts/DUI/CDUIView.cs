@@ -1,6 +1,24 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+
+/* Implementation */
+
 
 public enum EQuality
 {
@@ -86,17 +104,41 @@ public class CDUIView : MonoBehaviour
         fieldGo.transform.localRotation = Quaternion.identity;
         fieldGo.transform.localPosition = Vector3.zero;
 
-        // Add the DUIbutton
+        // Add the DUIfield
         CDUIField duiField = fieldGo.AddComponent<CDUIField>();
 		duiField.ElementID = ++m_ElementIdCount;
 		duiField.ParentViewID = m_ViewID;
 
-        // Initialise the button
+        // Initialise the field
         duiField.Initialise(_text, Color.white);
 		
 		m_Elements.Add(duiField.ElementID, fieldGo);
 
         return (duiField);
+    }
+	
+	public CDUISprite AddSprite()
+    {
+        // Create the game object
+        GameObject spriteGo = new GameObject("Sprite");
+
+        // Set the default values
+        spriteGo.layer = gameObject.layer;
+        spriteGo.transform.parent = transform;
+        spriteGo.transform.localRotation = Quaternion.identity;
+        spriteGo.transform.localPosition = Vector3.zero;
+
+        // Add the DUIsprite
+        CDUISprite duiSprite = spriteGo.AddComponent<CDUISprite>();
+		duiSprite.ElementID = ++m_ElementIdCount;
+		duiSprite.ParentViewID = m_ViewID;
+
+        // Initialise the sprite
+        duiSprite.Initialise();
+		
+		m_Elements.Add(duiSprite.ElementID, spriteGo);
+
+        return (duiSprite);
     }
 	
 	public CDUIElement GetDUIElement(uint _ElementId)

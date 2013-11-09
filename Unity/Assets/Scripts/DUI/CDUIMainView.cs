@@ -1,9 +1,24 @@
-﻿using UnityEngine;
-using System;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Xml;
-using System.Reflection;
+
+
+/* Implementation */
+
 
 public enum ELayoutStyle
 {
@@ -20,9 +35,9 @@ public class CDUIMainView : CDUIView
     // Member Fields
     private ELayoutStyle m_Layout = ELayoutStyle.INVALID;
 	
-	private Rect m_TitleRect = new Rect();
-    private Rect m_NavAreaRect = new Rect();
-    private Rect m_SubViewAreaRect = new Rect();
+	public Rect m_TitleRect = new Rect();
+    public Rect m_NavAreaRect = new Rect();
+    public Rect m_SubViewAreaRect = new Rect();
 	
 	GameObject m_ActiveSubView = null;
 	
@@ -46,9 +61,9 @@ public class CDUIMainView : CDUIView
 		switch (m_Layout) 
 		{
 		case ELayoutStyle.Layout_1: 
-			m_TitleRect.Set(0.0f, 0.8f, 1.0f, 0.2f); 
-			m_NavAreaRect.Set(0.0f, 0.0f, 0.2f, 0.8f); 
-			m_SubViewAreaRect.Set(0.3f, 0.0f, 0.6f, 0.8f); 
+			m_TitleRect.Set(0.275f, 0.85f, 0.6f, 0.15f); 
+			m_NavAreaRect.Set(0.035f, 0.35f, 0.235f, 0.5f); 
+			m_SubViewAreaRect.Set(0.275f, 0.05f, 0.6f, 0.8f); 
 			break;
 			
 		default:
@@ -71,11 +86,6 @@ public class CDUIMainView : CDUIView
 	
 	public void SetupSubView(CDUISubView _duiSubView)
     {
-		// Place the subview in the middle
-        float x = m_SubViewAreaRect.center.x * m_Dimensions.x - (m_Dimensions.x * 0.5f);
-        float y = m_SubViewAreaRect.center.y * m_Dimensions.y - (m_Dimensions.y * 0.5f);
-        _duiSubView.transform.localPosition = new Vector3(x, y);
-		
 		// Initialise the DUI Component
         _duiSubView.Initialise(new Vector2(m_SubViewAreaRect.width * m_Dimensions.x, m_SubViewAreaRect.height * m_Dimensions.y));
 		
@@ -91,17 +101,32 @@ public class CDUIMainView : CDUIView
         // Reposition the buttons
         RepositionNavButtons();
 		
-		// Set this as the active subview
+		// Set this as the active subview by default
 		SetActiveSubView(_duiSubView.gameObject);
     }
 	
 	public void SetActiveSubView(GameObject _SubView)
 	{
-		if(m_ActiveSubView != null)
-			m_ActiveSubView.SetActive(false);
+		// Reposition all of the subviews out of view of the camera
+		foreach(GameObject subView in m_NavButtonSubViewPairs.Values)
+		{
+			float x = m_SubViewAreaRect.center.x * m_Dimensions.x - (m_Dimensions.x * 0.5f);
+        	float y = m_SubViewAreaRect.center.y * m_Dimensions.y - (m_Dimensions.y * 0.5f);
+			
+			subView.transform.localPosition = new Vector3(x, y, -1.5f);
+		}
 		
-		m_ActiveSubView = _SubView;
-		m_ActiveSubView.SetActive(true);
+		// Move this subview back into view
+		if(m_NavButtonSubViewPairs.ContainsValue(_SubView))
+		{
+			m_ActiveSubView = _SubView;
+			
+			m_ActiveSubView.transform.localPosition = new Vector3(m_ActiveSubView.transform.localPosition.x, m_ActiveSubView.transform.localPosition.y, 0.0f);
+		}
+		else
+		{
+			Debug.Log("SetActiveSubView, subview doesn't belong to this DUI!!");
+		}
 	}
 	
     private void RepositionNavButtons()
@@ -116,17 +141,17 @@ public class CDUIMainView : CDUIView
             // Calculate the position for the nav button to go
             if (m_NavAreaRect.width * Dimensions.x < m_NavAreaRect.height * Dimensions.y)
             {
-                float x = m_NavAreaRect.center.x * m_Dimensions.x - (m_Dimensions.x * 0.5f);
-                float y = ((m_NavAreaRect.yMax - m_NavAreaRect.y) * (count + 0.5f) / numSubViews) * m_Dimensions.y - (m_Dimensions.y * 0.5f);
+                float x = m_NavAreaRect.center.x;
+                float y = m_NavAreaRect.yMin + m_NavAreaRect.height * (float)(count + 1) / (float)(numSubViews + 1);
 
-                navButton.transform.localPosition = new Vector3(x, y);
+                navButton.GetComponent<CDUIElement>().MiddleCenterViewPos = new Vector2(x, y);
             }
             else
             {
-                float x = (m_NavAreaRect.xMax - m_NavAreaRect.x) * (count + 0.5f) / numSubViews * m_Dimensions.x - (m_Dimensions.x * 0.5f);
-                float y = m_NavAreaRect.center.y * m_Dimensions.y - (m_Dimensions.y * 0.5f);
+                float x = m_NavAreaRect.xMin + m_NavAreaRect.width * (float)(count + 1) / (float)(numSubViews + 1);
+                float y = m_NavAreaRect.center.y;
 
-                navButton.transform.localPosition = new Vector3(x, y);
+                navButton.GetComponent<CDUIElement>().MiddleCenterViewPos = new Vector2(x, y);
             }
 
             count += 1;

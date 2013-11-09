@@ -3,10 +3,10 @@
 	Properties 
 	{
 		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_Alpha ("Alpha", Range(0.0, 1.0)) = 0.5
-		_SpecColor ("Specular Color", Color) = (0.5,0.5,0.5,1)
-		_Shininess ("Shininess", Range (0.01, 1)) = 0.078125
-		_EmissivePower ("Emissive Power", Range(1.0, 10.0)) = 1.0
+		_Alpha ("Alpha", Range(0.0, 1.0)) = 0.85
+		_SpecColor ("Specular Color", Color) = (0.7,0.7,0.7,1)
+		_Shininess ("Shininess", Range (0.01, 1)) = 0.2
+		_EmissivePower ("Emissive Power", Range(1.0, 10.0)) = 1.5
 	}
 	SubShader 
 	{
