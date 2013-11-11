@@ -135,15 +135,10 @@ public class CExpansionPortInterface : MonoBehaviour
 		
 		/*** Code for rotating the new facility using quaternions. Rotates all the axis to be aligned correctly ***/
 		
-//		// Find the rotation quaternion for the forward vector from this expansionport forward vector to the other expansionport inversed forward vector
-		// (So that they face each other)
-//		Quaternion forwardRot = Quaternion.FromToRotation(m_attachedPorts[_portID].forward * -1.0f, transform.forward);
+//		Quaternion Rot1 = transform.rotation * m_attachedPorts[_portID].parent.rotation * Quaternion.Inverse(m_attachedPorts[_portID].rotation);
+//		Quaternion Rot2 = Quaternion.AngleAxis(180.0f, Vector3.up);
 //		
-//		// Find the rotation quaternion for the up vector from this expansionport up vector to the other expansionport up vector
-//		Quaternion upRot = Quaternion.FromToRotation(m_attachedPorts[_portID].up, transform.up);
-//		
-//		// Apply the final rotation using the LookRotation (takes a forward and up vector) function and pass in the rotated forward and up vectors
-//		_objNewRoom.transform.rotation = Quaternion.LookRotation(forwardRot * Vector3.forward, upRot * Vector3.up);
+//		_objNewRoom.transform.rotation = Rot1 * Rot2;
 //		
 //		// Apply the new position (this expansion port position plus the rotated other expansionport local position)
 //		_objNewRoom.transform.position = transform.position - (_objNewRoom.transform.rotation * m_attachedPorts[_portID].localPosition);
