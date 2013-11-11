@@ -95,16 +95,16 @@ public class GalaxyObserver : MonoBehaviour
 
             //// Add the mesh renderer
             //MeshRenderer mr = textObject.AddComponent<MeshRenderer>();
-            //mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
+            //mr.material = (Material)Resources.Load("Fonts/Couri", typeof(Material));
 
             //// Add the text mesh
             //tm = textObject.AddComponent<TextMesh>();
-            //tm.fontSize = 24;
-            //tm.characterSize = .5f;
+            //tm.fontSize = 72;
+            //tm.characterSize = .125f;
             //tm.color = Color.white;
-            //tm.font = (Font)Resources.Load("Fonts/Arial", typeof(Font));
+            //tm.font = (Font)Resources.Load("Fonts/Couri", typeof(Font));
             //tm.anchor = TextAnchor.MiddleCenter;
-            //tm.offsetZ = -0.01f;
+            //tm.offsetZ = 0.0f;
             //tm.text = "OHAI";
             //tm.fontStyle = FontStyle.Italic;
         }
@@ -115,11 +115,13 @@ public class GalaxyObserver : MonoBehaviour
     //void Update()
     //{
     //    textObject.transform.position = gameObject.transform.position;
-    //    if(Camera.current)
-    //        textObject.transform.LookAt(-Camera.current.transform.position);
+    //    if (Camera.current)
+    //        textObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - Camera.current.transform.position);
 
-    //    CGalaxy.SGridCellPos cellPos = CGame.Instance.GetComponent<CGalaxy>().PointToTransformedCell(gameObject.transform.position);
-    //    tm.text = string.Format("({0},{1},{2})", cellPos.x, cellPos.y, cellPos.z);
+    //    CGalaxy galaxy = CGame.Instance.GetComponent<CGalaxy>();
+    //    CGalaxy.SGridCellPos transformedCellPos = galaxy.PointToRelativeCell(gameObject.transform.position);
+    //    CGalaxy.SGridCellPos untransformedCellPos = galaxy.PointToAbsoluteCell(gameObject.transform.position);
+    //    tm.text = string.Format("Rel({0},{1},{2})\nAbs({3},{4},{5})", transformedCellPos.x, transformedCellPos.y, transformedCellPos.z, untransformedCellPos.x, untransformedCellPos.y, untransformedCellPos.z);
     //}
 
     void OnDestroy()
