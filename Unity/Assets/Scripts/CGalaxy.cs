@@ -160,6 +160,37 @@ public class CGalaxy : MonoBehaviour
         return Random.value;
     }
 
+    // Set the aesthetic of the galaxy based on the observer's position.
+    void UpdateAesthetic(SGridCellPos absoluteCell)
+    {
+        //Skybox skybox = Camera.main.GetComponent<Skybox>();
+        if (RenderSettings.skybox)
+        {
+            System.Collections.Generic.List<string> skyboxFaces = new System.Collections.Generic.List<string>();
+            skyboxFaces.Add("Up");
+            skyboxFaces.Add("Down");
+            skyboxFaces.Add("Left");
+            skyboxFaces.Add("Right");
+            skyboxFaces.Add("Front");
+            skyboxFaces.Add("Back");
+
+            Texture texture;
+            foreach (string skyboxFace in skyboxFaces)
+            {
+                texture = Resources.Load("Textures/SpaceSkyBox/0" + skyboxFace) as Texture;
+                texture.wrapMode = TextureWrapMode.Clamp;
+                RenderSettings.skybox.SetTexture("_" + skyboxFace + "Tex", texture);
+            }
+
+            //Color fogColour = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+            //RenderSettings.fog = true;
+            //RenderSettings.fogColor = fogColour;
+            //RenderSettings.fogEndDistance = Random.Range(1000.0f, 5000.0f);    // 5000 is camera's far plane.
+            //RenderSettings.skybox.SetColor("_Tint", fogColour);
+            //skybox.material.SetColor("_Tint", Color.grey);    // Neutralises the tint and returns the skybox's image to normal.
+        }
+    }
+
     void LoadAbsoluteCell(SGridCellPos absoluteCell)
     {
         mGrid.Add(absoluteCell, new CGridCellContent(mbValidCellValue)); // Create cell with updated alternator to indicate cell is within proximity of observer.
@@ -228,6 +259,12 @@ public class CGalaxy : MonoBehaviour
 	void Start()
     {
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
+
+        // Initialise skybox.
+        if (!RenderSettings.skybox)
+            RenderSettings.skybox = new Material(Shader.Find("RenderFX/Skybox"));
+
+        UpdateAesthetic(mCentreCell);
 
         //mGalaxyParent = GameObject.Instantiate(Resources.Load("Prefabs/GalaxyParent")) as GameObject;
         mGalaxyParent = CNetwork.Factory.CreateObject((ushort)CGame.ENetworkRegisteredPrefab.GalaxyParent);
