@@ -131,6 +131,17 @@ public class CExpansionPortInterface : MonoBehaviour
 		AllignForwardVector(newPort, _objNewRoom);
 		//AllignRightVector(newPort, _objNewRoom);
 		//AllignUpVector(newPort, _objNewRoom);
+		
+		
+		/*** Code for rotating the new facility using quaternions. Rotates all the axis to be aligned correctly ***/
+		
+//		Quaternion Rot1 = transform.rotation * m_attachedPorts[_portID].parent.rotation * Quaternion.Inverse(m_attachedPorts[_portID].rotation);
+//		Quaternion Rot2 = Quaternion.AngleAxis(180.0f, Vector3.up);
+//		
+//		_objNewRoom.transform.rotation = Rot1 * Rot2;
+//		
+//		// Apply the new position (this expansion port position plus the rotated other expansionport local position)
+//		_objNewRoom.transform.position = transform.position - (_objNewRoom.transform.rotation * m_attachedPorts[_portID].localPosition);
 	}
 	
 	void AllignForwardVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)

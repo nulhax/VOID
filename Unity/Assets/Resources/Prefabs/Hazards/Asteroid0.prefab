@@ -103,9 +103,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c62355566030eb14a82121cc52a779b7, type: 3}
+  m_Script: {fileID: 11500000, guid: f3e26481c7f479546831f204059b49ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Position: 1
+  Angle: 1
+  PositionalVelocity: 1
+  AngularVelocity: 1
+  UpdatesPerSecond: .239999995
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

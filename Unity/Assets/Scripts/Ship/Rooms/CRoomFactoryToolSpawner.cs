@@ -48,7 +48,7 @@ public class CRoomFactoryToolSpawner : CNetworkMonoBehaviour
 		CDUIButton but = factory.AddButton("SpawnTool");
 		but.PressDown += SpawnTool;
 		
-		but.m_ViewPos = new Vector2(0.5f, 0.5f);
+		but.MiddleCenterViewPos = new Vector2(0.5f, 0.5f);
 	}
 
     public void Update()

@@ -91,7 +91,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 		
 		 // Initialise the console
-        console.Initialise(EQuality.High, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
+        console.Initialise(EQuality.VeryHigh, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
+		console.DUI.MainView.AddSprite();
 		
 		// Add the room control subview
         m_DoorControlSubView = console.DUI.AddSubView().gameObject;
@@ -103,7 +104,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
 		
 		// Set the initialise create expansion stage.
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectFacilityType;
+		SetupExpansionSubviewStageOne();
 	}
 	
 	public void Update()
@@ -158,7 +159,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			newDoorObject.GetComponent<CNetworkView>().SyncTransformPosition();
 			newDoorObject.GetComponent<CNetworkView>().SyncTransformRotation();
 			
-			// Test: Make the door open by default
+			// Debug: Make the door open by default
 			newDoorObject.GetComponent<CDoorMotor>().OpenDoor();
 		}
 	}
@@ -202,9 +203,8 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_fieldDoorPairs[duiDoorState] = door;
 			
 			// Set their positions
-			duiDoorState.m_ViewPos = new Vector2(0.1f, (float)(i + 1) / (float)(m_Doors.Count + 1));
-			duiBut.transform.localPosition = duiDoorState.transform.localPosition + new Vector3(duiDoorState.Dimensions.x * 0.5f + duiBut.Dimensions.x * 0.5f, 0.0f);
-			duiBut.m_ViewPos = new Vector2(duiBut.m_ViewPos.x + 0.1f, duiBut.m_ViewPos.y);
+			duiDoorState.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)(m_Doors.Count + 1));
+			duiBut.MiddleLeftViewPos = new Vector2(duiDoorState.MiddleRightViewPos.x + 0.1f, duiDoorState.MiddleRightViewPos.y);
 			
 			// Register the statechange
 			door.StateChanged += DoorStateChanged;
@@ -220,7 +220,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select a room to create.");
-		diuField.m_ViewPos = new Vector2(0.5f, 1.0f);
+		diuField.LowerLeftViewPos = new Vector2(0.1f, 1.0f);
 		
 		// For each room type
 		for(int i = 0; i < (int)CRoomInterface.ERoomType.MAX; ++i)
@@ -232,7 +232,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
             duiBut.PressDown += ExpansionSubviewSelectFacility;
 
 			// Set the positions
-			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
+			duiBut.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)((int)CRoomInterface.ERoomType.MAX + 1));
 			
 			m_buttonRoomTypePairs[duiBut] = roomType;
 		}
@@ -247,7 +247,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select a LOCAL expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
+		diuField.LowerLeftViewPos = new Vector2(0.1f, 1.0f);
 		
 		// For each expansion port add a button
 		List<GameObject> expansionPorts = GetComponent<CRoomInterface>().ExpansionPorts;
@@ -260,7 +260,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
             duiBut.PressDown += ExpansionSubviewSelectLocalPort;
 
 			// Set the positions
-			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
+			duiBut.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
 			
 			m_buttonLocalPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
@@ -275,7 +275,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 
 		// Add the title field
 		CDUIField diuField = duiExpansionControl.AddField("Select an OTHER expansion port to use.");
-		diuField.m_ViewPos = new Vector2(0.0f, 1.0f);
+		diuField.LowerLeftViewPos = new Vector2(0.1f, 1.0f);
 		
 		// Get the local prefab string
 		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CRoomInterface.GetRoomPrefab(m_FacilitySelected));
@@ -292,7 +292,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
             duiBut.PressDown += ExpansionSubviewSelectOtherPort;
 
 			// Set the positions
-			duiBut.m_ViewPos = new Vector2(0.0f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
+			duiBut.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)(expansionPorts.Count + 1));
 			
 			m_buttonOtherPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
@@ -343,30 +343,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 
     private void DoorStateChanged(CDoorMotor _sender)
     {	
-		foreach(CDUIButton button in m_buttonDoorPairs.Keys)
-		{
-			if(m_buttonDoorPairs[button] == _sender)
-			{
-				switch (_sender.State)
-                {
-					case CDoorMotor.EDoorState.Opened: 
-                    	button.m_text = "Close";
-                    	break;
-                    
-					case CDoorMotor.EDoorState.Closed:
-                   	 	button.m_text = "Open";
-                    	break;
-					
-					case CDoorMotor.EDoorState.Opening:
-                	case CDoorMotor.EDoorState.Closing:
-                    	button.m_text = "...";
-                    	break;
-					
-                	default:
-                    	break;
-                }
-			}
-		}
+		Vector2 buttonMiddleLeftViewPos = Vector2.zero;
 		
 		foreach(CDUIField field in m_fieldDoorPairs.Keys)
 		{
@@ -374,21 +351,53 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			{
 				switch (_sender.State)
                 {
-                    case CDoorMotor.EDoorState.Opened: 
-                        field.m_text = field.m_text.Replace("Opening...", "Open");
-                        break;
-                    case CDoorMotor.EDoorState.Opening:
-                        field.m_text = field.m_text.Replace("Closed", "Opening...");
-                        break;
-                    case CDoorMotor.EDoorState.Closed:
-                        field.m_text = field.m_text.Replace("Closing...", "Closed");
-                        break;
-                    case CDoorMotor.EDoorState.Closing:
-                        field.m_text = field.m_text.Replace("Open", "Closing...");
-                        break;
-                    default:
-                        break;
+                case CDoorMotor.EDoorState.Opened: 
+                    field.Text = field.Text.Replace("Opening", "Open");
+                    break;
+                case CDoorMotor.EDoorState.Opening:
+                    field.Text = field.Text.Replace("Closed", "Opening");
+                    break;
+                case CDoorMotor.EDoorState.Closed:
+                    field.Text = field.Text.Replace("Closing", "Closed");
+                    break;
+                case CDoorMotor.EDoorState.Closing:
+                    field.Text = field.Text.Replace("Open", "Closing");
+                    break;
+                default:
+                    break;
                 }
+				
+				field.MiddleLeftViewPos = new Vector2(0.1f, field.MiddleLeftViewPos.y);
+				buttonMiddleLeftViewPos = new Vector2(field.MiddleRightViewPos.x + 0.1f, field.MiddleRightViewPos.y);
+				break;
+			}
+		}
+		
+		foreach(CDUIButton button in m_buttonDoorPairs.Keys)
+		{
+			if(m_buttonDoorPairs[button] == _sender)
+			{
+				switch (_sender.State)
+                {
+					case CDoorMotor.EDoorState.Opened: 
+                    	button.Text = "Close";
+                    	break;
+                    
+					case CDoorMotor.EDoorState.Closed:
+                   	 	button.Text = "Open";
+                    	break;
+					
+					case CDoorMotor.EDoorState.Opening:
+                	case CDoorMotor.EDoorState.Closing:
+                    	button.Text = "Please Wait";
+                    	break;
+					
+                	default:
+                    	break;
+                }
+				
+				button.MiddleLeftViewPos = buttonMiddleLeftViewPos;
+				break;
 			}
 		}
     }

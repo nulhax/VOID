@@ -1,8 +1,23 @@
+//  Auckland
+//  New Zealand
+//
+//  (c) 2013 VOID
+//
+//  File Name   :   CActorMotor.cs
+//  Description :   --------------------------
+//
+//  Author      :  Programming Team
+//  Mail        :  contanct@spaceintransit.co.nz
+//
+
+
+// Namespaces
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
-using System.Xml;
-using System.Reflection;
+
+
+/* Implementation */
+
 
 public class CDUISubView : CDUIView
 {

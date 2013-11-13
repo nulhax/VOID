@@ -40,7 +40,10 @@ public class CGame : CNetworkMonoBehaviour
 		RoomReplicator,
 		RoomEngine,
 		RoomGravityGenerator,
+		HallwayStraight,
+		HallwayCorner,
 		HallwayTSection,
+		HallwayXSection,
 		Door,
 		ControlConsole,
 		PlayerActor,
@@ -154,7 +157,10 @@ public class CGame : CNetworkMonoBehaviour
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayStraight, "Ship/Hallways/HallwayStraight");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayCorner, "Ship/Hallways/HallwayCorner");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayXSection, "Ship/Hallways/HallwayXSection");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomLifeSupport, "Ship/Rooms/RoomLifeSupport");
 
 		// Register serialization targets

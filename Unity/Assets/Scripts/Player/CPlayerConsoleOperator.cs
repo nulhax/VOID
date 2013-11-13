@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -144,7 +144,7 @@ public class CPlayerConsoleOperator : CNetworkMonoBehaviour
 		// Active the button press down call
 		if(_duiViewId == 0)
 		{
-			((CDUIButton)consoleDIU.DUIMainView.GetDUIElement(_duiButtonId)).OnPressDown();
+			((CDUIButton)consoleDIU.MainView.GetDUIElement(_duiButtonId)).OnPressDown();
 		}
 		else
 		{
