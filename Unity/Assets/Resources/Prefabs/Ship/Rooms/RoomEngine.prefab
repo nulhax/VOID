@@ -497,6 +497,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400058}
+  - 114: {fileID: 11400008}
   - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: RoomEngine
@@ -1512,6 +1513,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b219732ab7a89439aefe0a34944e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_eType: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1538,6 +1540,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_bInvertRightVector: 0
   m_bInvertUpVector: 0
+--- !u!114 &11400008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -46,6 +46,7 @@ public class CGame : CNetworkMonoBehaviour
 		HallwayXSection,
 		Door,
 		ControlConsole,
+		Cockpit,
 		PlayerActor,
         ToolTorch,
         GalaxyParent,
@@ -150,6 +151,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomGravityGenerator, "Ship/Rooms/RoomGravityGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Rooms/Doors/Door");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Rooms/Cockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");

@@ -29,21 +29,43 @@ public class CBridgePilotingSystem : MonoBehaviour
 
 	
 	// Member Fields
-	public GameObject m_Cockpit = null;
+	private GameObject m_Cockpit = null;
 	
     // Member Properties
 
 
     // Member Methods
-	public void Start()
+	public void Awake()
 	{
-		// Initialise the cockpit
-		InitialiseCockpit();
+		if(CNetwork.IsServer)
+		{
+			ServerCreateControlCockpit();
+		}
 	}
 	
-	private void InitialiseCockpit()
+	public void Start()
+	{	
+		// Get the console script from the children
+		CBridgeCockpit cockpit = GetComponentInChildren<CBridgeCockpit>();
+		
+		// Store the room control console game object
+ 		m_Cockpit = cockpit.gameObject;
+	}
+	
+	private void ServerCreateControlCockpit()
 	{
-		m_Cockpit.AddComponent<CBridgeCockpit>();
+		Transform consoleTransform = transform.FindChild("Cockpit");
+
+		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Cockpit;
+		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+	
+		newConsoleObject.transform.position = consoleTransform.position;
+		newConsoleObject.transform.rotation = consoleTransform.rotation;
+		newConsoleObject.transform.parent = transform;	
+		
+		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
+		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
 	}
 }
 

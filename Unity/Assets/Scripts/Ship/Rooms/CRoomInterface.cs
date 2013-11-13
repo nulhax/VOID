@@ -63,7 +63,24 @@ public class CRoomInterface : MonoBehaviour
 			}
 			else
 			{
-				Debug.LogError("Cannot set ID value twice");
+				Debug.LogError("Cannot set room ID value twice!");
+			}			
+		}			
+	}
+	
+	
+	public ERoomType RoomType 
+	{
+		get{return(m_eType);}			
+		set
+		{
+			if(m_eType == ERoomType.INVALID)
+			{
+				m_eType = value;
+			}
+			else
+			{
+				Debug.LogError("Cannot set room type value twice!");
 			}			
 		}			
 	}
@@ -76,12 +93,30 @@ public class CRoomInterface : MonoBehaviour
 	{
 		SearchExpansionPorts();
 		AddDebugPortNames();
-		
-
+	}
+	
+	public void Start()
+	{
+		// Generic components to be added for all room types
 		gameObject.AddComponent<CRoomAtmosphere>();
 		gameObject.AddComponent<CRoomPower>();
 		gameObject.AddComponent<CRoomGeneral>();
-		gameObject.AddComponent<CNetworkView>();		
+		
+		// Specific scripts to be added
+		switch(m_eType)
+		{
+		case ERoomType.Bridge:
+			gameObject.AddComponent<CBridgePilotingSystem>();
+			break;
+			
+		case ERoomType.Factory:
+			gameObject.AddComponent<CRoomFactoryToolSpawner>();
+			break;
+			
+		case ERoomType.LifeSupportDome:
+			gameObject.AddComponent<CLifeSupportPlants>();
+			break;
+		}
 	}
 
 
@@ -94,27 +129,6 @@ public class CRoomInterface : MonoBehaviour
 	public void Update()
 	{
 		//Update
-	}
-
-
-	public ERoomType RoomType
-	{
-		set
-		{
-			if (m_eType != ERoomType.INVALID)
-			{
-				Debug.LogError("You cannot change the room type once it has been set. Moron.");
-			}
-			else
-			{
-				m_eType = value;
-			}
-		}
-
-		get
-		{
-			return (m_eType);
-		}
 	}
 
 
@@ -200,8 +214,9 @@ public class CRoomInterface : MonoBehaviour
 	}
 
 	// Member Fields
-
-	ERoomType m_eType = ERoomType.INVALID;
+	
+	public ERoomType m_eType = ERoomType.INVALID;
+	
 	uint m_uiRoomID = uint.MaxValue;
 	bool m_bIntersecting = false;
 	

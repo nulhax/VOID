@@ -75,9 +75,17 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		
     }
 	
-
+	public void Awake()
+	{	
+		if(CNetwork.IsServer)
+		{
+			ServerCreateDoors();
+			ServerCreateControlConsole();
+		}
+	}
+	
 	public void Start()
-	{
+	{	
 		// Get the console script from the children
 		CDUIConsole console = GetComponentInChildren<CDUIConsole>();
 		
@@ -142,7 +150,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	public void ServerCreateDoors()
+	private void ServerCreateDoors()
 	{
 		foreach(GameObject expansionPort in GetComponent<CRoomInterface>().ExpansionPorts)
 		{
@@ -165,7 +173,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	public void ServerCreateControlConsole()
+	private void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
 
