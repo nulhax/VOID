@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -166,9 +166,8 @@ public class CGame : CNetworkMonoBehaviour
 		// Register serialization targets
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerInteractor.SerializePlayerState, CPlayerInteractor.UnserializePlayerState);
         CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
-
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerConsoleOperator.SerializePlayerState, CPlayerConsoleOperator.UnserializePlayerState);
 		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);

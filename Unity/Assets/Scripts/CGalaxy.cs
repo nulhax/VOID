@@ -262,7 +262,10 @@ public class CGalaxy : MonoBehaviour
 
         // Initialise skybox.
         if (!RenderSettings.skybox)
-            RenderSettings.skybox = new Material(Shader.Find("RenderFX/Skybox"));
+		{
+			UnityEngine.Shader shader = Shader.Find("RenderFX/Skybox");
+            RenderSettings.skybox = new Material(shader);
+		}
 
         UpdateAesthetic(mCentreCell);
 

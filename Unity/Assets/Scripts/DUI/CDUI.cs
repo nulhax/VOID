@@ -193,12 +193,12 @@ public class CDUI : MonoBehaviour
         camera.orthographicSize = duiMainView.Dimensions.y * 0.5f;
     }
 	
-	public GameObject FindDUIElementCollisions(RaycastHit _rh)
+	public GameObject FindDUIElementCollisions(float _texCoordU, float _texCoordV)
     {
 		CDUIView duiMainView = m_MainView.GetComponent<CDUIMainView>();
 		
-		Vector3 offset = new Vector3(_rh.textureCoord.x * duiMainView.Dimensions.x - duiMainView.Dimensions.x * 0.5f,
-                                     _rh.textureCoord.y * duiMainView.Dimensions.y - duiMainView.Dimensions.y * 0.5f, 0.0f);
+		Vector3 offset = new Vector3(_texCoordU * duiMainView.Dimensions.x - duiMainView.Dimensions.x * 0.5f,
+                                     _texCoordV * duiMainView.Dimensions.y - duiMainView.Dimensions.y * 0.5f, 0.0f);
 
         offset = transform.rotation * offset;
         Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;

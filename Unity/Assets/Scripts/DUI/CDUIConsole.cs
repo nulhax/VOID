@@ -3,7 +3,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   CActorMotor.cs
+//  File Name   :   CDUIConsole.cs
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -44,9 +44,6 @@ public class CDUIConsole : MonoBehaviour
 		{
 			Debug.LogError("CDUIConsole Initialise failed. ScreenObj hasn't been assigned!");
 		}
-		
-		// Set the screen to be on the right layer
-		m_ScreenObject.layer = LayerMask.NameToLayer("Screen");
 		
 		// Create the DUI object
 		CreateDUI(_Quality, _Layout, _Dimensions);
