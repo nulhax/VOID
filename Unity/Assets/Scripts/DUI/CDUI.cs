@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,6 +23,9 @@ using System.Collections.Generic;
 
 public class CDUI : MonoBehaviour
 {
+	// Member delegates
+	public event Action<uint> SubviewChanged;
+	
     // Member Fields
     private EQuality m_Quality = EQuality.INVALID;
 	
@@ -31,9 +35,14 @@ public class CDUI : MonoBehaviour
 	
 	private GameObject m_MainView = null;
 	
+	private GameObject m_ActiveSubView = null;
 	private Dictionary<uint, GameObject> m_SubViews = new Dictionary<uint, GameObject>();
 	
-	private uint m_ViewIdCount = 0;
+	private uint m_ViewIdCount = 0;	
+	
+	// Member Properties
+	
+	// Member Methods
 	
     // Member Properties
 	public Camera RenderCamera 
@@ -52,6 +61,7 @@ public class CDUI : MonoBehaviour
 		}
 	}
 
+	
     // Member Methods
     private void Update()
 	{
@@ -95,11 +105,20 @@ public class CDUI : MonoBehaviour
 		
 		// Get the MainView component and setup the subview
 		CDUIMainView duiMainView = m_MainView.GetComponent<CDUIMainView>();
-        duiMainView.SetupSubView(duiSubView);
+        CDUIButton navButton = duiMainView.SetupSubViewAndNavButton(duiSubView);
+		
+		// Register the button for the event
+        navButton.PressDown += NavButtonPressed;
 		
 		// Add to the dictionaries
         m_SubViews[duiSubView.ViewID] = subView;
-
+		
+		// Set as the active subview on the server
+		if(CNetwork.IsServer)
+		{
+			OnSubviewChange(duiSubView.ViewID);
+		}
+		
         return(duiSubView);
     }
 	
@@ -119,10 +138,40 @@ public class CDUI : MonoBehaviour
 		return(subView.GetComponent<CDUISubView>());
 	}
 	
+	public void SetActiveSubView(GameObject _SubView)
+	{
+		// Reposition all of the subviews out of view of the camera
+		foreach(GameObject subView in m_SubViews.Values)
+		{
+			float x = MainView.m_SubViewAreaRect.center.x * MainView.Dimensions.x - (MainView.Dimensions.x * 0.5f);
+        	float y = MainView.m_SubViewAreaRect.center.y * MainView.Dimensions.y - (MainView.Dimensions.y * 0.5f);
+			
+			subView.transform.localPosition = new Vector3(x, y, -1.5f);
+		}
+		
+		// Move this subview back into view
+		if(m_SubViews.ContainsValue(_SubView))
+		{
+			m_ActiveSubView = _SubView;
+			
+			m_ActiveSubView.transform.localPosition = new Vector3(m_ActiveSubView.transform.localPosition.x, m_ActiveSubView.transform.localPosition.y, 0.0f);
+		}
+		else
+		{
+			Debug.Log("SetActiveSubView, subview doesn't belong to this DUI!!");
+		}
+	}
+	
     public void AttatchRenderTexture(Material _sharedScreenMat)
     {
         // Set the render text onto the material of the screen
         _sharedScreenMat.SetTexture("_MainTex", m_RenderTex); 
+    }
+	
+	private void NavButtonPressed(CDUIButton _sender)
+    {
+		// Call the subview changed event
+		OnSubviewChange(MainView.GetSubviewFromNavButton(_sender).GetComponent<CDUISubView>().ViewID);
     }
 	
 	private void SetupMainView(ELayoutStyle _Layout, Vector2 _Dimensions)
@@ -193,12 +242,12 @@ public class CDUI : MonoBehaviour
         camera.orthographicSize = duiMainView.Dimensions.y * 0.5f;
     }
 	
-	public GameObject FindDUIElementCollisions(RaycastHit _rh)
+	public GameObject FindDUIElementCollisions(float _texCoordU, float _texCoordV)
     {
 		CDUIView duiMainView = m_MainView.GetComponent<CDUIMainView>();
 		
-		Vector3 offset = new Vector3(_rh.textureCoord.x * duiMainView.Dimensions.x - duiMainView.Dimensions.x * 0.5f,
-                                     _rh.textureCoord.y * duiMainView.Dimensions.y - duiMainView.Dimensions.y * 0.5f, 0.0f);
+		Vector3 offset = new Vector3(_texCoordU * duiMainView.Dimensions.x - duiMainView.Dimensions.x * 0.5f,
+                                     _texCoordV * duiMainView.Dimensions.y - duiMainView.Dimensions.y * 0.5f, 0.0f);
 
         offset = transform.rotation * offset;
         Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
@@ -221,5 +270,11 @@ public class CDUI : MonoBehaviour
         }
 		
 		return(element);
+	}
+	
+	private void OnSubviewChange(uint _iActiveSubview)
+	{
+		if(SubviewChanged != null)
+			SubviewChanged(_iActiveSubview);
 	}
 }
