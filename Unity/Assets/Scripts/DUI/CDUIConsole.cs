@@ -36,6 +36,14 @@ public class CDUIConsole : MonoBehaviour
 		} 
 	}
 	
+	public GameObject DUIGameObject 
+	{ 
+		get 
+		{ 
+			return(m_DUI); 
+		} 
+	}
+	
 	// Member Methods
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
     {
@@ -47,6 +55,9 @@ public class CDUIConsole : MonoBehaviour
 		
 		// Create the DUI object
 		CreateDUI(_Quality, _Layout, _Dimensions);
+		
+		// Initialise the duiInteraction script
+		GetComponent<CDUIInteraction>().Initialise();
     }
 	
     private void CreateDUI(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)

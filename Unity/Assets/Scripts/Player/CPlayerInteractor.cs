@@ -110,9 +110,20 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			
 			// Check the parents untill we find the one that is not of layer InteractableObject
 			int IOLayer = LayerMask.NameToLayer("InteractableObject");
-			while(IOHit.transform.parent.gameObject.layer == IOLayer)
+			for(int i = 0; i < 100; ++i)
 			{
-				IOHit = IOHit.transform.parent.gameObject;
+				if(i == 99)
+				{
+					Debug.LogError("CheckInteractionObjects Couldn't find the interactableobjetcs parent!");
+				}
+				if(IOHit.transform.parent.gameObject.layer == IOLayer)
+				{
+					IOHit = IOHit.transform.parent.gameObject;
+				}
+				else
+				{
+					break;
+				}
 			}
 			
 			// Get the Interactable Object script from the object
@@ -140,7 +151,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		}
 	}
 	
-	private bool CheckInteractableObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
+	private static bool CheckInteractableObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
     {
 		Ray ray = new Ray(_origin, _direction);
 		
@@ -178,15 +189,52 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadInt();
 		ushort interactableObjectViewID = _cStream.ReadUShort();
 		
-		// Get the interactable object
-		GameObject obj = CNetwork.Factory.FindObject(interactableObjectViewID);
+		// Find the origin, direction, distance of the players interaction with the object
+		CPlayerHeadMotor playerHeadMotor = playerActor.GetComponent<CPlayerHeadMotor>();
+		Vector3 orig = playerHeadMotor.ActorHead.transform.position;
+		Vector3 direction = playerHeadMotor.ActorHead.transform.forward;
+		float distance = 5.0f;
+		RaycastHit hit = new RaycastHit();
 		
-		// If the event is registered then let all of the clients know
-		CInteractableObject interactableObject = obj.GetComponent<CInteractableObject>();
-		if(interactableObject.IsInteractionEventRegistered(interactionEvent))
+		// Confirm the ray cast against the interactable object
+		if(CheckInteractableObjectRaycast(orig, direction, distance, out hit))
 		{
-			// Invoke the rpc to activate the event across all clients
-			interactableObject.InvokeRpcAll("OnInteractionEvent", interactionEvent, playerActor.GetComponent<CNetworkView>().ViewId);
+			// Get the game object which owns this mesh
+			GameObject IOHit = hit.collider.gameObject;
+			
+			// Check the parents untill we find the one that is not of layer InteractableObject
+			int IOLayer = LayerMask.NameToLayer("InteractableObject");
+			for(int i = 0; i < 100; ++i)
+			{
+				if(i == 99)
+				{
+					Debug.LogError("CheckInteractionObjects Couldn't find the interactableobjetcs parent!");
+				}
+				if(IOHit.transform.parent.gameObject.layer == IOLayer)
+				{
+					IOHit = IOHit.transform.parent.gameObject;
+				}
+				else
+				{
+					break;
+				}
+			}
+			
+			// Get the interactable object from packet
+			GameObject obj = CNetwork.Factory.FindObject(interactableObjectViewID);
+			
+			// Confirm it was this object
+			//if(obj == IOHit)
+			{
+				CInteractableObject interactableObject = obj.GetComponent<CInteractableObject>();
+				
+				// Check this object has an interaction event registered
+				if(interactableObject.IsInteractionEventRegistered(interactionEvent))
+				{
+					// Invoke the event handlers
+					interactableObject.OnInteractionEvent(interactionEvent, playerActor.GetComponent<CNetworkView>().ViewId, hit);
+				}
+			}
 		}
     }
 }

@@ -87,36 +87,19 @@ public class CRoomInterface : MonoBehaviour
 
 
 // Member Functions
-
-
 	public void Awake()
-	{
+	{	
+		// Initialis ethe expansion ports
 		SearchExpansionPorts();
 		AddDebugPortNames();
-	}
-	
-	public void Start()
-	{
+		
 		// Generic components to be added for all room types
 		gameObject.AddComponent<CRoomAtmosphere>();
 		gameObject.AddComponent<CRoomPower>();
 		gameObject.AddComponent<CRoomGeneral>();
-		
-		// Specific scripts to be added
-		switch(m_eType)
-		{
-		case ERoomType.Bridge:
-			gameObject.AddComponent<CBridgePilotingSystem>();
-			break;
 			
-		case ERoomType.Factory:
-			gameObject.AddComponent<CRoomFactoryToolSpawner>();
-			break;
-			
-		case ERoomType.LifeSupportDome:
-			gameObject.AddComponent<CLifeSupportPlants>();
-			break;
-		}
+		// Add the network view
+		gameObject.AddComponent<CNetworkView>();
 	}
 
 
@@ -215,7 +198,7 @@ public class CRoomInterface : MonoBehaviour
 
 	// Member Fields
 	
-	public ERoomType m_eType = ERoomType.INVALID;
+	ERoomType m_eType = ERoomType.INVALID;
 	
 	uint m_uiRoomID = uint.MaxValue;
 	bool m_bIntersecting = false;

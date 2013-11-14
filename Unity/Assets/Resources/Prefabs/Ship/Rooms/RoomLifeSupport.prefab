@@ -375,8 +375,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400048}
-  - 114: {fileID: 11400004}
   - 114: {fileID: 11400006}
+  - 114: {fileID: 11400004}
   m_Layer: 0
   m_Name: RoomLifeSupport
   m_TagString: Untagged
@@ -771,7 +771,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100048}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: af5c8941f115a0742b28d0f9499e0456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400006
@@ -785,7 +785,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b219732ab7a89439aefe0a34944e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eType: 4
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

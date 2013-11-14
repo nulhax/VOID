@@ -35,16 +35,13 @@ public class CBridgePilotingSystem : MonoBehaviour
 
 
     // Member Methods
-	public void Awake()
-	{
+	public void Start()
+	{	
 		if(CNetwork.IsServer)
 		{
 			ServerCreateControlCockpit();
 		}
-	}
-	
-	public void Start()
-	{	
+		
 		// Get the console script from the children
 		CBridgeCockpit cockpit = GetComponentInChildren<CBridgeCockpit>();
 		

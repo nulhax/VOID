@@ -23,7 +23,7 @@ using System.Collections.Generic;
 public class CInteractableObject : CNetworkMonoBehaviour 
 {
     // Member Delegates
-    public delegate void PlayerInteractionHandler(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId);
+    public delegate void PlayerInteractionHandler(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId, RaycastHit _RayHit);
     
 	// Member events
 	public event PlayerInteractionHandler UseLeftClick;
@@ -78,8 +78,7 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		return(eventRegistered);
 	}
 	
-	[ANetworkRpc]
-	public void OnInteractionEvent(CPlayerInteractor.EInteractionEvent _InteractionEvent, ushort _InteractingPlayerActorViewId)
+	public void OnInteractionEvent(CPlayerInteractor.EInteractionEvent _InteractionEvent, ushort _InteractingPlayerActorViewId, RaycastHit _RayHit)
 	{	
 		ushort networkViewId = GetComponent<CNetworkView>().ViewId;
 		
@@ -87,22 +86,22 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		{
 		case CPlayerInteractor.EInteractionEvent.LeftClick:
 			if(UseLeftClick != null)
-				UseLeftClick(_InteractingPlayerActorViewId, networkViewId);
+				UseLeftClick(_InteractingPlayerActorViewId, networkViewId, _RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionEvent.RightClick:
 			if(UseRightClick != null)
-				UseRightClick(_InteractingPlayerActorViewId, networkViewId);
+				UseRightClick(_InteractingPlayerActorViewId, networkViewId, _RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionEvent.Action1:
 			if(UseAction1 != null)
-				UseAction1(_InteractingPlayerActorViewId, networkViewId);
+				UseAction1(_InteractingPlayerActorViewId, networkViewId, _RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionEvent.Action2:
 			if(UseAction2 != null)
-				UseAction2(_InteractingPlayerActorViewId, networkViewId);
+				UseAction2(_InteractingPlayerActorViewId, networkViewId, _RayHit);
 			break;
 			
 		default:

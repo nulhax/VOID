@@ -67,9 +67,15 @@ public class CShipRooms : MonoBehaviour
 			}
 		}
 		
+		uint uiRoomId = ++m_uiRoomIdCount;
+		
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-					
+		
+		CRoomInterface roomInterface = cNewRoomObject.GetComponent<CRoomInterface>();
+		roomInterface.RoomId = uiRoomId;
+		roomInterface.RoomType = _eType;
+		
 		cNewRoomObject.transform.parent = transform;
 		
 		if(cExpansionPort != null)
@@ -79,12 +85,7 @@ public class CShipRooms : MonoBehaviour
 		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformPosition();
 		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		
-		uint uiRoomId = ++m_uiRoomIdCount;
 		m_mRooms.Add(uiRoomId, cNewRoomObject);
-		
-		CRoomInterface roomInterface = cNewRoomObject.GetComponent<CRoomInterface>();
-		roomInterface.RoomId = uiRoomId;
-		roomInterface.RoomType = _eType;
 		
 		return (cNewRoomObject);
 	}

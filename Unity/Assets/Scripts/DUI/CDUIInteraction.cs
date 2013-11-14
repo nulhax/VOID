@@ -14,50 +14,69 @@
 // Namespaces
 using UnityEngine;
 using System.Collections;
+using System;
 
 
 /* Implementation */
 
 
 public class CDUIInteraction : CNetworkMonoBehaviour 
-{
+{	
 	// Member Types
 	
-	
 	// Member Fields
-	
-	
+	private bool m_bSubviewChanged = false;
+	private CNetworkVar<uint> m_CurrentActiveSubviewId = null;
+
 	// Member Properties
-	
 	
 	// Member Methods
 	public override void InstanceNetworkVars()
     {
-		
+		m_CurrentActiveSubviewId = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 	}
 	
-	public void Start()
+  	public void OnNetworkVarSync(INetworkVar _rSender)
+    {
+        if (_rSender == m_CurrentActiveSubviewId)
+        {	
+			m_bSubviewChanged = true;
+        }
+	}
+	
+	public void Initialise()
 	{
+		// Register the interactable object event
 		CInteractableObject IO = GetComponent<CInteractableObject>();
-		
 		IO.UseLeftClick += HandlerPlayerActorLeftClick;
+		
+		// Register the subview change event
+		CDUI dui = GetComponent<CDUIConsole>().DUI; 
+		dui.SubviewChanged += HandleSubviewChange;
 	}
 	
-	private void HandlerPlayerActorLeftClick(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId)
+	public void Update()
 	{
-		// Placeholder: Create the ray from the players perspective to get the texture coords back
-		CPlayerHeadMotor playerHeadMotor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId).GetComponent<CPlayerHeadMotor>();
-		Vector3 orig = playerHeadMotor.ActorHead.transform.position;
-		Vector3 direction = playerHeadMotor.ActorHead.transform.forward;
-		float distance = 5.0f;
-		RaycastHit hit = new RaycastHit();
-		Physics.Raycast(new Ray(orig, direction), out hit, distance, 1 << LayerMask.NameToLayer("InteractableObject"));
-		
+		if(m_bSubviewChanged)
+		{
+			CDUI dui = GetComponent<CDUIConsole>().DUI;
+			dui.SetActiveSubView(dui.GetSubView(m_CurrentActiveSubviewId.Get()).gameObject);
+			m_bSubviewChanged = false;
+		}
+	}
+	
+	private void HandleSubviewChange(uint _iActiveSubview)
+	{
+		m_CurrentActiveSubviewId.Set(_iActiveSubview);
+	}
+	
+	private void HandlerPlayerActorLeftClick(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId, RaycastHit _RayHit)
+	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
 		
 		// Find the element hit
-		GameObject hitElement = dui.FindDUIElementCollisions(hit.textureCoord.x, hit.textureCoord.y);
+		GameObject hitElement = dui.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
 		
 		// If it did get the element pressed on the screen
 		if(hitElement != null)
@@ -70,16 +89,16 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void ButtonPressedDown(CDUI _dui, uint _duiViewId, uint _duiButtonId)
+	private void ButtonPressedDown(CDUI _Dui, uint _duiViewId, uint _duiButtonId)
 	{
 		// Active the button press down call
 		if(_duiViewId == 0)
 		{
-			((CDUIButton)_dui.MainView.GetDUIElement(_duiButtonId)).OnPressDown();
+			((CDUIButton)_Dui.MainView.GetDUIElement(_duiButtonId)).OnPressDown();
 		}
 		else
 		{
-			((CDUIButton)_dui.GetSubView(_duiViewId).GetDUIElement(_duiButtonId)).OnPressDown();
+			((CDUIButton)_Dui.GetSubView(_duiViewId).GetDUIElement(_duiButtonId)).OnPressDown();
 		}
 	}
 }

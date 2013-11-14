@@ -406,8 +406,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
             // Retrieve network view instance
             CNetworkView cNetworkView = CNetworkView.FindUsingViewId(usNetworkViewId);
-
-
+			
             // Process network var sync procedure
             if (eProcedure == EProdecure.SyncNetworkVar)
             {
