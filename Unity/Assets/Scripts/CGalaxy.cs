@@ -177,11 +177,11 @@ public class CGalaxy : MonoBehaviour
 
         //RenderSettings.skybox.Lerp(mSkyboxMaterials[(uint)ESkyboxLayer.Solid], mSkyboxMaterials[(uint)ESkyboxLayer.Composite], 0.0f);
 
-        Color fogColour = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+        Color fogColour = new Color(Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), 1.0f);
         RenderSettings.fog = true;
         RenderSettings.fogColor = fogColour;
-        RenderSettings.fogDensity = Random.Range(0.0f, 0.005f);
-        RenderSettings.fogEndDistance = Random.Range(1000.0f, 4000.0f);    // 5000 is camera's far plane.
+        RenderSettings.fogDensity = Random.Range(0.0f, 0.002f);
+        RenderSettings.fogEndDistance = Random.Range(4000.0f, 5000.0f);    // 5000 is camera's far plane.
         RenderSettings.skybox.SetColor("_Tint", fogColour);
         //RenderSettings.skybox.SetColor("_Tint", Color.grey);    // Neutralises the tint and returns the skybox's image to normal.
     }
