@@ -56,6 +56,10 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	private CNetworkVar<int> m_ServerCreateExpansionStage    	 	= null;
 	private EExpansionCreatePhase m_CreateExpansionStage 			= EExpansionCreatePhase.INVALID;
 	
+	private CNetworkVar<uint> m_ServerLocalExpansionPortIdSelected  = null;
+	private CNetworkVar<uint> m_ServerOtherExpansionPortIdSelected  = null;
+	private CNetworkVar<int> m_ServerFacilitySelected  = null;
+	
 	private uint m_LocalExpansionPortIdSelected = 0;
 	private uint m_OtherExpansionPortIdSelected = 0;
 	private CRoomInterface.ERoomType m_FacilitySelected = CRoomInterface.ERoomType.INVALID;
@@ -67,17 +71,28 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars()
     {
 		m_ServerCreateExpansionStage = new CNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
+		m_ServerLocalExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_ServerOtherExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_ServerFacilitySelected = new CNetworkVar<int>(OnNetworkVarSync, (int)CRoomInterface.ERoomType.INVALID);
 	}
 	
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
     {
-		
+		m_CreateExpansionStage = (EExpansionCreatePhase)m_ServerCreateExpansionStage.Get();
+		m_LocalExpansionPortIdSelected = m_ServerLocalExpansionPortIdSelected.Get();
+		m_OtherExpansionPortIdSelected = m_ServerOtherExpansionPortIdSelected.Get();
+		m_FacilitySelected = (CRoomInterface.ERoomType)m_ServerFacilitySelected.Get();
     }
 	
-
 	public void Start()
-	{
+	{	
+		if(CNetwork.IsServer)
+		{
+			ServerCreateDoors();
+			ServerCreateControlConsole();
+		}
+		
 		// Get the console script from the children
 		CDUIConsole console = GetComponentInChildren<CDUIConsole>();
 		
@@ -142,7 +157,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	public void ServerCreateDoors()
+	private void ServerCreateDoors()
 	{
 		foreach(GameObject expansionPort in GetComponent<CRoomInterface>().ExpansionPorts)
 		{
@@ -165,7 +180,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	}
 	
 	
-	public void ServerCreateControlConsole()
+	private void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
 
@@ -304,25 +319,25 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 	
 	private void ExpansionSubviewSelectLocalPort(CDUIButton _sender)
     {
-        m_LocalExpansionPortIdSelected = m_buttonLocalPortPairs[_sender];
+        m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectOtherExpansionPort;
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
     }
 	
 	
 	private void ExpansionSubviewSelectFacility(CDUIButton _sender)
     {
-        m_FacilitySelected = m_buttonRoomTypePairs[_sender];
+        m_ServerFacilitySelected.Set((int)m_buttonRoomTypePairs[_sender]);
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.SelectLocalExpansionPort;
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
     }
 	
 	
 	private void ExpansionSubviewSelectOtherPort(CDUIButton _sender)
     {
-        m_OtherExpansionPortIdSelected = m_buttonOtherPortPairs[_sender];
+        m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
 		
-		m_CreateExpansionStage = EExpansionCreatePhase.CreateExpansion;
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
     }
 	
 	

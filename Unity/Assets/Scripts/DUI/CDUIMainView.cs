@@ -39,10 +39,8 @@ public class CDUIMainView : CDUIView
     public Rect m_NavAreaRect = new Rect();
     public Rect m_SubViewAreaRect = new Rect();
 	
-	GameObject m_ActiveSubView = null;
-	
 	private Dictionary<uint, GameObject> m_NavButtonSubViewPairs = new Dictionary<uint, GameObject>();
-	
+
     // Member Properties
 	
     // Member Methods
@@ -84,7 +82,7 @@ public class CDUIMainView : CDUIView
 		duiField.transform.localPosition = localPos;
     }
 	
-	public void SetupSubView(CDUISubView _duiSubView)
+	public CDUIButton SetupSubViewAndNavButton(CDUISubView _duiSubView)
     {
 		// Initialise the DUI Component
         _duiSubView.Initialise(new Vector2(m_SubViewAreaRect.width * m_Dimensions.x, m_SubViewAreaRect.height * m_Dimensions.y));
@@ -92,42 +90,19 @@ public class CDUIMainView : CDUIView
 		 // Add the navigation button
 		CDUIButton duiNavButton = AddButton(_duiSubView.gameObject.name);
 		
-        // Register the button for the event
-        duiNavButton.PressDown += NavButtonPressed;
-		
 		// Add to the dictionaries
 		m_NavButtonSubViewPairs[duiNavButton.ElementID] = _duiSubView.gameObject;
 		
         // Reposition the buttons
         RepositionNavButtons();
 		
-		// Set this as the active subview by default
-		SetActiveSubView(_duiSubView.gameObject);
+		return(duiNavButton);
     }
 	
-	public void SetActiveSubView(GameObject _SubView)
-	{
-		// Reposition all of the subviews out of view of the camera
-		foreach(GameObject subView in m_NavButtonSubViewPairs.Values)
-		{
-			float x = m_SubViewAreaRect.center.x * m_Dimensions.x - (m_Dimensions.x * 0.5f);
-        	float y = m_SubViewAreaRect.center.y * m_Dimensions.y - (m_Dimensions.y * 0.5f);
-			
-			subView.transform.localPosition = new Vector3(x, y, -1.5f);
-		}
-		
-		// Move this subview back into view
-		if(m_NavButtonSubViewPairs.ContainsValue(_SubView))
-		{
-			m_ActiveSubView = _SubView;
-			
-			m_ActiveSubView.transform.localPosition = new Vector3(m_ActiveSubView.transform.localPosition.x, m_ActiveSubView.transform.localPosition.y, 0.0f);
-		}
-		else
-		{
-			Debug.Log("SetActiveSubView, subview doesn't belong to this DUI!!");
-		}
-	}
+	public GameObject GetSubviewFromNavButton(CDUIButton _sender)
+    {
+		return(m_NavButtonSubViewPairs[_sender.ElementID]);
+    }
 	
     private void RepositionNavButtons()
     {
@@ -156,13 +131,6 @@ public class CDUIMainView : CDUIView
 
             count += 1;
         }
-    }
-
-    private void NavButtonPressed(CDUIButton _sender)
-    {
-		GameObject subView = m_NavButtonSubViewPairs[_sender.ElementID];
-		
-		SetActiveSubView(subView);
     }
 
     // Debug functions
