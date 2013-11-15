@@ -170,7 +170,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
        	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
 		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
