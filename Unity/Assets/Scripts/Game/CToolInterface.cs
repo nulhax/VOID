@@ -137,7 +137,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-        CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
+        //CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 	}
 
 

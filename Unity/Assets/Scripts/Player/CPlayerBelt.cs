@@ -123,7 +123,28 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 	public void OnDestroy()
 	{
-        // Empty
+        if (CNetwork.IsServer)
+        {
+            for (int i = 0; i < transform.childCount; ++i)
+            {
+                GameObject go = transform.GetChild(i).gameObject;
+
+                if (go.gameObject.GetComponent<CToolInterface>() != null)
+                {
+                    go.GetComponent<CToolInterface>().NotifyDropped();
+
+
+                    MonoBehaviour[] comps = go.GetComponents<MonoBehaviour>();
+
+                    foreach (MonoBehaviour c in comps)
+                    {
+                        c.enabled = true;
+                    }
+                    go.light.enabled = true;
+
+                }
+            }
+        }
 	}
 
 
@@ -183,7 +204,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetPrimaryActive(_bActive);
 
-            //Debug.Log(string.Format("Set primary active({0})", _bActive));
+            Debug.Log(string.Format("Set primary active({0})", _bActive));
 		}
 	}
 
