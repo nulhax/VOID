@@ -260,7 +260,7 @@ public class CDUI : MonoBehaviour
 		
         if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("DUI")))
         {
-            element = hit.transform.gameObject;
+            element = hit.collider.gameObject;
 			
             Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
         }

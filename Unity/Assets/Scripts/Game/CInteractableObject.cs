@@ -23,7 +23,7 @@ using System.Collections.Generic;
 public class CInteractableObject : CNetworkMonoBehaviour 
 {
     // Member Delegates
-    public delegate void PlayerInteractionHandler(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId, RaycastHit _RayHit);
+    public delegate void PlayerInteractionHandler(GameObject _PlayerInteractor, RaycastHit _RayHit);
     
 	// Member events
 	public event PlayerInteractionHandler UseLeftClick;
@@ -49,59 +49,30 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
 	}
 	
-	public bool IsInteractionEventRegistered(CPlayerInteractor.EInteractionEvent _InteractionEvent)
-	{
-		bool eventRegistered = false;
-		
-		switch(_InteractionEvent)
-		{
-		case CPlayerInteractor.EInteractionEvent.LeftClick:
-			eventRegistered = UseLeftClick != null;
-			break;
-			
-		case CPlayerInteractor.EInteractionEvent.RightClick:
-			eventRegistered = UseRightClick != null;
-			break;
-			
-		case CPlayerInteractor.EInteractionEvent.Action1:
-			eventRegistered = UseAction1 != null;
-			break;
-			
-		case CPlayerInteractor.EInteractionEvent.Action2:
-			eventRegistered = UseAction2 != null;
-			break;
-			
-		default:
-			break;
-		}
-		
-		return(eventRegistered);
-	}
-	
-	public void OnInteractionEvent(CPlayerInteractor.EInteractionEvent _InteractionEvent, ushort _InteractingPlayerActorViewId, RaycastHit _RayHit)
+	public void OnInteractionEvent(CPlayerInteractor.EPlayerInteractionEvent _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{	
 		ushort networkViewId = GetComponent<CNetworkView>().ViewId;
 		
 		switch(_InteractionEvent)
 		{
-		case CPlayerInteractor.EInteractionEvent.LeftClick:
+		case CPlayerInteractor.EPlayerInteractionEvent.LeftClick:
 			if(UseLeftClick != null)
-				UseLeftClick(_InteractingPlayerActorViewId, networkViewId, _RayHit);
+				UseLeftClick(_PlayerInteractor, _RayHit);
 			break;
 			
-		case CPlayerInteractor.EInteractionEvent.RightClick:
+		case CPlayerInteractor.EPlayerInteractionEvent.RightClick:
 			if(UseRightClick != null)
-				UseRightClick(_InteractingPlayerActorViewId, networkViewId, _RayHit);
+				UseRightClick(_PlayerInteractor, _RayHit);
 			break;
 			
-		case CPlayerInteractor.EInteractionEvent.Action1:
+		case CPlayerInteractor.EPlayerInteractionEvent.Action1:
 			if(UseAction1 != null)
-				UseAction1(_InteractingPlayerActorViewId, networkViewId, _RayHit);
+				UseAction1(_PlayerInteractor, _RayHit);
 			break;
 			
-		case CPlayerInteractor.EInteractionEvent.Action2:
+		case CPlayerInteractor.EPlayerInteractionEvent.Action2:
 			if(UseAction2 != null)
-				UseAction2(_InteractingPlayerActorViewId, networkViewId, _RayHit);
+				UseAction2(_PlayerInteractor, _RayHit);
 			break;
 			
 		default:

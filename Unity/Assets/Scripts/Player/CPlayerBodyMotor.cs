@@ -128,6 +128,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	public CPlayerMovementState m_MotorState = new CPlayerMovementState();
 	
 	
+	bool m_FreezeMovmentInput = false;
 	Vector3 m_Velocity = Vector3.zero;
 
 
@@ -140,7 +141,11 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	
 // Member Properties	
-
+	public bool FreezeMovmentInput
+	{
+		set { m_FreezeMovmentInput = value; }
+		get { return(m_FreezeMovmentInput); }
+	}
 	
 // Member Methods
     public void Update()
@@ -168,8 +173,11 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		{
 			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
 			
-			_cStream.Write(actorMotor.m_MotorState.CurrentState);
-			_cStream.Write(actorMotor.m_MotorState.TimeStamp);
+			if(!actorMotor.FreezeMovmentInput)
+			{
+				_cStream.Write(actorMotor.m_MotorState.CurrentState);
+				_cStream.Write(actorMotor.m_MotorState.TimeStamp);
+			}
 			
 			actorMotor.m_MotorState.ResetStates();
 		}	

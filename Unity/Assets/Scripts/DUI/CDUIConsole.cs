@@ -68,7 +68,6 @@ public class CDUIConsole : MonoBehaviour
         m_DUI.layer = LayerMask.NameToLayer("DUI");
 		m_DUI.transform.rotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
         m_DUI.transform.position = transform.position + m_DUI.transform.rotation * new Vector3(0.0f, 0.0f, -1.0f);
-		m_DUI.transform.parent = transform.parent;
 		
         // Add the DUI component
         CDUI dui = m_DUI.AddComponent<CDUI>();
