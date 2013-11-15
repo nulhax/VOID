@@ -23,11 +23,21 @@ using System;
 public class CDUIInteraction : CNetworkMonoBehaviour 
 {	
 	// Member Types
+	public enum EInteractionEvent : byte
+	{
+		INVALID,
+		
+		ButtonPressedDown,
+		
+		MAX
+	}
 	
 	// Member Fields
 	private bool m_bSubviewChanged = false;
 	private CNetworkVar<uint> m_CurrentActiveSubviewId = null;
-
+	
+	static private CNetworkStream s_CurrentDUIInteractions = new CNetworkStream();
+	
 	// Member Properties
 	
 	// Member Methods
@@ -35,6 +45,35 @@ public class CDUIInteraction : CNetworkMonoBehaviour
     {
 		m_CurrentActiveSubviewId = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 	}
+	
+	public static void SerializeDUIInteractions(CNetworkStream _cStream)
+    {
+		if(s_CurrentDUIInteractions.HasUnreadData)
+		{
+			_cStream.Write(s_CurrentDUIInteractions);
+			s_CurrentDUIInteractions.Clear();
+		}
+    }
+
+	public static void UnserializeDUIInteraction(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {	
+		while(_cStream.HasUnreadData)
+		{
+			// Get the interaction event and network view from the stream
+			EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
+			ushort duiConsoleNetworkViewId = _cStream.ReadUShort();
+			
+			switch(interactionEvent)
+			{
+			case EInteractionEvent.ButtonPressedDown:
+				uint duiViewId = _cStream.ReadUInt();
+				uint duiButtonId = _cStream.ReadUInt();
+				CNetwork.Factory.FindObject(duiConsoleNetworkViewId).GetComponent<CDUIInteraction>().
+					InvokeRpcAll("ButtonPressedDown", duiConsoleNetworkViewId, duiViewId, duiButtonId);
+				break;
+			}
+		}
+    }
 	
   	public void OnNetworkVarSync(INetworkVar _rSender)
     {
@@ -70,7 +109,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		m_CurrentActiveSubviewId.Set(_iActiveSubview);
 	}
 	
-	private void HandlerPlayerActorLeftClick(ushort _PlayerActorNetworkViewId, ushort _InteractableObjectNetworkViewId, RaycastHit _RayHit)
+	private void HandlerPlayerActorLeftClick(GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
@@ -84,21 +123,28 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
 			if(duiElement.ElementType == CDUIElement.EElementType.Button)
 			{
-				ButtonPressedDown(dui, duiElement.ParentViewID, duiElement.ElementID);
+				// Add this information to the network stream to serialise
+				s_CurrentDUIInteractions.Write((byte)EInteractionEvent.ButtonPressedDown);
+				s_CurrentDUIInteractions.Write(GetComponent<CNetworkView>().ViewId);
+				s_CurrentDUIInteractions.Write(duiElement.ParentViewID);
+				s_CurrentDUIInteractions.Write(duiElement.ElementID);
 			}
 		}
 	}
 	
-	private void ButtonPressedDown(CDUI _Dui, uint _duiViewId, uint _duiButtonId)
+	[ANetworkRpc]
+	private void ButtonPressedDown(ushort _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
 	{
+		CDUI dui = CNetwork.Factory.FindObject(_duiConsoleNetworkId).GetComponent<CDUIConsole>().DUI;
+		
 		// Active the button press down call
 		if(_duiViewId == 0)
 		{
-			((CDUIButton)_Dui.MainView.GetDUIElement(_duiButtonId)).OnPressDown();
+			((CDUIButton)dui.MainView.GetDUIElement(_duiButtonId)).OnPressDown();
 		}
 		else
 		{
-			((CDUIButton)_Dui.GetSubView(_duiViewId).GetDUIElement(_duiButtonId)).OnPressDown();
+			((CDUIButton)dui.GetSubView(_duiViewId).GetDUIElement(_duiButtonId)).OnPressDown();
 		}
 	}
 }

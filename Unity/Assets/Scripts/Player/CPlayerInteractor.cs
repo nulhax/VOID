@@ -22,7 +22,7 @@ using System.Collections;
 public class CPlayerInteractor : CNetworkMonoBehaviour
 {
 	// Member Types
-	public enum EInteractionEvent
+	public enum EPlayerInteractionEvent
 	{
 		INVALID = -1,
 		
@@ -37,9 +37,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	
 	
 	// Member Fields
-	private EInteractionEvent m_CurrentInteraction = EInteractionEvent.Nothing;
-	
-	private ushort m_InteractableObjViewID = 0;
+	private EPlayerInteractionEvent m_CurrentInteraction = EPlayerInteractionEvent.Nothing;
 	
     static KeyCode m_eAction1Key = KeyCode.E;
     static KeyCode m_eAction2Key = KeyCode.F;
@@ -62,7 +60,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		CheckInteractionEvents();
 		
 		// If the interaction event is not nothing check for interaction objects
-		if(m_CurrentInteraction != EInteractionEvent.Nothing)
+		if(m_CurrentInteraction != EPlayerInteractionEvent.Nothing)
 		{
 			CheckInteractionObjects();
 		}
@@ -70,22 +68,25 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	
 	private void CheckInteractionEvents()
 	{
+		// Reset the interaction event
+		m_CurrentInteraction = EPlayerInteractionEvent.Nothing;
+		
 		// Find out if any of the interaction events are active
 		if(Input.GetMouseButtonDown(0))
 		{
-			m_CurrentInteraction = EInteractionEvent.LeftClick;
+			m_CurrentInteraction = EPlayerInteractionEvent.LeftClick;
 		}
 		else if(Input.GetMouseButtonDown(1))
 		{
-			m_CurrentInteraction = EInteractionEvent.RightClick;
+			m_CurrentInteraction = EPlayerInteractionEvent.RightClick;
 		}
 		else if(Input.GetKeyDown(m_eAction1Key))
 		{
-			m_CurrentInteraction = EInteractionEvent.Action1;
+			m_CurrentInteraction = EPlayerInteractionEvent.Action1;
 		}
 		else if(Input.GetKeyDown(m_eAction2Key))
 		{
-			m_CurrentInteraction = EInteractionEvent.Action2;
+			m_CurrentInteraction = EPlayerInteractionEvent.Action2;
 		}
 		else
 		{
@@ -137,7 +138,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				
 				if(IONetworkView != null)
 				{
-					m_InteractableObjViewID = IONetworkView.ViewId;
+					IO.OnInteractionEvent(m_CurrentInteraction, gameObject, hit);
 				}
 				else
 				{
@@ -161,80 +162,5 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		}
 		
 		return(false); 
-    }
-	
-	public static void SerializePlayerState(CNetworkStream _cStream)
-    {
-		if(CGame.PlayerActorViewId != 0)
-		{
-			CPlayerInteractor actorInteractor = CGame.PlayerActor.GetComponent<CPlayerInteractor>();
-			
-			if(actorInteractor.m_CurrentInteraction != EInteractionEvent.Nothing && actorInteractor.m_InteractableObjViewID != 0)
-			{
-				_cStream.Write((int)actorInteractor.m_CurrentInteraction);
-				_cStream.Write(actorInteractor.m_InteractableObjViewID);
-			}
-			
-			// Reset the states
-			actorInteractor.m_CurrentInteraction = EInteractionEvent.Nothing;
-			actorInteractor.m_InteractableObjViewID = 0;
-		}
-    }
-
-	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-    {
-		GameObject playerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
-		CPlayerInteractor actorInteractor = playerActor.GetComponent<CPlayerInteractor>();
-		
-		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadInt();
-		ushort interactableObjectViewID = _cStream.ReadUShort();
-		
-		// Find the origin, direction, distance of the players interaction with the object
-		CPlayerHeadMotor playerHeadMotor = playerActor.GetComponent<CPlayerHeadMotor>();
-		Vector3 orig = playerHeadMotor.ActorHead.transform.position;
-		Vector3 direction = playerHeadMotor.ActorHead.transform.forward;
-		float distance = 5.0f;
-		RaycastHit hit = new RaycastHit();
-		
-		// Confirm the ray cast against the interactable object
-		if(CheckInteractableObjectRaycast(orig, direction, distance, out hit))
-		{
-			// Get the game object which owns this mesh
-			GameObject IOHit = hit.collider.gameObject;
-			
-			// Check the parents untill we find the one that is not of layer InteractableObject
-			int IOLayer = LayerMask.NameToLayer("InteractableObject");
-			for(int i = 0; i < 100; ++i)
-			{
-				if(i == 99)
-				{
-					Debug.LogError("CheckInteractionObjects Couldn't find the interactableobjetcs parent!");
-				}
-				if(IOHit.transform.parent.gameObject.layer == IOLayer)
-				{
-					IOHit = IOHit.transform.parent.gameObject;
-				}
-				else
-				{
-					break;
-				}
-			}
-			
-			// Get the interactable object from packet
-			GameObject obj = CNetwork.Factory.FindObject(interactableObjectViewID);
-			
-			// Confirm it was this object
-			//if(obj == IOHit)
-			{
-				CInteractableObject interactableObject = obj.GetComponent<CInteractableObject>();
-				
-				// Check this object has an interaction event registered
-				if(interactableObject.IsInteractionEventRegistered(interactionEvent))
-				{
-					// Invoke the event handlers
-					interactableObject.OnInteractionEvent(interactionEvent, playerActor.GetComponent<CNetworkView>().ViewId, hit);
-				}
-			}
-		}
     }
 }
