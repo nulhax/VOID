@@ -129,6 +129,8 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	
 	bool m_FreezeMovmentInput = false;
+	bool m_UsingGravity = true;
+	Vector3 m_GravityForce = Vector3.zero;
 	Vector3 m_Velocity = Vector3.zero;
 
 
@@ -147,6 +149,18 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		get { return(m_FreezeMovmentInput); }
 	}
 	
+	public bool UsingGravity
+	{
+		set { m_UsingGravity = value; }
+		get { return(m_UsingGravity); }
+	}
+	
+	public Vector3 GravityForce
+	{
+		set { m_GravityForce = value; }
+		get { return(m_GravityForce); }
+	}
+	
 // Member Methods
     public void Update()
     {	
@@ -154,13 +168,16 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		{
 			UpdatePlayerInput();
 		}
-		
+    }
+	
+	
+	public void FixedUpdate()
+	{
 		if(CNetwork.IsServer)
-		{	
-			// Process the actor movements
+		{
 			ProcessMovement();
 		}
-    }
+	}
 	
 	public override void InstanceNetworkVars()
 	{
@@ -170,7 +187,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
 		if(CGame.PlayerActorViewId != 0)
-		{
+		{	
 			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
 			
 			if(!actorMotor.FreezeMovmentInput)
@@ -178,11 +195,9 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 				_cStream.Write(actorMotor.m_MotorState.CurrentState);
 				_cStream.Write(actorMotor.m_MotorState.TimeStamp);
 			}
-			
 			actorMotor.m_MotorState.ResetStates();
 		}	
     }
-
 
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
@@ -233,62 +248,47 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		}
 	}
 	
-	
 	protected void ProcessMovement()
     {
-		CharacterController charController = GetComponent<CharacterController>();
+		float moveSpeed = m_MovementSpeed;
+		Vector3 velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
 		
-		// Only if grounded
-		if(charController.isGrounded)
+		// Sprinting
+		if(m_MotorState.Sprinting)
 		{
-			Vector3 vDirForward = transform.TransformDirection(Vector3.forward);
-			Vector3 vDirLeft = transform.TransformDirection(Vector3.left);
-			float moveSpeed = m_MovementSpeed;
-			m_Velocity = new Vector3(0.0f, m_Velocity.y, 0.0f);
-			
-			// Sprinting
-			if(m_MotorState.Sprinting)
-			{
-				moveSpeed = m_SprintSpeed;
-			}
-			
-			// Moving 
-	        if (m_MotorState.MovingForward &&
-	            !m_MotorState.MovingBackward)
-	        {
-	            m_Velocity += vDirForward * moveSpeed;
-	        }
-	        else if (m_MotorState.MovingBackward &&
-	            	 !m_MotorState.MovingForward)
-	        {
-	            m_Velocity -= vDirForward * moveSpeed;
-	        }
-			
-			// Strafing
-	        if (m_MotorState.MovingLeft &&
-            	!m_MotorState.MovingRight)
-	        {
-	            m_Velocity += vDirLeft * moveSpeed;
-	        }
-	        else if (m_MotorState.MovingRight &&
-            		 !m_MotorState.MovingLeft)
-	        {
-	            m_Velocity -= vDirLeft * moveSpeed;
-	        }
-			
-			// Jumping
-			if(m_MotorState.Jumping)
-			{
-				m_Velocity.y = m_JumpSpeed;
-			}
-		}
-		else
-		{
-			// Apply the gravity
-			m_Velocity.y += -m_Gravity * Time.deltaTime;
+			moveSpeed = m_SprintSpeed;
 		}
 		
-		// Apply the movement
-		charController.Move(m_Velocity * Time.deltaTime);
+		// Moving 
+        if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
+		{
+			velocity.z = m_MotorState.MovingForward ? moveSpeed : -moveSpeed;
+		}
+		
+		// Strafing
+		if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
+		{
+			velocity.x = m_MotorState.MovingLeft ? -moveSpeed : moveSpeed;
+		}
+		
+		// Set the new velocity
+		rigidbody.velocity = transform.rotation * velocity;
+		
+		// Jumping
+		if(m_MotorState.Jumping)
+		{
+			// Apply the velocity change
+			rigidbody.AddForce(m_GravityForce * -10, ForceMode.Impulse);
+		}
+		
+		// Gravity
+		if(UsingGravity)
+		{
+			// Placeholder: Make gravity relative to the ship
+			m_GravityForce = CGame.Ship.transform.up * -m_Gravity;
+			
+			// Apply the velocity change
+			rigidbody.AddForce(m_GravityForce, ForceMode.Acceleration);
+		}
 	}
 };

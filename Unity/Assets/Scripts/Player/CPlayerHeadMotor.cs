@@ -73,9 +73,6 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 
 	public float m_MinimumY = -60.0f;
 	public float m_MaximumY = 60.0f;
-
-	public float m_RotationX = 0.0f;
-	public float m_RotationY = 0.0f;
 		
 	
 	GameObject m_ActorHead = null;
@@ -171,7 +168,10 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{
 			UpdateHeadMotorInput();
 		}
-		
+    }
+	
+	public void FixedUpdate()
+	{
 		if(CNetwork.IsServer)
 		{	
 			// Process the actor rotations
@@ -180,7 +180,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 			// Syncronize the head rotation
 			HeadEuler = m_ActorHead.transform.eulerAngles;
 		}
-    }
+	}
 	
 	public void AttatchPlayerCamera()
     {
@@ -210,30 +210,24 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	
 	protected void ProcessRotations()
 	{
+		Vector3 angularVelocity = Vector3.zero;
+		
 		// Yaw rotation
 		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
 		{
-			m_RotationX += m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
-			
-			if(m_RotationX > 360.0f)
-				m_RotationX -= 360.0f;
-			else if(m_RotationX < -360.0f)
-				m_RotationX += 360.0f;
-				
-			m_RotationX = Mathf.Clamp(m_RotationX, m_MinimumX, m_MaximumX);	
+			angularVelocity.x = m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
 		}
 		
 		// Pitch rotation
 		if(m_HeadMotorState.CurrentRotationState.y != 0.0f)
 		{
-			m_RotationY += m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
-			m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
+			angularVelocity.y = m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
 		}
 		
 		// Apply the pitch to the actor
-		transform.eulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
+		rigidbody.angularVelocity = new Vector3(0.0f, angularVelocity.x, 0.0f);
 		
 		// Apply the yaw to the camera
-		m_ActorHead.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
+		m_ActorHead.transform.eulerAngles = new Vector3(m_ActorHead.transform.eulerAngles.x - angularVelocity.y, transform.eulerAngles.y, 0.0f);
 	}
 };

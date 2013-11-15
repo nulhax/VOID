@@ -42,27 +42,29 @@ public class CPlayerHealth : MonoBehaviour
 		//Set everything to kinematic
 		foreach(Transform child in transform.GetComponentsInChildren<Transform>())
 		{		
-			Rigidbody rigidBody;
 			if(child.GetComponent<Rigidbody>() != null)
 			{
-				rigidBody = child.GetComponent<Rigidbody>();
-				rigidBody.isKinematic = true;	
+				Rigidbody childRigidBody = child.GetComponent<Rigidbody>();
+				childRigidBody.isKinematic = false;	
+				childRigidBody.useGravity = false;
 			}
 			
-			CapsuleCollider capCollider;
 			if(child.GetComponent<CapsuleCollider>() != null)
 			{
-				capCollider = child.GetComponent<CapsuleCollider>();
-				capCollider.isTrigger = true;	
+				CapsuleCollider childCapCollider = child.GetComponent<CapsuleCollider>();
+				childCapCollider.isTrigger = true;	
 			}
 			
-			BoxCollider boxCollider;
 			if(child.GetComponent<BoxCollider>() != null)
 			{
-				boxCollider = child.GetComponent<BoxCollider>();
-				boxCollider.isTrigger = true;	
+				BoxCollider childBoxCollider = child.GetComponent<BoxCollider>();
+				childBoxCollider.isTrigger = true;	
 			}			
-		}			
+		}
+		
+		// Change the parents values back
+		rigidbody.isKinematic = false;
+		collider.isTrigger = false;
 	}
 
     public void OnDestroy()

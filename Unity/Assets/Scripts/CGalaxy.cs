@@ -177,11 +177,11 @@ public class CGalaxy : MonoBehaviour
 
         //RenderSettings.skybox.Lerp(mSkyboxMaterials[(uint)ESkyboxLayer.Solid], mSkyboxMaterials[(uint)ESkyboxLayer.Composite], 0.0f);
 
-        Color fogColour = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+        Color fogColour = new Color(Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), 1.0f);
         RenderSettings.fog = true;
         RenderSettings.fogColor = fogColour;
-        RenderSettings.fogDensity = Random.Range(0.0f, 0.005f);
-        RenderSettings.fogEndDistance = Random.Range(1000.0f, 4000.0f);    // 5000 is camera's far plane.
+        RenderSettings.fogDensity = Random.Range(0.0f, 0.002f);
+        RenderSettings.fogEndDistance = Random.Range(4000.0f, 5000.0f);    // 5000 is camera's far plane.
         RenderSettings.skybox.SetColor("_Tint", fogColour);
         //RenderSettings.skybox.SetColor("_Tint", Color.grey);    // Neutralises the tint and returns the skybox's image to normal.
     }
@@ -255,31 +255,31 @@ public class CGalaxy : MonoBehaviour
     {
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
 
-//        // Initialise the renderer's skybox material.
-//        RenderSettings.skybox = new Material(Shader.Find("VOID/SkyboxLayered"));
-//
-//        // Load skybox textures.
-//        mSkyboxFaces[0] = "Front";
-//        mSkyboxFaces[1] = "Back";
-//        mSkyboxFaces[2] = "Left";
-//        mSkyboxFaces[3] = "Right";
-//        mSkyboxFaces[4] = "Up";
-//        mSkyboxFaces[5] = "Down";
-//        
-//        for (uint uiSkybox = 0; uiSkybox < (uint)ESkyboxLayer.MAX; ++uiSkybox)    // For each skybox...
-//        {
-//            mSkyboxTextures[uiSkybox] = new Texture[6]; // Instantiate 6 textures.
-//
-//            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each texture in the skybox...
-//            {
-//                mSkyboxTextures[uiSkybox][uiFace] = Resources.Load("Textures/SpaceSkyBox/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture;  // Load the texture from file.
-//                mSkyboxTextures[uiSkybox][uiFace].wrapMode = TextureWrapMode.Clamp;   // Eliminates z-fighting along edges of skybox.
-//                //mSkyboxMaterials[uiSkybox].SetTexture("_" + skyboxFace + "Tex1", texture); // Assign texture to material.
-//            }
-//        }
-//
-//        // First update of the galaxy skybox.
-//        UpdateAesthetic(mCentreCell);
+        // Initialise the renderer's skybox material.
+        RenderSettings.skybox = new Material(Shader.Find("VOID/SkyboxLayered"));
+
+        // Load skybox textures.
+        mSkyboxFaces[0] = "Front";
+        mSkyboxFaces[1] = "Back";
+        mSkyboxFaces[2] = "Left";
+        mSkyboxFaces[3] = "Right";
+        mSkyboxFaces[4] = "Up";
+        mSkyboxFaces[5] = "Down";
+        
+        for (uint uiSkybox = 0; uiSkybox < (uint)ESkyboxLayer.MAX; ++uiSkybox)    // For each skybox...
+        {
+            mSkyboxTextures[uiSkybox] = new Texture[6]; // Instantiate 6 textures.
+
+            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each texture in the skybox...
+            {
+                mSkyboxTextures[uiSkybox][uiFace] = Resources.Load("Textures/SpaceSkyBox/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture;  // Load the texture from file.
+                mSkyboxTextures[uiSkybox][uiFace].wrapMode = TextureWrapMode.Clamp;   // Eliminates z-fighting along edges of skybox.
+                //mSkyboxMaterials[uiSkybox].SetTexture("_" + skyboxFace + "Tex1", texture); // Assign texture to material.
+            }
+        }
+
+        // First update of the galaxy skybox.
+        UpdateAesthetic(mCentreCell);
 
         //mGalaxyParent = GameObject.Instantiate(Resources.Load("Prefabs/GalaxyParent")) as GameObject;
         mGalaxyParent = CNetwork.Factory.CreateObject((ushort)CGame.ENetworkRegisteredPrefab.GalaxyParent);

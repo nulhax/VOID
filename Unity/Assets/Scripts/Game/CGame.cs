@@ -356,7 +356,11 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Create new player's actor
 		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
-
+		
+		// Sync the parent
+		cPlayerActor.transform.parent = Ship.transform;
+		cPlayerActor.GetComponent<CNetworkView>().SyncParent();
+		
 		// Get actor network view id
 		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
@@ -369,10 +373,8 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
-        CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
-		
-		// Fire schtuff making on the ramp stuff
-		CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);
+        //CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
+		//CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);
 
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
