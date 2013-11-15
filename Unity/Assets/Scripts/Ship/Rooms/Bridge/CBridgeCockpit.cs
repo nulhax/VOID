@@ -189,7 +189,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		m_CockpitPilotState.Rotation = rotationState;
 	}
 	
-	private void HandlerPlayerActorAction1(GameObject _PlayerInteractor, RaycastHit _RayHit)
+	private void HandlerPlayerActorAction1(RaycastHit _RayHit)
 	{
 		s_CurrentCockpitInteractions.Write((byte)EInteractionEvent.PlayerEnter);
 	}

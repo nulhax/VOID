@@ -21,35 +21,52 @@ using System.Collections;
 
 public class CPlayerInteractor : CNetworkMonoBehaviour
 {
-	// Member Types
-	public enum EPlayerInteractionEvent
+// Member Types
+
+
+	public enum EInteractionType
 	{
 		INVALID = -1,
 		
 		Nothing,
-		LeftClick,
-		RightClick,
-		Action1,
+		Primary,
+		Secondary,
+		Use,
 		Action2,
 		
 		MAX
 	}
+
+
+// Member Delegates & Events
+
+
+    public delegate void HandleInteraction(EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit);
+    public event HandleInteraction EventInteraction;
 	
 	
-	// Member Fields
-	private EPlayerInteractionEvent m_CurrentInteraction = EPlayerInteractionEvent.Nothing;
+// Member Fields
+
+
+	private EInteractionType m_CurrentInteraction = EInteractionType.Nothing;
 	
-    static KeyCode m_eAction1Key = KeyCode.E;
+
+    static KeyCode m_eUseKey = KeyCode.E;
     static KeyCode m_eAction2Key = KeyCode.F;
 	
-	// Member Properties
+
+// Member Properties
+
 	
-	// Member Methods
+// Member Methods
+
+
 	public override void InstanceNetworkVars()
     {
 		
 	}
 	
+
 	public void Update()
 	{
 		// Return if this is not their player
@@ -60,39 +77,41 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		CheckInteractionEvents();
 		
 		// If the interaction event is not nothing check for interaction objects
-		if(m_CurrentInteraction != EPlayerInteractionEvent.Nothing)
+		if(m_CurrentInteraction != EInteractionType.Nothing)
 		{
 			CheckInteractionObjects();
 		}
 	}
+
 	
 	private void CheckInteractionEvents()
 	{
 		// Reset the interaction event
-		m_CurrentInteraction = EPlayerInteractionEvent.Nothing;
+		m_CurrentInteraction = EInteractionType.Nothing;
 		
 		// Find out if any of the interaction events are active
 		if(Input.GetMouseButtonDown(0))
 		{
-			m_CurrentInteraction = EPlayerInteractionEvent.LeftClick;
+			m_CurrentInteraction = EInteractionType.Primary;
 		}
 		else if(Input.GetMouseButtonDown(1))
 		{
-			m_CurrentInteraction = EPlayerInteractionEvent.RightClick;
+			m_CurrentInteraction = EInteractionType.Secondary;
 		}
-		else if(Input.GetKeyDown(m_eAction1Key))
+		else if(Input.GetKeyDown(m_eUseKey))
 		{
-			m_CurrentInteraction = EPlayerInteractionEvent.Action1;
+			m_CurrentInteraction = EInteractionType.Use;
 		}
 		else if(Input.GetKeyDown(m_eAction2Key))
 		{
-			m_CurrentInteraction = EPlayerInteractionEvent.Action2;
+			m_CurrentInteraction = EInteractionType.Action2;
 		}
 		else
 		{
 			return;
 		}
 	}
+
 	
 	private void CheckInteractionObjects()
 	{
@@ -117,7 +136,8 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				{
 					Debug.LogError("CheckInteractionObjects Couldn't find the interactableobjetcs parent!");
 				}
-				if(IOHit.transform.parent.gameObject.layer == IOLayer)
+                if (IOHit.transform.parent != null &&
+                    IOHit.transform.parent.gameObject.layer == IOLayer)
 				{
 					IOHit = IOHit.transform.parent.gameObject;
 				}
@@ -138,6 +158,12 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				
 				if(IONetworkView != null)
 				{
+                    if (EventInteraction != null)
+                    {
+                        EventInteraction(m_CurrentInteraction, IOHit, hit);
+                    }
+
+
 					IO.OnInteractionEvent(m_CurrentInteraction, gameObject, hit);
 				}
 				else
@@ -152,6 +178,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		}
 	}
 	
+
 	private static bool CheckInteractableObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
     {
 		Ray ray = new Ray(_origin, _direction);
@@ -163,4 +190,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		
 		return(false); 
     }
+
+
 }

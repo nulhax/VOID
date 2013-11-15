@@ -20,7 +20,7 @@ using System;
 /* Implementation */
 
 
-public interface INetworkVar
+public abstract class INetworkVar
 {
 
 // Member Types
@@ -31,15 +31,15 @@ public interface INetworkVar
     // public:
 
 
-	void Sync(object _cValue);
-	void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback);
+	public abstract void Sync(object _cValue);
+	public abstract void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback);
 
 
-	object GetValueObject();
-    Type GetValueType();
+	public abstract object GetValueObject();
+	public abstract Type GetValueType();
 
 
-	bool IsDefault();
+	public abstract bool IsDefault();
 
 
     // protected:

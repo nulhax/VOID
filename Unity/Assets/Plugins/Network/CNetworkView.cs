@@ -506,23 +506,43 @@ public class CNetworkView : CNetworkMonoBehaviour
             foreach (FieldInfo cFieldInfo in aFieldInfos)
             {
                 // Check this is a network var
-                if (cFieldInfo.FieldType.GetInterface(typeof(INetworkVar).Name, false) != null)
-                {
-                    // Extract network var instance
-                    INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
+				if (cFieldInfo.FieldType.IsSubclassOf(typeof(INetworkVar)))
+				{
+					// Extract network var instance
+					INetworkVar cNetworkVar = (INetworkVar)cFieldInfo.GetValue(cComponent);
+					
+					
+					ReigserNetworkVar(cNetworkVar);
+				}
+				
+                // Check this is a network var
+				else if (cFieldInfo.FieldType.IsArray &&
+						 cFieldInfo.FieldType.GetElementType().IsSubclassOf(typeof(INetworkVar)))
+				{
+					INetworkVar[] acItems = cFieldInfo.GetValue(cComponent) as INetworkVar[];
 
-                    // Generate network var id, 1-byte.MAX
-                    byte bId = (byte)(m_mNetworkVars.Count + 1);
-
-                    // Store network var instance towards ids
-                    m_mNetworkVars.Add(bId, cNetworkVar);
-
-                    // Set the network view owner of the network var
-					cNetworkVar.SetNetworkViewOwner(bId, OnNetworkVarChange);
-                }
+					
+		            foreach (INetworkVar cItem in acItems)
+		            {
+						ReigserNetworkVar(cItem);
+					}
+				}
             }
         }
     }
+	
+	
+	void ReigserNetworkVar(INetworkVar _cNetworkVar)
+	{
+		// Generate network var id, 1-byte.MAX
+		byte bId = (byte)(m_mNetworkVars.Count + 1);
+
+		// Store network var instance towards ids
+		m_mNetworkVars.Add(bId, _cNetworkVar);
+
+		// Set the network view owner of the network var
+		_cNetworkVar.SetNetworkViewOwner(bId, OnNetworkVarChange);
+	}
 
 
 	void InitialiseNetworkRpcs()

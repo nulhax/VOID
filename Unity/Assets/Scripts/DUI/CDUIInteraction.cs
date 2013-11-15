@@ -109,7 +109,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		m_CurrentActiveSubviewId.Set(_iActiveSubview);
 	}
 	
-	private void HandlerPlayerActorLeftClick(GameObject _PlayerInteractor, RaycastHit _RayHit)
+	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
