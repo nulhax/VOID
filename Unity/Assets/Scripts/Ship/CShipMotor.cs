@@ -164,11 +164,9 @@ public class CShipMotor : CNetworkMonoBehaviour
 	{
 	}
 	
-	public void Start()
+	public void Update()
 	{
-		// Placeholder: Temp inertia tensors
-		rigidbody.inertiaTensor = new Vector3(0,0,50);
-		rigidbody.inertiaTensorRotation = Quaternion.identity;
+		
 	}
 	
 	public void FixedUpdate()
@@ -185,6 +183,9 @@ public class CShipMotor : CNetworkMonoBehaviour
 		Vector3 angularForce = Vector3.zero;
 		
 		// Get the piloting state from the cockpit
+		if(PilotingCockpit == null)
+			return;
+		
 		CShipPilotState pilotingState = PilotingCockpit.GetComponent<CBridgeCockpit>().CockpitPilotState;
 		
 		// Exit early to avoid computations

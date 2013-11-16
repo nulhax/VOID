@@ -172,9 +172,11 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	
 	public void FixedUpdate()
-	{
+	{	
 		if(CNetwork.IsServer)
 		{
+			transform.localEulerAngles = new Vector3(0.0f, transform.localEulerAngles.y, 0.0f);
+			
 			ProcessMovement();
 		}
 	}
@@ -251,7 +253,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	protected void ProcessMovement()
     {
 		float moveSpeed = m_MovementSpeed;
-		Vector3 velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+		Vector3 newVelocity = Vector3.zero;
 		
 		// Sprinting
 		if(m_MotorState.Sprinting)
@@ -262,33 +264,35 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		// Moving 
         if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
 		{
-			velocity.z = m_MotorState.MovingForward ? moveSpeed : -moveSpeed;
+			newVelocity.z = m_MotorState.MovingForward ? moveSpeed : -moveSpeed;
 		}
 		
 		// Strafing
 		if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
 		{
-			velocity.x = m_MotorState.MovingLeft ? -moveSpeed : moveSpeed;
+			newVelocity.x = m_MotorState.MovingLeft ? -moveSpeed : moveSpeed;
 		}
 		
-		// Set the new velocity
-		rigidbody.velocity = transform.rotation * velocity;
+		// Placeholder: Make gravity relative to the ship
+		m_GravityForce = CGame.Ship.transform.rotation * Vector3.up * -m_Gravity;
 		
 		// Jumping
 		if(m_MotorState.Jumping)
 		{
-			// Apply the velocity change
-			rigidbody.AddForce(m_GravityForce * -10, ForceMode.Impulse);
+			rigidbody.AddForce(-m_GravityForce * 10.0f, ForceMode.Impulse);
 		}
 		
 		// Gravity
 		if(UsingGravity)
 		{
-			// Placeholder: Make gravity relative to the ship
-			m_GravityForce = CGame.Ship.transform.up * -m_Gravity;
-			
-			// Apply the velocity change
 			rigidbody.AddForce(m_GravityForce, ForceMode.Acceleration);
 		}
+		
+		// Get the relative velocity and remove the upwards component
+		Vector3 relativeVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
+		relativeVelocity.y = 0.0f;
+		
+		// Set the new velocity
+		rigidbody.AddRelativeForce(newVelocity - relativeVelocity, ForceMode.VelocityChange);
 	}
 };

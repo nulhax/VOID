@@ -224,10 +224,10 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 			angularVelocity.y = m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
 		}
 		
-		// Apply the pitch to the actor
-		rigidbody.angularVelocity = new Vector3(0.0f, angularVelocity.x, 0.0f);
+		// Apply the yaw to the actor
+		rigidbody.angularVelocity = rigidbody.rotation * new Vector3(0.0f, angularVelocity.x, 0.0f);
 		
-		// Apply the yaw to the camera
-		m_ActorHead.transform.eulerAngles = new Vector3(m_ActorHead.transform.eulerAngles.x - angularVelocity.y, transform.eulerAngles.y, 0.0f);
+		// Apply the pitch to the camera
+		m_ActorHead.transform.localEulerAngles = new Vector3(m_ActorHead.transform.localEulerAngles.x - angularVelocity.y, 0.0f, 0.0f);
 	}
 };

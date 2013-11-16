@@ -109,7 +109,6 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (CNetwork.Factory.FindObject(Instance.m_usShipViewId)); }
 	}
 
-
 	public static ushort ShipViewId
 	{
 		get { return (s_cInstance.m_usShipViewId); }
