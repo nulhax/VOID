@@ -4,6 +4,7 @@ using Mono.Data.Sqlite;
 
 public class CSQLInstance
 {
+	/*
     string databasePathName;
     SqliteConnection connection = new SqliteConnection();
     bool connectionOpen = false;
@@ -42,4 +43,5 @@ public class CSQLInstance
             openConnection = false;
         }
     }
+	 * */
 }

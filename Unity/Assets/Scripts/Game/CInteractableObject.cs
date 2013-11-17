@@ -23,7 +23,7 @@ using System.Collections.Generic;
 public class CInteractableObject : CNetworkMonoBehaviour 
 {
     // Member Delegates
-    public delegate void PlayerInteractionHandler(GameObject _PlayerInteractor, RaycastHit _RayHit);
+    public delegate void PlayerInteractionHandler(RaycastHit _RayHit);
     
 	// Member events
 	public event PlayerInteractionHandler UseLeftClick;
@@ -49,30 +49,30 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
 	}
 	
-	public void OnInteractionEvent(CPlayerInteractor.EPlayerInteractionEvent _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
+	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{	
 		ushort networkViewId = GetComponent<CNetworkView>().ViewId;
 		
 		switch(_InteractionEvent)
 		{
-		case CPlayerInteractor.EPlayerInteractionEvent.LeftClick:
+		case CPlayerInteractor.EInteractionType.Primary:
 			if(UseLeftClick != null)
-				UseLeftClick(_PlayerInteractor, _RayHit);
+				UseLeftClick(_RayHit);
 			break;
 			
-		case CPlayerInteractor.EPlayerInteractionEvent.RightClick:
+		case CPlayerInteractor.EInteractionType.Secondary:
 			if(UseRightClick != null)
-				UseRightClick(_PlayerInteractor, _RayHit);
+				UseRightClick(_RayHit);
 			break;
 			
-		case CPlayerInteractor.EPlayerInteractionEvent.Action1:
+		case CPlayerInteractor.EInteractionType.Use:
 			if(UseAction1 != null)
-				UseAction1(_PlayerInteractor, _RayHit);
+				UseAction1(_RayHit);
 			break;
 			
-		case CPlayerInteractor.EPlayerInteractionEvent.Action2:
+		case CPlayerInteractor.EInteractionType.Action2:
 			if(UseAction2 != null)
-				UseAction2(_PlayerInteractor, _RayHit);
+				UseAction2(_RayHit);
 			break;
 			
 		default:
