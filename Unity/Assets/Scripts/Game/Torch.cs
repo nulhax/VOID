@@ -1,17 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Torch : MonoBehaviour {
+public class Torch : CNetworkMonoBehaviour {
 	
-bool bTorchLit;
+    CNetworkVar<bool> m_bTorchLit = null;
+
+    public override void InstanceNetworkVars()
+    {
+        m_bTorchLit = new CNetworkVar<bool>(OnNetworkVarSync, true);
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    {
+        if (!m_bTorchLit.Get())
+        {
+            light.intensity = 0;
+        }
+        else
+        {
+            light.intensity = 2;
+        }
+    }
+
+
+
 
 	// Use this for initialization
 	void Start ()
 	{
-        gameObject.GetComponent<CToolInterface>().EventActivatePrimary += new CToolInterface.ActivatePrimary(TurnOn);
-        gameObject.GetComponent<CToolInterface>().EventDeactivatePrimary += new CToolInterface.DeactivatePrimary(TurnOff);
-
-		bTorchLit = true;
+        gameObject.GetComponent<CToolInterface>().EventActivatePrimary += new CToolInterface.ActivatePrimary(ToggleActivate);
+        m_bTorchLit.Set(false);
 	}
 	
 	// Update is called once per frame
@@ -20,20 +39,15 @@ bool bTorchLit;
 
 	}
 
-    private void TurnOn()
+    private void ToggleActivate()
     {
-        if (bTorchLit == false)
+        if (!m_bTorchLit.Get())
         {
-            bTorchLit = true;
-            light.intensity = 1;
+            m_bTorchLit.Set(true);
         }
-    }
-    private void TurnOff()
-    {
-        if(bTorchLit == true)
+        else
         {
-            bTorchLit = false;
-            light.intensity = 0;
+            m_bTorchLit.Set(false);
         }
-    }
+    }   
 }

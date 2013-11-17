@@ -92,7 +92,7 @@ public class Logger
     public static void Write(string _sMessageFormat, params object[] _caParameters)
     {
 #if UNITY_EDITOR
-        Debug.Log(string.Format(_sMessageFormat, _caParameters));
+        //Debug.Log(string.Format(_sMessageFormat, _caParameters));
 #endif
     }
 
