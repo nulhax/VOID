@@ -74,6 +74,7 @@ public class CToolInterface : MonoBehaviour
 
 	public void Start()
 	{
+        m_bPrimaryActive = true;
 	}
 
 

@@ -8,7 +8,8 @@ bool bTorchLit;
 	// Use this for initialization
 	void Start ()
 	{
-        gameObject.GetComponent<CToolInterface>().EventActivatePrimary += new CToolInterface.ActivatePrimary(ToggleActivate);
+        gameObject.GetComponent<CToolInterface>().EventActivatePrimary += new CToolInterface.ActivatePrimary(TurnOn);
+        gameObject.GetComponent<CToolInterface>().EventDeactivatePrimary += new CToolInterface.DeactivatePrimary(TurnOff);
 
 		bTorchLit = true;
 	}
@@ -19,17 +20,20 @@ bool bTorchLit;
 
 	}
 
-    private void ToggleActivate()
+    private void TurnOn()
     {
         if (bTorchLit == false)
         {
             bTorchLit = true;
-            light.intensity = 2;
+            light.intensity = 1;
         }
-        else
+    }
+    private void TurnOff()
+    {
+        if(bTorchLit == true)
         {
             bTorchLit = false;
             light.intensity = 0;
         }
-    }   
+    }
 }
