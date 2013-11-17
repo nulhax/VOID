@@ -73,12 +73,14 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 
 	public float m_MinimumY = -60.0f;
 	public float m_MaximumY = 60.0f;
-		
-	
-	GameObject m_ActorHead = null;
 	
 	
 	CHeadMotorState m_HeadMotorState = new CHeadMotorState();
+	
+	
+	bool m_FreezeHeadInput = false;
+	GameObject m_ActorHead = null;
+	
 	
 	
 	CNetworkVar<float> m_HeadEulerX    = null;
@@ -93,6 +95,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{ 
 			return(m_ActorHead); 
 		} 
+	}
+	
+	public bool FreezeHeadInput
+	{
+		set { m_FreezeHeadInput = value; }
+		get { return(m_FreezeHeadInput); }
 	}
 	
 	public Vector3 HeadEuler
@@ -134,9 +142,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{
 			CPlayerHeadMotor actorHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
 			
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.x);
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.y);
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.TimeStamp);
+			if(!actorHeadMotor.FreezeHeadInput)
+			{
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.x);
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.y);
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.TimeStamp);
+			}
 			
 			actorHeadMotor.m_HeadMotorState.ResetStates();
 		}	
@@ -164,9 +175,14 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.PlayerActor == gameObject && !FreezeHeadInput)
 		{
 			UpdateHeadMotorInput();
+		}
+		if(CNetwork.IsServer)
+		{
+			// Placeholder: Remove the x and z components of the local euler angles
+			transform.localEulerAngles = Vector3.up * transform.localEulerAngles.y;
 		}
     }
 	
@@ -188,7 +204,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		m_ActorHead.AddComponent<CPlayerCamera>();
     }
 	
-    protected void UpdateHeadMotorInput()
+    private void UpdateHeadMotorInput()
 	{	
 		Vector2 rotationState = m_HeadMotorState.CurrentRotationState;
 		
@@ -208,26 +224,29 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	}
 	
 	
-	protected void ProcessRotations()
+	private void ProcessRotations()
 	{
-		Vector3 angularVelocity = Vector3.zero;
-		
-		// Yaw rotation
-		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
-		{
-			angularVelocity.x = m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
-		}
+		Vector3 newAngularVelocity = Vector3.zero;
 		
 		// Pitch rotation
 		if(m_HeadMotorState.CurrentRotationState.y != 0.0f)
 		{
-			angularVelocity.y = m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
+			newAngularVelocity.x = m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
 		}
 		
-		// Apply the yaw to the actor
-		rigidbody.angularVelocity = rigidbody.rotation * new Vector3(0.0f, angularVelocity.x, 0.0f);
+		// Yaw rotation
+		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
+		{
+			newAngularVelocity.y = m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
+		}
+		
+		// Get the relative angular velocity and remove the upwards component
+		Vector3 relativeAngularVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.angularVelocity;
+		
+		// Set the new angular velocity using only the yaw
+		rigidbody.AddRelativeTorque(new Vector3(0.0f, newAngularVelocity.y, 0.0f) - relativeAngularVelocity, ForceMode.VelocityChange);
 		
 		// Apply the pitch to the camera
-		m_ActorHead.transform.localEulerAngles = new Vector3(m_ActorHead.transform.localEulerAngles.x - angularVelocity.y, 0.0f, 0.0f);
+		m_ActorHead.transform.localEulerAngles = new Vector3(m_ActorHead.transform.localEulerAngles.x - newAngularVelocity.x, 0.0f, 0.0f);
 	}
 };

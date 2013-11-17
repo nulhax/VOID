@@ -68,25 +68,28 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		if(CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit)
-		{
-			CBridgeCockpit cockpit = CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
-			if(cockpit.m_AttachedPlayerActor)
-			{	
-				_cStream.Write((byte)EInteractionEvent.PlayerPiloting);
-				_cStream.Write(cockpit.CockpitPilotState.CurrentState);
-				_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.x);
-				_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.y);
-				_cStream.Write(cockpit.CockpitPilotState.TimeStamp);
-				
-				cockpit.CockpitPilotState.ResetStates();
-			}
+		if(CGame.Ship == null)
+			return;
+		
+		if(CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit == null)
+			return;
 			
-			if(s_CurrentCockpitInteractions.HasUnreadData)
-			{
-				_cStream.Write(s_CurrentCockpitInteractions);
-				s_CurrentCockpitInteractions.Clear();
-			}
+		CBridgeCockpit cockpit = CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		if(cockpit.m_AttachedPlayerActor)
+		{	
+			_cStream.Write((byte)EInteractionEvent.PlayerPiloting);
+			_cStream.Write(cockpit.CockpitPilotState.CurrentState);
+			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.x);
+			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.y);
+			_cStream.Write(cockpit.CockpitPilotState.TimeStamp);
+			
+			cockpit.CockpitPilotState.ResetStates();
+		}
+		
+		if(s_CurrentCockpitInteractions.HasUnreadData)
+		{
+			_cStream.Write(s_CurrentCockpitInteractions);
+			s_CurrentCockpitInteractions.Clear();
 		}
     }
 

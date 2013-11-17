@@ -114,7 +114,6 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		public void ResetStates()
 		{
 			m_CurrentMovementState = 0;
-			m_LastUpdateTimeStamp = Time.time;
 		}
 	}
 	
@@ -162,9 +161,17 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	}
 	
 // Member Methods
+	public void Start()
+	{
+		if(!CNetwork.IsServer)
+		{
+			gameObject.rigidbody.isKinematic = true;
+		}
+	}
+	
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.PlayerActor == gameObject && !FreezeMovmentInput)
 		{
 			UpdatePlayerInput();
 		}
@@ -175,8 +182,10 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	{	
 		if(CNetwork.IsServer)
 		{
-			transform.localEulerAngles = new Vector3(0.0f, transform.localEulerAngles.y, 0.0f);
+			// Compensate for ship movement
+			ProcessShipCompensation();
 			
+			// Process the movement of the player
 			ProcessMovement();
 		}
 	}
@@ -192,11 +201,9 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		{	
 			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
 			
-			if(!actorMotor.FreezeMovmentInput)
-			{
-				_cStream.Write(actorMotor.m_MotorState.CurrentState);
-				_cStream.Write(actorMotor.m_MotorState.TimeStamp);
-			}
+			_cStream.Write(actorMotor.m_MotorState.CurrentState);
+			_cStream.Write(actorMotor.m_MotorState.TimeStamp);
+			
 			actorMotor.m_MotorState.ResetStates();
 		}	
     }
@@ -211,7 +218,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		actorMotor.m_MotorState.SetCurrentState(motorState, timeStamp);
     }
 	
-    protected void UpdatePlayerInput()
+    private void UpdatePlayerInput()
 	{	
 		// Move forwards
         if (Input.GetKey(m_eMoveForwardKey))
@@ -250,10 +257,13 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		}
 	}
 	
-	protected void ProcessMovement()
+	private void ProcessMovement()
     {
 		float moveSpeed = m_MovementSpeed;
 		Vector3 newVelocity = Vector3.zero;
+		
+		// Placeholder: Make gravity relative to the ship
+		m_GravityForce = CGame.Ship.transform.rotation * Vector3.up * -m_Gravity;
 		
 		// Sprinting
 		if(m_MotorState.Sprinting)
@@ -264,17 +274,17 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		// Moving 
         if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
 		{
-			newVelocity.z = m_MotorState.MovingForward ? moveSpeed : -moveSpeed;
+			newVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
 		}
 		
 		// Strafing
 		if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
 		{
-			newVelocity.x = m_MotorState.MovingLeft ? -moveSpeed : moveSpeed;
+			newVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
 		}
 		
-		// Placeholder: Make gravity relative to the ship
-		m_GravityForce = CGame.Ship.transform.rotation * Vector3.up * -m_Gravity;
+		// Normaize the new velocuity vector and multiply by the speed
+		newVelocity = newVelocity.normalized * moveSpeed;
 		
 		// Jumping
 		if(m_MotorState.Jumping)
@@ -288,11 +298,43 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 			rigidbody.AddForce(m_GravityForce, ForceMode.Acceleration);
 		}
 		
-		// Get the relative velocity and remove the upwards component
+		// Get the relative velocity
 		Vector3 relativeVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
-		relativeVelocity.y = 0.0f;
 		
-		// Set the new velocity
-		rigidbody.AddRelativeForce(newVelocity - relativeVelocity, ForceMode.VelocityChange);
+		// Set the new velocity, conserve the Y velocity for gravity
+		rigidbody.AddRelativeForce(new Vector3(newVelocity.x, relativeVelocity.y, newVelocity.z) - relativeVelocity, ForceMode.VelocityChange);
+	}
+	
+	private void ProcessShipCompensation()
+    {
+		Rigidbody shipRigidBody = CGame.Ship.rigidbody;
+		CShipMotor shipMotor = shipRigidBody.GetComponent<CShipMotor>();
+		
+		// Get the velocity of the actor from within the ship
+		Vector3 velocityCompensation = shipRigidBody.GetPointVelocity(transform.position);
+		
+		// Convert it to relative velocity of the actor and drop the Y component
+		velocityCompensation = Quaternion.Inverse(transform.rotation) * velocityCompensation;
+		velocityCompensation.y = 0.0f;
+		
+		// Get the angular velocity ship
+		Vector3 angularVelocityCompensation = shipRigidBody.angularVelocity;
+		
+		// Convert it to relative angular velocity of the actor
+		angularVelocityCompensation = Quaternion.Inverse(transform.rotation) * angularVelocityCompensation;
+		
+		// Add the compensation velocity amount to the actor
+		rigidbody.AddRelativeForce(velocityCompensation, ForceMode.VelocityChange);
+		
+		// Add the compensation angular velocity amount to the actor
+		rigidbody.AddRelativeTorque(angularVelocityCompensation, ForceMode.VelocityChange);
+		
+		// Add the compensation acceleration amount to the actor
+		Vector3 acceleration = shipMotor.Acceleration;
+		rigidbody.AddForce(acceleration, ForceMode.Acceleration);
+		
+		// Add the compensation angular acceleration amount to the actor
+		Vector3 angularAcceleration = shipMotor.AngularAcceleration;
+		rigidbody.AddTorque(angularAcceleration, ForceMode.Acceleration);
 	}
 };

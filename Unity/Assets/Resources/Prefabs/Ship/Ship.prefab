@@ -104,9 +104,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: 1
   Angle: 1
-  PositionalVelocity: 1
-  AngularVelocity: 1
-  UpdatesPerSecond: 20
+  PositionalVelocity: 0
+  AngularVelocity: 0
+  UpdatesPerSecond: 30
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

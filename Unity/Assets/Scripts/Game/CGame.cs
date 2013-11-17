@@ -325,15 +325,13 @@ public class CGame : CNetworkMonoBehaviour
 
 	void DebugProcessInputs()
 	{
-		// Lock Cursor on/off
+		// Lock Cursor/head movement toggle
 		if(Input.GetKeyDown(KeyCode.F1))
 		{
-			Screen.lockCursor = !Screen.lockCursor;
-		}
-
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			//Ship.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Factory, )
+			bool state = !Screen.lockCursor;
+			
+			Screen.lockCursor = state;
+			CGame.PlayerActor.GetComponent<CPlayerHeadMotor>().FreezeHeadInput = !state;
 		}
 
 		// Quick quit game

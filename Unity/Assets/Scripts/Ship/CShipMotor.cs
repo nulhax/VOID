@@ -139,7 +139,6 @@ public class CShipPilotState
 	{
 		m_CurrentRotationState = Vector2.zero;
 		m_CurrentMovementState = 0;
-		m_LastUpdateTimeStamp = Time.time;
 	}
 }
 
@@ -151,12 +150,27 @@ public class CShipMotor : CNetworkMonoBehaviour
 	// Member Fields
 	private GameObject m_PilotingCockpit = null;
 	
+	private Vector3 m_Acceleration = Vector3.zero;
+	private Vector3 m_PreviousVelocity = Vector3.zero;
+	
+	private Vector3 m_AngularAcceleration = Vector3.zero;
+	private Vector3 m_PreviousAngularVelocity = Vector3.zero;
 	
 	// Member Properies
 	public GameObject PilotingCockpit
 	{
 		set { m_PilotingCockpit = value; }
 		get { return(m_PilotingCockpit); }
+	}
+	
+	public Vector3 Acceleration
+	{
+		get { return(m_Acceleration); }
+	}
+	
+	public Vector3 AngularAcceleration
+	{
+		get { return(m_AngularAcceleration); }
 	}
 	
 	// Member Methods
@@ -181,6 +195,14 @@ public class CShipMotor : CNetworkMonoBehaviour
     {
 		Vector3 movementForce = Vector3.zero;
 		Vector3 angularForce = Vector3.zero;
+		
+		// Calculate the acceleration of the ship
+		m_Acceleration = (rigidbody.velocity - m_PreviousVelocity) / Time.fixedDeltaTime;
+		m_PreviousVelocity = rigidbody.velocity;
+		
+		// Calculate the angular acceleration of the ship
+		m_AngularAcceleration = (rigidbody.angularVelocity - m_PreviousAngularVelocity) / Time.fixedDeltaTime;
+		m_PreviousAngularVelocity = rigidbody.angularVelocity;
 		
 		// Get the piloting state from the cockpit
 		if(PilotingCockpit == null)
