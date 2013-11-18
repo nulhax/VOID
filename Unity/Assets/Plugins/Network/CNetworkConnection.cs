@@ -17,6 +17,7 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System;
 
 
 /* Implementation */
@@ -34,6 +35,10 @@ public class CNetworkConnection : MonoBehaviour
 
 	public delegate void OnDisconnect();
 	public event OnDisconnect EventDisconnect;
+	
+	
+	public delegate void OnRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream);
+	public event OnRecievedMicrophoneAudio EventRecievedMicrophoneAudio;
 
 
 	public delegate void SerializeMethod(CNetworkStream _cStream);
@@ -43,6 +48,7 @@ public class CNetworkConnection : MonoBehaviour
     public enum EPacketId
     {
         NetworkView = RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM,
+		MicrophoneAudio
     }
 
 
@@ -204,6 +210,16 @@ public class CNetworkConnection : MonoBehaviour
             Logger.Write("Connection disconnected");
         }
     }
+	
+	
+	public void TransmitMicrophoneAudio(CNetworkStream _cAudioDataStream)
+	{
+		CNetworkStream cTransmitStream = new CNetworkStream();
+		cTransmitStream.Write((byte)CNetworkServer.EPacketId.PlayerMicrophoneAudio);
+		cTransmitStream.Write(_cAudioDataStream);
+		
+		m_cRnPeer.Send(cTransmitStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.UNRELIABLE_SEQUENCED, (char)1, m_cServerSystemAddress, false);
+	}
 
 
     public RakNet.RakPeer RakPeer
@@ -358,6 +374,12 @@ public class CNetworkConnection : MonoBehaviour
                         HandleNetworkViewPacket(cRnPacket.data);
                     }
                     break;
+				
+                case (RakNet.DefaultMessageIDTypes)EPacketId.MicrophoneAudio:
+                    {
+                        HandleMicrophoneAudio(cRnPacket.data);
+                    }
+                    break;
 
                 default:
                     Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
@@ -478,6 +500,18 @@ public class CNetworkConnection : MonoBehaviour
 
         Logger.Write("Disconnect notification ({0})", _eDisconnectType);
     }
+	
+	
+	protected void HandleMicrophoneAudio(byte[] _bAudioData)
+	{
+		if (EventRecievedMicrophoneAudio != null)
+		{
+			CNetworkStream cAudioDataStream = new CNetworkStream(_bAudioData);
+			cAudioDataStream.IgnoreBytes(1);
+			
+			EventRecievedMicrophoneAudio(cAudioDataStream);
+		}
+	}
 
 
 	protected static void CompileSerializeTargetsOutboundData(CNetworkStream _cOutboundStream)

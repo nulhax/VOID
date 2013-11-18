@@ -68,6 +68,4 @@ public class CRoomPower : CNetworkMonoBehaviour
 
 
 	CNetworkVar<float> m_fPowerConsumption;
-
-
 };
