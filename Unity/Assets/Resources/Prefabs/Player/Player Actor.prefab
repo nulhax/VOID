@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Gravity: 9.81000042
   m_MovementSpeed: 4
   m_SprintSpeed: 7
-  m_JumpSpeed: 3
+  m_JumpSpeed: 4
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1

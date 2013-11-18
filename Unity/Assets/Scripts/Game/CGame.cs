@@ -366,9 +366,6 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
-        //CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
-		//CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);
-
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 
