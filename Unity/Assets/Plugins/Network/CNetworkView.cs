@@ -47,6 +47,10 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
+	public delegate void NotiftyPreDestory();
+	public event NotiftyPreDestory EventPreDestory;
+
+
 // Member Functions
     
     // public:
@@ -75,6 +79,15 @@ public class CNetworkView : CNetworkMonoBehaviour
             this.ViewId = GenerateStaticViewId();
         }
     }
+
+
+	public void OnPreDestory() // Call in CNetworkFactory
+	{
+		if (EventPreDestory != null)
+		{
+			EventPreDestory();
+		}
+	}
 
 
     public void OnDestroy()

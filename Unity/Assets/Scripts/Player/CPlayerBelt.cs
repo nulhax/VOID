@@ -52,7 +52,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	{
 		get 
 		{
-			if (ActiveSlotId != 0)
+			if (ActiveToolViewId != 0)
 			{
 				return (CNetwork.Factory.FindObject(ActiveToolViewId));
 			}
@@ -118,31 +118,20 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void Start()
 	{
         gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnToolPickupRequest);
+		gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
 	}
 
 
-	public void OnDestroy()
+	public void OnPreDestroy()
 	{
         if (CNetwork.IsServer)
         {
-            for (int i = 0; i < transform.childCount; ++i)
+            for (uint i = 0; i < k_uiMaxNumTools; ++i)
             {
-                GameObject go = transform.GetChild(i).gameObject;
-
-                if (go.gameObject.GetComponent<CToolInterface>() != null)
-                {
-                    go.GetComponent<CToolInterface>().NotifyDropped();
-
-
-                    MonoBehaviour[] comps = go.GetComponents<MonoBehaviour>();
-
-                    foreach (MonoBehaviour c in comps)
-                    {
-                        c.enabled = true;
-                    }
-                    go.light.enabled = true;
-
-                }
+				if (m_ausToolsViewId[i].Get() != 0)
+				{
+					GetTool(i).GetComponent<CToolInterface>().Drop();
+				}
             }
         }
 	}
@@ -184,7 +173,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                     else
                     {
                         m_ausToolsViewId[i].Set(cToolNetworkView.ViewId);
-                        cToolInterface.NotifyPickedUp(_ulPlayerId);
+                        cToolInterface.PickUp(_ulPlayerId);
                         ChangeTool((byte)i);
                         Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolViewId({1}) SlotId({2})", _ulPlayerId, _usToolViewid, i));
                     }
@@ -204,7 +193,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetPrimaryActive(_bActive);
 
-            Debug.Log(string.Format("Set primary active({0})", _bActive));
+            //Debug.Log(string.Format("Set primary active({0})", _bActive));
 		}
 	}
 
@@ -252,10 +241,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		// Check tool exists
 		if (GetToolViewId(_bSlotId) != 0)
 		{
-			GetTool(_bSlotId).GetComponent<CToolInterface>().NotifyDropped();
+			GetTool(_bSlotId).GetComponent<CToolInterface>().Drop();
             m_ausToolsViewId[_bSlotId].Set(0);
 
-            // Change tool to next avaiable tool
+            // Change tool to next available tool
             for (int i = (int)k_uiMaxNumTools - 1; i >= 0; --i)
             {
                 if (m_ausToolsViewId[i].Get() != 0)

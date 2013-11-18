@@ -45,27 +45,26 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void ActivatePrimary();
-	public delegate void DeactivatePrimary();
-	
-	public delegate void ActivateSecondary();
-	public delegate void DeactivateSecondary();
-	
-	public delegate void Reload2();
+	public delegate void NotifyPrimaryActivate();
+	public event NotifyPrimaryActivate EventPrimaryActivate;
 
-    public delegate void PickedUp();
-    public delegate void Dropped();
-	
-	public event ActivatePrimary EventActivatePrimary;
-	public event DeactivatePrimary EventDeactivatePrimary;
-	
-	public event ActivateSecondary EventActivateSecondary;
-	public event DeactivateSecondary EventDeactivateSecondary;
+	public delegate void NotifyPrimaryDeactivate();
+	public event NotifyPrimaryDeactivate EventPrimaryDeactivate;
 
-	public event Reload2 EventReload;
+	public delegate void NotifySecondaryActivate();
+	public event NotifySecondaryActivate EventSecondaryActivate;
 
-    public event PickedUp EventPickedUp;
-    public event PickedUp EventDropped;
+	public delegate void NotifySecondaryDeactivate();
+	public event NotifySecondaryDeactivate EventSecondaryDeactivate;
+
+	public delegate void NotifyReload();
+	public event NotifyReload EventReload;
+
+	public delegate void NotifyPickedUp();
+	public event NotifyPickedUp EventPickedUp;
+
+	public delegate void NotifyDropped();
+	public event NotifyDropped EventDropped;
 	
 	
 // Member Properties
@@ -77,9 +76,9 @@ public class CToolInterface : CNetworkMonoBehaviour
     }
 
 
-    public bool IsHeldByPlayer
+    public bool IsHeld
     {
-        get { return (m_bHeldByPlayer.Get()); }
+		get { return (m_usOwnerPlayerActorViewId.Get() != 0); }
     }
 
 
@@ -89,20 +88,19 @@ public class CToolInterface : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
         m_usOwnerPlayerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
-        m_bHeldByPlayer = new CNetworkVar<bool>(OnNetworkVarSync, false);
     }
 
 
     public void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-        if (_cVarInstance == m_bHeldByPlayer)
+        if (_cVarInstance == m_usOwnerPlayerActorViewId)
         {
-            if (m_bHeldByPlayer.Get())
+			if (IsHeld)
             {
                 GameObject cOwnerPlayerActor = OwnerPlayerActorObject;
 
                 gameObject.transform.parent = cOwnerPlayerActor.transform;
-                gameObject.transform.localPosition = new Vector3(1.0f, 0.0f, 2.0f);
+                gameObject.transform.localPosition = new Vector3(0.5f, 0.36f, 0.5f);
                 gameObject.transform.localRotation = Quaternion.identity;
 
                 // Turn off  dynamic physics
@@ -131,13 +129,16 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Awake()
     {
-		// Empty
+		gameObject.AddComponent<Rigidbody>();
+		gameObject.AddComponent<CInteractableObject>();
+		gameObject.AddComponent<CDynamicActor>();
+		gameObject.AddComponent<CNetworkView>();
 	}
 
 
 	public void Start()
 	{
-        //CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
+		// Empty
 	}
 
 
@@ -149,7 +150,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-        if (m_bHeldByPlayer.Get())
+		if (IsHeld)
         {
             gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActorObject.GetComponent<CPlayerHeadMotor>().HeadEuler.x, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
         }
@@ -157,20 +158,17 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerMethod]
-	public void NotifyPickedUp(ulong _ulPlayerId)
+	public void PickUp(ulong _ulPlayerId)
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
-		if (m_bHeldByPlayer.Get() == false)
+		if (!IsHeld)
 		{
 			// Set owning player
 			m_ulOwnerPlayerId = _ulPlayerId;
 
             // Set owning object view id
             m_usOwnerPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-
-			// Set held
-			m_bHeldByPlayer.Set(true);
 
             // Notify observers
             if (EventPickedUp != null)
@@ -182,21 +180,18 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerMethod]
-	public void NotifyDropped()
+	public void Drop()
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
 		// Check currently held
-		if (m_bHeldByPlayer.Get())
+		if (IsHeld)
 		{
 			// Remove owner player
             m_ulOwnerPlayerId = 0;
 
             // Set owning object view id
             m_usOwnerPlayerActorViewId.Set(0);
-
-			// Set un-held
-			m_bHeldByPlayer.Set(false);
 
             // Notify observers
             if (EventDropped != null)
@@ -213,7 +208,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
 		// Check currently held
-		if (m_bHeldByPlayer.Get())
+		if (IsHeld)
 		{
 			// Notify observers
 			if (EventReload != null)
@@ -235,9 +230,9 @@ public class CToolInterface : CNetworkMonoBehaviour
             m_bPrimaryActive = true;
 
             // Notify observers
-            if (EventActivatePrimary != null)
+            if (EventPrimaryActivate != null)
             {
-                EventActivatePrimary();
+                EventPrimaryActivate();
             }
 		}
 
@@ -249,9 +244,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 			m_bPrimaryActive = false;
 
             // Notify observers
-            if (EventDeactivatePrimary != null)
+            if (EventPrimaryDeactivate != null)
             {
-                EventDeactivatePrimary();
+                EventPrimaryDeactivate();
             }
 		}
 	}
@@ -268,9 +263,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 			m_bSecondaryActive = true;
 
             // Notify observers
-            if (EventActivateSecondary != null)
+            if (EventSecondaryActivate != null)
             {
-                EventActivateSecondary();
+                EventSecondaryActivate();
             }
 		}
 
@@ -282,9 +277,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 			m_bSecondaryActive = false;
 
             // Notify observers
-            if (EventDeactivateSecondary != null)
+            if (EventSecondaryDeactivate != null)
             {
-                EventDeactivateSecondary();
+                EventSecondaryDeactivate();
             }
 		}
 	}
@@ -295,47 +290,15 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         if (m_ulOwnerPlayerId == _cPlayer.PlayerId)
         {
-            NotifyDropped();
+            Drop();
         }
     }
-
-	/*
-
-	public static void SerializeActions(CNetworkStream _cStream)
-	{
-		// Write in stream
-		_cStream.Write(s_cSerializeStream);
-	}
-
-
-	public static void UnserializeActions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-	{
-		// Process stream data
-		while (_cStream.HasUnreadData)
-		{
-			// Extract action
-			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-
-			// Extract target tool view id
-			ushort usToolViewId = _cStream.ReadUShort();
-
-			// Handle action
-			switch (eAction)
-			{
-			case ENetworkAction.PickUp:
-				HandlePickupRequest(_cNetworkPlayer, usToolViewId);
-				break;
-			}
-		}
-	}
-	*/
 
 
 // Member Fields
 
 
     CNetworkVar<ushort> m_usOwnerPlayerActorViewId = null;
-    CNetworkVar<bool> m_bHeldByPlayer = null;
 
 
     bool m_bPrimaryActive = false;
