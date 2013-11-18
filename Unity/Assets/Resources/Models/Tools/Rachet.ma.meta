@@ -1,15 +1,35 @@
 fileFormatVersion: 2
-guid: 278a13c58460f6e4da7675e699f809ea
+guid: 5a4d20a8d37890f4f93a1bdf4b65e20b
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: default
-    100002: //RootNode
-    400000: default
-    400002: //RootNode
-    2300000: default
-    3300000: default
-    4300000: default
+    100000: gun_baseGEO
+    100002: gun_handleGEO
+    100004: gun_socAxelGEO
+    100006: gun_socketGEO
+    100008: gun_triggerGEO
+    100010: //RootNode
+    400000: gun_baseGEO
+    400002: gun_handleGEO
+    400004: gun_socAxelGEO
+    400006: gun_socketGEO
+    400008: gun_triggerGEO
+    400010: //RootNode
+    2300000: gun_baseGEO
+    2300002: gun_handleGEO
+    2300004: gun_socAxelGEO
+    2300006: gun_socketGEO
+    2300008: gun_triggerGEO
+    3300000: gun_baseGEO
+    3300002: gun_handleGEO
+    3300004: gun_socAxelGEO
+    3300006: gun_socketGEO
+    3300008: gun_triggerGEO
+    4300000: gun_handleGEO
+    4300002: gun_socAxelGEO
+    4300004: gun_socketGEO
+    4300006: gun_triggerGEO
+    4300008: gun_baseGEO
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -27,7 +47,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: .0250000004
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1

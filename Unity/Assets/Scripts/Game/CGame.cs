@@ -49,6 +49,7 @@ public class CGame : CNetworkMonoBehaviour
 		Cockpit,
 		PlayerActor,
         ToolTorch,
+		ToolRachet,
         GalaxyParent,
         Asteroid_FIRST,
         // Do not insert anything here.
@@ -158,6 +159,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Rooms/Cockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
@@ -374,6 +376,7 @@ public class CGame : CNetworkMonoBehaviour
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
         CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
