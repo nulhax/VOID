@@ -263,7 +263,8 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	private void ProcessMovement()
     {	
-		if(m_bGrounded)
+		// Check if the actor is grounded
+		if(CheckIsGrounded())
 		{	
 			float moveSpeed = m_MovementSpeed;
 			Vector3 relMoveVelocity = Vector3.zero;
@@ -309,10 +310,10 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void CheckIsGrounded()
+	private bool CheckIsGrounded()
 	{
 		Ray ray = new Ray(rigidbody.position, -transform.up);
-		if(Physics.Raycast(ray, collider.bounds.extents.y))
+		if(Physics.SphereCast(ray, 0.5f, 0.5f))
 		{
 			m_bGrounded = true;
 		}
@@ -320,15 +321,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		{
 			m_bGrounded = false;
 		}
-	}
-	
-	private void OnCollisionStay()
-	{
-		CheckIsGrounded();
-	}
-	
-	private void OnCollisionExit()
-	{
-		CheckIsGrounded();
+		
+		return(m_bGrounded);
 	}
 };

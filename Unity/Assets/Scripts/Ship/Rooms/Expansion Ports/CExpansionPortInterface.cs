@@ -111,37 +111,37 @@ public class CExpansionPortInterface : MonoBehaviour
 
 	public void Orient(int _portID, GameObject _objNewRoom)
 	{
-		_objNewRoom.transform.position = transform.position;
-        _objNewRoom.transform.rotation = Quaternion.identity;
-        Debug.Log("Current Port Pos " + transform.position.x + "," + transform.position.y + "," + transform.position.z);
-
-        //m_attachedPorts[_portID].renderer.material.color = Color.green;
-
-        //Subtract the offset of the selected port from the position of the new object
-        Vector3 offset = m_attachedPorts[_portID].localPosition;
-        Vector3 currentPos = _objNewRoom.transform.position - offset;
-        Debug.Log("Offset: " + offset.x + "," + offset.y + "," + offset.z);
-        _objNewRoom.transform.position = currentPos;
-
-        //Adjust rotation
-        //The center of rotation should be the currently selected port of the new hull
-		CExpansionPortInterface newPort = (CExpansionPortInterface)m_attachedPorts[_portID].GetComponent("CExpansionPortInterface");
-		newPort.HasAttachedRoom = true;		
-		
-		AllignForwardVector(newPort, _objNewRoom);
-		//AllignRightVector(newPort, _objNewRoom);
-		//AllignUpVector(newPort, _objNewRoom);
-		
+//		_objNewRoom.transform.position = transform.position;
+//        _objNewRoom.transform.rotation = Quaternion.identity;
+//        Debug.Log("Current Port Pos " + transform.position.x + "," + transform.position.y + "," + transform.position.z);
+//
+//        //m_attachedPorts[_portID].renderer.material.color = Color.green;
+//
+//        //Subtract the offset of the selected port from the position of the new object
+//        Vector3 offset = m_attachedPorts[_portID].localPosition;
+//        Vector3 currentPos = _objNewRoom.transform.position - offset;
+//        Debug.Log("Offset: " + offset.x + "," + offset.y + "," + offset.z);
+//        _objNewRoom.transform.position = currentPos;
+//
+//        //Adjust rotation
+//        //The center of rotation should be the currently selected port of the new hull
+//		CExpansionPortInterface newPort = (CExpansionPortInterface)m_attachedPorts[_portID].GetComponent("CExpansionPortInterface");
+//		newPort.HasAttachedRoom = true;		
+//		
+//		AllignForwardVector(newPort, _objNewRoom);
+//		//AllignRightVector(newPort, _objNewRoom);
+//		//AllignUpVector(newPort, _objNewRoom);
+//		
 		
 		/*** Code for rotating the new facility using quaternions. Rotates all the axis to be aligned correctly ***/
 		
-//		Quaternion Rot1 = transform.rotation * m_attachedPorts[_portID].parent.rotation * Quaternion.Inverse(m_attachedPorts[_portID].rotation);
-//		Quaternion Rot2 = Quaternion.AngleAxis(180.0f, Vector3.up);
-//		
-//		_objNewRoom.transform.rotation = Rot1 * Rot2;
-//		
-//		// Apply the new position (this expansion port position plus the rotated other expansionport local position)
-//		_objNewRoom.transform.position = transform.position - (_objNewRoom.transform.rotation * m_attachedPorts[_portID].localPosition);
+		Quaternion Rot1 = transform.rotation * m_attachedPorts[_portID].parent.rotation * Quaternion.Inverse(m_attachedPorts[_portID].rotation);
+		Quaternion Rot2 = Quaternion.AngleAxis(180.0f, Vector3.up);
+		
+		_objNewRoom.transform.rotation = Rot1 * Rot2;
+		
+		// Apply the new position (this expansion port position plus the rotated other expansionport local position)
+		_objNewRoom.transform.position = transform.position - (_objNewRoom.transform.rotation * m_attachedPorts[_portID].localPosition);
 	}
 	
 	void AllignForwardVector(CExpansionPortInterface _newPort, GameObject _objNewRoom)
