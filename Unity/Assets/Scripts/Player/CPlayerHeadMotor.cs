@@ -87,7 +87,8 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	private CNetworkVar<float> m_HeadEulerX    = null;
     private CNetworkVar<float> m_HeadEulerY    = null;
     private CNetworkVar<float> m_HeadEulerZ    = null;
-
+	
+	
 	
 // Member Properties	
 	public GameObject ActorHead 
@@ -240,5 +241,10 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		
 		// Apply the pitch to the camera
 		m_ActorHead.transform.localEulerAngles = new Vector3(-m_Rotation.x, 0.0f, 0.0f);
+	}
+	
+	private void OnApplicationFocus(bool _focusStatus) 
+	{
+		FreezeHeadInput = !_focusStatus;
 	}
 };

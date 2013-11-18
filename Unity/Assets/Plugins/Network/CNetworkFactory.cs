@@ -246,6 +246,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
         TObjectInfo tObject = m_mCreatedObjects[_usObjectNetworkViewId];
 
 
+		tObject.cGameObject.GetComponent<CNetworkView>().OnPreDestory();
         GameObject.Destroy(tObject.cGameObject);
 
 
