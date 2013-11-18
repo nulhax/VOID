@@ -354,10 +354,6 @@ public class CGame : CNetworkMonoBehaviour
 		// Create new player's actor
 		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
 		
-		// Sync the parent
-		cPlayerActor.transform.parent = Ship.transform;
-		cPlayerActor.GetComponent<CNetworkView>().SyncParent();
-		
 		// Get actor network view id
 		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 

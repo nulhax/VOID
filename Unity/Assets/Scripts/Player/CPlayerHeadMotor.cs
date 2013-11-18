@@ -75,17 +75,18 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	public float m_MaximumY = 60.0f;
 	
 	
-	CHeadMotorState m_HeadMotorState = new CHeadMotorState();
+	private CHeadMotorState m_HeadMotorState = new CHeadMotorState();
 	
 	
-	bool m_FreezeHeadInput = false;
-	GameObject m_ActorHead = null;
+	private Vector3 m_Rotation = Vector3.zero;
+	private bool m_FreezeHeadInput = false;
+	private GameObject m_ActorHead = null;
 	
 	
 	
-	CNetworkVar<float> m_HeadEulerX    = null;
-    CNetworkVar<float> m_HeadEulerY    = null;
-    CNetworkVar<float> m_HeadEulerZ    = null;
+	private CNetworkVar<float> m_HeadEulerX    = null;
+    private CNetworkVar<float> m_HeadEulerY    = null;
+    private CNetworkVar<float> m_HeadEulerZ    = null;
 
 	
 // Member Properties	
@@ -179,11 +180,6 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{
 			UpdateHeadMotorInput();
 		}
-		if(CNetwork.IsServer)
-		{
-			// Placeholder: Remove the x and z components of the local euler angles
-			transform.localEulerAngles = Vector3.up * transform.localEulerAngles.y;
-		}
     }
 	
 	public void FixedUpdate()
@@ -226,27 +222,23 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	
 	private void ProcessRotations()
 	{
-		Vector3 newAngularVelocity = Vector3.zero;
-		
 		// Pitch rotation
 		if(m_HeadMotorState.CurrentRotationState.y != 0.0f)
 		{
-			newAngularVelocity.x = m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
+			m_Rotation.x += m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
 		}
 		
 		// Yaw rotation
 		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
 		{
-			newAngularVelocity.y = m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
+			m_Rotation.y += m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
 		}
 		
-		// Get the relative angular velocity and remove the upwards component
-		Vector3 relativeAngularVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.angularVelocity;
-		
-		// Set the new angular velocity using only the yaw
-		rigidbody.AddRelativeTorque(new Vector3(0.0f, newAngularVelocity.y, 0.0f) - relativeAngularVelocity, ForceMode.VelocityChange);
+		// Apply the yaw to the player actor
+		Quaternion shipRot = CGame.Ship.transform.rotation;
+		transform.rotation = shipRot * Quaternion.AngleAxis(m_Rotation.y, Vector3.up);
 		
 		// Apply the pitch to the camera
-		m_ActorHead.transform.localEulerAngles = new Vector3(m_ActorHead.transform.localEulerAngles.x - newAngularVelocity.x, 0.0f, 0.0f);
+		m_ActorHead.transform.localEulerAngles = new Vector3(-m_Rotation.x, 0.0f, 0.0f);
 	}
 };

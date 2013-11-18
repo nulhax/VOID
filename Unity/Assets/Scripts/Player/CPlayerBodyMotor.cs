@@ -129,9 +129,16 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	bool m_FreezeMovmentInput = false;
 	bool m_UsingGravity = true;
-	Vector3 m_GravityForce = Vector3.zero;
-	Vector3 m_Velocity = Vector3.zero;
-
+	bool m_bGrounded = false;
+	
+	private Vector3 m_GravityForce = Vector3.zero;
+	private Vector3 m_TangVelocity = Vector3.zero;
+	private Vector3 m_PrevTangVelocity = Vector3.zero;
+	
+	private Vector3 m_CurrentPos = Vector3.zero;
+	private Vector3 m_CurrentMovementVelocity = Vector3.zero;
+	private Vector3 m_CurrentCompoundGravity = Vector3.zero;
+	
 
     static KeyCode m_eMoveForwardKey = KeyCode.W;
     static KeyCode m_eMoveBackwardsKey = KeyCode.S;
@@ -169,14 +176,24 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		}
 	}
 	
+	static float bvla = 0.0f;
     public void Update()
     {	
 		if(CGame.PlayerActor == gameObject && !FreezeMovmentInput)
 		{
 			UpdatePlayerInput();
 		}
+		
+		if(CNetwork.IsServer)
+		{
+			// Placeholder: Make gravity relative to the ship
+			m_GravityForce = CGame.Ship.transform.up * -m_Gravity;
+			
+			bvla += Time.deltaTime;
+			if(bvla > 2.0f)
+				m_CurrentPos = Quaternion.Inverse(CGame.Ship.rigidbody.rotation) * (rigidbody.worldCenterOfMass - CGame.Ship.rigidbody.worldCenterOfMass); bvla = 0.0f;
+		}
     }
-	
 	
 	public void FixedUpdate()
 	{	
@@ -260,11 +277,8 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	private void ProcessMovement()
     {
 		float moveSpeed = m_MovementSpeed;
-		Vector3 newVelocity = Vector3.zero;
-		
-		// Placeholder: Make gravity relative to the ship
-		m_GravityForce = CGame.Ship.transform.rotation * Vector3.up * -m_Gravity;
-		
+		Vector3 moveVelocity = Vector3.zero;
+
 		// Sprinting
 		if(m_MotorState.Sprinting)
 		{
@@ -274,67 +288,92 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		// Moving 
         if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
 		{
-			newVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
+			moveVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
 		}
 		
 		// Strafing
 		if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
 		{
-			newVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
+			moveVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
 		}
 		
-		// Normaize the new velocuity vector and multiply by the speed
-		newVelocity = newVelocity.normalized * moveSpeed;
+		// Normaize the move velocuity vector and multiply by the speed
+		moveVelocity = moveVelocity.normalized * moveSpeed;
 		
-		// Jumping
-		if(m_MotorState.Jumping)
+		Ray ray = new Ray(rigidbody.position, -transform.up);
+		if(Physics.Raycast(ray, collider.bounds.extents.y))
 		{
-			rigidbody.AddForce(-m_GravityForce * 10.0f, ForceMode.Impulse);
+			m_bGrounded = true;
+		}
+		else
+		{
+			m_bGrounded = false;
 		}
 		
-		// Gravity
-		if(UsingGravity)
-		{
+		if(!m_bGrounded)
+		{	
+			// Add the gravity gain to the velocity.
 			rigidbody.AddForce(m_GravityForce, ForceMode.Acceleration);
 		}
+		else
+		{
+			m_CurrentMovementVelocity = moveVelocity;
+		}
+		
+		
 		
 		// Get the relative velocity
-		Vector3 relativeVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
+		//Vector3 relativeVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
 		
 		// Set the new velocity, conserve the Y velocity for gravity
-		rigidbody.AddRelativeForce(new Vector3(newVelocity.x, relativeVelocity.y, newVelocity.z) - relativeVelocity, ForceMode.VelocityChange);
+		//rigidbody.AddRelativeForce(new Vector3(newVelocity.x, relativeVelocity.y, newVelocity.z) - relativeVelocity, ForceMode.VelocityChange);
 	}
 	
+	static float timer = 0;
 	private void ProcessShipCompensation()
     {
 		Rigidbody shipRigidBody = CGame.Ship.rigidbody;
 		CShipMotor shipMotor = shipRigidBody.GetComponent<CShipMotor>();
 		
-		// Get the velocity of the actor from within the ship
-		Vector3 velocityCompensation = shipRigidBody.GetPointVelocity(transform.position);
+		// Get the current tangential velocity
+		m_TangVelocity = shipRigidBody.GetRelativePointVelocity(m_CurrentPos);	
 		
-		// Convert it to relative velocity of the actor and drop the Y component
-		velocityCompensation = Quaternion.Inverse(transform.rotation) * velocityCompensation;
-		velocityCompensation.y = 0.0f;
+		// Calculate the centripedal acceleration of the actor based on the last two tangential velocities
+		Vector3 centripedalAccel = (m_TangVelocity - m_PrevTangVelocity) / Time.fixedDeltaTime;
 		
-		// Get the angular velocity ship
-		Vector3 angularVelocityCompensation = shipRigidBody.angularVelocity;
+		// Save the tangential velocity
+		m_PrevTangVelocity = m_TangVelocity;
 		
-		// Convert it to relative angular velocity of the actor
-		angularVelocityCompensation = Quaternion.Inverse(transform.rotation) * angularVelocityCompensation;
+		// Add the compensation centripedal acceleration amount to the actor
+		rigidbody.AddForce(centripedalAccel, ForceMode.Acceleration);
+
+		// Set the current velocity as the tangential velocity
+		rigidbody.velocity = m_TangVelocity + m_CurrentMovementVelocity;
 		
-		// Add the compensation velocity amount to the actor
-		rigidbody.AddRelativeForce(velocityCompensation, ForceMode.VelocityChange);
+//		Debug.DrawLine(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + centripedalAccel.normalized * 5.0f, Color.cyan);
+//		Debug.DrawLine(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + m_TangVelocity.normalized * 5.0f, Color.green);
+//		Debug.DrawLine(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + m_PrevTangVelocity.normalized * 5.0f, Color.yellow);
+//		Debug.DrawLine(rigidbody.worldCenterOfMass, shipRigidBody.worldCenterOfMass, Color.blue);
 		
-		// Add the compensation angular velocity amount to the actor
-		rigidbody.AddRelativeTorque(angularVelocityCompensation, ForceMode.VelocityChange);
 		
-		// Add the compensation acceleration amount to the actor
-		Vector3 acceleration = shipMotor.Acceleration;
-		rigidbody.AddForce(acceleration, ForceMode.Acceleration);
+		timer+=Time.fixedDeltaTime;
+		if(timer > 0.2f)
+		{
+			GameObject go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			go.transform.position = rigidbody.position;
+			DestroyImmediate(go.collider);
+			timer = 0.0f;
+		}
 		
-		// Add the compensation angular acceleration amount to the actor
-		Vector3 angularAcceleration = shipMotor.AngularAcceleration;
-		rigidbody.AddTorque(angularAcceleration, ForceMode.Acceleration);
+		
+		
+//		// Get the angular velocity ship
+//		Vector3 angularVelocityCompensation = shipRigidBody.angularVelocity;
+//		
+//		// Convert it to relative angular velocity of the actor
+//		angularVelocityCompensation = Quaternion.Inverse(transform.rotation) * angularVelocityCompensation;
+//		
+//		// Add the compensation angular velocity amount to the actor
+//		rigidbody.AddRelativeTorque(angularVelocityCompensation, ForceMode.VelocityChange);
 	}
 };
