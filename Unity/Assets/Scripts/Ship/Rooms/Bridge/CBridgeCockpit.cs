@@ -71,10 +71,11 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		if(CGame.Ship == null)
 			return;
 		
-		if(CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit == null)
+		CShipMotor shipMotor = CGame.WorldShip.GetComponent<CShipMotor>();
+		if(shipMotor.PilotingCockpit == null)
 			return;
 			
-		CBridgeCockpit cockpit = CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit cockpit = shipMotor.PilotingCockpit.GetComponent<CBridgeCockpit>();
 		if(cockpit.m_AttachedPlayerActor)
 		{	
 			_cStream.Write((byte)EInteractionEvent.PlayerPiloting);
@@ -96,7 +97,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public static void UnserializeCockpitInteractions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {	
 		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-		CShipMotor shipMotor = CGame.Ship.GetComponent<CShipMotor>();
+		CShipMotor shipMotor = CGame.WorldShip.GetComponent<CShipMotor>();
 		
 		switch(interactionEvent)
 		{
@@ -120,7 +121,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register this cockpit as the piloting cockpit of the ship
-		CGame.Ship.GetComponent<CShipMotor>().PilotingCockpit = gameObject;
+		CGame.WorldShip.GetComponent<CShipMotor>().PilotingCockpit = gameObject;
 		
 		// Make this object interactable with action 1
 		CInteractableObject IO = GetComponent<CInteractableObject>();
@@ -140,6 +141,15 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
 			m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>().ActorHead.transform.rotation = transform.parent.parent.rotation;
+			
+			CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
+			CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
+			
+			bodyMotor.collider.enabled = false;
+			bodyMotor.m_Gravity = 0.0f;
+			
+			bodyMotor.FreezeMovmentInput = true;
+			headMotor.FreezeHeadInput = true;
 		}
 	}
 	
@@ -209,14 +219,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	private void AttachPlayer(ushort _PlayerActorNetworkViewId)
 	{
 		m_AttachedPlayerActor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId);	
-		CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
-		CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
-		
-		bodyMotor.collider.enabled = false;
-		bodyMotor.FreezeMovmentInput = true;
-		bodyMotor.m_Gravity = 0.0f;
-		
-		headMotor.enabled = false;
 	}
 	
 	[ANetworkRpc]

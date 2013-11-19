@@ -32,18 +32,12 @@ public class CDUIConsole : MonoBehaviour
     // Member Properties
 	public CDUI DUI 
 	{ 
-		get 
-		{ 
-			return(m_DUI.GetComponent<CDUI>()); 
-		} 
+		get { return(m_DUI.GetComponent<CDUI>()); } 
 	}
 	
 	public GameObject DUIGameObject 
 	{ 
-		get 
-		{ 
-			return(m_DUI); 
-		} 
+		get { return(m_DUI); } 
 	}
 	
 	// Member Methods
@@ -76,9 +70,10 @@ public class CDUIConsole : MonoBehaviour
 
         // Initialise the DUI Component
         dui.Initialise(_Quality, _Layout, _Dimensions, gameObject);
-
-        // Attach the render texture material
-        dui.AttatchRenderTexture(m_ScreenObject.renderer.material);
+		
+		// Attach the render texture material
+		GameObject screenWorldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldChildActor(gameObject, m_ScreenObject);
+        DUI.AttatchRenderTexture(screenWorldActor.renderer.material);
 		
 		// Increment the offset
 		s_UIOffset += 2.0f;

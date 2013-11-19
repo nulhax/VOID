@@ -3,7 +3,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   CActorMotor.cs
+//  File Name   :   CPlayerHeadMotor.cs
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -170,9 +170,21 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
     public void Awake()
 	{	
 		// Create the actor head object
-		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Head", typeof(GameObject))) as GameObject;
-        m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.up * 0.4f;
+		m_ActorHead = transform.FindChild("Head").gameObject;
+	}
+	
+	public void Start()
+	{
+		GameObject worldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(gameObject);
+		
+		if(CGame.PlayerActor == gameObject)
+		{
+			// Add the player camera to this player world actor
+			worldActor.transform.FindChild("Head").gameObject.AddComponent<CPlayerCamera>();
+		}
+		
+		// Add the galaxy observer to the world actor
+		worldActor.AddComponent<GalaxyObserver>();
 	}
 
     public void Update()
@@ -227,6 +239,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		if(m_HeadMotorState.CurrentRotationState.y != 0.0f)
 		{
 			m_Rotation.x += m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
+			m_Rotation.x =  Mathf.Clamp(m_Rotation.x, m_MinimumY, m_MaximumY);
 		}
 		
 		// Yaw rotation

@@ -185,8 +185,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		
 		if (Physics.Raycast(ray, out _rh, _fDistance, 1 << LayerMask.NameToLayer("InteractableObject")))
 		{
+			Debug.DrawRay(_origin, _direction * _fDistance, Color.green, 1.0f);
 			return(true);
 		}
+		
+		Debug.DrawRay(_origin, _direction * _fDistance, Color.red, 1.0f);
 		
 		return(false); 
     }

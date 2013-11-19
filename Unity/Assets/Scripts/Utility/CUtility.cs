@@ -17,7 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /* Implementation */
-public class Utility
+public class CUtility
 {
     // Member Types
     static readonly string s_sXmlPath           = "C:/VOID/Unity/Assets/Resources/XMLs/";
@@ -50,6 +50,14 @@ public class Utility
     static public string GetXmlPathComponents() { return (s_sXmlPathComponents); }
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
-    // Member Fields
-
+    // Member Methods
+	static public void SetLayerRecursively(GameObject _Obj, int _Layer)
+	{
+		_Obj.layer = _Layer;
+		
+		for(int i = 0; i < _Obj.transform.childCount; ++i)
+		{
+			SetLayerRecursively(_Obj.transform.GetChild(i).gameObject, _Layer);
+		}
+	}
 };

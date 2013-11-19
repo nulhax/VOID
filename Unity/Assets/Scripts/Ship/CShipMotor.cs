@@ -170,11 +170,6 @@ public class CShipMotor : CNetworkMonoBehaviour
 	{
 	}
 	
-	public void Update()
-	{
-		
-	}
-	
 	public void FixedUpdate()
 	{
 		if(CNetwork.IsServer)

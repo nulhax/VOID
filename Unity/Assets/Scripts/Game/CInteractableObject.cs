@@ -46,7 +46,7 @@ public class CInteractableObject : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Set the layer of myself and all children to be of "InteractableObject"
-		SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
+		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
 	}
 	
 	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
@@ -77,16 +77,6 @@ public class CInteractableObject : CNetworkMonoBehaviour
 			
 		default:
 			break;
-		}
-	}
-	
-	private void SetLayerRecursively(GameObject _Obj, int _Layer)
-	{
-		_Obj.layer = _Layer;
-		
-		for(int i = 0; i < _Obj.transform.childCount; ++i)
-		{
-			SetLayerRecursively(_Obj.transform.GetChild(i).gameObject, _Layer);
 		}
 	}
 }
