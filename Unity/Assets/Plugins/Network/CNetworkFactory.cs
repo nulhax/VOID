@@ -120,7 +120,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
 				// Tell object to sync all their network vars with the player
-				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
+				cNetworkView.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
             }
 			
 			// Sync parents for each transform
@@ -147,18 +147,26 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public GameObject FindObject(ushort _usNetworkViewId)
 	{
-		GameObject go = null;
-		
-		if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+		GameObject cGameObject = null;
+
+		// Dynamic object
+		if (_usNetworkViewId >= CNetworkView.k_usMaxStaticViewId)
 		{
-			go = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+			if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+			{
+				cGameObject = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+			}
 		}
+		
+		// Static object
 		else
 		{
-			Logger.WriteError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
+			cGameObject = CNetworkView.FindUsingViewId(_usNetworkViewId).gameObject;
 		}
-		
-		return (go);
+
+		Logger.WriteErrorOn(cGameObject == null, "Could not find network object with view id ({0})", _usNetworkViewId);
+
+		return (cGameObject);
 	}
 
 

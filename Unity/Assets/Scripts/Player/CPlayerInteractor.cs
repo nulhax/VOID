@@ -29,8 +29,10 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		INVALID = -1,
 		
 		Nothing,
-		Primary,
-		Secondary,
+		PrimaryStart,
+		PrimaryEnd,
+		SecondaryStart,
+		SecondaryEnd,
 		Use,
 		Action2,
 		
@@ -43,16 +45,21 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     public delegate void HandleInteraction(EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit);
     public event HandleInteraction EventInteraction;
+
+	public delegate void HandleNoInteraction(EInteractionType _eType, RaycastHit _cRayHit);
+	public event HandleNoInteraction EventNoInteraction;
 	
 	
 // Member Fields
 
 
-	private EInteractionType m_CurrentInteraction = EInteractionType.Nothing;
-	
+	private EInteractionType m_eCurrentInteractionType = EInteractionType.Nothing;
 
-    static KeyCode m_eUseKey = KeyCode.E;
-    static KeyCode m_eAction2Key = KeyCode.F;
+
+	static KeyCode s_ePrimaryKey = KeyCode.Mouse0;
+	static KeyCode s_eSecondaryKey = KeyCode.Mouse1;
+    static KeyCode s_eUseKey = KeyCode.E;
+    static KeyCode s_eAction2Key = KeyCode.F;
 	
 
 // Member Properties
@@ -77,34 +84,43 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		CheckInteractionEvents();
 		
 		// If the interaction event is not nothing check for interaction objects
-		if(m_CurrentInteraction != EInteractionType.Nothing)
+		if(m_eCurrentInteractionType != EInteractionType.Nothing)
 		{
 			CheckInteractionObjects();
 		}
 	}
 
-	
+
+	[AClientMethod]
 	private void CheckInteractionEvents()
 	{
 		// Reset the interaction event
-		m_CurrentInteraction = EInteractionType.Nothing;
+		m_eCurrentInteractionType = EInteractionType.Nothing;
 		
 		// Find out if any of the interaction events are active
-		if(Input.GetMouseButtonDown(0))
+		if(Input.GetKeyDown(s_ePrimaryKey))
 		{
-			m_CurrentInteraction = EInteractionType.Primary;
+			m_eCurrentInteractionType = EInteractionType.PrimaryStart;
 		}
-		else if(Input.GetMouseButtonDown(1))
+		else if (Input.GetKeyDown(s_eSecondaryKey))
 		{
-			m_CurrentInteraction = EInteractionType.Secondary;
+			m_eCurrentInteractionType = EInteractionType.SecondaryStart;
 		}
-		else if(Input.GetKeyDown(m_eUseKey))
+		if (Input.GetKeyUp(s_ePrimaryKey))
 		{
-			m_CurrentInteraction = EInteractionType.Use;
+			m_eCurrentInteractionType = EInteractionType.PrimaryEnd;
 		}
-		else if(Input.GetKeyDown(m_eAction2Key))
+		else if (Input.GetKeyUp(s_eSecondaryKey))
 		{
-			m_CurrentInteraction = EInteractionType.Action2;
+			m_eCurrentInteractionType = EInteractionType.SecondaryEnd;
+		}
+		else if(Input.GetKeyDown(s_eUseKey))
+		{
+			m_eCurrentInteractionType = EInteractionType.Use;
+		}
+		else if(Input.GetKeyDown(s_eAction2Key))
+		{
+			m_eCurrentInteractionType = EInteractionType.Action2;
 		}
 		else
 		{
@@ -113,33 +129,38 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	}
 
 	
+	[AClientMethod]
 	private void CheckInteractionObjects()
 	{
 		// Find the origin, direction, distance of the players interaction cursor
-		CPlayerHeadMotor playerHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
-		Vector3 orig = playerHeadMotor.ActorHead.transform.position;
-		Vector3 direction = playerHeadMotor.ActorHead.transform.forward;
-		float distance = 5.0f;
-		RaycastHit hit = new RaycastHit();
+		CPlayerHeadMotor cPlayerHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
+		Vector3 vOrigin = cPlayerHeadMotor.ActorHead.transform.position;
+		Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
+		float fDistance = 5.0f;
+		RaycastHit cRayHit = new RaycastHit();
+		GameObject cHitInteractableObject = null;
+
 		
 		// Check if the player cast a ray on the screen
-		if(CheckInteractableObjectRaycast(orig, direction, distance, out hit))
+		if(CheckInteractableObjectRaycast(vOrigin, vDirection, fDistance, out cRayHit))
 		{
 			// Get the game object which owns this mesh
-			GameObject IOHit = hit.collider.gameObject;
+			GameObject cHitObject = cRayHit.collider.gameObject;
 			
-			// Check the parents untill we find the one that is not of layer InteractableObject
+			// Check the parents until we find the one that is not of layer InteractableObject
 			int IOLayer = LayerMask.NameToLayer("InteractableObject");
-			for(int i = 0; i < 100; ++i)
+			for(int i = 0; i < 10; ++i)
 			{
-				if(i == 99)
+				// Break endless loop
+				if(i == 9)
 				{
-					Debug.LogError("CheckInteractionObjects Couldn't find the interactableobjetcs parent!");
+					Debug.LogError("Couldn't find the intractable objects parent!");
 				}
-                if (IOHit.transform.parent != null &&
-                    IOHit.transform.parent.gameObject.layer == IOLayer)
+
+                if (cHitObject.transform.parent != null &&
+                    cHitObject.transform.parent.gameObject.layer == IOLayer)
 				{
-					IOHit = IOHit.transform.parent.gameObject;
+					cHitObject = cHitObject.transform.parent.gameObject;
 				}
 				else
 				{
@@ -147,33 +168,42 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				}
 			}
 			
-			// Get the Interactable Object script from the object
-			CInteractableObject IO = IOHit.GetComponent<CInteractableObject>();
-			
+			// Get the intractable Object script from the object
+			CInteractableObject cInteractableObjectComponent = cHitObject.GetComponent<CInteractableObject>();
+
 			// If this is a valid IO
-			if(IO != null)
+			if (cInteractableObjectComponent != null)
 			{
-				// Get the network view id of the interactable object
-				CNetworkView IONetworkView = IOHit.GetComponent<CNetworkView>();
-				
-				if(IONetworkView != null)
-				{
-                    if (EventInteraction != null)
-                    {
-                        EventInteraction(m_CurrentInteraction, IOHit, hit);
-                    }
+				cHitInteractableObject = cHitObject;
+			}
+		}
 
 
-					IO.OnInteractionEvent(m_CurrentInteraction, gameObject, hit);
-				}
-				else
-				{
-					Debug.LogError("CheckInteractionObjects. Something has gone wrong here... There was no CNetworkView component!");
-				}
+		// If this is a valid IO
+		if (cHitInteractableObject != null)
+		{
+			// Get the network view id of the intractable object
+			CNetworkView cNetworkView = cHitInteractableObject.GetComponent<CNetworkView>();
+
+			if (cNetworkView == null)
+			{
+				Debug.LogError("CheckInteractionObjects. Something has gone wrong here... There was no CNetworkView component!");
 			}
 			else
 			{
-				Debug.LogError("CheckInteractionObjects. Something has gone wrong here... There was no CInteractableObject component!");
+				cHitInteractableObject.GetComponent<CInteractableObject>().OnInteractionEvent(m_eCurrentInteractionType, gameObject, cRayHit);
+			}
+
+			if (EventInteraction != null)
+			{
+				EventInteraction(m_eCurrentInteractionType, cHitInteractableObject, cRayHit);
+			}
+		}
+		else
+		{
+			if (EventNoInteraction != null)
+			{
+				EventNoInteraction(m_eCurrentInteractionType, cRayHit);
 			}
 		}
 	}
