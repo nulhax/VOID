@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e586cb774fed2449c9ed11c94c3d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testClip: {fileID: 8300000, guid: 671d5dc18b0069d4caf3c188fd9256d5, type: 3}
+  testClip: {fileID: 8300000, guid: 3d46ec0cd084aec42822879e8e8c9268, type: 3}
 --- !u!1001 &1688088628
 Prefab:
   m_ObjectHideFlags: 0

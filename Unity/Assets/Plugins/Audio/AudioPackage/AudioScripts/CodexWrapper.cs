@@ -31,9 +31,9 @@ public class CodexWrapper : MonoBehaviour
 	// Member Functions
 		
 	// Member Fields
-	static SpeexEncoder encoder = new SpeexEncoder(BandMode.Wide);
-	static SpeexDecoder decoder = new SpeexDecoder(BandMode.Wide, false);
-	static SpeexJitterBuffer jitterBuffer = new SpeexJitterBuffer(decoder);
+	static SpeexEncoder m_cEncoder = new SpeexEncoder(BandMode.Wide);
+	static SpeexDecoder m_eDecoder = new SpeexDecoder(BandMode.Wide, false);
+	static SpeexJitterBuffer jitterBuffer = new SpeexJitterBuffer(m_eDecoder);
 	public AudioClip testClip;
 	private int encodedSize = 0;
 		
@@ -51,30 +51,90 @@ public class CodexWrapper : MonoBehaviour
 	{
 		if(Input.GetKeyDown(KeyCode.Tab))
 		{
-			//Get raw clip data
-			float[] clipData = new float[testClip.samples];//testClip.channels * 
-			testClip.GetData(clipData, 0);			
+			int iAudioDataSize = testClip.samples * sizeof(float);
+			iAudioDataSize -= iAudioDataSize % 640;
+			Debug.Log("Audio data size: " + iAudioDataSize);
+
+
+			// Extract audio data
+			float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
+			testClip.GetData(fAudioData, 0);
+			Debug.Log("Audio length: " + testClip.length);
+			//Debug.Log("Audio sample: " + fAudioData[80000]);
+
 			
-			int sizeInMegabytes = (clipData.Length * sizeof(float)) / 1000;
+			// Convert to short
+			short[] saAudioData = new short[fAudioData.Length];
+
+
+			for (int i = 0; i < fAudioData.Length; ++i)
+				saAudioData[i] = (short)(fAudioData[i] * 32767.0f);
+
+
+			// Encode
+			byte[] baEncodedData = new byte[iAudioDataSize];
+			int iNumEncodedBytes = m_cEncoder.Encode(saAudioData, 0, saAudioData.Length, baEncodedData, 0, baEncodedData.Length);
+			Debug.Log("Encoded audio data size: " + iNumEncodedBytes + " : " + baEncodedData.Length);
+
+
+			// Decode
+			short[] saDecodedFrame = new short[fAudioData.Length];
+			int iNumDecodedBytes = m_eDecoder.Decode(baEncodedData, 0, iNumEncodedBytes, saDecodedFrame, 0, false);
+			Debug.Log("Decoded audio data size: " + iNumDecodedBytes + " : " + saDecodedFrame.Length);
+
+
+			// Convert to float
+			Debug.LogError(iNumDecodedBytes);
+			float[] faDecodedAudioData = new float[iNumDecodedBytes / sizeof(float)];
+
+
+			for (int i = 0; i < faDecodedAudioData.Length; ++i)
+			{
+				faDecodedAudioData[i] = (float)((float)saDecodedFrame[i] / 32767.0f);
+			}
+
+
+			//Buffer.BlockCopy(saDecodedFrame, 0, faDecodedAudioData, 0, iNumDecodedBytes);
+
+
+			//Debug.Log("Audio sample: " + faDecodedAudioData[80000]);
+
+
+
+			AudioClip newClip = AudioClip.Create("Test", faDecodedAudioData.Length, testClip.channels, testClip.frequency, false, false);
+			newClip.SetData(faDecodedAudioData, 0);
+			Debug.Log("Audio length: " + newClip.length);
+
+
+			AudioSource newSource = gameObject.GetComponent<AudioSource>();
+			newSource.priority = 10;
+
+			newSource.PlayOneShot(newClip);
+
+
+
+			return;
+			
+			int sizeInMegabytes = (fAudioData.Length * sizeof(float)) / 1000;
 			Debug.Log("Raw clip is " + sizeInMegabytes.ToString() + " Kilobytes long.");
 			
 			//Make sure to only send in complete frames. Discard any additional data which does not fit in a full frame.
 			int numSamplesToEncode = testClip.samples;
-			numSamplesToEncode -= numSamplesToEncode % encoder.FrameSize;
+			numSamplesToEncode -= numSamplesToEncode % m_cEncoder.FrameSize;
 						
 			CNetworkStream decodedData = new CNetworkStream();
 			
 			encodedSize = 0;
 			
 			//Break up samples into frames. Iterate through these frames and encode each one.
-			for(int i = 0 ; i < numSamplesToEncode; i += encoder.FrameSize)
+			for(int i = 0 ; i < numSamplesToEncode; i += m_cEncoder.FrameSize)
 			{
 				//create a buffer equal to the length of the encoder frame size
-				float[] clipFrame = new float[encoder.FrameSize];
+				float[] clipFrame = new float[m_cEncoder.FrameSize];
 				//Populate with current frame data
-				Buffer.BlockCopy(clipData,i,clipFrame,0,encoder.FrameSize * sizeof(float));
+				Buffer.BlockCopy(fAudioData,i,clipFrame,0,m_cEncoder.FrameSize * sizeof(float));
 				
-				int numRawBytes = encoder.FrameSize * sizeof(float);
+				int numRawBytes = m_cEncoder.FrameSize * sizeof(float);
 								
 				byte[] encodedFrameBuffer = EncodeData(clipFrame, numRawBytes);
 				
@@ -95,26 +155,27 @@ public class CodexWrapper : MonoBehaviour
 			float[] decodedFloatData = new float[decodedBytes.Length / sizeof(float)];
 			Buffer.BlockCopy(decodedBytes,0,decodedFloatData,0,decodedBytes.Length);
 			
+			/*
 			AudioClip newClip = AudioClip.Create("Test", testClip.samples, testClip.channels, testClip.frequency, false, false);
 			newClip.SetData(decodedFloatData, 0);
 			
 			AudioSource newSource = gameObject.AddComponent<AudioSource>();
 			newSource.clip = newClip;
 			newSource.Play();
-			
+			*/
 		}		
 	}
 	
 	public byte[] EncodeData(float[] rawData, int bytesRecorded)
 	{
 		// note: the number of samples per frame must be a multiple of encoder.FrameSize
-		bytesRecorded -= bytesRecorded % encoder.FrameSize;
+		bytesRecorded -= bytesRecorded % m_cEncoder.FrameSize;
 		
 		short[] data = new short[bytesRecorded / sizeof(short)];
 		Buffer.BlockCopy(rawData, 0, data, 0, bytesRecorded);	
 		
 		var encodedData = new byte[bytesRecorded];			
-		var encodedBytes = encoder.Encode(data, 0, data.Length, encodedData, 0, encodedData.Length);
+		var encodedBytes = m_cEncoder.Encode(data, 0, data.Length, encodedData, 0, encodedData.Length);
 		encodedSize += encodedBytes;
 		
 		var returnData = new byte[encodedBytes];
@@ -161,7 +222,7 @@ public class CodexWrapper : MonoBehaviour
 		byte[] encodedData = _cAudioDataStream.ReadBytes(_cAudioDataStream.NumUnreadBytes);
 		
 		short[] decodedFrame = new short[BytesRecorded];
-		int numDecoded = decoder.Decode(encodedData, 0, encodedData.Length, decodedFrame, 0, false);
+		int numDecoded = m_eDecoder.Decode(encodedData, 0, encodedData.Length, decodedFrame, 0, false);
 		
 		byte[] dedocedBytes = new byte[numDecoded * sizeof(short)];
 		Buffer.BlockCopy(decodedFrame,0,dedocedBytes,0,numDecoded * 2); 
