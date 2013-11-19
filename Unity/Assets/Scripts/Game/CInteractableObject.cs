@@ -55,12 +55,12 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		
 		switch(_InteractionEvent)
 		{
-		case CPlayerInteractor.EInteractionType.Primary:
+		case CPlayerInteractor.EInteractionType.PrimaryStart:
 			if(UseLeftClick != null)
 				UseLeftClick(_RayHit);
 			break;
 			
-		case CPlayerInteractor.EInteractionType.Secondary:
+		case CPlayerInteractor.EInteractionType.SecondaryStart:
 			if(UseRightClick != null)
 				UseRightClick(_RayHit);
 			break;

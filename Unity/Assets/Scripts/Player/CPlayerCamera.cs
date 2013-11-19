@@ -39,11 +39,11 @@ public class CPlayerCamera : MonoBehaviour
 		
 		// Configure the camerea
 		gameObject.camera.cullingMask &= ~(1 << LayerMask.NameToLayer("DUI"));
+		gameObject.camera.nearClipPlane = 0.2f;
 		gameObject.camera.farClipPlane = 5000.0f;
 		
-		Vector3 pos = transform.position;
-		pos.z += 0.5f;
-		transform.position = pos;
+		//Vector3 pos = transform.position;
+		//transform.position = pos;
 	}
 	
 	void OnGUI()
