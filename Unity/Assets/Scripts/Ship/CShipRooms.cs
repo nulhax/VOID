@@ -47,99 +47,48 @@ public class CShipRooms : MonoBehaviour
 	}
 
 
-	public void Update()
-	{
-		// Do it from the control consoles
-		
-//		if (CNetwork.IsServer)
-//		{
-//			RaycastHit hit;
-//		 	Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
-//			if (Physics.Raycast (ray, out hit, 1000))
-//			{		
-//				if(hit.collider.gameObject.name == "ExpansionPort")
-//				{
-//					if(Input.GetMouseButtonDown(0))
-//					{
-//						uint RoomId = hit.collider.transform.parent.GetComponent<CRoomInterface>().RoomId;
-//						uint PortId = hit.collider.gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId;
-//						CreateRoom(CRoomInterface.ERoomType.Factory, RoomId, PortId, 0);  				
-//					}
-//				}			
-//			}   
-//		}
-	}
-
-
 	public bool ValidateCreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId)
 	{
-		
-		
 		return (true);
 	}
 
 
-	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId, uint _uiAttachToId)
+	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
-		GameObject cExpansionPort =  m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId);
-		
-		if(cExpansionPort.GetComponent<CExpansionPortInterface>().HasAttachedRoom == false)
-		{		
-			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
-			GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-					
+		CExpansionPortInterface cExpansionPort = null;
+		if(_uiExpansionPortId != uint.MaxValue && _uiAttachToId != uint.MaxValue)
+		{
+			cExpansionPort = m_mRooms[_uiRoomId].GetComponent<CRoomInterface>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
 			
-			//Attach the new room to the expansion port selected			
-			cExpansionPort.GetComponent<CExpansionPortInterface>().Attach(_uiAttachToId, cNewRoomObject);			
-			
-			cNewRoomObject.transform.parent = transform;
-				
-			cNewRoomObject.GetComponent<CNetworkView>().SyncParent();
-			cNewRoomObject.GetComponent<CNetworkView>().SyncTransformPosition();
-			cNewRoomObject.GetComponent<CNetworkView>().SyncTransformRotation();
-				
-			
-			// Create the room's doors and initialise the control console
-			CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
-			room.ServerCreateDoors();
-			room.ServerCreateControlConsole();
-			
-			uint uiRoomId = ++m_uiRoomIdCount;
-			m_mRooms.Add(uiRoomId, cNewRoomObject);
-			
-			cNewRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;
-			
-			return (cNewRoomObject);
+			if(cExpansionPort.HasAttachedRoom == true)
+			{
+				Debug.LogWarning("Failed to create new room. Port already in use");
+				return(null);
+			}
 		}
-		Debug.LogWarning("Failed to create new room. Port already in use");
-		return(null);
-	}
-	
-	public GameObject CreateRoom(CRoomInterface.ERoomType _eType, uint _uiRoomId)
-	{
+		
+		uint uiRoomId = ++m_uiRoomIdCount;
+		
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CRoomInterface.GetRoomPrefab(_eType);
 		GameObject cNewRoomObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-				
+		
+		CRoomInterface roomInterface = cNewRoomObject.GetComponent<CRoomInterface>();
+		roomInterface.RoomId = uiRoomId;
+		roomInterface.RoomType = _eType;
+		
 		cNewRoomObject.transform.parent = transform;
+		
+		if(cExpansionPort != null)
+			cExpansionPort.Attach(_uiAttachToId, cNewRoomObject);			
 			
 		cNewRoomObject.GetComponent<CNetworkView>().SyncParent();
 		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformPosition();
 		cNewRoomObject.GetComponent<CNetworkView>().SyncTransformRotation();
-			
 		
-		// Create the room's doors and initialise the control console
-		CRoomGeneral room = cNewRoomObject.GetComponent<CRoomGeneral>();
-		room.ServerCreateDoors();
-		room.ServerCreateControlConsole();
-		
-		uint uiRoomId = ++m_uiRoomIdCount;
 		m_mRooms.Add(uiRoomId, cNewRoomObject);
 		
-		cNewRoomObject.GetComponent<CRoomInterface>().RoomId = uiRoomId;		
-
 		return (cNewRoomObject);
 	}
-
 
 	public GameObject GetRoom(uint _uiRoomId)
 	{

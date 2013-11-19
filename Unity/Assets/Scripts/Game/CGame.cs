@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -46,14 +46,21 @@ public class CGame : CNetworkMonoBehaviour
 		HallwayXSection,
 		Door,
 		ControlConsole,
+		Cockpit,
 		PlayerActor,
         ToolTorch,
+		ToolRachet,
         GalaxyParent,
         Asteroid_FIRST,
         // Do not insert anything here.
         Asteroid_LAST = Asteroid_FIRST + 2, // Inclusive, thus 3 total.
 		Fire,
         TESTFACTORY,
+		BlackMatterCell,
+		FuelCell,
+		PlasmaCell,
+		PowerCell,
+		PanelFuseBox,
 	}
 
 
@@ -150,8 +157,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomGravityGenerator, "Ship/Rooms/RoomGravityGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Rooms/Doors/Door");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Rooms/Cockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
@@ -162,13 +171,19 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayXSection, "Ship/Hallways/HallwayXSection");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomLifeSupport, "Ship/Rooms/RoomLifeSupport");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/BlackMatterCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/FuelCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/PlasmaCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Panels/PanelFuseBox");
 
 		// Register serialization targets
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
-        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
-
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerConsoleOperator.SerializePlayerState, CPlayerConsoleOperator.UnserializePlayerState);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
+       	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
 		
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
@@ -330,11 +345,6 @@ public class CGame : CNetworkMonoBehaviour
 			Screen.lockCursor = !Screen.lockCursor;
 		}
 
-		if (Input.GetKeyDown(KeyCode.P))
-		{
-			//Ship.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Factory, )
-		}
-
 		// Quick quit game
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
@@ -367,10 +377,15 @@ public class CGame : CNetworkMonoBehaviour
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
-        CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.ToolTorch);
-		
+        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+
 		// Fire schtuff making on the ramp stuff
-		CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.Fire);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
@@ -444,6 +459,7 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Create the camera for the client
 		PlayerActor.GetComponent<CPlayerHeadMotor>().AttatchPlayerCamera();
+		PlayerActor.transform.FindChild("soldier_Military_Male_Lod_1").GetComponent<SkinnedMeshRenderer>().enabled = false;
 	}
 
 

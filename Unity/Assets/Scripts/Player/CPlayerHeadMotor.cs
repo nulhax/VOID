@@ -162,7 +162,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		// Create the actor head object
 		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Head", typeof(GameObject))) as GameObject;
         m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.up * 0.4f;
+        m_ActorHead.transform.localPosition = Vector3.up * 0.65f;
 	}
 
     public void Update()
@@ -187,9 +187,19 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		// Attach the player camera script
 		m_ActorHead.AddComponent<CPlayerCamera>();
     }
+
+	static bool m_bFocused = true;
+	void OnApplicationFocus(bool _bFocued) {
+		m_bFocused = _bFocued;
+	}
 	
     protected void UpdateHeadMotorInput()
-	{	
+	{
+		if (!m_bFocused)
+		{
+			return;
+		}
+
 		Vector2 rotationState = m_HeadMotorState.CurrentRotationState;
 		
 		// Rotate around Y

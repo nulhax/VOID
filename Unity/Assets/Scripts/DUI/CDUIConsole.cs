@@ -3,7 +3,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   CActorMotor.cs
+//  File Name   :   CDUIConsole.cs
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -36,6 +36,14 @@ public class CDUIConsole : MonoBehaviour
 		} 
 	}
 	
+	public GameObject DUIGameObject 
+	{ 
+		get 
+		{ 
+			return(m_DUI); 
+		} 
+	}
+	
 	// Member Methods
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
     {
@@ -45,11 +53,11 @@ public class CDUIConsole : MonoBehaviour
 			Debug.LogError("CDUIConsole Initialise failed. ScreenObj hasn't been assigned!");
 		}
 		
-		// Set the screen to be on the right layer
-		m_ScreenObject.layer = LayerMask.NameToLayer("Screen");
-		
 		// Create the DUI object
 		CreateDUI(_Quality, _Layout, _Dimensions);
+		
+		// Initialise the duiInteraction script
+		GetComponent<CDUIInteraction>().Initialise();
     }
 	
     private void CreateDUI(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
@@ -60,7 +68,6 @@ public class CDUIConsole : MonoBehaviour
         m_DUI.layer = LayerMask.NameToLayer("DUI");
 		m_DUI.transform.rotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
         m_DUI.transform.position = transform.position + m_DUI.transform.rotation * new Vector3(0.0f, 0.0f, -1.0f);
-		m_DUI.transform.parent = transform.parent;
 		
         // Add the DUI component
         CDUI dui = m_DUI.AddComponent<CDUI>();

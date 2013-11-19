@@ -76,7 +76,7 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public void Sync(object _cValue)
+	public override void Sync(object _cValue)
 	{
 		Logger.WriteErrorOn(m_nSyncNotifyCallback == null, "This network var does not have a OnSyncCallback defined!!");
 
@@ -87,7 +87,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
-	public void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback)
+	public override void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback)
 	{
 		Logger.WriteErrorOn(m_bNetworkVarId != 0, "You should not change a network var's network view owner once set. Undefined behaviour may occur");
 
@@ -102,19 +102,19 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-    public object GetValueObject()
+	public override object GetValueObject()
     {
         return (m_Value);
     }
 
 
-    public Type GetValueType()
+	public override Type GetValueType()
     {
         return (m_Value.GetType());
     }
 
 
-	public bool IsDefault()
+	public override bool IsDefault()
 	{
 		return (m_Value.Equals(m_StartValue));
 	}
