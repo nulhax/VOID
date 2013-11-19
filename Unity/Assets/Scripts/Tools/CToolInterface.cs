@@ -45,13 +45,13 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void NotifyPrimaryActivate();
+	public delegate void NotifyPrimaryActivate(GameObject _cGameObject);
 	public event NotifyPrimaryActivate EventPrimaryActivate;
 
 	public delegate void NotifyPrimaryDeactivate();
 	public event NotifyPrimaryDeactivate EventPrimaryDeactivate;
 
-	public delegate void NotifySecondaryActivate();
+	public delegate void NotifySecondaryActivate(GameObject _cGameObject);
 	public event NotifySecondaryActivate EventSecondaryActivate;
 
 	public delegate void NotifySecondaryDeactivate();
@@ -65,6 +65,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public delegate void NotifyDropped();
 	public event NotifyDropped EventDropped;
+
+	public delegate void NotifyUse(GameObject _cGameObject);
+	public event NotifyUse EventUse;
 	
 	
 // Member Properties
@@ -158,6 +161,72 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerMethod]
+	public void SetPrimaryActive(bool _bActive, GameObject _cInteractableObject)
+	{
+		// Check not already active
+		if (_bActive &&
+			!m_bPrimaryActive)
+		{
+			// Set active
+			m_bPrimaryActive = true;
+
+			// Notify observers
+			if (EventPrimaryActivate != null)
+			{
+				EventPrimaryActivate(_cInteractableObject);
+			}
+		}
+
+		// Check currently active
+		else if (!_bActive &&
+				 m_bPrimaryActive)
+		{
+			// Set deactive
+			m_bPrimaryActive = false;
+
+			// Notify observers
+			if (EventPrimaryDeactivate != null)
+			{
+				EventPrimaryDeactivate();
+			}
+		}
+	}
+
+
+	[AServerMethod]
+	public void SetSecondaryActive(bool _bActive, GameObject _cInteractableObject)
+	{
+		// Check not already active
+		if (_bActive &&
+			!m_bPrimaryActive)
+		{
+			// Set active
+			m_bSecondaryActive = true;
+
+			// Notify observers
+			if (EventSecondaryActivate != null)
+			{
+				EventSecondaryActivate(_cInteractableObject);
+			}
+		}
+
+		// Check currently active
+		else if (!_bActive &&
+				 m_bPrimaryActive)
+		{
+			// Set deactive
+			m_bSecondaryActive = false;
+
+			// Notify observers
+			if (EventSecondaryDeactivate != null)
+			{
+				EventSecondaryDeactivate();
+			}
+		}
+	}
+
+
+	[AServerMethod]
 	public void PickUp(ulong _ulPlayerId)
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
@@ -220,79 +289,18 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerMethod]
-	public void SetPrimaryActive(bool _bActive)
+	public void Use(GameObject _cInteractableObject)
 	{
-		// Check not already active
-		if (_bActive &&
-			!m_bPrimaryActive)
+		// Check currently held
+		if (IsHeld)
 		{
-			// Set active
-            m_bPrimaryActive = true;
-
-            // Notify observers
-            if (EventPrimaryActivate != null)
-            {
-                EventPrimaryActivate();
-            }
-		}
-
-		// Check currently active
-		else if (!_bActive &&
-				 m_bPrimaryActive)
-		{
-			// Set deactive
-			m_bPrimaryActive = false;
-
-            // Notify observers
-            if (EventPrimaryDeactivate != null)
-            {
-                EventPrimaryDeactivate();
-            }
+			// Notify observers
+			if (EventUse != null)
+			{
+				EventUse(_cInteractableObject);
+			}
 		}
 	}
-
-
-	[AServerMethod]
-	public void SetSecondaryActive(bool _bActive)
-	{
-		// Check not already active
-		if (_bActive &&
-			!m_bPrimaryActive)
-		{
-			// Set active
-			m_bSecondaryActive = true;
-
-            // Notify observers
-            if (EventSecondaryActivate != null)
-            {
-                EventSecondaryActivate();
-            }
-		}
-
-		// Check currently active
-        else if (!_bActive &&
-				 m_bPrimaryActive)
-		{
-			// Set deactive
-			m_bSecondaryActive = false;
-
-            // Notify observers
-            if (EventSecondaryDeactivate != null)
-            {
-                EventSecondaryDeactivate();
-            }
-		}
-	}
-
-
-    [AServerMethod]
-    void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
-    {
-        if (m_ulOwnerPlayerId == _cPlayer.PlayerId)
-        {
-            Drop();
-        }
-    }
 
 
 // Member Fields

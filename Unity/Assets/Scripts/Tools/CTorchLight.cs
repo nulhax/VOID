@@ -1,10 +1,39 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CTorchLight.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
 
-public class Torch : CNetworkMonoBehaviour {
-	
-    CNetworkVar<bool> m_bTorchLit = null;
-	CNetworkVar<byte> m_bTorchColour = null;
+
+// Namespaces
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+
+/* Implementation */
+
+
+public class CTorchLight : CNetworkMonoBehaviour
+{
+
+// Member Types
+
+
+// Member Delegates & Events
+
+
+// Member Properties
+
+
+// Member Functions
+
 
     public override void InstanceNetworkVars()
     {
@@ -47,10 +76,7 @@ public class Torch : CNetworkMonoBehaviour {
     }
 
 
-
-
-	// Use this for initialization
-	void Start ()
+	public void Start()
 	{
 		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(ToggleActivate);
 		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += new CToolInterface.NotifySecondaryActivate(ToggleColour);
@@ -60,14 +86,19 @@ public class Torch : CNetworkMonoBehaviour {
 			m_bTorchLit.Set(false);
 		}
 	}
-	
-	// Update is called once per frame
-	void Update ()
-	{
 
+
+	public void OnDestroy()
+	{
 	}
 
-    private void ToggleActivate()
+
+	public void Update()
+	{
+	}
+
+
+	void ToggleActivate(GameObject _cInteractableObject)
     {
         if (!m_bTorchLit.Get())
         {
@@ -77,10 +108,10 @@ public class Torch : CNetworkMonoBehaviour {
         {
             m_bTorchLit.Set(false);
         }
-    } 
-  
+    }
 
-	private void ToggleColour()
+
+	void ToggleColour(GameObject _cInteractableObject)
     {
 		byte bNextNumber = (byte)(m_bTorchColour.Get() + 1);
 
@@ -93,4 +124,12 @@ public class Torch : CNetworkMonoBehaviour {
 		m_bTorchColour.Set(bNextNumber);
 	}
 
-}
+
+// Member Fields
+
+
+    CNetworkVar<bool> m_bTorchLit = null;
+	CNetworkVar<byte> m_bTorchColour = null;
+
+
+};
