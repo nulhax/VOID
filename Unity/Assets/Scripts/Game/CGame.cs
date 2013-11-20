@@ -50,6 +50,7 @@ public class CGame : CNetworkMonoBehaviour
 		PlayerActor,
         ToolTorch,
 		ToolRachet,
+		ToolExtinguisher,
         GalaxyParent,
         Asteroid_FIRST,
         // Do not insert anything here.
@@ -162,7 +163,8 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
@@ -385,6 +387,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 
 		// Fire schtuff making on the ramp stuff
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
