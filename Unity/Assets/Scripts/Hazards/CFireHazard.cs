@@ -32,6 +32,22 @@ public class CFireHazard : MonoBehaviour {
     // Member Functions
 
 
+	public float Health
+	{
+		set
+		{ 
+			m_fHealth = value;
+			if (!m_bDead &&
+				m_fHealth < 0)
+			{
+				CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+				m_bDead = true;
+			}
+		}
+		get { return (m_fHealth); }
+	}
+
+
     public float Damage
     {
         get { return m_fDamage; }
@@ -88,4 +104,8 @@ public class CFireHazard : MonoBehaviour {
 	
 	//Members
 	private float m_fDamage;
+	float m_fHealth = 100;
+	bool m_bDead = false;
+
+
 }
