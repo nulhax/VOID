@@ -111,6 +111,18 @@ public class CNetworkStream
 	}
 
 
+	public void Write(byte[] _baData, uint _uiLength)
+	{
+		m_cBitStream.Write(_baData, _uiLength);
+	}
+
+
+	public void Write(byte[] _baData, int _iLength)
+	{
+		Write(_baData, (uint)_iLength);
+	}
+
+
 	public void Write(byte _bValue)
 	{
 		m_cBitStream.Write(_bValue);

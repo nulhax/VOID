@@ -85,8 +85,8 @@ public class CNetworkServer : MonoBehaviour
     public event NotifyShutdown EventShutdown;
 	
 	
-	public delegate byte[] NotifyRecievedMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream);
-	public event NotifyRecievedMicrophoneAudio EventRecievedPlayerMicrophoneAudio;
+	public delegate void NotifyRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream);
+	public event NotifyRecievedPlayerMicrophoneAudio EventRecievedPlayerMicrophoneAudio;
 
 
 // Member Functions

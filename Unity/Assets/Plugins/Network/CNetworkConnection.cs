@@ -37,8 +37,8 @@ public class CNetworkConnection : MonoBehaviour
 	public event OnDisconnect EventDisconnect;
 	
 	
-	public delegate void OnRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream);
-	public event OnRecievedMicrophoneAudio EventRecievedMicrophoneAudio;
+	public delegate void HandleRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream);
+	public event HandleRecievedMicrophoneAudio EventRecievedMicrophoneAudio;
 
 
 	public delegate void SerializeMethod(CNetworkStream _cStream);
