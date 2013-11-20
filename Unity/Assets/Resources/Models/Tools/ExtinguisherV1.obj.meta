@@ -1,0 +1,85 @@
+fileFormatVersion: 2
+guid: 52f112035bf4d824781347661c93e895
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: ext_Canister_GEO_extinguisher_GEO
+    100002: extinguisher_GEO_ext_Body_GEO
+    100004: extinguisher_GEO_ext_Gauge_GEO
+    100006: extinguisher_GEO_ext_Handle_GEO
+    100008: extinguisher_GEO_ext_Trigger_GEO
+    100010: //RootNode
+    400000: ext_Canister_GEO_extinguisher_GEO
+    400002: extinguisher_GEO_ext_Body_GEO
+    400004: extinguisher_GEO_ext_Gauge_GEO
+    400006: extinguisher_GEO_ext_Handle_GEO
+    400008: extinguisher_GEO_ext_Trigger_GEO
+    400010: //RootNode
+    2300000: ext_Canister_GEO_extinguisher_GEO
+    2300002: extinguisher_GEO_ext_Body_GEO
+    2300004: extinguisher_GEO_ext_Gauge_GEO
+    2300006: extinguisher_GEO_ext_Handle_GEO
+    2300008: extinguisher_GEO_ext_Trigger_GEO
+    3300000: ext_Canister_GEO_extinguisher_GEO
+    3300002: extinguisher_GEO_ext_Body_GEO
+    3300004: extinguisher_GEO_ext_Gauge_GEO
+    3300006: extinguisher_GEO_ext_Handle_GEO
+    3300008: extinguisher_GEO_ext_Trigger_GEO
+    4300000: ext_Canister_GEO_extinguisher_GEO
+    4300002: extinguisher_GEO_ext_Body_GEO
+    4300004: extinguisher_GEO_ext_Gauge_GEO
+    4300006: extinguisher_GEO_ext_Handle_GEO
+    4300008: extinguisher_GEO_ext_Trigger_GEO
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .0250000004
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 2
+  userData: 

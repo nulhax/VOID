@@ -16,10 +16,10 @@ public class GalaxyObserver : MonoBehaviour
             float observationRadius = 1.0f;
             {
                 Rigidbody body = gameObject.GetComponent<Rigidbody>();
-                if (body)
+                if (body && body.collider != null)
                 {
                     Debug.Log("Got Rigidbody on " + gameObject.name);
-
+					
                     observationRadius = Mathf.Sqrt(body.collider.bounds.extents.sqrMagnitude);
                 }
                 else

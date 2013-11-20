@@ -263,56 +263,57 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	private void ProcessMovement()
     {	
-		// Check if the actor is grounded
-		if(CheckIsGrounded())
-		{	
-			float moveSpeed = m_MovementSpeed;
-			Vector3 relMoveVelocity = Vector3.zero;
-	
-			// Sprinting
-			if(m_MotorState.Sprinting)
-			{
-				moveSpeed = m_SprintSpeed;
-			}
-			
-			// Moving 
-	        if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
-			{
-				relMoveVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
-			}
-			
-			// Strafing
-			if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
-			{
-				relMoveVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
-			}
-			
-			// Jumping
-			if(m_MotorState.Jumping)
-			{
-				rigidbody.AddRelativeForce(Vector3.up * m_JumpSpeed, ForceMode.Impulse);
-			}
-			
-			// Normalize the move velocity vector and multiply by the speed
-			relMoveVelocity = relMoveVelocity.normalized * moveSpeed;
-			
-			// Get the relative velocity
-			Vector3 relVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
-		
-			// Set the new velocity, conserve the Y velocity for gravity
-			Vector3 relVelChange = new Vector3(relMoveVelocity.x, 0.0f, relMoveVelocity.z) - new Vector3(relVelocity.x, 0.0f, relVelocity.z);
-			rigidbody.AddRelativeForce(relVelChange, ForceMode.VelocityChange);
-		}
-		else
-		{
-			// Apply the gravity force
-			rigidbody.AddForce(m_GravityForce, ForceMode.Acceleration);
-		}
+//		// Check if the actor is grounded
+//		if(CheckIsGrounded())
+//		{	
+//			float moveSpeed = m_MovementSpeed;
+//			Vector3 relMoveVelocity = Vector3.zero;
+//	
+//			// Sprinting
+//			if(m_MotorState.Sprinting)
+//			{
+//				moveSpeed = m_SprintSpeed;
+//			}
+//			
+//			// Moving 
+//	        if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
+//			{
+//				relMoveVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
+//			}
+//			
+//			// Strafing
+//			if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
+//			{
+//				relMoveVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
+//			}
+//			
+//			// Jumping
+//			if(m_MotorState.Jumping)
+//			{
+//				rigidbody.AddRelativeForce(Vector3.up * m_JumpSpeed, ForceMode.Impulse);
+//			}
+//			
+//			// Normalize the move velocity vector and multiply by the speed
+//			relMoveVelocity = relMoveVelocity.normalized * moveSpeed;
+//			
+//			// Get the relative velocity
+//			Vector3 relVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
+//		
+//			// Set the new velocity, conserve the Y velocity for gravity
+//			Vector3 relVelChange = new Vector3(relMoveVelocity.x, 0.0f, relMoveVelocity.z) - new Vector3(relVelocity.x, 0.0f, relVelocity.z);
+//			
+//			rigidbody.position += relVelChange / Time.fixedDeltaTime;
+//		}
+//		else
+//		{
+//			// Apply the gravity force
+//			rigidbody.position += m_GravityForce / Time.fixedDeltaTime * Time.fixedDeltaTime;
+//		}
 	}
 	
 	private bool CheckIsGrounded()
 	{
-		Ray ray = new Ray(rigidbody.position, -transform.up);
+		Ray ray = new Ray(transform.position, -transform.up);
 		if(Physics.SphereCast(ray, 0.5f, 0.5f))
 		{
 			m_bGrounded = true;

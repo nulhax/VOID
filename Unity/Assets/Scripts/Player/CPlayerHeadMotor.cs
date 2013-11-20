@@ -74,14 +74,14 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	public float m_MinimumY = -60.0f;
 	public float m_MaximumY = 60.0f;
 	
+	public GameObject m_ActorHead = null;
+	
 	
 	private CHeadMotorState m_HeadMotorState = new CHeadMotorState();
 	
 	
 	private Vector3 m_Rotation = Vector3.zero;
 	private bool m_FreezeHeadInput = false;
-	private GameObject m_ActorHead = null;
-	
 	
 	
 	private CNetworkVar<float> m_HeadEulerX    = null;
@@ -169,22 +169,21 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	
     public void Awake()
 	{	
-		// Create the actor head object
-		m_ActorHead = transform.FindChild("Head").gameObject;
+		
 	}
 	
 	public void Start()
 	{
-		GameObject worldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(gameObject);
+		GameObject actorHead = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(ActorHead);
 		
 		if(CGame.PlayerActor == gameObject)
 		{
 			// Add the player camera to this player world actor
-			worldActor.transform.FindChild("Head").gameObject.AddComponent<CPlayerCamera>();
+			actorHead.AddComponent<CPlayerCamera>();
 		}
 		
 		// Add the galaxy observer to the world actor
-		worldActor.AddComponent<GalaxyObserver>();
+		actorHead.AddComponent<GalaxyObserver>();
 	}
 
     public void Update()

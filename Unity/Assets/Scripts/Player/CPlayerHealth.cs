@@ -18,7 +18,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-public class CPlayerHealth : MonoBehaviour 
+public class CPlayerHealth : CNetworkMonoBehaviour
 {
 
     // Member Types
@@ -28,14 +28,19 @@ public class CPlayerHealth : MonoBehaviour
 
 
     // Member Properties
-
+	public float fHealth
+	{ 
+		get { return (m_fActorHp.Get()); }
+		set { m_fActorHp.Set(value); }
+	}
 
     // Member Functions
+	public override void InstanceNetworkVars()
+	{
+		m_fActorHp = new CNetworkVar<float>(OnNetworkVarSync, 100.0f);
+		m_bIsAlive = new CNetworkVar<bool>(OnNetworkVarSync, true);
+	}
 
-
-    // Get player HP from XML
-    public float m_fActorHp = 100.0f;
-	public bool m_bIsAlive = true;
 	
 	void Start () 
     {
@@ -45,8 +50,7 @@ public class CPlayerHealth : MonoBehaviour
 			if(child.GetComponent<Rigidbody>() != null)
 			{
 				Rigidbody childRigidBody = child.GetComponent<Rigidbody>();
-				childRigidBody.isKinematic = false;	
-				childRigidBody.useGravity = false;
+				childRigidBody.isKinematic = true;
 			}
 			
 			if(child.GetComponent<CapsuleCollider>() != null)
@@ -63,8 +67,7 @@ public class CPlayerHealth : MonoBehaviour
 		}
 		
 		// Change the parents values back
-		rigidbody.isKinematic = false;
-		collider.isTrigger = false;
+		//rigidbody.isKinematic = false;
 	}
 
     public void OnDestroy()
@@ -74,73 +77,31 @@ public class CPlayerHealth : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		if(CNetwork.IsServer)
-		{
-		    // Get the player health from the XML
-			if(m_bIsAlive == true)
-			{
-				if(m_fActorHp <= 0.0f || Input.GetKeyDown(KeyCode.Q))
-				{			
-					Debug.Log("Player is deaaad");
-					
-					foreach(Transform child in transform.GetComponentsInChildren<Transform>())
-					{
-						Rigidbody rigidBody;
-						if(child.GetComponent<Rigidbody>() != null)
-						{
-							rigidBody = child.GetComponent<Rigidbody>();
-							rigidBody.isKinematic = false;	
-						}
-						
-						CapsuleCollider capCollider;
-						if(child.GetComponent<CapsuleCollider>() != null)
-						{
-							capCollider = child.GetComponent<CapsuleCollider>();
-							capCollider.isTrigger = false;	
-						}
-						
-						BoxCollider boxCollider;
-						if(child.GetComponent<BoxCollider>() != null)
-						{
-							boxCollider = child.GetComponent<BoxCollider>();
-							boxCollider.isTrigger = false;	
-						}
-						
-						
-						// Below needs to be syncronized to the clients not only the server. Otherwise the clients will never get these changes.
-						// Use CNetworkVars to do this - not RPC calls. As RPC calls will not be queued up when a new player joins.
-						
-						transform.GetComponent<CharacterController>().enabled = false;
-						transform.GetComponent<CPlayerBodyMotor>().enabled = false;
-						transform.GetComponent<CPlayerHeadMotor>().enabled = false;
-						
-						// CPlayerCamera only exists on the CLIENT player actor. This will only exist on the server if this gameObject == CGame.PlayerActor.
-						// In other words the below stuff needs to be syncronized to each client indivisually. 
-						// See InvokeRPC() and CNetworkView.ViewID to send just to the lient to modify their camera.
-						
-						/*
-						Camera headCam = transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera;
-						Vector3 pos = headCam.transform.localPosition;
-						pos.z -= 0.05f;
-						headCam.transform.localPosition = pos;
-						*/					
-					}	
-					
-					m_bIsAlive = false;
-				}	
-			}
-			else
-			{
-				
-				// Same deal as above
-				
-				/*
-				transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera.transform.LookAt(transform);
-				*/
-				
-				
-				// Do nothing at the moment
-			}
+			// Below needs to be syncronized to the clients not only the server. Otherwise the clients will never get these changes.
+			// Use CNetworkVars to do this - not RPC calls. As RPC calls will not be queued up when a new player joins.
+			
+
+			
+			// CPlayerCamera only exists on the CLIENT player actor. This will only exist on the server if this gameObject == CGame.PlayerActor.
+			// In other words the below stuff needs to be syncronized to each client indivisually. 
+			// See InvokeRPC() and CNetworkView.ViewID to send just to the lient to modify their camera.
+			
+			/*
+			Camera headCam = transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera;
+			Vector3 pos = headCam.transform.localPosition;
+			pos.z -= 0.05f;
+			headCam.transform.localPosition = pos;
+			*/					
+
+			// Same deal as above
+			
+			/*
+			transform.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponent<CPlayerCamera>().camera.transform.LookAt(transform);
+			*/
+			
+		
+			// Do nothing at the moment
+		
 	        // Check if the player is in harmful atmosphere leading to suffocation
 	            // Decrease stamina first and incrimenting rate
 	            // Then decrease health
@@ -157,15 +118,61 @@ public class CPlayerHealth : MonoBehaviour
 	        // Check health points
 	
 	        // Send a complete loss of health to manager that handles death screen
+		
+	}
+
+	void OnNetworkVarSync(INetworkVar _cVarInstance)
+	{
+		if(_cVarInstance == m_bIsAlive)
+		{
+			foreach(Transform child in transform.GetComponentsInChildren<Transform>())
+			{
+				Rigidbody rigidBody;
+				if(child.GetComponent<Rigidbody>() != null)
+				{
+					rigidBody = child.GetComponent<Rigidbody>();
+					rigidBody.isKinematic = false;	
+				}
+				
+				CapsuleCollider capCollider;
+				if(child.GetComponent<CapsuleCollider>() != null)
+				{
+					capCollider = child.GetComponent<CapsuleCollider>();
+					capCollider.isTrigger = false;	
+				}
+				
+				BoxCollider boxCollider;
+				if(child.GetComponent<BoxCollider>() != null)
+				{
+					boxCollider = child.GetComponent<BoxCollider>();
+					boxCollider.isTrigger = false;	
+				}
+				
+				
+			}
+			transform.GetComponent<CharacterController>().enabled = false;
+			transform.GetComponent<CPlayerBodyMotor>().enabled = false;
+			transform.GetComponent<CPlayerHeadMotor>().enabled = false;
 		}
-}
-
-
+		
+		if(_cVarInstance == m_fActorHp)
+		{
+			if(CNetwork.IsServer)
+			{
+				if(m_fActorHp.Get() <= 0.0f)
+				{
+					m_bIsAlive.Set(false);
+				}
+			}
+		}
+	}
+		
     public void ApplyDamage(float _fDamage, float _fPlayerHealth)
     {
-        m_fActorHp = _fPlayerHealth - _fDamage;
+        m_fActorHp.Set(_fPlayerHealth - _fDamage);
     }
     // Member Fields
-	
+	CNetworkVar<float> m_fActorHp;
+	CNetworkVar<bool> m_bIsAlive;
 }
 

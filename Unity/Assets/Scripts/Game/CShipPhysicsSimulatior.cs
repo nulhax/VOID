@@ -188,6 +188,7 @@ public class CShipPhysicsSimulatior : CNetworkMonoBehaviour
 			if(	component.GetType() != typeof(Transform) && 
 				component.GetType() != typeof(MeshRenderer) &&
 				component.GetType() != typeof(MeshFilter) &&
+				component.GetType() != typeof(SkinnedMeshRenderer) &&
 				component.GetType() != typeof(Animator))
 			{
 				DestroyImmediate(component);
