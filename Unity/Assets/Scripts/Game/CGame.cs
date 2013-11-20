@@ -459,7 +459,8 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Create the camera for the client
 		PlayerActor.GetComponent<CPlayerHeadMotor>().AttatchPlayerCamera();
-		PlayerActor.transform.FindChild("soldier_Military_Male_Lod_1").GetComponent<SkinnedMeshRenderer>().enabled = false;
+		// Fucking allow player model to render here
+		PlayerActor.transform.FindChild("soldier_Military_Male_Lod_1").GetComponent<SkinnedMeshRenderer>().enabled = true;
 	}
 
 

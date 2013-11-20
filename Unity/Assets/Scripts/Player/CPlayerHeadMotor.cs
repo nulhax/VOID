@@ -78,7 +78,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	public float m_RotationY = 0.0f;
 		
 	
-	GameObject m_ActorHead = null;
+	public GameObject m_ActorHead = null;
 	
 	
 	CHeadMotorState m_HeadMotorState = new CHeadMotorState();
@@ -159,10 +159,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	
     public void Awake()
 	{	
-		// Create the actor head object
-		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Head", typeof(GameObject))) as GameObject;
-        m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.up * 0.65f;
+		
 	}
 
     public void Update()
