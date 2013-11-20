@@ -35,7 +35,8 @@ public class CPlayerCamera : MonoBehaviour
         Camera.main.enabled = false;
 		
 		// Add the camera component
-		gameObject.AddComponent<Camera>();
+        gameObject.AddComponent<Camera>();
+        gameObject.AddComponent<GalaxyIE>();
 		
 		// Configure the camerea
 		gameObject.camera.cullingMask &= ~(1 << LayerMask.NameToLayer("DUI"));

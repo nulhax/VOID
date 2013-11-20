@@ -138,8 +138,9 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnPlayerJoin);
 		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
-		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
-		CNetwork.Connection.EventDisconnect +=new CNetworkConnection.OnDisconnect(OnDisconnect);
+        CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
+        CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
+        CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		// Register prefabs
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
@@ -397,10 +398,6 @@ public class CGame : CNetworkMonoBehaviour
 	{
         System.Diagnostics.Debug.Assert(CNetwork.IsServer);
 
-        // DO FIRST (i.e. before anything in the game world is created).
-        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-        gameObject.AddComponent<CGalaxy>();
-
 		// Create ship object
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
@@ -418,16 +415,24 @@ public class CGame : CNetworkMonoBehaviour
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
 		m_usShipViewId = 0;
-
-        // DO LAST (i.e. after everything in the game world is destroyed).
-        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
+
+
+    void OnConnect()
+    {
+        // DO FIRST (i.e. before anything in the game world is created).
+        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+        gameObject.AddComponent<CGalaxy>();
+    }
 
 
 	void OnDisconnect()
 	{
 		GameObject.Find("Main Camera").camera.enabled = true;
 		m_usActorViewId = 0;
+
+        // DO LAST (i.e. after everything in the game world is destroyed).
+        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
