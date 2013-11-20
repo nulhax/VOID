@@ -40,7 +40,7 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-	
+		m_fTotalNanites = 1000.0f;
 	}
 	
 
@@ -53,17 +53,42 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		// Get the size of the asteroid input into the replicator	
-		// Add the unit size to the amount of nanites in the replicator
-	
+
 	}
 	
+	void OnTriggerEnter(Collider _Object)
+	{
+		m_fObjectSize = _Object.bounds.size.magnitude * 50.0f;
+		
+		m_fTotalNanites = m_fTotalNanites + m_fObjectSize;
+		
+		Debug.Log("Nanites are " + m_fTotalNanites.ToString());
+		
+		// Check for player entity
+		if(_Object.gameObject.name != "Player Actor(Clone)")
+		{
+			// If the object is not a player, just deleted it.
+			Destroy(_Object.gameObject);
+			
+			// Display particles for nanite conversion
+			gameObject.GetComponentInChildren<ParticleSystem>().Play();
+
+		}
+		else
+		{
+			// If the object is a player actor, kill it.
+			float fDamage = 1000.0f;
+			
+			// Kill player
+			_Object.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(fDamage, 0.0f);
+		}
+	}
 	
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
 		
 	}
 	// Member Fields
-	float m_fAsteroidSize;
+	float m_fObjectSize;
 	float m_fTotalNanites;
 }
