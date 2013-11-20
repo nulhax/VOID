@@ -60,6 +60,7 @@ public class CGame : CNetworkMonoBehaviour
 		FuelCell,
 		PlasmaCell,
 		PowerCell,
+		ConveyorCube,
 		PanelFuseBox,
 	}
 
@@ -175,6 +176,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/FuelCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/PlasmaCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ConveyorCube, "Ship/Rooms/ConveyorCube");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Panels/PanelFuseBox");
 
 		// Register serialization targets

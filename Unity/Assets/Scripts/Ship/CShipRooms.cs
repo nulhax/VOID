@@ -89,11 +89,24 @@ public class CShipRooms : MonoBehaviour
 		
 		return (cNewRoomObject);
 	}
+	
+	
+	public List<GameObject> GetAllRooms()
+	{
+		List<GameObject> ReturnList = new List<GameObject>();
+		
+		foreach (KeyValuePair<uint,GameObject> Entry in m_mRooms)
+		{
+			ReturnList.Add(Entry.Value);
+		}
+		
+		return (ReturnList);
+	}
 
 	public GameObject GetRoom(uint _uiRoomId)
 	{
 		return (m_mRooms[_uiRoomId]);
-	}	
+	}
 
 
 // Member Fields
