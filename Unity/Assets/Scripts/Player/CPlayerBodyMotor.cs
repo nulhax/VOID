@@ -133,6 +133,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
 	
 	private Vector3 m_GravityForce = Vector3.zero;
+	private Vector3 m_Velocity = Vector3.zero;
 	
 
     static KeyCode m_eMoveForwardKey = KeyCode.W;
@@ -182,17 +183,11 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		{
 			// Placeholder: Make gravity relative to the ship
 			m_GravityForce = CGame.Ship.transform.up * -m_Gravity;
-		}
-    }
-	
-	public void FixedUpdate()
-	{	
-		if(CNetwork.IsServer)
-		{
+			
 			// Process the movement of the player
 			ProcessMovement();
 		}
-	}
+    }
 	
 	public override void InstanceNetworkVars()
 	{
@@ -262,67 +257,52 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	}
 	
 	private void ProcessMovement()
-    {	
-//		// Check if the actor is grounded
-//		if(CheckIsGrounded())
-//		{	
-//			float moveSpeed = m_MovementSpeed;
-//			Vector3 relMoveVelocity = Vector3.zero;
-//	
-//			// Sprinting
-//			if(m_MotorState.Sprinting)
-//			{
-//				moveSpeed = m_SprintSpeed;
-//			}
-//			
-//			// Moving 
-//	        if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
-//			{
-//				relMoveVelocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
-//			}
-//			
-//			// Strafing
-//			if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
-//			{
-//				relMoveVelocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
-//			}
-//			
-//			// Jumping
-//			if(m_MotorState.Jumping)
-//			{
-//				rigidbody.AddRelativeForce(Vector3.up * m_JumpSpeed, ForceMode.Impulse);
-//			}
-//			
-//			// Normalize the move velocity vector and multiply by the speed
-//			relMoveVelocity = relMoveVelocity.normalized * moveSpeed;
-//			
-//			// Get the relative velocity
-//			Vector3 relVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity;
-//		
-//			// Set the new velocity, conserve the Y velocity for gravity
-//			Vector3 relVelChange = new Vector3(relMoveVelocity.x, 0.0f, relMoveVelocity.z) - new Vector3(relVelocity.x, 0.0f, relVelocity.z);
-//			
-//			rigidbody.position += relVelChange / Time.fixedDeltaTime;
-//		}
-//		else
-//		{
-//			// Apply the gravity force
-//			rigidbody.position += m_GravityForce / Time.fixedDeltaTime * Time.fixedDeltaTime;
-//		}
-	}
-	
-	private bool CheckIsGrounded()
-	{
-		Ray ray = new Ray(transform.position, -transform.up);
-		if(Physics.SphereCast(ray, 0.5f, 0.5f))
+    {		
+		CharacterController charController = GetComponent<CharacterController>();
+		
+		// Only if grounded
+		if(charController.isGrounded)
 		{
-			m_bGrounded = true;
+			float moveSpeed = m_MovementSpeed;
+			m_Velocity = Vector3.zero;
+			
+			// Sprinting
+			if(m_MotorState.Sprinting)
+			{
+				moveSpeed = m_SprintSpeed;
+			}
+			
+			// Moving 
+			if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
+			{
+				m_Velocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
+			}
+			
+			// Strafing
+			if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
+			{
+				m_Velocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
+			}
+			
+			// Normalize the movewment/strafing and multiply by movement speed
+			m_Velocity = m_Velocity.normalized * moveSpeed;
+			
+			// Jumping
+			if(m_MotorState.Jumping)
+			{
+				m_Velocity.y = m_JumpSpeed;
+			}
+			
+			// Transform the velocity ammount for relative velocity
+			m_Velocity = transform.rotation * m_Velocity;
 		}
 		else
 		{
-			m_bGrounded = false;
+			// Apply the gravity
+			m_Velocity += m_GravityForce * Time.deltaTime;
 		}
 		
-		return(m_bGrounded);
+		// Apply the movement
+		charController.Move(m_Velocity * Time.deltaTime);
 	}
 };
