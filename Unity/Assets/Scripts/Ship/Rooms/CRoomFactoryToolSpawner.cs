@@ -41,7 +41,7 @@ public class CRoomFactoryToolSpawner : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Placeholder DUI stuff ************************
-		CDUI consoleDUI = GetComponent<CRoomGeneral>().RoomControlConsole.GetComponent<CDUIConsole>().DUI;
+		CDUI consoleDUI = transform.parent.gameObject.GetComponent<CRoomGeneral>().RoomControlConsole.GetComponent<CDUIConsole>().DUI;
 		
 		CDUISubView factory = consoleDUI.AddSubView();
 		
@@ -59,12 +59,14 @@ public class CRoomFactoryToolSpawner : CNetworkMonoBehaviour
     void SpawnTool(CDUIButton _sender)
     {
         // Create a new prefab and tool
-        CGame.ENetworkRegisteredPrefab TorchPrefab = CGame.ENetworkRegisteredPrefab.ToolTorch;
-        GameObject newTool = CNetwork.Factory.CreateObject(TorchPrefab);
+        CGame.ENetworkRegisteredPrefab ToolPrefab = CGame.ENetworkRegisteredPrefab.ToolRachet;
+        GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
+		
+		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
 		
 		newTool.transform.position = transform.position;
-		newTool.transform.rotation = transform.rotation;
-		newTool.transform.parent = transform.parent;	
+		newTool.transform.rotation = TempQuat;
+		newTool.transform.parent   = transform.parent;
 		
 		newTool.GetComponent<CNetworkView>().SyncParent();
 		newTool.GetComponent<CNetworkView>().SyncTransformPosition();
