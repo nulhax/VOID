@@ -1,3 +1,16 @@
+//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   AudioSystem.cs
+//  Description :   Audio system implementation
+//
+//  Author  	:  Daniel Langsford
+//  Mail    	:  folduppugg@hotmail.com
+//
+
+// Namespaces
 using UnityEngine;
 using System;
 using System.Collections;
@@ -5,6 +18,7 @@ using System.Collections.Generic;
 
 public class AudioSystem : Singleton<AudioSystem> 
 { 
+	// Member Types
 	public enum SoundType	
 	{
 		SOUND_EFFECTS,
@@ -24,12 +38,17 @@ public class AudioSystem : Singleton<AudioSystem>
 		public GameObject  	soundLocoation	{ get; set; }
 		public SoundType	soundType;
     }
-	
-	public bool useMuLaw = true; // specifies which method of data encoding/decoding will be used. ALaw encoding/decoding will be used if this is set to false.
-	
+
+	// Member Delegates & Events
+		
+	// Member Properties
+		
+	// Member Fields	
 	List<ClipInfo> m_activeAudio;
 	private float musicVolume;
 	private float effectsVolume;
+	
+	// Member Functions
 	
 	void Awake() 
 	{
@@ -239,84 +258,5 @@ public class AudioSystem : Singleton<AudioSystem>
 		Buffer.BlockCopy(floatData, 0, byteData, 0, byteData.Length);
 		
 		return(byteData);
-	}
-	
-	//Compresses the data of an AudioClip
-	public AudioClip Encode (AudioClip _clipToEncode)
-	{
-		//Get data
-		float[] floatData = new float[_clipToEncode.samples * _clipToEncode.channels];
-		_clipToEncode.GetData(floatData,0);			
-		
-		//convert to byte array
-		byte[] byteData = new byte[floatData.Length * 4];
-		Buffer.BlockCopy(floatData, 0, byteData, 0, byteData.Length);
-		
-		//Log information
-		Debug.Log("Original size: " + byteData.Length / 1000 + " kilobytes");
-		
-		byte[] encodedData;
-		
-		//Encode
-		if(useMuLaw)
-		{
-			encodedData = g711audio.MuLawEncoder.MuLawEncode(byteData);
-		}
-		else
-		{
-			encodedData = g711audio.ALawEncoder.ALawEncode(byteData);
-		}
-		Debug.Log("Encoded data size: " + encodedData.Length / 1000 + " kilobytes");
-		
-		//Convert back to float
-		float[] encodedFloatArr = new float[encodedData.Length / 4];		
-		Buffer.BlockCopy(encodedData, 0, encodedFloatArr, 0, encodedData.Length);
-		
-		//Create a new clip to return.
-		
-		AudioClip returnClip = AudioClip.Create((_clipToEncode.name + "(Encoded)"), _clipToEncode.samples, _clipToEncode.channels, _clipToEncode.frequency, true, false); 
-		returnClip.SetData(encodedFloatArr, 0);	
-		
-		return(returnClip);
-	}
-	
-	//Decompresses the data of an AudioClip
-	public AudioClip Decode (AudioClip _clipToDecode)
-	{
-		//Get data
-		float[] floatData = new float[_clipToDecode.samples * _clipToDecode.channels];
-		_clipToDecode.GetData(floatData,0);			
-		
-		//convert to byte array
-		byte[] byteData = new byte[floatData.Length * 4];
-		Buffer.BlockCopy(floatData, 0, byteData, 0, byteData.Length);
-		
-		//Log information
-		Debug.Log("Original size: " + byteData.Length / 1000 + " kilobytes");
-		
-		byte[] decodedData;
-		
-		//Encode
-		if(useMuLaw)
-		{
-			decodedData = g711audio.MuLawEncoder.MuLawEncode(byteData);
-		}
-		else
-		{
-			decodedData = g711audio.ALawEncoder.ALawEncode(byteData);
-		}
-		Debug.Log("Encoded data size: " + decodedData.Length / 1000 + " kilobytes");
-		
-		//Convert back to float
-		float[] decodedFloatArr = new float[decodedData.Length / 4];
-		
-		Buffer.BlockCopy(decodedData, 0, decodedFloatArr, 0, decodedData.Length);
-		
-		//Create a new clip to return.
-		
-		AudioClip returnClip = AudioClip.Create((_clipToDecode.name + "(Encoded)"), _clipToDecode.samples, _clipToDecode.channels, _clipToDecode.frequency, true, false); 
-		returnClip.SetData(decodedFloatArr, 0);	
-		
-		return(returnClip);		
-	}
+	}	
 };
