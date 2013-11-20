@@ -157,6 +157,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
+	[AServerMethod]
 	private void ServerCreateDoors()
 	{
 		foreach(GameObject expansionPort in GetComponent<CRoomInterface>().ExpansionPorts)
@@ -179,7 +180,7 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	
+	[AServerMethod]
 	private void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsole");
@@ -195,7 +196,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
 		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
 	}
-	
 	
 	private void SetupDoorsSubview()
 	{
@@ -226,7 +226,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
         }
 	}
 	
-	
 	private void SetupExpansionSubviewStageOne()
 	{
 		// Clear the existing elements
@@ -252,7 +251,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_buttonRoomTypePairs[duiBut] = roomType;
 		}
 	}
-	
 	
 	private void SetupExpansionSubviewStageTwo()
 	{
@@ -280,7 +278,6 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 			m_buttonLocalPortPairs[duiBut] = expansionPort.GetComponent<CExpansionPortInterface>().ExpansionPortId;
 		}
 	}
-	
 	
 	private void SetupExpansionSubviewStageThree()
 	{
@@ -316,28 +313,34 @@ public class CRoomGeneral : CNetworkMonoBehaviour
 		Destroy(tempRoomObject);
 	}
 	
-	
 	private void ExpansionSubviewSelectLocalPort(CDUIButton _sender)
     {
-        m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
-		
-		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
+		if(CNetwork.IsServer)
+		{
+	        m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
+				
+			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
+		}
     }
-	
 	
 	private void ExpansionSubviewSelectFacility(CDUIButton _sender)
     {
-        m_ServerFacilitySelected.Set((int)m_buttonRoomTypePairs[_sender]);
+		if(CNetwork.IsServer)
+		{
+	   	 	m_ServerFacilitySelected.Set((int)m_buttonRoomTypePairs[_sender]);
 		
-		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
+			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
+		}
     }
-	
 	
 	private void ExpansionSubviewSelectOtherPort(CDUIButton _sender)
     {
-        m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
-		
-		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
+		if(CNetwork.IsServer)
+		{
+	       	m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
+			
+			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
+		}
     }
 	
 	

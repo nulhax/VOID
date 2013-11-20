@@ -31,8 +31,8 @@ public class CShipPhysicsSimulatior : CNetworkMonoBehaviour
 	
 	private GameObject m_WorldShip = null;
 	
-	private Dictionary<GameObject, GameObject> m_ActorPairs = new Dictionary<GameObject, GameObject>();
-	private Dictionary<GameObject, Dictionary<GameObject, GameObject>> m_ActorChildrenPairs = new Dictionary<GameObject, Dictionary<GameObject, GameObject>>();
+	private Dictionary<GameObject, GameObject> m_SimWorldActorPairs = new Dictionary<GameObject, GameObject>();
+	private Dictionary<GameObject, Dictionary<GameObject, GameObject>> m_WorldChildrenSimWorldPairs = new Dictionary<GameObject, Dictionary<GameObject, GameObject>>();
 	
     protected CNetworkVar<float> m_cPositionX    = null;
     protected CNetworkVar<float> m_cPositionY    = null;
@@ -122,56 +122,52 @@ public class CShipPhysicsSimulatior : CNetworkMonoBehaviour
 	
 	public void AddWorldActor(GameObject _SimulationActor)
 	{	
-		// Create the local simulation player actor
-		GameObject worldActor = new GameObject("World " + _SimulationActor.name);
+		// Disable the simulation actor
+		_SimulationActor.SetActive(false);
 		
-		// Add the children of this actor to the world actor
-		m_ActorChildrenPairs.Add(_SimulationActor, new Dictionary<GameObject, GameObject>());
-		for(int i = 0; i < _SimulationActor.transform.childCount; ++i)
-		{	
-			GameObject simulationChild = _SimulationActor.transform.GetChild(i).gameObject;
-			
-			GameObject worldChild = (GameObject)GameObject.Instantiate(simulationChild);
-			worldChild.name = simulationChild.name;
-			worldChild.transform.parent = worldActor.transform;
-			
-			m_ActorChildrenPairs[_SimulationActor].Add(simulationChild, worldChild);
-		}
-		
-		// Set the world ship as this actors parent
-		worldActor.transform.parent = m_WorldShip.transform;
-		
-		// Set the layer as "Simulation" recursively
-		CUtility.SetLayerRecursively(worldActor, LayerMask.NameToLayer("World"));
+		// Clone the simulation actors
+		GameObject worldActor = (GameObject)GameObject.Instantiate(_SimulationActor);
 		
 		// Add to the actor list of actor pairs
-		m_ActorPairs.Add(_SimulationActor, worldActor);
+		m_SimWorldActorPairs.Add(_SimulationActor, worldActor);
+		
+		// Strip the unnecessary components
+		StripUnnecessaryComponents(worldActor);
+		
+		// Add all of the children to the list of simulation children pairs
+		RecursiveAddChildren(_SimulationActor, worldActor);
+		
+		// Reactivate the actors
+		worldActor.SetActive(true);
+		_SimulationActor.SetActive(true);
+		
+		// Set the world ship as the parent
+		worldActor.transform.parent = m_WorldShip.transform;
+		
+		// Set the layer as "World" recursively
+		CUtility.SetLayerRecursively(worldActor, LayerMask.NameToLayer("World"));
 	}
 	
 	public GameObject GetWorldActor(GameObject _SimulationActor)
 	{
 		GameObject worldActor = null;
 		
-		if(!m_ActorPairs.ContainsKey(_SimulationActor))
+		if(!m_SimWorldActorPairs.ContainsKey(_SimulationActor))
 			Debug.LogError("CShipPhysicsSimulatior GetWorldActor: simulation actor not found: " + _SimulationActor.name);
 		else
-			worldActor = m_ActorPairs[_SimulationActor];
+			worldActor = m_SimWorldActorPairs[_SimulationActor];
 		
 		return(worldActor);
 	}
 	
-	public GameObject GetWorldChildActor(GameObject _SimulationParent, GameObject _SimulationChildActor)
+	public GameObject GetWorldChildActor(GameObject _SimulationRootParent, GameObject _SimulationChildActor)
 	{
-		GameObject worldActor = GetWorldActor(_SimulationParent);
-		GameObject childWorldActor = null;
+		GameObject worldActor = GetWorldActor(_SimulationRootParent);
+		GameObject childWorldActor = RecursiveFindWorldChild(worldActor, _SimulationChildActor.name);;
 
-		Dictionary<GameObject, GameObject> childrenPairs = m_ActorChildrenPairs[_SimulationParent];
-		
-		if(!childrenPairs.ContainsKey(_SimulationChildActor))
-			Debug.LogError("CShipPhysicsSimulatior GetWorldChildActor: simulation child actor not found: " + _SimulationChildActor.name);
-		else
-			childWorldActor = childrenPairs[_SimulationChildActor];
-		
+		if(childWorldActor == null)
+			Debug.LogError("CShipPhysicsSimulatior GetWorldChildActor: simulation child actor not found (" + _SimulationChildActor.name + ") within (" + _SimulationRootParent.name + ")");
+
 		return(childWorldActor);
 	}
 	
@@ -179,14 +175,7 @@ public class CShipPhysicsSimulatior : CNetworkMonoBehaviour
 	{
 		GameObject worldActor = GetWorldActor(_SimulationActor);
 		
-		Dictionary<GameObject, GameObject> childrenPairs = m_ActorChildrenPairs[_SimulationActor];
-		foreach(GameObject childWorldActor in childrenPairs.Values)
-		{
-			Destroy(childWorldActor);
-		}
-		
-		m_ActorPairs.Remove(_SimulationActor);
-		m_ActorChildrenPairs.Remove(_SimulationActor);
+		m_SimWorldActorPairs.Remove(_SimulationActor);
 		
 		Destroy(worldActor);
 	}
@@ -199,47 +188,112 @@ public class CShipPhysicsSimulatior : CNetworkMonoBehaviour
 			SyncWorldShipTransform();
 	}
 	
-	protected void SyncWorldShipTransform()
+	private GameObject RecursiveFindWorldChild(GameObject _Actor, string _childName)
+	{
+		Transform childTransform = _Actor.transform.FindChild(_childName);
+		GameObject worldChild = null;
+		
+		if(childTransform != null)
+		{
+			worldChild = childTransform.gameObject;
+		}
+		else
+		{
+			for(int i = 0; i < _Actor.transform.childCount; ++i)
+			{
+				worldChild = RecursiveFindWorldChild(_Actor.transform.GetChild(i).gameObject, _childName);
+				if(worldChild != null)
+					break;
+			}
+		}
+		
+		return(worldChild);
+	}
+	
+	private void StripUnnecessaryComponents(GameObject _Actor)
+	{
+		foreach(Component component in _Actor.GetComponents<Component>())
+		{
+			if(	component.GetType() != typeof(Transform) && 
+				component.GetType() != typeof(MeshRenderer) &&
+				component.GetType() != typeof(MeshFilter) &&
+				component.GetType() != typeof(Animator))
+			{
+				DestroyImmediate(component);
+			}
+		}
+	}
+	
+	private void RecursiveAddChildren(GameObject _SimulationActorParent, GameObject _WorldActorParent)
+	{
+		for(int i = 0; i < _SimulationActorParent.transform.childCount; ++i)
+		{
+			GameObject simChild = _SimulationActorParent.transform.GetChild(i).gameObject;
+			GameObject worldChild = _WorldActorParent.transform.GetChild(i).gameObject;
+			
+			m_SimWorldActorPairs.Add(simChild, worldChild);
+			
+			RecursiveAddChildren(simChild, worldChild);
+		}
+	}
+	
+	private void RecursiveStrip(GameObject _Actor)
+	{
+		StripUnnecessaryComponents(_Actor);
+		
+		for(int i = 0; i < _Actor.transform.childCount; ++i)
+		{
+			StripUnnecessaryComponents(_Actor.transform.GetChild(i).gameObject);
+		}
+	}
+	
+	private void SyncWorldShipTransform()
 	{
 		Position = m_WorldShip.rigidbody.position;
 		EulerAngles = m_WorldShip.transform.eulerAngles;
 	}
 	
 	private void UpdateWorldActorTransforms()
-	{
-		foreach(GameObject simulationActor in m_ActorPairs.Keys)
-		{
-			// Get the simulation actors position relative to the ship
-			Vector3 simRelPos = simulationActor.transform.position - transform.position;
-			Quaternion simRelRot = Quaternion.Inverse(transform.rotation) * simulationActor.transform.rotation;
+	{	
+		List<GameObject> keysToDelete = new List<GameObject>();
+		
+		foreach(var pair in m_SimWorldActorPairs)
+		{	
+			GameObject simulationActor = pair.Key;
+			GameObject worldActor = pair.Value;
 			
-			// Get the world actor and set the new transforms based on the world ship
-			GameObject worldActor = m_ActorPairs[simulationActor];	
-			
-			if(worldActor.transform.localPosition != simRelPos)
-				worldActor.transform.localPosition = simRelPos;
-			
-			if(worldActor.transform.localRotation != simRelRot)
-				worldActor.transform.localRotation = simRelRot;
-			
-			if(worldActor.transform.localScale != simulationActor.transform.localScale)
-				worldActor.transform.localScale = simulationActor.transform.localScale;
-			
-			// Syncronize the children
-			Dictionary<GameObject, GameObject> childrenPairs = m_ActorChildrenPairs[simulationActor];
-			foreach(GameObject simulationChild in childrenPairs.Keys)
-			{			
-				GameObject worldChild = childrenPairs[simulationChild];
-				
-				if(worldChild.transform.localPosition != simulationChild.transform.localPosition)
-					worldChild.transform.localPosition = simulationChild.transform.localPosition;
-			
-				if(worldChild.transform.localRotation != simulationChild.transform.localRotation)
-					worldChild.transform.localRotation = simulationChild.transform.localRotation;
-				
-				if(worldChild.transform.localScale != simulationChild.transform.localScale)
-					worldChild.transform.localScale = simulationChild.transform.localScale;
+			// Check that the simulation actor still exists
+			if(simulationActor == null)
+			{
+				keysToDelete.Add(simulationActor);
+				Destroy(worldActor);
+				continue;
 			}
+			
+			// Get the simulation actors position relative to the ship
+			Vector3 simRelPos = WorldShip.transform.position +  simulationActor.transform.position - transform.position;
+			Quaternion simRelRot = WorldShip.transform.rotation * Quaternion.Inverse(transform.rotation) * simulationActor.transform.rotation;
+			
+			// Update the transform
+			UpdateWorldActorTransform(worldActor, simRelPos, simRelRot, simulationActor.transform.localScale);
 		}
+		
+		// Delete any of the keys added
+		foreach(GameObject key in keysToDelete)
+		{
+			m_SimWorldActorPairs.Remove(key);
+		}
+	}
+	
+	private void UpdateWorldActorTransform(GameObject _WorldActor, Vector3 _Postion, Quaternion _Rotation, Vector3 _LocalScale)
+	{
+		if(_WorldActor.transform.position != _Postion)
+			_WorldActor.transform.position = _Postion;
+		
+		if(_WorldActor.transform.rotation != _Rotation)
+			_WorldActor.transform.rotation = _Rotation;
+		
+		if(_WorldActor.transform.localScale != _LocalScale)
+			_WorldActor.transform.localScale = _LocalScale;
 	}
 }

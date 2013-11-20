@@ -57,16 +57,4 @@ public class CShipPhysicsSimulationActor : MonoBehaviour
 		
 		m_bCreated = true;
 	}
-	
-	private void OnDestroy()
-	{
-		if(m_bCreated && CNetwork.Instance != null)
-		{
-			// Get the ship physics simulator
-			CShipPhysicsSimulatior simulator = CGame.Ship.GetComponent<CShipPhysicsSimulatior>();
-			
-			// Destroy this actor
-			simulator.DestroyWorldActor(gameObject);
-		}
-	}
 }
