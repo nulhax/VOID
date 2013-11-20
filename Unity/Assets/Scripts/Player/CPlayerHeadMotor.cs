@@ -193,6 +193,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{
 			UpdateHeadMotorInput();
 		}
+	
+		if(CNetwork.IsServer)
+		{
+			// Syncronize the head rotation
+			HeadEuler = m_ActorHead.transform.eulerAngles;
+		}
     }
 	
 	public void FixedUpdate()
@@ -201,9 +207,6 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{	
 			// Process the actor rotations
 			ProcessRotations();
-			
-			// Syncronize the head rotation
-			HeadEuler = m_ActorHead.transform.eulerAngles;
 		}
 	}
 	

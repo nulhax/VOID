@@ -41,6 +41,13 @@ public class CDUIConsole : MonoBehaviour
 	}
 	
 	// Member Methods
+	public void Start()
+	{
+		// Attach the render texture material
+		GameObject screenWorldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(m_ScreenObject);
+        DUI.AttatchRenderTexture(screenWorldActor.renderer.material);
+	}
+	
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
     {
 		// Check the screen is assigned in the editor
@@ -70,10 +77,6 @@ public class CDUIConsole : MonoBehaviour
 
         // Initialise the DUI Component
         dui.Initialise(_Quality, _Layout, _Dimensions, gameObject);
-		
-		// Attach the render texture material
-		GameObject screenWorldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldChildActor(gameObject, m_ScreenObject);
-        DUI.AttatchRenderTexture(screenWorldActor.renderer.material);
 		
 		// Increment the offset
 		s_UIOffset += 2.0f;

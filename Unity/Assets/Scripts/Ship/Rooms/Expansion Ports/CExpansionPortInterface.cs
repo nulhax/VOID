@@ -133,6 +133,9 @@ public class CExpansionPortInterface : MonoBehaviour
 //		//AllignUpVector(newPort, _objNewRoom);
 //		
 		
+		CExpansionPortInterface newPort = m_attachedPorts[_portID].GetComponent<CExpansionPortInterface>();
+		newPort.HasAttachedRoom = true;		
+		
 		/*** Code for rotating the new facility using quaternions. Rotates all the axis to be aligned correctly ***/
 		
 		Quaternion Rot1 = transform.rotation * m_attachedPorts[_portID].parent.rotation * Quaternion.Inverse(m_attachedPorts[_portID].rotation);
