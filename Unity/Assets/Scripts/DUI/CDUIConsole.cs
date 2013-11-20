@@ -44,8 +44,7 @@ public class CDUIConsole : MonoBehaviour
 	public void Start()
 	{
 		// Attach the render texture material
-		GameObject screenWorldActor = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(m_ScreenObject);
-        DUI.AttatchRenderTexture(screenWorldActor.renderer.material);
+        DUI.AttatchRenderTexture(m_ScreenObject.renderer.material);
 	}
 	
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)

@@ -26,10 +26,9 @@ public class CInteractableObject : CNetworkMonoBehaviour
     public delegate void PlayerInteractionHandler(RaycastHit _RayHit);
     
 	// Member events
-	public event PlayerInteractionHandler UseLeftClick;
-	public event PlayerInteractionHandler UseRightClick;
-	public event PlayerInteractionHandler UseAction1;
-	public event PlayerInteractionHandler UseAction2;
+	public event PlayerInteractionHandler InteractionPrimaryStart;
+	public event PlayerInteractionHandler InteractionSecondaryStart;
+	public event PlayerInteractionHandler InteractionUse;
 	
 	// Member Fields
 	
@@ -56,23 +55,18 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		switch(_InteractionEvent)
 		{
 		case CPlayerInteractor.EInteractionType.PrimaryStart:
-			if(UseLeftClick != null)
-				UseLeftClick(_RayHit);
+			if(InteractionPrimaryStart != null)
+				InteractionPrimaryStart(_RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.SecondaryStart:
-			if(UseRightClick != null)
-				UseRightClick(_RayHit);
+			if(InteractionSecondaryStart != null)
+				InteractionSecondaryStart(_RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.Use:
-			if(UseAction1 != null)
-				UseAction1(_RayHit);
-			break;
-			
-		case CPlayerInteractor.EInteractionType.Action2:
-			if(UseAction2 != null)
-				UseAction2(_RayHit);
+			if(InteractionUse != null)
+				InteractionUse(_RayHit);
 			break;
 			
 		default:

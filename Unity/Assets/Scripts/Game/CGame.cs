@@ -33,7 +33,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		INVALID,
 		Ship,
-		WorldShip,
+		GalaxyShip,
 		RoomBridge,
 		RoomFactory,
 		RoomLifeSupport,
@@ -125,7 +125,7 @@ public class CGame : CNetworkMonoBehaviour
 	
 	public static GameObject WorldShip
 	{
-		get { return (Ship.GetComponent<CShipPhysicsSimulatior>().WorldShip); }
+		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
 	}
 
 // Member Functions
@@ -155,7 +155,7 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Register prefabs
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.WorldShip, "Ship/WorldShip");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/WorldShip");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Ship/Rooms/RoomBridge");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Ship/Rooms/RoomFactory");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomScanner, "Ship/Rooms/RoomScanner");
@@ -392,7 +392,7 @@ public class CGame : CNetworkMonoBehaviour
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 
       	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);

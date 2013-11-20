@@ -271,7 +271,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 400034}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400006}
   m_Layer: 0
   m_Name: HallwayCorner
   m_TagString: Untagged
@@ -584,18 +583,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06b219732ab7a89439aefe0a34944e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400006
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2aec518936d412458032904dae49acb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ExecutionTime: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

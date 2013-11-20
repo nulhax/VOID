@@ -167,23 +167,22 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		actorHeadMotor.m_HeadMotorState.SetCurrentRotation(new Vector2(rotationX, rotationY), timeStamp);
     }
 	
-    public void Awake()
-	{	
-		
-	}
-	
 	public void Start()
-	{
-		GameObject actorHead = CGame.Ship.GetComponent<CShipPhysicsSimulatior>().GetWorldActor(ActorHead);
-		
+	{	
 		if(CGame.PlayerActor == gameObject)
 		{
-			// Add the player camera to this player world actor
-			actorHead.AddComponent<CPlayerCamera>();
+			// Disable any main camera currently rendering
+			Destroy(Camera.main.gameObject);
+			
+			// Add the ship camera to the actor observing the ship
+			GameObject shipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/PlayerShipCamera"));
+			shipCamera.transform.parent = ActorHead.transform;
+			shipCamera.transform.localPosition = Vector3.zero;
+			shipCamera.transform.localRotation = Quaternion.identity;
+			
+			// Add the galaxy camera to the ship galaxy simulator
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera(shipCamera);
 		}
-		
-		// Add the galaxy observer to the world actor
-		actorHead.AddComponent<GalaxyObserver>();
 	}
 
     public void Update()
@@ -208,12 +207,6 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 			ProcessRotations();
 		}
 	}
-	
-	public void AttatchPlayerCamera()
-    {
-		// Attach the player camera script
-		m_ActorHead.AddComponent<CPlayerCamera>();
-    }
 	
     private void UpdateHeadMotorInput()
 	{	

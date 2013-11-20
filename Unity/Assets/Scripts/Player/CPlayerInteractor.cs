@@ -34,7 +34,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		SecondaryStart,
 		SecondaryEnd,
 		Use,
-		Action2,
 		
 		MAX
 	}
@@ -117,10 +116,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		else if(Input.GetKeyDown(s_eUseKey))
 		{
 			m_eCurrentInteractionType = EInteractionType.Use;
-		}
-		else if(Input.GetKeyDown(s_eAction2Key))
-		{
-			m_eCurrentInteractionType = EInteractionType.Action2;
 		}
 		else
 		{
