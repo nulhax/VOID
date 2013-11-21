@@ -29,8 +29,8 @@ public class CNetworkView : CNetworkMonoBehaviour
 // Member Types
 
 
-    const ushort k_usMaxStaticViewId = 500;
-    const ushort k_usMaxDynamicViewId = ushort.MaxValue;
+	public const ushort k_usMaxStaticViewId = 500;
+	public const ushort k_usMaxDynamicViewId = ushort.MaxValue;
 
 
     public enum EProdecure : byte
@@ -247,7 +247,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-    public void SyncPlayerNetworkVarValues(ulong _ulPlayerId)
+    public void SyncNetworkVarsWithPlayer(ulong _ulPlayerId)
     {
         // Send all current network variable values to player
         foreach (KeyValuePair<byte, INetworkVar> tEntry in m_mNetworkVars)
@@ -306,6 +306,54 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+	public ushort ViewId
+	{
+		set
+		{
+			// Ensure network view id cannot change once set
+			if (CNetwork.IsServer &&
+				m_usViewId != 0)
+			{
+				Logger.WriteError("The network view id cannot be changed once set. CurrentViewId({0}) TargetViewId({1})", m_usViewId, value);
+			}
+			else
+			{
+				// Check network view id already exists
+				if (s_cNetworkViews.ContainsKey(value))
+				{
+					// Ensure there is not network view attached to this view id yet
+					if (s_cNetworkViews[value] != null)
+					{
+						Logger.WriteError("Unable to assign GameObject ({0}) network view id ({1}) because its already in use!", gameObject.name, value);
+					}
+
+					// Take ownership of this network view id
+					else
+					{
+						s_cNetworkViews[value] = this;
+						m_usViewId = value;
+					}
+				}
+
+				// Ensure servers should never reach this part for dynamic view ids
+				// because the keys without owners are created during GenerateDynamicViewId()
+				else if (value < k_usMaxStaticViewId ||
+						 !CNetwork.IsServer)
+				{
+					s_cNetworkViews.Add(value, this);
+					m_usViewId = value;
+				}
+				else
+				{
+					Logger.WriteError("Somethign went wrong when setting the network view id ({0})", value);
+				}
+			}
+		}
+
+		get { return (m_usViewId); }
+	}
+
+
     public static ushort GenerateDynamicViewId()
     {
 		// Ensure servers only generate dynamic view ids
@@ -356,54 +404,6 @@ public class CNetworkView : CNetworkMonoBehaviour
     public static Dictionary<ushort, CNetworkView> FindAll()
     {
         return (s_cNetworkViews);
-    }
-
-
-    public ushort ViewId
-    {
-        set
-        {
-            // Ensure network view id cannot change once set
-            if (CNetwork.IsServer &&
-                m_usViewId != 0)
-            {
-                Logger.WriteError("The network view id cannot be changed once set. CurrentViewId({0}) TargetViewId({1})", m_usViewId, value);
-            }
-            else
-            {
-                // Check network view id already exists
-                if (s_cNetworkViews.ContainsKey(value))
-                {
-                    // Ensure there is not network view attached to this view id yet
-                    if (s_cNetworkViews[value] != null)
-                    {
-                        Logger.WriteError("Unable to assign GameObject ({0}) network view id ({1}) because its already in use!", gameObject.name, value);
-                    }
-
-                    // Take ownership of this network view id
-                    else
-                    {
-                        s_cNetworkViews[value] = this;
-                        m_usViewId = value;
-                    }
-                }
-
-                // Ensure servers should never reach this part for dynamic view ids
-                // because the keys without owners are created during GenerateDynamicViewId()
-                else if (value < k_usMaxStaticViewId ||
-                         !CNetwork.IsServer)
-                {
-                    s_cNetworkViews.Add(value, this);
-                    m_usViewId = value;
-                }
-                else
-                {
-                    Logger.WriteError("Somethign went wrong when setting the network view id ({0})", value);
-                }
-            }
-        }
-
-        get { return (m_usViewId); }
     }
 
 
@@ -467,6 +467,12 @@ public class CNetworkView : CNetworkMonoBehaviour
     // protected:
 
 
+	protected void OnNetworkVarChange(byte _bNetworkVarId)
+	{
+		SyncNetworkVar(0, _bNetworkVarId);
+	}
+
+
 	protected static ushort GenerateStaticViewId()
 	{
 		ushort usViewId = 0;
@@ -489,12 +495,6 @@ public class CNetworkView : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(usViewId == 0, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
 
 		return (usViewId);
-	}
-
-
-	protected void OnNetworkVarChange(byte _bNetworkVarId)
-	{
-		SyncNetworkVar(0, _bNetworkVarId);
 	}
 
 

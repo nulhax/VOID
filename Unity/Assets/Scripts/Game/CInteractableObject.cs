@@ -26,10 +26,9 @@ public class CInteractableObject : CNetworkMonoBehaviour
     public delegate void PlayerInteractionHandler(RaycastHit _RayHit);
     
 	// Member events
-	public event PlayerInteractionHandler UseLeftClick;
-	public event PlayerInteractionHandler UseRightClick;
-	public event PlayerInteractionHandler UseAction1;
-	public event PlayerInteractionHandler UseAction2;
+	public event PlayerInteractionHandler InteractionPrimaryStart;
+	public event PlayerInteractionHandler InteractionSecondaryStart;
+	public event PlayerInteractionHandler InteractionUse;
 	
 	// Member Fields
 	
@@ -46,7 +45,7 @@ public class CInteractableObject : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Set the layer of myself and all children to be of "InteractableObject"
-		SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
+		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
 	}
 	
 	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
@@ -55,38 +54,23 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		
 		switch(_InteractionEvent)
 		{
-		case CPlayerInteractor.EInteractionType.Primary:
-			if(UseLeftClick != null)
-				UseLeftClick(_RayHit);
+		case CPlayerInteractor.EInteractionType.PrimaryStart:
+			if(InteractionPrimaryStart != null)
+				InteractionPrimaryStart(_RayHit);
 			break;
 			
-		case CPlayerInteractor.EInteractionType.Secondary:
-			if(UseRightClick != null)
-				UseRightClick(_RayHit);
+		case CPlayerInteractor.EInteractionType.SecondaryStart:
+			if(InteractionSecondaryStart != null)
+				InteractionSecondaryStart(_RayHit);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.Use:
-			if(UseAction1 != null)
-				UseAction1(_RayHit);
-			break;
-			
-		case CPlayerInteractor.EInteractionType.Action2:
-			if(UseAction2 != null)
-				UseAction2(_RayHit);
+			if(InteractionUse != null)
+				InteractionUse(_RayHit);
 			break;
 			
 		default:
 			break;
-		}
-	}
-	
-	private void SetLayerRecursively(GameObject _Obj, int _Layer)
-	{
-		_Obj.layer = _Layer;
-		
-		for(int i = 0; i < _Obj.transform.childCount; ++i)
-		{
-			SetLayerRecursively(_Obj.transform.GetChild(i).gameObject, _Layer);
 		}
 	}
 }

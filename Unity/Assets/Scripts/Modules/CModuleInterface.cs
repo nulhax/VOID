@@ -26,6 +26,15 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Types
 
 
+	public enum EType
+	{
+		PowerCell,
+		PlasmaCell,
+		FuelCell,
+		BlackMatterCell
+	}
+
+
 // Member Delegates & Events
 
 
@@ -169,6 +178,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 
 // Member Fields
+
+
+	public EType m_eType;
 
 
 	CNetworkVar<ushort> m_usOwnerPlayerActorViewId = null;

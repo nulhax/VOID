@@ -65,14 +65,8 @@ public class CDUI : MonoBehaviour
     // Member Methods
     private void Update()
 	{
-        // Update the render texture
-        m_RenderTex.DiscardContents(true, true);
-        RenderTexture.active = m_RenderTex;
-		
 		// Render using the render camrea
         RenderCamera.Render();
-
-        RenderTexture.active = null;
     }
 
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions, GameObject _Console)
@@ -233,13 +227,14 @@ public class CDUI : MonoBehaviour
         // Get the render camera and set its target as the render texture
         Camera camera = m_RenderCamera.AddComponent<Camera>();
         camera.cullingMask = 1 << gameObject.layer;
-		camera.clearFlags = CameraClearFlags.SolidColor;
+		camera.clearFlags = CameraClearFlags.Depth;
         camera.orthographic = true;
         camera.backgroundColor = Color.black;
         camera.nearClipPlane = 0.0f;
         camera.farClipPlane = 2.0f;
         camera.targetTexture = m_RenderTex;
         camera.orthographicSize = duiMainView.Dimensions.y * 0.5f;
+		camera.enabled = false;
     }
 	
 	public GameObject FindDUIElementCollisions(float _texCoordU, float _texCoordV)

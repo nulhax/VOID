@@ -47,7 +47,7 @@ public class CDoorMotor : CNetworkMonoBehaviour
   
 	
 // Static Fields
-	float s_OpenAmount						= 4.0f;
+	float s_OpenAmount						= 3.5f;
 	
 
 // Member Properties
@@ -80,6 +80,23 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
 
 // Member Methods
+	public void OnEnable()
+	{
+		// Uglyfix for on enable
+		if(CNetwork.IsServer)
+		{
+			if(m_DoorState == EDoorState.Opening)
+			{
+				StartCoroutine("Open");
+			}
+			else if(m_DoorState == EDoorState.Closing)
+			{
+				StartCoroutine("Close");
+			}
+		}
+	}
+	
+	
 	public override void InstanceNetworkVars()
     {
 		m_ServerDoorState = new CNetworkVar<int>(OnNetworkVarSync, (int)EDoorState.INVALID);

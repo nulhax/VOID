@@ -120,7 +120,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
 				// Tell object to sync all their network vars with the player
-				cNetworkView.SyncPlayerNetworkVarValues(_cNetworkPlayer.PlayerId);
+				cNetworkView.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
             }
 			
 			// Sync parents for each transform
@@ -147,18 +147,26 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public GameObject FindObject(ushort _usNetworkViewId)
 	{
-		GameObject go = null;
-		
-		if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+		GameObject cGameObject = null;
+
+		// Dynamic object
+		if (_usNetworkViewId >= CNetworkView.k_usMaxStaticViewId)
 		{
-			go = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+			if(m_mCreatedObjects.ContainsKey(_usNetworkViewId))
+			{
+				cGameObject = m_mCreatedObjects[_usNetworkViewId].cGameObject;
+			}
 		}
+		
+		// Static object
 		else
 		{
-			Logger.WriteError("Network Factory Find Object NetworkViewId doesn't exsist yet! Something must be wrong here...");
+			cGameObject = CNetworkView.FindUsingViewId(_usNetworkViewId).gameObject;
 		}
-		
-		return (go);
+
+		Logger.WriteErrorOn(cGameObject == null, "Could not find network object with view id ({0})", _usNetworkViewId);
+
+		return (cGameObject);
 	}
 
 
@@ -216,27 +224,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 		// Notice
         Logger.Write("Created new game object with prefab ({0}), name ({1}) and network view id ({2})", _usPrefabId, cNewgameObject.name, _usNetworkViewId);
-
-
-
-		// Testing
-		if (_usPrefabId == 2)
-		{
-			/*
-			cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
-			
-			switch (_usNetworkViewId)
-			{
-				case 500: cNewgameObject.renderer.material.color = Color.red; break;
-				case 501: cNewgameObject.renderer.material.color = Color.blue; break;
-				case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
-				case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
-				case 504: cNewgameObject.renderer.material.color = Color.green; break;
-				case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
-				case 506: cNewgameObject.renderer.material.color = Color.black; break;
-			}
-			*/
-		}
     }
 
 
