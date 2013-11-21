@@ -424,6 +424,10 @@ public class CGame : CNetworkMonoBehaviour
 	{
         System.Diagnostics.Debug.Assert(CNetwork.IsServer);
 
+        // DO FIRST (i.e. before anything in the game world is created).
+        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+        gameObject.AddComponent<CGalaxy>();
+
 		// Create ship object
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
@@ -440,7 +444,10 @@ public class CGame : CNetworkMonoBehaviour
 
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
-		m_usShipViewId = 0;
+        m_usShipViewId = 0;
+
+        // DO LAST (i.e. after everything in the game world is destroyed).
+        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
@@ -448,7 +455,8 @@ public class CGame : CNetworkMonoBehaviour
     {
         // DO FIRST (i.e. before anything in the game world is created).
         // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-        gameObject.AddComponent<CGalaxy>();
+        if(!CNetwork.IsServer)
+            gameObject.AddComponent<CGalaxy>();
     }
 
 
@@ -458,7 +466,8 @@ public class CGame : CNetworkMonoBehaviour
 		m_usActorViewId = 0;
 
         // DO LAST (i.e. after everything in the game world is destroyed).
-        Destroy(gameObject.GetComponent<CGalaxy>());
+        if (!CNetwork.IsServer)
+            Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
