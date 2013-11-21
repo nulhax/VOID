@@ -45,9 +45,9 @@ GameObject:
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400004}
-  - 143: {fileID: 14300000}
-  - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
+  - 114: {fileID: 11400016}
+  - 143: {fileID: 14300000}
   m_Layer: 0
   m_Name: Player Actor
   m_TagString: Untagged
@@ -94,8 +94,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400010}
   - 136: {fileID: 13600006}
-  - 54: {fileID: 5400008}
   - 144: {fileID: 14400008}
+  - 54: {fileID: 5400008}
   m_Layer: 0
   m_Name: LeftArm
   m_TagString: Untagged
@@ -112,8 +112,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400012}
   - 136: {fileID: 13600002}
-  - 54: {fileID: 5400004}
   - 144: {fileID: 14400004}
+  - 54: {fileID: 5400004}
   m_Layer: 0
   m_Name: LeftForeArm
   m_TagString: Untagged
@@ -220,8 +220,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400026}
   - 136: {fileID: 13600004}
-  - 54: {fileID: 5400006}
   - 144: {fileID: 14400006}
+  - 54: {fileID: 5400006}
   m_Layer: 0
   m_Name: RightArm
   m_TagString: Untagged
@@ -238,8 +238,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400028}
   - 136: {fileID: 13600000}
-  - 54: {fileID: 5400002}
   - 144: {fileID: 14400002}
+  - 54: {fileID: 5400002}
   m_Layer: 0
   m_Name: RightForeArm
   m_TagString: Untagged
@@ -316,8 +316,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400038}
   - 136: {fileID: 13600014}
-  - 54: {fileID: 5400018}
   - 144: {fileID: 14400018}
+  - 54: {fileID: 5400018}
   m_Layer: 0
   m_Name: LeftUpLeg
   m_TagString: Untagged
@@ -334,8 +334,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400040}
   - 136: {fileID: 13600010}
-  - 54: {fileID: 5400014}
   - 144: {fileID: 14400014}
+  - 54: {fileID: 5400014}
   m_Layer: 0
   m_Name: LeftLeg
   m_TagString: Untagged
@@ -382,8 +382,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400046}
   - 136: {fileID: 13600012}
-  - 54: {fileID: 5400016}
   - 144: {fileID: 14400016}
+  - 54: {fileID: 5400016}
   m_Layer: 0
   m_Name: RightUpLeg
   m_TagString: Untagged
@@ -400,8 +400,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400048}
   - 136: {fileID: 13600008}
-  - 54: {fileID: 5400012}
   - 144: {fileID: 14400012}
+  - 54: {fileID: 5400012}
   m_Layer: 0
   m_Name: RightLeg
   m_TagString: Untagged
@@ -556,8 +556,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400068}
   - 65: {fileID: 6500000}
-  - 54: {fileID: 5400010}
   - 144: {fileID: 14400010}
+  - 54: {fileID: 5400010}
   m_Layer: 0
   m_Name: Spine
   m_TagString: Untagged
@@ -634,8 +634,8 @@ GameObject:
   m_Component:
   - 4: {fileID: 400078}
   - 135: {fileID: 13500000}
-  - 54: {fileID: 5400000}
   - 144: {fileID: 14400000}
+  - 54: {fileID: 5400000}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1339,17 +1339,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f67b1ff6bd1f6b4da8ccb47b5f76496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6227d592b349e84987e6b1cdbf840d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1361,8 +1350,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeb43f9b71d8cd347afd9820334db5d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fActorHp: 100
-  m_bIsAlive: 1
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1380,8 +1367,7 @@ MonoBehaviour:
   m_MaximumX: 360
   m_MinimumY: -60
   m_MaximumY: 60
-  m_RotationX: 0
-  m_RotationY: 0
+  m_ActorHead: {fileID: 100078}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1430,6 +1416,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fcbfbbba83afcf498f2eaf975b680d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400016
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d925af8b42e5b84d9a3cf55e954ead0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -1440,7 +1437,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: .0923165828
+  m_Radius: .200000003
   m_Center: {x: 0, y: .0923165828, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:

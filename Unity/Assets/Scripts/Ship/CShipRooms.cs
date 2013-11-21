@@ -30,7 +30,12 @@ public class CShipRooms : MonoBehaviour
 
 
 // Member Properties
-
+	
+	
+// Member Fields
+	uint m_uiRoomIdCount;	
+	Dictionary<uint, GameObject> m_mRooms = new Dictionary<uint, GameObject>();
+	
 
 // Member Functions
 
@@ -89,17 +94,22 @@ public class CShipRooms : MonoBehaviour
 		
 		return (cNewRoomObject);
 	}
+	
+	
+	public List<GameObject> GetAllRooms()
+	{
+		List<GameObject> ReturnList = new List<GameObject>();
+		
+		foreach (KeyValuePair<uint,GameObject> Entry in m_mRooms)
+		{
+			ReturnList.Add(Entry.Value);
+		}
+		
+		return (ReturnList);
+	}
 
 	public GameObject GetRoom(uint _uiRoomId)
 	{
 		return (m_mRooms[_uiRoomId]);
-	}	
-
-
-// Member Fields
-
-
-	uint m_uiRoomIdCount;	
-	Dictionary<uint, GameObject> m_mRooms = new Dictionary<uint, GameObject>();
-	
+	}
 };

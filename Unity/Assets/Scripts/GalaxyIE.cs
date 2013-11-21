@@ -6,7 +6,6 @@
 
 public class GalaxyIE : PostEffectsBase
 {
-    private bool mRegisteredWithGalaxy = false;
     //RenderTexture mSkyboxBaked = new RenderTexture(Screen.width, Screen.height, 0);
     GameObject mGalaxyCamera = (GameObject)Resources.Load("Prefabs/GalaxyCamera", typeof(GameObject));
 
@@ -17,29 +16,54 @@ public class GalaxyIE : PostEffectsBase
 
     public Skybox mSkybox = null;
     public Material mSkyboxMaterial { get { return mSkybox.material; } set { mSkybox.material = value; } }
-    public Material mFogMaterial = new Material(Shader.Find("VOID/TexturedFog"));
+    public Material mFogMaterial = null;
     public float mFogStartDistance;
+
+    private bool mRegisteredWithGalaxy = false;
+    public bool mRegisterWithGalaxy
+    {
+        get { return mRegisteredWithGalaxy; }
+        set
+        {
+            if (mRegisteredWithGalaxy != value)
+            {
+                CGame game = CGame.Instance;
+                if (game)
+                {
+                    CGalaxy galaxy = game.GetComponent<CGalaxy>();
+                    if (galaxy)
+                    {
+                        if (value)
+                            mRegisteredWithGalaxy = galaxy.RegisterGalaxyIE(this);
+                        else
+                        {
+                            galaxy.DeregisterGalaxyIE(this);
+                            mRegisteredWithGalaxy = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     public override void Start()
     {
         base.Start();
 
+        mFogMaterial = new Material(Shader.Find("VOID/TexturedFog"));
+
         mGalaxyCamera.camera.enabled = false;   // Disable camera to control when it renders.
         camera.clearFlags = CameraClearFlags.Depth;   // Actual camera clears only depth, as the entire image will be updated with a skybox manually.
 
         mSkybox = mGalaxyCamera.GetComponent<Skybox>();
+        if (!mSkybox)
+            mSkybox = mGalaxyCamera.AddComponent<Skybox>();
         mSkyboxMaterial = new Material(Shader.Find("VOID/MultitexturedSkybox"));
+    }
 
-        CGame game = CGame.Instance;
-        if(game)
-        {
-            CGalaxy galaxy = game.GetComponent<CGalaxy>();
-            if (galaxy)
-            {
-                galaxy.RegisterGalaxyIE(this);
-                mRegisteredWithGalaxy = true;
-            }
-        }
+    void OnDestroy()
+    {
+        mRegisterWithGalaxy = false;
     }
 
     public override bool CheckResources()
@@ -61,19 +85,7 @@ public class GalaxyIE : PostEffectsBase
             return;
         }
 
-        if (!mRegisteredWithGalaxy)
-        {
-            CGame game = CGame.Instance;
-            if (game)
-            {
-                CGalaxy galaxy = game.GetComponent<CGalaxy>();
-                if (galaxy)
-                {
-                    galaxy.RegisterGalaxyIE(this);
-                    mRegisteredWithGalaxy = true;
-                }
-            }
-        }
+        mRegisterWithGalaxy = true;
 
         // Calculate stuff for fog.
         CAMERA_NEAR = camera.nearClipPlane;
