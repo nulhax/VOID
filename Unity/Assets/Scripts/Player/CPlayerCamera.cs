@@ -36,7 +36,7 @@ public class CPlayerCamera : MonoBehaviour
 		
 		// Add the camera component
         gameObject.AddComponent<Camera>();
-        gameObject.AddComponent<GalaxyIE>();
+        gameObject.AddComponent<GalaxyIE>();    // Add galaxy image effect script to the same gameobject as the camera for nice visuals.
 		
 		// Configure the camerea
 		gameObject.camera.cullingMask &= ~(1 << LayerMask.NameToLayer("DUI"));

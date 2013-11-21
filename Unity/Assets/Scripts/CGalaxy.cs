@@ -51,7 +51,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         MAX
     }
 
-    enum ESkyboxLayer : uint
+    enum ESkybox : uint
     {
         Composite,
         Solid,
@@ -66,7 +66,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
 
     string[] mSkyboxFaces = new string[6];
-    Texture[][] mSkyboxTextures = new Texture[(uint)ESkyboxLayer.MAX][/*6*/];
+    Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
     SGridCellPos mCentreCell = new SGridCellPos(0, 0, 0);    // All cells are offset by this cell.
     protected CNetworkVar<int> mCentreCellX;
@@ -85,7 +85,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     uint muiNumGridSubsets = 20;
 
     protected CNetworkVar<uint> mMaxAsteroidsPerCell;
-    uint muiMaxAsteroidsPerCell = 1;
+    uint muiMaxAsteroidsPerCell = 5;
 
     public const float mfTimeBetweenGridUpdates = 0.2f;
     float mfTimeUntilNextGridUpdate = 0.0f;
@@ -112,22 +112,25 @@ public class CGalaxy : CNetworkMonoBehaviour
             mNoises[ui] = new PerlinSimplexNoise();
 
         // Load skybox textures.
-        mSkyboxFaces[0] = "Front";
-        mSkyboxFaces[1] = "Back";
-        mSkyboxFaces[2] = "Left";
-        mSkyboxFaces[3] = "Right";
-        mSkyboxFaces[4] = "Up";
-        mSkyboxFaces[5] = "Down";
+        mSkyboxFaces[0] = "Left";
+        mSkyboxFaces[1] = "Right";
+        mSkyboxFaces[2] = "Down";
+        mSkyboxFaces[3] = "Up";
+        mSkyboxFaces[4] = "Front";
+        mSkyboxFaces[5] = "Back";
 
-        for (uint uiSkybox = 0; uiSkybox < (uint)ESkyboxLayer.MAX; ++uiSkybox)    // For each skybox...
+        for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
         {
-            mSkyboxTextures[uiSkybox] = new Texture[6]; // Instantiate 6 textures.
-
-            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each texture in the skybox...
+            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
             {
-                mSkyboxTextures[uiSkybox][uiFace] = Resources.Load("Textures/SpaceSkyBox/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture;  // Load the texture from file.
-                mSkyboxTextures[uiSkybox][uiFace].wrapMode = TextureWrapMode.Clamp;   // Eliminates z-fighting along edges of skybox.
+                Texture2D skyboxFace = Resources.Load("Textures/SpaceSkyBox/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture2D;  // Load the texture from file.
+                skyboxFace.wrapMode = TextureWrapMode.Clamp;   // Eliminates z-fighting along edges of skybox.
+                if (!mSkyboxes[uiSkybox])
+                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
+                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
             }
+
+            mSkyboxes[uiSkybox].Apply(false, true);
         }
 
         // Galaxy is ready to update galaxyIEs.
@@ -327,14 +330,13 @@ public class CGalaxy : CNetworkMonoBehaviour
     // Set the aesthetic of the galaxy based on the observer's position.
     void UpdateGalaxyIE(SGridCellPos absoluteCell, GalaxyIE galaxyIE)
     {
-        for (uint uiFace = 0; uiFace < 6; ++uiFace)  // Apply each texture of a skybox to the material...
-            galaxyIE.mGalaxyMaterial.SetTexture("_" + mSkyboxFaces[uiFace] + "Tex1", mSkyboxTextures[(uint)ESkyboxLayer.Composite][uiFace]);
+        // Skybox.
+        galaxyIE.mSkyboxMaterial.SetTexture("_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
+        galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
 
-        galaxyIE.mGalaxyMaterial.SetVector("_Tint", Color.grey);
-        galaxyIE.mGalaxyMaterial.SetVector("_FogColour", new Color(Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), Random.Range(0.0f, 0.05f), 1.0f));
-        galaxyIE.mGalaxyMaterial.SetFloat("_FogDensity", Random.Range(0.0002f, 0.0002f));
-        galaxyIE.mFogStartDistance = Random.Range(10.0f, 100.0f);
-        galaxyIE.mFogEndDistance = Random.Range(4000.0f, 5000.0f);  // 5000 is camera's far plane.
+        // Fog.
+        galaxyIE.mFogMaterial.SetFloat("_FogDensity", 0.001f);
+        galaxyIE.mFogStartDistance = 2000.0f;
     }
 
     void LoadAbsoluteCell(SGridCellPos absoluteCell)
