@@ -166,10 +166,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 // Member Methods
 	public void Start()
 	{
-		if(!CNetwork.IsServer)
-		{
-			gameObject.rigidbody.isKinematic = true;
-		}
+
 	}
 	
     public void Update()

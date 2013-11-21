@@ -13,7 +13,7 @@ SceneSettings:
     memoryUsage: 10485760
 --- !u!104 &2
 RenderSettings:
-  m_Fog: 1
+  m_Fog: 0
   m_FogColor: {r: .0647058263, g: 0, b: .323529422, a: 1}
   m_FogMode: 3
   m_FogDensity: .00999999978
