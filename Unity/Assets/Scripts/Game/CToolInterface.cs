@@ -304,6 +304,4 @@ public class CToolInterface : CNetworkMonoBehaviour
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
     ulong m_ulOwnerPlayerId = 0;
-
-	
 };

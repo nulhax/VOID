@@ -41,6 +41,7 @@ public class CRoomInterface : MonoBehaviour
 		HallwayCorner,
 		HallwayTSection,
 		HallwayXSection,
+        ShieldGenerator,
 		
 		MAX
 	}
@@ -89,7 +90,7 @@ public class CRoomInterface : MonoBehaviour
 // Member Functions
 	public void Awake()
 	{	
-		// Initialis ethe expansion ports
+		// Initialise the expansion ports
 		SearchExpansionPorts();
 		AddDebugPortNames();
 		
