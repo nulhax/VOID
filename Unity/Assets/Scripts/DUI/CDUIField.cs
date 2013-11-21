@@ -41,7 +41,7 @@ public class CDUIField : CDUIElement
     // Member Methods
 	public void Awake()
 	{
-		ElementType = CDUIElement.EElementType.Field;
+		ElementType = CDUIElement.EElementType.Field;		
 	}
 	
     public void Initialise(string _text, Color _textColor, int _fontSize = 96, float _characterSize = 0.00625f)
@@ -50,7 +50,7 @@ public class CDUIField : CDUIElement
     }
 
     private void InitialiseText(string _text, Color _textColor, int _fontSize, float _characterSize)
-    {
+    {		
         // Create the text field object
         m_TextField = new GameObject(name + "_Text");
         m_TextField.transform.parent = transform;

@@ -405,7 +405,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e586cb774fed2449c9ed11c94c3d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cTestSoundClip: {fileID: 8300000, guid: 671d5dc18b0069d4caf3c188fd9256d5, type: 3}
 --- !u!82 &1432749554
 AudioSource:
   m_ObjectHideFlags: 0

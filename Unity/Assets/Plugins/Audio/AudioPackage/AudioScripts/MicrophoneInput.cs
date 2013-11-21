@@ -62,6 +62,7 @@ public class MicrophoneInput : MonoBehaviour
 			if(m_fRecordingTimer >= m_kiRecordTime)
 			{
 				m_bRecording = false;
+				
 			}
 		}
 	}
