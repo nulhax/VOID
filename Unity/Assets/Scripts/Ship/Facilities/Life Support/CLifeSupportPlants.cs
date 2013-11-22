@@ -69,7 +69,7 @@ public class CLifeSupportPlants : MonoBehaviour
 		{
 			if (transform.GetChild(i).name == CLifeSupportPlants.ksPlantObjectName)
 			{
-				GameObject cPlantObject = (GameObject)GameObject.Instantiate(Resources.Load(string.Format("Prefabs/Ship/Rooms/LifeSupportPlant{0}", Random.Range(1,3)), typeof(GameObject)));
+				GameObject cPlantObject = (GameObject)GameObject.Instantiate(Resources.Load(string.Format("Prefabs/Ship/Facilities/Life Support/LifeSupportPlant{0}", Random.Range(1,3)), typeof(GameObject)));
 				cPlantObject.transform.position = transform.GetChild(i).gameObject.transform.position;
 
 
