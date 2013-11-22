@@ -463,8 +463,9 @@ public class CGame : CNetworkMonoBehaviour
 	void OnDisconnect()
 	{
 		GameObject.Find("Main Camera").camera.enabled = true;
+		
 		m_usActorViewId = 0;
-
+		
         // DO LAST (i.e. after everything in the game world is destroyed).
         if (!CNetwork.IsServer)
             Destroy(gameObject.GetComponent<CGalaxy>());
@@ -483,6 +484,9 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Notice
 		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
+		
+		// Initialise the players cameras
+		PlayerActor.GetComponent<CPlayerHeadMotor>().InitialiseCameras();
 	}
 
 
