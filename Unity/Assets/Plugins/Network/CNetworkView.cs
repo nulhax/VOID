@@ -291,6 +291,15 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+    public void SyncRigidBodyMass()
+    {
+        // Ensure servers only sync parents
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's rigid body mass!!!");
+
+        InvokeRpcAll("SetRigidBodyMass", rigidbody.mass);
+    }
+
+
 	public void SyncParent()
 	{
 		if (transform.parent != null)
@@ -631,6 +640,13 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		transform.localScale = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
 	}
+
+
+    [ANetworkRpc]
+    void SetRigidBodyMass(float _fMass)
+    {
+        rigidbody.mass = _fMass;
+    }
 
 
 	[ANetworkRpc]
