@@ -27,6 +27,7 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	// Member Fields
 	private GameObject m_GalaxyShip = null;
 	private GameObject m_PlayerGalaxyCamera = null;
+	private GameObject m_PlayerShipCamera = null;
 	
     protected CNetworkVar<float> m_GalaxyShipPositionX    = null;
     protected CNetworkVar<float> m_GalaxyShipPositionY    = null;
@@ -107,8 +108,11 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		m_GalaxyShip = GameObject.Instantiate(Resources.Load("Prefabs/Ship/GalaxyShip", typeof(GameObject))) as GameObject;
 	}
 	
-	public void AddPlayerActorGalaxyCamera(GameObject _PlayerActorCamera)
+	public void AddPlayerActorGalaxyCamera(GameObject _PlayerShipCamera)
 	{	
+		// Save the player ship camera
+		m_PlayerShipCamera = _PlayerShipCamera;
+		
 		// Create the galaxy camera and attach it to the galaxy ship
 		m_PlayerGalaxyCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/PlayerGalaxyCamera"));
 		m_PlayerGalaxyCamera.transform.parent = m_GalaxyShip.transform;
@@ -132,12 +136,21 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	private void UpdateGalaxyCameraTransforms()
 	{	
-		// Get the players ship camera
-		GameObject playerShipCamera = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>().ActorHead.GetComponentInChildren<CPlayerShipCamera>().gameObject;
+		// If the cameras are gone remove the galaxy camera
+		if(m_PlayerShipCamera == null)
+		{
+			if(m_PlayerGalaxyCamera != null)
+			{
+				Destroy(m_PlayerGalaxyCamera);
+			}
 			
+			// Exit the fucntion.
+			return;
+		}
+		
 		// Get the simulation actors position relative to the ship
-		Vector3 relativePos = playerShipCamera.transform.position - transform.position;
-		Quaternion relativeRot = playerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
+		Vector3 relativePos = m_PlayerShipCamera.transform.position - transform.position;
+		Quaternion relativeRot = m_PlayerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
 			
 		// Update the transform
 		if(m_PlayerGalaxyCamera.transform.localPosition != relativePos)

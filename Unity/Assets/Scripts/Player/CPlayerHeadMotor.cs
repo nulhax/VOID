@@ -167,12 +167,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		actorHeadMotor.m_HeadMotorState.SetCurrentRotation(new Vector2(rotationX, rotationY), timeStamp);
     }
 	
-	public void Start()
+	public void InitialiseCameras()
 	{	
 		if(CGame.PlayerActor == gameObject)
 		{
 			// Disable any main camera currently rendering
-			Destroy(Camera.main.gameObject);
+			GameObject.Find("Main Camera").camera.enabled = false;
 			
 			// Add the ship camera to the actor observing the ship
 			GameObject shipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/PlayerShipCamera"));
