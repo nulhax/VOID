@@ -72,7 +72,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Galaxy
 		GalaxyParent,
 		Asteroid_FIRST,
-		Asteroid_LAST = Asteroid_FIRST + 2,
+		Asteroid_LAST = Asteroid_FIRST + 3,
 		
 		// Hazards
         Fire,

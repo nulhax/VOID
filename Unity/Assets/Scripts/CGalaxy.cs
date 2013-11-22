@@ -123,7 +123,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         {
             for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
             {
-                Texture2D skyboxFace = Resources.Load("Textures/SpaceSkyBox/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture2D;  // Load the texture from file.
+                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + mSkyboxFaces[uiFace]) as Texture2D;  // Load the texture from file.
                 skyboxFace.wrapMode = TextureWrapMode.Clamp;   // Eliminates z-fighting along edges of skybox.
                 if (!mSkyboxes[uiSkybox])
                     mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
@@ -219,7 +219,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 {
                     foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
                     {
-                        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, 0.0f))
+                        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, 1.0f))
                         {
                             gubbin.mAlternator = mbValidCellValue;
                             break;
@@ -316,7 +316,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     public bool RelativeCellWithinProximityOfPoint(SGridCellPos relativeCell, Vector3 point, float pointRadius)
     {
         Vector3 cellCentrePos = new Vector3(relativeCell.x * mCellDiameter, relativeCell.y * mCellDiameter, relativeCell.z * mCellDiameter);
-        float cellBoundingSphereRadius = mCellDiameter * 0.70710678118654752440084436210485f;
+        float cellBoundingSphereRadius = mCellDiameter * 0.86602540378443864676372317075294f;
         return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
     }
 
@@ -372,11 +372,12 @@ public class CGalaxy : CNetworkMonoBehaviour
                     newAsteroid.transform.rotation = Random.rotationUniform;
                     
                     newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
-                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 50.0f);
+                    newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 75.0f);
                     newAsteroid.GetComponent<NetworkedEntity>().UpdateNetworkVars();
 
-                    float uniformScale = Random.Range(10.0f, 100.0f);
+                    float uniformScale = Random.Range(10.0f, 150.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
+                    newAsteroid.rigidbody.mass *= uniformScale * uniformScale;  // Alter default mass to be proportionate to the new scale.
 
                 } while (--iTries != 0 && false /*newAsteroid.collider.*/);
 
@@ -384,6 +385,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 //newAsteroidNetworkView.SyncTransformPosition();
                 //newAsteroidNetworkView.SyncTransformRotation();
                 newAsteroidNetworkView.SyncTransformScale();
+                newAsteroidNetworkView.SyncRigidBodyMass();
 
                 mGubbins.Add(new CRegisteredGubbin(newAsteroid, newAsteroidNetworkView.ViewId, mbValidCellValue));  // Add new asteroid to list of gubbins ("space things").
             }
