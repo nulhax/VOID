@@ -68,6 +68,4 @@ public class CFacilityPower : CNetworkMonoBehaviour
 
 
 	CNetworkVar<float> m_fPowerConsumption;
-
-
 };

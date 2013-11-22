@@ -36,7 +36,8 @@ public class CNetworkServer : MonoBehaviour
 
     public enum EPacketId
     {
-		PlayerSerializedData = RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM
+		PlayerSerializedData = RakNet.DefaultMessageIDTypes.ID_USER_PACKET_ENUM,
+		PlayerMicrophoneAudio
     }
 
 
@@ -82,6 +83,10 @@ public class CNetworkServer : MonoBehaviour
 
     public delegate void NotifyShutdown();
     public event NotifyShutdown EventShutdown;
+	
+	
+	public delegate void NotifyRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream);
+	public event NotifyRecievedPlayerMicrophoneAudio EventRecievedPlayerMicrophoneAudio;
 
 
 // Member Functions
@@ -162,6 +167,13 @@ public class CNetworkServer : MonoBehaviour
             Logger.Write("Server shutdown");
         }
     }
+	
+	
+	public void TransmitMicrophoneAudio(ulong _ulPlayerId, CNetworkStream _cAudioDataStream)
+	{
+		m_cRnPeer.Send(_cAudioDataStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.UNRELIABLE_SEQUENCED, (char)1, FindNetworkPlayer(_ulPlayerId).SystemAddress, false);
+		_cAudioDataStream.SetReadOffset(0);			
+	}
 
 
 	public CNetworkPlayer FindNetworkPlayer(ulong _ulPlayerId)
@@ -254,6 +266,12 @@ public class CNetworkServer : MonoBehaviour
                     }
                     break;
 
+                case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerMicrophoneAudio:
+                    {
+                        HandlePlayerMicrophoneAudio(cRnPacket.guid, cRnPacket.data);
+                    }
+                    break;
+				
                 default:
                     Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
                     break;
@@ -368,8 +386,19 @@ public class CNetworkServer : MonoBehaviour
 	{
 		CNetworkPlayer cNetworkPlayer = s_mNetworkPlayers[_cPlayerGuid.g];
 
-
 		CNetworkConnection.ProcessPlayerSerializedData(cNetworkPlayer, _baData);
+	}
+	
+	
+	protected void HandlePlayerMicrophoneAudio(RakNet.RakNetGUID _cPlayerGuid, byte[] _baData)
+	{
+		if (EventRecievedPlayerMicrophoneAudio != null)
+		{
+			CNetworkStream cAudioDataStream = new CNetworkStream(_baData);
+			cAudioDataStream.IgnoreBytes(1);
+			
+			EventRecievedPlayerMicrophoneAudio(FindNetworkPlayer(_cPlayerGuid.g), cAudioDataStream);
+		}
 	}
 
 

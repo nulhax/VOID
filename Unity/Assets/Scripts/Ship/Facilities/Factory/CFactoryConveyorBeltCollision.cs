@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
-public class CRoomFactoryConveyorBeltCollision : MonoBehaviour
+public class CFactoryConveyorBeltCollision : MonoBehaviour
 {
 	void OnTriggerStay(Collider TriggerObject)
 	{

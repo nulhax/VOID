@@ -37,7 +37,7 @@ public class CFacilityInterface : MonoBehaviour
 		LifeSupportDome,
 		Replicator,
 		Scanner,
-		ShieldGenerator,
+		//ShieldGenerator,
 		HallwayStraight,
 		HallwayCorner,
 		HallwayTSection,
@@ -147,7 +147,7 @@ public class CFacilityInterface : MonoBehaviour
 			case EFacilityType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
 			case EFacilityType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
 			case EFacilityType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
-			case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
+			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
 			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
 			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
 			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
@@ -175,9 +175,9 @@ public class CFacilityInterface : MonoBehaviour
 	{
 		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
 		{
-			CDUIField debugName = m_aExpansionPorts[i].gameObject.AddComponent<CDUIField>();
+			CDUIField portName = m_aExpansionPorts[i].gameObject.AddComponent<CDUIField>();
 			int PortId = i + 1;
-			debugName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
+			//portName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
 		}
 	}
 	
