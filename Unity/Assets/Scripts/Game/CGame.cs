@@ -532,9 +532,6 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Notice
 		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
-		
-		// Initialise the players cameras
-		PlayerActor.GetComponent<CPlayerHeadMotor>().InitialiseCameras();
 	}
 
 

@@ -167,7 +167,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		actorHeadMotor.m_HeadMotorState.SetCurrentRotation(new Vector2(rotationX, rotationY), timeStamp);
     }
 	
-	public void InitialiseCameras()
+	public void Start()
 	{	
 		if(CGame.PlayerActor == gameObject)
 		{

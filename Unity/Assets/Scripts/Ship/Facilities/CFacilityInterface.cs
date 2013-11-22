@@ -37,7 +37,7 @@ public class CFacilityInterface : MonoBehaviour
 		LifeSupportDome,
 		Replicator,
 		Scanner,
-		ShieldGenerator,
+		//ShieldGenerator,
 		HallwayStraight,
 		HallwayCorner,
 		HallwayTSection,
@@ -147,7 +147,7 @@ public class CFacilityInterface : MonoBehaviour
 			case EFacilityType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
 			case EFacilityType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
 			case EFacilityType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
-			case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
+			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
 			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
 			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
 			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
