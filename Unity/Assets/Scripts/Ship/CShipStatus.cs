@@ -28,7 +28,7 @@ public class CShipStatus : CNetworkMonoBehaviour
     CNetworkVar<float> m_fTotalOxygenOutput;
     CNetworkVar<float> m_fTotalOxygenConsumption;
 	
-	Dictionary<CRoomInterface.ERoomType, List<GameObject>> m_RoomDictionary = new Dictionary<CRoomInterface.ERoomType, List<GameObject>>();
+	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_RoomDictionary = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
 	List<GameObject> m_RoomsBridge      = new List<GameObject>();
 	List<GameObject> m_RoomsFactory     = new List<GameObject>();
 	List<GameObject> m_RoomsLifeSupport = new List<GameObject>();
@@ -59,7 +59,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 	//	foreach (GameObject Room in TempList)
 	//	{
 			// Get the current room's type
-	//		switch (Room.GetComponent<CRoomInterface>().RoomType())
+	//		switch (Room.GetComponent<CFacilityInterface>().RoomType())
 	//		{
 	//		case Bridge:           { m_RoomsBridge.Add(Room); break; }
 	//		case Factory:          { m_RoomsFactory.Add(Room); break; }
@@ -71,17 +71,17 @@ public class CShipStatus : CNetworkMonoBehaviour
 	//	}
 		
 		// Add each 'type' list into a dictionary, keyed to that type
-	//	m_RoomDictionary.Add(CRoomInterface.ERoomType.Bridge, m_RoomsBridge);
-//		m_RoomDictionary.Add(CRoomInterface.ERoomType.Factory, m_RoomsFactory);
-//		m_RoomDictionary.Add(CRoomInterface.ERoomType.LifeSupportDome, m_RoomsLifeSupport);
-	//	m_RoomDictionary.Add(CRoomInterface.ERoomType.GravityGenerator, m_RoomsGravityGen);
-	//	m_RoomDictionary.Add(CRoomInterface.ERoomType.Engine, m_RoomsEngine);
+	//	m_RoomDictionary.Add(CFacilityInterface.ERoomType.Bridge, m_RoomsBridge);
+//		m_RoomDictionary.Add(CFacilityInterface.ERoomType.Factory, m_RoomsFactory);
+//		m_RoomDictionary.Add(CFacilityInterface.ERoomType.LifeSupportDome, m_RoomsLifeSupport);
+	//	m_RoomDictionary.Add(CFacilityInterface.ERoomType.GravityGenerator, m_RoomsGravityGen);
+	//	m_RoomDictionary.Add(CFacilityInterface.ERoomType.Engine, m_RoomsEngine);
 	}
 
     public void Update()
     {
-//		for (CRoomInterface.ERoomType RoomType = CRoomInterface.ERoomType.Bridge;
-		//	 RoomType < CRoomInterface.ERoomType.MAX;
+//		for (CFacilityInterface.ERoomType RoomType = CFacilityInterface.ERoomType.Bridge;
+		//	 RoomType < CFacilityInterface.ERoomType.MAX;
 		//	 ++RoomType)
 		//{
 			// Total up every room's power consumpotion
@@ -93,7 +93,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 		//	switch (RoomType)
 		//	{
 				// Total up all life support system's output
-		//		case CRoomInterface.ERoomType.LifeSupportDome: 
+		//		case CFacilityInterface.ERoomType.LifeSupportDome: 
 		//		{
 					// m_fTotalOxygenOutput += Current room's oxygen output
 		//		}

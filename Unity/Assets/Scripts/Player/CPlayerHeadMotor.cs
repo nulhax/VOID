@@ -175,7 +175,7 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 			GameObject.Find("Main Camera").camera.enabled = false;
 			
 			// Add the ship camera to the actor observing the ship
-			GameObject shipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/PlayerShipCamera"));
+			GameObject shipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerShipCamera"));
 			shipCamera.transform.parent = ActorHead.transform;
 			shipCamera.transform.localPosition = Vector3.zero;
 			shipCamera.transform.localRotation = Quaternion.identity;

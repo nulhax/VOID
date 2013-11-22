@@ -114,7 +114,7 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		m_PlayerShipCamera = _PlayerShipCamera;
 		
 		// Create the galaxy camera and attach it to the galaxy ship
-		m_PlayerGalaxyCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/PlayerGalaxyCamera"));
+		m_PlayerGalaxyCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerGalaxyCamera"));
 		m_PlayerGalaxyCamera.transform.parent = m_GalaxyShip.transform;
 	}
 	

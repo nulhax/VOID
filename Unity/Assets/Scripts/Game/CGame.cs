@@ -31,39 +31,64 @@ public class CGame : CNetworkMonoBehaviour
 
 	public enum ENetworkRegisteredPrefab : ushort
 	{
+		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
+		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
+		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
+		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
+		
 		INVALID,
+		
+		// Ships
 		Ship,
 		GalaxyShip,
-		RoomBridge,
-		RoomFactory,
-		RoomLifeSupport,
-		RoomScanner,
-		RoomReplicator,
-		RoomEngine,
-		RoomGravityGenerator,
+		
+		// Ship: Facilities
+		FacilityBridge, 
+		FacilityFactory,
+		FacilityScanner,
+		FacilityReplicator,
+		FacilityEngine,
+		FacilityGravityGenerator, 
+		FacilityShieldGenerator, 
+		FacilityLifeSupport,
+		
+		// Ship: Doors
+		Door,
+		
+		// Ship: Hallways
 		HallwayStraight,
 		HallwayCorner,
-		HallwayTSection,
+		HallwayTSection, 
 		HallwayXSection,
-		Door,
-		ControlConsole,
-		Cockpit,
-		PlayerActor,
-        ToolTorch,
-		ToolRachet,
-		ToolExtinguisher,
-        GalaxyParent,
-        Asteroid_FIRST,
-        // Do not insert anything here.
-        Asteroid_LAST = Asteroid_FIRST + 2, // Inclusive, thus 3 total.
-		Fire,
-        TESTFACTORY,
+		
+		// Player
+        PlayerActor,
+		
+		// Register prefabs: Tools
+        ToolTorch, 
+		ToolRachet, 
+		ToolExtinguisher, 
+		
+		// Galaxy
+		GalaxyParent,
+		Asteroid_FIRST,
+		Asteroid_LAST = Asteroid_FIRST + 2,
+		
+		// Hazards
+        Fire,
+		
+		// Modules: General
 		BlackMatterCell,
 		FuelCell,
 		PlasmaCell,
 		PowerCell,
-		ConveyorCube,
 		PanelFuseBox,
+		ControlConsole,
+		
+		// Modules: Bridge
+		Cockpit,
+		
+		MAX
 	}
 
 
@@ -153,39 +178,9 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
         CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
-
-		// Register prefabs
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/WorldShip");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomBridge, "Ship/Rooms/RoomBridge");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomFactory, "Ship/Rooms/RoomFactory");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomScanner, "Ship/Rooms/RoomScanner");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomReplicator, "Ship/Rooms/RoomReplicator");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomEngine, "Ship/Rooms/RoomEngine");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomGravityGenerator, "Ship/Rooms/RoomGravityGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Rooms/Doors/Door");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "DUI/CurvedMonitor_wide");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Rooms/Cockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
-        for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
-            CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Hazards/Asteroid" + us.ToString());
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TESTFACTORY, "FactoryRoom");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayStraight, "Ship/Hallways/HallwayStraight");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayCorner, "Ship/Hallways/HallwayCorner");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayXSection, "Ship/Hallways/HallwayXSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.RoomLifeSupport, "Ship/Rooms/RoomLifeSupport");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/BlackMatterCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/FuelCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/PlasmaCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ConveyorCube, "Ship/Rooms/ConveyorCube");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Panels/PanelFuseBox");
+		
+		// Register Prefabs. Register your prefabs inside this function
+		RegisterPrefabs();
 
 		// Register serialization targets
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerBodyMotor.SerializePlayerState, CPlayerBodyMotor.UnserializePlayerState);
@@ -201,7 +196,60 @@ public class CGame : CNetworkMonoBehaviour
 		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
-    
+	
+	private void RegisterPrefabs()
+	{
+		// Ships
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/WorldShip");
+		
+		// Ship: Facilities
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityBridge, "Ship/Facilities/Bridge/Bridge");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityFactory, "Ship/Facilities/Factory/Factory");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityScanner, "Ship/Facilities/Scanner/Scanner");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityReplicator, "Ship/Facilities/Replicator/Replicator");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityEngine, "Ship/Facilities/Engine/Engine");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityGravityGenerator, "Ship/Facilities/Gravity Generator/GravityGenerator");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityShieldGenerator, "Ship/Facilities/Shield Generator/ShieldGenerator");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityLifeSupport, "Ship/Facilities/Life Support/LifeSupport");
+		
+		// Ship: Doors
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Doors/Door");
+		
+		// Ship: Hallways
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayStraight, "Ship/Hallways/HallwayStraight");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayCorner, "Ship/Hallways/HallwayCorner");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayXSection, "Ship/Hallways/HallwayXSection");
+		
+		// Player
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
+		
+		// Register prefabs: Tools
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
+		
+		// Galaxy
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
+        for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
+            CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Galaxy/Asteroid" + us.ToString());
+		
+		// Hazards
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
+		
+		// Modules: General
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/General/BlackMatterCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/General/FuelCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/General/PlasmaCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/General/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/General/PanelFuseBox");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/General/DUI/CurvedMonitor_wide");
+		
+		// Modules: Bridge
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Facilities/Bridge/Cockpit");
+		
+	}
 
 	public void Update()
 	{
@@ -434,7 +482,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Save view id
 		m_usShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 		
-		cShipObject.GetComponent<CShipRooms>().CreateRoom(CRoomInterface.ERoomType.Bridge, 0);
+		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge, 0);
 	}
 
 
