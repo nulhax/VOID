@@ -175,7 +175,7 @@ public class CRoomInterface : MonoBehaviour
 		{
 			CDUIField portName = m_aExpansionPorts[i].gameObject.AddComponent<CDUIField>();
 			int PortId = i + 1;
-						portName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
+			//portName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
 		}
 	}
 	

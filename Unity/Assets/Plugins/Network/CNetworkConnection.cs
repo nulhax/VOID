@@ -214,6 +214,7 @@ public class CNetworkConnection : MonoBehaviour
 	
 	public void TransmitMicrophoneAudio(CNetworkStream _cAudioDataStream)
 	{
+
 		CNetworkStream cTransmitStream = new CNetworkStream();
 		cTransmitStream.Write((byte)CNetworkServer.EPacketId.PlayerMicrophoneAudio);
 		cTransmitStream.Write(_cAudioDataStream);

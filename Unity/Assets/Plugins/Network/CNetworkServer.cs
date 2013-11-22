@@ -171,11 +171,8 @@ public class CNetworkServer : MonoBehaviour
 	
 	public void TransmitMicrophoneAudio(ulong _ulPlayerId, CNetworkStream _cAudioDataStream)
 	{
-		CNetworkStream cTransmitStream = new CNetworkStream();
-		cTransmitStream.Write((byte)CNetworkConnection.EPacketId.MicrophoneAudio);
-		cTransmitStream.Write(_cAudioDataStream);
-		
-		m_cRnPeer.Send(cTransmitStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.UNRELIABLE_SEQUENCED, (char)1, FindNetworkPlayer(_ulPlayerId).SystemAddress, false);
+		m_cRnPeer.Send(_cAudioDataStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.UNRELIABLE_SEQUENCED, (char)1, FindNetworkPlayer(_ulPlayerId).SystemAddress, false);
+		_cAudioDataStream.SetReadOffset(0);			
 	}
 
 
@@ -389,7 +386,6 @@ public class CNetworkServer : MonoBehaviour
 	{
 		CNetworkPlayer cNetworkPlayer = s_mNetworkPlayers[_cPlayerGuid.g];
 
-
 		CNetworkConnection.ProcessPlayerSerializedData(cNetworkPlayer, _baData);
 	}
 	
@@ -400,7 +396,6 @@ public class CNetworkServer : MonoBehaviour
 		{
 			CNetworkStream cAudioDataStream = new CNetworkStream(_baData);
 			cAudioDataStream.IgnoreBytes(1);
-			
 			
 			EventRecievedPlayerMicrophoneAudio(FindNetworkPlayer(_cPlayerGuid.g), cAudioDataStream);
 		}
