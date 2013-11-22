@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -87,7 +87,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	{
 		// Register the interactable object event
 		CInteractableObject IO = GetComponent<CInteractableObject>();
-		IO.UseLeftClick += HandlerPlayerActorLeftClick;
+		IO.InteractionPrimaryStart += HandlerPlayerActorLeftClick;
 		
 		// Register the subview change event
 		CDUI dui = GetComponent<CDUIConsole>().DUI; 

@@ -16,70 +16,32 @@ public class GalaxyObserver : MonoBehaviour
             float observationRadius = 1.0f;
             {
                 Rigidbody body = gameObject.GetComponent<Rigidbody>();
-                if (body)
-                {
-                    Debug.Log("Got Rigidbody on " + gameObject.name);
-
+                if (body && body.collider != null)
                     observationRadius = Mathf.Sqrt(body.collider.bounds.extents.sqrMagnitude);
-                }
                 else
                 {
-                    Debug.Log("No Rigidbody on " + gameObject.name);
-
                     Collider collider = gameObject.GetComponent<Collider>();
                     if (collider)
-                    {
-                        Debug.Log("Got Collider on " + gameObject.name);
-
                         observationRadius = Mathf.Sqrt(collider.bounds.extents.sqrMagnitude);
-                    }
                     else
                     {
-                        Debug.Log("No Collider on " + gameObject.name);
-
                         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
                         if (meshRenderer)
-                        {
-                            Debug.Log("Got MeshRenderer on " + gameObject.name);
-
                             observationRadius = Mathf.Sqrt(meshRenderer.bounds.extents.sqrMagnitude);
-                        }
                         else
                         {
-                            Debug.Log("No MeshRenderer on " + gameObject.name);
-
                             bool gotSomethingFromAnimator = false;
                             Animator anim = gameObject.GetComponent<Animator>();
                             if (anim)
                             {
-                                if (anim.renderer)
-                                {
-                                    gotSomethingFromAnimator = true;
-                                    Debug.Log("Got Animator.renderer on " + gameObject.name);
-                                    observationRadius = Mathf.Sqrt(anim.renderer.bounds.extents.sqrMagnitude);
-                                }
-                                else if (anim.collider)
-                                {
-                                    gotSomethingFromAnimator = true;
-                                    Debug.Log("Got Animator.collider on " + gameObject.name);
-                                    observationRadius = Mathf.Sqrt(anim.collider.bounds.extents.sqrMagnitude);
-                                }
-                                else if (anim.rigidbody)
-                                {
-                                    gotSomethingFromAnimator = true;
-                                    Debug.Log("Got Animator.rigidbody on " + gameObject.name);
-                                    observationRadius = Mathf.Sqrt(anim.rigidbody.collider.bounds.extents.sqrMagnitude);
-                                }
-                                else
-                                    Debug.Log("Nothing useful in Animator on " + gameObject.name);
+                                gotSomethingFromAnimator =  anim.renderer || anim.collider || anim.rigidbody;
+                                if (anim.renderer)          observationRadius = Mathf.Sqrt(anim.renderer.bounds.extents.sqrMagnitude);
+                                else if (anim.collider)     observationRadius = Mathf.Sqrt(anim.collider.bounds.extents.sqrMagnitude);
+                                else if (anim.rigidbody)    observationRadius = Mathf.Sqrt(anim.rigidbody.collider.bounds.extents.sqrMagnitude);
                             }
-                            else
-                                Debug.Log("No Animator on " + gameObject.name);
 
                             if (!gotSomethingFromAnimator)
-                            {
-                                Debug.LogWarning("GalaxyObserver: Can not get anything useful from " + gameObject.name + ". Bounding sphere radius set to 1");
-                            }
+                                Debug.LogWarning("GalaxyObserver: No RigidBody, Collider, MeshRenderer, or Animator on " + gameObject.name + ". Bounding sphere radius set to 1");
                         }
                     }
                 }

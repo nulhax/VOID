@@ -3,7 +3,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   CActorMotor.cs
+//  File Name   :   CPlayerHeadMotor.cs
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -73,21 +73,22 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 
 	public float m_MinimumY = -60.0f;
 	public float m_MaximumY = 60.0f;
-
-	public float m_RotationX = 0.0f;
-	public float m_RotationY = 0.0f;
-		
 	
-	GameObject m_ActorHead = null;
+	public GameObject m_ActorHead = null;
 	
 	
-	CHeadMotorState m_HeadMotorState = new CHeadMotorState();
+	private CHeadMotorState m_HeadMotorState = new CHeadMotorState();
 	
 	
-	CNetworkVar<float> m_HeadEulerX    = null;
-    CNetworkVar<float> m_HeadEulerY    = null;
-    CNetworkVar<float> m_HeadEulerZ    = null;
-
+	private Vector3 m_Rotation = Vector3.zero;
+	private bool m_FreezeHeadInput = false;
+	
+	
+	private CNetworkVar<float> m_HeadEulerX    = null;
+    private CNetworkVar<float> m_HeadEulerY    = null;
+    private CNetworkVar<float> m_HeadEulerZ    = null;
+	
+	
 	
 // Member Properties	
 	public GameObject ActorHead 
@@ -96,6 +97,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{ 
 			return(m_ActorHead); 
 		} 
+	}
+	
+	public bool FreezeHeadInput
+	{
+		set { m_FreezeHeadInput = value; }
+		get { return(m_FreezeHeadInput); }
 	}
 	
 	public Vector3 HeadEuler
@@ -137,9 +144,12 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		{
 			CPlayerHeadMotor actorHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
 			
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.x);
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.y);
-			_cStream.Write(actorHeadMotor.m_HeadMotorState.TimeStamp);
+			if(!actorHeadMotor.FreezeHeadInput)
+			{
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.x);
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.CurrentRotationState.y);
+				_cStream.Write(actorHeadMotor.m_HeadMotorState.TimeStamp);
+			}
 			
 			actorHeadMotor.m_HeadMotorState.ResetStates();
 		}	
@@ -157,49 +167,49 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 		actorHeadMotor.m_HeadMotorState.SetCurrentRotation(new Vector2(rotationX, rotationY), timeStamp);
     }
 	
-    public void Awake()
+	public void InitialiseCameras()
 	{	
-		// Create the actor head object
-		m_ActorHead = GameObject.Instantiate(Resources.Load("Prefabs/Player/Actor Head", typeof(GameObject))) as GameObject;
-        m_ActorHead.transform.parent = transform;
-        m_ActorHead.transform.localPosition = Vector3.up * 0.65f;
+		if(CGame.PlayerActor == gameObject)
+		{
+			// Disable any main camera currently rendering
+			GameObject.Find("Main Camera").camera.enabled = false;
+			
+			// Add the ship camera to the actor observing the ship
+			GameObject shipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerShipCamera"));
+			shipCamera.transform.parent = ActorHead.transform;
+			shipCamera.transform.localPosition = Vector3.zero;
+			shipCamera.transform.localRotation = Quaternion.identity;
+			
+			// Add the galaxy camera to the ship galaxy simulator
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera(shipCamera);
+		}
 	}
 
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.PlayerActor == gameObject && !FreezeHeadInput)
 		{
 			UpdateHeadMotorInput();
 		}
-		
+	
 		if(CNetwork.IsServer)
-		{	
-			// Process the actor rotations
-			ProcessRotations();
-			
+		{
 			// Syncronize the head rotation
 			HeadEuler = m_ActorHead.transform.eulerAngles;
 		}
     }
 	
-	public void AttatchPlayerCamera()
-    {
-		// Attach the player camera script
-		m_ActorHead.AddComponent<CPlayerCamera>();
-    }
-
-	static bool m_bFocused = true;
-	void OnApplicationFocus(bool _bFocued) {
-		m_bFocused = _bFocued;
+	public void FixedUpdate()
+	{
+		if(CNetwork.IsServer)
+		{	
+			// Process the actor rotations
+			ProcessRotations();
+		}
 	}
 	
-    protected void UpdateHeadMotorInput()
-	{
-		if (!m_bFocused)
-		{
-			return;
-		}
-
+    private void UpdateHeadMotorInput()
+	{	
 		Vector2 rotationState = m_HeadMotorState.CurrentRotationState;
 		
 		// Rotate around Y
@@ -218,32 +228,31 @@ public class CPlayerHeadMotor : CNetworkMonoBehaviour
 	}
 	
 	
-	protected void ProcessRotations()
+	private void ProcessRotations()
 	{
-		// Yaw rotation
-		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
-		{
-			m_RotationX += m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
-			
-			if(m_RotationX > 360.0f)
-				m_RotationX -= 360.0f;
-			else if(m_RotationX < -360.0f)
-				m_RotationX += 360.0f;
-				
-			m_RotationX = Mathf.Clamp(m_RotationX, m_MinimumX, m_MaximumX);	
-		}
-		
 		// Pitch rotation
 		if(m_HeadMotorState.CurrentRotationState.y != 0.0f)
 		{
-			m_RotationY += m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
-			m_RotationY = Mathf.Clamp(m_RotationY, m_MinimumY, m_MaximumY);
+			m_Rotation.x += m_HeadMotorState.CurrentRotationState.y * m_SensitivityY;
+			m_Rotation.x =  Mathf.Clamp(m_Rotation.x, m_MinimumY, m_MaximumY);
 		}
 		
-		// Apply the pitch to the actor
-		transform.eulerAngles = new Vector3(0.0f, m_RotationX, 0.0f);
+		// Yaw rotation
+		if(m_HeadMotorState.CurrentRotationState.x != 0.0f)
+		{
+			m_Rotation.y += m_HeadMotorState.CurrentRotationState.x * m_SensitivityX;
+		}
 		
-		// Apply the yaw to the camera
-		m_ActorHead.transform.eulerAngles = new Vector3(-m_RotationY, m_RotationX, 0.0f);
+		// Apply the yaw to the player actor
+		Quaternion shipRot = CGame.Ship.transform.rotation;
+		transform.rotation = shipRot * Quaternion.AngleAxis(m_Rotation.y, Vector3.up);
+		
+		// Apply the pitch to the camera
+		m_ActorHead.transform.localEulerAngles = new Vector3(-m_Rotation.x, 0.0f, 0.0f);
+	}
+	
+	private void OnApplicationFocus(bool _focusStatus) 
+	{
+		FreezeHeadInput = !_focusStatus;
 	}
 };

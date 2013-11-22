@@ -34,7 +34,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		SecondaryStart,
 		SecondaryEnd,
 		Use,
-		Action2,
 		
 		MAX
 	}
@@ -117,10 +116,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		else if(Input.GetKeyDown(s_eUseKey))
 		{
 			m_eCurrentInteractionType = EInteractionType.Use;
-		}
-		else if(Input.GetKeyDown(s_eAction2Key))
-		{
-			m_eCurrentInteractionType = EInteractionType.Action2;
 		}
 		else
 		{
@@ -215,8 +210,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		
 		if (Physics.Raycast(ray, out _rh, _fDistance, 1 << LayerMask.NameToLayer("InteractableObject")))
 		{
+			Debug.DrawRay(_origin, _direction * _fDistance, Color.green, 1.0f);
 			return(true);
 		}
+		
+		Debug.DrawRay(_origin, _direction * _fDistance, Color.red, 1.0f);
 		
 		return(false); 
     }

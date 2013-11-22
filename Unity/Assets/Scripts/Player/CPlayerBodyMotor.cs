@@ -114,7 +114,6 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		public void ResetStates()
 		{
 			m_CurrentMovementState = 0;
-			m_LastUpdateTimeStamp = Time.time;
 		}
 	}
 	
@@ -122,15 +121,20 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	public float m_Gravity = 9.81f;
 	public float m_MovementSpeed = 4.0f;
 	public float m_SprintSpeed = 7.0f;
-	public float m_JumpSpeed = 3.0f;
+	public float m_JumpSpeed = 4.0f;
 
 	
 	public CPlayerMovementState m_MotorState = new CPlayerMovementState();
 	
 	
-	bool m_FreezeMovmentInput = false;
-	Vector3 m_Velocity = Vector3.zero;
-
+	private bool m_FreezeMovmentInput = false;
+	private bool m_UsingGravity = true;
+	private bool m_bGrounded = false;
+	
+	
+	private Vector3 m_GravityForce = Vector3.zero;
+	private Vector3 m_Velocity = Vector3.zero;
+	
 
     static KeyCode m_eMoveForwardKey = KeyCode.W;
     static KeyCode m_eMoveBackwardsKey = KeyCode.S;
@@ -147,17 +151,37 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		get { return(m_FreezeMovmentInput); }
 	}
 	
+	public bool UsingGravity
+	{
+		set { m_UsingGravity = value; }
+		get { return(m_UsingGravity); }
+	}
+	
+	public Vector3 GravityForce
+	{
+		set { m_GravityForce = value; }
+		get { return(m_GravityForce); }
+	}
+	
 // Member Methods
+	public void Start()
+	{
+
+	}
+	
     public void Update()
     {	
-		if(CGame.PlayerActor == gameObject)
+		if(CGame.PlayerActor == gameObject && !FreezeMovmentInput)
 		{
 			UpdatePlayerInput();
 		}
 		
 		if(CNetwork.IsServer)
-		{	
-			// Process the actor movements
+		{
+			// Placeholder: Make gravity relative to the ship
+			m_GravityForce = CGame.Ship.transform.up * -m_Gravity;
+			
+			// Process the movement of the player
 			ProcessMovement();
 		}
     }
@@ -170,19 +194,15 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
 		if(CGame.PlayerActorViewId != 0)
-		{
+		{	
 			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
 			
-			if(!actorMotor.FreezeMovmentInput)
-			{
-				_cStream.Write(actorMotor.m_MotorState.CurrentState);
-				_cStream.Write(actorMotor.m_MotorState.TimeStamp);
-			}
+			_cStream.Write(actorMotor.m_MotorState.CurrentState);
+			_cStream.Write(actorMotor.m_MotorState.TimeStamp);
 			
 			actorMotor.m_MotorState.ResetStates();
 		}	
     }
-
 
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
@@ -194,7 +214,7 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		actorMotor.m_MotorState.SetCurrentState(motorState, timeStamp);
     }
 	
-    protected void UpdatePlayerInput()
+    private void UpdatePlayerInput()
 	{	
 		// Move forwards
         if (Input.GetKey(m_eMoveForwardKey))
@@ -233,18 +253,15 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 		}
 	}
 	
-	
-	protected void ProcessMovement()
-    {
+	private void ProcessMovement()
+    {		
 		CharacterController charController = GetComponent<CharacterController>();
 		
 		// Only if grounded
 		if(charController.isGrounded)
 		{
-			Vector3 vDirForward = transform.TransformDirection(Vector3.forward);
-			Vector3 vDirLeft = transform.TransformDirection(Vector3.left);
 			float moveSpeed = m_MovementSpeed;
-			m_Velocity = new Vector3(0.0f, m_Velocity.y, 0.0f);
+			m_Velocity = Vector3.zero;
 			
 			// Sprinting
 			if(m_MotorState.Sprinting)
@@ -253,39 +270,33 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 			}
 			
 			// Moving 
-	        if (m_MotorState.MovingForward &&
-	            !m_MotorState.MovingBackward)
-	        {
-	            m_Velocity += vDirForward * moveSpeed;
-	        }
-	        else if (m_MotorState.MovingBackward &&
-	            	 !m_MotorState.MovingForward)
-	        {
-	            m_Velocity -= vDirForward * moveSpeed;
-	        }
+			if(m_MotorState.MovingForward != m_MotorState.MovingBackward)
+			{
+				m_Velocity.z = m_MotorState.MovingForward ? 1.0f : -1.0f;
+			}
 			
 			// Strafing
-	        if (m_MotorState.MovingLeft &&
-            	!m_MotorState.MovingRight)
-	        {
-	            m_Velocity += vDirLeft * moveSpeed;
-	        }
-	        else if (m_MotorState.MovingRight &&
-            		 !m_MotorState.MovingLeft)
-	        {
-	            m_Velocity -= vDirLeft * moveSpeed;
-	        }
+			if(m_MotorState.MovingLeft != m_MotorState.MovingRight)
+			{
+				m_Velocity.x = m_MotorState.MovingLeft ? -1.0f : 1.0f;
+			}
+			
+			// Normalize the movewment/strafing and multiply by movement speed
+			m_Velocity = m_Velocity.normalized * moveSpeed;
 			
 			// Jumping
 			if(m_MotorState.Jumping)
 			{
 				m_Velocity.y = m_JumpSpeed;
 			}
+			
+			// Transform the velocity ammount for relative velocity
+			m_Velocity = transform.rotation * m_Velocity;
 		}
 		else
 		{
 			// Apply the gravity
-			m_Velocity.y += -m_Gravity * Time.deltaTime;
+			m_Velocity += m_GravityForce * Time.deltaTime;
 		}
 		
 		// Apply the movement

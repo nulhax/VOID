@@ -27,24 +27,26 @@ public class CDUIConsole : MonoBehaviour
     // Member Fields 
 	private GameObject m_DUI = null;
 	
+	static float s_UIOffset = 0.0f;
+	
     // Member Properties
 	public CDUI DUI 
 	{ 
-		get 
-		{ 
-			return(m_DUI.GetComponent<CDUI>()); 
-		} 
+		get { return(m_DUI.GetComponent<CDUI>()); } 
 	}
 	
 	public GameObject DUIGameObject 
 	{ 
-		get 
-		{ 
-			return(m_DUI); 
-		} 
+		get { return(m_DUI); } 
 	}
 	
 	// Member Methods
+	public void Start()
+	{
+		// Attach the render texture material
+        DUI.AttatchRenderTexture(m_ScreenObject.renderer.material);
+	}
+	
     public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
     {
 		// Check the screen is assigned in the editor
@@ -66,16 +68,16 @@ public class CDUIConsole : MonoBehaviour
         m_DUI = new GameObject();
         m_DUI.name = name + "_DUI";
         m_DUI.layer = LayerMask.NameToLayer("DUI");
-		m_DUI.transform.rotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
-        m_DUI.transform.position = transform.position + m_DUI.transform.rotation * new Vector3(0.0f, 0.0f, -1.0f);
+		m_DUI.transform.rotation = Quaternion.identity;
+        m_DUI.transform.position = new Vector3(0.0f, 0.0f, s_UIOffset);
 		
         // Add the DUI component
         CDUI dui = m_DUI.AddComponent<CDUI>();
 
         // Initialise the DUI Component
         dui.Initialise(_Quality, _Layout, _Dimensions, gameObject);
-
-        // Attach the render texture material
-        dui.AttatchRenderTexture(m_ScreenObject.renderer.material);
+		
+		// Increment the offset
+		s_UIOffset += 2.0f;
 	}
 }

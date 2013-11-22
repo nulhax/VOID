@@ -224,27 +224,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 		// Notice
         Logger.Write("Created new game object with prefab ({0}), name ({1}) and network view id ({2})", _usPrefabId, cNewgameObject.name, _usNetworkViewId);
-
-
-
-		// Testing
-		if (_usPrefabId == 2)
-		{
-			/*
-			cNewgameObject.renderer.material = new Material(Shader.Find("Diffuse"));
-			
-			switch (_usNetworkViewId)
-			{
-				case 500: cNewgameObject.renderer.material.color = Color.red; break;
-				case 501: cNewgameObject.renderer.material.color = Color.blue; break;
-				case 502: cNewgameObject.renderer.material.color = Color.yellow; break;
-				case 503: cNewgameObject.renderer.material.color = Color.cyan; break;
-				case 504: cNewgameObject.renderer.material.color = Color.green; break;
-				case 505: cNewgameObject.renderer.material.color = Color.magenta; break;
-				case 506: cNewgameObject.renderer.material.color = Color.black; break;
-			}
-			*/
-		}
     }
 
 
