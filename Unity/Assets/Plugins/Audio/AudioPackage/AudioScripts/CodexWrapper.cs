@@ -114,7 +114,7 @@ public class CodexWrapper : MonoBehaviour
 
 	void Update()
 	{
-		if(Microphone.devices.Length != 0)
+		if(Microphone.devices.Length != 0 && false)
 		{
 			if(m_bRecording == false)
 			{
@@ -192,7 +192,6 @@ public class CodexWrapper : MonoBehaviour
 		s_AudioPacket.Write(baEncodedData, iTotalNumEncodedBytes);
 		
 									
-		
 		//return(returnData);
 	}
 	

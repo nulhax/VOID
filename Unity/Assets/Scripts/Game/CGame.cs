@@ -148,7 +148,7 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (s_cInstance.m_usShipViewId); }
 	}
 	
-	public static GameObject WorldShip
+	public static GameObject GalaxyShip
 	{
 		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
 	}
@@ -439,7 +439,10 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Tell connecting player which is the ship's network view id
 		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
-
+		
+		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
+		
+		// Placeholder Test stuff
       	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
@@ -449,7 +452,6 @@ public class CGame : CNetworkMonoBehaviour
 
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 
 
@@ -559,7 +561,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	ushort m_usActorViewId = 0;
-	ushort m_usShipViewId = 500;
+	ushort m_usShipViewId = 0;
 
 
 	Dictionary<ulong, ushort> m_mPlayersActor = new Dictionary<ulong, ushort>();
