@@ -115,12 +115,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
             {
                 // Tell player to instantiate already created object
                 InvokeRpc(_cNetworkPlayer.PlayerId, "CreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
-
-                // Extract the network view from this object
-                CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
-
-				// Tell object to sync all their network vars with the player
-				cNetworkView.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
             }
 			
 			// Sync parents for each transform
@@ -131,15 +125,35 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				
                 // Invoke set parent rpc
                 cSelfView.SyncParent();
+
+				// Only sync if position is not default
+				if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+				{
+					cSelfView.SyncTransformPosition();
+				}
+
+				// Sync if rotation is not default
+				if (tEntry.Value.cGameObject.transform.rotation != Quaternion.identity)
+				{
+					cSelfView.SyncTransformRotation();
+				}
 				
-				// Sync object's position
-                cSelfView.SyncTransformPosition();
+				// Sync if scale is not default
+				if (tEntry.Value.cGameObject.transform.localScale != Vector3.zero)
+				{
+					// Sync object's scale
+					cSelfView.SyncTransformScale();
+				}
+			}
 
-				// Sync object's rotation
-				cSelfView.SyncTransformRotation();
+			// Sync network vars last
+			foreach (KeyValuePair<ushort, TObjectInfo> tEntry in m_mCreatedObjects)
+			{
+				// Extract the network view from this object
+				CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-			    // Sync object's scale
-                cSelfView.SyncTransformScale();
+				// Tell object to sync all their network vars with the player
+				cNetworkView.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
 			}
         }
     }

@@ -23,7 +23,7 @@ using System;
 /* Implementation */
 
 
-public class CNetworkConnection : MonoBehaviour
+public class CNetworkConnection : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -39,6 +39,10 @@ public class CNetworkConnection : MonoBehaviour
 	
 	public delegate void HandleRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream);
 	public event HandleRecievedMicrophoneAudio EventRecievedMicrophoneAudio;
+
+
+	public delegate void HandleInitialGameStateDownloaded();
+	public event HandleInitialGameStateDownloaded EventInitialGameStateDownloaded;
 
 
 	public delegate void SerializeMethod(CNetworkStream _cStream);
@@ -75,6 +79,14 @@ public class CNetworkConnection : MonoBehaviour
 	}
 
 
+	public enum EState
+	{
+		Unconnected,
+		RecievingInitialGameData,
+		Connected,
+	}
+
+
 	public struct TRateData
 	{
 		public float fTimer;
@@ -101,6 +113,12 @@ public class CNetworkConnection : MonoBehaviour
 // Member Functions
     
     // public:
+
+
+	public override void InstanceNetworkVars()
+	{
+		// Empty
+	}
 
 
     public void Awake()
@@ -262,6 +280,15 @@ public class CNetworkConnection : MonoBehaviour
     }
 
 
+	public bool IsDownloadingInitialGameData
+	{
+		get
+		{
+			return (m_bDownloadingInitialGameState);
+		}
+	}
+
+
 	public static void RegisterSerializationTarget(SerializeMethod _nSerializeMethod, UnserializeMethod _nUnserializeMethod)
 	{
 		int iTargetId = s_mSerializeTargets.Count + 1;
@@ -399,31 +426,34 @@ public class CNetworkConnection : MonoBehaviour
 
     protected void ProcessOutboundPackets()
     {
-		CompileSerializeTargetsOutboundData(m_cOutboundSerializationStream);
-
-        // Increment outbound timer
-		m_fPacketOutboundTimer += Time.deltaTime;
-
-        if (m_fPacketOutboundTimer > m_fPacketOutboundInterval)
+		if (!m_bDownloadingInitialGameState)
 		{
-			CompileThrottledSerializeTargetsOutboundData(m_cOutboundSerializationStream);
+			CompileSerializeTargetsOutboundData(m_cOutboundSerializationStream);
 
-            // Check player has data to be sent to the server
-			if (m_cOutboundSerializationStream.Size > 1)
-            {
-				m_tOutboundRateData.uiBytes += m_cOutboundSerializationStream.Size;
-				m_tOutboundRateData.uiNumEntries += 1;
+			// Increment outbound timer
+			m_fPacketOutboundTimer += Time.deltaTime;
 
-                // Dispatch data to the server
-				m_cRnPeer.Send(m_cOutboundSerializationStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cServerSystemAddress, false);
+			if (m_fPacketOutboundTimer > m_fPacketOutboundInterval)
+			{
+				CompileThrottledSerializeTargetsOutboundData(m_cOutboundSerializationStream);
 
-				// Reset stream
-				m_cOutboundSerializationStream.Clear();
-				m_cOutboundSerializationStream.Write((byte)CNetworkServer.EPacketId.PlayerSerializedData);
-            }
+				// Check player has data to be sent to the server
+				if (m_cOutboundSerializationStream.Size > 1)
+				{
+					m_tOutboundRateData.uiBytes += m_cOutboundSerializationStream.Size;
+					m_tOutboundRateData.uiNumEntries += 1;
 
-            // Decrement timer by interval
-            m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
+					// Dispatch data to the server
+					m_cRnPeer.Send(m_cOutboundSerializationStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cServerSystemAddress, false);
+
+					// Reset stream
+					m_cOutboundSerializationStream.Clear();
+					m_cOutboundSerializationStream.Write((byte)CNetworkServer.EPacketId.PlayerSerializedData);
+				}
+
+				// Decrement timer by interval
+				m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
+			}
 		}
     }
 
@@ -460,6 +490,8 @@ public class CNetworkConnection : MonoBehaviour
 
     protected void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
     {
+		m_bDownloadingInitialGameState = true;
+
         // Save server address
         m_cServerSystemAddress = new RakNet.SystemAddress(_cServerSystemAddress.ToString(), _cServerSystemAddress.GetPort());
 
@@ -616,6 +648,18 @@ public class CNetworkConnection : MonoBehaviour
     }
 
 
+	[ANetworkRpc]
+	void NotifyDownloadingInitialGameStateComplete()
+	{
+		m_bDownloadingInitialGameState = false;
+
+		if (EventInitialGameStateDownloaded != null)
+		{
+			EventInitialGameStateDownloaded();
+		}
+	}
+
+
 // Member Variables
     
     // protected:
@@ -640,6 +684,7 @@ public class CNetworkConnection : MonoBehaviour
 
 
     bool m_bShowStats = true;
+	bool m_bDownloadingInitialGameState = true;
 
 
 	static Dictionary<byte, TSerializationMethods> s_mSerializeTargets = new Dictionary<byte, TSerializationMethods>();

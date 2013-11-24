@@ -37,6 +37,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     {
         InvokeNetworkRpc,
         SyncNetworkVar,
+		SyncNetworkVarDefault,
     }
 
 

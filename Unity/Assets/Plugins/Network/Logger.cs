@@ -14,6 +14,7 @@
 // Namespaces
 using UnityEngine;
 using System.Collections;
+using System.Diagnostics;
 
 
 /* Implementation */
@@ -76,7 +77,7 @@ public class Logger
     public static void WriteError(string _sMessageFormat, params object[] _caParameters)
     {
 #if UNITY_EDITOR
-        Debug.LogError(string.Format(_sMessageFormat, _caParameters));
+        UnityEngine.Debug.LogError(string.Format(_sMessageFormat, _caParameters));
 #endif
     }
 
@@ -84,7 +85,7 @@ public class Logger
     public static void WriteWarning(string _sMessageFormat, params object[] _caParameters)
     {
 #if UNITY_EDITOR
-        Debug.LogWarning(string.Format(_sMessageFormat, _caParameters));
+        UnityEngine.Debug.LogWarning(string.Format(_sMessageFormat, _caParameters));
 #endif
     }
 
