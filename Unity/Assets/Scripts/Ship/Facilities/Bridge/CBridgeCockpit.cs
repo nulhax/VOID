@@ -80,10 +80,12 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		if(CGame.ShipViewId == 0)
+		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit;
+		
+		if(pilotingCockpit == null)
 			return;
 		
-		CBridgeCockpit cockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
 		switch(cockpit.m_CurrentPlayerInteractionEvent)
 		{
 		case EInteractionEvent.PlayerEnter:

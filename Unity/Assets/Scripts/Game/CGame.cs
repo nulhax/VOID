@@ -191,10 +191,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
 		
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
+		//CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
 
 		// Connect to server (Development Only)
-		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
+		//CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
 	
 	private void RegisterPrefabs()

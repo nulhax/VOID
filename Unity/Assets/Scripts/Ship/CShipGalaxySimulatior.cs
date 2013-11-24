@@ -159,4 +159,9 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		if(m_PlayerGalaxyCamera.transform.localRotation != relativeRot)
 			m_PlayerGalaxyCamera.transform.localRotation = relativeRot;
 	}
+	
+	private void OnDestroy()
+	{
+		Destroy(m_GalaxyShip);
+	}
 }
