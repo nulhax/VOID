@@ -262,6 +262,7 @@ public class CNetworkServer : MonoBehaviour
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerSerializedData:
                     {
+						Debug.Log("fesfesfesf");
                         HandlePlayerSerializedData(cRnPacket.guid, cRnPacket.data);
                     }
                     break;
@@ -271,6 +272,15 @@ public class CNetworkServer : MonoBehaviour
                         HandlePlayerMicrophoneAudio(cRnPacket.guid, cRnPacket.data);
                     }
                     break;
+
+
+				case RakNet.DefaultMessageIDTypes.ID_TIMESTAMP:
+					CNetworkStream cStream = new CNetworkStream(cRnPacket.data);
+					cStream.IgnoreBytes(1);
+
+
+					Debug.LogError("FUCK: " + cRnPacket.data.Length + ":" + (RakNet.RakNet.GetTime() - cStream.ReadULong()));
+					break;
 				
                 default:
                     Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
@@ -440,6 +450,7 @@ public class CNetworkServer : MonoBehaviour
         else
         {
             m_cRnPeer.SetMaximumIncomingConnections((ushort)_uiNumSlots);
+			m_cRnPeer.SetOccasionalPing(true);
             bPeerStarted = true;
 
 

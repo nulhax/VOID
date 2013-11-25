@@ -171,7 +171,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
 			m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>().ActorHead.transform.rotation = transform.parent.parent.rotation;
 			
-			CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
+			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 			CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
 			
 			bodyMotor.FreezeMovmentInput = true;
@@ -261,7 +261,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
 		m_AttachedPlayerActor.transform.position = transform.position + transform.up * 2.0f;
 		
-		CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
+		CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 		CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
 		
 		bodyMotor.collider.enabled = true;
