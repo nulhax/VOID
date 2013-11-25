@@ -133,7 +133,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				}
 
 				// Sync if rotation is not default
-				if (tEntry.Value.cGameObject.transform.rotation.eulerAngles != Vector3.zero)
+				if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
 				{
 					cSelfView.SyncTransformRotation();
 				}

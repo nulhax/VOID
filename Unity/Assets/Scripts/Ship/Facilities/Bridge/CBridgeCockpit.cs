@@ -74,7 +74,16 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     {
         if (_NetworkVar == m_AttachedPlayerActorViewId)
         {
-			// Dont need to do anything atm
+			// Attach the pilot if it isnt attached
+			if(m_AttachedPlayerActorViewId.Get() != 0)
+			{
+				AttachPlayer(m_AttachedPlayerActorViewId.Get());
+			}
+			// Detach the pilot if it needs to detach
+			else if(m_AttachedPlayerActorViewId.Get() == 0)
+			{
+				DetachPlayer();
+			}
 		}
 	}
 	
@@ -149,15 +158,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 	
 	public void Update()
-	{
-		// Attach the pilot if it isnt attached
-		if(m_AttachedPlayerActorViewId.Get() != 0 && m_AttachedPlayerActor == null)
-			AttachPlayer(m_AttachedPlayerActorViewId.Get());
-		
-		// Detach the pilot if it needs to detach
-		else if(m_AttachedPlayerActorViewId.Get() == 0 && m_AttachedPlayerActor != null)
-			DetachPlayer();
-		
+	{	
 		// Update the pilot states
 		if(m_AttachedPlayerActor != null)
 		{
@@ -243,7 +244,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	private void HandlerPlayerActorUseAction(RaycastHit _RayHit)
 	{
-		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
+		if(m_AttachedPlayerActor == null)
+		{
+			m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
+		}
 	}
 	
 	private void AttachPlayer(ushort _PlayerActorNetworkViewId)
