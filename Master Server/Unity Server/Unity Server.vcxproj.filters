@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Framework">
+      <UniqueIdentifier>{273abe82-be73-4193-8e4f-d382c1505176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Application">
+      <UniqueIdentifier>{204a279e-f373-4f4f-b65e-f457f1b50cce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{62bea31a-36a3-4d56-8109-28cd19e328b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\Observer Pattern">
+      <UniqueIdentifier>{4edc70b6-c3b3-4b93-8b35-f72fa7d287f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Library\Process Object">
+      <UniqueIdentifier>{d942f2f7-d696-46b8-b4c5-6d62084019f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Defines">
+      <UniqueIdentifier>{84f8f407-e335-42f4-87d1-8269185d5538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Logger">
+      <UniqueIdentifier>{ef7ced3c-5668-431a-afbe-888131408a8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{ed96bcc1-6ae4-490e-a69a-83d7be897fce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities\Str Utilities">
+      <UniqueIdentifier>{395f0bb2-79e7-464f-b4a9-c673e5390c67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\File">
+      <UniqueIdentifier>{ba8cfee9-da79-464e-acb5-95e10ae0a9f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Rak Master Server">
+      <UniqueIdentifier>{6ef2c591-1208-48ee-bbd6-6dd79ad05f3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Framework\Clock">
+      <UniqueIdentifier>{aa71d422-2519-4739-a73c-96168c014982}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Framework\Application.cpp">
+      <Filter>Framework\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\ProcessObject.cpp">
+      <Filter>Library\Process Object</Filter>
+    </ClCompile>
+    <ClCompile Include="MAIN.cpp" />
+    <ClCompile Include="Framework\Logger.cpp">
+      <Filter>Framework\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities\StrUtilities.cpp">
+      <Filter>Utilities\Str Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\File.cpp">
+      <Filter>Framework\File</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\RakMasterServer.cpp">
+      <Filter>Framework\Rak Master Server</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Clock.cpp">
+      <Filter>Framework\Clock</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\Application.h">
+      <Filter>Framework\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ProcessObject.h">
+      <Filter>Library\Process Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Observer.h">
+      <Filter>Library\Observer Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Subject.h">
+      <Filter>Library\Observer Pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines\Macros.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Defines\DataTypes.h">
+      <Filter>Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Logger.h">
+      <Filter>Framework\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities\StrUtilities.h">
+      <Filter>Utilities\Str Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\File.h">
+      <Filter>Framework\File</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\RakMasterServer.h">
+      <Filter>Framework\Rak Master Server</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Clock.h">
+      <Filter>Framework\Clock</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Library\Inline\ProcessObject.inl">
+      <Filter>Library\Process Object</Filter>
+    </None>
+    <None Include="Framework\Inline\Logger.inl">
+      <Filter>Framework\Logger</Filter>
+    </None>
+    <None Include="Framework\Inline\File.inl">
+      <Filter>Framework\File</Filter>
+    </None>
+    <None Include="Framework\Inline\RakMasterServer.inl">
+      <Filter>Framework\Rak Master Server</Filter>
+    </None>
+    <None Include="..\..\Template Generator\Generated Templates\Inline\Application.inl">
+      <Filter>Framework\Application</Filter>
+    </None>
+    <None Include="framework\inline\Clock.inl">
+      <Filter>Framework\Clock</Filter>
+    </None>
+  </ItemGroup>
+</Project>
