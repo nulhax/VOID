@@ -80,4 +80,9 @@ public class CDUIConsole : MonoBehaviour
 		// Increment the offset
 		s_UIOffset += 2.0f;
 	}
+	
+	private void OnDestroy()
+	{
+		Destroy(m_DUI);
+	}
 }

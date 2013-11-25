@@ -163,6 +163,9 @@ public class CDUIView : MonoBehaviour
 		{
 			Destroy(element);
 		}
+		
+		m_Elements.Clear();
+		m_ElementIdCount = 0;
 	}
 	
     protected void DebugDrawRect(Rect _rect, Color _color, float _offset)

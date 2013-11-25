@@ -53,6 +53,20 @@ public class CNetworkPlayer : MonoBehaviour
 	}
 
 
+	public void SetDownloadingInitialGameStateComplete()
+	{
+		Logger.WriteErrorOn(!m_bDownloadingInitialGameState, "Downloading initial game data has already been set to complete");
+
+
+		if (m_bDownloadingInitialGameState)
+		{
+			gameObject.GetComponent<CNetworkConnection>().InvokeRpc(PlayerId, "NotifyDownloadingInitialGameStateComplete");
+
+			m_bDownloadingInitialGameState = false;
+		}
+	}
+
+
 	public void ResetNetworkViewSteam()
 	{
 		m_cNetworkViewStream.Clear();
@@ -64,6 +78,12 @@ public class CNetworkPlayer : MonoBehaviour
     {
 		get { return (m_bHost); }
     }
+
+
+	public bool IsDownloadingInitialGameState
+	{
+		get { return (m_bDownloadingInitialGameState); }
+	}
 
 
     public uint AccountId
@@ -114,6 +134,7 @@ public class CNetworkPlayer : MonoBehaviour
 
 
 	bool m_bHost = false;
+	bool m_bDownloadingInitialGameState = true;
 
 
     RakNet.SystemAddress m_cSystemAddress = null;

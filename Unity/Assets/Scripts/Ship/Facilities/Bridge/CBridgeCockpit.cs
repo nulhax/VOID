@@ -74,16 +74,27 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     {
         if (_NetworkVar == m_AttachedPlayerActorViewId)
         {
-			// Dont need to do anything atm
+			// Attach the pilot if it isnt attached
+			if(m_AttachedPlayerActorViewId.Get() != 0)
+			{
+				AttachPlayer(m_AttachedPlayerActorViewId.Get());
+			}
+			// Detach the pilot if it needs to detach
+			else if(m_AttachedPlayerActorViewId.Get() == 0)
+			{
+				DetachPlayer();
+			}
 		}
 	}
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		if(CGame.ShipViewId == 0)
+		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit;
+		
+		if(pilotingCockpit == null)
 			return;
 		
-		CBridgeCockpit cockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
 		switch(cockpit.m_CurrentPlayerInteractionEvent)
 		{
 		case EInteractionEvent.PlayerEnter:
@@ -147,15 +158,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 	
 	public void Update()
-	{
-		// Attach the pilot if it isnt attached
-		if(m_AttachedPlayerActorViewId.Get() != 0 && m_AttachedPlayerActor == null)
-			AttachPlayer(m_AttachedPlayerActorViewId.Get());
-		
-		// Detach the pilot if it needs to detach
-		else if(m_AttachedPlayerActorViewId.Get() == 0 && m_AttachedPlayerActor != null)
-			DetachPlayer();
-		
+	{	
 		// Update the pilot states
 		if(m_AttachedPlayerActor != null)
 		{
@@ -241,7 +244,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	private void HandlerPlayerActorUseAction(RaycastHit _RayHit)
 	{
-		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
+		if(m_AttachedPlayerActor == null)
+		{
+			m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
+		}
 	}
 	
 	private void AttachPlayer(ushort _PlayerActorNetworkViewId)

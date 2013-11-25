@@ -37,6 +37,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     {
         InvokeNetworkRpc,
         SyncNetworkVar,
+		SyncNetworkVarDefault,
     }
 
 
@@ -278,7 +279,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only sync transforms
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform rotation!!!");
 
-		InvokeRpcAll("SetTransformRotation", transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+		InvokeRpcAll("SetTransformRotation", transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 	}
 
 

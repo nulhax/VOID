@@ -57,10 +57,14 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-	public void Start()
+	public void Awake()
 	{
 		m_cSprayParticalSystem = transform.FindChild("ParticalSprayer").particleSystem;
+	}
 
+
+	public void Start()
+	{
 		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
 		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
 	}

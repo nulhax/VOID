@@ -401,7 +401,12 @@ public class CGame : CNetworkMonoBehaviour
 		if(Input.GetKeyDown(KeyCode.F1))
 		{
 			Screen.lockCursor = !Screen.lockCursor;
-			PlayerActor.GetComponent<CPlayerHeadMotor>().FreezeHeadInput = !Screen.lockCursor;
+
+			if (CNetwork.Connection.IsConnected &&
+				!CNetwork.Connection.IsDownloadingInitialGameData)
+			{
+				PlayerActor.GetComponent<CPlayerHeadMotor>().FreezeHeadInput = !Screen.lockCursor;
+			}
 		}
 
 		// Quick quit game
@@ -452,6 +457,9 @@ public class CGame : CNetworkMonoBehaviour
 
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+
+
+		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}
 
 

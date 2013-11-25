@@ -193,15 +193,12 @@ public class CPlayerBodyMotor : CNetworkMonoBehaviour
 	
     public static void SerializePlayerState(CNetworkStream _cStream)
     {
-		if(CGame.PlayerActorViewId != 0)
-		{	
-			CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
-			
-			_cStream.Write(actorMotor.m_MotorState.CurrentState);
-			_cStream.Write(actorMotor.m_MotorState.TimeStamp);
-			
-			actorMotor.m_MotorState.ResetStates();
-		}	
+		CPlayerBodyMotor actorMotor = CGame.PlayerActor.GetComponent<CPlayerBodyMotor>();
+		
+		_cStream.Write(actorMotor.m_MotorState.CurrentState);
+		_cStream.Write(actorMotor.m_MotorState.TimeStamp);
+		
+		actorMotor.m_MotorState.ResetStates();
     }
 
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
