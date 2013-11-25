@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -89,7 +89,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit;
+		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
 		
 		if(pilotingCockpit == null)
 			return;
@@ -124,7 +124,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public static void UnserializeCockpitInteractions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {	
 		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-		CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
 		
 		switch(interactionEvent)
 		{
@@ -157,7 +157,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register this cockpit as the piloting cockpit of the ship
-		CGame.GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit = gameObject;
+		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
 		
 		// Make this object interactable with action 1
 		CInteractableObject IO = GetComponent<CInteractableObject>();

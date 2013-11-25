@@ -313,37 +313,31 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		Destroy(tempFacilityObject);
 	}
 	
+	[AServerMethod]
 	private void ExpansionSubviewSelectLocalPort(CDUIButton _sender)
     {
-		if(CNetwork.IsServer)
-		{
-	        m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
-				
-			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
-		}
+        m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
+			
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
     }
 	
+	[AServerMethod]
 	private void ExpansionSubviewSelectFacility(CDUIButton _sender)
     {
-		if(CNetwork.IsServer)
-		{
-	   	 	m_ServerFacilitySelected.Set((int)m_buttonFacilityTypePairs[_sender]);
-		
-			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
-		}
+   	 	m_ServerFacilitySelected.Set((int)m_buttonFacilityTypePairs[_sender]);
+	
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
     }
 	
+	[AServerMethod]
 	private void ExpansionSubviewSelectOtherPort(CDUIButton _sender)
     {
-		if(CNetwork.IsServer)
-		{
-	       	m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
-			
-			m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
-		}
+       	m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
+		
+		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
     }
 	
-	
+	[AServerMethod]
 	private void OpenCloseDoor(CDUIButton _sender)
     {
         CDoorMotor door = m_buttonDoorPairs[_sender];
