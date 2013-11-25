@@ -127,13 +127,15 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 cSelfView.SyncParent();
 
 				// Only sync if position is not default
-				if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+				if (tEntry.Value.cGameObject.transform.position != Vector3.zero &&
+					tEntry.Value.cGameObject.transform.localPosition != Vector3.zero)
 				{
 					cSelfView.SyncTransformPosition();
 				}
 
 				// Sync if rotation is not default
-				if (tEntry.Value.cGameObject.transform.rotation != Quaternion.identity)
+				if (tEntry.Value.cGameObject.transform.rotation != Quaternion.identity &&
+					tEntry.Value.cGameObject.transform.localRotation != Quaternion.identity)
 				{
 					cSelfView.SyncTransformRotation();
 				}

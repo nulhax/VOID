@@ -270,7 +270,14 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only sync transforms
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform position!!!");
 
-		InvokeRpcAll("SetTransformPosition", transform.position.x, transform.position.y, transform.position.z);
+		if (transform.parent != null)
+		{
+			InvokeRpcAll("SetTransformPosition", transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+		}
+		else
+		{
+			InvokeRpcAll("SetTransformPosition", transform.position.x, transform.position.y, transform.position.z);
+		}
 	}
 
 
@@ -279,7 +286,14 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only sync transforms
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform rotation!!!");
 
-		InvokeRpcAll("SetTransformRotation", transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+		if (transform.parent != null)
+		{
+			InvokeRpcAll("SetTransformRotation", transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
+		}
+		else
+		{
+			InvokeRpcAll("SetTransformPosition", transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+		}
 	}
 
 
