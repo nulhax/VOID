@@ -61,7 +61,8 @@ public class CGalaxy : CNetworkMonoBehaviour
     ///////////////////////////////////////////////////////////////////////////
     // Variables:
 
-    GameObject mGalaxyParent;    // Only the server maintains a reference to the galaxy parent.
+    private static CGalaxy sGalaxy = null;
+    public static CGalaxy instance { get { return sGalaxy; } }
 
     PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
 
@@ -74,7 +75,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<int> mCentreCellZ;
 
     System.Collections.Generic.List<GalaxyIE> mGalaxyIEs;   // Is only instantiated when this galaxy is ready to update galaxyIEs.
-    System.Collections.Generic.List<GalaxyShiftable> mShiftableEntities = new System.Collections.Generic.List<GalaxyShiftable>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
+    System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
     System.Collections.Generic.List<CRegisteredGubbin> mGubbins = new System.Collections.Generic.List<CRegisteredGubbin>();    // Gubbins ("space things") are unloaded based on proximity to cells.
     System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
@@ -102,9 +103,10 @@ public class CGalaxy : CNetworkMonoBehaviour
     ///////////////////////////////////////////////////////////////////////////
     // Functions:
 
-    // Use this for initialization
     void Start()
     {
+        sGalaxy = this;
+
         // Fog and skybox are controlled by the galaxy.
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
@@ -137,13 +139,13 @@ public class CGalaxy : CNetworkMonoBehaviour
         // Galaxy is ready to update galaxyIEs.
         mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
 
-        if (CNetwork.IsServer)
-        {
-            // Statistical data sometimes helps spot errors.
-            Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
+        // Statistical data sometimes helps spot errors.
+        Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
+    }
 
-            mGalaxyParent = CNetwork.Factory.CreateObject((ushort)CGame.ENetworkRegisteredPrefab.GalaxyParent);
-        }
+    void OnDestroy()
+    {
+        sGalaxy = null;
     }
 
     public override void InstanceNetworkVars()
@@ -156,106 +158,140 @@ public class CGalaxy : CNetworkMonoBehaviour
         mNumGridSubsets = new CNetworkVar<uint>(SyncNumGridSubsets, muiNumGridSubsets);
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //if (CNetwork.IsServer)
-        //{
-        //    // Limit processing.
-        //    mfTimeUntilNextGridUpdate -= Time.deltaTime;
-        //    if (mfTimeUntilNextGridUpdate <= 0.0f)
-        //    {
-        //        mfTimeUntilNextGridUpdate = mfTimeBetweenGridUpdates;    // Drop the remainder as it doesn't matter if there is a lag spike.
+        if (CNetwork.IsServer)
+        {
+            // Limit processing.
+            mfTimeUntilNextGridUpdate -= Time.deltaTime;
+            if (mfTimeUntilNextGridUpdate <= 0.0f)
+            {
+                mfTimeUntilNextGridUpdate = mfTimeBetweenGridUpdates;    // Drop the remainder as it doesn't matter if there is a lag spike.
 
-        //        mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.
+                mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.
 
-        //        // Load unloaded grid cells within proximity to observers.
-        //        foreach (CRegisteredObserver observer in mObservers)
-        //        {
-        //            Vector3 observerPosition = observer.mObserver.transform.position;
-        //            SGridCellPos occupiedRelativeCell = PointToRelativeCell(observerPosition);
-        //            int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
+                // Load unloaded grid cells within proximity to observers.
+                foreach (CRegisteredObserver observer in mObservers)
+                {
+                    Vector3 observerPosition = observer.mObserver.transform.position;
+                    SGridCellPos occupiedRelativeCell = PointToRelativeCell(observerPosition);
+                    int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
 
-        //            for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
-        //            {
-        //                for (int y = -((iCellsInARow - 1) / 2); y <= (iCellsInARow - 1) / 2; ++y)
-        //                {
-        //                    for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
-        //                    {
-        //                        // Check if this cell is loaded.
-        //                        SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
-        //                        if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
-        //                        {
-        //                            SGridCellPos neighbouringAbsoluteCell = neighbouringRelativeCell + mCentreCell;
-        //                            CGridCellContent temp;
-        //                            if (mGrid.TryGetValue(neighbouringAbsoluteCell, out temp))   // Existing cell...
-        //                                temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
-        //                            else    // Not an existing cell...
-        //                                LoadAbsoluteCell(neighbouringAbsoluteCell);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
+                    for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
+                    {
+                        for (int y = -((iCellsInARow - 1) / 2); y <= (iCellsInARow - 1) / 2; ++y)
+                        {
+                            for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
+                            {
+                                // Check if this cell is loaded.
+                                SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
+                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
+                                {
+                                    SGridCellPos neighbouringAbsoluteCell = neighbouringRelativeCell + mCentreCell;
+                                    CGridCellContent temp;
+                                    if (mGrid.TryGetValue(neighbouringAbsoluteCell, out temp))   // Existing cell...
+                                        temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity of an observer.
+                                    else    // Not an existing cell...
+                                        LoadAbsoluteCell(neighbouringAbsoluteCell);
+                                }
+                            }
+                        }
+                    }
+                }
 
-        //        // Unload cells that are too far from any observers.
-        //        bool restart;
-        //        do
-        //        {
-        //            restart = false;
-        //            foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> absoluteCell in mGrid) // For every loaded cell...
-        //            {
-        //                if (absoluteCell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
-        //                {
-        //                    // This cell is not within proximity of any observers.
-        //                    UnloadAbsoluteCell(absoluteCell.Key); // Unload the cell.
-        //                    restart = true;
-        //                    break;
-        //                }
-        //            }
-        //        } while (restart);
+                // Unload cells that are too far from any observers.
+                bool restart;
+                do
+                {
+                    restart = false;
+                    foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> absoluteCell in mGrid) // For every loaded cell...
+                    {
+                        if (absoluteCell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
+                        {
+                            // This cell is not within proximity of any observers.
+                            UnloadAbsoluteCell(absoluteCell.Key); // Unload the cell.
+                            restart = true;
+                            break;
+                        }
+                    }
+                } while (restart);
 
-        //        // Find gubbins that are not within proximity to the cells.
-        //        foreach (CRegisteredGubbin gubbin in mGubbins)
-        //        {
-        //            foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
-        //            {
-        //                if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, 1.0f))
-        //                {
-        //                    gubbin.mAlternator = mbValidCellValue;
-        //                    break;
-        //                }
-        //            }
-        //        }
+                // Find gubbins that are not within proximity to the cells.
+                foreach (CRegisteredGubbin gubbin in mGubbins)
+                {
+                    foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
+                    {
+                        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, 1.0f))
+                        {
+                            gubbin.mAlternator = mbValidCellValue;
+                            break;
+                        }
+                    }
+                }
 
-        //        // Unload gubbins that are not within proximity to the cells.
-        //        do
-        //        {
-        //            restart = false;
-        //            foreach (CRegisteredGubbin gubbin in mGubbins)
-        //            {
-        //                if (gubbin.mAlternator != mbValidCellValue)
-        //                {
-        //                    UnloadGubbin(gubbin);
-        //                    restart = true;
-        //                    break;
-        //                }
-        //            }
-        //        }
-        //        while (restart);
-        //    }
-        //}
+                // Unload gubbins that are not within proximity to the cells.
+                do
+                {
+                    restart = false;
+                    foreach (CRegisteredGubbin gubbin in mGubbins)
+                    {
+                        if (gubbin.mAlternator != mbValidCellValue)
+                        {
+                            UnloadGubbin(gubbin);
+                            restart = true;
+                            break;
+                        }
+                    }
+                }
+                while (restart);
+
+                // Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
+                SGridCellPos relativeCentrePos = PointToRelativeCell(CalculateAverageObserverPosition());
+                if (relativeCentrePos.x != 0)
+                    mCentreCellX.Set(mCentreCell.x + relativeCentrePos.x);
+                if (relativeCentrePos.y != 0)
+                    mCentreCellY.Set(mCentreCell.y + relativeCentrePos.y);
+                if (relativeCentrePos.z != 0)
+                    mCentreCellZ.Set(mCentreCell.z + relativeCentrePos.z);
+            }
+        }
     }
 
-    public void SyncCentreCellX(INetworkVar sender) { mCentreCell.x = mCentreCellX.Get(); }
-    public void SyncCentreCellY(INetworkVar sender) { mCentreCell.y = mCentreCellY.Get(); }
-    public void SyncCentreCellZ(INetworkVar sender) { mCentreCell.z = mCentreCellZ.Get(); }
+    private void ShiftEntities(Vector3 translation)
+    {
+        foreach (Transform transform in mShiftableTransforms)
+            transform.position += translation;
+    }
+
+    public Vector3 CalculateAverageObserverPosition()
+    {
+        Vector3 result = new Vector3();
+        foreach (CRegisteredObserver observer in mObservers)
+            result += observer.mObserver.transform.position;
+
+        return result / mObservers.Count;
+    }
+
+    public void SyncCentreCellX(INetworkVar sender)
+    {
+        ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * mCellDiameter, 0.0f, 0.0f));
+        mCentreCell.x = mCentreCellX.Get();
+    }
+    public void SyncCentreCellY(INetworkVar sender)
+    {
+        ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * mCellDiameter, 0.0f));
+        mCentreCell.y = mCentreCellY.Get();
+    }
+    public void SyncCentreCellZ(INetworkVar sender)
+    {
+        ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * mCellDiameter));
+        mCentreCell.y = mCentreCellY.Get();
+    }
     public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
     public void SyncMaxAsteroidsPerCell(INetworkVar sender) { muiMaxAsteroidsPerCell = mMaxAsteroidsPerCell.Get(); }
     public void SyncNumGridSubsets(INetworkVar sender) { muiNumGridSubsets = mNumGridSubsets.Get(); }
 
     public void RegisterObserver(GameObject observer, float observationRadius) { mObservers.Add(new CRegisteredObserver(observer, observationRadius)); }
-
     public void DeregisterObserver(GameObject observer)
     {
         foreach (CRegisteredObserver elem in mObservers)
@@ -283,11 +319,10 @@ public class CGalaxy : CNetworkMonoBehaviour
         else
             return false;
     }
-
     public void DeregisterGalaxyIE(GalaxyIE galaxyIE) { mGalaxyIEs.Remove(galaxyIE); }
 
-    void RegisterShiftableEntity(GalaxyShiftable shiftableEntity) { mShiftableEntities.Add(shiftableEntity); }
-    void DeregisterShiftableEntity(GalaxyShiftable shiftableEntity) { mShiftableEntities.Remove(shiftableEntity); }
+    public void RegisterShiftableEntity(Transform shiftableTransform) { mShiftableTransforms.Add(shiftableTransform); }
+    public void DeregisterShiftableEntity(Transform shiftableTransform) { mShiftableTransforms.Remove(shiftableTransform); }
 
     void LoadAbsoluteCell(SGridCellPos absoluteCell)
     {
@@ -312,7 +347,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 ushort lastAstertoid = (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST;
                 ushort randomRange = (ushort)Random.Range(0, (lastAstertoid+1) - firstAsteroid);
                 GameObject newAsteroid = CNetwork.Factory.CreateObject((ushort)(firstAsteroid + randomRange));
-                newAsteroid.transform.parent = mGalaxyParent.transform;
+                newAsteroid.transform.parent = gameObject.transform;
 
                 // Work out a position where the asteroid fits.
                 int iTries = 5;    // To prevent infinite loops.
@@ -323,7 +358,6 @@ public class CGalaxy : CNetworkMonoBehaviour
                     
                     newAsteroid.rigidbody.angularVelocity = Random.onUnitSphere * Random.Range(0.0f, 2.0f);
                     newAsteroid.rigidbody.velocity = Random.onUnitSphere * Random.Range(0.0f, 75.0f);
-                    newAsteroid.GetComponent<NetworkedEntity>().UpdateNetworkVars();
 
                     float uniformScale = Random.Range(10.0f, 150.0f);
                     newAsteroid.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
@@ -331,11 +365,13 @@ public class CGalaxy : CNetworkMonoBehaviour
 
                 } while (--iTries != 0 && false /*newAsteroid.collider.*/);
 
+                newAsteroid.GetComponent<NetworkedEntity>().UpdateNetworkVars();
                 CNetworkView newAsteroidNetworkView = newAsteroid.GetComponent<CNetworkView>();
                 //newAsteroidNetworkView.SyncTransformPosition();
                 //newAsteroidNetworkView.SyncTransformRotation();
                 newAsteroidNetworkView.SyncTransformScale();
                 newAsteroidNetworkView.SyncRigidBodyMass();
+                newAsteroidNetworkView.SyncParent();
 
                 mGubbins.Add(new CRegisteredGubbin(newAsteroid, newAsteroidNetworkView.ViewId, mbValidCellValue));  // Add new asteroid to list of gubbins ("space things").
             }
@@ -385,13 +421,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         Vector3 cellCentrePos = new Vector3(relativeCell.x * mCellDiameter, relativeCell.y * mCellDiameter, relativeCell.z * mCellDiameter);
         float cellBoundingSphereRadius = mCellDiameter * 0.86602540378443864676372317075294f;
         return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
-    }
-
-    void ShiftGalaxy(SGridCellPos shiftAmount)
-    {
-        // TODO: Tell network to broadcast message to shift everything.
-
-        mCentreCell += shiftAmount;
     }
 
     // Set the aesthetic of the galaxy based on the observer's position.

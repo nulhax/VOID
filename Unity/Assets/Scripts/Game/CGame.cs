@@ -70,7 +70,7 @@ public class CGame : CNetworkMonoBehaviour
 		ToolExtinguisher, 
 		
 		// Galaxy
-		GalaxyParent,
+		Galaxy,
 		Asteroid_FIRST,
 		Asteroid_LAST = Asteroid_FIRST + 3,
 		
@@ -231,7 +231,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
 		
 		// Galaxy
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyParent, "GalaxyParent");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Galaxy/Asteroid" + us.ToString());
 		
@@ -435,10 +435,10 @@ public class CGame : CNetworkMonoBehaviour
 		m_mPlayersActor.Add(_cPlayer.PlayerId, usActorNetworkViewId);
 
 		// Tell connecting player to update their network player id 
-		InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
+        InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
 
-		// Tell connecting player which is the ship's network view id
-		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
+        // Tell connecting player which is the ship's network view id
+        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 		
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 		
@@ -474,9 +474,8 @@ public class CGame : CNetworkMonoBehaviour
 	{
         System.Diagnostics.Debug.Assert(CNetwork.IsServer);
 
-        // DO FIRST (i.e. before anything in the game world is created).
-        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-        gameObject.AddComponent<CGalaxy>();
+        // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
+        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
 
 		// Create ship object
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
@@ -495,18 +494,14 @@ public class CGame : CNetworkMonoBehaviour
 		m_mPlayersActor.Clear();
 		m_usActorViewId = 0;
         m_usShipViewId = 0;
-
-        // DO LAST (i.e. after everything in the game world is destroyed).
-        Destroy(gameObject.GetComponent<CGalaxy>());
 	}
 
 
     void OnConnect()
     {
-        // DO FIRST (i.e. before anything in the game world is created).
-        // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-        if(!CNetwork.IsServer)
-            gameObject.AddComponent<CGalaxy>();
+        // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
+        //if (!CNetwork.IsServer)    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+        //    m_Galaxy = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy).GetComponent<CGalaxy>();
     }
 
 
@@ -515,10 +510,9 @@ public class CGame : CNetworkMonoBehaviour
 		GameObject.Find("Main Camera").camera.enabled = true;
 		
 		m_usActorViewId = 0;
-		
-        // DO LAST (i.e. after everything in the game world is destroyed).
-        if (!CNetwork.IsServer)
-            Destroy(gameObject.GetComponent<CGalaxy>());
+
+        //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
+        //    m_Galaxy = null;
 	}
 
 
@@ -537,14 +531,14 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	[ANetworkRpc]
-	void SetShipNetworkViewId(ushort _usShipViewId)
-	{
-		m_usShipViewId = _usShipViewId;
+    [ANetworkRpc]
+    void SetShipNetworkViewId(ushort _usShipViewId)
+    {
+        m_usShipViewId = _usShipViewId;
 
-		// Notice
-		Logger.Write("The ship's network view id is ({0})", m_usShipViewId);
-	}
+        // Notice
+        Logger.Write("The ship's network view id is ({0})", m_usShipViewId);
+    }
 
 
 // Member Variables
