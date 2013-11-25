@@ -27,7 +27,7 @@ public class CNetwork : MonoBehaviour
 
 	public const string sMasterServerIp = "121.98.172.91"; // spacegamems.capturehub.net
 	public const string sMasterServerPassword = "";
-    public const ushort usMasterServerPort = 9896;
+    public const ushort usMasterServerPort = 9826;
 
 
 // Member Functions
