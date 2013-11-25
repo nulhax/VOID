@@ -69,7 +69,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 				uint duiViewId = _cStream.ReadUInt();
 				uint duiButtonId = _cStream.ReadUInt();
 				CNetwork.Factory.FindObject(duiConsoleNetworkViewId).GetComponent<CDUIInteraction>().
-					InvokeRpcAll("ButtonPressedDown", duiConsoleNetworkViewId, duiViewId, duiButtonId);
+						ButtonPressedDown(duiConsoleNetworkViewId, duiViewId, duiButtonId);
 				break;
 			}
 		}
@@ -89,9 +89,12 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		CInteractableObject IO = GetComponent<CInteractableObject>();
 		IO.InteractionPrimaryStart += HandlerPlayerActorLeftClick;
 		
-		// Register the subview change event
-		CDUI dui = GetComponent<CDUIConsole>().DUI; 
-		dui.SubviewChanged += HandleSubviewChange;
+		if(CNetwork.IsServer)
+		{
+			// Register the subview change event
+			CDUI dui = GetComponent<CDUIConsole>().DUI; 
+			dui.SubviewChanged += HandleSubviewChange;
+		}
 	}
 	
 	public void Update()
@@ -104,11 +107,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void HandleSubviewChange(uint _iActiveSubview)
-	{
-		m_CurrentActiveSubviewId.Set(_iActiveSubview);
-	}
-	
+	[AClientMethod]
 	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit)
 	{	
 		// Get the UI from the console hit
@@ -132,7 +131,13 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	[ANetworkRpc]
+	[AServerMethod]
+	private void HandleSubviewChange(uint _iActiveSubview)
+	{
+		m_CurrentActiveSubviewId.Set(_iActiveSubview);
+	}
+	
+	[AServerMethod]
 	private void ButtonPressedDown(ushort _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
 	{
 		CDUI dui = CNetwork.Factory.FindObject(_duiConsoleNetworkId).GetComponent<CDUIConsole>().DUI;

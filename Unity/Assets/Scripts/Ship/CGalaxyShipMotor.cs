@@ -142,7 +142,7 @@ public class CShipPilotState
 	}
 }
 
-public class CShipMotor : CNetworkMonoBehaviour 
+public class CGalaxyShipMotor : CNetworkMonoBehaviour 
 {
 	// Member Types
 	
