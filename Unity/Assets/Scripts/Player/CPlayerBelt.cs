@@ -282,7 +282,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     void OnInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		bool bWriteViewId = true;
-
+		
 		switch (_eType)
 		{
 			case CPlayerInteractor.EInteractionType.PrimaryStart: s_cSerializeStream.Write((byte)ENetworkAction.ActivateToolPrimary); break;

@@ -154,7 +154,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 			}
 			transform.GetComponent<CharacterController>().enabled = false;
 			transform.GetComponent<CPlayerMotor>().enabled = false;
-			transform.GetComponent<CPlayerHeadMotor>().enabled = false;
+			transform.GetComponent<CPlayerHead>().enabled = false;
 		}
 		
 		if(_cVarInstance == m_fActorHp)

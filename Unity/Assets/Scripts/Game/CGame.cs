@@ -26,7 +26,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Types
 
 
-	public const ushort kusServerPort = 30001;
+	public const ushort kusServerPort = 9836;
 
 
 	public enum ENetworkRegisteredPrefab : ushort
@@ -184,7 +184,7 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Register serialization targets
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHeadMotor.SerializePlayerState, CPlayerHeadMotor.UnserializePlayerState);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState, CPlayerHead.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
        	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
@@ -405,7 +405,7 @@ public class CGame : CNetworkMonoBehaviour
 			if (CNetwork.Connection.IsConnected &&
 				!CNetwork.Connection.IsDownloadingInitialGameData)
 			{
-				PlayerActor.GetComponent<CPlayerHeadMotor>().FreezeHeadInput = !Screen.lockCursor;
+				PlayerActor.GetComponent<CPlayerHead>().InputFrozen = !Screen.lockCursor;
 			}
 		}
 

@@ -23,16 +23,16 @@ using System.Collections.Generic;
 public class CNetworkInterpolatedObject : MonoBehaviour
 {
 
-	// Member Types
+// Member Types
 
 
-	// Member Delegates & Events
+// Member Delegates & Events
 
 
-	// Member Properties
+// Member Properties
 
 
-	// Member Methods
+// Member Methods
 
 
 	public void Start()
@@ -62,7 +62,7 @@ public class CNetworkInterpolatedObject : MonoBehaviour
 	}
 
 
-	// Member Fields
+// Member Fields
 
 
 	float m_fInterpolationTimer = 0.0f;

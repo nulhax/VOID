@@ -128,7 +128,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	private void CheckInteractionObjects()
 	{
 		// Find the origin, direction, distance of the players interaction cursor
-		CPlayerHeadMotor cPlayerHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHeadMotor>();
+		CPlayerHead cPlayerHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHead>();
 		Vector3 vOrigin = cPlayerHeadMotor.ActorHead.transform.position;
 		Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
 		float fDistance = 5.0f;

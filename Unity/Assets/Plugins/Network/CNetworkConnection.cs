@@ -29,7 +29,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 // Member Constants
 
 
-	public const uint k_uiOutboundRate = 20; // 50ms
+	public const uint k_uiOutboundRate = 30; // 50ms
 
 
 // Member Types
@@ -204,7 +204,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
         // Process packets
         if (this.IsActive)
         {
-			m_cRnPeer.ApplyNetworkSimulator(0.0f, 200, 200);
+			m_cRnPeer.ApplyNetworkSimulator(0.0f, 200, 50);
 
             ProcessInboundPackets();
 
@@ -325,14 +325,11 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
 	public static void ProcessPlayerSerializedData(CNetworkPlayer _cPlayer, byte[] _baData)
 	{
-		Debug.LogError("awdawdawdawd");
 		// Create packet stream
 		CNetworkStream cStream = new CNetworkStream(_baData);
-		Debug.LogError(cStream.Size);
-		cStream.IgnoreBytes(12);
 
-		// Ignore packet id
-		cStream.IgnoreBytes(1);
+		cStream.IgnoreBytes(1); // Packet id
+		cStream.IgnoreBytes(9); // Time stamp
 
 		// Iterate through the packet data
 		while (cStream.HasUnreadData)
