@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -89,12 +89,15 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit;
+		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
 		
 		if(pilotingCockpit == null)
 			return;
 		
 		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
+		if(cockpit.m_AttachedPlayerActor != null && CGame.PlayerActor != cockpit.m_AttachedPlayerActor)
+			return;
+			
 		switch(cockpit.m_CurrentPlayerInteractionEvent)
 		{
 		case EInteractionEvent.PlayerEnter:
@@ -114,21 +117,25 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			cockpit.CockpitPilotState.ResetStates();
 			break;
 		}
+		
+		cockpit.m_CurrentPlayerInteractionEvent = EInteractionEvent.Nothing;
     }
 
 	public static void UnserializeCockpitInteractions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {	
 		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-		CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
 		
 		switch(interactionEvent)
 		{
 		case EInteractionEvent.PlayerEnter:
-			bridgeCockpit.m_AttachedPlayerActorViewId.Set(CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CNetworkView>().ViewId);
+			if(bridgeCockpit.m_AttachedPlayerActor == null)
+				bridgeCockpit.m_AttachedPlayerActorViewId.Set(CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CNetworkView>().ViewId);
 			break;
 			
 		case EInteractionEvent.PlayerExit:
-			bridgeCockpit.m_AttachedPlayerActorViewId.Set(0);
+			if(bridgeCockpit.m_AttachedPlayerActor != null)
+				bridgeCockpit.m_AttachedPlayerActorViewId.Set(0);
 			break;
 			
 		case EInteractionEvent.PlayerPiloting:
@@ -150,7 +157,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register this cockpit as the piloting cockpit of the ship
-		CGame.GalaxyShip.GetComponent<CShipMotor>().PilotingCockpit = gameObject;
+		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
 		
 		// Make this object interactable with action 1
 		CInteractableObject IO = GetComponent<CInteractableObject>();
@@ -158,10 +165,11 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 	
 	public void Update()
-	{	
+	{		
 		// Update the pilot states
 		if(m_AttachedPlayerActor != null)
-		{
+		{	
+			// Get the players input
 			if(CGame.PlayerActor == m_AttachedPlayerActor)
 			{
 				UpdatePlayerInput();
@@ -169,19 +177,34 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
-			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
+			m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>().ActorHead.transform.rotation = transform.parent.parent.rotation;
 			
-			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
-			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
+			CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
+			CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
 			
-			bodyMotor.InputDisabled = true;
-			headMotor.InputFrozen = true;
+			bodyMotor.FreezeMovmentInput = true;
+			headMotor.FreezeHeadInput = true;
+			
+			// Make sure the actor is still alive
+			if(CNetwork.IsServer)
+			{
+				if(!CGame.PlayerActor.GetComponent<CPlayerHealth>().Alive)
+				{
+					m_AttachedPlayerActorViewId.Set(0);
+				}
+			}
 		}
 	}
 	
 	private void UpdatePlayerInput()
 	{
 		m_CockpitPilotState.ResetStates();
+		
+		// Check if already trying to exit
+		if(m_CurrentPlayerInteractionEvent != EInteractionEvent.PlayerExit)
+			m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerPiloting;
+		else
+			return;
 		
 		// Exit
         if (Input.GetKey(m_eExitKey))
@@ -244,34 +267,27 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	private void HandlerPlayerActorUseAction(RaycastHit _RayHit)
 	{
-		if(m_AttachedPlayerActor == null)
-		{
-			m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
-		}
+		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
 	}
 	
 	private void AttachPlayer(ushort _PlayerActorNetworkViewId)
 	{
 		m_AttachedPlayerActor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId);	
-		
-		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerPiloting;
 	}
 	
 	private void DetachPlayer()
 	{
 		m_AttachedPlayerActor.transform.position = transform.position + transform.up * 2.0f;
 		
-		CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
-		CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
+		CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
+		CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
 		
 		bodyMotor.collider.enabled = true;
 		
-		bodyMotor.InputDisabled = false;
-		headMotor.InputFrozen = false;
+		bodyMotor.FreezeMovmentInput = false;
+		headMotor.FreezeHeadInput = false;
 		
 		m_AttachedPlayerActor = null;
-		
-		m_CurrentPlayerInteractionEvent = EInteractionEvent.Nothing;
 	}
 }
 

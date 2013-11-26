@@ -85,7 +85,6 @@ GameObject:
   - 20: {fileID: 624659157}
   - 92: {fileID: 624659156}
   - 124: {fileID: 624659155}
-  - 81: {fileID: 624659154}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -93,13 +92,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &624659154
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 624659153}
-  m_Enabled: 1
 --- !u!124 &624659155
 Behaviour:
   m_ObjectHideFlags: 0
@@ -166,7 +158,8 @@ GameObject:
   - 114: {fileID: 1432749552}
   - 114: {fileID: 1432749549}
   - 114: {fileID: 1432749553}
-  - 82: {fileID: 1432749554}
+  - 114: {fileID: 1432749555}
+  - 114: {fileID: 1432749554}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -247,65 +240,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e586cb774fed2449c9ed11c94c3d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_acVoiceInput: {fileID: 8300000, guid: 671d5dc18b0069d4caf3c188fd9256d5, type: 3}
---- !u!82 &1432749554
-AudioSource:
+  m_acVoiceInput: {fileID: 0}
+  m_bReturnToSender: 0
+--- !u!114 &1432749554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432749547}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dacbe2f0cca42074daebd8a67f9a324e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1432749555
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
-  serializedVersion: 3
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84910e80f36d997479ed1d68505bf0de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startRect:
     serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    - time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
+    x: 10
+    y: 10
+    width: 75
+    height: 50
+  updateColor: 1
+  allowDrag: 1
+  frequency: .5
+  nbDecimal: 1
 --- !u!1001 &1688088628
 Prefab:
   m_ObjectHideFlags: 0

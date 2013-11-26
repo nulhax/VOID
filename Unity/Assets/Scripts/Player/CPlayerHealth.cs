@@ -28,10 +28,16 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     // Member Properties
-	public float fHealth
+	public float Health
 	{ 
 		get { return (m_fActorHp.Get()); }
 		set { m_fActorHp.Set(value); }
+	}
+	
+	public bool Alive
+	{
+		get { return (m_bIsAlive.Get()); }
+		set { m_bIsAlive.Set(value); }
 	}
 
     // Member Functions

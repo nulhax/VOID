@@ -10,7 +10,7 @@ public class GalaxyObserver : MonoBehaviour
             // Find the galaxy instance and register this object as an observer.
             CNetwork network = CNetwork.Instance; System.Diagnostics.Debug.Assert(network);
             CGame game = CGame.Instance; System.Diagnostics.Debug.Assert(game);
-            CGalaxy galaxy = game.GetComponent<CGalaxy>(); System.Diagnostics.Debug.Assert(galaxy);
+            CGalaxy galaxy = CGalaxy.instance; System.Diagnostics.Debug.Assert(galaxy);
 
             // Depending on the type of model; it may use a mesh renderer, an animator, or something else.
             float observationRadius = 1.0f;
@@ -80,7 +80,7 @@ public class GalaxyObserver : MonoBehaviour
     //    if (Camera.current)
     //        textObject.transform.rotation = Quaternion.LookRotation(gameObject.transform.position - Camera.current.transform.position);
 
-    //    CGalaxy galaxy = CGame.Instance.GetComponent<CGalaxy>();
+    //    CGalaxy galaxy = CGalaxy.instance;
     //    CGalaxy.SGridCellPos transformedCellPos = galaxy.PointToRelativeCell(gameObject.transform.position);
     //    CGalaxy.SGridCellPos untransformedCellPos = galaxy.PointToAbsoluteCell(gameObject.transform.position);
     //    tm.text = string.Format("Rel({0},{1},{2})\nAbs({3},{4},{5})", transformedCellPos.x, transformedCellPos.y, transformedCellPos.z, untransformedCellPos.x, untransformedCellPos.y, untransformedCellPos.z);
@@ -96,28 +96,11 @@ public class GalaxyObserver : MonoBehaviour
                 CGame game = CGame.Instance;
                 if (game)
                 {
-                    CGalaxy galaxy = game.GetComponent<CGalaxy>();
+                    CGalaxy galaxy = CGalaxy.instance;
                     if (galaxy)
                         galaxy.DeregisterObserver(this.gameObject);
                 }
             }
         }
-    }
-}
-
-public class GalaxyObserver_Attachable
-{
-    GameObject mObserver;
-    GalaxyObserver_Attachable(GameObject observer, float observationRadius)
-    {
-        mObserver = observer;
-
-        // Find parent galaxy instance and register this object as an observer.
-        CGame.Instance.GetComponent<CGalaxy>().RegisterObserver(observer, observationRadius);
-    }
-
-    ~GalaxyObserver_Attachable()
-    {
-        CGame.Instance.GetComponent<CGalaxy>().DeregisterObserver(mObserver);
     }
 }

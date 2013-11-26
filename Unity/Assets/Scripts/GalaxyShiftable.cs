@@ -3,19 +3,18 @@ using System.Collections;
 
 public class GalaxyShiftable : MonoBehaviour
 {
-
-    // Use this for initialization
     void Start()
     {
-
+        CGalaxy.instance.RegisterShiftableEntity(gameObject.transform);
     }
 
     void OnDestroy()
     {
-
+        CGalaxy galaxy = CGalaxy.instance;
+        if(galaxy)
+            galaxy.DeregisterShiftableEntity(gameObject.transform);
     }
 	
-    //// Update is called once per frame
     //void Update ()
     //{
 	
