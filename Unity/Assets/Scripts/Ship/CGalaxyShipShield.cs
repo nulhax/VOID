@@ -47,15 +47,17 @@ public class CGalaxyShipShield : MonoBehaviour
 	
 	
 	// Member Methods
-	public void UpdateShieldBounds(Bounds _ShieldBounds)
+	public void UpdateShieldBounds(Mesh _ShieldMesh)
 	{	
-		Vector3 scale = Vector3.zero;
-		scale.x = _ShieldBounds.size.x / Mathf.Sqrt(2.0f) * 2.0f;
-		scale.z = _ShieldBounds.size.z / Mathf.Sqrt(2.0f) * 2.0f;
-		scale.y = _ShieldBounds.size.y;
+		Mesh workingMesh = MeshUtils.CloneMesh(_ShieldMesh);
 		
-		// Set as the scale of the object and increase the scale a little
-		m_Shield.transform.localScale = scale;
-		m_Shield.transform.localPosition = _ShieldBounds.center;
+		// Apply Laplacian Smoothing Filter to Mesh
+		int iterations = 1;
+		for(int i = 0; i < iterations; ++i)
+		{
+			//workingMesh.vertices = SmoothFilter.laplacianFilter(_ShieldMesh.vertices, workingMesh.triangles);
+		}
+		
+		m_Shield.GetComponent<MeshFilter>().sharedMesh = workingMesh;
 	}
 }
