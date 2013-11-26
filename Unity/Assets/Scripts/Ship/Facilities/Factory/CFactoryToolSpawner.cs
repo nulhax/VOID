@@ -46,16 +46,17 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 		CDUISubView factory = consoleDUI.AddSubView();
 		
 		CDUIButton but = factory.AddButton("SpawnTool");
-		but.PressDown += SpawnTool;
 		
 		but.MiddleCenterViewPos = new Vector2(0.5f, 0.5f);
+		but.PressDown += SpawnTool;	
 	}
 
     public void Update()
     {
         
     }
-
+	
+	[AServerMethod]
     void SpawnTool(CDUIButton _sender)
     {
         // Create a new prefab and tool
