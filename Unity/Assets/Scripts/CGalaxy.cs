@@ -99,7 +99,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     float mfTimeUntilNextGubbinUnload = 0.0f;
     public const float mfTimeBetweenShiftTests = 0.5f;
     float mfTimeUntilNextShiftTest = 0.0f;
-    public const float mfTimeBetweenCellLoads = 0.05f;
+    public const float mfTimeBetweenCellLoads = 0.1f;
     float mfTimeUntilNextCellLoad = 0.0f;
 
     public const uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
