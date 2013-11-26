@@ -419,6 +419,8 @@ public class CNetworkView : CNetworkMonoBehaviour
 
     public static void ProcessInboundStream(CNetworkStream _cStream)
     {
+		List<INetworkVar> cSyncedNetworkVars = new List<INetworkVar>();
+
         while (_cStream.HasUnreadData)
         {
             // Extract owner network view id
@@ -449,7 +451,10 @@ public class CNetworkView : CNetworkMonoBehaviour
                 object cNewVarValue = Converter.ToObject(baVarValue, cVarType);
 
                 // Sync with new value
-                cNetworkVar.Sync(cNewVarValue);
+                cNetworkVar.SyncValue(cNewVarValue);
+
+				// Add to callback list
+				cSyncedNetworkVars.Add(cNetworkVar);
             }
 
             // Process network rpc procedure
@@ -471,6 +476,12 @@ public class CNetworkView : CNetworkMonoBehaviour
                 cMethodInfo.Invoke(cParentComponent, caParameterValues);
             }
         }
+
+
+		foreach (INetworkVar cSyncedNetworkVar in cSyncedNetworkVars)
+		{
+			cSyncedNetworkVar.InvokeSyncCallback();
+		}
     }
 
 

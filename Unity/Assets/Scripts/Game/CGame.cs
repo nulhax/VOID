@@ -401,12 +401,6 @@ public class CGame : CNetworkMonoBehaviour
 		if(Input.GetKeyDown(KeyCode.F1))
 		{
 			Screen.lockCursor = !Screen.lockCursor;
-
-			if (CNetwork.Connection.IsConnected &&
-				!CNetwork.Connection.IsDownloadingInitialGameData)
-			{
-				PlayerActor.GetComponent<CPlayerHead>().InputFrozen = !Screen.lockCursor;
-			}
 		}
 
 		// Quick quit game
