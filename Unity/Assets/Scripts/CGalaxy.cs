@@ -124,9 +124,34 @@ public class CGalaxy : CNetworkMonoBehaviour
         for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
             mNoises[ui] = new PerlinSimplexNoise();
 
-        // Load skybox cubemaps.
+        // Load skyboxes.
+        mSkyboxFaces[0] = "Left";
+        mSkyboxFaces[1] = "Right";
+        mSkyboxFaces[2] = "Down";
+        mSkyboxFaces[3] = "Up";
+        mSkyboxFaces[4] = "Front";
+        mSkyboxFaces[5] = "Back";
+
+        Profiler.BeginSample("Initialise cubemap from 6 textures");
         for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-            mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap") as Cubemap;  // Load the cubemap texture from file.
+        {
+            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
+            {
+                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + mSkyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
+                if (!mSkyboxes[uiSkybox])
+                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
+                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
+                Resources.UnloadAsset(skyboxFace);
+            }
+
+            mSkyboxes[uiSkybox].Apply(false, true);
+        }
+        Profiler.EndSample();
+
+        //Profiler.BeginSample("Load cubemaps");
+        //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+        //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
+        //Profiler.EndSample();
 
         // Galaxy is ready to update galaxyIEs.
         mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
