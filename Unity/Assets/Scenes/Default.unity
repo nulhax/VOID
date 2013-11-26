@@ -248,6 +248,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_acVoiceInput: {fileID: 8300000, guid: 671d5dc18b0069d4caf3c188fd9256d5, type: 3}
+  m_bReturnToSender: 1
 --- !u!82 &1432749554
 AudioSource:
   m_ObjectHideFlags: 0
