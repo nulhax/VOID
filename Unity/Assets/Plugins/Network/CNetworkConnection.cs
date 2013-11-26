@@ -199,7 +199,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-    public void Update()
+	public void LateUpdate()
     {
         // Process packets
         if (this.IsActive)

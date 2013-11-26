@@ -20,10 +20,25 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CNetworkInterpolatedObject : MonoBehaviour
+public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 {
 
 // Member Types
+
+
+	public struct TPosition
+	{
+		public TPosition(float _fX, float _fY, float _fZ)
+		{
+			fX = _fX;
+			fY = _fY;
+			fZ = _fZ;
+		}
+
+		public float fX;
+		public float fY;
+		public float fZ;
+	}
 
 
 // Member Delegates & Events
@@ -35,8 +50,24 @@ public class CNetworkInterpolatedObject : MonoBehaviour
 // Member Methods
 
 
+	public override void InstanceNetworkVars()
+	{
+		m_tPosition = new CNetworkVar<TPosition>(OnNetworkVarSync);
+	}
+
+
+	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	{
+		if (_cSyncedNetworkVar == m_tPosition)
+		{
+			transform.position = new Vector3(m_tPosition.Get().fX, m_tPosition.Get().fY, m_tPosition.Get().fZ);
+		}
+	}
+
+
 	public void Start()
 	{
+		//rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 	}
 
 
@@ -59,10 +90,28 @@ public class CNetworkInterpolatedObject : MonoBehaviour
 		int iHistoryElement = (int)((float)CNetworkConnection.k_uiOutboundRate * m_fInterpolationTimer);
 		m_vaPositions[iHistoryElement] = transform.position;
 		m_vaRotations[iHistoryElement] = transform.rotation;
+
+
+		//if (CNetwork.IsServer)
+		//{
+
+		//}
+	}
+
+
+	[AServerMethod]
+	public void SetCurrentPosition(Vector3 _vPosition)
+	{
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers can set the interpolated objects current position");
+
+		m_tPosition.Set(new TPosition(_vPosition.x, _vPosition.y, _vPosition.z));
 	}
 
 
 // Member Fields
+
+
+	CNetworkVar<TPosition> m_tPosition = null;
 
 
 	float m_fInterpolationTimer = 0.0f;

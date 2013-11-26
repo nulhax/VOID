@@ -144,13 +144,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	void OnApplicationFocus(bool _focusStatus) 
-	{
-		InputFrozen = !_focusStatus;
-		Screen.lockCursor = _focusStatus;
-	}
-
-
 // Member Fields
 
 

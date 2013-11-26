@@ -110,7 +110,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    public void Update()
+	public void LateUpdate()
     {
         if (IsActive)
         {

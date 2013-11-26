@@ -45,9 +45,13 @@ public class CNetwork : MonoBehaviour
 
 
 		gameObject.AddComponent<CNetworkScanner>();
-		gameObject.AddComponent<CNetworkConnection>();
 		gameObject.AddComponent<CNetworkFactory>();
+
+		// Make sure the connection happens before the server
+		gameObject.AddComponent<CNetworkConnection>();
 		gameObject.AddComponent<CNetworkServer>();
+
+		// Network view needs to be added last
 		gameObject.AddComponent<CNetworkView>();
 
 

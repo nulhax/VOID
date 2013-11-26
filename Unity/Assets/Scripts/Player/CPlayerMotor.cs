@@ -89,7 +89,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, 9.81f);
+		m_fRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, -9.81f);
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
 		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
@@ -100,6 +101,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
+		if (_cSyncedNetworkVar == m_fRotationY &&
+			CGame.PlayerActor != gameObject)
+		{
+			transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_fRotationY.Get(), transform.eulerAngles.z);
+		}
 	}
 
 
@@ -119,9 +125,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			CGame.PlayerActor == gameObject)
 		{
 			UpdateInput();
+			
 		}
 
 		// Process movement on server and client
+		if (CNetwork.IsServer)
 		ProcessMovement();
 	}
 
@@ -133,6 +141,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 		// Write movement states
 		_cStream.Write(cMyActorMotor.m_uiMovementStates);
+		_cStream.Write(cMyActorMotor.transform.eulerAngles.y);
 	}
 
 
@@ -144,8 +153,14 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Read movement states
 		uint uiMovementStates = _cStream.ReadUInt();
 
+		// Read rotation y
+		float fRotationY = _cStream.ReadFloat();
+
 		// Set movement states
 		cPlayerActorMotor.m_uiMovementStates = uiMovementStates;
+
+		// Set rotation y
+		cPlayerActorMotor.m_fRotationY.Set(fRotationY);
 	}
 
 
@@ -190,12 +205,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Apply movement velocity
 		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
 		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+
+		// Set latest position
+		if (CNetwork.IsServer)
+		{
+			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+		}
 	}
 	
 
 // Member Fields
 
 
+	CNetworkVar<float> m_fRotationY = null;
 	CNetworkVar<float> m_fGravity = null;
 	CNetworkVar<float> m_fMovementSpeed = null;
 	CNetworkVar<float> m_fSprintSpeed = null;

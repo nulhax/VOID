@@ -76,14 +76,18 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public override void Sync(object _cValue)
+	public override void InvokeSyncCallback()
 	{
 		Logger.WriteErrorOn(m_nSyncNotifyCallback == null, "This network var does not have a OnSyncCallback defined!!");
 
-		m_Value = (TYPE)_cValue;
-
 		// Notify observer
 		m_nSyncNotifyCallback(this);
+	}
+
+
+	public override void SyncValue(object _cValue)
+	{
+		m_Value = (TYPE)_cValue;
 	}
 
 
