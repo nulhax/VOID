@@ -52,10 +52,10 @@ public class CGalaxyShipShield : MonoBehaviour
 		Vector3 scale = Vector3.zero;
 		scale.x = _ShieldBounds.size.x / Mathf.Sqrt(2.0f) * 2.0f;
 		scale.z = _ShieldBounds.size.z / Mathf.Sqrt(2.0f) * 2.0f;
-		scale.y = _ShieldBounds.size.y * 2.0f;
+		scale.y = _ShieldBounds.size.y;
 		
 		// Set as the scale of the object and increase the scale a little
-		m_Shield.transform.localScale = scale * 1.1f;
+		m_Shield.transform.localScale = scale;
 		m_Shield.transform.localPosition = _ShieldBounds.center;
 	}
 }
