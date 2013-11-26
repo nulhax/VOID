@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 20: {fileID: 2000000}
   - 114: {fileID: 11400002}
+  - 81: {fileID: 8100000}
   m_Layer: 0
   m_Name: PlayerShipCamera
   m_TagString: Untagged
@@ -56,6 +57,13 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+--- !u!81 &8100000
+AudioListener:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
