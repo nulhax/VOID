@@ -12,9 +12,8 @@ _Alpha("Alpha", Range(0.01,1) ) = 0.5
 	{
 		Tags
 		{
-"Queue"="Opaque"
-"IgnoreProjector"="False"
-"RenderType"="Opaque"
+"Queue"="Transparent"
+"RenderType"="Transparent"
 
 		}
 
@@ -28,7 +27,7 @@ Fog{
 
 
 		CGPROGRAM
-#pragma surface surf BlinnPhongEditor  vertex:vert
+#pragma surface surf BlinnPhongEditor  vertex:vert fullforwardshadows
 #pragma target 2.0
 
 
