@@ -26,6 +26,9 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 // Member Types
 
 
+	public const float m_fInterp = 0.1f;
+
+
 	public struct TPosition
 	{
 		public TPosition(float _fX, float _fY, float _fZ)
@@ -61,6 +64,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 		if (_cSyncedNetworkVar == m_tPosition)
 		{
 			transform.position = new Vector3(m_tPosition.Get().fX, m_tPosition.Get().fY, m_tPosition.Get().fZ);
+			Debug.LogError(_cSyncedNetworkVar.GetLastSyncedTime());
 		}
 	}
 
@@ -105,6 +109,12 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers can set the interpolated objects current position");
 
 		m_tPosition.Set(new TPosition(_vPosition.x, _vPosition.y, _vPosition.z));
+	}
+
+
+	void InsertNewPosition()
+	{
+
 	}
 
 

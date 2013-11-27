@@ -38,6 +38,7 @@ public abstract class INetworkVar
 
 	public abstract object GetValueObject();
 	public abstract Type GetValueType();
+	public abstract ulong GetLastSyncedTime();
 
 
 	public abstract bool IsDefault();

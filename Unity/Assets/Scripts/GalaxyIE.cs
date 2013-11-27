@@ -27,19 +27,14 @@ public class GalaxyIE : PostEffectsBase
         {
             if (mRegisteredWithGalaxy != value)
             {
-                CGame game = CGame.Instance;
-                if (game)
+                if (CGalaxy.instance)
                 {
-                    CGalaxy galaxy = game.GetComponent<CGalaxy>();
-                    if (galaxy)
+                    if (value)
+                        mRegisteredWithGalaxy = CGalaxy.instance.RegisterGalaxyIE(this);
+                    else
                     {
-                        if (value)
-                            mRegisteredWithGalaxy = galaxy.RegisterGalaxyIE(this);
-                        else
-                        {
-                            galaxy.DeregisterGalaxyIE(this);
-                            mRegisteredWithGalaxy = false;
-                        }
+                        CGalaxy.instance.DeregisterGalaxyIE(this);
+                        mRegisteredWithGalaxy = false;
                     }
                 }
             }

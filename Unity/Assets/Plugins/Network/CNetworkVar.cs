@@ -88,6 +88,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 	public override void SyncValue(object _cValue)
 	{
 		m_Value = (TYPE)_cValue;
+		m_uiSyncedTime = RakNet.RakNet.GetTime();
 	}
 
 
@@ -118,6 +119,12 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
+	public override ulong GetLastSyncedTime()
+	{
+		return (m_uiSyncedTime);
+	}
+
+
 	public override bool IsDefault()
 	{
 		return (m_Value.Equals(m_StartValue));
@@ -144,6 +151,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	CNetworkVar<object>.OnSetCallback m_nSetNotifyCallback = null;
 	OnSyncCallback m_nSyncNotifyCallback = null;
+	ulong m_uiSyncedTime = 0;
 
 
 	byte m_bNetworkVarId = 0;

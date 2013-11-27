@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -84,7 +84,7 @@ public class CFireHazard : MonoBehaviour {
             {
                 Debug.Log("Rigid body triggered. ---------------------------");
                 //Get actor health
-                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().fHealth;
+                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().Health;
 				
 				if(hp <= 0.0f)
 				{
