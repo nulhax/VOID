@@ -12,13 +12,12 @@ public class CGalaxy : CNetworkMonoBehaviour
         public int y;
         public int z;
 
-        //public CGridCellPos() { }
         public SGridCellPos(int _x, int _y, int _z) { x = _x; y = _y; z = _z; }
 
         public static SGridCellPos operator +(SGridCellPos lhs, SGridCellPos rhs) { return new SGridCellPos(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
         public static SGridCellPos operator -(SGridCellPos lhs, SGridCellPos rhs) { return new SGridCellPos(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
-        public static bool operator ==(SGridCellPos lhs, SGridCellPos rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z; }
-        public static bool operator !=(SGridCellPos lhs, SGridCellPos rhs) { return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z; }
+        //public static bool operator ==(SGridCellPos lhs, SGridCellPos rhs) { return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z; }
+        //public static bool operator !=(SGridCellPos lhs, SGridCellPos rhs) { return lhs.x != rhs.x || lhs.y != rhs.y || lhs.z != rhs.z; }
     }
 
     class CGridCellContent
@@ -45,7 +44,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public CRegisteredGubbin(GameObject entity, ushort networkViewID, bool alternatorValue) { mEntity = entity; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
-    enum ENoiseLayer : uint
+    public enum ENoiseLayer : uint
     {
         AsteroidDensity,
         FogDensity,
@@ -65,46 +64,49 @@ public class CGalaxy : CNetworkMonoBehaviour
     private static CGalaxy sGalaxy = null;
     public static CGalaxy instance { get { return sGalaxy; } }
 
-    PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
+    private PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
 
-    string[] mSkyboxFaces = new string[6];
-    Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
+    private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
-    SGridCellPos mCentreCell = new SGridCellPos(0, 0, 0);    // All cells are offset by this cell.
+    private SGridCellPos mCentreCell = new SGridCellPos(0, 0, 0);    // All cells are offset by this cell.
     protected CNetworkVar<int> mCentreCellX;
     protected CNetworkVar<int> mCentreCellY;
     protected CNetworkVar<int> mCentreCellZ;
 
-    System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
-    System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
-    System.Collections.Generic.List<GalaxyIE> mGalaxyIEs;   // Is only instantiated when this galaxy is ready to update galaxyIEs.
-    System.Collections.Generic.List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
-    System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid;
-    System.Collections.Generic.Queue<SGridCellPos> mCellsToLoad;
+    private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
+    private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells in the grid are loaded and unloaded based on proximity to observers.
+    private System.Collections.Generic.List<GalaxyIE> mGalaxyIEs;   // Is only instantiated when this galaxy is ready to update galaxyIEs.
+    private System.Collections.Generic.List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
+    private System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent> mGrid;
+    private System.Collections.Generic.Queue<SGridCellPos> mCellsToLoad;
 
-    protected CNetworkVar<float> mGalaxySize; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
-    float mfGalaxySize = 1391000000.0f;
+    private float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
+    protected CNetworkVar<float> mGalaxySize;
+    public float galaxySize { get { return mfGalaxySize; } }
 
+    private uint muiNumGridSubsets = 20; // Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
     protected CNetworkVar<uint> mNumGridSubsets;
-    uint muiNumGridSubsets = 20; // Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
+    public uint numGridSubsets { get { return muiNumGridSubsets; } }
 
+    private uint muiMaxAsteroidsPerCell = 5;
     protected CNetworkVar<uint> mMaxAsteroidsPerCell;
-    uint muiMaxAsteroidsPerCell = 5;
+    public uint maxAsteroidsPerCell { get { return muiMaxAsteroidsPerCell; } }
 
     public const float mfTimeBetweenQueueCellsToLoad = 0.2f;
-    float mfTimeUntilNextQueueCellToLoad = 0.0f;
+    private float mfTimeUntilNextQueueCellToLoad = 0.0f;
     public const float mfTimeBetweenCellUnloads = 0.1f;
-    float mfTimeUntilNextCellUnload = 0.0f;
+    private float mfTimeUntilNextCellUnload = 0.0f;
     public const float mfTimeBetweenGubbinUnloads = 0.4f;
-    float mfTimeUntilNextGubbinUnload = 0.0f;
+    private float mfTimeUntilNextGubbinUnload = 0.0f;
     public const float mfTimeBetweenShiftTests = 0.5f;
-    float mfTimeUntilNextShiftTest = 0.0f;
+    private float mfTimeUntilNextShiftTest = 0.0f;
     public const float mfTimeBetweenCellLoads = 0.1f;
-    float mfTimeUntilNextCellLoad = 0.0f;
+    private float mfTimeUntilNextCellLoad = 0.0f;
 
-    public const uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
+    private uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
+    public uint numExtraNeighbourCells { get { return mNumExtraNeighbourCells; } }
 
-    bool mbValidCellValue = false;  // Used for culling cells that are too far away from observers.
+    private bool mbValidCellValue = false;  // Used for culling cells that are too far away from observers.
 
     public float mCellDiameter { get { return mfGalaxySize / mNumGridCellsInRow; } }
     public ulong mNumGridCells { get { /*return (uint)Mathf.Pow(8, muiGridSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumGridSubsets; ++ui2)ul *= 8u; return ul; } }
@@ -121,23 +123,25 @@ public class CGalaxy : CNetworkMonoBehaviour
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
 
+        // Initialise galaxy noises.
         for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
             mNoises[ui] = new PerlinSimplexNoise();
 
         // Load skyboxes.
-        mSkyboxFaces[0] = "Left";
-        mSkyboxFaces[1] = "Right";
-        mSkyboxFaces[2] = "Down";
-        mSkyboxFaces[3] = "Up";
-        mSkyboxFaces[4] = "Front";
-        mSkyboxFaces[5] = "Back";
+        string[] skyboxFaces = new string[6];
+        skyboxFaces[0] = "Left";
+        skyboxFaces[1] = "Right";
+        skyboxFaces[2] = "Down";
+        skyboxFaces[3] = "Up";
+        skyboxFaces[4] = "Front";
+        skyboxFaces[5] = "Back";
 
         Profiler.BeginSample("Initialise cubemap from 6 textures");
         for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
         {
             for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
             {
-                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + mSkyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
+                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
                 if (!mSkyboxes[uiSkybox])
                     mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
                 mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
@@ -453,11 +457,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         SGridCellPos relativeCell = absoluteCell - mCentreCell;
 
         // Load the content for the cell.
-        if (false)   // TODO: If the content for the cell is on file...
-        {
-            // TODO: Load content from SQL.
-        }
-        else    // This cell is not on file, so it has not been visited...
+        //if (false)   // TODO: If the content for the cell is on file...
+        //{
+        //    // TODO: Load content from SQL.
+        //}
+        //else    // This cell is not on file, so it has not been visited...
         {
             // Generate the content in the cell.
             float fCellRadius = mCellDiameter*0.5f;
@@ -556,6 +560,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         CNetwork.Factory.DestoryObject(gubbin.mNetworkViewID);
 
         Profiler.EndSample();
+    }
+
+    public float SampleNoise(float x, float y, float z, ENoiseLayer noiseLayer)
+    {
+        return mNoises[(uint)noiseLayer].Generate(x, y, z);
     }
 
     public Vector3 RelativeCellCentrePoint(SGridCellPos relativeCell)
