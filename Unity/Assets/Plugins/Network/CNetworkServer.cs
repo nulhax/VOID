@@ -29,7 +29,7 @@ public class CNetworkServer : MonoBehaviour
 // Member Constants
 
 
-	public const uint k_uiSendRate = 20; // 50ms
+	public const float k_fSendRate = 20; // 50ms
     public const int kiTitleMaxLength = 32;
 	public const float kfRegistrationInterval = 5.0f;
 
@@ -464,7 +464,7 @@ public class CNetworkServer : MonoBehaviour
 
 	float m_fRegistrationTimer = 5;
 	float m_fPacketOutboundTimer = 0.0f;
-	float m_fPacketOutboundInterval = 1.0f / k_uiSendRate;
+	float m_fPacketOutboundInterval = 1.0f / k_fSendRate;
 
 
     string m_sTitle = "Untitled";
