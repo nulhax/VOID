@@ -107,6 +107,9 @@ public class AudioSystem : Singleton<AudioSystem>
 						}																	
 					}					
 				}
+				
+				//Process audio occlusion
+							
 	        }
 	    } 
 		catch 
@@ -166,6 +169,28 @@ public class AudioSystem : Singleton<AudioSystem>
 		audioSource.transform.parent = _emitter;
 				
 		return(audioSource);
+	}
+	
+	public AudioSource PlaySource(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType)
+	{
+		if(_fadeInTime > 0)
+		{
+			_source.volume = 0;
+		}
+		else
+		{
+			_source.volume = _volume;
+		}
+				
+		GameObject soundLoc = new GameObject("Audio: " + _source.clip.name);
+		soundLoc.transform.position = _source.transform.position;
+		
+		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, audioSource = _source,
+										defaultVolume = _volume, soundLocoation = soundLoc, soundType = _soundType});
+		
+		_source.Play();
+		
+		return(_source);
 	}
 	
 	private void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 

@@ -13,7 +13,7 @@ GameObject:
   - 81: {fileID: 8100000}
   m_Layer: 0
   m_Name: PlayerShipCamera
-  m_TagString: Untagged
+  m_TagString: Camera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
