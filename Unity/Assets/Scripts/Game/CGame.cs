@@ -231,7 +231,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
 		
 		// Galaxy
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy/Galaxy");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
             CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Galaxy/Asteroid" + us.ToString());
 		

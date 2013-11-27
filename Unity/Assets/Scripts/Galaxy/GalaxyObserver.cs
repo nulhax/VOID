@@ -88,19 +88,8 @@ public class GalaxyObserver : MonoBehaviour
 
     void OnDestroy()
     {
-        CNetwork network = CNetwork.Instance;
-        if(network)
-        {
-            if (CNetwork.IsServer)
-            {
-                CGame game = CGame.Instance;
-                if (game)
-                {
-                    CGalaxy galaxy = CGalaxy.instance;
-                    if (galaxy)
-                        galaxy.DeregisterObserver(this.gameObject);
-                }
-            }
-        }
+        CGalaxy galaxy = CGalaxy.instance;
+        if (galaxy)
+            galaxy.DeregisterObserver(this.gameObject);
     }
 }
