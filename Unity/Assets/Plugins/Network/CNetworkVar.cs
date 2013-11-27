@@ -85,10 +85,10 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
-	public override void SyncValue(object _cValue)
+	public override void SyncValue(object _cValue, float _fSyncTime)
 	{
 		m_Value = (TYPE)_cValue;
-		m_uiSyncedTime = RakNet.RakNet.GetTime();
+		m_fSyncedTime = _fSyncTime;
 	}
 
 
@@ -119,9 +119,9 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public override ulong GetLastSyncedTime()
+	public override float GetLastSyncedTime()
 	{
-		return (m_uiSyncedTime);
+		return (m_fSyncedTime);
 	}
 
 
@@ -151,7 +151,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	CNetworkVar<object>.OnSetCallback m_nSetNotifyCallback = null;
 	OnSyncCallback m_nSyncNotifyCallback = null;
-	ulong m_uiSyncedTime = 0;
+	float m_fSyncedTime = 0;
 
 
 	byte m_bNetworkVarId = 0;

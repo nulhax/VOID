@@ -129,8 +129,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 
 		// Process movement on server and client
-		if (CNetwork.IsServer)
-		ProcessMovement();
+		//if (CNetwork.IsServer)
+			ProcessMovement();
 	}
 
 

@@ -182,12 +182,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
 			
-<<<<<<< HEAD
 			bodyMotor.InputDisabled = true;
 			headMotor.InputFrozen = true;
-=======
-			bodyMotor.FreezeMovmentInput = true;
-			headMotor.FreezeHeadInput = true;
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
@@ -197,7 +193,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 					m_AttachedPlayerActorViewId.Set(0);
 				}
 			}
->>>>>>> 378efe3ae16d942770cba5654c00ed750682a8e9
 		}
 	}
 	

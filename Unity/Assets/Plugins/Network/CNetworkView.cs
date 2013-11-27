@@ -139,7 +139,7 @@ public class CNetworkView : CNetworkMonoBehaviour
         if (_ulPlayerId == 0)
         {
 			// Process on server straight away
-			CNetworkView.ProcessInboundStream(cRpcStream);
+			CNetworkView.ProcessInboundStream(0, cRpcStream);
 			cRpcStream.SetReadOffset(0);
 
 			// Append rpc stream to connected non-host players
@@ -168,7 +168,7 @@ public class CNetworkView : CNetworkMonoBehaviour
             // Make host execute RPC straight away
             if (cNetworkPlayer.IsHost)
             {
-                CNetworkView.ProcessInboundStream(cRpcStream);
+                CNetworkView.ProcessInboundStream(0, cRpcStream);
                 cRpcStream.SetReadOffset(0);
             }
             else
@@ -206,7 +206,7 @@ public class CNetworkView : CNetworkMonoBehaviour
         if (_ulPlayerId == 0)
         {
 			// Process on server straight away
-			CNetworkView.ProcessInboundStream(cVarStream);
+			CNetworkView.ProcessInboundStream(0, cVarStream);
 			cVarStream.SetReadOffset(0);
 
 			// Append network var sync stream to connected non-host players
@@ -233,7 +233,7 @@ public class CNetworkView : CNetworkMonoBehaviour
             // Make host execute sync straight away
             if (cNetworkPlayer.IsHost)
             {
-                CNetworkView.ProcessInboundStream(cVarStream);
+                CNetworkView.ProcessInboundStream(0, cVarStream);
                 cVarStream.SetReadOffset(0);
             }
             else
@@ -417,9 +417,11 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-    public static void ProcessInboundStream(CNetworkStream _cStream)
+    public static void ProcessInboundStream(ulong _uiLatency, CNetworkStream _cStream)
     {
 		List<INetworkVar> cSyncedNetworkVars = new List<INetworkVar>();
+		float fSyncedTime = CNetwork.Connection.ConnectionElapsedTime - ((float)_uiLatency / 1000.0f);
+		//Debug.LogError(fSyncedTime);
 
         while (_cStream.HasUnreadData)
         {
@@ -451,7 +453,7 @@ public class CNetworkView : CNetworkMonoBehaviour
                 object cNewVarValue = Converter.ToObject(baVarValue, cVarType);
 
                 // Sync with new value
-                cNetworkVar.SyncValue(cNewVarValue);
+				cNetworkVar.SyncValue(cNewVarValue, fSyncedTime);
 
 				// Add to callback list
 				cSyncedNetworkVars.Add(cNetworkVar);
@@ -477,7 +479,7 @@ public class CNetworkView : CNetworkMonoBehaviour
             }
         }
 
-
+		// Invoke callbacks for synced network vars
 		foreach (INetworkVar cSyncedNetworkVar in cSyncedNetworkVars)
 		{
 			cSyncedNetworkVar.InvokeSyncCallback();

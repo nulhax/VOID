@@ -128,9 +128,27 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
-	public float TimeMs
+	public float ConnectionElapsedTime
 	{
-		get { return (RakNet.RakNet.GetTime()); }
+		get { return (m_fConnectionElapsedTime); }
+	}
+
+
+	public float TickTimer
+	{
+		get { return (m_fTickTimer); }
+	}
+
+
+	public float Tick
+	{
+		get { return (m_fTick); }
+	}
+
+
+	public float TickTotal
+	{
+		get { return (m_fTickTotal); }
 	}
 
 
@@ -204,13 +222,13 @@ public class CNetworkConnection : CNetworkMonoBehaviour
         // Process packets
         if (this.IsActive)
         {
-			m_cRnPeer.ApplyNetworkSimulator(0.0f, 200, 50);
-
             ProcessInboundPackets();
 
 			if (this.IsConnected)
             {
 				ProcessOutboundPackets();
+
+				UpdateTicksAndTimes();
 			}
 
 			ProcessInboundOutboundRates();
@@ -366,6 +384,17 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
+	protected void UpdateTicksAndTimes()
+	{
+		m_fTickTimer += Time.deltaTime;
+		m_fTickTimer -= Mathf.Floor(m_fTickTimer);
+		m_fTick = CNetworkServer.k_fSendRate * m_fTickTimer;
+
+
+		m_fConnectionElapsedTime += Time.deltaTime;
+	}
+
+
     protected void ProcessInboundPackets()
     {
         RakNet.Packet cRnPacket = null;
@@ -412,7 +441,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.NetworkView:
                     {
-                        HandleNetworkViewPacket(cRnPacket.data);
+						Logger.WriteError("This method should not have been called.");
                     }
                     break;
 				
@@ -421,6 +450,23 @@ public class CNetworkConnection : CNetworkMonoBehaviour
                         HandleMicrophoneAudio(cRnPacket.data);
                     }
                     break;
+
+				case RakNet.DefaultMessageIDTypes.ID_TIMESTAMP:
+					{
+						// Get actual subject of message, dismissing RakNet.DefaultMessageIDTypes.ID_TIMESTAMP
+						// and the following 8 byte timestamp value
+						switch (cRnPacket.data[sizeof(byte) + sizeof(ulong)])
+						{
+							case (byte)EPacketId.NetworkView:
+								HandleNetworkViewPacket(cRnPacket.data);
+								break;
+
+							default:
+								Logger.WriteError("Receieved unknown network message id ({0})");
+								break;
+						}
+					}
+					break;
 
                 default:
                     Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
@@ -509,6 +555,9 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
     protected void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
     {
+		m_fConnectionElapsedTime = 0.0f;
+		m_fTick = 0;
+		m_fTickTotal = 0;
 		m_bDownloadingInitialGameState = true;
 
         // Save server address
@@ -531,11 +580,17 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			// Create stream with data
 			CNetworkStream cStream = new CNetworkStream(_baData);
 
-			// Ignore packet id
+			// Ignore ID_TIME
 			cStream.IgnoreBytes(1);
+			
+			// Retrieve latency
+			ulong ulLatency = cStream.ReadULong();
 
+			// Ignore EPacketId.NetworkView identifier
+			cStream.IgnoreBytes(1);
+			
 			// Process packet data
-			CNetworkView.ProcessInboundStream(cStream);
+			CNetworkView.ProcessInboundStream(ulLatency, cStream);
 
 			// Logger.WriteError("Processed Inbound Data of size ({0})", cStream.GetSize());
 		}
@@ -686,8 +741,12 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	TRateData m_tOutboundRateData = new TRateData();
 
 
+	float m_fConnectionElapsedTime = 0.0f;
+	float m_fTickTimer = 0.0f;
     float m_fPacketOutboundTimer = 0.0f;
 	float m_fPacketOutboundInterval = 1.0f / k_uiOutboundRate;
+	float m_fTick = 0;
+	float m_fTickTotal = 0;
 
 
     ushort m_usPort = 0;

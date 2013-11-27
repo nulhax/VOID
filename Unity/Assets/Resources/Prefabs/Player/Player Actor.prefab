@@ -47,14 +47,10 @@ GameObject:
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400016}
-<<<<<<< HEAD
+  - 114: {fileID: 11400002}
+  - 82: {fileID: 8200000}
   - 54: {fileID: 5400022}
   - 65: {fileID: 6500004}
-  - 114: {fileID: 11400002}
-=======
-  - 143: {fileID: 14300000}
-  - 82: {fileID: 8200000}
->>>>>>> 378efe3ae16d942770cba5654c00ed750682a8e9
   m_Layer: 0
   m_Name: Player Actor
   m_TagString: Untagged
@@ -1122,12 +1118,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-<<<<<<< HEAD
   m_Size: {x: .600000024, y: 1.79999995, z: .400000006}
-  m_Center: {x: 0, y: -.0599999987, z: 0}
-=======
-  m_Size: {x: .369266331, y: .124995768, z: .257336408}
-  m_Center: {x: -1.49011612e-08, y: .0297653377, z: -.0273373872}
+  m_Center: {x: 0, y: -.0549999997, z: 0}
 --- !u!82 &8200000
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1186,7 +1178,6 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
->>>>>>> 378efe3ae16d942770cba5654c00ed750682a8e9
 --- !u!111 &11100000
 Animation:
   m_ObjectHideFlags: 1
@@ -1195,9 +1186,8 @@ Animation:
   m_GameObject: {fileID: 100004}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: e32ceebea819f884aab98d6038c7bbbe, type: 3}
-  m_Animations:
-  - {fileID: 7400000, guid: e32ceebea819f884aab98d6038c7bbbe, type: 3}
+  m_Animation: {fileID: 0}
+  m_Animations: []
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
@@ -1267,7 +1257,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c62355566030eb14a82121cc52a779b7, type: 3}
   m_Name: 
