@@ -155,7 +155,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		if (IsHeld)
         {
-            gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActorObject.GetComponent<CPlayerHeadMotor>().HeadEuler.x, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
+            gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActorObject.GetComponent<CPlayerHead>().HeadEulerX, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
         }
 	}
 

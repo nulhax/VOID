@@ -151,6 +151,18 @@ public class CNetworkStream
 	{
 		m_cBitStream.Write((int)_uiValue);
 	}
+
+
+	public void Write(long _lValue)
+	{
+		m_cBitStream.Write(_lValue);
+	}
+
+
+	public void Write(ulong _ulValue)
+	{
+		m_cBitStream.Write((long)_ulValue);
+	}
 	
 	
 	public void Write(float _fValue)
@@ -289,6 +301,27 @@ public class CNetworkStream
 	public uint ReadUInt()
 	{
 		return ((uint)ReadInt());
+	}
+
+
+	public long ReadLong()
+	{
+		long lValue = 0;
+
+
+		if (!m_cBitStream.Read(out lValue))
+		{
+			Logger.WriteError("Could not read int");
+		}
+
+
+		return (lValue);
+	}
+
+
+	public ulong ReadULong()
+	{
+		return ((ulong)ReadLong());
 	}
 	
 	

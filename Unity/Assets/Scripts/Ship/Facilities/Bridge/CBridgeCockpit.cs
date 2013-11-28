@@ -177,13 +177,13 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
-			m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>().ActorHead.transform.rotation = transform.parent.parent.rotation;
+			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
 			
-			CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
-			CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
+			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
+			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
 			
-			bodyMotor.FreezeMovmentInput = true;
-			headMotor.FreezeHeadInput = true;
+			bodyMotor.InputDisabled = true;
+			headMotor.InputFrozen = true;
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
@@ -279,13 +279,13 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
 		m_AttachedPlayerActor.transform.position = transform.position + transform.up * 2.0f;
 		
-		CPlayerBodyMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerBodyMotor>();
-		CPlayerHeadMotor headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHeadMotor>();
+		CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
+		CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
 		
 		bodyMotor.collider.enabled = true;
 		
-		bodyMotor.FreezeMovmentInput = false;
-		headMotor.FreezeHeadInput = false;
+		bodyMotor.InputDisabled = false;
+		headMotor.InputFrozen = false;
 		
 		m_AttachedPlayerActor = null;
 	}
