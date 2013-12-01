@@ -55,7 +55,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	List<ClipInfo> m_activeAudio;
 	private float musicVolume;
 	private float effectsVolume;
-	private AudioListener listener;
+	private AudioListener m_listener;
 	private OcclusionState occludeState;
 	
 	// Member Functions
@@ -65,14 +65,21 @@ public class AudioSystem : Singleton<AudioSystem>
         Debug.Log("AudioManager Initialising");
        		
 		m_activeAudio = new List<ClipInfo>();
-		listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
+		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
 		
 		occludeState = OcclusionState.OCCLUSION_FALSE;
     }
 	
 	void Update() 
 	{
-		ProcessActiveAudio();
+		if(m_listener == null)
+		{
+			m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
+		}
+		else
+		{
+			ProcessActiveAudio();
+		}
 	}
 	
 	void ProcessActiveAudio()
@@ -145,7 +152,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	void ProcessAudioOcclusion(ClipInfo _audioClip)
 	{
 		//Get the audioListener in the scene
-		Vector3 listenerPos = listener.transform.position;
+		Vector3 listenerPos = m_listener.transform.position;
 		Vector3 sourcePos = _audioClip.audioSource.transform.position;
 	
 		
