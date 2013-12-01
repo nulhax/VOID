@@ -27,6 +27,13 @@ public class AudioSystem : Singleton<AudioSystem>
 		SOUND_OTHER,
 	};
 	
+	public enum OcclusionState
+	{
+		OCCLUSION_FALSE,
+		OCCLUSION_PARTIAL,
+		OCCLUSION_FULL		
+	};
+	
 	class ClipInfo
     {
 	   	public float 		fadeInTime 		{ get; set; }
@@ -37,6 +44,7 @@ public class AudioSystem : Singleton<AudioSystem>
        	public float 		defaultVolume 	{ get; set; }
 		public GameObject  	soundLocoation	{ get; set; }
 		public SoundType	soundType;
+		public bool 		useOcclusion	{ get; set; }	
     }
 
 	// Member Delegates & Events
@@ -47,6 +55,8 @@ public class AudioSystem : Singleton<AudioSystem>
 	List<ClipInfo> m_activeAudio;
 	private float musicVolume;
 	private float effectsVolume;
+	private AudioListener listener;
+	private OcclusionState occludeState;
 	
 	// Member Functions
 	
@@ -55,6 +65,9 @@ public class AudioSystem : Singleton<AudioSystem>
         Debug.Log("AudioManager Initialising");
        		
 		m_activeAudio = new List<ClipInfo>();
+		listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
+		
+		occludeState = OcclusionState.OCCLUSION_FALSE;
     }
 	
 	void Update() 
@@ -69,7 +82,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		{
 	        foreach(ClipInfo audioClip in m_activeAudio) 
 			{
-	            if(!audioClip.audioSource) 
+	            if(!audioClip.audioSource || audioClip.audioSource.isPlaying == false) 
 				{
 	                toRemove.Add(audioClip);
 	            } 
@@ -107,7 +120,13 @@ public class AudioSystem : Singleton<AudioSystem>
 						}																	
 					}					
 				}
-	        }
+				
+				//Process audio occlusion
+				if(audioClip.useOcclusion)			
+				{
+					ProcessAudioOcclusion(audioClip);					
+				}
+			}
 	    } 
 		catch 
 		{
@@ -123,7 +142,99 @@ public class AudioSystem : Singleton<AudioSystem>
 		}
     }
 	
-	public AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType) 
+	void ProcessAudioOcclusion(ClipInfo _audioClip)
+	{
+		//Get the audioListener in the scene
+		Vector3 listenerPos = listener.transform.position;
+		Vector3 sourcePos = _audioClip.audioSource.transform.position;
+	
+		
+		int ignoreMask = 3 << 10;		
+		ignoreMask = ~ignoreMask;
+		
+		RaycastHit hit;
+        if(Physics.Linecast(sourcePos, listenerPos, out hit, ignoreMask))
+		{
+			Debug.DrawLine(	sourcePos, listenerPos);
+			
+           	if(hit.collider.tag != "Listener")
+			{			
+				//TODO:
+				//For now, get every conduit in existence
+				GameObject[] conduits = GameObject.FindGameObjectsWithTag("AudioConduit");
+				bool occlude = true;
+				
+				//Before occluding, raycast from audio source to all nearby audio conduits.
+				foreach(GameObject conduit in conduits)
+				{
+					RaycastHit sourceToConduit;
+					if(Physics.Linecast(sourcePos, conduit.transform.position, out sourceToConduit))
+					{					
+						if(sourceToConduit.collider.tag == "AudioConduit")
+						{						
+							//If there is a conduit within sight of the audio source, check whether the listener has line of sight with the same conduit.				
+							RaycastHit LinstenerToConduit;
+							if(Physics.Linecast(listenerPos, conduit.transform.position, out LinstenerToConduit))
+							{							
+								if(LinstenerToConduit.collider.tag == "AudioConduit")
+								{
+									Debug.DrawLine(	sourcePos, conduit.transform.position, Color.red);
+									Debug.DrawLine(	conduit.transform.position, listenerPos, Color.blue);
+									
+									occlude = false;
+									_audioClip.audioSource.volume = _audioClip.defaultVolume / 2;
+									
+									if(occludeState != OcclusionState.OCCLUSION_PARTIAL)
+									{
+										occludeState = OcclusionState.OCCLUSION_PARTIAL;
+										Debug.Log("Partial Occlusion");
+									}									
+								}
+							}
+						}
+					}
+				}				
+				
+				AudioLowPassFilter audioFilter = _audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>(); 
+				
+				if(occlude)
+				{
+					if(audioFilter == null)
+					{
+						AudioLowPassFilter filter =_audioClip.audioSource.gameObject.AddComponent<AudioLowPassFilter>();
+						filter.cutoffFrequency = 2000; 
+					}
+					
+					_audioClip.audioSource.volume = _audioClip.defaultVolume / 10;
+					
+					if(occludeState != OcclusionState.OCCLUSION_FULL)
+					{
+						occludeState = OcclusionState.OCCLUSION_FULL;
+						Debug.Log("Full Occlusion");
+					}					
+				}							
+			}	
+		
+			else
+			{	
+				if(_audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>() != null)
+				{
+					Destroy(_audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>());
+					_audioClip.audioSource.volume = _audioClip.defaultVolume;
+				}
+				
+				if(occludeState != OcclusionState.OCCLUSION_FALSE)
+				{
+					occludeState = OcclusionState.OCCLUSION_FALSE;
+					Debug.Log("No Occlusion");
+				}	
+			}
+					 
+		}
+	}
+	
+	public AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop,
+							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 
 	{
 		//Create an empty game object
 		GameObject soundLoc = new GameObject("Audio: " + _clip.name);
@@ -153,19 +264,39 @@ public class AudioSystem : Singleton<AudioSystem>
 		}
 		
 		//Set the source as active
-		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, audioSource = audioSource,
-										defaultVolume = _volume, soundLocoation = soundLoc, soundType = _soundType});
+		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, audioSource = audioSource, defaultVolume = _volume,
+										 soundLocoation = soundLoc, soundType = _soundType, useOcclusion = _useOcclusion});
 		return(audioSource);
 	}
 	
-	public AudioSource Play(AudioClip _clip, Transform _emitter, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType) 
+	public AudioSource Play(AudioClip _clip, Transform _emitter, float _volume, float _pitch, bool _loop,
+							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 
 	{
 		
 		//Create the source
-		AudioSource audioSource = Play(_clip, _emitter.position, _volume, _pitch, _loop, _fadeInTime, _soundType);
+		AudioSource audioSource = Play(_clip, _emitter.position, _volume, _pitch, _loop, _fadeInTime, _soundType, _useOcclusion);
 		audioSource.transform.parent = _emitter;
 				
 		return(audioSource);
+	}
+	
+	public void Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
+	{
+		if(_fadeInTime > 0)
+		{
+			_source.volume = 0;
+		}
+		else
+		{
+			_source.volume = _volume;
+		}
+		
+		_source.loop = _loop;
+		
+		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
+										 soundType = _soundType, useOcclusion = _useOcclusion});
+		
+		_source.Play();				
 	}
 	
 	private void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 

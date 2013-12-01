@@ -105,7 +105,7 @@ public class AudioCue : MonoBehaviour
 												  		 	Random.Range(volumeMin, volumeMax) * volumeScale,
 												   			Random.Range(pitchMin, pitchMax), loop,
 															fadeInTimeList[index],
-															soundType);	
+															soundType, true);	
 		
 		//Add this to the list of attached audio sources.
 		attachedAudioSource.Add(newAudioSource);

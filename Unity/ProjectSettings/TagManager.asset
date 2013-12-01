@@ -4,6 +4,8 @@
 TagManager:
   tags:
   - Room
+  - Listener
+  - AudioConduit
   - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
@@ -16,7 +18,7 @@ TagManager:
   User Layer 8: InteractableObject
   User Layer 9: DUI
   User Layer 10: Galaxy
-  User Layer 11: 
+  User Layer 11: AudioConduit
   User Layer 12: 
   User Layer 13: 
   User Layer 14: 

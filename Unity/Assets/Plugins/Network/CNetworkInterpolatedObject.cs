@@ -105,7 +105,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 		}
 
 		//rigidbody.position = new Vector3(m_vaPositions[(int)fCurrentTick].x, m_vaPositions[(int)fCurrentTick].y, m_vaPositions[(int)fCurrentTick].z);
-		Debug.LogError((int)fCurrentTick);
+		//Debug.LogError((int)fCurrentTick);
 		//int iHistoryElement = (int)((float)CNetworkConnection.k_uiOutboundRate * m_fInterpolationTimer);
 		//m_vaPositions[iHistoryElement] = transform.position;
 		//m_vaRotations[iHistoryElement] = transform.rotation;
