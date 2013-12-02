@@ -131,7 +131,7 @@ public class CDUIButton : CDUIElement
 		AudioSource conosleAudio = transform.parent.parent.GetComponent<CDUI>().Console.GetComponent<AudioSource>();
 		conosleAudio.clip = s_PressDownSound;
 		
-		AudioSystem.GetInstance.Play(conosleAudio, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
+		AudioSystem.GetInstance.Play(conosleAudio, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, false);
     }
 	
 	public void OnPressUp()
