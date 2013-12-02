@@ -217,7 +217,7 @@ public class AudioSystem : Singleton<AudioSystem>
 					if(occludeState != OcclusionState.OCCLUSION_FULL)
 					{
 						occludeState = OcclusionState.OCCLUSION_FULL;
-						Debug.Log("Full Occlusion");
+						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
 					}					
 				}							
 			}	
@@ -287,7 +287,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		return(audioSource);
 	}
 	
-	public void Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
+	public AudioSource Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
 	{
 		if(_fadeInTime > 0)
 		{
@@ -303,7 +303,9 @@ public class AudioSystem : Singleton<AudioSystem>
 		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
 										 soundType = _soundType, useOcclusion = _useOcclusion});
 		
-		_source.Play();				
+		_source.Play();
+		
+		return(_source);
 	}
 	
 	private void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 
