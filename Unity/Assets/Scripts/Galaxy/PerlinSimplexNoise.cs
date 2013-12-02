@@ -35,7 +35,7 @@
 public class PerlinSimplexNoise
 {
     //public byte perm[] = null;
-    public int mSeed;
+    private int mSeed;
 
     public byte[] perm = new byte[512];
     //public byte[] perm = new byte[512] { 151,160,137,91,90,15,
@@ -66,7 +66,17 @@ public class PerlinSimplexNoise
     //        138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180 
     //    };
 
+    public PerlinSimplexNoise()
+    {
+
+    }
+
     public PerlinSimplexNoise(int seed)
+    {
+        Seed(seed);
+    }
+
+    public void Seed(int seed)
     {
         mSeed = seed;
         System.Random random = new System.Random(seed);

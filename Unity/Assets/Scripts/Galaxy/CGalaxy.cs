@@ -66,6 +66,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     public static CGalaxy instance { get { return sGalaxy; } }
 
     private PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
+    protected CNetworkVar<int>[] mNoiseSeeds = new CNetworkVar<int>[(uint)ENoiseLayer.MAX];
 
     private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
@@ -117,6 +118,13 @@ public class CGalaxy : CNetworkMonoBehaviour
     ///////////////////////////////////////////////////////////////////////////
     // Functions:
 
+    public CGalaxy()
+    {
+        // Instantiate galaxy noises.
+        for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            mNoises[ui] = new PerlinSimplexNoise();
+    }
+
     void Start()
     {
         sGalaxy = this;
@@ -125,9 +133,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
 
-        // Initialise galaxy noises.
-        for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            mNoises[ui] = new PerlinSimplexNoise(Random.Range(int.MinValue, int.MaxValue));
+        //// Initialise galaxy noises.
+        //for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+        //    mNoises[ui] = new PerlinSimplexNoise();
 
         // Load skyboxes.
         string[] skyboxFaces = new string[6];
@@ -170,6 +178,10 @@ public class CGalaxy : CNetworkMonoBehaviour
             mGubbins = new System.Collections.Generic.List<CRegisteredGubbin>();
             mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
             mCellsToLoad = new System.Collections.Generic.Queue<SGridCellPos>();
+
+            // Seed galaxy noises through the network variable to sync the seed across all clients.
+            for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+                mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
         }
     }
 
@@ -181,6 +193,9 @@ public class CGalaxy : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
         Profiler.BeginSample("InstanceNetworkVars");
+
+        for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            mNoiseSeeds[ui] = new CNetworkVar<int>(SyncNoiseSeed);
 
         mCentreCellX = new CNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
         mCentreCellY = new CNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
@@ -383,6 +398,13 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
 
         return result / mObservers.Count;
+    }
+
+    public void SyncNoiseSeed(INetworkVar sender)
+    {
+        for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            if(mNoiseSeeds[ui] == sender)
+                mNoises[ui].Seed(mNoiseSeeds[ui].Get());
     }
 
     public void SyncCentreCellX(INetworkVar sender)
