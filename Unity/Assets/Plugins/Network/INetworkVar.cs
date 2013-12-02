@@ -31,12 +31,14 @@ public abstract class INetworkVar
     // public:
 
 
-	public abstract void Sync(object _cValue);
+	public abstract void InvokeSyncCallback();
+	public abstract void SyncValue(object _cValue, float _fSyncTime);
 	public abstract void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback);
 
 
 	public abstract object GetValueObject();
 	public abstract Type GetValueType();
+	public abstract float GetLastSyncedTime();
 
 
 	public abstract bool IsDefault();

@@ -2,7 +2,7 @@ Shader "ShipPiece"
 {
 	Properties 
 	{
-_Diffuse("_Diffuse", 2D) = "black" {}
+_Diffuse("_Diffuse", 2D) = "gray" {}
 _SpecMap("_SpecMap", 2D) = "black" {}
 _Normal("_Normal", 2D) = "black" {}
 _SpecPower("_SpecPower", Float) = 1

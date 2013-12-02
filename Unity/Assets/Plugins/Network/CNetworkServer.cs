@@ -26,12 +26,15 @@ using System.IO;
 public class CNetworkServer : MonoBehaviour
 {
 
+// Member Constants
 
-// Member Types
 
-
+	public const float k_fSendRate = 20; // 50ms
     public const int kiTitleMaxLength = 32;
 	public const float kfRegistrationInterval = 5.0f;
+
+
+// Member Types
 
 
     public enum EPacketId
@@ -67,7 +70,7 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-// Member Events
+// Member Delegates & Events
 
 
     public delegate void NotifyPlayerConnect(CNetworkPlayer _cPlayer);
@@ -89,9 +92,10 @@ public class CNetworkServer : MonoBehaviour
 	public event NotifyRecievedPlayerMicrophoneAudio EventRecievedPlayerMicrophoneAudio;
 
 
-// Member Functions
+// Member Properties
 
-    // public:
+
+// Member Methods
 
 
     public void Start()
@@ -106,7 +110,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    public void Update()
+	public void LateUpdate()
     {
         if (IsActive)
         {
@@ -216,9 +220,6 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    // protected:
-
-
     protected void ProcessInboundPackets()
     {
         RakNet.Packet cRnPacket = null;
@@ -262,6 +263,7 @@ public class CNetworkServer : MonoBehaviour
 
                 case (RakNet.DefaultMessageIDTypes)EPacketId.PlayerSerializedData:
                     {
+						Debug.Log("This should not be used");
                         HandlePlayerSerializedData(cRnPacket.guid, cRnPacket.data);
                     }
                     break;
@@ -271,6 +273,11 @@ public class CNetworkServer : MonoBehaviour
                         HandlePlayerMicrophoneAudio(cRnPacket.guid, cRnPacket.data);
                     }
                     break;
+
+
+				case RakNet.DefaultMessageIDTypes.ID_TIMESTAMP:
+					HandlePlayerSerializedData(cRnPacket.guid, cRnPacket.data);
+					break;
 				
                 default:
                     Logger.WriteError("Receieved unknown network message id ({0})", cRnPacket.data[0]);
@@ -419,9 +426,6 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    // private:
-
-
     bool StartupPeer(uint _uiNumSlots)
     {
         //m_cRnPeer = RakNet.RakPeerInterface.GetInstance();
@@ -440,6 +444,7 @@ public class CNetworkServer : MonoBehaviour
         else
         {
             m_cRnPeer.SetMaximumIncomingConnections((ushort)_uiNumSlots);
+			m_cRnPeer.SetOccasionalPing(true);
             bPeerStarted = true;
 
 
@@ -450,12 +455,7 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-// Member Variables
-
-    // protected:
-
-
-    // private:
+// Member Fields
 
 
     RakNet.RakPeer m_cRnPeer = null;
@@ -464,7 +464,7 @@ public class CNetworkServer : MonoBehaviour
 
 	float m_fRegistrationTimer = 5;
 	float m_fPacketOutboundTimer = 0.0f;
-	float m_fPacketOutboundInterval = 1.0f / 100.0f;
+	float m_fPacketOutboundInterval = 1.0f / k_fSendRate;
 
 
     string m_sTitle = "Untitled";

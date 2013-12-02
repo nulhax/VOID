@@ -51,6 +51,7 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		
 	}
 	
 
@@ -122,6 +123,7 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 			}
 		}
 	}
+	
 	// Member Fields
 	CNetworkVar<float> m_fObjectSize;
 	CNetworkVar<float> m_fTotalNanites;

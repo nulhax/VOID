@@ -27,7 +27,7 @@ public class CNetwork : MonoBehaviour
 
     public const string sMasterServerIp = "116.193.147.34"; // spacegamems.capturehub.net
 	public const string sMasterServerPassword = "";
-    public const ushort usMasterServerPort = 9896;
+    public const ushort usMasterServerPort = 7954;
 
 
 // Member Functions
@@ -45,9 +45,13 @@ public class CNetwork : MonoBehaviour
 
 
 		gameObject.AddComponent<CNetworkScanner>();
-		gameObject.AddComponent<CNetworkConnection>();
 		gameObject.AddComponent<CNetworkFactory>();
+
+		// Make sure the connection happens before the server
+		gameObject.AddComponent<CNetworkConnection>();
 		gameObject.AddComponent<CNetworkServer>();
+
+		// Network view needs to be added last
 		gameObject.AddComponent<CNetworkView>();
 
 

@@ -50,6 +50,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	
 	void Start () 
     {
+		/*
 		//Set everything to kinematic
 		foreach(Transform child in transform.GetComponentsInChildren<Transform>())
 		{		
@@ -73,8 +74,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		}
 		
 		// Change the parents values back
-		//rigidbody.isKinematic = false;
+		//rigidbody.isKinematic = false;* */
 	}
+		 
 
     public void OnDestroy()
     { 
@@ -157,8 +159,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 				
 			}
 			transform.GetComponent<CharacterController>().enabled = false;
-			transform.GetComponent<CPlayerBodyMotor>().enabled = false;
-			transform.GetComponent<CPlayerHeadMotor>().enabled = false;
+			transform.GetComponent<CPlayerMotor>().enabled = false;
+			transform.GetComponent<CPlayerHead>().enabled = false;
 		}
 		
 		if(_cVarInstance == m_fActorHp)
