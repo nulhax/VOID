@@ -31,7 +31,10 @@ public class CDUIButton : CDUIElement
 
     // Member Fields
 	private GameObject m_TextField = null;
-
+	
+	static private string s_PressDownSoundFile = "Audio/Alarm";
+	static private AudioClip s_PressDownSound = null;
+	
     // Member Properties
     public string Text
     {
@@ -50,6 +53,11 @@ public class CDUIButton : CDUIElement
 	public void Awake()
 	{
 		ElementType = CDUIElement.EElementType.Button;
+		
+		if(s_PressDownSound == null)
+		{
+			s_PressDownSound = (AudioClip)Resources.Load(s_PressDownSoundFile, typeof(AudioClip));
+		}
 	}
 	
     public void Initialise(string _text)
@@ -119,6 +127,11 @@ public class CDUIButton : CDUIElement
         {
             PressDown(this);
         }
+		
+		AudioSource conosleAudio = transform.parent.parent.GetComponent<CDUI>().Console.GetComponent<AudioSource>();
+		conosleAudio.clip = s_PressDownSound;
+		
+		AudioSystem.GetInstance.Play(conosleAudio, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
     }
 	
 	public void OnPressUp()
