@@ -127,7 +127,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
         // Initialise galaxy noises.
         for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            mNoises[ui] = new PerlinSimplexNoise();
+            mNoises[ui] = new PerlinSimplexNoise(Random.Range(int.MinValue, int.MaxValue));
 
         // Load skyboxes.
         string[] skyboxFaces = new string[6];
