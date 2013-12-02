@@ -32,7 +32,7 @@ public class CDUIButton : CDUIElement
     // Member Fields
 	private GameObject m_TextField = null;
 	
-	static private string s_PressDownSoundFile = "Audio/Alarm";
+	static private string s_PressDownSoundFile = "Audio/DUI/ButtonPress";
 	static private AudioClip s_PressDownSound = null;
 	
     // Member Properties
