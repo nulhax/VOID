@@ -25,7 +25,15 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     // Member Delegates & Events
-
+	public delegate void OnPlayerApplyHeal(GameObject _SourcePlayer, GameObject _TargetPlayer, float _fHealAmount);
+	public delegate void OnPlayerApplyDamage(GameObject _SourcePlayer, GameObject _TargetPlayer, float _fDamageAmount);
+	public delegate void OnPlayerDeath(GameObject _SourcePlayer);
+	public delegate void OnPlayerRevive(GameObject _SourcePlayer);
+	
+	public event OnPlayerApplyHeal   EventOnPlayerApplyHeal;
+	public event OnPlayerApplyDamage EventOnPlayerApplyDamage;
+	public event OnPlayerDeath       EventOnPlayerDeath;
+	public event OnPlayerRevive      EventOnPlayerRevive;
 
     // Member Properties
 	public float Health
@@ -187,9 +195,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 		
     public void ApplyDamage(float _fDamage, float _fPlayerHealth)
-    {
+    {		
         m_fActorHp.Set(_fPlayerHealth - _fDamage);
     }
+	
     // Member Fields
 	CNetworkVar<float> m_fActorHp;
 	CNetworkVar<bool> m_bIsAlive;

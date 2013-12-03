@@ -3,11 +3,11 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CShipHull.cs
+//  File Name   :   CShipFacilities.cs
 //  Description :   --------------------------
 //
-//  Author  	:  
-//  Mail    	:  @hotmail.com
+//  Author  	:  Multiple
+//  Mail    	:  N/A
 //
 
 
@@ -27,8 +27,11 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
-	public delegate void OnFacilityCreate(GameObject _NewFacilty);
+	public delegate void OnFacilityCreate(GameObject _Facilty);
+	public delegate void OnFacilityDestroy(GameObject _Facility);
+	
 	public event OnFacilityCreate EventOnFaciltiyCreate;
+	public event OnFacilityDestroy EventOnFaciltiyDestroy;
 
 // Member Properties
 	
@@ -68,7 +71,7 @@ public class CShipFacilities : MonoBehaviour
 			
 			if(cExpansionPort.HasAttachedFacility == true)
 			{
-				Debug.LogWarning("Failed to create new room. Port already in use");
+				Debug.LogWarning("Failed to create new room. Port is already in use.");
 				return(null);
 			}
 		}
@@ -105,6 +108,16 @@ public class CShipFacilities : MonoBehaviour
 		}
 		
 		return (cNewFacilityObject);
+	}
+	
+	public void DestroyFacility(GameObject _Facility)
+	{
+		if (EventOnFaciltiyDestroy != null)
+		{
+			EventOnFaciltiyDestroy(_Facility);
+		}
+		
+		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
 	}
 	
 	
