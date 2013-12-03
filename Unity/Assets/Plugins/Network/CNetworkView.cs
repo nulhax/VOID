@@ -420,8 +420,24 @@ public class CNetworkView : CNetworkMonoBehaviour
     public static void ProcessInboundStream(ulong _uiLatency, CNetworkStream _cStream)
     {
 		List<INetworkVar> cSyncedNetworkVars = new List<INetworkVar>();
-		float fSyncedTime = CNetwork.Connection.ConnectionElapsedTime - ((float)_uiLatency / 1000.0f);
-		//Debug.LogError(fSyncedTime);
+		float fSyncedTick = 0.0f;
+
+		if (CNetwork.IsServer)
+		{
+			fSyncedTick  = ((float)RakNet.RakNet.GetTimeMS()) / 1000.0f;
+			fSyncedTick -= Mathf.Floor(fSyncedTick);
+			fSyncedTick *= CNetworkServer.k_fSendRate;
+		}
+		else
+		{
+			fSyncedTick = CNetwork.Connection.Tick - ((float)_uiLatency / 1000.0f);
+
+			if (fSyncedTick < 0.0f)
+			{
+				fSyncedTick = CNetworkServer.k_fSendRate - fSyncedTick;
+				Debug.Log(fSyncedTick);
+			}
+		}
 
         while (_cStream.HasUnreadData)
         {
@@ -453,7 +469,7 @@ public class CNetworkView : CNetworkMonoBehaviour
                 object cNewVarValue = Converter.ToObject(baVarValue, cVarType);
 
                 // Sync with new value
-				cNetworkVar.SyncValue(cNewVarValue, fSyncedTime);
+				cNetworkVar.SyncValue(cNewVarValue, fSyncedTick);
 
 				// Add to callback list
 				cSyncedNetworkVars.Add(cNetworkVar);

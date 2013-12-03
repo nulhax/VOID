@@ -112,6 +112,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Empty
+		if (!CNetwork.IsServer)
+		{
+			rigidbody.isKinematic = true;
+		}
 	}
 
 
@@ -125,11 +129,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			CGame.PlayerActor == gameObject)
 		{
 			UpdateInput();
-			
 		}
 
 		// Process movement on server and client
-		//if (CNetwork.IsServer)
+		if (CNetwork.IsServer)
 			ProcessMovement();
 	}
 

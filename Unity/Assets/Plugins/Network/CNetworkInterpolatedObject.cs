@@ -85,7 +85,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 		{
 			//return;
 		}
-
+		//Debug.LogError(m_tPosition.GetLastSyncedTime());
 
 		m_fInterpolationTimer += Time.deltaTime;
 
@@ -97,15 +97,22 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 
 		float fCurrentTick = CNetwork.Connection.Tick;
-		fCurrentTick -= m_fInterp;
 
-		if (fCurrentTick < 0.0f)
+		if (!CNetwork.IsServer &&
+			m_bNewPositionInserted)
 		{
-			fCurrentTick = CNetworkServer.k_fSendRate + fCurrentTick; // Set new tick rate
-		}
+			fCurrentTick -= m_fInterp;
 
-		//rigidbody.position = new Vector3(m_vaPositions[(int)fCurrentTick].x, m_vaPositions[(int)fCurrentTick].y, m_vaPositions[(int)fCurrentTick].z);
-		Debug.LogError((int)fCurrentTick);
+			if (fCurrentTick < 0.0f)
+			{
+				fCurrentTick = CNetworkServer.k_fSendRate + fCurrentTick; // Set new tick rate
+			}
+
+			gameObject.rigidbody.position = new Vector3(m_vaPositions[(int)fCurrentTick].x, m_vaPositions[(int)fCurrentTick].y, m_vaPositions[(int)fCurrentTick].z);
+
+			m_bNewPositionInserted = false;
+		}
+		//Debug.LogError(fCurrentTick);
 		//int iHistoryElement = (int)((float)CNetworkConnection.k_uiOutboundRate * m_fInterpolationTimer);
 		//m_vaPositions[iHistoryElement] = transform.position;
 		//m_vaRotations[iHistoryElement] = transform.rotation;
@@ -123,19 +130,39 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers can set the interpolated objects current position");
 
+		m_vLatestPosition = _vPosition;
 		m_tPosition.Set(new TPosition(_vPosition.x, _vPosition.y, _vPosition.z));
 	}
 
 
+	public Vector3 GetLastestPosition()
+	{
+		return (m_vLatestPosition);
+	}
+
+
+	static int i = 0;
+
+
 	void InsertNewPosition()
 	{
-		float fSyncedTime = m_tPosition.GetLastSyncedTime();
+		float fSyncedTime = m_tPosition.GetLastSyncedTick();
 
-		// Calcuate which tick to put the position
-		uint uiSyncedTick = (uint)((fSyncedTime - Mathf.Floor(fSyncedTime)) * CNetworkServer.k_fSendRate);
+		// Calculate which tick to put the position
+		int iSyncedTick = (int)((fSyncedTime - Mathf.Floor(fSyncedTime)) * CNetworkServer.k_fSendRate);
+		//int iSyncedTick = (int)CNetwork.Connection.Tick;
+		int iLastSyncedTick = iSyncedTick - 2;
 
 
-		m_vaPositions[uiSyncedTick] = new Vector3(m_tPosition.Get().fX, m_tPosition.Get().fY, m_tPosition.Get().fZ);
+		if (iLastSyncedTick < 0)
+		{
+			iLastSyncedTick = (int)CNetworkServer.k_fSendRate + iLastSyncedTick;
+		}
+
+
+		//m_vaPositions[iLastSyncedTick] = Vector3.zero;
+		m_vaPositions[iSyncedTick] = new Vector3(m_tPosition.Get().fX, m_tPosition.Get().fY, m_tPosition.Get().fZ);
+		m_bNewPositionInserted = true;
 	}
 
 
@@ -159,6 +186,11 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 	Vector3[] m_vaPositions = new Vector3[(int)CNetworkServer.k_fSendRate];
 	Quaternion[] m_vaRotations = new Quaternion[(int)CNetworkServer.k_fSendRate];
+
+	bool m_bNewPositionInserted = false;
+
+
+	Vector3 m_vLatestPosition = new Vector3();
 
 
 };
