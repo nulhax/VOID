@@ -327,55 +327,55 @@ public class CGalaxy : CNetworkMonoBehaviour
                 // Find gubbins that are not within proximity to the cells.
                 Profiler.BeginSample("Find gubbins");
 
-                foreach (CRegisteredGubbin gubbin in mGubbins)
-                {
-                    foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
-                    {
-                        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, gubbin.mBoundingRadius))
-                        {
-                            gubbin.mAlternator = mbValidGubbinValue;
-                            break;
-                        }
-                    }
-                }
-
                 //foreach (CRegisteredGubbin gubbin in mGubbins)
                 //{
-                //    Vector3 gubbinPosition = gubbin.mEntity.transform.position;
-                //    SGridCellPos occupiedRelativeCell = PointToRelativeCell(gubbinPosition);
-                //    int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
-                //    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
-
-                //    // Iterate through all 3 axis, checking the centre cell first.
-                //    int x = 0;
-                //    int y = 0;
-                //    int z = 0;
-                //    do
+                //    foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
                 //    {
-                //        do
+                //        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, gubbin.mBoundingRadius))
                 //        {
-                //            do
-                //            {
-                //                // Check if this cell is loaded.
-                //                SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
-                //                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, gubbinPosition, gubbin.mBoundingRadius))
-                //                {
-                //                    if (mGrid.ContainsKey(neighbouringRelativeCell + mCentreCell))
-                //                    {
-                //                        gubbin.mAlternator = mbValidGubbinValue;
-                //                        x = y = z = -1;  // Way to break the nested loop.
-                //                    }
-                //                }
-
-                //                ++z; if (z > iNeighboursPerDirection) z = -iNeighboursPerDirection;
-                //            } while (z != 0);
-
-                //            ++y; if (y > iNeighboursPerDirection) y = -iNeighboursPerDirection;
-                //        } while (y != 0);
-
-                //        ++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
-                //    } while (x != 0);
+                //            gubbin.mAlternator = mbValidGubbinValue;
+                //            break;
+                //        }
+                //    }
                 //}
+
+                foreach (CRegisteredGubbin gubbin in mGubbins)
+                {
+                    Vector3 gubbinPosition = gubbin.mEntity.transform.position;
+                    SGridCellPos occupiedRelativeCell = PointToRelativeCell(gubbinPosition);
+                    int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
+                    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
+
+                    // Iterate through all 3 axis, checking the centre cell first.
+                    int x = 0;
+                    int y = 0;
+                    int z = 0;
+                    do
+                    {
+                        do
+                        {
+                            do
+                            {
+                                // Check if this cell is loaded.
+                                SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
+                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, gubbinPosition, gubbin.mBoundingRadius))
+                                {
+                                    if (mGrid.ContainsKey(neighbouringRelativeCell + mCentreCell))
+                                    {
+                                        gubbin.mAlternator = mbValidGubbinValue;
+                                        x = y = z = -1;  // Way to break the nested loop.
+                                    }
+                                }
+
+                                ++z; if (z > iNeighboursPerDirection) z = -iNeighboursPerDirection;
+                            } while (z != 0);
+
+                            ++y; if (y > iNeighboursPerDirection) y = -iNeighboursPerDirection;
+                        } while (y != 0);
+
+                        ++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
+                    } while (x != 0);
+                }
 
                 Profiler.EndSample();
 
