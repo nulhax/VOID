@@ -177,7 +177,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
-			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
+            m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
 			
 			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();

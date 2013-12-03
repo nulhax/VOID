@@ -95,6 +95,9 @@ public class CNetworkServer : MonoBehaviour
 // Member Properties
 
 
+	public uint SendCounter { get; set; }
+
+
 // Member Methods
 
 
@@ -301,14 +304,19 @@ public class CNetworkServer : MonoBehaviour
             // Decrement timer
             m_fPacketOutboundTimer -= m_fPacketOutboundInterval;
 
+			++SendCounter;
+
             // Send player packets out
             foreach (KeyValuePair<ulong, CNetworkPlayer> tEntry in s_mNetworkPlayers)
             {
                 CNetworkPlayer cNetworkPlayer = tEntry.Value;
-				CNetworkStream cNetworkViewStream = cNetworkPlayer.NetworkViewStream;
+				CNetworkStream cNetworkViewStream = new CNetworkStream();
+				cNetworkViewStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
+				cNetworkViewStream.Write(RakNet.RakNet.GetTime());
+				cNetworkViewStream.Write(cNetworkPlayer.NetworkViewStream);
 
                 // Check stream has outbound data
-				if (cNetworkViewStream.Size > 1)
+				if (cNetworkViewStream.Size >= 11)
                 {
                     //Logger.WriteError("Sent packet to player id ({0}) system address ({1}) of size ({2}) MessageId ({3})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkViewStream.GetSize(), cNetworkViewStream.ReadByte());
 					//cNetworkViewStream.SetReadOffset(0);
@@ -445,6 +453,7 @@ public class CNetworkServer : MonoBehaviour
         {
             m_cRnPeer.SetMaximumIncomingConnections((ushort)_uiNumSlots);
 			m_cRnPeer.SetOccasionalPing(true);
+			SendCounter = 0;
             bPeerStarted = true;
 
 
