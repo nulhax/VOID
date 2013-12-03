@@ -43,7 +43,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     // Member Functions
 	public override void InstanceNetworkVars()
 	{
-		m_fActorHp = new CNetworkVar<float>(OnNetworkVarSync, 100.0f);
+		m_fActorHp = new CNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
 		m_bIsAlive = new CNetworkVar<bool>(OnNetworkVarSync, true);
 	}
 
@@ -139,6 +139,20 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		
 	}
 
+	void OnGUI()
+	{
+		const float kHealthBarMargin = 10.0f;
+		const float kHealthBarLength = 150.0f;
+		const float kHealthBarHeight = 20.0f;
+
+
+		if (gameObject == CGame.PlayerActor)
+			GUI.Box(new Rect(Screen.width - kHealthBarLength - kHealthBarMargin, 
+							 Screen.height - kHealthBarHeight - kHealthBarMargin,
+							 kHealthBarLength, kHealthBarHeight), 
+							 "Health: " + m_fActorHp.Get() + "/" + k_fMaxHealth);
+	}
+
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
 		if(_cVarInstance == m_bIsAlive)
@@ -191,6 +205,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         m_fActorHp.Set(_fPlayerHealth - _fDamage);
     }
     // Member Fields
+
+	const float k_fMaxHealth = 100.0f;
+
 	CNetworkVar<float> m_fActorHp;
 	CNetworkVar<bool> m_bIsAlive;
 	AudioCue m_LaughTrack;

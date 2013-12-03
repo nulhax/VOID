@@ -132,8 +132,8 @@ public class CodexWrapper : MonoBehaviour
 
 	void Update()
 	{	
-		EncodingUpdate();	
-		DecodingUpdate();
+		//EncodingUpdate();	
+		//DecodingUpdate();
 	}
 	
 	void EncodingUpdate()
