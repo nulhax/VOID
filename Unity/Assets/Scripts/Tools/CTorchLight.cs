@@ -54,6 +54,11 @@ public class CTorchLight : CNetworkMonoBehaviour
 			{
 				light.intensity = 2;
 			}
+			
+			if(m_torchPowerSwitchCue != null)
+			{
+				m_torchPowerSwitchCue.Play(1.0f, false, -1);
+			}
 		}
 		else if (_cVarInstance == m_bTorchColour)
 		{
@@ -72,6 +77,11 @@ public class CTorchLight : CNetworkMonoBehaviour
 					light.color = new Color(0, 0, 1.0f);
 					break;
 			}
+			
+			if(m_torchColourToggleCue != null)
+			{
+				m_torchColourToggleCue.Play(1.0f, false, -1);
+			}
 		}
     }
 
@@ -84,6 +94,21 @@ public class CTorchLight : CNetworkMonoBehaviour
 		if (CNetwork.IsServer)
 		{
 			m_bTorchLit.Set(false);
+		}
+		
+		//Get audio cues
+		AudioCue[] cues = gameObject.GetComponents<AudioCue>();
+				
+		foreach(AudioCue cue in cues)
+		{
+			if(cue.m_strCueName == "TorchClick")
+			{
+				m_torchPowerSwitchCue = cue;
+			}
+			if(cue.m_strCueName == "TorchToggle")
+			{
+				m_torchColourToggleCue = cue;
+			}			
 		}
 	}
 
@@ -102,12 +127,12 @@ public class CTorchLight : CNetworkMonoBehaviour
     {
         if (!m_bTorchLit.Get())
         {
-            m_bTorchLit.Set(true);
+            m_bTorchLit.Set(true);		
         }
         else
         {
-            m_bTorchLit.Set(false);
-        }
+            m_bTorchLit.Set(false);			
+	    }
     }
 
 
@@ -121,7 +146,7 @@ public class CTorchLight : CNetworkMonoBehaviour
 			bNextNumber = 0;
 		}
 
-		m_bTorchColour.Set(bNextNumber);
+		m_bTorchColour.Set(bNextNumber);		
 	}
 
 
@@ -130,6 +155,6 @@ public class CTorchLight : CNetworkMonoBehaviour
 
     CNetworkVar<bool> m_bTorchLit = null;
 	CNetworkVar<byte> m_bTorchColour = null;
-
-
+	AudioCue m_torchPowerSwitchCue;
+	AudioCue m_torchColourToggleCue;
 };

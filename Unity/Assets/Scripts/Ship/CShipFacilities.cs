@@ -37,7 +37,7 @@ public class CShipFacilities : MonoBehaviour
 	Dictionary<uint, GameObject> m_Facilities = new Dictionary<uint, GameObject>();
 	
 
-// Member Functions
+// Member Methods
 
 
 	public void Start()
@@ -58,7 +58,7 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
-	public GameObject CreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
+	public GameObject CreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
 		if(_uiExpansionPortId != uint.MaxValue && _uiAttachToId != uint.MaxValue)

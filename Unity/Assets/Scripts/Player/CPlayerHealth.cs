@@ -48,8 +48,18 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 	
-	void Start () 
+	void Start() 
     {
+		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		foreach(AudioCue cue in audioCues)
+		{
+			if(cue.m_strCueName == "LaughTrack")
+			{
+				m_LaughTrack = 	cue;
+			}
+		}
+		
+		
 		/*
 		//Set everything to kinematic
 		foreach(Transform child in transform.GetComponentsInChildren<Transform>())
@@ -154,17 +164,18 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 				{
 					boxCollider = child.GetComponent<BoxCollider>();
 					boxCollider.isTrigger = false;	
-				}
-				
-				
+				}				
 			}
-			transform.GetComponent<CharacterController>().enabled = false;
+		
 			transform.GetComponent<CPlayerMotor>().enabled = false;
-			transform.GetComponent<CPlayerHead>().enabled = false;
+			transform.GetComponent<CPlayerHead>().enabled = false;			
+			
 		}
 		
 		if(_cVarInstance == m_fActorHp)
 		{
+			m_LaughTrack.Play(1.0f, false, -1);
+			
 			if(CNetwork.IsServer)
 			{
 				if(m_fActorHp.Get() <= 0.0f)
@@ -182,5 +193,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     // Member Fields
 	CNetworkVar<float> m_fActorHp;
 	CNetworkVar<bool> m_bIsAlive;
+	AudioCue m_LaughTrack;
 }
 

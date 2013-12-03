@@ -60,6 +60,14 @@ public class CDUI : MonoBehaviour
 			return(m_MainView.GetComponent<CDUIMainView>());
 		}
 	}
+	
+	public GameObject Console
+	{
+		get
+		{
+			return(m_Console);
+		}
+	}
 
 	
     // Member Methods

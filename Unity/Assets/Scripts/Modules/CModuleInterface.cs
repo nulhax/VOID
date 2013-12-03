@@ -111,6 +111,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		gameObject.AddComponent<CDynamicActor>();
 		gameObject.AddComponent<CInteractableObject>();
 		gameObject.AddComponent<CNetworkView>();
+		
+		gameObject.rigidbody.useGravity = false;
 	}
 
 

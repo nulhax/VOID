@@ -52,9 +52,10 @@ GameObject:
   - 54: {fileID: 5400022}
   - 65: {fileID: 6500004}
   - 114: {fileID: 11400018}
+  - 114: {fileID: 11400020}
   m_Layer: 0
   m_Name: Player Actor
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1104,7 +1105,7 @@ Rigidbody:
   m_Mass: 1
   m_Drag: 0
   m_AngularDrag: .0500000007
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
@@ -1307,6 +1308,44 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3b98548dc8351e41bd886072573ad6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400020
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a50861cb3ea8044fa38e15bc1239585, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: LaughTrack
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  m_fFadeOutTimeList:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  m_arAudioClipPool:
+  - {fileID: 8300000, guid: 42a012e435a4a6f48a67238d3d652330, type: 3}
+  - {fileID: 8300000, guid: 7dac000418339cd4b8795d6379cd7528, type: 3}
+  - {fileID: 8300000, guid: 7ff3bb27aa008fd47adf8646e5f10891, type: 3}
+  - {fileID: 8300000, guid: 996cd1faf0546334da748195924ba3fa, type: 3}
+  - {fileID: 8300000, guid: d2d18cba0cde47c4a83b7761791c7cf7, type: 3}
+  m_barLoopList: 0000000000
+  m_bContinuousEvent: 0
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!137 &13700000
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
