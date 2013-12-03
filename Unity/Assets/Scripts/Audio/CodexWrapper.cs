@@ -280,7 +280,7 @@ public class CodexWrapper : MonoBehaviour
 		// Decode
 		short[] saDecodedFrames = new short[iNumSamples];
 		int iNumDecodedBytes = m_eDecoder.Decode(baEncodedData, 0, iNumEncodedBytes, saDecodedFrames, 0, false);
-		Debug.Log("Decoded audio data size: " + iNumDecodedBytes + " : " + saDecodedFrames.Length);
+		//Debug.Log("Decoded audio data size: " + iNumDecodedBytes + " : " + saDecodedFrames.Length);
 				
 		//Populate a new struct which can be accessed later.
 		DecodeInformation decodedFrameInfo;		
