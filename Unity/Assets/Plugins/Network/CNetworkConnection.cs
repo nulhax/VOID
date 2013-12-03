@@ -142,7 +142,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
 	public float Tick
 	{
-		get { return (m_fTick); }
+		get { return (m_fConnectionElapsedTime - Mathf.Floor(m_fConnectionElapsedTime)) * CNetworkServer.k_fSendRate; }
 	}
 
 
@@ -347,7 +347,11 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 		CNetworkStream cStream = new CNetworkStream(_baData);
 
 		cStream.IgnoreBytes(1); // Packet id
-		cStream.IgnoreBytes(9); // Time stamp
+
+		// Retrieve latency
+		ulong ulLatency = RakNet.RakNet.GetTime() - cStream.ReadULong();
+
+		cStream.IgnoreBytes(1); // Packet id
 
 		// Iterate through the packet data
 		while (cStream.HasUnreadData)
@@ -503,7 +507,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 				CompileThrottledSerializeTargetsOutboundData(cOutboundStream);
 
 				// Check player has data to be sent to the server
-				if (cOutboundStream.Size > 13)
+				if (cOutboundStream.Size > 10)
 				{
 					m_tOutboundRateData.uiBytes += cOutboundStream.Size;
 					m_tOutboundRateData.uiNumEntries += 1;
@@ -584,8 +588,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			cStream.IgnoreBytes(1);
 			
 			// Retrieve latency
-			ulong ulLatency = cStream.ReadULong();
-
+			ulong ulLatency = RakNet.RakNet.GetTime() - cStream.ReadULong();
 			// Ignore EPacketId.NetworkView identifier
 			cStream.IgnoreBytes(1);
 			

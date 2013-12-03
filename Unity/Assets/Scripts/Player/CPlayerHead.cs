@@ -115,7 +115,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		// Retrieve player actors head
-		CPlayerHead cMyActorHead = CGame.PlayerActor.GetComponent<CPlayerHead>();
+		CPlayerHead cMyActorHead = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerHead>();
 
 		// Write my head's x-rotation
 		float fRotationX = _cStream.ReadFloat();

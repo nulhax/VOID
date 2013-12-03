@@ -70,8 +70,6 @@ public class CNetworkPlayer : MonoBehaviour
 	public void ResetNetworkViewSteam()
 	{
 		m_cNetworkViewStream.Clear();
-		m_cNetworkViewStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
-		m_cNetworkViewStream.Write(RakNet.RakNet.GetTime());
 		m_cNetworkViewStream.Write((byte)CNetworkConnection.EPacketId.NetworkView);
 	}
 

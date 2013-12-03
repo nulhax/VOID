@@ -38,7 +38,7 @@ public abstract class INetworkVar
 
 	public abstract object GetValueObject();
 	public abstract Type GetValueType();
-	public abstract float GetLastSyncedTime();
+	public abstract float GetLastSyncedTick();
 
 
 	public abstract bool IsDefault();
