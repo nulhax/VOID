@@ -22,10 +22,11 @@ public class COxygenProduction : CNetworkMonoBehaviour
 {
 
 // Globals
+const float g_cfMAXROOMAIR = 100.0f;
 
-	
 // Member Types
 
+	
 
 // Member Delegates & Events
 
@@ -41,6 +42,12 @@ public bool bIsOxygen
 	{
 		get { return (m_fOxygens.Get()); }
 		set { m_fOxygens.Set(value); }
+	}
+	
+	public float fCO2
+	{
+		get { return (m_fCO2s.Get()); }
+		set { m_fCO2s.Set(value); }	
 	}
 	
 // Member Functions
@@ -60,20 +67,7 @@ public bool bIsOxygen
 	// Update is called once per frame
 	void Update () 
 	{
-		// Get oxygen amount from plants
 		
-		// Get Room collider
-		
-		// ray cast to ball
-		
-		// if ball is increase
-			// Increase oxygen
-		
-		// if Decrease then decrease from oxygen
-			// But increase CO2
-		
-		// if cO2 is > 60% then start causing player damage
-			// Incrememnt as the cO2 level increases
 	}
 	
 	public void OnDestroy()
@@ -81,18 +75,38 @@ public bool bIsOxygen
 		
 	}
 	
+	
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
 
 	}
 	
+	void OnTriggerEnter(Collider _ColliderObject)
+	{
+		if (CNetwork.IsServer)
+        {
+
+		}
+	}
 	float GetOxygenAmount()
 	{
 		return(m_fOxygens.Get());
+	}
+	
+	float GetCO2Amount()
+	{
+		return(m_fCO2s.Get());
+	}
+	
+	// Balance the Co2 with the O2 
+	// If one decreases, the other should increase and vice versa
+	void BalanceO2vsCO2(float _fOxygenChange, float _fCO2Change)
+	{
+
+		
 	}
 // Member Fields
 	CNetworkVar<bool> m_bIsOxygenated;
 	CNetworkVar<float> m_fOxygens;
 	CNetworkVar<float> m_fCO2s;
-
 }
