@@ -98,7 +98,8 @@ public class CFacilityInterface : MonoBehaviour
 		gameObject.AddComponent<CRoomAtmosphere>();
 		gameObject.AddComponent<CFacilityPower>();
 		gameObject.AddComponent<CFacilityGeneral>();
-			
+		gameObject.AddComponent<CFacilityHull>();
+		
 		// Add the network view
 		gameObject.AddComponent<CNetworkView>();
 	}
