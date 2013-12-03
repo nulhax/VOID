@@ -20,16 +20,24 @@ public class CDynamicActor : CNetworkMonoBehaviour
 {
 	
 // Member Fields
-    protected CNetworkVar<float> m_cPositionX    = null;
-    protected CNetworkVar<float> m_cPositionY    = null;
-    protected CNetworkVar<float> m_cPositionZ    = null;
+	private Vector3 m_GravityAcceleration = Vector3.zero;
 	
-    protected CNetworkVar<float> m_EulerAngleX    = null;
-    protected CNetworkVar<float> m_EulerAngleY    = null;
-    protected CNetworkVar<float> m_EulerAngleZ    = null;
+    private CNetworkVar<float> m_cPositionX    = null;
+    private CNetworkVar<float> m_cPositionY    = null;
+    private CNetworkVar<float> m_cPositionZ    = null;
+	
+    private CNetworkVar<float> m_EulerAngleX    = null;
+    private CNetworkVar<float> m_EulerAngleY    = null;
+    private CNetworkVar<float> m_EulerAngleZ    = null;
 	
 	
 // Member Properties	
+	public Vector3 GravityAcceleration
+	{
+		set { m_GravityAcceleration = value; }
+		get { return(m_GravityAcceleration); }
+	}
+	
 	public Vector3 Position
     {
         set 
@@ -63,6 +71,16 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		}
 	}
 	
+	public void FixedUpdate()
+	{
+		// If there is no gravity we skip the update
+		if(rigidbody == null)
+			return;
+			
+		// Apply the gravity to the rigid body
+		rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+	}
+	
     public override void InstanceNetworkVars()
     {
 		m_cPositionX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
@@ -92,7 +110,12 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		}
 	}
 	
-	protected void SyncTransform()
+	private void ApplyGravity()
+	{
+		
+	}
+	
+	private void SyncTransform()
 	{
 		Position = transform.position;
 		EulerAngles = transform.eulerAngles;

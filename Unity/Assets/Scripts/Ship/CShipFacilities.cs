@@ -37,7 +37,7 @@ public class CShipFacilities : MonoBehaviour
 	Dictionary<uint, GameObject> m_Facilities = new Dictionary<uint, GameObject>();
 	
 
-// Member Functions
+// Member Methods
 
 
 	public void Start()

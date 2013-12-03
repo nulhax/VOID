@@ -95,24 +95,13 @@ public class CFacilityInterface : MonoBehaviour
 		AddDebugPortNames();
 		
 		// Generic components to be added for all room types
-		gameObject.AddComponent<CRoomAtmosphere>();
+		gameObject.AddComponent<CFacilityGravity>();
+		gameObject.AddComponent<CFacilityAtmosphere>();
 		gameObject.AddComponent<CFacilityPower>();
 		gameObject.AddComponent<CFacilityGeneral>();
 			
 		// Add the network view
 		gameObject.AddComponent<CNetworkView>();
-	}
-
-
-	public void OnDestroy()
-	{
-		// Empty
-	}
-
-
-	public void Update()
-	{
-		//Update
 	}
 
 
@@ -171,6 +160,14 @@ public class CFacilityInterface : MonoBehaviour
 		}
 	}
 	
+	private void FindInteriorTrigger()
+	{
+		m_InteriorTrigger = transform.FindChild("InteriorTrigger").gameObject;
+		
+		if(m_InteriorTrigger == null)
+			Debug.LogError("Interior Trigger not founf for this facility! Gravity and atmosphere will not function!");
+	}
+	
 	private void AddDebugPortNames()
 	{
 		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
@@ -206,5 +203,6 @@ public class CFacilityInterface : MonoBehaviour
 	bool m_bIntersecting = false;
 	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
+	GameObject m_InteriorTrigger = null;
 
 };
