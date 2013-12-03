@@ -96,6 +96,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
 		m_bFreezeMovmentInput = new CNetworkVar<bool>(OnNetworkVarSync, false);
 		m_bUsingGravity = new CNetworkVar<bool>(OnNetworkVarSync, true);
+
+
+		m_vPosition = new CNetworkVar<Vector3>(OnNetworkVarSync);
 	}
 
 
@@ -106,12 +109,21 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		{
 			transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_fRotationY.Get(), transform.eulerAngles.z);
 		}
+		else if (_cSyncedNetworkVar == m_vPosition)
+		{
+			transform.position = m_vPosition.Get();
+		}
 	}
 
 
 	public void Start()
 	{
 		// Empty
+		if (!CNetwork.IsServer)
+		{
+			rigidbody.isKinematic = true;
+			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+		}
 	}
 
 
@@ -134,7 +146,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Needs to be in fixed update!
 		
 		// Process movement on server and client
-		//if (CNetwork.IsServer)
+		if (CNetwork.IsServer)
 		{
 			ProcessMovement();
 		}
@@ -216,8 +228,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Set latest position
 		if (CNetwork.IsServer)
 		{
-			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+			//GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
 		}
+
+
+		m_vPosition.Set(transform.position);
 	}
 	
 
@@ -231,6 +246,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fJumpSpeed = null;
 	CNetworkVar<bool> m_bFreezeMovmentInput = null;
 	CNetworkVar<bool> m_bUsingGravity = null;
+
+
+	CNetworkVar<Vector3> m_vPosition = null;
 
 
 	uint m_uiMovementStates = 0;

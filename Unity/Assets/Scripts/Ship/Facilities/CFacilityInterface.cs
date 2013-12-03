@@ -123,11 +123,13 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		AddDebugPortNames();
 		
 		// Generic components to be added for all room types
+		gameObject.AddComponent<CFacilityHull>();
 		gameObject.AddComponent<CFacilityGravity>();
 		gameObject.AddComponent<CFacilityAtmosphere>();
 		gameObject.AddComponent<CFacilityPower>();
 		gameObject.AddComponent<CFacilityGeneral>();
-			
+		
+		
 		// Add the network view
 		gameObject.AddComponent<CNetworkView>();
 		

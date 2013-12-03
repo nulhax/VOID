@@ -67,7 +67,8 @@ public class CGame : CNetworkMonoBehaviour
 		// Register prefabs: Tools
         ToolTorch, 
 		ToolRachet, 
-		ToolExtinguisher, 
+		ToolExtinguisher,
+		ToolAk47,
 		
 		// Galaxy
 		Galaxy,
@@ -229,7 +230,8 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
-		
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolAk47, "Tools/ToolAk47");
+
 		// Galaxy
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy/Galaxy");
         for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
@@ -452,6 +454,7 @@ public class CGame : CNetworkMonoBehaviour
 //		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 //		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}

@@ -75,7 +75,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
     public GameObject OwnerPlayerActorObject
     {
-        get { return (CNetwork.Factory.FindObject(m_usOwnerPlayerActorViewId.Get())); }
+		get { if (!IsHeld) return null; return (CNetwork.Factory.FindObject(m_usOwnerPlayerActorViewId.Get())); }
     }
 
 

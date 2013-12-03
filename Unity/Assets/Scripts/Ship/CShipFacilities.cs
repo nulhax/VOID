@@ -27,7 +27,8 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
-
+	public delegate void OnFacilityCreate(GameObject _NewFacilty);
+	public event OnFacilityCreate EventOnFaciltiyCreate;
 
 // Member Properties
 	
@@ -79,6 +80,12 @@ public class CShipFacilities : MonoBehaviour
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		
 		m_Facilities.Add(uiFacilityId, cNewFacilityObject);
+		
+		// Facility creation event
+		if (EventOnFaciltiyCreate != null)
+		{
+			EventOnFaciltiyCreate(cNewFacilityObject);
+		}
 		
 		return (cNewFacilityObject);
 	}

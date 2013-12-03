@@ -87,7 +87,7 @@ public class AudioSystem : MonoBehaviour
 		}
 		else
 		{
-			ProcessActiveAudio();
+			//ProcessActiveAudio();
 		}
 	}
 	
