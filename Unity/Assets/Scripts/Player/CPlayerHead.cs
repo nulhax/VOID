@@ -45,8 +45,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public bool InputFrozen
 	{
-		set { m_bInputFrozen.Set(value); }
-		get { return (m_bInputFrozen.Get()); }
+		set { m_bInputFrozen = value; }
+		get { return (m_bInputFrozen); }
 	}
 
 
@@ -56,7 +56,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
 		m_fHeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_bInputFrozen = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		//m_bInputFrozen = new CNetworkVar<bool>(OnNetworkVarSync, false);
     }
 	
 	
@@ -66,7 +66,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		if (CGame.PlayerActor != gameObject &&
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
-	        m_cActorHead.transform.eulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
+	        m_cActorHead.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
     }
 	
@@ -145,10 +145,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Fields
-
-
 	CNetworkVar<float> m_fHeadEulerX = null;
-	CNetworkVar<bool> m_bInputFrozen = null;
+	
+	
+	bool m_bInputFrozen = false;
 
 
 	public GameObject m_cActorHead = null;

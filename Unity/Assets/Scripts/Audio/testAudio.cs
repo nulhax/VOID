@@ -9,7 +9,7 @@ public class testAudio : MonoBehaviour
 	{
 		AudioSource test = GetComponent<AudioSource>();
 		
-		AudioSystem.GetInstance.Play(test, 1.0f, 1.0f, true, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
+		AudioSystem.Play(test, 1.0f, 1.0f, true, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
 	}
 	
 	// Update is called once per frame

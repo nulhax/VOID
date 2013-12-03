@@ -33,7 +33,7 @@ public class AudioCue : MonoBehaviour
 			{
 				if(audioSource != null && audioSource.isPlaying)
 				{
-					AudioSystem.GetInstance.StopSound(audioSource);
+					AudioSystem.StopSound(audioSource);
 				}
 			}		
 			
@@ -50,12 +50,12 @@ public class AudioCue : MonoBehaviour
 			{
 				if(m_arAttachedAudioSource[i] != null && m_arAttachedAudioSource[i].isPlaying && i < m_fFadeOutTimeList.Length )
 				{
-					AudioSystem.GetInstance.FadeOut(m_arAttachedAudioSource[i], m_fFadeOutTimeList[i]);
+					AudioSystem.FadeOut(m_arAttachedAudioSource[i], m_fFadeOutTimeList[i]);
 				}
 				else if(m_arAttachedAudioSource[i] != null && m_arAttachedAudioSource[i].isPlaying )
 				{
 					//If the correct fadeout information cannot be found, simply stop the sound.
-					AudioSystem.GetInstance.StopSound(m_arAttachedAudioSource[i]);										
+					AudioSystem.StopSound(m_arAttachedAudioSource[i]);										
 				}
 			}
 			
@@ -112,7 +112,7 @@ public class AudioCue : MonoBehaviour
 		newAudioSource.clip = m_arAudioClipPool[index];
 		
 		//Allow the AudioSystem to handle the new audio source.
-		AudioSystem.GetInstance.Play( 	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+		AudioSystem.Play( 	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 								   		Random.Range(m_fPitchMin, m_fpitchMax), loop,
 										m_fFadeInTimeList[index],
 										m_eSoundType, true );	
@@ -156,7 +156,7 @@ public class AudioCue : MonoBehaviour
 		}
 			
 		//Allow the AudioSystem to handle the new audio source.
-		newAudioSource = AudioSystem.GetInstance.Play(	m_arAudioClipPool[index], parent,
+		newAudioSource = AudioSystem.Play(	m_arAudioClipPool[index], parent,
 											  		 	Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 											   			Random.Range(m_fPitchMin, m_fpitchMax), loop,
 														m_fFadeInTimeList[index],

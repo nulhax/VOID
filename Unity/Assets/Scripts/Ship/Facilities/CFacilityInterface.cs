@@ -15,18 +15,19 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
 
 
-public class CFacilityInterface : MonoBehaviour
+public class CFacilityInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
 
 
-	public enum EFacilityType
+	public enum EFacilityType : int
 	{
 		INVALID = -1,
 		
@@ -48,7 +49,17 @@ public class CFacilityInterface : MonoBehaviour
 
 
 // Member Delegates & Events
-
+	
+	
+// Member Fields
+	
+	private CNetworkVar<int> m_eFacilityType = null;
+	
+	private uint m_uiFacilityID = uint.MaxValue;
+	private bool m_bIntersecting = false;
+	
+	private List<GameObject> m_aExpansionPorts = new List<GameObject>();
+	private GameObject m_InteriorTrigger = null;
 
 // Member Properties
 	
@@ -65,29 +76,46 @@ public class CFacilityInterface : MonoBehaviour
 			else
 			{
 				Debug.LogError("Cannot set room ID value twice!");
-			}			
+			}
 		}			
 	}
 	
 	
 	public EFacilityType FacilityType 
 	{
-		get{return(m_eType);}			
+		get{return((EFacilityType)m_eFacilityType.Get());}			
 		set
 		{
-			if(m_eType == EFacilityType.INVALID)
+			if(CNetwork.IsServer)
 			{
-				m_eType = value;
+				if((EFacilityType)m_eFacilityType.Get() == EFacilityType.INVALID)
+				{
+					m_eFacilityType.Set((int)value);
+				}
+				else
+				{
+					Debug.LogError("Cannot set room type value twice!");
+				}	
 			}
 			else
 			{
-				Debug.LogError("Cannot set room type value twice!");
-			}			
+				Debug.LogError("Only the server can set the room type!");
+			}
 		}			
 	}
 
 
 // Member Functions
+	public override void InstanceNetworkVars()
+    {
+		m_eFacilityType = new CNetworkVar<int>(OnNetworkVarSync, (int)EFacilityType.INVALID);
+    }
+	
+	public void OnNetworkVarSync(INetworkVar _cVarInstance)
+	{
+		
+	}
+	
 	public void Awake()
 	{	
 		// Initialise the expansion ports
@@ -102,8 +130,19 @@ public class CFacilityInterface : MonoBehaviour
 			
 		// Add the network view
 		gameObject.AddComponent<CNetworkView>();
+		
+		// Register this rooms internal triggers to the ship actors
+		CInteriorTrigger interiorTrigger = gameObject.GetComponentInChildren<CInteriorTrigger>();
+		interiorTrigger.ActorEnteredTrigger += new Action<GameObject>(CGame.Ship.GetComponent<CShipActors>().ActorEnteredFacility);
+		interiorTrigger.ActorExitedTrigger += new Action<GameObject>(CGame.Ship.GetComponent<CShipActors>().ActorExitedFacility);	
 	}
-
+	
+	public void Start()
+	{
+		// Attach the collider for the facility to the galaxy ship
+		CGalaxyShipCollider galaxyShipCollider = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
+		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+	}
 
 	public GameObject GetExpansionPort(uint _uiExpansionPortId)
 	{
@@ -194,15 +233,4 @@ public class CFacilityInterface : MonoBehaviour
 			m_bIntersecting = false;
 		}
 	}
-
-	// Member Fields
-	
-	EFacilityType m_eType = EFacilityType.INVALID;
-	
-	uint m_uiFacilityID = uint.MaxValue;
-	bool m_bIntersecting = false;
-	
-	List<GameObject> m_aExpansionPorts = new List<GameObject>();
-	GameObject m_InteriorTrigger = null;
-
 };

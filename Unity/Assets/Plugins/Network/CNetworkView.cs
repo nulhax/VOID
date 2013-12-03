@@ -313,6 +313,10 @@ public class CNetworkView : CNetworkMonoBehaviour
 			
 			InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
 		}
+		else
+		{
+			InvokeRpcAll("SetParent", 0);
+		}
 	}
 
 
@@ -682,7 +686,10 @@ public class CNetworkView : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void SetParent(ushort _usParentViewId)
 	{
-		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+		if(_usParentViewId != 0)
+			transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+		else
+			transform.parent = null;
 	}
 
 

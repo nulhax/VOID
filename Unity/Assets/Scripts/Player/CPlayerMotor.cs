@@ -127,10 +127,17 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			UpdateInput();
 			
 		}
-
+	}
+	
+	public void FixedUpdate()
+	{
+		// Needs to be in fixed update!
+		
 		// Process movement on server and client
 		//if (CNetwork.IsServer)
-		ProcessMovement();
+		{
+			ProcessMovement();
+		}
 	}
 
 

@@ -82,7 +82,6 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				gameObject.transform.localRotation = Quaternion.identity;
 
 				// Turn off  dynamic physics
-				rigidbody.detectCollisions = false;
 				rigidbody.isKinematic = true;
 
 				// Disable dynamic actor

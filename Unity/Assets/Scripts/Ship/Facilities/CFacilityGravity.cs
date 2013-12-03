@@ -45,16 +45,18 @@ public class CFacilityGravity : MonoBehaviour
 		if(facilityInteriorTrigger == null)
 			Debug.LogError("CFacilityGravity, no interior trigger to use for gravity application!");
 		
-		facilityInteriorTrigger.ActorEnteredTrigger += ActorEnteredGravityZone;
-		facilityInteriorTrigger.ActorExitedTrigger += ActorExitedGravityZone;
+		facilityInteriorTrigger.ActorEnteredTrigger += new Action<GameObject>(ActorEnteredGravityZone);
+		facilityInteriorTrigger.ActorExitedTrigger += new Action<GameObject>(ActorExitedGravityZone);
 	}
 	
 	
 	public void Update()
 	{
+		m_ActorsInsideTrigger.RemoveAll((item) => item == null);
+		
 		// Apply the gravity to the actor every frame (so we can modify it if we want later)
 		foreach(GameObject actor in m_ActorsInsideTrigger)
-		{
+		{	
 			actor.GetComponent<CDynamicActor>().GravityAcceleration = m_FacilityGravityAcceleration;
 		}
 	}

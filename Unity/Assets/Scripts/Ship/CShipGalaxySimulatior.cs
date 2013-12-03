@@ -104,8 +104,14 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	public void Awake()
 	{
-		// Create a world ship to explore the galaxy
-		m_GalaxyShip = GameObject.Instantiate(Resources.Load("Prefabs/Ship/GalaxyShip", typeof(GameObject))) as GameObject;
+		if(CNetwork.IsServer)
+		{
+			m_GalaxyShip = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.GalaxyShip);
+		}
+		else
+		{
+			m_GalaxyShip = GameObject.FindGameObjectWithTag("GalaxyShip");
+		}
 	}
 	
 	public void AddPlayerActorGalaxyCamera(GameObject _PlayerShipCamera)
@@ -124,11 +130,11 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		
 		if(CNetwork.IsServer)
 		{
-			SyncWorldShipTransform();
+			SyncGalaxyShipTransform();
 		}
 	}
 	
-	private void SyncWorldShipTransform()
+	private void SyncGalaxyShipTransform()
 	{
 		Position = m_GalaxyShip.rigidbody.position;
 		EulerAngles = m_GalaxyShip.transform.eulerAngles;
@@ -148,9 +154,20 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 			return;
 		}
 		
+		// Make sure we are using the correct relative transform (When player exits the ship)
+		Transform relativeTransform = null;
+		if(m_PlayerGalaxyCamera.transform.parent == CGame.Ship)
+		{
+			relativeTransform = m_GalaxyShip.transform;
+		}
+		else
+		{
+			relativeTransform = transform;
+		}
+		
 		// Get the simulation actors position relative to the ship
-		Vector3 relativePos = m_PlayerShipCamera.transform.position - transform.position;
-		Quaternion relativeRot = m_PlayerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
+		Vector3 relativePos = m_PlayerShipCamera.transform.position - relativeTransform.position;
+		Quaternion relativeRot = m_PlayerShipCamera.transform.rotation * Quaternion.Inverse(relativeTransform.rotation);
 			
 		// Update the transform
 		if(m_PlayerGalaxyCamera.transform.localPosition != relativePos)
@@ -158,10 +175,5 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		
 		if(m_PlayerGalaxyCamera.transform.localRotation != relativeRot)
 			m_PlayerGalaxyCamera.transform.localRotation = relativeRot;
-	}
-	
-	private void OnDestroy()
-	{
-		Destroy(m_GalaxyShip);
 	}
 }

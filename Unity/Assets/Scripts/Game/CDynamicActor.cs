@@ -73,12 +73,11 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	public void FixedUpdate()
 	{
-		// If there is no gravity we skip the update
-		if(rigidbody == null)
-			return;
-			
-		// Apply the gravity to the rigid body
-		rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+		if(rigidbody != null && CNetwork.IsServer)
+		{	
+			// Apply the gravity to the rigid body
+			rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+		}
 	}
 	
     public override void InstanceNetworkVars()

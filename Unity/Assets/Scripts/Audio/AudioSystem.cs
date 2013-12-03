@@ -16,7 +16,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public class AudioSystem : Singleton<AudioSystem> 
+public class AudioSystem : MonoBehaviour
 { 
 	// Member Types
 	public enum SoundType	
@@ -50,21 +50,30 @@ public class AudioSystem : Singleton<AudioSystem>
 	// Member Delegates & Events
 		
 	// Member Properties
-		
+	public static AudioSystem Instance
+	{
+		get { return (s_cInstance); }
+	}	
+	
 	// Member Fields	
-	List<ClipInfo> m_activeAudio;
-	private float musicVolume;
-	private float effectsVolume;
-	private AudioListener m_listener;
-	private OcclusionState occludeState;
+	static List<ClipInfo> s_activeAudio;
+	
+	static private float musicVolume;
+	static private float effectsVolume;
+	static private AudioListener m_listener;
+	static private OcclusionState occludeState;
+	
+	static AudioSystem s_cInstance = null;
 	
 	// Member Functions
 	
 	void Awake() 
 	{
+		s_cInstance = this;
+		
         Debug.Log("AudioManager Initialising");
        		
-		m_activeAudio = new List<ClipInfo>();
+		s_activeAudio = new List<ClipInfo>();
 		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
 		
 		occludeState = OcclusionState.OCCLUSION_FALSE;
@@ -87,7 +96,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	    var toRemove = new List<ClipInfo>();
 	    try 
 		{
-	        foreach(ClipInfo audioClip in m_activeAudio) 
+	        foreach(ClipInfo audioClip in s_activeAudio) 
 			{
 	            if(!audioClip.audioSource || audioClip.audioSource.isPlaying == false) 
 				{
@@ -144,7 +153,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		// Cleanup
 	    foreach(var audioClip in toRemove) 
 		{
-	        m_activeAudio.Remove(audioClip);
+	        s_activeAudio.Remove(audioClip);
 			Destroy(audioClip.soundLocoation);
 		}
     }
@@ -194,7 +203,7 @@ public class AudioSystem : Singleton<AudioSystem>
 									if(occludeState != OcclusionState.OCCLUSION_PARTIAL)
 									{
 										occludeState = OcclusionState.OCCLUSION_PARTIAL;
-										Debug.Log("Partial Occlusion");
+										//Debug.Log("Partial Occlusion");
 									}									
 								}
 							}
@@ -217,7 +226,7 @@ public class AudioSystem : Singleton<AudioSystem>
 					if(occludeState != OcclusionState.OCCLUSION_FULL)
 					{
 						occludeState = OcclusionState.OCCLUSION_FULL;
-						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
+						//Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
 					}					
 				}							
 			}	
@@ -233,14 +242,14 @@ public class AudioSystem : Singleton<AudioSystem>
 				if(occludeState != OcclusionState.OCCLUSION_FALSE)
 				{
 					occludeState = OcclusionState.OCCLUSION_FALSE;
-					Debug.Log("No Occlusion");
+					//Debug.Log("No Occlusion");
 				}	
 			}
 					 
 		}
 	}
 	
-	public AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop,
+	public static AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop,
 							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 
 	{
 		//Create an empty game object
@@ -271,12 +280,12 @@ public class AudioSystem : Singleton<AudioSystem>
 		}
 		
 		//Set the source as active
-		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, audioSource = audioSource, defaultVolume = _volume,
+		s_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, audioSource = audioSource, defaultVolume = _volume,
 										 soundLocoation = soundLoc, soundType = _soundType, useOcclusion = _useOcclusion});
 		return(audioSource);
 	}
 	
-	public AudioSource Play(AudioClip _clip, Transform _emitter, float _volume, float _pitch, bool _loop,
+	public static AudioSource Play(AudioClip _clip, Transform _emitter, float _volume, float _pitch, bool _loop,
 							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 
 	{
 		
@@ -287,7 +296,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		return(audioSource);
 	}
 	
-	public AudioSource Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
+	public static AudioSource Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
 	{
 		if(_fadeInTime > 0)
 		{
@@ -300,7 +309,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		
 		_source.loop = _loop;
 		
-		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
+		s_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
 										 soundType = _soundType, useOcclusion = _useOcclusion});
 		
 		_source.Play();
@@ -308,7 +317,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		return(_source);
 	}
 	
-	private void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 
+	private static void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 
 	{
 		_source.rolloffMode = AudioRolloffMode.Logarithmic;
 		_source.dopplerLevel = 0.01f;
@@ -318,11 +327,11 @@ public class AudioSystem : Singleton<AudioSystem>
 		_source.volume = _volume;
 	}
 	
-	public void StopSound(AudioSource _toStop) 
+	public static void StopSound(AudioSource _toStop) 
 	{
 		try 
 		{
-			Destroy(m_activeAudio.Find(s => s.audioSource == _toStop).audioSource.gameObject);
+			Destroy(s_activeAudio.Find(s => s.audioSource == _toStop).audioSource.gameObject);
 		} 
 		catch 
 		{
@@ -330,18 +339,18 @@ public class AudioSystem : Singleton<AudioSystem>
 		}
 	}
 	
-	public void FadeOut(AudioSource _toStop, float _fadeOutTime) 
+	public static void FadeOut(AudioSource _toStop, float _fadeOutTime) 
 	{
 		if(_fadeOutTime == 0.0f)
 		{
 			_fadeOutTime = 0.1f;
 		}
 		
-		m_activeAudio.Find(s => s.audioSource == _toStop).fadeOutTime = _fadeOutTime;	
-		m_activeAudio.Find(s => s.audioSource == _toStop).defaultVolume = 0.0f;
+		s_activeAudio.Find(s => s.audioSource == _toStop).fadeOutTime = _fadeOutTime;	
+		s_activeAudio.Find(s => s.audioSource == _toStop).defaultVolume = 0.0f;
 	}
 	
-	public void BalanceVolumes(float _musicVolume, float _effectsVolume)
+	public static void BalanceVolumes(float _musicVolume, float _effectsVolume)
 	{
 		if(_musicVolume > 0 && _musicVolume < 1 &&
 		   _effectsVolume > 0 && _effectsVolume < 1)
@@ -349,7 +358,7 @@ public class AudioSystem : Singleton<AudioSystem>
 			musicVolume = _musicVolume;
 			effectsVolume = _effectsVolume;
 			
-			foreach(var audioClip in m_activeAudio) 
+			foreach(var audioClip in s_activeAudio) 
 			{
 				switch(audioClip.soundType)
 				{
@@ -387,7 +396,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	}
 	
 	//Returns data from an AudioClip as a byte array.
-	public byte[] GetClipData(AudioClip _clip)
+	public static byte[] GetClipData(AudioClip _clip)
 	{
 		//Get data
 		float[] floatData = new float[_clip.samples * _clip.channels];
