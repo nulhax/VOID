@@ -85,10 +85,10 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
-	public override void SyncValue(object _cValue, float _fSyncTime)
+	public override void SyncValue(object _cValue, float _fSyncTick)
 	{
 		m_Value = (TYPE)_cValue;
-		m_fSyncedTime = _fSyncTime;
+		m_fSyncedTick = _fSyncTick;
 	}
 
 
@@ -119,9 +119,9 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public override float GetLastSyncedTime()
+	public override float GetLastSyncedTick()
 	{
-		return (m_fSyncedTime);
+		return (m_fSyncedTick);
 	}
 
 
@@ -151,7 +151,9 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	CNetworkVar<object>.OnSetCallback m_nSetNotifyCallback = null;
 	OnSyncCallback m_nSyncNotifyCallback = null;
-	float m_fSyncedTime = 0;
+	float m_fSyncedTick = 0;
+	uint m_uiSendCount = 0;
+	uint m_uiSendPacketOffset = 0;
 
 
 	byte m_bNetworkVarId = 0;

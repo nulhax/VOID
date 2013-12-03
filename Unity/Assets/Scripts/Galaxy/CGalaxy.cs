@@ -29,19 +29,20 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     class CRegisteredObserver
     {
-        public GameObject mObserver;
-        public float mObservationRadius;   // Bounding sphere.
+        public GameObject mEntity;
+        public float mBoundingRadius;   // Bounding sphere.
 
-        public CRegisteredObserver(GameObject observer, float observationRadius) { mObserver = observer; mObservationRadius = observationRadius; }
+        public CRegisteredObserver(GameObject entity, float boundingRadius) { mEntity = entity; mBoundingRadius = boundingRadius; }
     }
 
     class CRegisteredGubbin
     {
         public GameObject mEntity;
+        public float mBoundingRadius;   // Bounding sphere.
         public ushort mNetworkViewID;
         public bool mAlternator;   // This is used for culling purposes.
 
-        public CRegisteredGubbin(GameObject entity, ushort networkViewID, bool alternatorValue) { mEntity = entity; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
+        public CRegisteredGubbin(GameObject entity, float boundingRadius, ushort networkViewID, bool alternatorValue) { mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
     public enum ENoiseLayer : uint
@@ -65,6 +66,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     public static CGalaxy instance { get { return sGalaxy; } }
 
     private PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
+    protected CNetworkVar<int>[] mNoiseSeeds = new CNetworkVar<int>[(uint)ENoiseLayer.MAX];
 
     private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
@@ -108,12 +110,20 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     private bool mbValidCellValue = false;  // Used for culling cells that are too far away from observers.
 
-    public float mCellDiameter { get { return mfGalaxySize / mNumGridCellsInRow; } }
-    public ulong mNumGridCells { get { /*return (uint)Mathf.Pow(8, muiGridSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumGridSubsets; ++ui2)ul *= 8u; return ul; } }
-    public uint mNumGridCellsInRow { get { /*return (uint)Mathf.Pow(2, muiGridSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumGridSubsets; ++ui2)ui *= 2; return ui; } }
+    public float cellDiameter { get { return mfGalaxySize / numGridCellsInRow; } }
+    public float cellRadius { get { return mfGalaxySize / (numGridCellsInRow*2u); } }
+    public ulong numGridCells { get { /*return (uint)Mathf.Pow(8, muiGridSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumGridSubsets; ++ui2)ul *= 8u; return ul; } }
+    public uint numGridCellsInRow { get { /*return (uint)Mathf.Pow(2, muiGridSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumGridSubsets; ++ui2)ui *= 2; return ui; } }
 
     ///////////////////////////////////////////////////////////////////////////
     // Functions:
+
+    public CGalaxy()
+    {
+        // Instantiate galaxy noises.
+        for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            mNoises[ui] = new PerlinSimplexNoise();
+    }
 
     void Start()
     {
@@ -123,9 +133,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
 
-        // Initialise galaxy noises.
-        for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            mNoises[ui] = new PerlinSimplexNoise();
+        //// Initialise galaxy noises.
+        //for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+        //    mNoises[ui] = new PerlinSimplexNoise();
 
         // Load skyboxes.
         string[] skyboxFaces = new string[6];
@@ -161,13 +171,17 @@ public class CGalaxy : CNetworkMonoBehaviour
         mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
 
         // Statistical data sometimes helps spot errors.
-        Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumGridSubsets.ToString("n0") + " grid subsets, thus the " + mNumGridCells.ToString("n0") + " cells are " + (mfGalaxySize / mNumGridCellsInRow).ToString("n0") + " units in diameter and " + mNumGridCellsInRow.ToString("n0") + " cells in a row.");
+        Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumGridSubsets.ToString("n0") + " grid subsets, thus the " + numGridCells.ToString("n0") + " cells are " + (mfGalaxySize / numGridCellsInRow).ToString("n0") + " units in diameter and " + numGridCellsInRow.ToString("n0") + " cells in a row.");
 
         if (CNetwork.IsServer)
         {
             mGubbins = new System.Collections.Generic.List<CRegisteredGubbin>();
             mGrid = new System.Collections.Generic.Dictionary<SGridCellPos, CGridCellContent>();
             mCellsToLoad = new System.Collections.Generic.Queue<SGridCellPos>();
+
+            // Seed galaxy noises through the network variable to sync the seed across all clients.
+            for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+                mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
         }
     }
 
@@ -179,6 +193,9 @@ public class CGalaxy : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
         Profiler.BeginSample("InstanceNetworkVars");
+
+        for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            mNoiseSeeds[ui] = new CNetworkVar<int>(SyncNoiseSeed);
 
         mCentreCellX = new CNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
         mCentreCellY = new CNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
@@ -206,19 +223,20 @@ public class CGalaxy : CNetworkMonoBehaviour
                 Profiler.BeginSample("Check for cells to queue for loading");
                 foreach (CRegisteredObserver observer in mObservers)
                 {
-                    Vector3 observerPosition = observer.mObserver.transform.position;
+                    Vector3 observerPosition = observer.mEntity.transform.position;
                     SGridCellPos occupiedRelativeCell = PointToRelativeCell(observerPosition);
-                    int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mObservationRadius / (mCellDiameter * .5f)) - 1) * 2);
+                    int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
+                    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                                                                                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
 
-                    for (int x = -((iCellsInARow - 1) / 2); x <= (iCellsInARow - 1) / 2; ++x)
+                    for (int x = -iNeighboursPerDirection; x <= iNeighboursPerDirection; ++x)
                     {
-                        for (int y = -((iCellsInARow - 1) / 2); y <= (iCellsInARow - 1) / 2; ++y)
+                        for (int y = -iNeighboursPerDirection; y <= iNeighboursPerDirection; ++y)
                         {
-                            for (int z = -((iCellsInARow - 1) / 2); z <= (iCellsInARow - 1) / 2; ++z)
+                            for (int z = -iNeighboursPerDirection; z <= iNeighboursPerDirection; ++z)
                             {
                                 // Check if this cell is loaded.
                                 SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
-                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mObservationRadius + mCellDiameter * mNumExtraNeighbourCells))
+                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mBoundingRadius + cellDiameter * mNumExtraNeighbourCells))
                                 {
                                     SGridCellPos neighbouringAbsoluteCell = neighbouringRelativeCell + mCentreCell;
                                     CGridCellContent temp;
@@ -269,14 +287,40 @@ public class CGalaxy : CNetworkMonoBehaviour
                 Profiler.BeginSample("Find gubbins");
                 foreach (CRegisteredGubbin gubbin in mGubbins)
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)
+                    Vector3 gubbinPosition = gubbin.mEntity.transform.position;
+                    SGridCellPos occupiedRelativeCell = PointToRelativeCell(gubbinPosition);
+                    int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
+                    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
+
+                    // Iterate through all 3 axis, checking the centre cell first.
+                    int x = 0;
+                    int y = 0;
+                    int z = 0;
+                    do
                     {
-                        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, 1.0f))
+                        do
                         {
-                            gubbin.mAlternator = mbValidCellValue;
-                            break;
-                        }
-                    }
+                            do
+                            {
+                                // Check if this cell is loaded.
+                                SGridCellPos neighbouringRelativeCell = new SGridCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
+                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, gubbinPosition, gubbin.mBoundingRadius))
+                                {
+                                    if (mGrid.ContainsKey(neighbouringRelativeCell))
+                                    {
+                                        gubbin.mAlternator = mbValidCellValue;
+                                        x = y = z = -1;  // Way to break the nested loop.
+                                    }
+                                }
+
+                                ++z; if (z > iNeighboursPerDirection) z = -iNeighboursPerDirection;
+                            }while(z != 0);
+
+                            ++y; if (y > iNeighboursPerDirection) y = -iNeighboursPerDirection;
+                        }while(y != 0);
+
+                        ++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
+                    }while(x != 0);
                 }
                 Profiler.EndSample();
 
@@ -349,36 +393,43 @@ public class CGalaxy : CNetworkMonoBehaviour
 
         Vector3 result = new Vector3();
         foreach (CRegisteredObserver observer in mObservers)
-            result += observer.mObserver.transform.position;
+            result += observer.mEntity.transform.position;
 
         Profiler.EndSample();
 
         return result / mObservers.Count;
     }
 
+    public void SyncNoiseSeed(INetworkVar sender)
+    {
+        for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            if(mNoiseSeeds[ui] == sender)
+                mNoises[ui].Seed(mNoiseSeeds[ui].Get());
+    }
+
     public void SyncCentreCellX(INetworkVar sender)
     {
-        ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * mCellDiameter, 0.0f, 0.0f));
+        ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * cellDiameter, 0.0f, 0.0f));
         mCentreCell.x = mCentreCellX.Get();
     }
     public void SyncCentreCellY(INetworkVar sender)
     {
-        ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * mCellDiameter, 0.0f));
+        ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * cellDiameter, 0.0f));
         mCentreCell.y = mCentreCellY.Get();
     }
     public void SyncCentreCellZ(INetworkVar sender)
     {
-        ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * mCellDiameter));
+        ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * cellDiameter));
         mCentreCell.y = mCentreCellY.Get();
     }
     public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
     public void SyncMaxAsteroidsPerCell(INetworkVar sender) { muiMaxAsteroidsPerCell = mMaxAsteroidsPerCell.Get(); }
     public void SyncNumGridSubsets(INetworkVar sender) { muiNumGridSubsets = mNumGridSubsets.Get(); }
 
-    public void RegisterObserver(GameObject observer, float observationRadius)
+    public void RegisterObserver(GameObject observer, float boundingRadius)
     {
         Profiler.BeginSample("RegisterObserver");
-        mObservers.Add(new CRegisteredObserver(observer, observationRadius));
+        mObservers.Add(new CRegisteredObserver(observer, boundingRadius));
         Profiler.EndSample();
     }
 
@@ -388,7 +439,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
         foreach (CRegisteredObserver elem in mObservers)
         {
-            if (elem.mObserver.GetInstanceID() == observer.GetInstanceID())
+            if (elem.mEntity.GetInstanceID() == observer.GetInstanceID())
             {
                 mObservers.Remove(elem);
                 break;
@@ -464,7 +515,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         //else    // This cell is not on file, so it has not been visited...
         {
             // Generate the content in the cell.
-            float fCellRadius = mCellDiameter*0.5f;
+            float fCellRadius = cellDiameter*0.5f;
 
             // 1) For asteroids.
             uint uiNumAsteroids = (uint)Mathf.RoundToInt(muiMaxAsteroidsPerCell * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.AsteroidDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z))) /*Mathf.RoundToInt(PerlinSimplexNoise.(ENoiseLayer.AsteroidDensity, absoluteCell))*/;
@@ -530,7 +581,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                     Profiler.EndSample();
 
                     Profiler.BeginSample("Push asteroid to dictionary");
-                    mGubbins.Add(new CRegisteredGubbin(newAsteroid, newAsteroidNetworkView.ViewId, mbValidCellValue));  // Add new asteroid to list of gubbins ("space things").
+                    mGubbins.Add(new CRegisteredGubbin(newAsteroid, newAsteroid.collider.bounds.extents.magnitude, newAsteroidNetworkView.ViewId, mbValidCellValue));  // Add new asteroid to list of gubbins ("space things").
                     Profiler.EndSample();
                 }
 
@@ -571,7 +622,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("RelativeCellCentrePoint");
 
-        Vector3 result = new Vector3(relativeCell.x * mCellDiameter, relativeCell.y * mCellDiameter, relativeCell.z * mCellDiameter);
+        Vector3 result = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 
         Profiler.EndSample();
 
@@ -582,11 +633,11 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("PointToAbsoluteCell");
 
-        float cellRadius = mCellDiameter * 0.5f;
+        float cellRadius = cellDiameter * 0.5f;
         point.x += cellRadius;
         point.y += cellRadius;
         point.z += cellRadius;
-        point /= mCellDiameter;
+        point /= cellDiameter;
         SGridCellPos result = new SGridCellPos(Mathf.FloorToInt(point.x) + mCentreCell.x, Mathf.FloorToInt(point.y) + mCentreCell.y, Mathf.FloorToInt(point.z) + mCentreCell.z);
 
         Profiler.EndSample();
@@ -598,11 +649,11 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("PointToRelativeCell");
 
-        float cellRadius = mCellDiameter * 0.5f;
+        float cellRadius = cellDiameter * 0.5f;
         point.x += cellRadius;
         point.y += cellRadius;
         point.z += cellRadius;
-        point /= mCellDiameter;
+        point /= cellDiameter;
         SGridCellPos result = new SGridCellPos(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
 
         Profiler.EndSample();
@@ -614,8 +665,8 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("RelativeCellWithinProximityOfPoint");
 
-        Vector3 cellCentrePos = new Vector3(relativeCell.x * mCellDiameter, relativeCell.y * mCellDiameter, relativeCell.z * mCellDiameter);
-        float cellBoundingSphereRadius = mCellDiameter * 0.86602540378443864676372317075294f;
+        Vector3 cellCentrePos = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
+        float cellBoundingSphereRadius = cellDiameter * 0.86602540378443864676372317075294f;
         bool result = (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
 
         Profiler.EndSample();
@@ -643,11 +694,15 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("OnDrawGizmos");
 
-        //Debug.LogWarning("88888888888            " + mGrid.Count.ToString());
+        GL.Color(Color.white);
         foreach (CRegisteredObserver elem in mObservers)
-            Gizmos.DrawWireSphere(elem.mObserver.transform.position, elem.mObservationRadius);
+            Gizmos.DrawWireSphere(elem.mEntity.transform.position, elem.mBoundingRadius);
+
+        GL.Color(Color.blue);
+        foreach (CRegisteredGubbin elem in mGubbins)
+            Gizmos.DrawWireSphere(elem.mEntity.transform.position, elem.mBoundingRadius);
         
-        float fCellDiameter = mCellDiameter;
+        float fCellDiameter = cellDiameter;
         float fCellRadius = fCellDiameter * .5f;
 
         foreach (System.Collections.Generic.KeyValuePair<SGridCellPos, CGridCellContent> pair in mGrid)

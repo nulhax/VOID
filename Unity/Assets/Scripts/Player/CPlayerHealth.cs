@@ -39,17 +39,36 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		get { return (m_bIsAlive.Get()); }
 		set { m_bIsAlive.Set(value); }
 	}
+	
+	public float Breath
+	{
+		get { return(m_fOxygenUseRate.Get()); }
+		set { m_fOxygenUseRate.Set(value); }
+	}
 
     // Member Functions
 	public override void InstanceNetworkVars()
 	{
 		m_fActorHp = new CNetworkVar<float>(OnNetworkVarSync, 100.0f);
 		m_bIsAlive = new CNetworkVar<bool>(OnNetworkVarSync, true);
+		m_fOxygenUseRate = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
 	
-	void Start () 
+	void Start() 
     {
+		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		foreach(AudioCue cue in audioCues)
+		{
+			if(cue.m_strCueName == "LaughTrack")
+			{
+				m_LaughTrack = 	cue;
+			}
+		}
+		
+		
+		
+		
 		/*
 		//Set everything to kinematic
 		foreach(Transform child in transform.GetComponentsInChildren<Transform>())
@@ -154,17 +173,18 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 				{
 					boxCollider = child.GetComponent<BoxCollider>();
 					boxCollider.isTrigger = false;	
-				}
-				
-				
+				}				
 			}
-			transform.GetComponent<CharacterController>().enabled = false;
+		
 			transform.GetComponent<CPlayerMotor>().enabled = false;
-			transform.GetComponent<CPlayerHead>().enabled = false;
+			transform.GetComponent<CPlayerHead>().enabled = false;			
+			
 		}
 		
 		if(_cVarInstance == m_fActorHp)
 		{
+			m_LaughTrack.Play(1.0f, false, -1);
+			
 			if(CNetwork.IsServer)
 			{
 				if(m_fActorHp.Get() <= 0.0f)
@@ -175,12 +195,20 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		}
 	}
 		
-    public void ApplyDamage(float _fDamage, float _fPlayerHealth)
+    public void ApplyDamage(float _fDamage)
     {
-        m_fActorHp.Set(_fPlayerHealth - _fDamage);
+        m_fActorHp.Set(m_fActorHp.Get() - _fDamage);
     }
+	
+	public void OnOxygenChange(float _fOxygenAmount)
+	{
+		
+	}
+	
     // Member Fields
 	CNetworkVar<float> m_fActorHp;
+	CNetworkVar<float> m_fOxygenUseRate;
 	CNetworkVar<bool> m_bIsAlive;
+	AudioCue m_LaughTrack;
 }
 

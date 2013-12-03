@@ -129,7 +129,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 	void InsertNewPosition()
 	{
-		float fSyncedTime = m_tPosition.GetLastSyncedTime();
+		float fSyncedTime = m_tPosition.GetLastSyncedTick();
 
 		// Calcuate which tick to put the position
 		uint uiSyncedTick = (uint)((fSyncedTime - Mathf.Floor(fSyncedTime)) * CNetworkServer.k_fSendRate);

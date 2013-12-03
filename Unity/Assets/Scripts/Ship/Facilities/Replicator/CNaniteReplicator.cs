@@ -96,7 +96,7 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 				float fDamage = 1000.0f;
 				
 				// Kill player
-				_Object.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(fDamage, 0.0f);
+				_Object.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(fDamage);
 				
 				m_bIsParticleEmtEnabled.Set(true);
 			}

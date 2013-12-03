@@ -55,7 +55,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	List<ClipInfo> m_activeAudio;
 	private float musicVolume;
 	private float effectsVolume;
-	private AudioListener listener;
+	private AudioListener m_listener;
 	private OcclusionState occludeState;
 	
 	// Member Functions
@@ -65,14 +65,21 @@ public class AudioSystem : Singleton<AudioSystem>
         Debug.Log("AudioManager Initialising");
        		
 		m_activeAudio = new List<ClipInfo>();
-		listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
+		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
 		
 		occludeState = OcclusionState.OCCLUSION_FALSE;
     }
 	
 	void Update() 
 	{
-		ProcessActiveAudio();
+		if(m_listener == null)
+		{
+			m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
+		}
+		else
+		{
+			ProcessActiveAudio();
+		}
 	}
 	
 	void ProcessActiveAudio()
@@ -145,7 +152,7 @@ public class AudioSystem : Singleton<AudioSystem>
 	void ProcessAudioOcclusion(ClipInfo _audioClip)
 	{
 		//Get the audioListener in the scene
-		Vector3 listenerPos = listener.transform.position;
+		Vector3 listenerPos = m_listener.transform.position;
 		Vector3 sourcePos = _audioClip.audioSource.transform.position;
 	
 		
@@ -210,7 +217,7 @@ public class AudioSystem : Singleton<AudioSystem>
 					if(occludeState != OcclusionState.OCCLUSION_FULL)
 					{
 						occludeState = OcclusionState.OCCLUSION_FULL;
-						Debug.Log("Full Occlusion");
+						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
 					}					
 				}							
 			}	
@@ -280,7 +287,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		return(audioSource);
 	}
 	
-	public void Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
+	public AudioSource Play(AudioSource _source, float _volume, float _pitch, bool _loop, float _fadeInTime, SoundType _soundType,  bool _useOcclusion)
 	{
 		if(_fadeInTime > 0)
 		{
@@ -296,7 +303,9 @@ public class AudioSystem : Singleton<AudioSystem>
 		m_activeAudio.Add(new ClipInfo { fadeInTime = _fadeInTime, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
 										 soundType = _soundType, useOcclusion = _useOcclusion});
 		
-		_source.Play();				
+		_source.Play();
+		
+		return(_source);
 	}
 	
 	private void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 

@@ -7,7 +7,7 @@
 public class GalaxyIE : PostEffectsBase
 {
     //RenderTexture mSkyboxBaked = new RenderTexture(Screen.width, Screen.height, 0);
-    GameObject mGalaxyCamera = (GameObject)Resources.Load("Prefabs/GalaxyCamera", typeof(GameObject));
+    GameObject mGalaxyCamera = null;
 
 	private float CAMERA_NEAR = 0.5f;
 	private float CAMERA_FAR = 50.0f;
@@ -44,6 +44,8 @@ public class GalaxyIE : PostEffectsBase
     public override void Start()
     {
         base.Start();
+
+        mGalaxyCamera = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/GalaxyCamera", typeof(GameObject)));
 
         mFogMaterial = new Material(Shader.Find("VOID/TexturedFog"));
 

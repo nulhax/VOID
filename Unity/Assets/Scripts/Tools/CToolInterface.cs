@@ -123,7 +123,7 @@ public class CToolInterface : CNetworkMonoBehaviour
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
-                // Disable dynamic actor
+                // Enable dynamic actor
                 GetComponent<CDynamicActor>().enabled = true;
             }
         }
@@ -136,6 +136,8 @@ public class CToolInterface : CNetworkMonoBehaviour
 		gameObject.AddComponent<CInteractableObject>();
 		gameObject.AddComponent<CDynamicActor>();
 		gameObject.AddComponent<CNetworkView>();
+		
+		gameObject.rigidbody.useGravity = false;
 	}
 
 

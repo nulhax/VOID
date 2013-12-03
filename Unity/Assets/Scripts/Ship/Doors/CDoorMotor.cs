@@ -44,7 +44,10 @@ public class CDoorMotor : CNetworkMonoBehaviour
 	bool m_StateChanged						= true;
 	
 	CNetworkVar<int> m_ServerDoorState    	= null;
-  
+	
+	public AudioClip m_audioClipOpen		= null;
+	public AudioClip m_audioClipClose		= null;
+  	AudioSource m_audioSource				= null;
 	
 // Static Fields
 	float s_OpenAmount						= 3.5f;
@@ -110,11 +113,15 @@ public class CDoorMotor : CNetworkMonoBehaviour
 			// Door State
 			if(_rSender == m_ServerDoorState)
 			{
-				State = NetworkState;
+				State = NetworkState;				
 			}
 		}
     }
 	
+	public void Awake()
+	{
+		m_audioSource = gameObject.GetComponent<AudioSource>();
+	}
 	
 	public void Update()
 	{
@@ -129,7 +136,7 @@ public class CDoorMotor : CNetworkMonoBehaviour
     public void OpenDoor()
     {
 		Logger.Write("Opening Door with network id ({0})", GetComponent<CNetworkView>().ViewId);
-		
+			
         StartCoroutine("Open");
     }
 	
@@ -138,7 +145,7 @@ public class CDoorMotor : CNetworkMonoBehaviour
     {
 		Logger.Write("Closing Door with network id ({0})", GetComponent<CNetworkView>().ViewId);
 		
-        StartCoroutine("Close");
+		StartCoroutine("Close");
     }
 	
 
@@ -148,8 +155,12 @@ public class CDoorMotor : CNetworkMonoBehaviour
         Vector3 pos = transform.position;
 
         NetworkState = EDoorState.Opening;
-
-        while (d < s_OpenAmount)
+			
+		//Play audio
+		m_audioSource.clip = m_audioClipOpen;
+		AudioSystem.GetInstance.Play(m_audioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
+		
+		while (d < s_OpenAmount)
         {
             d += Time.deltaTime;
             if (d > s_OpenAmount)
@@ -162,8 +173,8 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
             yield return null;
         }
-
-        NetworkState = EDoorState.Opened;
+		
+		NetworkState = EDoorState.Opened;
     }
 	
 	
@@ -173,8 +184,13 @@ public class CDoorMotor : CNetworkMonoBehaviour
         Vector3 pos = transform.position;
 
         NetworkState = EDoorState.Closing;
+		
+		//Play audio
+		m_audioSource.clip = m_audioClipClose;
+		AudioSystem.GetInstance.Play(m_audioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
 
-        while (d < s_OpenAmount)
+		
+		while (d < s_OpenAmount)
         {
             d += Time.deltaTime;
             if (d > s_OpenAmount)
@@ -186,8 +202,8 @@ public class CDoorMotor : CNetworkMonoBehaviour
             transform.position = newPos;
 
             yield return null;
-        }
-
+        }	
+				
         NetworkState = EDoorState.Closed;
     }
 	

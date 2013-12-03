@@ -57,7 +57,9 @@ public class CFireHazard : MonoBehaviour {
 	// Use this for initialization
 	public void Start () 
     {
-	    
+	    AudioSource fireAudio = GetComponent<AudioSource>();
+		
+		AudioSystem.GetInstance.Play(fireAudio, 1.0f, 1.0f, true, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
 	}
     
     public void OnDestroy()
@@ -96,7 +98,7 @@ public class CFireHazard : MonoBehaviour {
                		 Damage = 40.0f * Time.deltaTime;
 
                		 //apply damage
-               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage, hp);
+               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage);
 				}
             }
         }
