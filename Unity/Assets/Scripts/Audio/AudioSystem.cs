@@ -78,7 +78,7 @@ public class AudioSystem : Singleton<AudioSystem>
 		}
 		else
 		{
-			ProcessActiveAudio();
+			//ProcessActiveAudio();
 		}
 	}
 	
