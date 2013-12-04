@@ -124,15 +124,18 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 		else
 		{
+			// Pressure is decreasing
 			if(Pressure > 0.0f)
 			{
 				m_fPressure.Set(Pressure - k_fDepressurizingRate * Time.deltaTime);
 			}
 			
+			// If pressure is decreasing, decrease oxygen.
 			if(Oxygen > Pressure * Volume)
 			{
 				m_fOxygen.Set ( Oxygen - k_fO2DecrementRate * Time.deltaTime);
 				
+				// Damage the player if there is no oxygen.
 				if(Oxygen < 100.0f)
 				{
 					m_bIsO2Avaliable.Set(false);
@@ -159,15 +162,21 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	void OnPlayerActorEnter(GameObject _PlayerActor)
 	{
 		// If there is no oxygen, damage the player. 
-		if(m_bIsO2Avaliable.Get() == false)
+		if(CNetwork.IsServer)
 		{
-			gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
+			if(m_bIsO2Avaliable.Get() == false)
+			{
+				gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
+			}
 		}
 	}
 	
 	void OnPlayerActorExit(GameObject _PlayerActor)
 	{
-		m_bIsO2Avaliable.Set(true);
+		if(CNetwork.IsServer)
+		{
+			m_bIsO2Avaliable.Set(true);
+		}
 	}
 	
 	
