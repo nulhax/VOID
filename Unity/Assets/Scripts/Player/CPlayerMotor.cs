@@ -124,6 +124,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			rigidbody.isKinematic = true;
 			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 		}
+		
+		m_ThirdPersonAnim = GetComponent<Animator>();
+		
+		collider = GetComponent<CapsuleCollider>();
 	}
 
 
@@ -172,13 +176,13 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		cPlayerActorMotor.m_uiMovementStates = uiMovementStates;
 
 		// Set rotation y
-		cPlayerActorMotor.m_fRotationY.Set(fRotationY);
+		cPlayerActorMotor.m_fRotationY.Set(fRotationY);		
 	}
 
 
 	void UpdateGrounded()
 	{
-		m_bGrounded = Physics.Raycast(transform.position, -Vector3.up, collider.bounds.extents.y + 0.1f);
+		m_bGrounded = Physics.Raycast(transform.position, -Vector3.up, collider.bounds.extents.y + 0.5f);
 	}
 
 
@@ -204,19 +208,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveRight)    > 0) ? transform.right   : Vector3.zero;
 
 		// Apply direction movement speed
-		vMovementVelocity  = vMovementVelocity.normalized;
-		vMovementVelocity *= ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
+		//vMovementVelocity  = vMovementVelocity.normalized;
+		//vMovementVelocity *= ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
 
 		// Jump 
 		if ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0 &&
 			 IsGrounded)
 		{
-			vMovementVelocity.y = JumpSpeed;
+			//vMovementVelocity.y = JumpSpeed;
 		}
 
 		// Apply movement velocity
-		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
-		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+		//rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+		//rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
 
 		// Set latest position
 		if (CNetwork.IsServer)
@@ -225,9 +229,41 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 
 
-		m_vPosition.Set(transform.position);
+		//m_vPosition.Set(transform.position);
+		
+		UpdateThirdPersonAnimation();
 	}
 	
+	void UpdateThirdPersonAnimation()
+	{	
+		bool WalkForward;
+		bool WalkBack;
+		bool Sprint;
+		bool Jump;
+		
+		WalkForward = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward) > 0) ? true : false;	
+		WalkBack = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? true : false;	
+		Sprint = ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? true : false;	
+		Jump = ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0) ? true : false;	
+		
+		m_ThirdPersonAnim.SetBool("WalkForward", WalkForward);	
+		m_ThirdPersonAnim.SetBool("WalkBack", WalkBack);
+		m_ThirdPersonAnim.SetBool("Sprint", Sprint);
+		m_ThirdPersonAnim.SetBool("Jump", Jump);
+		
+		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+		
+		if (currentBaseState.nameHash == m_iJumpState)
+		{
+			if(!m_ThirdPersonAnim.IsInTransition(0))
+			{
+				collider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");	
+				
+				int i = 0;
+				i++;
+			}			
+		}		
+	}
 
 // Member Fields
 
@@ -256,6 +292,14 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     static KeyCode s_eMoveRightKey = KeyCode.D;
 	static KeyCode s_eJumpKey = KeyCode.Space;
 	static KeyCode s_eSprintKey = KeyCode.LeftShift;
+	
+	
+	Animator m_ThirdPersonAnim;
+	
+	static int m_iIdleState = Animator.StringToHash("Base Layer.Idle");
+	static int m_iJumpState = Animator.StringToHash("Base Layer.Jump");
+	
+	CapsuleCollider collider;
 
 
 };
