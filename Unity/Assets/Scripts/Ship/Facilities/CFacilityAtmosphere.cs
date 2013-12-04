@@ -79,8 +79,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	public void Awake()
 	{
 		gameObject.GetComponent<CFacilityHull>().EventBreached += new CFacilityHull.NotifyBreached(OnHullBreach);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().PlayerActorEnteredTrigger += new Action<GameObject>(OnPlayerActorEnter);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().PlayerActorEnteredTrigger += new Action<GameObject>(OnPlayerActorExit);
+		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorEnter);
+		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorExit);
 	}
 	
 	public void OnDestroy()
@@ -156,16 +156,16 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		m_fTemperature.Set(0.0f);
 	}
 	
-	void OnPlayerActorEnter(GameObject _PlayerActor)
+	void OnPlayerActorEnter(GameObject _Facility, GameObject _Actor)
 	{
 		// If there is no oxygen, damage the player. 
 		if(m_bIsO2Avaliable.Get() == false)
 		{
-			gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
+			_Actor.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
 		}
 	}
 	
-	void OnPlayerActorExit(GameObject _PlayerActor)
+	void OnPlayerActorExit(GameObject _Facility, GameObject _PlayerActor)
 	{
 		m_bIsO2Avaliable.Set(true);
 	}

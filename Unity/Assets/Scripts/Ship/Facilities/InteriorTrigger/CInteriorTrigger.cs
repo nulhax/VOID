@@ -27,12 +27,13 @@ public class CInteriorTrigger : MonoBehaviour
 
 
 	// Member Delegates & Events
-	public event Action<GameObject> ActorEnteredTrigger;
-	public event Action<GameObject> ActorExitedTrigger;
+	public delegate void FacilityActorInteriorTriggerHandler(GameObject _Facility, GameObject _Actor);
 	
-	public event Action<GameObject> PlayerActorEnteredTrigger;
-	public event Action<GameObject> PlayerActorExitedTrigger;
+	public event FacilityActorInteriorTriggerHandler ActorEnteredTrigger;
+	public event FacilityActorInteriorTriggerHandler ActorExitedTrigger;
 	
+	public event FacilityActorInteriorTriggerHandler PlayerActorEnteredTrigger;
+	public event FacilityActorInteriorTriggerHandler PlayerActorExitedTrigger;
 		
 	// Member Fields
 	
@@ -43,45 +44,33 @@ public class CInteriorTrigger : MonoBehaviour
 	// Member Methods
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(_Other.gameObject.tag == "Player")
-		{
-			OnPlayerActorEnter(_Other.rigidbody.gameObject);
-		}
-		
-		OnActorEnter(_Other.rigidbody.gameObject);
+		OnActorEnter(transform.parent.gameObject, _Other.rigidbody.gameObject);
 	}
 	
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.gameObject.tag == "Player")
-		{
-			OnPlayerActorExit(_Other.rigidbody.gameObject);
-		}
-		
-		OnActorExit(_Other.rigidbody.gameObject);
+		OnActorExit(transform.parent.gameObject, _Other.rigidbody.gameObject);
 	}
 	
-	private void OnPlayerActorEnter(GameObject _PlayerActor)
-	{
-		if(PlayerActorEnteredTrigger != null)
-			PlayerActorEnteredTrigger(_PlayerActor);
-	}
-	
-	private void OnPlayerActorExit(GameObject _PlayerActor)
-	{
-		if(PlayerActorExitedTrigger != null)
-			PlayerActorExitedTrigger(_PlayerActor);
-	}
-	
-	private void OnActorEnter(GameObject _Actor)
+	private void OnActorEnter(GameObject _Facility, GameObject _Actor)
 	{
 		if(ActorEnteredTrigger != null)
-			ActorEnteredTrigger(_Actor);
+		{
+			if(_Actor.tag == "Player")
+				PlayerActorEnteredTrigger(_Facility, _Actor);
+			else
+				ActorEnteredTrigger(_Facility, _Actor);
+		}
 	}
 	
-	private void OnActorExit(GameObject _Actor)
+	private void OnActorExit(GameObject _Facility, GameObject _Actor)
 	{
 		if(ActorExitedTrigger != null)
-			ActorExitedTrigger(_Actor);
+			{
+			if(_Actor.tag == "Player")
+				PlayerActorExitedTrigger(_Facility, _Actor);
+			else
+				ActorExitedTrigger(_Facility, _Actor);
+		}
 	}
 }

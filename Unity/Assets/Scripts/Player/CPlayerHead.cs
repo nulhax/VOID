@@ -37,16 +37,27 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		get { return (m_fHeadEulerX.Get()); }
 	}
 
-
 	public GameObject ActorHead
 	{
 		get { return (m_cActorHead); }
 	}
-
+	
+	public GameObject PlayerShipCamera
+	{
+		get { return (m_cShipCamera); }
+		set { m_cShipCamera = value; }
+	}
+	
 	public bool InputFrozen
 	{
 		set { m_bInputFrozen = value; }
 		get { return (m_bInputFrozen); }
+	}
+	
+	public bool IsOutsideShip
+	{
+		set { m_bIsOutsideShip.Set(value); }
+		get { return (m_bIsOutsideShip.Get()); }
 	}
 
 
@@ -56,18 +67,25 @@ public class CPlayerHead : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
 		m_fHeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		//m_bInputFrozen = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bIsOutsideShip = new CNetworkVar<bool>(OnNetworkVarSync, false);
     }
 	
 	
     public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
     {
 		// Head Rotation
-		if (CGame.PlayerActor != gameObject &&
+		if (CGame.PlayerActor != gameObject && 
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
 	        m_cActorHead.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
+		
+		// Outside ship
+		if(CGame.PlayerActor == gameObject && 
+			_cSyncedNetworkVar == m_bIsOutsideShip)
+		{
+			SwapCameras(IsOutsideShip);
+		}
     }
 	
 
@@ -86,7 +104,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			m_cShipCamera.transform.localRotation = Quaternion.identity;
 			
 			// Add the galaxy camera to the ship galaxy simulator
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera(m_cShipCamera);
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
 		}
 	}
 
@@ -124,7 +142,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 	
 
-    void UpdateInput()
+    private void UpdateInput()
 	{
 		// Retrieve new rotations
 		m_vRotation.x += Input.GetAxis("Mouse Y") * m_fSensitivityX * -1.0f;
@@ -142,10 +160,38 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		transform.localEulerAngles = new Vector3(0.0f, m_vRotation.y, 0.0f);
 		m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
 	}
+	
+	private void SwapCameras(bool _OutsideShipState)
+	{
+		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
+		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
+		
+		if(_OutsideShipState)
+		{
+			// Swap the cameras parenthood
+			playerGalaxyCamera.transform.parent = ActorHead.transform;
+			PlayerShipCamera.transform.parent = shipGalaxySim.gameObject.transform;
+			
+			// Update the transform of the player galaxy camera
+			playerGalaxyCamera.transform.localPosition = Vector3.zero;
+			playerGalaxyCamera.transform.localRotation = Quaternion.identity;
+		}
+		else
+		{
+			// Swap the cameras parenthood
+			playerGalaxyCamera.transform.parent = shipGalaxySim.gameObject.transform;
+			PlayerShipCamera.transform.parent = ActorHead.transform;
+			
+			// Reset the transform of the player ship camera
+			PlayerShipCamera.transform.localPosition = Vector3.zero;
+			PlayerShipCamera.transform.localRotation = Quaternion.identity;
+		}
+	}
 
 
 // Member Fields
 	CNetworkVar<float> m_fHeadEulerX = null;
+	CNetworkVar<bool> m_bIsOutsideShip = null;
 	
 	
 	bool m_bInputFrozen = false;

@@ -444,17 +444,17 @@ public class CGame : CNetworkMonoBehaviour
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 		
 		// Placeholder Test stuff
-//      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-//
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
 
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}
