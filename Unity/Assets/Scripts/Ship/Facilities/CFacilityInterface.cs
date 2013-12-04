@@ -134,8 +134,8 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		
 		// Register this rooms internal triggers to the ship actors
 		CInteriorTrigger interiorTrigger = gameObject.GetComponentInChildren<CInteriorTrigger>();
-		interiorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipActors>().ActorEnteredFacility);
-		interiorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipActors>().ActorExitedFacility);	
+		interiorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacility);
+		interiorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacility);	
 	}
 	
 	public void Start()
