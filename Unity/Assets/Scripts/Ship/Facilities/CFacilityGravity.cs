@@ -45,21 +45,24 @@ public class CFacilityGravity : MonoBehaviour
 		if(facilityInteriorTrigger == null)
 			Debug.LogError("CFacilityGravity, no interior trigger to use for gravity application!");
 		
-		facilityInteriorTrigger.ActorEnteredTrigger += ActorEnteredGravityZone;
-		facilityInteriorTrigger.ActorExitedTrigger += ActorExitedGravityZone;
+		facilityInteriorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorEnteredGravityZone);
+		facilityInteriorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorExitedGravityZone);
 	}
 	
 	
 	public void Update()
 	{
+		// Remove actors that dont exist anymore
+		m_ActorsInsideTrigger.RemoveAll((item) => item == null);
+		
 		// Apply the gravity to the actor every frame (so we can modify it if we want later)
 		foreach(GameObject actor in m_ActorsInsideTrigger)
-		{
+		{	
 			actor.GetComponent<CDynamicActor>().GravityAcceleration = m_FacilityGravityAcceleration;
 		}
 	}
 	
-	private void ActorEnteredGravityZone(GameObject _Actor)
+	private void ActorEnteredGravityZone(GameObject _Facility, GameObject _Actor)
 	{
 		// Only add to the list if there is a dynamic actor
 		if(_Actor.GetComponent<CDynamicActor>() == null)
@@ -68,7 +71,7 @@ public class CFacilityGravity : MonoBehaviour
 		m_ActorsInsideTrigger.Add(_Actor);
 	}
 	
-	private void ActorExitedGravityZone(GameObject _Actor)
+	private void ActorExitedGravityZone(GameObject _Facility, GameObject _Actor)
 	{
 		if(!m_ActorsInsideTrigger.Contains(_Actor))
 			return;

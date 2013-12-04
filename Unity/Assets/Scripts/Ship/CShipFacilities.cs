@@ -41,18 +41,6 @@ public class CShipFacilities : MonoBehaviour
 // Member Methods
 
 
-	public void Start()
-	{
-		
-	}
-
-
-	public void OnDestroy()
-	{
-		
-	}
-
-
 	public bool ValidateCreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId, uint _uiExpansionPortId)
 	{
 		return (true);
@@ -92,11 +80,6 @@ public class CShipFacilities : MonoBehaviour
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		
 		m_Facilities.Add(uiFacilityId, cNewFacilityObject);
-		
-		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = gameObject.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(eRegisteredPrefab) + "Ext", 
-												cNewFacilityObject.transform.localPosition, cNewFacilityObject.transform.localRotation);
 		
 		// Facility creation event
 		if (EventOnFaciltiyCreate != null)

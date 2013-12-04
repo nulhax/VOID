@@ -79,8 +79,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	public void Awake()
 	{
 		gameObject.GetComponent<CFacilityHull>().EventBreached += new CFacilityHull.NotifyBreached(OnHullBreach);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().PlayerActorEnteredTrigger += new Action<GameObject>(OnPlayerActorEnter);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().PlayerActorEnteredTrigger += new Action<GameObject>(OnPlayerActorExit);
+		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorEnter);
+		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorExit);
 	}
 	
 	public void OnDestroy()
@@ -124,15 +124,18 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 		else
 		{
+			// Pressure is decreasing
 			if(Pressure > 0.0f)
 			{
 				m_fPressure.Set(Pressure - k_fDepressurizingRate * Time.deltaTime);
 			}
 			
+			// If pressure is decreasing, decrease oxygen.
 			if(Oxygen > Pressure * Volume)
 			{
 				m_fOxygen.Set ( Oxygen - k_fO2DecrementRate * Time.deltaTime);
 				
+				// Damage the player if there is no oxygen.
 				if(Oxygen < 100.0f)
 				{
 					m_bIsO2Avaliable.Set(false);
@@ -143,7 +146,6 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 				}
 			}
 		}
-
 	}
 
 
@@ -153,21 +155,30 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 	void OnHullBreach()
 	{
-		m_fTemperature.Set(0.0f);
-	}
-	
-	void OnPlayerActorEnter(GameObject _PlayerActor)
-	{
-		// If there is no oxygen, damage the player. 
-		if(m_bIsO2Avaliable.Get() == false)
+		if(CNetwork.IsServer)
 		{
-			gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
+			m_fTemperature.Set(0.0f);
 		}
 	}
 	
-	void OnPlayerActorExit(GameObject _PlayerActor)
+	void OnPlayerActorEnter(GameObject _Facility, GameObject _PlayerActor)
 	{
-		m_bIsO2Avaliable.Set(true);
+		// If there is no oxygen, damage the player. 
+		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
+		{
+			if(m_bIsO2Avaliable.Get() == false)
+			{
+				gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
+			}
+		}
+	}
+	
+	void OnPlayerActorExit(GameObject _Facility, GameObject _PlayerActor)
+	{
+		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
+		{
+			m_bIsO2Avaliable.Set(true);
+		}
 	}
 	
 	

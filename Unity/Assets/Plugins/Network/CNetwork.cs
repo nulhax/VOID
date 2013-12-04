@@ -43,7 +43,6 @@ public class CNetwork : MonoBehaviour
 		// Store instance
 		s_cInstance = this;
 
-
 		gameObject.AddComponent<CNetworkScanner>();
 		gameObject.AddComponent<CNetworkFactory>();
 
@@ -61,6 +60,7 @@ public class CNetwork : MonoBehaviour
 
 	public void Start()
 	{
+		
 	}
 
 

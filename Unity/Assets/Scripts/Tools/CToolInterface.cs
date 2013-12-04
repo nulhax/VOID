@@ -106,9 +106,11 @@ public class CToolInterface : CNetworkMonoBehaviour
                 gameObject.transform.localPosition = new Vector3(0.5f, 0.36f, 0.5f);
                 gameObject.transform.localRotation = Quaternion.identity;
 
-                // Turn off  dynamic physics
-                rigidbody.detectCollisions = false;
-                rigidbody.isKinematic = true;
+                // Turn off dynamic physics
+				if(CNetwork.IsServer)
+				{
+                	rigidbody.isKinematic = true;
+				}
 
                 // Disable dynamic actor
                 GetComponent<CDynamicActor>().enabled = false;
@@ -118,8 +120,11 @@ public class CToolInterface : CNetworkMonoBehaviour
                 gameObject.transform.parent = null;
 
                 // Turn on  dynamic physics
-                rigidbody.detectCollisions = true;
-                rigidbody.isKinematic = false;
+				if(CNetwork.IsServer)
+				{
+					rigidbody.isKinematic = false;
+				}
+				
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
