@@ -53,12 +53,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		set { m_bInputFrozen = value; }
 		get { return (m_bInputFrozen); }
 	}
-	
-	public bool IsOutsideShip
-	{
-		set { m_bIsOutsideShip.Set(value); }
-		get { return (m_bIsOutsideShip.Get()); }
-	}
 
 
 // Member Methods
@@ -67,7 +61,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
 		m_fHeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_bIsOutsideShip = new CNetworkVar<bool>(OnNetworkVarSync, false);
     }
 	
 	
@@ -79,13 +72,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	    {	
 	        m_cActorHead.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
-		
-		// Outside ship
-		if(CGame.PlayerActor == gameObject && 
-			_cSyncedNetworkVar == m_bIsOutsideShip)
-		{
-			SwapCameras(IsOutsideShip);
-		}
     }
 	
 
@@ -105,6 +91,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			
 			// Add the galaxy camera to the ship galaxy simulator
 			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
+			
+			// Register event handler for entering/exiting ship
+			gameObject.GetComponent<CDynamicActor>().DynamicActorExitedShip += new CDynamicActor.ActorEnterExitShipHandler(PlayerActorExitShip);
 		}
 	}
 
@@ -161,37 +150,23 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
 	}
 	
-	private void SwapCameras(bool _OutsideShipState)
+	private void PlayerActorExitShip()
 	{
 		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
 		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
+	
+		// Swap the cameras parenthood
+		playerGalaxyCamera.transform.parent = ActorHead.transform;
+		PlayerShipCamera.transform.parent = shipGalaxySim.gameObject.transform;
 		
-		if(_OutsideShipState)
-		{
-			// Swap the cameras parenthood
-			playerGalaxyCamera.transform.parent = ActorHead.transform;
-			PlayerShipCamera.transform.parent = shipGalaxySim.gameObject.transform;
-			
-			// Update the transform of the player galaxy camera
-			playerGalaxyCamera.transform.localPosition = Vector3.zero;
-			playerGalaxyCamera.transform.localRotation = Quaternion.identity;
-		}
-		else
-		{
-			// Swap the cameras parenthood
-			playerGalaxyCamera.transform.parent = shipGalaxySim.gameObject.transform;
-			PlayerShipCamera.transform.parent = ActorHead.transform;
-			
-			// Reset the transform of the player ship camera
-			PlayerShipCamera.transform.localPosition = Vector3.zero;
-			PlayerShipCamera.transform.localRotation = Quaternion.identity;
-		}
+		// Update the transform of the player galaxy camera
+		playerGalaxyCamera.transform.localPosition = Vector3.zero;
+		playerGalaxyCamera.transform.localRotation = Quaternion.identity;
 	}
 
 
 // Member Fields
 	CNetworkVar<float> m_fHeadEulerX = null;
-	CNetworkVar<bool> m_bIsOutsideShip = null;
 	
 	
 	bool m_bInputFrozen = false;

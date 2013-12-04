@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public class CShipActors : MonoBehaviour 
+public class CShipOnboardActors : MonoBehaviour 
 {
 	// Member Types
 
@@ -43,6 +43,16 @@ public class CShipActors : MonoBehaviour
 			m_FacilitiesActorsOnboard.Add(_Facility, new List<GameObject>());
 		}
 	
+		// If the actor is not onboard the ship invoke the callback for entering
+		if(!IsActorOnboardShip(_Actor) && CNetwork.IsServer)
+		{
+			// Only on dynamic actor script
+			if(_Actor.GetComponent<CDynamicActor>() != null)	
+			{
+				_Actor.GetComponent<CDynamicActor>().IsOnboardShip = true;
+			}
+		}
+		
 		m_FacilitiesActorsOnboard[_Facility].Add(_Actor);
 	}
 	
@@ -50,6 +60,19 @@ public class CShipActors : MonoBehaviour
 	{
 		m_FacilitiesActorsOnboard[_Facility].Remove(_Actor);
 		
+		// If the actor is not onboard the ship invoke the callback for exiting
+		if(!IsActorOnboardShip(_Actor) && CNetwork.IsServer)
+		{
+			// Only on dynamic actor script
+			if(_Actor.GetComponent<CDynamicActor>() != null)	
+			{
+				_Actor.GetComponent<CDynamicActor>().IsOnboardShip = false;
+			}
+		}
+	}
+	
+	private bool IsActorOnboardShip(GameObject _Actor)
+	{
 		// Check if this actor is onboard any other facility
 		bool actorOnboardShip = false;
 		foreach(List<GameObject> actorsOnboardFacility in m_FacilitiesActorsOnboard.Values)
@@ -61,38 +84,6 @@ public class CShipActors : MonoBehaviour
 			}
 		}
 		
-		// If the actor is not onboard the ship, transfer to galaxy space
-		if(!actorOnboardShip)
-		{
-			TransferActorToGalaxySpace(_Actor);
-		}
-	}
-	
-	private void TransferActorToGalaxySpace(GameObject _Actor)
-	{	 
-		// Get the actors position relative to the ship
-		Vector3 relativePos = _Actor.transform.position - transform.position;
-		Quaternion relativeRot = _Actor.transform.rotation * Quaternion.Inverse(transform.rotation);
-			
-		// Temporarily parent the actor to the galaxy ship
-		GameObject galaxyShip = gameObject.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
-		_Actor.transform.parent = galaxyShip.transform;
-		
-		// Update the transform of the actor
-		_Actor.transform.localPosition = relativePos;
-		_Actor.transform.localRotation = relativeRot;
-		
-		// If this actor is the player actor we need to inform them
-		if(CGame.PlayerActor == _Actor)
-		{
-			_Actor.GetComponent<CPlayerHead>().IsOutsideShip = true;
-		}
-		
-		// Remove parent
-		_Actor.transform.parent = null;
-		_Actor.GetComponent<CNetworkView>().SyncParent();
-		
-		// Resursively set the galaxy layer on the actor
-		CUtility.SetLayerRecursively(_Actor, LayerMask.NameToLayer("Galaxy"));
+		return(actorOnboardShip);
 	}
 }

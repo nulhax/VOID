@@ -454,7 +454,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}

@@ -66,8 +66,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public bool InputDisabled
 	{
-		set { m_bFreezeMovmentInput.Set(value); }
-		get { return (m_bFreezeMovmentInput.Get()); }
+		set { m_bInputDisabled = value; }
+		get { return (m_bInputDisabled); }
 	}
 
 
@@ -94,7 +94,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
 		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
-		m_bFreezeMovmentInput = new CNetworkVar<bool>(OnNetworkVarSync, false);
 		m_bUsingGravity = new CNetworkVar<bool>(OnNetworkVarSync, true);
 
 
@@ -244,7 +243,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fMovementSpeed = null;
 	CNetworkVar<float> m_fSprintSpeed = null;
 	CNetworkVar<float> m_fJumpSpeed = null;
-	CNetworkVar<bool> m_bFreezeMovmentInput = null;
 	CNetworkVar<bool> m_bUsingGravity = null;
 
 
@@ -252,8 +250,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 
 	uint m_uiMovementStates = 0;
-
-
+	
+	
+	bool m_bInputDisabled = false;
 	bool m_bGrounded = false;
 	
 

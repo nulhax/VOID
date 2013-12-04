@@ -31,9 +31,6 @@ public class CInteriorTrigger : MonoBehaviour
 	
 	public event FacilityActorInteriorTriggerHandler ActorEnteredTrigger;
 	public event FacilityActorInteriorTriggerHandler ActorExitedTrigger;
-	
-	public event FacilityActorInteriorTriggerHandler PlayerActorEnteredTrigger;
-	public event FacilityActorInteriorTriggerHandler PlayerActorExitedTrigger;
 		
 	// Member Fields
 	
@@ -56,21 +53,15 @@ public class CInteriorTrigger : MonoBehaviour
 	{
 		if(ActorEnteredTrigger != null)
 		{
-			if(_Actor.tag == "Player")
-				PlayerActorEnteredTrigger(_Facility, _Actor);
-			else
-				ActorEnteredTrigger(_Facility, _Actor);
+			ActorEnteredTrigger(_Facility, _Actor);
 		}
 	}
 	
 	private void OnActorExit(GameObject _Facility, GameObject _Actor)
 	{
 		if(ActorExitedTrigger != null)
-			{
-			if(_Actor.tag == "Player")
-				PlayerActorExitedTrigger(_Facility, _Actor);
-			else
-				ActorExitedTrigger(_Facility, _Actor);
+		{
+			ActorExitedTrigger(_Facility, _Actor);
 		}
 	}
 }

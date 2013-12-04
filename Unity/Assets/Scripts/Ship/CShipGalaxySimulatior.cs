@@ -153,7 +153,7 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		}
 		
 		// Make sure we are using the correct relative transforms (i.e. When player is outside the ship)
-		if(CGame.PlayerActor.GetComponent<CPlayerHead>().IsOutsideShip)
+		if(!CGame.PlayerActor.GetComponent<CDynamicActor>().IsOnboardShip)
 		{
 			// Update the ship camera transform relative to the players galaxy camera from the galaxy ship
 			playerShipCamera.transform.position = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (m_PlayerGalaxyCamera.transform.position - m_GalaxyShip.transform.position) + transform.position;

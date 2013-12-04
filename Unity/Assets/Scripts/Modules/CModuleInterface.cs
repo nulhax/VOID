@@ -82,7 +82,10 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				gameObject.transform.localRotation = Quaternion.identity;
 
 				// Turn off  dynamic physics
-				rigidbody.isKinematic = true;
+				if(CNetwork.IsServer)
+				{
+                	rigidbody.isKinematic = true;
+				}
 
 				// Disable dynamic actor
 				GetComponent<CDynamicActor>().enabled = false;
@@ -92,11 +95,14 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				gameObject.transform.parent = null;
 
 				// Turn on  dynamic physics
-				rigidbody.detectCollisions = true;
-				rigidbody.isKinematic = false;
+				if(CNetwork.IsServer)
+				{
+                	rigidbody.isKinematic = false;
+				}
+				
 				rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
 				rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
-
+				
 				// Disable dynamic actor
 				GetComponent<CDynamicActor>().enabled = true;
 			}
