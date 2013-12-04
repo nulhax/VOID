@@ -27,7 +27,8 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
-
+	public delegate void OnFacilityCreate(GameObject _NewFacilty);
+	public event OnFacilityCreate EventOnFaciltiyCreate;
 
 // Member Properties
 	
@@ -96,6 +97,12 @@ public class CShipFacilities : MonoBehaviour
 		CGalaxyShipCollider galaxyShipCollider = gameObject.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(eRegisteredPrefab) + "Ext", 
 												cNewFacilityObject.transform.localPosition, cNewFacilityObject.transform.localRotation);
+		
+		// Facility creation event
+		if (EventOnFaciltiyCreate != null)
+		{
+			EventOnFaciltiyCreate(cNewFacilityObject);
+		}
 		
 		return (cNewFacilityObject);
 	}

@@ -98,7 +98,7 @@ public class CFireHazard : MonoBehaviour {
                		 Damage = 40.0f * Time.deltaTime;
 
                		 //apply damage
-               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage, hp);
+               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage);
 				}
             }
         }

@@ -50,11 +50,6 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 		but.MiddleCenterViewPos = new Vector2(0.5f, 0.5f);
 		but.PressDown += SpawnTool;	
 	}
-
-    public void Update()
-    {
-        
-    }
 	
 	[AServerMethod]
     void SpawnTool(CDUIButton _sender)
@@ -78,4 +73,6 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
     {
         // Empty
 	}
+	
+	public void Update(){}
 };
