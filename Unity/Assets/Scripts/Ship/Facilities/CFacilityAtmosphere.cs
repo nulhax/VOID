@@ -156,7 +156,10 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 	void OnHullBreach()
 	{
-		m_fTemperature.Set(0.0f);
+		if(CNetwork.IsServer)
+		{
+			m_fTemperature.Set(0.0f);
+		}
 	}
 	
 	void OnPlayerActorEnter(GameObject _PlayerActor)
