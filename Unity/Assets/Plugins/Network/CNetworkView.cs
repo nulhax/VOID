@@ -267,19 +267,13 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public void SyncTransformPosition()
 	{
-		// Ensure servers only sync transforms
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform position!!!");
-
-		InvokeRpcAll("SetTransformPosition", transform.position.x, transform.position.y, transform.position.z);
+		SetPosition(transform.position.x, transform.position.y, transform.position.z);
 	}
 
 
 	public void SyncTransformRotation()
 	{
-		// Ensure servers only sync transforms
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform rotation!!!");
-
-		InvokeRpcAll("SetTransformRotation", transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+		SetRotation(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 	}
 
 
@@ -288,7 +282,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only sync parents
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's transform scale!!!");
 
-		InvokeRpcAll("SetTransformScale", transform.localScale.x, transform.localScale.y, transform.localScale.z);
+		InvokeRpcAll("RemoteSetScale", transform.localScale.x, transform.localScale.y, transform.localScale.z);
 	}
 
 
@@ -297,7 +291,7 @@ public class CNetworkView : CNetworkMonoBehaviour
         // Ensure servers only sync parents
         Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's rigid body mass!!!");
 
-        InvokeRpcAll("SetRigidBodyMass", rigidbody.mass);
+		InvokeRpcAll("RemoteSetRigidBodyMass", rigidbody.mass);
     }
 
 
@@ -305,14 +299,48 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		if (transform.parent != null)
 		{
-			// Ensure servers only sync parents
-			Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parents!!!");
-	
-			// Ensure transform has a network view for parent
-			Logger.WriteErrorOn(transform.parent.GetComponent<CNetworkView>() == null, "Syncing to a parent requires a parent with a network view!!!");
-			
-			InvokeRpcAll("SetParent", transform.parent.GetComponent<CNetworkView>().ViewId);
+			SetParent(transform.parent.GetComponent<CNetworkView>().ViewId);
 		}
+		else
+		{
+			SetParent(0);
+		}
+	}
+
+
+	public void SetParent(ushort _sParentViewId)
+	{
+		// Ensure servers only sync parents
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's parents!!!");
+
+		// Ensure transform has a network view for parent
+		Logger.WriteErrorOn(_sParentViewId != 0 && transform.parent.GetComponent<CNetworkView>() == null, "Syncing to a parent requires a parent with a network view!!!");
+
+		InvokeRpcAll("RemoteSetParent", _sParentViewId);
+	}
+
+
+	public void SetPosition(Vector3 _vPosition)
+	{
+		SetPosition(_vPosition.x, _vPosition.y, _vPosition.z);
+	}
+
+
+	public void SetPosition(float _fX, float _fY, float _fZ)
+	{
+		// Ensure servers only sync transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform position!!!");
+
+		InvokeRpcAll("RemoteSetPosition", _fX, _fY, _fZ);
+	}
+
+
+	public void SetRotation(float _fX, float _fY, float _fZ)
+	{
+		// Ensure servers only set transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform rotation!!!");
+
+		InvokeRpcAll("RemoteSetRotation", _fX, _fY, _fZ);
 	}
 
 
@@ -652,37 +680,44 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	void SetTransformPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+	void RemoteSetPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
 	{
 		transform.position = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
 	}
 
 
 	[ANetworkRpc]
-	void SetTransformRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	void RemoteSetRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
 	{
 		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
 	}
 
 
 	[ANetworkRpc]
-	void SetTransformScale(float _fScaleX, float _fScaleY, float _fScaleZ)
+	void RemoteSetScale(float _fScaleX, float _fScaleY, float _fScaleZ)
 	{
 		transform.localScale = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
 	}
 
 
     [ANetworkRpc]
-    void SetRigidBodyMass(float _fMass)
+    void RemoteSetRigidBodyMass(float _fMass)
     {
         rigidbody.mass = _fMass;
     }
 
 
 	[ANetworkRpc]
-	void SetParent(ushort _usParentViewId)
+	void RemoteSetParent(ushort _usParentViewId)
 	{
-		transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+		if (_usParentViewId != 0)
+		{
+			transform.parent = CNetwork.Factory.FindObject(_usParentViewId).transform;
+		}
+		else
+		{
+			transform.parent = null;
+		}
 	}
 
 
