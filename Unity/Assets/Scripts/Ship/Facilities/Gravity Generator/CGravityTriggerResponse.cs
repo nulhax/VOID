@@ -13,13 +13,14 @@
 // Namespaces
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 // Implementation
 public class CGravityTriggerResponse : CNetworkMonoBehaviour
 {
 	// Member Data
-	SphereCollider     m_Trigger;
-	CNetworkVar<float> m_fTriggerRadius;	
+	List<GameObject>   NearbyFacilities;
+	CNetworkVar<float> m_fTriggerRadius;
 	CNetworkVar<float> m_fCurrentGravityOutput;
 	
 	// Member Properties
@@ -35,30 +36,59 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-        if (_cVarInstance == m_fTriggerRadius)
-		{
-			// Update radius using trigger radius
-			m_Trigger.radius = TriggerRadius;
-		}
-		
-		else if (_cVarInstance == m_fCurrentGravityOutput)
-		{
-			// Do nothing
-		}
+		// Do nothing
 	}
 	
 	void Start()
-	{
-		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate += new CShipFacilities.OnFacilityCreate(OnfacilityCreate);
-		// Get sphere collider gravity trigger and save locally
-		m_Trigger = transform.FindChild("GravityTrigger").GetComponent<SphereCollider>();
+	{	
+		// Signup for events
+		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate  += new CShipFacilities.OnFacilityCreate(OnFacilityCreate);
+		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += new CShipFacilities.OnFacilityDestroy(OnFacilityDestroy);
 	}
-			
-			
-	void OnfacilityCreate(GameObject _NewFaciltiy)
+
+
+	void OnFacilityCreate(GameObject _Facility)
 	{
-		Debug.Log ("OnFacilityCreate is successful!");
-		// distance checking
+		// If trigger radius >= (Vec1 - Vec2).magnitude 
+		if (m_fTriggerRadius.Get() >= ((_Facility.transform.position - transform.position).magnitude))
+		{
+			// If facility is NOT a member of the facility list
+			if (!ListSearch(_Facility))
+			{
+				NearbyFacilities.Add(_Facility);
+				
+				// Apply gravity to facility
+			}
+			
+			// Default
+			else
+			{
+				Debug.LogError("CGravityTriggerResponse.cs attempted" +
+				               "to call OnFacilityCreate(" + _Facility.ToString() + ")." +
+				               "Event parameter object is already a member of the facility list.");
+			}
+		}
+	}
+
+	void OnFacilityDestroy(GameObject _Facility)
+	{
+		// If trigger radius <= (Vec1 - Vec2).magnitude 
+		if (m_fTriggerRadius.Get() <= ((_Facility.transform.position - transform.position).magnitude))
+		{
+			// If facility IS a member of the facility list
+			if (ListSearch(_Facility))
+			{
+				NearbyFacilities.Remove(_Facility);
+				
+				// Remove gravity from facility
+			}
+			
+			// Default
+			else
+			{
+				// Do nothing
+			}
+		}
 	}
 			
 	[AServerMethod]
@@ -73,22 +103,26 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 		m_fCurrentGravityOutput.Set(_fNewCurrentGravityOutput);
 	}
 	
-	void OnTriggerEnter(Collider _CollisionObject)
+	bool ListSearch(GameObject _Object)
 	{
-		// Set triggered facility's gravity
+		// Temporary return variable
+		bool bReturn = false;
+		
+		// Search the list for a matching entry
+		foreach (GameObject Entry in NearbyFacilities)
+		{
+			// If matching entry is found
+			if (Entry == _Object)
+			{
+				// Set return value
+				bReturn = true;
+				break;
+			}
+		}
+		
+		return (bReturn);
 	}
 	
-	void OnTriggerStay(Collider _CollidionObject)
-	{
-		// Update triggered facility's gravity
-	}
-	
-	void OnTriggerExit(Collider _CollisionObject)
-	{
-		// Disable triggered facility's gravity
-		// NOTE: Ensure that only gravity provided by this
-		// specific generator is disabled, not all gravity for that room.
-	}
-	
-	void Update(){}
+	// Unused functions
+	void UForEachte(){}
 }
