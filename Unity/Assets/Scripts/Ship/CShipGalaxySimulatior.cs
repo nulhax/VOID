@@ -27,7 +27,6 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	// Member Fields
 	private GameObject m_GalaxyShip = null;
 	private GameObject m_PlayerGalaxyCamera = null;
-	private GameObject m_PlayerShipCamera = null;
 	
     protected CNetworkVar<float> m_GalaxyShipPositionX    = null;
     protected CNetworkVar<float> m_GalaxyShipPositionY    = null;
@@ -46,6 +45,7 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	public GameObject PlayerGalaxyCamera
 	{
 		get { return(m_PlayerGalaxyCamera); }
+		set { m_PlayerGalaxyCamera = value; }
 	}
 
 	public Vector3 Position
@@ -104,15 +104,18 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	public void Awake()
 	{
-		// Create a world ship to explore the galaxy
-		m_GalaxyShip = GameObject.Instantiate(Resources.Load("Prefabs/Ship/GalaxyShip", typeof(GameObject))) as GameObject;
+		if(CNetwork.IsServer)
+		{
+			m_GalaxyShip = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.GalaxyShip);
+		}
+		else
+		{
+			m_GalaxyShip = GameObject.FindGameObjectWithTag("GalaxyShip");
+		}
 	}
 	
-	public void AddPlayerActorGalaxyCamera(GameObject _PlayerShipCamera)
-	{	
-		// Save the player ship camera
-		m_PlayerShipCamera = _PlayerShipCamera;
-		
+	public void AddPlayerActorGalaxyCamera()
+	{		
 		// Create the galaxy camera and attach it to the galaxy ship
 		m_PlayerGalaxyCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerGalaxyCamera"));
 		m_PlayerGalaxyCamera.transform.parent = m_GalaxyShip.transform;
@@ -124,11 +127,11 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		
 		if(CNetwork.IsServer)
 		{
-			SyncWorldShipTransform();
+			SyncGalaxyShipTransform();
 		}
 	}
 	
-	private void SyncWorldShipTransform()
+	private void SyncGalaxyShipTransform()
 	{
 		Position = m_GalaxyShip.rigidbody.position;
 		EulerAngles = m_GalaxyShip.transform.eulerAngles;
@@ -137,31 +140,36 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	private void UpdateGalaxyCameraTransforms()
 	{	
 		// If the cameras are gone remove the galaxy camera
-		if(m_PlayerShipCamera == null)
+		GameObject playerShipCamera = CGame.PlayerActor.GetComponent<CPlayerHead>().PlayerShipCamera;
+		if(playerShipCamera == null)
 		{
 			if(m_PlayerGalaxyCamera != null)
 			{
 				Destroy(m_PlayerGalaxyCamera);
 			}
 			
-			// Exit the fucntion.
+			// Exit the method.
 			return;
 		}
 		
-		// Get the simulation actors position relative to the ship
-		Vector3 relativePos = m_PlayerShipCamera.transform.position - transform.position;
-		Quaternion relativeRot = m_PlayerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
+		// Make sure we are using the correct relative transforms (i.e. When player is outside the ship)
+		if(!CGame.PlayerActor.GetComponent<CDynamicActor>().IsOnboardShip)
+		{
+			// Update the ship camera transform relative to the players galaxy camera from the galaxy ship
+			playerShipCamera.transform.position = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (m_PlayerGalaxyCamera.transform.position - m_GalaxyShip.transform.position) + transform.position;
+			playerShipCamera.transform.rotation = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * m_PlayerGalaxyCamera.transform.rotation;		
+		}
+		else
+		{
+			// Update the galaxy camera transform relative to the players ship camera from the ship
+			Vector3 relativePos = playerShipCamera.transform.position - transform.position;
+			Quaternion relativeRot = playerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
 			
-		// Update the transform
-		if(m_PlayerGalaxyCamera.transform.localPosition != relativePos)
-			m_PlayerGalaxyCamera.transform.localPosition = relativePos;
-		
-		if(m_PlayerGalaxyCamera.transform.localRotation != relativeRot)
-			m_PlayerGalaxyCamera.transform.localRotation = relativeRot;
-	}
-	
-	private void OnDestroy()
-	{
-		Destroy(m_GalaxyShip);
+			if(m_PlayerGalaxyCamera.transform.localPosition != relativePos)
+				m_PlayerGalaxyCamera.transform.localPosition = relativePos;
+			
+			if(m_PlayerGalaxyCamera.transform.localRotation != relativeRot)
+				m_PlayerGalaxyCamera.transform.localRotation = relativeRot;
+		}
 	}
 }
