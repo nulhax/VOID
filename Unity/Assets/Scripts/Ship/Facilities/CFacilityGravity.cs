@@ -36,7 +36,7 @@ public class CFacilityGravity : MonoBehaviour
 	// Member Fields
 	private List<GameObject> m_GravitySources;
 	private List<GameObject> m_ActorsInsideTrigger = new List<GameObject>();
-	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.81f, 0.0f);
+	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, 0.0f, 0.0f);
 	
 	// Member Properties
 	
@@ -48,10 +48,15 @@ public class CFacilityGravity : MonoBehaviour
 		CInteriorTrigger facilityInteriorTrigger = GetComponentInChildren<CInteriorTrigger>();
 		
 		if(facilityInteriorTrigger == null)
-			Debug.LogError("CFacilityGravity, no interior trigger to use for gravity application!");
+		{
+			Debug.LogWarning("CFacilityGravity, no interior trigger to use for gravity application!");
+		}
 		
-		facilityInteriorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorEnteredGravityZone);
-		facilityInteriorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorExitedGravityZone);
+		else
+		{
+			facilityInteriorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorEnteredGravityZone);
+			facilityInteriorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorExitedGravityZone);
+		}
 	}
 	
 	public void AddGravitySource(GameObject _Source)
