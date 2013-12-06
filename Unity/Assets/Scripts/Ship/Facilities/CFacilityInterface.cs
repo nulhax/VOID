@@ -27,7 +27,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-	public enum EFacilityType : int
+	public enum EType
 	{
 		INVALID = -1,
 		
@@ -50,21 +50,11 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 	
-	
-// Member Fields
-	
-	private CNetworkVar<int> m_eFacilityType = null;
-	
-	private uint m_uiFacilityID = uint.MaxValue;
-	private bool m_bIntersecting = false;
-	
-	private List<GameObject> m_aExpansionPorts = new List<GameObject>();
-	private GameObject m_InteriorTrigger = null;
 
 // Member Properties
 	
 	
-	public uint FacilityId 
+	public uint Id 
 	{
 		get{return(m_uiFacilityID);}			
 		set
@@ -81,16 +71,16 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	}
 	
 	
-	public EFacilityType FacilityType 
+	public EType Type 
 	{
-		get{return((EFacilityType)m_eFacilityType.Get());}			
+		get{return(m_eType);}			
 		set
 		{
 			if(CNetwork.IsServer)
 			{
-				if((EFacilityType)m_eFacilityType.Get() == EFacilityType.INVALID)
+				if(m_eType == EType.INVALID)
 				{
-					m_eFacilityType.Set((int)value);
+					m_eType = value;
 				}
 				else
 				{
@@ -106,9 +96,11 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 
 // Member Functions
+
+
 	public override void InstanceNetworkVars()
     {
-		m_eFacilityType = new CNetworkVar<int>(OnNetworkVarSync, (int)EFacilityType.INVALID);
+		// Empty
     }
 	
 	public void OnNetworkVarSync(INetworkVar _cVarInstance)
@@ -142,7 +134,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	{
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(Type)) + "Ext", transform.localPosition, transform.localRotation);
 	}
 
 	public GameObject GetExpansionPort(uint _uiExpansionPortId)
@@ -163,31 +155,31 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	}
 	
 	
-	public static CGame.ENetworkRegisteredPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
+	public static CGame.ENetworkRegisteredPrefab GetFacilityPrefab(EType _eFacilityType)
 	{
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.INVALID;
 		
 		switch (_eFacilityType)
 		{
-			case EFacilityType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityBridge; break;
-			case EFacilityType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityFactory; break;
-			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityGravityGenerator; break;
-			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityLifeSupport; break;
-			case EFacilityType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
-			case EFacilityType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
-			case EFacilityType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
+			case EType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityBridge; break;
+			case EType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityFactory; break;
+			case EType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityGravityGenerator; break;
+			case EType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityLifeSupport; break;
+			case EType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
+			case EType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
+			case EType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
 			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
-			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
-			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
-			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
-			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayXSection; break;			
+			case EType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
+			case EType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
+			case EType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
+			case EType.HallwayXSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayXSection; break;			
 		}
 		
 		return (eRegisteredPrefab);
 	}
 
 
-	private void SearchExpansionPorts()
+	void SearchExpansionPorts()
 	{
 		int iCount = 0;
 		for (int i = 0; i < transform.childCount; ++i)
@@ -200,7 +192,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void FindInteriorTrigger()
+	void FindInteriorTrigger()
 	{
 		m_InteriorTrigger = transform.FindChild("InteriorTrigger").gameObject;
 		
@@ -208,7 +200,8 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 			Debug.LogError("Interior Trigger not founf for this facility! Gravity and atmosphere will not function!");
 	}
 	
-	private void AddDebugPortNames()
+
+	void AddDebugPortNames()
 	{
 		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
 		{
@@ -218,7 +211,8 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void OnTriggerEnter(Collider _Entity)
+
+	void OnTriggerEnter(Collider _Entity)
 	{
 		//If this room is intersecting another room, panic.
 		if(_Entity.gameObject.tag == "Facility")
@@ -227,11 +221,26 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		}
 	}   
 	
-	private void OnTriggerExit(Collider _Entity)
+
+	void OnTriggerExit(Collider _Entity)
 	{
 		if(_Entity.gameObject.tag == "Facility")
 		{
 			m_bIntersecting = false;
 		}
 	}
+
+
+	// Member Fields
+
+
+	EType m_eType = EType.INVALID;
+	
+	uint m_uiFacilityID = uint.MaxValue;
+	bool m_bIntersecting = false;
+	
+	List<GameObject> m_aExpansionPorts = new List<GameObject>();
+	GameObject m_InteriorTrigger = null;
+
+
 };
