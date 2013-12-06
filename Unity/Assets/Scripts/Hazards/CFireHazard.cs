@@ -59,7 +59,7 @@ public class CFireHazard : MonoBehaviour {
     {
 	    AudioSource fireAudio = GetComponent<AudioSource>();
 		
-		AudioSystem.GetInstance.Play(fireAudio, 1.0f, 1.0f, true, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
+		AudioSystem.Play(fireAudio, 1.0f, 1.0f, true, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
 	}
     
     public void OnDestroy()

@@ -202,7 +202,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		// Ships
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/WorldShip");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/GalaxyShip");
 		
 		// Ship: Facilities
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityBridge, "Ship/Facilities/Bridge/Bridge");
@@ -419,6 +419,9 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
+		// Tell connecting player which is the ship's network view id
+        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
+		
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
 		
@@ -437,9 +440,6 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Tell connecting player to update their network player id 
         InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
-
-        // Tell connecting player which is the ship's network view id
-        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
 		
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 		
@@ -453,8 +453,8 @@ public class CGame : CNetworkMonoBehaviour
 
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}

@@ -105,11 +105,6 @@ public class CShipFacilities : MonoBehaviour
 
 		m_mFacilityObjects[_eType].Add(cNewFacilityObject);
 		
-		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = gameObject.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(eRegisteredPrefab) + "Ext", 
-												cNewFacilityObject.transform.localPosition, cNewFacilityObject.transform.localRotation);
-		
 		// Facility creation event
 		if (EventOnFaciltiyCreate != null)
 		{

@@ -15,12 +15,13 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
 
 
-public class CFacilityInterface : MonoBehaviour
+public class CFacilityInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -48,7 +49,7 @@ public class CFacilityInterface : MonoBehaviour
 
 
 // Member Delegates & Events
-
+	
 
 // Member Properties
 	
@@ -65,7 +66,7 @@ public class CFacilityInterface : MonoBehaviour
 			else
 			{
 				Debug.LogError("Cannot set room ID value twice!");
-			}			
+			}
 		}			
 	}
 	
@@ -75,19 +76,38 @@ public class CFacilityInterface : MonoBehaviour
 		get{return(m_eType);}			
 		set
 		{
-			if(m_eType == EType.INVALID)
+			if(CNetwork.IsServer)
 			{
-				m_eType = value;
+				if(m_eType == EType.INVALID)
+				{
+					m_eType = value;
+				}
+				else
+				{
+					Debug.LogError("Cannot set room type value twice!");
+				}	
 			}
 			else
 			{
-				Debug.LogError("Cannot set room type value twice!");
-			}			
+				Debug.LogError("Only the server can set the room type!");
+			}
 		}			
 	}
 
 
 // Member Functions
+
+
+	public override void InstanceNetworkVars()
+    {
+		// Empty
+    }
+	
+	public void OnNetworkVarSync(INetworkVar _cVarInstance)
+	{
+		
+	}
+	
 	public void Awake()
 	{	
 		// Initialise the expansion ports
@@ -95,17 +115,27 @@ public class CFacilityInterface : MonoBehaviour
 		AddDebugPortNames();
 		
 		// Generic components to be added for all room types
-		gameObject.AddComponent<CFacilityHull>();
+		//gameObject.AddComponent<CFacilityHull>();
 		gameObject.AddComponent<CFacilityGravity>();
-		gameObject.AddComponent<CFacilityAtmosphere>();
+		//gameObject.AddComponent<CFacilityAtmosphere>();
 		gameObject.AddComponent<CFacilityPower>();
 		gameObject.AddComponent<CFacilityGeneral>();
 		
-		
 		// Add the network view
 		gameObject.AddComponent<CNetworkView>();
+		
+		// Register this rooms internal triggers to the ship actors
+		CInteriorTrigger interiorTrigger = gameObject.GetComponentInChildren<CInteriorTrigger>();
+		interiorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacility);
+		interiorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacility);	
 	}
-
+	
+	public void Start()
+	{
+		// Attach the collider for the facility to the galaxy ship
+		CGalaxyShipCollider galaxyShipCollider = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
+		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(Type)) + "Ext", transform.localPosition, transform.localRotation);
+	}
 
 	public GameObject GetExpansionPort(uint _uiExpansionPortId)
 	{
@@ -149,7 +179,7 @@ public class CFacilityInterface : MonoBehaviour
 	}
 
 
-	private void SearchExpansionPorts()
+	void SearchExpansionPorts()
 	{
 		int iCount = 0;
 		for (int i = 0; i < transform.childCount; ++i)
@@ -162,7 +192,7 @@ public class CFacilityInterface : MonoBehaviour
 		}
 	}
 	
-	private void FindInteriorTrigger()
+	void FindInteriorTrigger()
 	{
 		m_InteriorTrigger = transform.FindChild("InteriorTrigger").gameObject;
 		
@@ -170,7 +200,8 @@ public class CFacilityInterface : MonoBehaviour
 			Debug.LogError("Interior Trigger not founf for this facility! Gravity and atmosphere will not function!");
 	}
 	
-	private void AddDebugPortNames()
+
+	void AddDebugPortNames()
 	{
 		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
 		{
@@ -180,7 +211,8 @@ public class CFacilityInterface : MonoBehaviour
 		}
 	}
 	
-	private void OnTriggerEnter(Collider _Entity)
+
+	void OnTriggerEnter(Collider _Entity)
 	{
 		//If this room is intersecting another room, panic.
 		if(_Entity.gameObject.tag == "Facility")
@@ -189,7 +221,8 @@ public class CFacilityInterface : MonoBehaviour
 		}
 	}   
 	
-	private void OnTriggerExit(Collider _Entity)
+
+	void OnTriggerExit(Collider _Entity)
 	{
 		if(_Entity.gameObject.tag == "Facility")
 		{
@@ -197,8 +230,10 @@ public class CFacilityInterface : MonoBehaviour
 		}
 	}
 
+
 	// Member Fields
-	
+
+
 	EType m_eType = EType.INVALID;
 	
 	uint m_uiFacilityID = uint.MaxValue;
@@ -206,5 +241,6 @@ public class CFacilityInterface : MonoBehaviour
 	
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
 	GameObject m_InteriorTrigger = null;
+
 
 };

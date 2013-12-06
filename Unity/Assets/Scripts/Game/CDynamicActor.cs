@@ -16,8 +16,16 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody))]
 public class CDynamicActor : CNetworkMonoBehaviour 
 {
+	
+// Member Delegates and Events
+	public delegate void ActorEnterExitShipHandler();
+	
+	public event ActorEnterExitShipHandler DynamicActorExitedShip;
+	public event ActorEnterExitShipHandler DynamicActorEnteredShip;
+	
 	
 // Member Fields
 	private Vector3 m_GravityAcceleration = Vector3.zero;
@@ -30,12 +38,19 @@ public class CDynamicActor : CNetworkMonoBehaviour
     private CNetworkVar<float> m_EulerAngleY    = null;
     private CNetworkVar<float> m_EulerAngleZ    = null;
 	
+	CNetworkVar<bool> m_bIsOnboardShip = null;
 	
 // Member Properties	
 	public Vector3 GravityAcceleration
 	{
 		set { m_GravityAcceleration = value; }
 		get { return(m_GravityAcceleration); }
+	}
+	
+	public bool IsOnboardShip
+	{
+		set { m_bIsOnboardShip.Set(value); }
+		get { return (m_bIsOnboardShip.Get()); }
 	}
 	
 	public Vector3 Position
@@ -63,6 +78,16 @@ public class CDynamicActor : CNetworkMonoBehaviour
     }
 
 // Member Methods
+	public void Start()
+	{
+		if(!CNetwork.IsServer)
+		{
+			rigidbody.isKinematic = true;
+		}
+		
+		DynamicActorExitedShip += new ActorEnterExitShipHandler(TransferActorToGalaxySpace);
+	}
+	
 	public void Update()
 	{
 		if(CNetwork.IsServer)
@@ -73,12 +98,11 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	public void FixedUpdate()
 	{
-		// If there is no gravity we skip the update
-		if(rigidbody == null)
-			return;
-			
-		// Apply the gravity to the rigid body
-		rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+		if(rigidbody != null && CNetwork.IsServer)
+		{	
+			// Apply the gravity to the rigid body
+			rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+		}
 	}
 	
     public override void InstanceNetworkVars()
@@ -90,6 +114,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
         m_EulerAngleX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		
+		m_bIsOnboardShip = new CNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -108,16 +134,61 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	            transform.eulerAngles = EulerAngles;
 	        }
 		}
-	}
-	
-	private void ApplyGravity()
-	{
 		
+		// Outside ship
+		if(_rSender == m_bIsOnboardShip)
+		{
+			if(IsOnboardShip)
+			{
+				if(DynamicActorEnteredShip != null)
+					DynamicActorEnteredShip();
+			}
+			else
+			{
+				if(DynamicActorExitedShip != null)
+					DynamicActorExitedShip();
+			}
+		}
 	}
 	
 	private void SyncTransform()
 	{
-		Position = transform.position;
+		Position = rigidbody.position;
 		EulerAngles = transform.eulerAngles;
+	}
+	
+	private void TransferActorToGalaxySpace()
+	{	 	
+		// Temporarily parent the actor to the galaxy ship
+		GameObject galaxyShip =  CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
+		bool childOfPlayer = false;
+		
+		if(transform.parent != null)
+			if(transform.parent.tag == "Player")
+				childOfPlayer = true;
+		
+		if(!childOfPlayer)
+		{
+			// Get the actors position relative to the ship
+			Vector3 relativePos = transform.position - CGame.Ship.transform.position;
+			Quaternion relativeRot = transform.rotation * Quaternion.Inverse(CGame.Ship.transform.rotation);
+			
+			// Temporarily parent to galaxy ship
+			transform.parent = galaxyShip.transform;
+			
+			// Update the position and unparent
+			transform.localPosition = relativePos;
+			transform.localRotation = relativeRot;	
+			transform.parent = null;
+			
+			// Sync over the network
+			if(CNetwork.IsServer && GetComponent<CNetworkView>() != null)
+			{
+				GetComponent<CNetworkView>().SyncParent();
+			}
+		}
+		
+		// Resursively set the galaxy layer on the actor
+		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
 	}
 }
