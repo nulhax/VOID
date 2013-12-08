@@ -4,44 +4,68 @@
 //  (c) 2013
 //
 //  File Name   :   CShipStatus.cs
-//  Description :   Class script for maintaining and updating the stasus of the ship's resources.
+//  Description :   --------------------------
 //
-//  Author  	:  Nathan Boon
-//  Mail    	:  Nathan.Boon@gmail.com
+//  Author  	:  
+//  Mail    	:  @hotmail.com
 //
 
-// Notes:
-// Need to 'register' for event of new room
-// creation, to add that room to the lists
 
 // Namespaces
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-// Implementation
+
+/* Implementation */
+
+
 public class CShipStatus : CNetworkMonoBehaviour
 {
-    // Member Data
-    CNetworkVar<float> m_fTotalPowerOutput;
-    CNetworkVar<float> m_fTotalPowerConsumption;
-    CNetworkVar<float> m_fTotalOxygenOutput;
-    CNetworkVar<float> m_fTotalOxygenConsumption;
-	
-	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_RoomDictionary = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
-	List<GameObject> m_RoomsBridge      = new List<GameObject>();
-	List<GameObject> m_RoomsFactory     = new List<GameObject>();
-	List<GameObject> m_RoomsLifeSupport = new List<GameObject>();
-	List<GameObject> m_RoomsGravityGen  = new List<GameObject>();
-	List<GameObject> m_RoomsEngine      = new List<GameObject>();
 
-    // Member Properties
-    float TotalPowerOutput       { get { return (m_fTotalPowerOutput.Get()); }       set { TotalPowerOutput = value; } }
-    float TotalPowerConsumption  { get { return (m_fTotalPowerConsumption.Get()); }  set { TotalPowerConsumption = value; } }
-    float TotalOxygenOutput      { get { return (m_fTotalOxygenOutput.Get()); }      set { TotalOxygenOutput = value; } }
-    float TotalOxygenConsumption { get { return (m_fTotalOxygenConsumption.Get()); } set { TotalOxygenConsumption = value; } }
+// Member Types
 
-    // Member Functions
+
+// Member Delegates & Events
+
+
+// Member Properties
+
+
+	public float TotalPowerOutput
+    {
+        get { return (m_fTotalPowerOutput.Get()); }
+        set { TotalPowerOutput = value; }
+    }
+
+
+    public float TotalPowerConsumption
+    {
+        get { return (m_fTotalPowerConsumption.Get()); }
+        set { TotalPowerConsumption = value; }
+    }
+
+
+    public float TotalOxygenOutput
+    {
+        get { return (m_fTotalOxygenOutput.Get()); }
+        set { TotalOxygenOutput = value; }
+    }
+
+
+    public float TotalOxygenConsumption
+    {
+        get { return (m_fTotalOxygenConsumption.Get()); }
+        set { TotalOxygenConsumption = value; }
+    }
+
+
+// Member Methods
+
+
+// Member Properties
+
+
     public override void InstanceNetworkVars()
     {
         m_fTotalPowerOutput       = new CNetworkVar<float>(OnNetworkVarSync);
@@ -49,6 +73,7 @@ public class CShipStatus : CNetworkMonoBehaviour
         m_fTotalOxygenOutput      = new CNetworkVar<float>(OnNetworkVarSync);
         m_fTotalOxygenConsumption = new CNetworkVar<float>(OnNetworkVarSync);
     }
+
 	
 	public void Start()
 	{
@@ -78,8 +103,12 @@ public class CShipStatus : CNetworkMonoBehaviour
 	//	m_RoomDictionary.Add(CFacilityInterface.ERoomType.Engine, m_RoomsEngine);
 	}
 
+
     public void Update()
     {
+		UpdateOxygen();
+
+
 //		for (CFacilityInterface.ERoomType RoomType = CFacilityInterface.ERoomType.Bridge;
 		//	 RoomType < CFacilityInterface.ERoomType.MAX;
 		//	 ++RoomType)
@@ -101,5 +130,46 @@ public class CShipStatus : CNetworkMonoBehaviour
 		//}
     }
 
-    void OnNetworkVarSync(INetworkVar _cVarInstance) {}
+
+	void UpdateOxygen()
+	{
+        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EType.LifeSupportDome);
+
+        if (aLifeSupportFacilities != null)
+        {
+            float fTotalOxygen = 0.0f;
+
+            foreach (GameObject cFacility in aLifeSupportFacilities)
+            {
+                fTotalOxygen += cFacility.GetComponent<COxygenProduction>().fOxygens;
+            }
+
+            m_fTotalOxygenOutput.Set(fTotalOxygen);
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
+	{
+
+	}
+
+
+// Member Fields
+
+
+	CNetworkVar<float> m_fTotalPowerOutput;
+	CNetworkVar<float> m_fTotalPowerConsumption;
+	CNetworkVar<float> m_fTotalOxygenOutput;
+	CNetworkVar<float> m_fTotalOxygenConsumption;
+
+
+	Dictionary<CFacilityInterface.EType, List<GameObject>> m_RoomDictionary = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
+	List<GameObject> m_RoomsBridge = new List<GameObject>();
+	List<GameObject> m_RoomsFactory = new List<GameObject>();
+	List<GameObject> m_RoomsLifeSupport = new List<GameObject>();
+	List<GameObject> m_RoomsGravityGen = new List<GameObject>();
+	List<GameObject> m_RoomsEngine = new List<GameObject>();
+
+
 };

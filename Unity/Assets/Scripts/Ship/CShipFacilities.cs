@@ -58,6 +58,7 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
+    [AServerMethod]
 	public GameObject CreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
@@ -86,7 +87,7 @@ public class CShipFacilities : MonoBehaviour
 		
 		// Set facility properties
 		CFacilityInterface cFacilityInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
-		cFacilityInterface.Id = uiFacilityId;
+		cFacilityInterface.FacilityId = uiFacilityId;
 		cFacilityInterface.Type = _eType;
 		
 		// Set facility parent
@@ -121,7 +122,9 @@ public class CShipFacilities : MonoBehaviour
 		
 		return (cNewFacilityObject);
 	}
-	
+
+
+    [AServerMethod]
 	public void DestroyFacility(GameObject _Facility)
 	{
 		if (EventOnFaciltiyDestroy != null)
@@ -131,8 +134,9 @@ public class CShipFacilities : MonoBehaviour
 		
 		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
 	}
-	
-	
+
+
+    [AServerMethod]
 	public List<GameObject> GetAllFacilities()
 	{
 		List<GameObject> ReturnList = new List<GameObject>();
@@ -146,15 +150,24 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
+    [AServerMethod]
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
 		return (m_mFacilities[_uiFacilityId]);
 	}
 
 
+    [AServerMethod]
 	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
 	{
-		return (m_mFacilityObjects[_eType]);
+        if (m_mFacilityObjects.ContainsKey(_eType))
+        {
+            return (m_mFacilityObjects[_eType]);
+        }
+        else
+        {
+            return (null);
+        }
 	}
 
 
