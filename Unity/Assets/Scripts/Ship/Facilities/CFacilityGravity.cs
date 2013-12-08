@@ -36,7 +36,7 @@ public class CFacilityGravity : MonoBehaviour
 	// Member Fields
 	private List<GameObject> m_GravitySources;
 	private List<GameObject> m_ActorsInsideTrigger = new List<GameObject>();
-	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, 0.0f, 0.0f);
+	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.8f, 0.0f);
 	
 	// Member Properties
 	
