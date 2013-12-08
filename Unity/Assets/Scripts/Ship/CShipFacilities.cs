@@ -6,8 +6,8 @@
 //  File Name   :   CShipFacilities.cs
 //  Description :   --------------------------
 //
-//  Author  	:  
-//  Mail    	:  @hotmail.com
+//  Author  	:  Multiple
+//  Mail    	:  N/A
 //
 
 
@@ -27,10 +27,11 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
+	public delegate void OnFacilityCreate(GameObject _Facilty);
+	public delegate void OnFacilityDestroy(GameObject _Facility);
 	
-	
-	public delegate void OnFacilityCreate(GameObject _NewFacilty);
 	public event OnFacilityCreate EventOnFaciltiyCreate;
+	public event OnFacilityDestroy EventOnFaciltiyDestroy;
 
 
 // Member Properties
@@ -57,9 +58,12 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
+    [AServerMethod]
 	public GameObject CreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
+
+
 		if (_uiExpansionPortId != uint.MaxValue &&
 			_uiAttachToId != uint.MaxValue)
 		{
@@ -67,7 +71,7 @@ public class CShipFacilities : MonoBehaviour
 			
 			if(cExpansionPort.HasAttachedFacility == true)
 			{
-				Debug.LogWarning("Failed to create new room. Port already in use");
+				Debug.LogWarning("Failed to create new room. Port is already in use.");
 				return(null);
 			}
 		}
@@ -83,21 +87,26 @@ public class CShipFacilities : MonoBehaviour
 		
 		// Set facility properties
 		CFacilityInterface cFacilityInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
-		cFacilityInterface.Id = uiFacilityId;
+		cFacilityInterface.FacilityId = uiFacilityId;
 		cFacilityInterface.Type = _eType;
 		
 		// Set facility parent
-		cNewFacilityObject.transform.parent = transform;
+		cNewFacilityObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
+
+		// Attach facility expansion port to parent expansion port
+		if (cExpansionPort != null)
+		{
+			cExpansionPort.Attach(_uiAttachToId, cNewFacilityObject);
+		}
 		
-		if(cExpansionPort != null)
-			cExpansionPort.Attach(_uiAttachToId, cNewFacilityObject);			
-			
-		cNewFacilityObject.GetComponent<CNetworkView>().SyncParent();
+		// Sync position & rotation
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformPosition();
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		
+		// Index facility against its Facility Id
 		m_mFacilities.Add(uiFacilityId, cNewFacilityObject);
 
+		// Index facility against its Facility Type
 		if (!m_mFacilityObjects.ContainsKey(_eType))
 		{
 			m_mFacilityObjects.Add(_eType, new List<GameObject>());
@@ -105,7 +114,7 @@ public class CShipFacilities : MonoBehaviour
 
 		m_mFacilityObjects[_eType].Add(cNewFacilityObject);
 		
-		// Facility creation event
+		// Notify facility creation observers
 		if (EventOnFaciltiyCreate != null)
 		{
 			EventOnFaciltiyCreate(cNewFacilityObject);
@@ -113,8 +122,21 @@ public class CShipFacilities : MonoBehaviour
 		
 		return (cNewFacilityObject);
 	}
-	
-	
+
+
+    [AServerMethod]
+	public void DestroyFacility(GameObject _Facility)
+	{
+		if (EventOnFaciltiyDestroy != null)
+		{
+			EventOnFaciltiyDestroy(_Facility);
+		}
+		
+		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
+	}
+
+
+    [AServerMethod]
 	public List<GameObject> GetAllFacilities()
 	{
 		List<GameObject> ReturnList = new List<GameObject>();
@@ -128,15 +150,24 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
+    [AServerMethod]
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
 		return (m_mFacilities[_uiFacilityId]);
 	}
 
 
+    [AServerMethod]
 	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
 	{
-		return (m_mFacilityObjects[_eType]);
+        if (m_mFacilityObjects.ContainsKey(_eType))
+        {
+            return (m_mFacilityObjects[_eType]);
+        }
+        else
+        {
+            return (null);
+        }
 	}
 
 

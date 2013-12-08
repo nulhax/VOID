@@ -314,7 +314,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's parents!!!");
 
 		// Ensure transform has a network view for parent
-		Logger.WriteErrorOn(_sParentViewId != 0 && transform.parent.GetComponent<CNetworkView>() == null, "Syncing to a parent requires a parent with a network view!!!");
+		Logger.WriteErrorOn(_sParentViewId != 0 && FindUsingViewId(_sParentViewId).GetComponent<CNetworkView>() == null, "Syncing to a parent requires a parent with a network view!!!");
 
 		InvokeRpcAll("RemoteSetParent", _sParentViewId);
 	}

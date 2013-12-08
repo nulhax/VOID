@@ -27,7 +27,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-	public enum EType
+    public enum EType
 	{
 		INVALID = -1,
 		
@@ -54,7 +54,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Properties
 	
 	
-	public uint Id 
+	public uint FacilityId 
 	{
 		get{return(m_uiFacilityID);}			
 		set
@@ -73,14 +73,15 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	
 	public EType Type 
 	{
-		get{return(m_eType);}			
+		get{ return(m_eType.Get()); }		
+	
 		set
 		{
 			if(CNetwork.IsServer)
 			{
-				if(m_eType == EType.INVALID)
+				if(m_eType.Get() == EType.INVALID)
 				{
-					m_eType = value;
+					m_eType.Set(value);
 				}
 				else
 				{
@@ -100,7 +101,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
     {
-		// Empty
+        m_eType = new CNetworkVar<EType>(OnNetworkVarSync, EType.INVALID);
     }
 	
 	public void OnNetworkVarSync(INetworkVar _cVarInstance)
@@ -234,11 +235,13 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	// Member Fields
 
 
-	EType m_eType = EType.INVALID;
+	CNetworkVar<EType> m_eType = null;
 	
+
 	uint m_uiFacilityID = uint.MaxValue;
 	bool m_bIntersecting = false;
 	
+
 	List<GameObject> m_aExpansionPorts = new List<GameObject>();
 	GameObject m_InteriorTrigger = null;
 

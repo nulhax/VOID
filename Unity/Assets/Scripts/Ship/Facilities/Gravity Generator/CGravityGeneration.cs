@@ -3,8 +3,8 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CGravityTriggerResponse.cs
-//  Description :   Class script for the gravity trigger
+//  File Name   :   CGravityGeneration.cs
+//  Description :   Class script for generating gravity
 //
 //  Author  	:  Nathan Boon
 //  Mail    	:  Nathan.Boon@gmail.com
@@ -16,15 +16,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 // Implementation
-public class CGravityTriggerResponse : CNetworkMonoBehaviour
+public class CGravityGeneration : CNetworkMonoBehaviour
 {
 	// Member Data
+	const float m_fBaseGravity = -9.81f;
 	List<GameObject>   NearbyFacilities;
 	CNetworkVar<float> m_fTriggerRadius;
 	CNetworkVar<float> m_fCurrentGravityOutput;
 	
 	// Member Properties
-	float TriggerRadius        { get { return (m_fTriggerRadius.Get()); } set { TriggerRadius = value; } }
+	float TriggerRadius        { get { return (m_fTriggerRadius.Get()); }        set { TriggerRadius = value; } }
 	float CurrentGravityOutput { get { return (m_fCurrentGravityOutput.Get()); } set { CurrentGravityOutput = value; } }
 	
 	// Member Functions
@@ -41,11 +42,13 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	
 	void Start()
 	{	
-		// Signup for events
-		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate  += new CShipFacilities.OnFacilityCreate(OnFacilityCreate);
-		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += new CShipFacilities.OnFacilityDestroy(OnFacilityDestroy);
+		if (CNetwork.IsServer)
+		{
+			// Signup for events
+			CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate  += new CShipFacilities.OnFacilityCreate(OnFacilityCreate);
+			CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += new CShipFacilities.OnFacilityDestroy(OnFacilityDestroy);		
+		}
 	}
-
 
 	void OnFacilityCreate(GameObject _Facility)
 	{
@@ -57,7 +60,7 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 			{
 				NearbyFacilities.Add(_Facility);
 				
-				// Apply gravity to facility
+				CGame.Ship.GetComponent<CFacilityGravity>().AddGravitySource(gameObject);
 			}
 			
 			// Default
@@ -80,7 +83,7 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 			{
 				NearbyFacilities.Remove(_Facility);
 				
-				// Remove gravity from facility
+				CGame.Ship.GetComponent<CFacilityGravity>().RemoveGravitySource(gameObject);
 			}
 			
 			// Default
@@ -101,6 +104,11 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	void UpdateCurrentGravityOutput(float _fNewCurrentGravityOutput)
 	{
 		m_fCurrentGravityOutput.Set(_fNewCurrentGravityOutput);
+	}
+	
+	public float GetGravityOutput()
+	{
+		return (m_fCurrentGravityOutput.Get());
 	}
 	
 	bool ListSearch(GameObject _Object)
@@ -124,5 +132,5 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	}
 	
 	// Unused functions
-	void UForEachte(){}
+	void Update(){}
 }

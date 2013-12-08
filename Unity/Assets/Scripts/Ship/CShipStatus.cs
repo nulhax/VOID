@@ -32,10 +32,32 @@ public class CShipStatus : CNetworkMonoBehaviour
 // Member Properties
 
 
-	float TotalPowerOutput { get { return (m_fTotalPowerOutput.Get()); } set { TotalPowerOutput = value; } }
-	float TotalPowerConsumption { get { return (m_fTotalPowerConsumption.Get()); } set { TotalPowerConsumption = value; } }
-	float TotalOxygenOutput { get { return (m_fTotalOxygenOutput.Get()); } set { TotalOxygenOutput = value; } }
-	float TotalOxygenConsumption { get { return (m_fTotalOxygenConsumption.Get()); } set { TotalOxygenConsumption = value; } }
+	public float TotalPowerOutput
+    {
+        get { return (m_fTotalPowerOutput.Get()); }
+        set { TotalPowerOutput = value; }
+    }
+
+
+    public float TotalPowerConsumption
+    {
+        get { return (m_fTotalPowerConsumption.Get()); }
+        set { TotalPowerConsumption = value; }
+    }
+
+
+    public float TotalOxygenOutput
+    {
+        get { return (m_fTotalOxygenOutput.Get()); }
+        set { TotalOxygenOutput = value; }
+    }
+
+
+    public float TotalOxygenConsumption
+    {
+        get { return (m_fTotalOxygenConsumption.Get()); }
+        set { TotalOxygenConsumption = value; }
+    }
 
 
 // Member Methods
@@ -111,8 +133,20 @@ public class CShipStatus : CNetworkMonoBehaviour
 
 	void UpdateOxygen()
 	{
+        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EType.LifeSupportDome);
 
-	}
+        if (aLifeSupportFacilities != null)
+        {
+            float fTotalOxygen = 0.0f;
+
+            foreach (GameObject cFacility in aLifeSupportFacilities)
+            {
+                fTotalOxygen += cFacility.GetComponent<COxygenProduction>().fOxygens;
+            }
+
+            m_fTotalOxygenOutput.Set(fTotalOxygen);
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)

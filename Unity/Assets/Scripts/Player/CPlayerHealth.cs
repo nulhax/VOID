@@ -25,7 +25,15 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     // Member Delegates & Events
-
+	public delegate void OnPlayerApplyHeal(GameObject _TargetPlayer, float _fHealAmount);
+	public delegate void OnPlayerApplyDamage(GameObject _TargetPlayer, float _fDamageAmount);
+	public delegate void OnPlayerDeath(GameObject _SourcePlayer);
+	public delegate void OnPlayerRevive(GameObject _SourcePlayer);
+	
+	public event OnPlayerApplyHeal   EventOnPlayerApplyHeal;
+	public event OnPlayerApplyDamage EventOnPlayerApplyDamage;
+	public event OnPlayerDeath       EventOnPlayerDeath;
+	public event OnPlayerRevive      EventOnPlayerRevive;
 
     // Member Properties
 	public float Health
@@ -207,9 +215,42 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 		
     public void ApplyDamage(float _fDamage)
-    {
+	{
+		// Event callback for damage application
+		if (EventOnPlayerApplyDamage != null)
+		{
+			EventOnPlayerApplyDamage(gameObject, _fDamage);
+		}
+		
         m_fActorHp.Set(m_fActorHp.Get() - _fDamage);
     }
+	
+	public void ApplyHeal(float _fHeal)
+	{
+		// Event callback for heal applciation
+		if (EventOnPlayerApplyHeal != null)
+		{
+			EventOnPlayerApplyHeal(gameObject, _fHeal);
+		}
+	}
+	
+	public void PlayerDied()
+	{
+		// Event callback for player death
+		if (EventOnPlayerDeath != null)
+		{
+			EventOnPlayerDeath(gameObject);
+		}
+	}
+	
+	public void PlayerRevived()
+	{
+		// Event callback for player revived
+		if (EventOnPlayerRevive != null)
+		{
+			EventOnPlayerRevive(gameObject);	
+		}
+	}
 	
 	public void OnOxygenChange(float _fOxygenAmount)
 	{
