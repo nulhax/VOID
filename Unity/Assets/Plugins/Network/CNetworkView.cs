@@ -88,12 +88,14 @@ public class CNetworkView : CNetworkMonoBehaviour
 		{
 			EventPreDestory();
 		}
+
+        s_cNetworkViews.Remove(ViewId);
 	}
 
 
     public void OnDestroy()
     {
-        s_cNetworkViews.Remove(ViewId);
+        
     }
 
 
