@@ -149,9 +149,12 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		if (CGame.PlayerActor != null &&
 			CGame.PlayerActor == gameObject)
 		{
-			UpdateInput();
-			
+			UpdateInput();				
 		}
+		
+		//Update animation and audio based on movement states.
+		UpdateThirdPersonAnimation();
+		UpdateAudio();
 	}
 	
 	public void FixedUpdate()
@@ -161,7 +164,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Process movement on server and client
 		if (CNetwork.IsServer)
 		{
-			ProcessMovement();
+			ProcessMovement();				
 		}
 	}
 
@@ -211,14 +214,15 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_uiMovementStates |= Input.GetKey(s_eMoveRightKey)     ? (uint)EPlayerMovementState.MoveRight    : (uint)0;
 		m_uiMovementStates |= Input.GetKeyDown(s_eJumpKey)      ? (uint)EPlayerMovementState.Jump         : (uint)0;
 		m_uiMovementStates |= Input.GetKey(s_eSprintKey)        ? (uint)EPlayerMovementState.Sprint       : (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)        ? (uint)EPlayerMovementState.Crouch       : (uint)0;		
+		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)        ? (uint)EPlayerMovementState.Crouch       : (uint)0;			
 	}
 
 
 	void ProcessMovement()
 	{
 		// Direction movement
-		/*Vector3 vMovementVelocity = new Vector3();
+		/*
+		Vector3 vMovementVelocity = new Vector3();
 		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
 		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
 		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveLeft)     > 0) ? transform.right   : Vector3.zero;
@@ -238,17 +242,15 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Apply movement velocity
 		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
 		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
-*/
-		// Set latest position
-		//if (CNetwork.IsServer)
-		//{
-			//GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
-		//}
 
-		m_vPosition.Set(transform.position);
+		// Set latest position
+		if (CNetwork.IsServer)
+		{
+			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+		}		
+		*/	
 		
-		UpdateThirdPersonAnimation();	
-		UpdateAudio();
+		m_vPosition.Set(transform.position);
 	}
 	
 		
@@ -259,20 +261,62 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		bool Sprint;
 		bool Jump;
 		bool Crouch;
+		bool StrafeLeft;
+		bool StrafeRight;
+		
 				
 		WalkForward = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward) > 0) ? true : false;	
 		WalkBack = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? true : false;	
 		Sprint = ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? true : false;	
 		Jump = ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0) ? true : false;	
 		Crouch = ((m_uiMovementStates & (uint)EPlayerMovementState.Crouch) > 0) ? true : false;	
+		StrafeLeft = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveLeft) > 0) ? true : false;	
+		StrafeRight = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveRight) > 0) ? true : false;	
 		
+		//Figure out strafe direction		
+		if(StrafeLeft)
+		{	
+			if(m_fDirectionTarget !=  -0.9f)
+			{
+				m_fDirectionTarget = -0.9f;			
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		else if(StrafeRight)
+		{
+			if(m_fDirectionTarget !=  0.9f)
+			{
+				m_fDirectionTarget = 0.9f;
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		else if(!StrafeLeft && !StrafeRight)
+		{
+			if(m_fDirectionTarget !=  0.0f)
+			{
+				m_fDirectionTarget = 0.0f;
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		
+		if(m_fDirection != m_fDirectionTarget)
+		{	
+			m_fDirectionLerpTimer += Time.deltaTime;			
+			m_fDirection = Mathf.Lerp(m_fDirection, m_fDirectionTarget, m_fDirectionLerpTimer);
+		}	
+		else 
+		{
+			m_fDirectionLerpTimer = 0.0f;
+		}
+		
+		m_ThirdPersonAnim.SetFloat("Direction",  m_fDirection);
 		m_ThirdPersonAnim.SetBool("WalkForward", WalkForward);	
 		m_ThirdPersonAnim.SetBool("WalkBack", WalkBack);
 		m_ThirdPersonAnim.SetBool("Sprint", Sprint);
 		m_ThirdPersonAnim.SetBool("Jump", Jump);
 		m_ThirdPersonAnim.SetBool("Crouch", Crouch);	
 		m_ThirdPersonAnim.SetBool("Grounded", IsGrounded);	
-		
+			
 		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 		
 		if (currentBaseState.nameHash == m_iJumpState)
@@ -287,7 +331,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			
 			if(Physics.Raycast(ray, out hitInfo))
 			{
-				if(hitInfo.distance > 1.75)
+				if(hitInfo.distance > 1.75f)
 				{
 					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,1,0), 0), 0.35f, 0.5f);
 				}
@@ -296,9 +340,12 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		else if(currentBaseState.nameHash == m_iSlideState)
 		{
 			if(!m_ThirdPersonAnim.IsInTransition(0))
+			{				
+				m_physCollider.direction = 2;
+			}
+			else
 			{
-				m_physCollider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");					
-				m_physCollider.radius = m_ThirdPersonAnim.GetFloat("ColliderRadius");
+				m_physCollider.direction = 1;
 			}
 			
 			Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
@@ -306,9 +353,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			
 			if(Physics.Raycast(ray, out hitInfo))
 			{
-				if(hitInfo.distance > 1.75)
+				if(hitInfo.distance > 1.5f)
 				{
-					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,2,0), 0), 0.0f, 1.0f);
+					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,1,0), 0), 0.1f, 0.6f);
 				}
 			}
 		}		
@@ -334,9 +381,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			if(Time.time > m_fLastFootStep + 0.6f)
 			{
 				m_cueFootSteps.Play(0.8f, false, -1);
-				m_fLastFootStep = Time.time;
-				
-				
+				m_fLastFootStep = Time.time;			
 			}
 		}
 	}
@@ -370,7 +415,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	static KeyCode s_eSprintKey = KeyCode.LeftShift;
 	static KeyCode s_eCrouchKey = KeyCode.C;
 	
-	
 	Animator m_ThirdPersonAnim;
 	
 	static int m_iIdleState = Animator.StringToHash("Base Layer.Idle");
@@ -381,8 +425,14 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	static int m_iSlideState = Animator.StringToHash("Base Layer.Slide");
 	
 	CapsuleCollider m_physCollider;
+	float m_fDirection = 0;
+	float m_fDirectionTarget = 0;
+	float m_fDirectionLerpTimer = 0;
 	
-	
+	const float m_kfCrouchLayerWeight = 0.6f;
+	float m_fCrouchLerpTimer = 0;
+	float m_fCurrentCrouchWeight = 0;
+		
 	AudioCue m_cueFootSteps;
 	bool m_bFootStepCoolDown = false;
 	float m_fLastFootStep;

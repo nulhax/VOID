@@ -1180,7 +1180,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: d326a8459817a4d448fc14b0fa469ce8, type: 2}
   m_CullingMode: 0
   m_ApplyRootMotion: 1
-  m_AnimatePhysics: 0
+  m_AnimatePhysics: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1377,7 +1377,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: .5
+  m_Radius: .400000006
   m_Height: 1.79999995
   m_Direction: 1
   m_Center: {x: 0, y: .899999976, z: 0}
