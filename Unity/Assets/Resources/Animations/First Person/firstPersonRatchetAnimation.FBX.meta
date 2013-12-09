@@ -1,0 +1,293 @@
+fileFormatVersion: 2
+guid: d019aeaadd8c7484e92d6d2a670f08f6
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Base Human01RDigit01
+    100002: Base Human01RDigit019
+    100004: Base Human01RDigit02
+    100006: Base Human01RDigit020
+    100008: Base Human01RDigit021
+    100010: Base Human01RDigit022
+    100012: Base Human01RDigit023
+    100014: Base Human01RDigit024
+    100016: Base Human01RDigit025
+    100018: Base Human01RDigit026
+    100020: Base Human01RDigit027
+    100022: Base Human01RDigit028
+    100024: Base Human01RDigit029
+    100026: Base Human01RDigit03
+    100028: Base Human01RDigit030
+    100030: Base Human01RDigit031
+    100032: Base Human01RDigit032
+    100034: Base Human01RDigit033
+    100036: Base Human01RDigit04
+    100038: Base Human01RDigit05
+    100040: Base Human01RDigit06
+    100042: Base Human01RDigit07
+    100044: Base Human01RDigit08
+    100046: Base Human01RDigit09
+    100048: Base Human01RDigit10
+    100050: Base Human01RDigit14
+    100052: Base Human01RDigit15
+    100054: Base Human01RDigit16
+    100056: Base Human01RDigit17
+    100058: Base Human01RDigit18
+    100060: Base Human01RForearm005
+    100062: Base Human01RForearm006
+    100064: Base Human01RForearm03
+    100066: Base Human01RForearm04
+    100068: Base Human01RPalm002
+    100070: Base Human01RPalm01
+    100072: Base Human01RUpperarm
+    100074: Base Human01RUpperarm 1
+    100076: Base Human01RUpperarm005
+    100078: Base Human01RUpperarm006
+    100080: Camera_Player01
+    100082: Dummy01
+    100084: Dummy02
+    100086: //RootNode
+    100088: Gun_Barrel
+    100090: Gun_FrontPart
+    100092: Gun_Handle
+    100094: Gun_LowerPart
+    100096: Gun_UpperPart
+    100098: MainMesh
+    100100: MuzzleFlash
+    100102: Particle View 01
+    100104: root
+    400000: Base Human01RDigit01
+    400002: Base Human01RDigit019
+    400004: Base Human01RDigit02
+    400006: Base Human01RDigit020
+    400008: Base Human01RDigit021
+    400010: Base Human01RDigit022
+    400012: Base Human01RDigit023
+    400014: Base Human01RDigit024
+    400016: Base Human01RDigit025
+    400018: Base Human01RDigit026
+    400020: Base Human01RDigit027
+    400022: Base Human01RDigit028
+    400024: Base Human01RDigit029
+    400026: Base Human01RDigit03
+    400028: Base Human01RDigit030
+    400030: Base Human01RDigit031
+    400032: Base Human01RDigit032
+    400034: Base Human01RDigit033
+    400036: Base Human01RDigit04
+    400038: Base Human01RDigit05
+    400040: Base Human01RDigit06
+    400042: Base Human01RDigit07
+    400044: Base Human01RDigit08
+    400046: Base Human01RDigit09
+    400048: Base Human01RDigit10
+    400050: Base Human01RDigit14
+    400052: Base Human01RDigit15
+    400054: Base Human01RDigit16
+    400056: Base Human01RDigit17
+    400058: Base Human01RDigit18
+    400060: Base Human01RForearm005
+    400062: Base Human01RForearm006
+    400064: Base Human01RForearm03
+    400066: Base Human01RForearm04
+    400068: Base Human01RPalm002
+    400070: Base Human01RPalm01
+    400072: Base Human01RUpperarm
+    400074: Base Human01RUpperarm 1
+    400076: Base Human01RUpperarm005
+    400078: Base Human01RUpperarm006
+    400080: Camera_Player01
+    400082: Dummy01
+    400084: Dummy02
+    400086: //RootNode
+    400088: Gun_Barrel
+    400090: Gun_FrontPart
+    400092: Gun_Handle
+    400094: Gun_LowerPart
+    400096: Gun_UpperPart
+    400098: MainMesh
+    400100: MuzzleFlash
+    400102: Particle View 01
+    400104: root
+    2300000: Base Human01RDigit01
+    2300002: Base Human01RDigit019
+    2300004: Base Human01RDigit02
+    2300006: Base Human01RDigit020
+    2300008: Base Human01RDigit021
+    2300010: Base Human01RDigit022
+    2300012: Base Human01RDigit023
+    2300014: Base Human01RDigit024
+    2300016: Base Human01RDigit025
+    2300018: Base Human01RDigit026
+    2300020: Base Human01RDigit027
+    2300022: Base Human01RDigit028
+    2300024: Base Human01RDigit029
+    2300026: Base Human01RDigit03
+    2300028: Base Human01RDigit030
+    2300030: Base Human01RDigit031
+    2300032: Base Human01RDigit032
+    2300034: Base Human01RDigit033
+    2300036: Base Human01RDigit04
+    2300038: Base Human01RDigit05
+    2300040: Base Human01RDigit06
+    2300042: Base Human01RDigit07
+    2300044: Base Human01RDigit08
+    2300046: Base Human01RDigit09
+    2300048: Base Human01RDigit10
+    2300050: Base Human01RDigit14
+    2300052: Base Human01RDigit15
+    2300054: Base Human01RDigit16
+    2300056: Base Human01RDigit17
+    2300058: Base Human01RDigit18
+    2300060: Base Human01RForearm005
+    2300062: Base Human01RForearm006
+    2300064: Base Human01RForearm03
+    2300066: Base Human01RForearm04
+    2300068: Base Human01RPalm002
+    2300070: Base Human01RPalm01
+    2300072: Base Human01RUpperarm
+    2300074: Base Human01RUpperarm 1
+    2300076: Base Human01RUpperarm005
+    2300078: Base Human01RUpperarm006
+    2300080: MuzzleFlash
+    2300082: root
+    3300000: Base Human01RDigit01
+    3300002: Base Human01RDigit019
+    3300004: Base Human01RDigit02
+    3300006: Base Human01RDigit020
+    3300008: Base Human01RDigit021
+    3300010: Base Human01RDigit022
+    3300012: Base Human01RDigit023
+    3300014: Base Human01RDigit024
+    3300016: Base Human01RDigit025
+    3300018: Base Human01RDigit026
+    3300020: Base Human01RDigit027
+    3300022: Base Human01RDigit028
+    3300024: Base Human01RDigit029
+    3300026: Base Human01RDigit03
+    3300028: Base Human01RDigit030
+    3300030: Base Human01RDigit031
+    3300032: Base Human01RDigit032
+    3300034: Base Human01RDigit033
+    3300036: Base Human01RDigit04
+    3300038: Base Human01RDigit05
+    3300040: Base Human01RDigit06
+    3300042: Base Human01RDigit07
+    3300044: Base Human01RDigit08
+    3300046: Base Human01RDigit09
+    3300048: Base Human01RDigit10
+    3300050: Base Human01RDigit14
+    3300052: Base Human01RDigit15
+    3300054: Base Human01RDigit16
+    3300056: Base Human01RDigit17
+    3300058: Base Human01RDigit18
+    3300060: Base Human01RForearm005
+    3300062: Base Human01RForearm006
+    3300064: Base Human01RForearm03
+    3300066: Base Human01RForearm04
+    3300068: Base Human01RPalm002
+    3300070: Base Human01RPalm01
+    3300072: Base Human01RUpperarm
+    3300074: Base Human01RUpperarm 1
+    3300076: Base Human01RUpperarm005
+    3300078: Base Human01RUpperarm006
+    3300080: MuzzleFlash
+    3300082: root
+    4300000: root
+    4300002: Base Human01RUpperarm
+    4300004: Base Human01RUpperarm
+    4300006: Base Human01RForearm03
+    4300008: Base Human01RForearm04
+    4300010: Base Human01RPalm01
+    4300012: Base Human01RDigit01
+    4300014: Base Human01RDigit02
+    4300016: Base Human01RDigit03
+    4300018: Base Human01RDigit04
+    4300020: Base Human01RDigit05
+    4300022: Base Human01RDigit06
+    4300024: Base Human01RDigit07
+    4300026: Base Human01RDigit08
+    4300028: Base Human01RDigit09
+    4300030: Base Human01RDigit10
+    4300032: Base Human01RDigit14
+    4300034: Base Human01RDigit15
+    4300036: Base Human01RDigit16
+    4300038: Base Human01RDigit17
+    4300040: Base Human01RDigit18
+    4300042: MuzzleFlash
+    4300044: Base Human01RUpperarm005
+    4300046: Base Human01RUpperarm006
+    4300048: Base Human01RForearm005
+    4300050: Base Human01RForearm006
+    4300052: Base Human01RPalm002
+    4300054: Base Human01RDigit019
+    4300056: Base Human01RDigit020
+    4300058: Base Human01RDigit021
+    4300060: Base Human01RDigit022
+    4300062: Base Human01RDigit023
+    4300064: Base Human01RDigit024
+    4300066: Base Human01RDigit025
+    4300068: Base Human01RDigit026
+    4300070: Base Human01RDigit027
+    4300072: Base Human01RDigit028
+    4300074: Base Human01RDigit029
+    4300076: Base Human01RDigit030
+    4300078: Base Human01RDigit031
+    4300080: Base Human01RDigit032
+    4300082: Base Human01RDigit033
+    4300084: MainMesh
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: MainMesh
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    handles: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  additionalBone: 1
+  animationType: 2
+  userData: 

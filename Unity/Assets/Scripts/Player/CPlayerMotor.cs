@@ -218,33 +218,32 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	void ProcessMovement()
 	{
 		// Direction movement
-		//Vector3 vMovementVelocity = new Vector3();
-		//vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
-		//vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
-		//vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveLeft)     > 0) ? transform.right   : Vector3.zero;
-		//vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveRight)    > 0) ? transform.right   : Vector3.zero;
+		/*Vector3 vMovementVelocity = new Vector3();
+		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
+		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
+		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveLeft)     > 0) ? transform.right   : Vector3.zero;
+		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveRight)    > 0) ? transform.right   : Vector3.zero;
 
 		// Apply direction movement speed
-		//vMovementVelocity  = vMovementVelocity.normalized;
-		//vMovementVelocity *= ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
+		vMovementVelocity  = vMovementVelocity.normalized;
+		vMovementVelocity *= ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
 
 		// Jump 
-		//if ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0 &&
-		//	 IsGrounded)
-		//{
-			//vMovementVelocity.y = JumpSpeed;
-		//}
-
-		// Apply movement velocity
-		//rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
-		//rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
-
-		// Set latest position
-		if (CNetwork.IsServer)
+		if ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0 &&
+			 IsGrounded)
 		{
-			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+			vMovementVelocity.y = JumpSpeed;
 		}
 
+		// Apply movement velocity
+		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+*/
+		// Set latest position
+		//if (CNetwork.IsServer)
+		//{
+			//GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+		//}
 
 		m_vPosition.Set(transform.position);
 		
@@ -292,14 +291,14 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 				{
 					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,1,0), 0), 0.35f, 0.5f);
 				}
-			}
-				
+			}				
 		}
 		else if(currentBaseState.nameHash == m_iSlideState)
 		{
 			if(!m_ThirdPersonAnim.IsInTransition(0))
 			{
 				m_physCollider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");					
+				m_physCollider.radius = m_ThirdPersonAnim.GetFloat("ColliderRadius");
 			}
 			
 			Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
@@ -309,7 +308,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			{
 				if(hitInfo.distance > 1.75)
 				{
-					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,1,0), 0), 0.0f, 1.0f);
+					m_ThirdPersonAnim.MatchTarget(hitInfo.point, Quaternion.identity, AvatarTarget.Root, new MatchTargetWeightMask(new Vector3(0,2,0), 0), 0.0f, 1.0f);
 				}
 			}
 		}		
