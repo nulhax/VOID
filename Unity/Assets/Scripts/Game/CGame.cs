@@ -83,6 +83,8 @@ public class CGame : CNetworkMonoBehaviour
 		FuelCell,
 		PlasmaCell,
 		PowerCell,
+		BioCell,
+		ReplicatorCell,
 		PanelFuseBox,
 		ControlConsole,
 		
@@ -245,6 +247,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/General/FuelCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/General/PlasmaCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/General/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/General/BioCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/General/ReplicatorCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/General/PanelFuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/General/DUI/CurvedMonitor_wide");
 		
@@ -450,7 +454,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 

@@ -31,7 +31,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		PowerCell,
 		PlasmaCell,
 		FuelCell,
-		BlackMatterCell
+		BlackMatterCell,
+		BioCell,
+		ReplicatorCell
 	}
 
 
@@ -182,6 +184,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 			}
 		}
 	}
+	
+
 
 
 // Member Fields
@@ -194,6 +198,5 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 
 	ulong m_ulOwnerPlayerId = 0;
-
 
 };
