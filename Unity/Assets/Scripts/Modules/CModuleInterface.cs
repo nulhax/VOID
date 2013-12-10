@@ -46,34 +46,34 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public delegate void NotifyDropped();
 	public event NotifyDropped EventDropped;
 
-
+	public delegate void NotifySwapped();
+	public event NotifySwapped EventSwapped;
 // Member Properties
 
 
 	public GameObject OwnerPlayerActorObject
 	{
-		get { return (CNetwork.Factory.FindObject(m_usOwnerPlayerActorViewId.Get())); }
+		get { return (CNetwork.Factory.FindObject(m_usOwnerActorViewId.Get())); }
 	}
 
 
 	public bool IsHeld
 	{
-		get { return (m_usOwnerPlayerActorViewId.Get() != 0); }
+		get { return (m_usOwnerActorViewId.Get() != 0); }
 	}
-
 
 // Member Functions
 
 
 	public override void InstanceNetworkVars()
 	{
-		m_usOwnerPlayerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
+		m_usOwnerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
 	}
 
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_usOwnerPlayerActorViewId)
+		if (_cSyncedNetworkVar == m_usOwnerActorViewId)
 		{
 			if (IsHeld)
 			{
@@ -107,7 +107,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				
 				// Disable dynamic actor
 				GetComponent<CDynamicActor>().enabled = true;
+
 			}
+	
 		}
 	}
 
@@ -152,7 +154,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 			m_ulOwnerPlayerId = _ulPlayerId;
 
 			// Set owning object view id
-			m_usOwnerPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+			m_usOwnerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
 
 			// Notify observers
 			if (EventPickedUp != null)
@@ -175,7 +177,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 			m_ulOwnerPlayerId = 0;
 
 			// Set owning object view id
-			m_usOwnerPlayerActorViewId.Set(0);
+			m_usOwnerActorViewId.Set(0);
 
 			// Notify observers
 			if (EventDropped != null)
@@ -184,9 +186,6 @@ public class CModuleInterface : CNetworkMonoBehaviour
 			}
 		}
 	}
-	
-
-
 
 // Member Fields
 
@@ -194,8 +193,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public EType m_eType;
 
 
-	CNetworkVar<ushort> m_usOwnerPlayerActorViewId = null;
-
+	CNetworkVar<ushort> m_usOwnerActorViewId = null;
 
 	ulong m_ulOwnerPlayerId = 0;
 
