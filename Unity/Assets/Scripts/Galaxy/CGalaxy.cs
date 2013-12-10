@@ -710,11 +710,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         }
 
         // Linear velocity.
-        if (rigidBody != null && gubbin.mLinearVelocity != null)
+        if (rigidBody != null && gubbin.mLinearVelocity != Vector3.zero)
             rigidBody.velocity = gubbin.mLinearVelocity;
 
         // Angular velocity.
-        if (rigidBody != null && gubbin.mAngularVelocity != null)
+        if (rigidBody != null && gubbin.mAngularVelocity != Vector3.zero)
             rigidBody.angularVelocity = gubbin.mAngularVelocity;
 
         // Sync everything the networked entity script handles.
@@ -808,8 +808,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
 
         // Fog.
-        galaxyIE.mFogMaterial.SetFloat("_FogDensity", 0.001f);
-        galaxyIE.mFogStartDistance = 2000.0f;
+        Shader.SetGlobalFloat("void_FogStartDistance", 20.0f);
+        Shader.SetGlobalFloat("void_FogEndDistance", 40.0f);
+        Shader.SetGlobalFloat("void_FogDensity", 0.01f);
 
         Profiler.EndSample();
     }
