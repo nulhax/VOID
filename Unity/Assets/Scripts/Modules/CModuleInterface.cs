@@ -119,8 +119,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public void Awake()
 	{
 		gameObject.AddComponent<Rigidbody>();
-		gameObject.AddComponent<CDynamicActor>();
 		gameObject.AddComponent<CInteractableObject>();
+		gameObject.AddComponent<CDynamicActor>();
 		gameObject.AddComponent<CNetworkView>();
 		
 		gameObject.rigidbody.useGravity = false;
