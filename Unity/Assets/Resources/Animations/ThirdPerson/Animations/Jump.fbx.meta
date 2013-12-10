@@ -473,6 +473,7 @@ ModelImporter:
     4300110: l_ankleProxy_geo
     4300112: l_kneeProxy_geo
     4300114: l_hipProxy_geo
+    7400000: Fall1
     7400006: Avatar_TStance
     7400008: Run_Jumpvault_SideFlip_R_Run
     7400010: Run_Jumpvault_SideFlip_L_Run
@@ -503,6 +504,114 @@ ModelImporter:
       loop: 0
       loopBlend: 0
       loopBlendOrientation: 1
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves:
+      - name: ColliderHeight
+        curve:
+          serializedVersion: 2
+          curve:
+          - time: -.00833333377
+            value: 1.80124998
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: 0
+            value: 1.80121398
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .0485284477
+            value: .626671255
+            inSlope: .00536441803
+            outSlope: .00536441803
+            tangentMode: 0
+          - time: .100614905
+            value: .5
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .2386823
+            value: .5
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .410338968
+            value: .5
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .58136946
+            value: .564817309
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .664503276
+            value: 1.79999995
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          preInfinity: 2
+          postInfinity: 2
+      - name: gravityWeight
+        curve:
+          serializedVersion: 2
+          curve:
+          - time: -Infinity
+            value: NaN
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: 0
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .15257065
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .228855759
+            value: 0
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .63725853
+            value: .00344827538
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: .773521185
+            value: .996551752
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          - time: 1
+            value: 1
+            inSlope: 0
+            outSlope: 0
+            tangentMode: 0
+          preInfinity: 2
+          postInfinity: 2
+      transformMask: []
+    - name: Fall1
+      takeName: Jump
+      firstFrame: 306
+      lastFrame: 307
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopBlend: 1
+      loopBlendOrientation: 0
       loopBlendPositionY: 0
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 0
