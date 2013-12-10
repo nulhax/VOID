@@ -50,6 +50,8 @@ public class CShipOnboardActors : MonoBehaviour
 			if(_Actor.GetComponent<CDynamicActor>() != null)	
 			{
 				_Actor.GetComponent<CDynamicActor>().IsOnboardShip = true;
+				
+				Debug.Log("Actor Entered ship");
 			}
 		}
 		
@@ -67,11 +69,13 @@ public class CShipOnboardActors : MonoBehaviour
 			if(_Actor.GetComponent<CDynamicActor>() != null)	
 			{
 				_Actor.GetComponent<CDynamicActor>().IsOnboardShip = false;
+				
+				Debug.Log("Actor Exited ship");
 			}
 		}
 	}
 	
-	private bool IsActorOnboardShip(GameObject _Actor)
+	public bool IsActorOnboardShip(GameObject _Actor)
 	{
 		// Check if this actor is onboard any other facility
 		bool actorOnboardShip = false;

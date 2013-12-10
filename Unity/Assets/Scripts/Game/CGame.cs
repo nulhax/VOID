@@ -454,14 +454,14 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
 		
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
-		//CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}

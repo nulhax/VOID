@@ -41,12 +41,18 @@ public class CInteriorTrigger : MonoBehaviour
 	// Member Methods
 	private void OnTriggerEnter(Collider _Other)
 	{
-		OnActorEnter(transform.parent.gameObject, _Other.rigidbody.gameObject);
+		if(_Other.rigidbody != null)
+		{
+			OnActorEnter(transform.parent.gameObject, _Other.rigidbody.gameObject);
+		}
 	}
 	
 	private void OnTriggerExit(Collider _Other)
 	{
-		OnActorExit(transform.parent.gameObject, _Other.rigidbody.gameObject);
+		if(_Other.rigidbody != null)
+		{
+			OnActorExit(transform.parent.gameObject, _Other.rigidbody.gameObject);
+		}
 	}
 	
 	private void OnActorEnter(GameObject _Facility, GameObject _Actor)

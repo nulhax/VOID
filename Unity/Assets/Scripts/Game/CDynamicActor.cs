@@ -21,13 +21,14 @@ public class CDynamicActor : CNetworkMonoBehaviour
 {
 	
 // Member Delegates and Events
-	public delegate void ActorEnterExitShipHandler();
+	public delegate void EnterExitShipHandler();
 	
-	public event ActorEnterExitShipHandler DynamicActorExitedShip;
-	public event ActorEnterExitShipHandler DynamicActorEnteredShip;
+	public event EnterExitShipHandler EventExitedShip;
+	public event EnterExitShipHandler EventEnteredShip;
 	
 	
 // Member Fields
+	private int m_OriginalLayer = 0;
 	private Vector3 m_GravityAcceleration = Vector3.zero;
 	
     private CNetworkVar<float> m_cPositionX    = null;
@@ -38,7 +39,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
     private CNetworkVar<float> m_EulerAngleY    = null;
     private CNetworkVar<float> m_EulerAngleZ    = null;
 	
-	CNetworkVar<bool> m_bIsOnboardShip = null;
+	private CNetworkVar<bool> m_bIsOnboardShip = null;
+	private CNetworkVar<bool> m_bIsInBoardingZone = null;
 	
 // Member Properties	
 	public Vector3 GravityAcceleration
@@ -51,6 +53,12 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	{
 		set { m_bIsOnboardShip.Set(value); }
 		get { return (m_bIsOnboardShip.Get()); }
+	}
+	
+	public bool IsInBoardingZone
+	{
+		set { m_bIsInBoardingZone.Set(value); }
+		get { return (m_bIsInBoardingZone.Get()); }
 	}
 	
 	public Vector3 Position
@@ -85,7 +93,10 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			rigidbody.isKinematic = true;
 		}
 		
-		DynamicActorExitedShip += new ActorEnterExitShipHandler(TransferActorToGalaxySpace);
+		EventEnteredShip += new EnterExitShipHandler(TransferActorToShipSpace);
+		EventExitedShip += new EnterExitShipHandler(TransferActorToGalaxySpace);
+		
+		m_OriginalLayer = gameObject.layer;
 	}
 	
 	public void Update()
@@ -116,6 +127,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
 		m_bIsOnboardShip = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bIsInBoardingZone = new CNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -135,18 +147,18 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	        }
 		}
 		
-		// Outside ship
+		// Boarding/Unboarding ship
 		if(_rSender == m_bIsOnboardShip)
 		{
 			if(IsOnboardShip)
 			{
-				if(DynamicActorEnteredShip != null)
-					DynamicActorEnteredShip();
+				if(EventEnteredShip != null)
+					EventEnteredShip();
 			}
 			else
 			{
-				if(DynamicActorExitedShip != null)
-					DynamicActorExitedShip();
+				if(EventExitedShip != null)
+					EventExitedShip();
 			}
 		}
 	}
@@ -159,7 +171,6 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	private void TransferActorToGalaxySpace()
 	{	 	
-		// Temporarily parent the actor to the galaxy ship
 		GameObject galaxyShip =  CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
 		bool childOfPlayer = false;
 		
@@ -190,5 +201,38 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		// Resursively set the galaxy layer on the actor
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
+	}
+	
+	private void TransferActorToShipSpace()
+	{
+		GameObject galaxyShip = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
+		bool childOfPlayer = false;
+		
+		if(transform.parent != null)
+			if(transform.parent.tag == "Player")
+				childOfPlayer = true;
+		
+		if(!childOfPlayer)
+		{
+			// Get the actors position relative to the ship
+			Vector3 relativePos = transform.position - galaxyShip.transform.position;
+			Quaternion relativeRot = transform.rotation * Quaternion.Inverse(galaxyShip.transform.rotation);
+			
+			// Parent the actor to the ship
+			transform.parent = CGame.Ship.transform;
+			
+			// Update the position and unparent
+			transform.localPosition = relativePos;
+			transform.localRotation = relativeRot;	
+			
+			// Sync over the network
+			if(CNetwork.IsServer && GetComponent<CNetworkView>() != null)
+			{
+				GetComponent<CNetworkView>().SyncParent();
+			}
+		}
+		
+		// Resursively set the default layer on the actor
+		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
 	}
 }

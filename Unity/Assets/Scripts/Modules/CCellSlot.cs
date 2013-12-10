@@ -90,7 +90,7 @@ public class CCellSlot : CNetworkMonoBehaviour
 				InsertedCell.transform.position = transform.position + transform.up * 1.0f;
 				InsertedCell.transform.rotation = transform.rotation;
 				
-				//InsertedCell.GetComponent<CModuleFunctional>().EventModuleBroken += new CModuleFunctional.NotifyBroken(CellBroke);
+				InsertedCell.GetComponent<CModuleFunctional>().EventModuleBroken += new CModuleFunctional.NotifyBroken(CellBroke);
 				CellInserted();
 				
 				// Turn off  dynamic physics

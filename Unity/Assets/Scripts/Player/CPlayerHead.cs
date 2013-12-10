@@ -93,7 +93,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CDynamicActor>().DynamicActorExitedShip += new CDynamicActor.ActorEnterExitShipHandler(PlayerActorExitShip);
+			gameObject.GetComponent<CDynamicActor>().EventEnteredShip += new CDynamicActor.EnterExitShipHandler(PlayerActorEnteredShip);
+			gameObject.GetComponent<CDynamicActor>().EventExitedShip += new CDynamicActor.EnterExitShipHandler(PlayerActorExitedShip);
 		}
 	}
 
@@ -115,7 +116,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		CPlayerHead cMyActorHead = CGame.PlayerActor.GetComponent<CPlayerHead>();
 
 		// Write my head's x-rotation
-		_cStream.Write(cMyActorHead.m_vRotation.x);
+		_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
 	}
 
 
@@ -134,23 +135,43 @@ public class CPlayerHead : CNetworkMonoBehaviour
     private void UpdateInput()
 	{
 		// Retrieve new rotations
-		m_vRotation.x += Input.GetAxis("Mouse Y") * m_fSensitivityX * -1.0f;
-		m_vRotation.y += Input.GetAxis("Mouse X") * m_fSensitivityY;
+		m_vRotation.x = Input.GetAxis("Mouse Y") * m_fSensitivityX * -1.0f;
+		m_vRotation.y = Input.GetAxis("Mouse X") * m_fSensitivityY;
 
-		// Keep y rotation within 360 range
-		m_vRotation.y -= (m_vRotation.y >=  360.0f) ? 360.0f : 0.0f;
-		m_vRotation.y += (m_vRotation.y <= -360.0f) ? 360.0f : 0.0f;
-
-		// Clamp rotation
-		m_vRotation.x = Mathf.Clamp(m_vRotation.x, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
-		m_vRotation.y = Mathf.Clamp(m_vRotation.y, m_vCameraMinRotation.y, m_vCameraMaxRotation.y);
-
+		// Apply yaw to the actor
+		transform.Rotate(0.0f, m_vRotation.y, 0.0f, Space.Self);
+		
 		// Apply the pitch to the camera
-		transform.localEulerAngles = new Vector3(0.0f, m_vRotation.y, 0.0f);
-		m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
+		m_cActorHead.transform.Rotate(m_vRotation.x, 0.0f, 0.0f, Space.Self);
+		
+		// Clamp the head rotation
+		float clampedHeadX = m_cActorHead.transform.localEulerAngles.x;
+		if(clampedHeadX > 180.0f)
+			clampedHeadX = clampedHeadX - 360.0f;
+		clampedHeadX = Mathf.Clamp(clampedHeadX, -m_HeadYRotationLimit, m_HeadYRotationLimit);
+		
+		// Apply the clamp
+		m_cActorHead.transform.localEulerAngles = new Vector3(clampedHeadX, m_cActorHead.transform.localEulerAngles.y, m_cActorHead.transform.localEulerAngles.z);
 	}
 	
-	private void PlayerActorExitShip()
+	private void PlayerActorEnteredShip()
+	{
+		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
+		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
+	
+		if(playerGalaxyCamera.transform.parent == ActorHead.transform)
+		{
+			// Swap the cameras parenthood
+			playerGalaxyCamera.transform.parent = shipGalaxySim.gameObject.transform;
+			PlayerShipCamera.transform.parent = ActorHead.transform;
+			
+			// Update the transform of the player ship camera
+			PlayerShipCamera.transform.localPosition = Vector3.zero;
+			PlayerShipCamera.transform.localRotation = Quaternion.identity;
+		}
+	}
+	
+	private void PlayerActorExitedShip()
 	{
 		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
 		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
@@ -164,7 +185,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		playerGalaxyCamera.transform.localRotation = Quaternion.identity;
 	}
 
-
 // Member Fields
 	CNetworkVar<float> m_fHeadEulerX = null;
 	
@@ -175,10 +195,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public GameObject m_cActorHead = null;
 	GameObject m_cShipCamera = null;
 	Vector3 m_vRotation = Vector3.zero;
-	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f); 
-	Vector2 m_vCameraMaxRotation = new Vector2( 60.0f,  360.0f); 
-	Vector2 m_vHeadMinRotation = new Vector2(-30, -60); 
-	Vector2 m_vHeadMaxRotation = new Vector2( 30,  70); 
+	
+	
+	float m_HeadYRotationLimit = 80.0f;
 
 
 	float m_fSensitivityX = 10.0f;
