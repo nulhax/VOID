@@ -113,6 +113,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 				}
 
                 // Disable dynamic actor
+				rigidbody.collider.isTrigger = true;
                 GetComponent<CDynamicActor>().enabled = false;
             }
             else
@@ -129,6 +130,7 @@ public class CToolInterface : CNetworkMonoBehaviour
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
                 // Enable dynamic actor
+				rigidbody.collider.isTrigger = false;
                 GetComponent<CDynamicActor>().enabled = true;
             }
         }

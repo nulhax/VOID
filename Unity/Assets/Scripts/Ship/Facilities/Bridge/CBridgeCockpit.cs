@@ -161,7 +161,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		
 		// Make this object interactable with action 1
 		CInteractableObject IO = GetComponent<CInteractableObject>();
-		IO.InteractionUse += HandlerPlayerActorUseAction;
+		IO.EventUse += HandlerPlayerActorUseAction;
 	}
 	
 	public void Update()
@@ -181,9 +181,9 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			
 			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
-			
-			bodyMotor.InputDisabled = true;
-			headMotor.InputFrozen = true;
+
+			bodyMotor.DisableInput(this);
+			headMotor.DisableInput(this);
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
@@ -264,8 +264,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		
 		m_CockpitPilotState.Rotation = rotationState;
 	}
-	
-	private void HandlerPlayerActorUseAction(RaycastHit _RayHit)
+
+	private void HandlerPlayerActorUseAction(RaycastHit _RayHit, ushort _usPlayerActorViewId)
 	{
 		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerEnter;
 	}
@@ -283,9 +283,9 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
 		
 		bodyMotor.collider.enabled = true;
-		
-		bodyMotor.InputDisabled = false;
-		headMotor.InputFrozen = false;
+
+		bodyMotor.UndisableInput(this);
+		headMotor.UndisableInput(this);
 		
 		m_AttachedPlayerActor = null;
 	}

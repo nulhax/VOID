@@ -30,6 +30,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	{
 		PickupModule,
 		DropModule,
+		InsertCell
 	}
 
 
@@ -89,6 +90,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	public void Start()
 	{
 		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnCellInsertRequest);
 		gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
 	}
 
@@ -137,6 +139,25 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			m_usCarryingModuleViewId.Set(0);
 		}
 	}
+	
+	
+	[AServerMethod]
+	void InsertCell(ulong _ulPlayerId, ushort _usCellSlotViewId)
+	{
+		if(IsCarryingModule)
+		{	
+			ushort CellToInsert = m_usCarryingModuleViewId.Get();
+			
+			DropModule();
+			
+			ushort replacementCell = CNetwork.Factory.FindObject(_usCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
+			
+			if(replacementCell != 0)
+			{
+				PickupModule(_ulPlayerId, replacementCell);
+			}
+		}
+	}
 
 
 	[AClientMethod]
@@ -150,6 +171,30 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 			// Target tool view id
 			s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
+		}
+	}
+	
+	[AClientMethod]
+	public void OnCellInsertRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+	{
+		if (_eType == CPlayerInteractor.EInteractionType.PrimaryStart &&
+			_cInteractableObject.GetComponent<CCellSlot>() != null &&
+			IsCarryingModule)
+		{
+			CModuleInterface.EType carryingCellType = CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().m_eType;
+			CModuleInterface.EType cellSlotType = _cInteractableObject.GetComponent<CCellSlot>().m_CellSlotType;
+			
+			if(carryingCellType == cellSlotType)
+			{
+				// Function to insert the cell here
+				Debug.Log("Ima sliding my " + carryingCellType.ToString() + " into a " + cellSlotType.ToString() + " slot.");
+				
+				// Action
+				s_cSerializeStream.Write((byte)ENetworkAction.InsertCell);
+
+				// Target tool view id
+				s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
+			}
 		}
 	}
 
@@ -194,6 +239,11 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 				case ENetworkAction.DropModule:
 					cPlayerBackPack.DropModule();
+					break;
+				
+				case ENetworkAction.InsertCell:
+					ushort usCellSlotViewId = _cStream.ReadUShort();
+					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, usCellSlotViewId);
 					break;
 			}
 		}

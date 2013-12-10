@@ -73,10 +73,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 				m_LaughTrack = 	cue;
 			}
 		}
-		
-		
-		
-		
+				
 		/*
 		//Set everything to kinematic
 		foreach(Transform child in transform.GetComponentsInChildren<Transform>())

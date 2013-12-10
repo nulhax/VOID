@@ -14,6 +14,7 @@
 // Namespaces
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 
 /* Implementation */
@@ -27,11 +28,18 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Fields
 	public GameObject m_CompoundCollider = null;
 	
+	public List<GameObject> m_ActorsJustExitedShip = new List<GameObject>();
+	
 	
 	// Member Properies
 	
 	
 	// Member Methods
+	public void Start()
+	{
+		
+	}
+	
 	public void AttachNewCollider(string _ColliderPrefab, Vector3 _RelativePos, Quaternion _RelativeRot)
 	{
 		GameObject newCollider = (GameObject)GameObject.Instantiate(Resources.Load(_ColliderPrefab, typeof(GameObject)));
@@ -79,10 +87,5 @@ public class CGalaxyShipCollider : MonoBehaviour
 		// Move back to old transform
 		m_CompoundCollider.transform.position = oldPos;
 		m_CompoundCollider.transform.rotation = oldRot;
-	}
-	
-	void Update()
-	{
-		
 	}
 }

@@ -139,6 +139,9 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	private void UpdateGalaxyCameraTransforms()
 	{	
+		if(CGame.PlayerActor == null)
+			return;
+		
 		// If the cameras are gone remove the galaxy camera
 		GameObject playerShipCamera = CGame.PlayerActor.GetComponent<CPlayerHead>().PlayerShipCamera;
 		if(playerShipCamera == null)

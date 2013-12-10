@@ -48,18 +48,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	public delegate void HandleNoInteraction(EInteractionType _eType, RaycastHit _cRayHit);
 	public event HandleNoInteraction EventNoInteraction;
 	
-	
-// Member Fields
-
-
-	private EInteractionType m_eCurrentInteractionType = EInteractionType.Nothing;
-
-
-	static KeyCode s_ePrimaryKey = KeyCode.Mouse0;
-	static KeyCode s_eSecondaryKey = KeyCode.Mouse1;
-    static KeyCode s_eUseKey = KeyCode.E;
-    static KeyCode s_eAction2Key = KeyCode.F;
-	
 
 // Member Properties
 
@@ -69,63 +57,29 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
     {
-		
+		// Empty
+	}
+
+
+	public void Start()
+	{
+		if (gameObject == CGame.PlayerActor)
+		{
+			CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnInputPrimaryChange);
+			CGame.UserInput.EventSecondary += new CUserInput.NotifyKeyChange(OnInputSecondaryChange);
+			CGame.UserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
+		}
 	}
 	
 
 	public void Update()
 	{
-		// Return if this is not their player
-		if(gameObject != CGame.PlayerActor)
-			return;
-		
-		// Check if there is any interaction event active
-		CheckInteractionEvents();
-		
-		// If the interaction event is not nothing check for interaction objects
-		if(m_eCurrentInteractionType != EInteractionType.Nothing)
-		{
-			CheckInteractionObjects();
-		}
-	}
-
-
-	[AClientMethod]
-	private void CheckInteractionEvents()
-	{
-		// Reset the interaction event
-		m_eCurrentInteractionType = EInteractionType.Nothing;
-		
-		// Find out if any of the interaction events are active
-		if(Input.GetKeyDown(s_ePrimaryKey))
-		{
-			m_eCurrentInteractionType = EInteractionType.PrimaryStart;
-		}
-		else if (Input.GetKeyDown(s_eSecondaryKey))
-		{
-			m_eCurrentInteractionType = EInteractionType.SecondaryStart;
-		}
-		if (Input.GetKeyUp(s_ePrimaryKey))
-		{
-			m_eCurrentInteractionType = EInteractionType.PrimaryEnd;
-		}
-		else if (Input.GetKeyUp(s_eSecondaryKey))
-		{
-			m_eCurrentInteractionType = EInteractionType.SecondaryEnd;
-		}
-		else if(Input.GetKeyDown(s_eUseKey))
-		{
-			m_eCurrentInteractionType = EInteractionType.Use;
-		}
-		else
-		{
-			return;
-		}
+		// Empty
 	}
 
 	
 	[AClientMethod]
-	private void CheckInteractionObjects()
+	private void CheckInteraction(EInteractionType _eIneractionType)
 	{
 		// Find the origin, direction, distance of the players interaction cursor
 		CPlayerHead cPlayerHeadMotor = CGame.PlayerActor.GetComponent<CPlayerHead>();
@@ -186,19 +140,19 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
 			else
 			{
-				cHitInteractableObject.GetComponent<CInteractableObject>().OnInteractionEvent(m_eCurrentInteractionType, gameObject, cRayHit);
+				cHitInteractableObject.GetComponent<CInteractableObject>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
 			}
-
+			
 			if (EventInteraction != null)
 			{
-				EventInteraction(m_eCurrentInteractionType, cHitInteractableObject, cRayHit);
+				EventInteraction(_eIneractionType, cHitInteractableObject, cRayHit);
 			}
 		}
 		else
 		{
 			if (EventNoInteraction != null)
 			{
-				EventNoInteraction(m_eCurrentInteractionType, cRayHit);
+				EventNoInteraction(_eIneractionType, cRayHit);
 			}
 		}
 	}
@@ -218,6 +172,33 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		
 		return(false); 
     }
+
+
+	[AClientMethod]
+	void OnInputPrimaryChange(bool _bDown)
+	{
+		CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
+	}
+
+
+	[AClientMethod]
+	void OnInputSecondaryChange(bool _bDown)
+	{
+		CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
+	}
+
+
+	[AClientMethod]
+	void OnInputUseChange(bool _bDown)
+	{
+		if (_bDown)
+		{
+			CheckInteraction(EInteractionType.Use);
+		}
+	}
+
+
+// Member Fields
 
 
 }

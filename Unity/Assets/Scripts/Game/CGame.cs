@@ -83,11 +83,16 @@ public class CGame : CNetworkMonoBehaviour
 		FuelCell,
 		PlasmaCell,
 		PowerCell,
+		BioCell,
+		ReplicatorCell,
 		PanelFuseBox,
 		ControlConsole,
 		
 		// Modules: Bridge
 		Cockpit,
+
+		// Un categorized
+		Turret,
 		
 		MAX
 	}
@@ -154,6 +159,11 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
 	}
 
+	public static CUserInput UserInput
+	{
+		get { return (Instance.GetComponent<CUserInput>()); }
+	}
+
 // Member Functions
 
 
@@ -188,6 +198,7 @@ public class CGame : CNetworkMonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState, CPlayerHead.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
        	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound, CCockpit.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
 		
@@ -245,12 +256,16 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/General/FuelCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/General/PlasmaCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/General/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/General/BioCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/General/ReplicatorCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/General/PanelFuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/General/DUI/CurvedMonitor_wide");
 		
 		// Modules: Bridge
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Facilities/Bridge/Cockpit");
-		
+
+		// Un categorized
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Turrets/Turret");
 	}
 
 	public void Update()
@@ -446,15 +461,18 @@ public class CGame : CNetworkMonoBehaviour
 		// Placeholder Test stuff
       	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
+		
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 	}
