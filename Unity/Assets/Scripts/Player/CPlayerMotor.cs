@@ -34,6 +34,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		MoveRight		= 1 << 3,
 		Jump			= 1 << 4,
 		Sprint			= 1 << 5,
+		Crouch			= 1 << 6,
 	}
 
 
@@ -123,6 +124,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			rigidbody.isKinematic = true;
 			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 		}
+		
+		m_ThirdPersonAnim = GetComponent<Animator>();
+		
+		m_physCollider = GetComponent<CapsuleCollider>();
+		
+		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		foreach(AudioCue cue in audioCues)
+		{
+			if(cue.m_strCueName == "FootSteps")
+			{
+				m_cueFootSteps = 	cue;
+			}
+		}
 	}
 
 
@@ -135,9 +149,12 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		if (CGame.PlayerActor != null &&
 			CGame.PlayerActor == gameObject)
 		{
-			UpdateInput();
-			
+			UpdateInput();				
 		}
+		
+		//Update animation and audio based on movement states.
+		UpdateThirdPersonAnimation();
+		UpdateAudio();
 	}
 	
 	public void FixedUpdate()
@@ -147,7 +164,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Process movement on server and client
 		if (CNetwork.IsServer)
 		{
-			ProcessMovement();
+			ProcessMovement();				
 		}
 	}
 
@@ -178,13 +195,42 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		cPlayerActorMotor.m_uiMovementStates = uiMovementStates;
 
 		// Set rotation y
-		cPlayerActorMotor.m_fRotationY.Set(fRotationY);
+		cPlayerActorMotor.m_fRotationY.Set(fRotationY);		
 	}
 
 
 	void UpdateGrounded()
 	{
-		m_bGrounded = Physics.Raycast(transform.position, -Vector3.up, collider.bounds.extents.y + 0.1f);
+		
+		Vector3 vPos = m_physCollider.transform.position; 
+		vPos.y += 1.0f;
+		float fRayLength = m_physCollider.bounds.extents.y + 0.5f;				
+		Vector3 vTarget = vPos - (transform.up * fRayLength);
+	
+		//Grounded should only be set to false if the player hasn't touched the ground for a slight amount of time.
+		
+		m_bCurrentlyGround = Physics.Linecast(vPos, vTarget);
+		
+		Debug.DrawLine(vPos, vTarget, Color.magenta);		
+		
+		if(m_bCurrentlyGround)
+		{
+			m_fTimeLastGrounded = Time.time;
+		}
+		
+		if(	Time.time > m_fTimeLastGrounded + 0.1f)
+		{
+			m_bGrounded = false;		
+		}
+		else
+		{
+			m_bGrounded = true;
+		}
+		
+		RaycastHit hitInfo = new RaycastHit();
+		m_bCurrentlyGround = Physics.Linecast(vPos, -transform.up, out hitInfo);
+		
+		m_ThirdPersonAnim.SetFloat("DistanceToGround", hitInfo.distance); 
 	}
 
 
@@ -197,12 +243,14 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_uiMovementStates |= Input.GetKey(s_eMoveRightKey)     ? (uint)EPlayerMovementState.MoveRight    : (uint)0;
 		m_uiMovementStates |= Input.GetKeyDown(s_eJumpKey)      ? (uint)EPlayerMovementState.Jump         : (uint)0;
 		m_uiMovementStates |= Input.GetKey(s_eSprintKey)        ? (uint)EPlayerMovementState.Sprint       : (uint)0;
+		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)        ? (uint)EPlayerMovementState.Crouch       : (uint)0;			
 	}
 
 
 	void ProcessMovement()
 	{
 		// Direction movement
+		/*
 		Vector3 vMovementVelocity = new Vector3();
 		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
 		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
@@ -227,14 +275,202 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		// Set latest position
 		if (CNetwork.IsServer)
 		{
-			//GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
-		}
-
-
+			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+		}		
+		*/	
+		
 		m_vPosition.Set(transform.position);
 	}
 	
-
+		
+	void UpdateThirdPersonAnimation()
+	{	
+		bool bWalkForward;
+		bool bWalkBack;
+		bool bSprint;
+		bool bJump;
+		bool bCrouch;
+		bool bStrafeLeft;
+		bool bStrafeRight;
+		
+				
+		bWalkForward = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward) > 0) ? true : false;	
+		bWalkBack = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? true : false;	
+		bJump = ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0) ? true : false;	
+		bCrouch = ((m_uiMovementStates & (uint)EPlayerMovementState.Crouch) > 0) ? true : false;	
+		bStrafeLeft = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveLeft) > 0) ? true : false;	
+		bStrafeRight = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveRight) > 0) ? true : false;
+		bSprint = ((m_uiMovementStates & (uint)EPlayerMovementState.Sprint) > 0) ? true : false;	
+		
+		UpdateStrafe(bStrafeLeft, bStrafeRight);
+		UpdateCrouch(bCrouch);
+		
+		//Players cannot sprint if they've used their slide move. It will be re-enabled when they exit their crouch state
+		if(m_bUsedSlide)
+		{
+			bSprint = false;
+		}
+			
+		m_ThirdPersonAnim.SetFloat("Direction",  m_fDirection);
+		m_ThirdPersonAnim.SetBool("WalkForward", bWalkForward);	
+		m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
+		m_ThirdPersonAnim.SetBool("Sprint", bSprint);
+		m_ThirdPersonAnim.SetBool("Jump", bJump);
+		m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
+		m_ThirdPersonAnim.SetBool("Grounded", IsGrounded);	
+			
+		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+		
+		//-------------------------------------------
+		//----------------Jump State-----------------
+		//-------------------------------------------
+		if (currentBaseState.nameHash == m_iJumpState)
+		{
+			if(!m_ThirdPersonAnim.IsInTransition(0))
+			{
+				m_physCollider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");					
+			}			
+		}
+		
+		//-------------------------------------------
+		//----------------Fall State-----------------
+		//-------------------------------------------
+		if (currentBaseState.nameHash == m_iFallState)
+		{					
+			Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
+			RaycastHit hitInfo = new RaycastHit();
+			
+			if(Physics.Raycast(ray, out hitInfo))
+			{
+				//If the player was jumping and is about to hit the ground
+				if(hitInfo.distance < 2.0f)
+				{
+					//Change their state to the rolling animation
+					m_ThirdPersonAnim.SetBool("Landing", true);
+					m_ThirdPersonAnim.SetFloat("DistanceToGround", hitInfo.distance); 
+				
+				}
+				else
+				{
+					m_ThirdPersonAnim.SetBool("Landing", false);
+				}
+			}	
+		}
+		
+		//-------------------------------------------
+		//----------------Slide State----------------
+		//-------------------------------------------
+		
+		if(currentBaseState.nameHash == m_iSlideState)
+		{
+			m_bUsedSlide = true;
+			
+			//Set collider to be oriented to the Z axis			
+			m_physCollider.direction = 2;		
+		}
+		else
+		{
+			//Reset collider
+			m_physCollider.direction = 1;
+		}
+	}
+	
+	
+	void UpdateAudio()
+	{
+		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+		
+		//Update audio here based on animations for now
+		if(currentBaseState.nameHash == m_iRunState)
+		{
+			if(Time.time > m_fLastFootStep + 0.4f)
+			{
+				m_cueFootSteps.Play(0.8f, false, -1);
+				m_fLastFootStep = Time.time;
+			}
+		}	
+		if(	currentBaseState.nameHash == m_iWalkForwardState || 
+			currentBaseState.nameHash == m_iWalkBackState)
+		{
+			if(Time.time > m_fLastFootStep + 0.6f)
+			{
+				m_cueFootSteps.Play(0.8f, false, -1);
+				m_fLastFootStep = Time.time;			
+			}
+		}
+	}
+	
+	void UpdateCrouch(bool _bCrouch)
+	{
+		if(m_bPreviousCrouchState != _bCrouch)
+		{
+			if(_bCrouch)
+			{
+				m_bPreviousCrouchState = _bCrouch;
+				m_fCrouchLayerWeightTarget = 0.6f;
+				m_fCrouchLerpTimer = 0.0f;
+			}
+			else
+			{
+				m_bPreviousCrouchState = _bCrouch;
+				m_fCrouchLayerWeightTarget = 0.0f;
+				m_fCrouchLerpTimer = 0.0f;
+				
+				//Once the player has stood up again, re-enable the slide
+				m_bUsedSlide = false;
+			}
+		}
+		
+		if(m_fCurrentCrouchWeight != m_fCrouchLayerWeightTarget)
+		{
+			m_fCrouchLerpTimer += Time.deltaTime;
+			float percentage = m_fCrouchLerpTimer / m_fCrouchLerpTime;
+			
+			m_fCurrentCrouchWeight = Mathf.Lerp(m_fCurrentCrouchWeight, m_fCrouchLayerWeightTarget, percentage);	
+			
+			m_ThirdPersonAnim.SetLayerWeight(1, m_fCurrentCrouchWeight);
+		}
+	}
+	
+	void UpdateStrafe(bool _bStrafeLeft, bool _bStrafeRight)
+	{
+		//Figure out strafe direction		
+		if(_bStrafeLeft)
+		{	
+			if(m_fDirectionTarget !=  -0.9f)
+			{
+				m_fDirectionTarget = -0.9f;			
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		else if(_bStrafeRight)
+		{
+			if(m_fDirectionTarget !=  0.9f)
+			{
+				m_fDirectionTarget = 0.9f;
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		else if(!_bStrafeLeft && !_bStrafeRight)
+		{
+			if(m_fDirectionTarget !=  0.0f)
+			{
+				m_fDirectionTarget = 0.0f;
+				m_fDirectionLerpTimer = 0.0f;
+			}
+		}
+		
+		if(m_fDirection != m_fDirectionTarget)
+		{	
+			m_fDirectionLerpTimer += Time.deltaTime;			
+			m_fDirection = Mathf.Lerp(m_fDirection, m_fDirectionTarget, m_fDirectionLerpTimer);
+		}	
+		else 
+		{
+			m_fDirectionLerpTimer = 0.0f;
+		}				
+	}
+	
 // Member Fields
 
 
@@ -253,6 +489,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	
 	
 	bool m_bInputDisabled = false;
+	bool m_bCurrentlyGround = false;
 	bool m_bGrounded = false;
 	
 
@@ -262,6 +499,35 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     static KeyCode s_eMoveRightKey = KeyCode.D;
 	static KeyCode s_eJumpKey = KeyCode.Space;
 	static KeyCode s_eSprintKey = KeyCode.LeftShift;
-
-
+	static KeyCode s_eCrouchKey = KeyCode.C;
+	
+	Animator m_ThirdPersonAnim;
+	
+	static int m_iIdleState = Animator.StringToHash("Base Layer.Idle");
+	static int m_iJumpState = Animator.StringToHash("Base Layer.Jump");
+	static int m_iRunState = Animator.StringToHash("Base Layer.Run");
+	static int m_iWalkForwardState = Animator.StringToHash("Base Layer.WalkForward");
+	static int m_iWalkBackState = Animator.StringToHash("Base Layer.WalkBack");
+	static int m_iSlideState = Animator.StringToHash("Base Layer.Slide");
+	static int m_iFallState = Animator.StringToHash("Base Layer.Fall");
+	
+	CapsuleCollider m_physCollider;
+	float m_fDirection = 0;
+	float m_fDirectionTarget = 0;
+	float m_fDirectionLerpTimer = 0;
+	
+	float m_fCrouchLayerWeightTarget = 0;
+	float m_fCrouchLerpTimer = 0;
+	float m_fCrouchLerpTime = 0.5f;
+	float m_fCurrentCrouchWeight = 0;
+	bool m_bPreviousCrouchState = false;
+	
+	bool m_bUsedSlide = false;
+	
+	float m_fTimeLastGrounded = 0.0f;
+	float m_fGroundedTimer = 0.0f;
+	
+	AudioCue m_cueFootSteps;
+	bool m_bFootStepCoolDown = false;
+	float m_fLastFootStep;
 };

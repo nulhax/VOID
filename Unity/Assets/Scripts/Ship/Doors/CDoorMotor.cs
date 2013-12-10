@@ -158,7 +158,7 @@ public class CDoorMotor : CNetworkMonoBehaviour
 			
 		//Play audio
 		m_audioSource.clip = m_audioClipOpen;
-		AudioSystem.Play(m_audioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
+		AudioSystem.Play(m_audioSource, 0.1f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
 		
 		while (d < s_OpenAmount)
         {

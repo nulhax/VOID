@@ -90,6 +90,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				}
 
 				// Disable dynamic actor
+				rigidbody.collider.isTrigger = true;
 				GetComponent<CDynamicActor>().enabled = false;
 			}
 			else
@@ -106,6 +107,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 				
 				// Disable dynamic actor
+				rigidbody.collider.isTrigger = false;
 				GetComponent<CDynamicActor>().enabled = true;
 
 			}

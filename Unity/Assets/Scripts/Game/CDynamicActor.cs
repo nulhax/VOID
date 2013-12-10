@@ -92,7 +92,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			SyncTransform();
+			//SyncTransform();
 		}
 	}
 	
