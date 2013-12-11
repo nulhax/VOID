@@ -373,6 +373,10 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 98aa6ef45ff6b5445929de63e492d65f, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 98aa6ef45ff6b5445929de63e492d65f, type: 2}
   m_RootGameObject: {fileID: 1492911152}
@@ -711,7 +715,7 @@ Camera:
     type: 2}
   m_PrefabInternal: {fileID: 1869906051}
   m_GameObject: {fileID: 1549340061}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
@@ -823,6 +827,14 @@ Prefab:
     - target: {fileID: 2000000, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
       propertyPath: far clip plane
       value: 5000
+      objectReference: {fileID: 0}
+    - target: {fileID: 100006, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}

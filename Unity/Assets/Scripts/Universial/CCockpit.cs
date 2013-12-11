@@ -36,11 +36,11 @@ public class CCockpit : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void HandlePlayerEnter();
+	public delegate void HandlePlayerEnter(ushort _usEnteringPlayerActorViewId);
 	public event HandlePlayerEnter EventPlayerEnter;
 
 
-	public delegate void HandlePlayerLeave();
+	public delegate void HandlePlayerLeave(ushort _usLeavingPlayerActorViewId);
 	public event HandlePlayerLeave EventPlayerLeave;
 
 
@@ -97,7 +97,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			if (m_cContainedPlayerActorViewId.Get() == 0)
 			{
 				// Notify observers
-				if (EventPlayerLeave != null) EventPlayerLeave();
+				if (EventPlayerLeave != null) EventPlayerLeave(m_usLastContainedPlayerActorViewId);
 			}
 			else
 			{
@@ -112,7 +112,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				}
 
 				// Notify observers
-				if (EventPlayerEnter != null) EventPlayerEnter();
+				if (EventPlayerEnter != null) EventPlayerEnter(m_cContainedPlayerActorViewId.Get());
 			}
 
 			// Unlock player movement locally
@@ -235,8 +235,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				cPlayerActor.transform.rotation = gameObject.transform.rotation;
 
 				// Notify observers
-				if (EventPlayerEnter != null) EventPlayerEnter();
-
+				if (EventPlayerEnter != null) EventPlayerEnter(cPlayerActorViewId);
 
 				Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerActorViewId));
 			}

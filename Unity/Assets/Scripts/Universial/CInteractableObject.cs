@@ -48,8 +48,7 @@ public class CInteractableObject : CNetworkMonoBehaviour
 		
 	}
 	
-
-	public void Start()
+	public void Awake()
 	{
 		// Set the layer of myself and all children to be of "InteractableObject"
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));

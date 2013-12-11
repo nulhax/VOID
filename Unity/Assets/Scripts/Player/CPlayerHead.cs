@@ -93,8 +93,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CDynamicActor>().DynamicActorEnteredShip += new CDynamicActor.ActorEnterExitShipHandler(PlayerActorEnteredShip);
-			gameObject.GetComponent<CDynamicActor>().DynamicActorExitedShip += new CDynamicActor.ActorEnterExitShipHandler(PlayerActorExitedShip);
+			gameObject.GetComponent<CDynamicActor>().EventEnteredShip += new CDynamicActor.EnterExitShipHandler(PlayerActorEnteredShip);
+			gameObject.GetComponent<CDynamicActor>().EventExitedShip += new CDynamicActor.EnterExitShipHandler(PlayerActorExitedShip);
 
 			// Subscribe to mouse movement input
 			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
