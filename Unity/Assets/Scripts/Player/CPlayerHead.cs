@@ -168,6 +168,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			// Update the transform of the player ship camera
 			PlayerShipCamera.transform.localPosition = Vector3.zero;
 			PlayerShipCamera.transform.localRotation = Quaternion.identity;
+
+            Destroy(gameObject.GetComponent<GalaxyObserver>());
+            Destroy(gameObject.GetComponent<GalaxyShiftable>());
 		}
 	}
 	
@@ -183,6 +186,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		// Update the transform of the player galaxy camera
 		playerGalaxyCamera.transform.localPosition = Vector3.zero;
 		playerGalaxyCamera.transform.localRotation = Quaternion.identity;
+
+        gameObject.AddComponent<GalaxyObserver>();
+        gameObject.AddComponent<GalaxyShiftable>();
 	}
 
 // Member Fields

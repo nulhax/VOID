@@ -44,7 +44,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public CRegisteredGubbin(GameObject entity, float boundingRadius, ushort networkViewID, bool alternatorValue) {mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
-    struct SGubbinMeta
+    public struct SGubbinMeta
     {
         public CGame.ENetworkRegisteredPrefab mPrefabID;
         public SCellPos mParentAbsoluteCell;
@@ -107,6 +107,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<int> mCentreCellX;
     protected CNetworkVar<int> mCentreCellY;
     protected CNetworkVar<int> mCentreCellZ;
+    public SCellPos centreCell { get { return mCentreCell; } }
 
     private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
@@ -130,7 +131,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<uint> mMaxAsteroidsPerCell;
     public uint maxAsteroidsPerCell { get { return muiMaxAsteroidsPerCell; } }
 
-    public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.25f;
+    public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.15f;
     private float mfTimeUntilNextQueueCellToLoadOrUnload =      0.0f;
     public const float mfTimeBetweenCellLoads =                 0.1f;
     private float mfTimeUntilNextCellLoad =                     0.0f;
@@ -139,7 +140,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public const float mfTimeBetweenQueueGubbinsToUnload =      mfTimeBetweenQueueCellsToLoadOrUnload;
     private float mfTimeUntilNextQueueGubbinToUnload =          mfTimeBetweenQueueCellsToLoadOrUnload / 2;
-    public const float mfTimeBetweenGubbinLoads =               0.05f;
+    public const float mfTimeBetweenGubbinLoads =               0.01f;
     private float mfTimeUntilNextGubbinLoad =                   0.0f;
     public const float mfTimeBetweenGubbinUnloads =             mfTimeBetweenGubbinLoads;
     private float mfTimeUntilNextGubbinUnload =                 mfTimeBetweenGubbinLoads / 2;
@@ -661,7 +662,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    void LoadGubbin(SGubbinMeta gubbin)
+    public void LoadGubbin(SGubbinMeta gubbin)
     {
         Profiler.BeginSample("LoadGubbin");
 
