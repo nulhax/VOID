@@ -93,8 +93,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CDynamicActor>().EventEnteredShip += new CDynamicActor.EnterExitShipHandler(PlayerActorEnteredShip);
-			gameObject.GetComponent<CDynamicActor>().EventExitedShip += new CDynamicActor.EnterExitShipHandler(PlayerActorExitedShip);
+			gameObject.GetComponent<CDynamicActor>().EventBoard += new CDynamicActor.BoardingHandler(TransferCamerasOnShip);
+			gameObject.GetComponent<CDynamicActor>().EventDisembark += new CDynamicActor.BoardingHandler(TransferCamerasOffShip);
 
 			// Subscribe to mouse movement input
 			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
@@ -145,15 +145,15 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	private void PlayerActorEnteredShip()
+	private void TransferCamerasOnShip()
 	{
-		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
-		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
+		GameObject galaxyShip = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
+		GameObject playerGalaxyCamera = CGame.Ship.GetComponent<CShipGalaxySimulatior>().PlayerGalaxyCamera;
 	
-		if(playerGalaxyCamera.transform.parent == ActorHead.transform)
+		if(playerGalaxyCamera.transform.parent != galaxyShip.transform)
 		{
 			// Swap the cameras parenthood
-			playerGalaxyCamera.transform.parent = shipGalaxySim.gameObject.transform;
+			playerGalaxyCamera.transform.parent = galaxyShip.transform;
 			PlayerShipCamera.transform.parent = ActorHead.transform;
 			
 			// Update the transform of the player ship camera
@@ -165,7 +165,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		}
 	}
 	
-	private void PlayerActorExitedShip()
+	private void TransferCamerasOffShip()
 	{
 		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
 		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
@@ -182,7 +182,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
         gameObject.AddComponent<GalaxyShiftable>();
 	}
 
-	void OnMouseMoveX(float _fAmount)
+	private void OnMouseMoveX(float _fAmount)
 	{
 		if (!InputDisabled)
 		{
@@ -200,7 +200,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	void OnMouseMoveY(float _fAmount)
+	private void OnMouseMoveY(float _fAmount)
 	{
 		if (!InputDisabled)
 		{

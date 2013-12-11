@@ -60,7 +60,7 @@ GameObject:
   - 65: {fileID: 6500000}
   - 114: {fileID: 11400000}
   m_Layer: 10
-  m_Name: EntryPoint
+  m_Name: EntryPoint3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -77,7 +77,7 @@ GameObject:
   - 65: {fileID: 6500002}
   - 114: {fileID: 11400002}
   m_Layer: 10
-  m_Name: EntryPoint
+  m_Name: EntryPoint1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ GameObject:
   - 65: {fileID: 6500004}
   - 114: {fileID: 11400004}
   m_Layer: 10
-  m_Name: EntryPoint
+  m_Name: EntryPoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -111,7 +111,7 @@ GameObject:
   - 65: {fileID: 6500006}
   - 114: {fileID: 11400006}
   m_Layer: 10
-  m_Name: EntryPoint
+  m_Name: EntryPoint4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf94c6d530ecb6459c0612eb624a5f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 612bf8556307a0a4aa5ba403970f23d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400002
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100008}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf94c6d530ecb6459c0612eb624a5f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 612bf8556307a0a4aa5ba403970f23d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400004
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100010}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf94c6d530ecb6459c0612eb624a5f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 612bf8556307a0a4aa5ba403970f23d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400006
@@ -329,7 +329,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bf94c6d530ecb6459c0612eb624a5f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 612bf8556307a0a4aa5ba403970f23d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &100100000

@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public class CExteriorEntryTrigger : MonoBehaviour 
+public class CExitTrigger : MonoBehaviour 
 {
 	// Member Types
 
@@ -36,29 +36,14 @@ public class CExteriorEntryTrigger : MonoBehaviour
 	
 	
 	// Member Methods
-	private void OnTriggerEnter(Collider _Other)
-	{
-		if(_Other.rigidbody != null)
-		{
-			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
-			if(dynamicActor != null)
-			{
-				dynamicActor.IsOnboardShip = true;
-			}
-		}
-	}
-	
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.rigidbody != null)
+		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
 			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
-			if(dynamicActor != null)
+			if(dynamicActor != null && !CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(_Other.rigidbody.gameObject))
 			{
-				if(!CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(_Other.rigidbody.gameObject))
-				{
-					dynamicActor.IsOnboardShip = false;
-				}
+				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Disembarking;
 			}
 		}
 	}

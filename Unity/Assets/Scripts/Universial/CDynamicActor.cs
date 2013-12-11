@@ -20,11 +20,20 @@ using System.Collections;
 public class CDynamicActor : CNetworkMonoBehaviour 
 {
 	
-// Member Delegates and Events
-	public delegate void EnterExitShipHandler();
+// Member Types
+	public enum EBoardingState : int
+	{
+		Onboard,
+		Offboard,
+		Boarding,
+		Disembarking,
+	}
 	
-	public event EnterExitShipHandler EventExitedShip;
-	public event EnterExitShipHandler EventEnteredShip;
+// Member Delegates and Events
+	public delegate void BoardingHandler();
+	
+	public event BoardingHandler EventBoard;
+	public event BoardingHandler EventDisembark;
 	
 	
 // Member Fields
@@ -39,8 +48,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
     private CNetworkVar<float> m_EulerAngleY    = null;
     private CNetworkVar<float> m_EulerAngleZ    = null;
 	
-	private CNetworkVar<bool> m_bIsOnboardShip = null;
-	private CNetworkVar<bool> m_bIsInBoardingZone = null;
+	private CNetworkVar<int> m_BoardingState = null;
 	
 // Member Properties	
 	public Vector3 GravityAcceleration
@@ -49,16 +57,10 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		get { return(m_GravityAcceleration); }
 	}
 	
-	public bool IsOnboardShip
+	public EBoardingState BoardingState
 	{
-		set { m_bIsOnboardShip.Set(value); }
-		get { return (m_bIsOnboardShip.Get()); }
-	}
-	
-	public bool IsInBoardingZone
-	{
-		set { m_bIsInBoardingZone.Set(value); }
-		get { return (m_bIsInBoardingZone.Get()); }
+		set { m_BoardingState.Set((int)value); }
+		get { return ((EBoardingState)m_BoardingState.Get()); }
 	}
 	
 	public Vector3 Position
@@ -99,9 +101,6 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			rigidbody.isKinematic = true;
 		}
 		
-		EventEnteredShip += new EnterExitShipHandler(TransferActorToShipSpace);
-		EventExitedShip += new EnterExitShipHandler(TransferActorToGalaxySpace);
-		
 		m_OriginalLayer = gameObject.layer;
 	}
 	
@@ -132,8 +131,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
-		m_bIsOnboardShip = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_bIsInBoardingZone = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_BoardingState = new CNetworkVar<int>(OnNetworkVarSync, (int)EBoardingState.Onboard);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -153,18 +151,22 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	        }
 		}
 		
-		// Boarding/Unboarding ship
-		if(_rSender == m_bIsOnboardShip)
+		// Boarding state
+		if(_rSender == m_BoardingState)
 		{
-			if(IsOnboardShip)
+			if(BoardingState == EBoardingState.Boarding)
 			{
-				if(EventEnteredShip != null)
-					EventEnteredShip();
+				if(EventBoard != null)
+					EventBoard();
+				
+				TransferActorToShipSpace();
 			}
-			else
+			else if(BoardingState == EBoardingState.Disembarking)
 			{
-				if(EventExitedShip != null)
-					EventExitedShip();
+				if(EventDisembark != null)
+					EventDisembark();
+				
+				TransferActorToGalaxySpace();
 			}
 		}
 	}
@@ -198,15 +200,31 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			transform.localRotation = relativeRot;	
 			transform.parent = null;
 			
-			// Sync over the network
-			if(CNetwork.IsServer && GetComponent<CNetworkView>() != null)
+			// Sync over the network and apply the galaxy ship force
+			if(GetComponent<CNetworkView>() != null)
 			{
-				GetComponent<CNetworkView>().SyncParent();
+				if(CNetwork.IsServer)
+				{
+					// Add a compensation force to the actor
+					rigidbody.AddForce(galaxyShip.rigidbody.GetRelativePointVelocity(relativePos), ForceMode.VelocityChange);
+					
+					// Sync the parent
+					GetComponent<CNetworkView>().SyncParent();
+				}
+			}
+			else
+			{
+				Debug.LogError("No network view found on dynamic actor!");
 			}
 		}
 		
 		// Resursively set the galaxy layer on the actor
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
+		
+		if(CNetwork.IsServer)
+		{
+			BoardingState = EBoardingState.Offboard;
+		}
 	}
 	
 	private void TransferActorToShipSpace()
@@ -240,5 +258,10 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		// Resursively set the default layer on the actor
 		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
+		
+		if(CNetwork.IsServer)
+		{
+			BoardingState = EBoardingState.Onboard;
+		}
 	}
 }

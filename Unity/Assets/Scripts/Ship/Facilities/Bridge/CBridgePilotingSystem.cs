@@ -51,13 +51,13 @@ public class CBridgePilotingSystem : MonoBehaviour
 	
 	private void ServerCreateControlCockpit()
 	{
-		Transform consoleTransform = transform.FindChild("Cockpit");
+		Transform cockpitTransform = transform.FindChild("Cockpit");
 
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Cockpit;
 		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 	
-		newConsoleObject.transform.position = consoleTransform.position;
-		newConsoleObject.transform.rotation = consoleTransform.rotation;
+		newConsoleObject.transform.position = cockpitTransform.position;
+		newConsoleObject.transform.rotation = cockpitTransform.rotation;
 		newConsoleObject.transform.parent = transform;	
 		
 		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
