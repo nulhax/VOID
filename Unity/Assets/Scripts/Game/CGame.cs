@@ -90,6 +90,9 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Modules: Bridge
 		Cockpit,
+
+		// Un categorized
+		Turret,
 		
 		MAX
 	}
@@ -156,6 +159,11 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
 	}
 
+	public static CUserInput UserInput
+	{
+		get { return (Instance.GetComponent<CUserInput>()); }
+	}
+
 // Member Functions
 
 
@@ -190,6 +198,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState, CPlayerHead.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
        	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound, CCockpit.UnserializeInbound);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CTurretController.SerializeOutbound, CTurretController.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
 		
@@ -254,7 +264,9 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Modules: Bridge
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Facilities/Bridge/Cockpit");
-		
+
+		// Un categorized
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Turrets/Turret");
 	}
 
 	public void Update()

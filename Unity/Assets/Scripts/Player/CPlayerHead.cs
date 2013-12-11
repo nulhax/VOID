@@ -15,6 +15,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
@@ -47,11 +48,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		get { return (m_cShipCamera); }
 		set { m_cShipCamera = value; }
 	}
-	
-	public bool InputFrozen
+
+	public bool InputDisabled
 	{
-		set { m_bInputFrozen = value; }
-		get { return (m_bInputFrozen); }
+		get { return (m_cInputDisableQueue.Count > 0); }
 	}
 
 
@@ -82,7 +82,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		{
 			// Disable any main camera currently rendering
 			GameObject.Find("Main Camera").camera.enabled = false;
-			
+		
 			// Add the ship camera to the actor observing the ship
 			m_cShipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerShipCamera"));
 			m_cShipCamera.transform.parent = ActorHead.transform;
@@ -95,19 +95,32 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			// Register event handler for entering/exiting ship
 			gameObject.GetComponent<CDynamicActor>().EventEnteredShip += new CDynamicActor.EnterExitShipHandler(PlayerActorEnteredShip);
 			gameObject.GetComponent<CDynamicActor>().EventExitedShip += new CDynamicActor.EnterExitShipHandler(PlayerActorExitedShip);
+
+			// Subscribe to mouse movement input
+			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
+			CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
 		}
 	}
 
 
     public void Update()
-    {	
-		// Only update input for client
-		if(!InputFrozen &&
-		   CGame.PlayerActor == gameObject)
-		{
-			UpdateInput();
-		}
+    {
+		// Empty
     }
+
+
+	[AServerMethod]
+	public void DisableInput(object _cFreezeRequester)
+	{
+		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
+	}
+
+
+	[AServerMethod]
+	public void UndisableInput(object _cFreezeRequester)
+	{
+		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
+	}
 
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
@@ -130,30 +143,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 		cMyActorHead.m_fHeadEulerX.Set(fRotationX);
 	}
-	
 
-    private void UpdateInput()
-	{
-		// Retrieve new rotations
-		m_vRotation.x = Input.GetAxis("Mouse Y") * m_fSensitivityX * -1.0f;
-		m_vRotation.y = Input.GetAxis("Mouse X") * m_fSensitivityY;
 
-		// Apply yaw to the actor
-		transform.Rotate(0.0f, m_vRotation.y, 0.0f, Space.Self);
-		
-		// Apply the pitch to the camera
-		m_cActorHead.transform.Rotate(m_vRotation.x, 0.0f, 0.0f, Space.Self);
-		
-		// Clamp the head rotation
-		float clampedHeadX = m_cActorHead.transform.localEulerAngles.x;
-		if(clampedHeadX > 180.0f)
-			clampedHeadX = clampedHeadX - 360.0f;
-		clampedHeadX = Mathf.Clamp(clampedHeadX, -m_HeadYRotationLimit, m_HeadYRotationLimit);
-		
-		// Apply the clamp
-		m_cActorHead.transform.localEulerAngles = new Vector3(clampedHeadX, m_cActorHead.transform.localEulerAngles.y, m_cActorHead.transform.localEulerAngles.z);
-	}
-	
 	private void PlayerActorEnteredShip()
 	{
 		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
@@ -191,23 +182,59 @@ public class CPlayerHead : CNetworkMonoBehaviour
         gameObject.AddComponent<GalaxyShiftable>();
 	}
 
+	void OnMouseMoveX(float _fAmount)
+	{
+		if (!InputDisabled)
+		{
+			m_vRotation.y += _fAmount;
+
+			// Keep y rotation within 360 range
+			m_vRotation.y -= (m_vRotation.y >= 360.0f) ? 360.0f : 0.0f;
+			m_vRotation.y += (m_vRotation.y <= -360.0f) ? 360.0f : 0.0f;
+
+			// Clamp rotation
+			m_vRotation.y = Mathf.Clamp(m_vRotation.y, m_vCameraMinRotation.y, m_vCameraMaxRotation.y);
+
+			transform.localEulerAngles = new Vector3(0.0f, m_vRotation.y, 0.0f);
+		}
+	}
+
+
+	void OnMouseMoveY(float _fAmount)
+	{
+		if (!InputDisabled)
+		{
+			// Retrieve new rotations
+			m_vRotation.x += _fAmount;
+
+			// Clamp rotation
+			m_vRotation.x = Mathf.Clamp(m_vRotation.x, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
+
+			// Apply the pitch to the camera
+			m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
+		}
+	}
+
+
 // Member Fields
+
+
+	List<Type> m_cInputDisableQueue = new List<Type>();
+
+
 	CNetworkVar<float> m_fHeadEulerX = null;
-	
-	
-	bool m_bInputFrozen = false;
 
 
 	public GameObject m_cActorHead = null;
 	GameObject m_cShipCamera = null;
 	Vector3 m_vRotation = Vector3.zero;
+	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
+	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);
+	Vector2 m_vHeadMinRotation = new Vector2(-30, -60);
+	Vector2 m_vHeadMaxRotation = new Vector2(30, 70); 
 	
 	
 	float m_HeadYRotationLimit = 80.0f;
-
-
-	float m_fSensitivityX = 10.0f;
-	float m_fSensitivityY = 10.0f;
 
 
 };

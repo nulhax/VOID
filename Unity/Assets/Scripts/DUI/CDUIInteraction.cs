@@ -87,7 +87,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	{
 		// Register the interactable object event
 		CInteractableObject IO = GetComponent<CInteractableObject>();
-		IO.InteractionPrimaryStart += HandlerPlayerActorLeftClick;
+		IO.EventPrimaryStart += HandlerPlayerActorLeftClick;
 		
 		if(CNetwork.IsServer)
 		{
@@ -108,7 +108,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	}
 	
 	[AClientMethod]
-	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit)
+	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, ushort _usPlayerActorViewId)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;

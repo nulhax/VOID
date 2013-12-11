@@ -15,6 +15,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
@@ -67,10 +68,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public bool InputDisabled
 	{
-		set { m_bInputDisabled = value; }
-		get { return (m_bInputDisabled); }
+		get { return (m_cInputDisableQueue.Count > 0); }
 	}
-
+	
 
 	public bool UsingGravity
 	{
@@ -90,7 +90,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_fRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, -9.81f);
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
@@ -104,12 +103,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_fRotationY &&
-			CGame.PlayerActor != gameObject)
-		{
-			transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_fRotationY.Get(), transform.eulerAngles.z);
-		}
-		else if (_cSyncedNetworkVar == m_vPosition)
+		if (_cSyncedNetworkVar == m_vPosition)
 		{
 			transform.position = m_vPosition.Get();
 		}
@@ -123,6 +117,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		{
 			rigidbody.isKinematic = true;
 			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+		}
+
+		if (gameObject == CGame.PlayerActor)
+		{
+			gameObject.GetComponent<CDynamicActor>().RotationYDisabled = true;
 		}
 		
 		m_ThirdPersonAnim = GetComponent<Animator>();
@@ -169,6 +168,25 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	}
 
 
+	public void DisableInput(object _cFreezeRequester)
+	{
+		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
+
+		rigidbody.isKinematic = true;
+	}
+
+
+	public void UndisableInput(object _cFreezeRequester)
+	{
+		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
+
+		if (!InputDisabled)
+		{
+			rigidbody.isKinematic = false;
+		}
+	}
+
+
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
 		// Retrieve my actor motor
@@ -189,13 +207,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		uint uiMovementStates = _cStream.ReadUInt();
 
 		// Read rotation y
-		float fRotationY = _cStream.ReadFloat();
+		cPlayerActorMotor.m_fRotationY = _cStream.ReadFloat();
 
 		// Set movement states
 		cPlayerActorMotor.m_uiMovementStates = uiMovementStates;
-
-		// Set rotation y
-		cPlayerActorMotor.m_fRotationY.Set(fRotationY);		
 	}
 
 
@@ -237,18 +252,20 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	void UpdateInput()
 	{
 		m_uiMovementStates  = 0;
-		m_uiMovementStates |= Input.GetKey(s_eMoveForwardKey)   ? (uint)EPlayerMovementState.MoveForward  : (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eMoveBackwardsKey) ? (uint)EPlayerMovementState.MoveBackward : (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eMoveLeftKey)	    ? (uint)EPlayerMovementState.MoveLeft     : (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eMoveRightKey)     ? (uint)EPlayerMovementState.MoveRight    : (uint)0;
-		m_uiMovementStates |= Input.GetKeyDown(s_eJumpKey)      ? (uint)EPlayerMovementState.Jump         : (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eSprintKey)        ? (uint)EPlayerMovementState.Sprint       : (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveForward)	? (uint)EPlayerMovementState.MoveForward	: (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (uint)EPlayerMovementState.MoveBackward	: (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (uint)EPlayerMovementState.MoveLeft		: (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EPlayerMovementState.MoveRight		: (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.Jump)			? (uint)EPlayerMovementState.Jump			: (uint)0;
+		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.Sprint)			? (uint)EPlayerMovementState.Sprint			: (uint)0;
 		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)        ? (uint)EPlayerMovementState.Crouch       : (uint)0;			
 	}
 
 
 	void ProcessMovement()
 	{
+		rigidbody.transform.eulerAngles = new Vector3(rigidbody.transform.eulerAngles.x, m_fRotationY, rigidbody.transform.eulerAngles.z);
+
 		// Direction movement
 		/*
 		Vector3 vMovementVelocity = new Vector3();
@@ -269,6 +286,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 
 		// Apply movement velocity
+		if (!rigidbody.isKinematic)
 		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
 		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
 
@@ -474,7 +492,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkVar<float> m_fRotationY = null;
+	List<Type> m_cInputDisableQueue = new List<Type>();
+
+
 	CNetworkVar<float> m_fGravity = null;
 	CNetworkVar<float> m_fMovementSpeed = null;
 	CNetworkVar<float> m_fSprintSpeed = null;
@@ -485,20 +505,16 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	CNetworkVar<Vector3> m_vPosition = null;
 
 
+	float m_fRotationY = 0.0f;
+
+
 	uint m_uiMovementStates = 0;
 	
 	
 	bool m_bInputDisabled = false;
 	bool m_bCurrentlyGround = false;
 	bool m_bGrounded = false;
-	
 
-    static KeyCode s_eMoveForwardKey = KeyCode.W;
-    static KeyCode s_eMoveBackwardsKey = KeyCode.S;
-    static KeyCode s_eMoveLeftKey = KeyCode.A;
-    static KeyCode s_eMoveRightKey = KeyCode.D;
-	static KeyCode s_eJumpKey = KeyCode.Space;
-	static KeyCode s_eSprintKey = KeyCode.LeftShift;
 	static KeyCode s_eCrouchKey = KeyCode.C;
 	
 	Animator m_ThirdPersonAnim;
