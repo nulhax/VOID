@@ -229,6 +229,8 @@ public class CGalaxy : CNetworkMonoBehaviour
             // Seed galaxy noises through the network variable to sync the seed across all clients.
             for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
+
+            gameObject.AddComponent<DungeonMaster>();
         }
     }
 
@@ -639,8 +641,8 @@ public class CGalaxy : CNetworkMonoBehaviour
                                                     Random.Range(10.0f, 150.0f),    // Scale.
                                                     new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                     Random.rotationUniform, // Rotation.
-                                                    Random.onUnitSphere * Random.Range(0.0f, 75.0f),    // Linear velocity.
-                                                    Random.onUnitSphere * Random.Range(0.0f, 2.0f), // Angular velocity.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
                                                     true,   // Has NetworkedEntity script.
                                                     true    // Has a rigid body.
                                                     ));
