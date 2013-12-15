@@ -4,19 +4,14 @@
 [RequireComponent(typeof(Camera))]
 //[AddComponentMenu("VOID/GalaxyIE")]
 
-public class GalaxyIE : PostEffectsBase
+public class GalaxyIE : MonoBehaviour
 {
     //RenderTexture mSkyboxBaked = new RenderTexture(Screen.width, Screen.height, 0);
     GameObject mGalaxyCamera = null;
 
-	private float CAMERA_NEAR = 0.5f;
-	private float CAMERA_FAR = 50.0f;
-	private float CAMERA_FOV = 60.0f;
-	private float CAMERA_ASPECT_RATIO = 1.333333f;
-
     public Skybox mSkybox = null;
     public Material mSkyboxMaterial { get { return mSkybox.material; } set { mSkybox.material = value; } }
-    public Material mFogMaterial = null;
+    //public Material mFogMaterial = null;
     public float mFogStartDistance;
 
     private bool mRegisteredWithGalaxy = false;
@@ -41,21 +36,19 @@ public class GalaxyIE : PostEffectsBase
         }
     }
 
-    public override void Start()
+    void Start()
     {
-        base.Start();
-
         mGalaxyCamera = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/GalaxyCamera", typeof(GameObject)));
 
-        mFogMaterial = new Material(Shader.Find("VOID/TexturedFog"));
-
         mGalaxyCamera.camera.enabled = false;   // Disable camera to control when it renders.
-        camera.clearFlags = CameraClearFlags.Depth;   // Actual camera clears only depth, as the entire image will be updated with a skybox manually.
+        camera.clearFlags = CameraClearFlags.Skybox;
 
         mSkybox = mGalaxyCamera.GetComponent<Skybox>();
         if (!mSkybox)
             mSkybox = mGalaxyCamera.AddComponent<Skybox>();
         mSkyboxMaterial = new Material(Shader.Find("VOID/MultitexturedSkybox"));
+
+        RenderSettings.skybox = mSkyboxMaterial;
     }
 
     void OnDestroy()
@@ -63,34 +56,15 @@ public class GalaxyIE : PostEffectsBase
         mRegisterWithGalaxy = false;
     }
 
-    public override bool CheckResources()
+    void OnPreRender()
     {
-        CheckSupport(true);
-
-        //mFogMaterial = CheckShaderAndCreateMaterial(mGalaxyShader, mFogMaterial);
-
-        if (!isSupported)
-            ReportAutoDisable();
-        return isSupported;
-    }
-
-    void OnRenderImage(RenderTexture source, RenderTexture destination)
-    {
-        if (!CheckResources())
-        {
-            Graphics.Blit(source, destination);
-            return;
-        }
-
         mRegisterWithGalaxy = true;
 
         // Calculate stuff for fog.
-        CAMERA_NEAR = camera.nearClipPlane;
-        CAMERA_FAR = camera.farClipPlane;
-        CAMERA_FOV = camera.fieldOfView;
-        CAMERA_ASPECT_RATIO = camera.aspect;
-
-        Matrix4x4 frustumCorners = Matrix4x4.identity;
+        float CAMERA_NEAR = camera.nearClipPlane;
+        float CAMERA_FAR = camera.farClipPlane;
+        float CAMERA_FOV = camera.fieldOfView;
+        float CAMERA_ASPECT_RATIO = camera.aspect;
 
         float fovWHalf = CAMERA_FOV * 0.5f;
 
@@ -107,15 +81,12 @@ public class GalaxyIE : PostEffectsBase
         Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
         Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
 
-        frustumCorners.SetRow(0, topLeft);
-        frustumCorners.SetRow(1, topRight);
-        frustumCorners.SetRow(2, bottomRight);
-        frustumCorners.SetRow(3, bottomLeft);
-
-        mFogMaterial.SetMatrix("_FrustumCornersWS", frustumCorners);
-        mFogMaterial.SetVector("_CameraWS", camera.transform.position);
-        mFogMaterial.SetVector("_FogStartDistance", new Vector4(1.0f / mFogStartDistance, CAMERA_SCALE - mFogStartDistance));
-        mFogMaterial.SetTexture("_MainTex", source);
+        Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
+        Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
+        Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
+        Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
+        Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
+        //////////////////////////////////////
 
         // Render skybox to texture to use as the fog's texture.
         int oldCullingMask = mGalaxyCamera.camera.cullingMask;
@@ -128,30 +99,7 @@ public class GalaxyIE : PostEffectsBase
         mGalaxyCamera.camera.targetTexture = bakedSkyboxTexture;
         mGalaxyCamera.camera.Render();
         mGalaxyCamera.camera.targetTexture = oldTargetTexture;
-        mFogMaterial.SetTexture("_FogTex", bakedSkyboxTexture);
+        Shader.SetGlobalTexture("void_FogTex", bakedSkyboxTexture);
         RenderTexture.ReleaseTemporary(bakedSkyboxTexture);
-
-        // Render the fog.
-        mFogMaterial.SetPass(0);
-
-        GL.PushMatrix();
-        GL.LoadOrtho();
-
-        GL.Begin(GL.QUADS);
-
-        GL.MultiTexCoord2(0, 0.0f, 0.0f);
-        GL.Vertex3(0.0f, 0.0f, 3.0f); // BL
-
-        GL.MultiTexCoord2(0, 1.0f, 0.0f);
-        GL.Vertex3(1.0f, 0.0f, 2.0f); // BR
-
-        GL.MultiTexCoord2(0, 1.0f, 1.0f);
-        GL.Vertex3(1.0f, 1.0f, 1.0f); // TR
-
-        GL.MultiTexCoord2(0, 0.0f, 1.0f);
-        GL.Vertex3(0.0f, 1.0f, 0.0f); // TL
-
-        GL.End();
-        GL.PopMatrix();
     }
 }

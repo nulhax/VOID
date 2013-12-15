@@ -44,7 +44,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public CRegisteredGubbin(GameObject entity, float boundingRadius, ushort networkViewID, bool alternatorValue) {mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
-    struct SGubbinMeta
+    public struct SGubbinMeta
     {
         public CGame.ENetworkRegisteredPrefab mPrefabID;
         public SCellPos mParentAbsoluteCell;
@@ -107,6 +107,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<int> mCentreCellX;
     protected CNetworkVar<int> mCentreCellY;
     protected CNetworkVar<int> mCentreCellZ;
+    public SCellPos centreCell { get { return mCentreCell; } }
 
     private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
@@ -130,7 +131,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<uint> mMaxAsteroidsPerCell;
     public uint maxAsteroidsPerCell { get { return muiMaxAsteroidsPerCell; } }
 
-    public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.25f;
+    public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.15f;
     private float mfTimeUntilNextQueueCellToLoadOrUnload =      0.0f;
     public const float mfTimeBetweenCellLoads =                 0.1f;
     private float mfTimeUntilNextCellLoad =                     0.0f;
@@ -139,7 +140,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public const float mfTimeBetweenQueueGubbinsToUnload =      mfTimeBetweenQueueCellsToLoadOrUnload;
     private float mfTimeUntilNextQueueGubbinToUnload =          mfTimeBetweenQueueCellsToLoadOrUnload / 2;
-    public const float mfTimeBetweenGubbinLoads =               0.05f;
+    public const float mfTimeBetweenGubbinLoads =               0.01f;
     private float mfTimeUntilNextGubbinLoad =                   0.0f;
     public const float mfTimeBetweenGubbinUnloads =             mfTimeBetweenGubbinLoads;
     private float mfTimeUntilNextGubbinUnload =                 mfTimeBetweenGubbinLoads / 2;
@@ -228,6 +229,8 @@ public class CGalaxy : CNetworkMonoBehaviour
             // Seed galaxy noises through the network variable to sync the seed across all clients.
             for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
+
+            //gameObject.AddComponent<DungeonMaster>();
         }
     }
 
@@ -638,8 +641,8 @@ public class CGalaxy : CNetworkMonoBehaviour
                                                     Random.Range(10.0f, 150.0f),    // Scale.
                                                     new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                     Random.rotationUniform, // Rotation.
-                                                    Random.onUnitSphere * Random.Range(0.0f, 75.0f),    // Linear velocity.
-                                                    Random.onUnitSphere * Random.Range(0.0f, 2.0f), // Angular velocity.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
                                                     true,   // Has NetworkedEntity script.
                                                     true    // Has a rigid body.
                                                     ));
@@ -661,7 +664,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    void LoadGubbin(SGubbinMeta gubbin)
+    public void LoadGubbin(SGubbinMeta gubbin)
     {
         Profiler.BeginSample("LoadGubbin");
 
@@ -710,11 +713,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         }
 
         // Linear velocity.
-        if (rigidBody != null && gubbin.mLinearVelocity != null)
+        if (rigidBody != null && gubbin.mLinearVelocity != Vector3.zero)
             rigidBody.velocity = gubbin.mLinearVelocity;
 
         // Angular velocity.
-        if (rigidBody != null && gubbin.mAngularVelocity != null)
+        if (rigidBody != null && gubbin.mAngularVelocity != Vector3.zero)
             rigidBody.angularVelocity = gubbin.mAngularVelocity;
 
         // Sync everything the networked entity script handles.
@@ -808,8 +811,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
 
         // Fog.
-        galaxyIE.mFogMaterial.SetFloat("_FogDensity", 0.001f);
-        galaxyIE.mFogStartDistance = 2000.0f;
+        Shader.SetGlobalFloat("void_FogStartDistance", 20.0f);
+        Shader.SetGlobalFloat("void_FogEndDistance", 40.0f);
+        Shader.SetGlobalFloat("void_FogDensity", 0.01f);
 
         Profiler.EndSample();
     }
