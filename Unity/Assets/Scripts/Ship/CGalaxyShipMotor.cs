@@ -201,7 +201,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         if (pilotingState.MovingForward &&
             !pilotingState.MovingBackward)
         {
-            movementForce.z += 100.0f;
+            movementForce.z += 500.0f;
         }
         else if (pilotingState.MovingBackward &&
             	 !pilotingState.MovingForward)

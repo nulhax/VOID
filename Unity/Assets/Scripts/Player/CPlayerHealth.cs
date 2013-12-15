@@ -232,6 +232,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		{
 			EventOnPlayerApplyHeal(gameObject, _fHeal);
 		}
+
+        m_fActorHp.Set(m_fActorHp.Get() + _fHeal);
 	}
 	
 	public void PlayerDied()
