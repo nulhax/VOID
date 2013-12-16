@@ -115,9 +115,9 @@ public class CGame : CNetworkMonoBehaviour
 		{ 
 			GameObject playerActor = null;
 			
-			if(Instance.m_usActorViewId != 0)
+			if(PlayerActorViewId != 0)
 			{
-				playerActor = CNetwork.Factory.FindObject(Instance.m_usActorViewId);
+				playerActor = CNetwork.Factory.FindObject(PlayerActorViewId);
 			}
 			
 			return(playerActor); 
@@ -126,7 +126,7 @@ public class CGame : CNetworkMonoBehaviour
 	
 	public static ushort PlayerActorViewId
 	{
-		get { return (s_cInstance.m_usActorViewId); }
+		get { return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]); }
 	}
 	
 	public static List<GameObject> PlayerActors
@@ -325,6 +325,12 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
+	public static ushort FindPlayerActorViewId(ulong _ulPlayerId)
+	{
+		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
+	}
+
+
 	void DrawLobbyGui()
 	{
 		float fViewWidth = 450;
@@ -451,13 +457,14 @@ public class CGame : CNetworkMonoBehaviour
 		// Get actor network view id
 		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
-		// Save which player owns which actor
-		m_mPlayersActor.Add(_cPlayer.PlayerId, usActorNetworkViewId);
+		// Sync current players actor view ids with new player
+		foreach (KeyValuePair<ulong, ushort> tEntry in m_mPlayersActor)
+		{
+			InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
+		}
 
-		// Tell connecting player to update their network player id 
-        InvokeRpc(_cPlayer.PlayerId, "SetActorNetworkViewId", usActorNetworkViewId);
-		
-		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
+		// Sync player actor view id with everyone
+		InvokeRpcAll("RegisterPlayerActor", _cPlayer.PlayerId, usActorNetworkViewId);
 		
 		// Placeholder Test stuff
       	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
@@ -476,6 +483,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
+
+		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 
 
@@ -486,8 +495,8 @@ public class CGame : CNetworkMonoBehaviour
 
 		CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
 
-
-		m_mPlayersActor.Remove(_cPlayer.PlayerId);
+		// Sync unregister player actor view id with everyone
+		InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
 
 
 		Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
@@ -534,7 +543,6 @@ public class CGame : CNetworkMonoBehaviour
         System.Diagnostics.Debug.Assert(CNetwork.IsServer);
 
 		m_mPlayersActor.Clear();
-		m_usActorViewId = 0;
         m_usShipViewId = 0;
 	}
 
@@ -550,9 +558,9 @@ public class CGame : CNetworkMonoBehaviour
 	void OnDisconnect()
 	{
 		GameObject.Find("Main Camera").camera.enabled = true;
-		
-		m_usActorViewId = 0;
 
+		m_mPlayersActor.Clear();
+		m_usShipViewId = 0;
         //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
         //    m_Galaxy = null;
 	}
@@ -560,16 +568,6 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnApplicationFocus(bool _bFocused)
 	{
-	}
-
-
-	[ANetworkRpc]
-	void SetActorNetworkViewId(ushort _usActorViewId)
-	{
-		m_usActorViewId = _usActorViewId;
-
-		// Notice
-		Logger.Write("My actor network view id is ({0})", m_usActorViewId);
 	}
 
 
@@ -581,6 +579,22 @@ public class CGame : CNetworkMonoBehaviour
         // Notice
         Logger.Write("The ship's network view id is ({0})", m_usShipViewId);
     }
+
+
+	[ANetworkRpc]
+	[AClientMethod]
+	void RegisterPlayerActor(ulong _ulPlayerId, ushort _usPlayerActorId)
+	{
+		m_mPlayersActor.Add(_ulPlayerId, _usPlayerActorId);
+	}
+
+
+	[ANetworkRpc]
+	[AClientMethod]
+	void UnregisterPlayerActor(ulong _ulPlayerId)
+	{
+		m_mPlayersActor.Remove(_ulPlayerId);
+	}
 
 
 // Member Variables
@@ -596,7 +610,6 @@ public class CGame : CNetworkMonoBehaviour
 	int m_iActiveTab = 1;
 
 
-	ushort m_usActorViewId = 0;
 	ushort m_usShipViewId = 0;
 
 

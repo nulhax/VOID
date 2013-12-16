@@ -28,19 +28,13 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 // Member Types
 
 
-	public enum ENetworkAction
-	{
-		FireLasers
-	}
-
-
 // Member Delegates & Events
 
 
 // Member Properties
 
 
-	public GameObject TurretObject
+	public GameObject ActiveTurretObject
 	{
 		get { return (CNetwork.Factory.FindObject(m_cTurretViewId.Get())); }
 	}
@@ -59,7 +53,29 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_cTurretViewId)
 		{
-			UpdateActiveTurret();
+			// Check is connected to turret
+			if (m_cTurretViewId.Get() != 0)
+			{
+				// Check player is in cockpit
+				if (m_cCockpit.MountedPlayerId != 0)
+				{
+					if (CNetwork.IsServer)
+					{
+						// Notify turret that it has been mounted by player
+						ActiveTurretObject.GetComponent<CTurretController>().Mount(m_cCockpit.MountedPlayerId);
+					}
+				}
+
+				// There is no player in the cockpit
+				else
+				{
+					if (CNetwork.IsServer)
+					{
+						// Notify turret that it has been mounted by player
+						ActiveTurretObject.GetComponent<CTurretController>().Unmount();
+					}
+				}
+			}
 		}
 	}
 
@@ -85,64 +101,33 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 		CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
 
 		if (cCockpit.IsMounted &&
-			cCockpit.ContainedPlayerActorViewId == CGame.PlayerActorViewId)
+			cCockpit.MountedPlayerId == CGame.PlayerActorViewId)
 		{
 			//if (Input.GetKeyDown(KeyCode.Space))
 		}
 	}
 
 
+	[AServerMethod]
 	[AClientMethod]
-	void OnPlayerEnterCockpit(ushort _usEnteringPlayerActorViewId)
+	void OnPlayerEnterCockpit(ulong _ulPlayerId)
 	{
-		// Check the player was myself
-		if (_usEnteringPlayerActorViewId == CGame.PlayerActorViewId)
-		{
-			// Subscribe to mouse input
-			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
-			CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
-
-			// Debug - Testing
+		// Debug - Set default turret
+		if (CNetwork.IsServer)
+		{	
 			m_cTurretViewId.Set(5);
 		}
 	}
 
 
+	[AServerMethod]
 	[AClientMethod]
-	void OnPlayerLeaveCockpit(ushort _usLeavingPlayerActorViewId)
+	void OnPlayerLeaveCockpit(ulong _ulPlayerId)
 	{
-		if (_usLeavingPlayerActorViewId == CGame.PlayerActorViewId)
+		// Debug - Set default turret
+		if (CNetwork.IsServer)
 		{
-			// Unsubscriber to mouse input
-			CGame.UserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(OnMouseMoveX);
-			CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(OnMouseMoveY);
-		}
-	}
-
-
-	[AClientMethod]
-	void OnMouseMoveX(float _fAmount)
-	{
-		// Rotate turret around X
-		TurretObject.GetComponent<CTurretController>().RotateX(_fAmount);
-	}
-
-
-	[AClientMethod]
-	void OnMouseMoveY(float _fAmount)
-	{
-		// Rotate turret around Y
-		TurretObject.GetComponent<CTurretController>().RotateY(_fAmount);
-	}
-
-
-	[AClientMethod]
-	void UpdateActiveTurret()
-	{
-		if (m_cCockpit.ContainedPlayerActorViewId == CGame.PlayerActorViewId)
-		{
-			// Set the turret camera to enabled
-			TurretObject.transform.FindChild("TurretBarrels").FindChild("TurretCamera").camera.enabled = true;
+			ActiveTurretObject.GetComponent<CTurretController>().Unmount();
 		}
 	}
 
@@ -154,13 +139,6 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 
 
 	CCockpit m_cCockpit = null;
-
-
-	Vector3 m_vRotation = Vector3.zero;
-	Vector2 m_vMinRotationY = new Vector2(-50.0f, -360.0f);
-	Vector2 m_vMaxRotationY = new Vector2( 60.0f,  360.0f);
-	Vector2 m_vMinRotationX = new Vector2( -80, -60);
-	Vector2 m_vMaxRotationX = new Vector2( 0,  70);
 
 
 	float m_fFireTimer		= 0.0f;

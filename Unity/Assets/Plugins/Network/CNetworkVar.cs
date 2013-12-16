@@ -59,7 +59,7 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-    public void Set(TYPE _NewValue)
+	public void Set(TYPE _NewValue)
     {
         if (!CNetwork.IsServer)
         {
@@ -69,6 +69,7 @@ public class CNetworkVar<TYPE> : INetworkVar
         {
 			if (!(_NewValue).Equals(m_Value))
 			{
+				m_PreviousValue = m_Value;
 				m_Value = _NewValue;
 				m_nSetNotifyCallback(m_bNetworkVarId);
 			}
@@ -87,6 +88,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public override void SyncValue(object _cValue, float _fSyncTick)
 	{
+		// Previous values are already set on the server
+		if (!CNetwork.IsServer)
+		{
+			m_PreviousValue = m_Value;
+		}
+
 		m_Value = (TYPE)_cValue;
 		m_fSyncedTick = _fSyncTick;
 	}
@@ -105,6 +112,12 @@ public class CNetworkVar<TYPE> : INetworkVar
     {
         return (m_Value);
     }
+
+
+	public TYPE GetPrevious()
+	{
+		return (m_PreviousValue);
+	}
 
 
 	public override object GetValueObject()
@@ -147,6 +160,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 
     TYPE m_Value;
 	TYPE m_StartValue;
+	TYPE m_PreviousValue;
 
 
 	CNetworkVar<object>.OnSetCallback m_nSetNotifyCallback = null;

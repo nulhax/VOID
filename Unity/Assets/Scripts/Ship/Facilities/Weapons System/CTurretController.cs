@@ -28,7 +28,8 @@ public class CTurretController : CNetworkMonoBehaviour
 
 	public enum ENetworkAction
 	{
-		Rotation,
+		UpdateRotation,
+		FireLasers,
 	}
 
 
@@ -57,12 +58,25 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
+	public ulong MountedPlayerId
+	{
+		get { return (m_ulMountedPlayerId.Get()); }
+	}
+
+
+	public bool IsMounted
+	{
+		get { return (MountedPlayerId != 0); }
+	}
+
+
 // Member Methods
 
 
 	public override void InstanceNetworkVars()
 	{
 		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync);
+		m_ulMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync);
 	}
 
 
@@ -72,22 +86,91 @@ public class CTurretController : CNetworkMonoBehaviour
 		{
 			transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_tRotation.Get().y, transform.eulerAngles.z);
 		}
+		else if (_cSyncedVar == m_ulMountedPlayerId)
+		{
+			Debug.Log(m_ulMountedPlayerId.Get());
+			Debug.Log(m_ulMountedPlayerId.GetPrevious());
+			if (m_ulMountedPlayerId.Get() == CNetwork.PlayerId)
+			{
+				// Subscribe to input events
+				CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(RotateX);
+				CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
+				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(FireLasers);
+
+				// Enabled turret camera
+				m_cCameraObject.camera.enabled = true;
+			}
+			else if (m_ulMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
+			{
+				// Unsubscriber to input events
+				CGame.UserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(RotateX);
+				CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
+				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(FireLasers);
+
+				// Disable turret camera
+				m_cCameraObject.camera.enabled = false;
+			}
+		}
 	}
 
 
 	public void Start()
 	{
-		
+		// Empty
 	}
 
 
 	public void OnDestroy()
 	{
+		// Empty
 	}
 
 
 	public void Update()
 	{
+		// Check to send rotation
+		if (m_bSendRotation)
+		{
+			// Write update rotation action
+			s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
+			s_cSerializeStream.Write(transform.rotation.x);
+			s_cSerializeStream.Write(transform.rotation.y);
+
+			m_bSendRotation = true;
+		}
+
+		m_fFireTimer += Time.deltaTime;
+
+		if (m_bFireLasers)
+		{
+			if (m_fFireTimer < m_fFireInterval)
+			{
+				// Write fire lasers action
+				s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
+				s_cSerializeStream.Write(transform.rotation.x);
+				s_cSerializeStream.Write(transform.rotation.y);
+
+				m_fFireTimer = 0.0f;
+			}
+		}
+	}
+
+
+	[AServerMethod]
+	public void Mount(ulong _ulPlayerId)
+	{
+		Debug.Log(string.Format("Player ({0}) mounted turret", _ulPlayerId));
+
+		m_ulMountedPlayerId.Set(_ulPlayerId);
+	}
+
+
+	[AServerMethod]
+	public void Unmount()
+	{
+		Debug.Log(string.Format("Player ({0}) unmounted turret", m_ulMountedPlayerId.GetPrevious()));
+
+		m_ulMountedPlayerId.Set(0);
 	}
 
 
@@ -126,6 +209,13 @@ public class CTurretController : CNetworkMonoBehaviour
 
 
 	[AClientMethod]
+	public void FireLasers(bool _bDown)
+	{
+		m_bFireLasers = _bDown;
+	}
+
+
+	[AClientMethod]
 	public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		_cStream.Write(s_cSerializeStream);
@@ -144,6 +234,7 @@ public class CTurretController : CNetworkMonoBehaviour
 
 
 	CNetworkVar<Vector2> m_tRotation = null;
+	CNetworkVar<ulong> m_ulMountedPlayerId = null;
 
 
 	public GameObject m_cCameraObject = null;
@@ -156,7 +247,12 @@ public class CTurretController : CNetworkMonoBehaviour
 	Vector2 m_vMaxRotationX = new Vector2(0, 70);
 
 
-	bool m_bSendRotation = true;
+	float m_fFireTimer	  = 0.0f;
+	float m_fFireInterval = 0.1f;
+
+
+	bool m_bSendRotation = false;
+	bool m_bFireLasers   = false;
 
 
 	static CNetworkStream s_cSerializeStream = new CNetworkStream();

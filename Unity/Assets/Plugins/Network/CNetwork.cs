@@ -110,6 +110,12 @@ public class CNetwork : MonoBehaviour
 	}
 
 
+	public static ulong PlayerId
+	{
+		get { return (Connection.RakPeer.GetMyGUID().g); }
+	}
+
+
 	public static CNetwork Instance
 	{
 		get { return (s_cInstance); }
