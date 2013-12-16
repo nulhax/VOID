@@ -69,6 +69,7 @@ public class CGame : CNetworkMonoBehaviour
 		ToolRachet, 
 		ToolExtinguisher,
 		ToolAk47,
+        ToolMedical,
 		
 		// Galaxy
 		Galaxy,
@@ -243,6 +244,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolAk47, "Tools/ToolAk47");
+
+
+        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolMedical, "Tools/ToolMedical");
+
 
 		// Galaxy
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy/Galaxy");
@@ -472,6 +477,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
+
+        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
 		
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
