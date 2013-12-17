@@ -40,6 +40,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 // Member Fields
 	private int m_OriginalLayer = 0;
+	private bool m_bRotationYDisabled = false;
+	
 	private Vector3 m_GravityAcceleration = Vector3.zero;
 	
     private CNetworkVar<float> m_cPositionX    = null;
@@ -94,17 +96,22 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		set { m_bRotationYDisabled = value; }
 		get { return (m_bRotationYDisabled); }
 	}
-	bool m_bRotationYDisabled = false;
 
 // Member Methods
+	public void Awake()
+	{
+		// Save the original layer
+		m_OriginalLayer = gameObject.layer;
+	}
+	
 	public void Start()
 	{	
-		m_OriginalLayer = gameObject.layer;
-		
+		// Set to kinematic on the client
 		if(!CNetwork.IsServer)
 		{
 			rigidbody.isKinematic = true;
 		}
+		// Set the dynamic actor as currently boarding
 		else
 		{
 			BoardingState = EBoardingState.Boarding;

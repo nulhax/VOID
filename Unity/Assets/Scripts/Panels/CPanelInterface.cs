@@ -51,8 +51,7 @@ public class CPanelInterface : MonoBehaviour
 
 	public void Awake()
 	{
-		gameObject.AddComponent<CInteractableObject>();
-		gameObject.AddComponent<CNetworkView>();
+		
 	}
 
 

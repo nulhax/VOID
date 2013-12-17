@@ -394,7 +394,8 @@ public class CNetworkView : CNetworkMonoBehaviour
 					Logger.WriteError("Somethign went wrong when setting the network view id ({0})", value);
 				}
 			}
-			lol = m_usViewId;
+			
+			m_NetworkViewId = m_usViewId;
 		}
 
 		get { return (m_usViewId); }
@@ -739,7 +740,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
     public ushort m_usViewId = 0;
-	public int lol = 0;
+	public int m_NetworkViewId = 0;
     
     Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();
     Dictionary<byte, TRpcMethod> m_mNetworkRpcs = new Dictionary<byte, TRpcMethod>();

@@ -41,13 +41,17 @@ public class CExitTrigger : MonoBehaviour
 		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
 			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
-			if(dynamicActor != null && !CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
+			if(dynamicActor != null)
 			{
-				// Transfer dynamic actor to galaxy space
-				dynamicActor.TransferActorToGalaxySpace();
-				
-				// Set the disembarking state
-				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Disembarking;
+				// Ensure the actor is not onboard any other facility before disembarking
+				if(!CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
+				{
+					// Transfer dynamic actor to galaxy space
+					dynamicActor.TransferActorToGalaxySpace();
+					
+					// Set the disembarking state
+					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Disembarking;
+				}
 			}
 		}
 	}
