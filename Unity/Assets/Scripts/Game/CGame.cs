@@ -456,7 +456,9 @@ public class CGame : CNetworkMonoBehaviour
 		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
 		
 		// Set the parent as the ship
+		cPlayerActor.transform.position = new Vector3(0.0f, -6.0f, -42.0f);
 		cPlayerActor.transform.parent = Ship.transform;
+		cPlayerActor.GetComponent<CNetworkView>().SyncTransformPosition();
 		cPlayerActor.GetComponent<CNetworkView>().SyncParent();
 		
 		// Get actor network view id

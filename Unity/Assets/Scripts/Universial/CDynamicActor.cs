@@ -23,6 +23,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 // Member Types
 	public enum EBoardingState : int
 	{
+		INVALID,
+		
 		Onboard,
 		Offboard,
 		Boarding,
@@ -95,20 +97,39 @@ public class CDynamicActor : CNetworkMonoBehaviour
 
 // Member Methods
 	public void Start()
-	{
+	{	
+		m_OriginalLayer = gameObject.layer;
+		
 		if(!CNetwork.IsServer)
 		{
 			rigidbody.isKinematic = true;
 		}
-		
-		m_OriginalLayer = gameObject.layer;
+		else
+		{
+			BoardingState = EBoardingState.Boarding;
+		}
 	}
 	
 	public void Update()
 	{
 		if(CNetwork.IsServer)
 		{
-			//SyncTransform();
+			SyncTransform();
+		}
+	}
+	
+	public void LateUpdate()
+	{
+		if(CNetwork.IsServer)
+		{
+			if(BoardingState == EBoardingState.Disembarking)
+			{
+				BoardingState = EBoardingState.Offboard;
+			}
+			else if(BoardingState == EBoardingState.Boarding)
+			{
+				BoardingState = EBoardingState.Onboard;
+			}
 		}
 	}
 	
@@ -131,12 +152,12 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
-		m_BoardingState = new CNetworkVar<int>(OnNetworkVarSync, (int)EBoardingState.Onboard);
+		m_BoardingState = new CNetworkVar<int>(OnNetworkVarSync, (int)EBoardingState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
 	{
-		if(!CNetwork.IsServer)
+		if(!CNetwork.IsServer && CGame.PlayerActor != gameObject)
 		{
 			// Position
 	        if (_rSender == m_cPositionX || _rSender == m_cPositionY || _rSender == m_cPositionZ)
@@ -152,21 +173,25 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		}
 		
 		// Boarding state
-		if(_rSender == m_BoardingState)
+ 		if(_rSender == m_BoardingState)
 		{
 			if(BoardingState == EBoardingState.Boarding)
 			{
 				if(EventBoard != null)
 					EventBoard();
-				
-				TransferActorToShipSpace();
 			}
 			else if(BoardingState == EBoardingState.Disembarking)
 			{
 				if(EventDisembark != null)
 					EventDisembark();
-				
-				TransferActorToGalaxySpace();
+			}
+			else if(BoardingState == EBoardingState.Onboard)
+			{
+				SetOriginalLayer();
+			}
+			else if(BoardingState == EBoardingState.Offboard)
+			{
+				SetGalaxyLayer();
 			}
 		}
 	}
@@ -177,7 +202,20 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		EulerAngles = transform.eulerAngles;
 	}
 	
-	private void TransferActorToGalaxySpace()
+	private void SetGalaxyLayer()
+	{
+		// Resursively set the galaxy layer on the actor
+		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
+	}
+	
+	private void SetOriginalLayer()
+	{
+		// Resursively set the original layer on the actor
+		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
+	}
+	
+	[AServerMethod]
+	public void TransferActorToGalaxySpace()
 	{	 	
 		GameObject galaxyShip =  CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
 		bool childOfPlayer = false;
@@ -189,8 +227,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		if(!childOfPlayer)
 		{
 			// Get the actors position relative to the ship
-			Vector3 relativePos = transform.position - CGame.Ship.transform.position;
-			Quaternion relativeRot = transform.rotation * Quaternion.Inverse(CGame.Ship.transform.rotation);
+			Vector3 relativePos = Quaternion.Inverse(CGame.Ship.transform.rotation) * (transform.position - CGame.Ship.transform.position);
+			Quaternion relativeRot = Quaternion.Inverse(CGame.Ship.transform.rotation) * transform.rotation;
 			
 			// Temporarily parent to galaxy ship
 			transform.parent = galaxyShip.transform;
@@ -203,31 +241,24 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			// Sync over the network and apply the galaxy ship force
 			if(GetComponent<CNetworkView>() != null)
 			{
-				if(CNetwork.IsServer)
-				{
-					// Add a compensation force to the actor
-					rigidbody.AddForce(galaxyShip.rigidbody.GetRelativePointVelocity(relativePos), ForceMode.VelocityChange);
-					
-					// Sync the parent
-					GetComponent<CNetworkView>().SyncParent();
-				}
+				// Add a compensation force to the actor
+				Vector3 transferedVelocity = galaxyShip.rigidbody.GetRelativePointVelocity(relativePos);
+				rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
+				
+				// Sync the parent
+				GetComponent<CNetworkView>().SyncParent();
+				GetComponent<CNetworkView>().SyncTransformPosition();
+				GetComponent<CNetworkView>().SyncTransformRotation();
 			}
 			else
 			{
 				Debug.LogError("No network view found on dynamic actor!");
 			}
 		}
-		
-		// Resursively set the galaxy layer on the actor
-		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
-		
-		if(CNetwork.IsServer)
-		{
-			BoardingState = EBoardingState.Offboard;
-		}
 	}
 	
-	private void TransferActorToShipSpace()
+	[AServerMethod]
+	public void TransferActorToShipSpace()
 	{
 		GameObject galaxyShip = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
 		bool childOfPlayer = false;
@@ -239,8 +270,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		if(!childOfPlayer)
 		{
 			// Get the actors position relative to the ship
-			Vector3 relativePos = transform.position - galaxyShip.transform.position;
-			Quaternion relativeRot = transform.rotation * Quaternion.Inverse(galaxyShip.transform.rotation);
+			Vector3 relativePos = Quaternion.Inverse(galaxyShip.transform.rotation) * (transform.position - galaxyShip.transform.position);
+			Quaternion relativeRot = Quaternion.Inverse(galaxyShip.transform.rotation) * transform.rotation;
 			
 			// Parent the actor to the ship
 			transform.parent = CGame.Ship.transform;
@@ -250,18 +281,22 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			transform.localRotation = relativeRot;	
 			
 			// Sync over the network
-			if(CNetwork.IsServer && GetComponent<CNetworkView>() != null)
+			if(GetComponent<CNetworkView>() != null)
 			{
+				// Add a compensation force to the actor
+				Vector3 transferedVelocity = -galaxyShip.rigidbody.GetRelativePointVelocity(relativePos);
+				rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
+				
+				// Sync the new states
 				GetComponent<CNetworkView>().SyncParent();
+				GetComponent<CNetworkView>().SyncTransformPosition();
+				GetComponent<CNetworkView>().SyncTransformRotation();
+				
 			}
-		}
-		
-		// Resursively set the default layer on the actor
-		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
-		
-		if(CNetwork.IsServer)
-		{
-			BoardingState = EBoardingState.Onboard;
+			else
+			{
+				Debug.LogError("No network view found on dynamic actor!");
+			}
 		}
 	}
 }

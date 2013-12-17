@@ -6,15 +6,32 @@ ModelImporter:
     100000: //RootNode
     100002: polySurface614_MeshPart0
     100004: polySurface614_MeshPart1
+    100006: polySurface898
+    100008: polySurface898_MeshPart0
+    100010: polySurface898_MeshPart1
+    100012: polySurface898_MeshPart2
     400000: //RootNode
     400002: polySurface614_MeshPart0
     400004: polySurface614_MeshPart1
+    400006: polySurface898
+    400008: polySurface898_MeshPart0
+    400010: polySurface898_MeshPart1
+    400012: polySurface898_MeshPart2
     2300000: polySurface614_MeshPart0
     2300002: polySurface614_MeshPart1
+    2300004: polySurface898_MeshPart0
+    2300006: polySurface898_MeshPart1
+    2300008: polySurface898_MeshPart2
     3300000: polySurface614_MeshPart0
     3300002: polySurface614_MeshPart1
+    3300004: polySurface898_MeshPart0
+    3300006: polySurface898_MeshPart1
+    3300008: polySurface898_MeshPart2
     4300000: polySurface614_MeshPart0
     4300002: polySurface614_MeshPart1
+    4300004: polySurface898_MeshPart0
+    4300006: polySurface898_MeshPart1
+    4300008: polySurface898_MeshPart2
     9500000: //RootNode
   materials:
     importMaterials: 1

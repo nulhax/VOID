@@ -124,6 +124,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		gameObject.AddComponent<CNetworkView>();
 		
 		gameObject.rigidbody.useGravity = false;
+		gameObject.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
 	}
 
 

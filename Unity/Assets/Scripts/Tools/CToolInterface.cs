@@ -145,6 +145,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 		gameObject.AddComponent<CNetworkView>();
 		
 		gameObject.rigidbody.useGravity = false;
+		gameObject.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
 	}
 
 

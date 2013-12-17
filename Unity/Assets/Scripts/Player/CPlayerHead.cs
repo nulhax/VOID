@@ -48,6 +48,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		get { return (m_cShipCamera); }
 		set { m_cShipCamera = value; }
 	}
+	
+	public bool CamerasSwapped
+	{
+		get { return(PlayerShipCamera.transform.parent != ActorHead.transform); }
+	}
 
 	public bool InputDisabled
 	{
@@ -195,7 +200,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			// Clamp rotation
 			m_vRotation.y = Mathf.Clamp(m_vRotation.y, m_vCameraMinRotation.y, m_vCameraMaxRotation.y);
 
-			transform.localEulerAngles = new Vector3(0.0f, m_vRotation.y, 0.0f);
+			// Apply yaw to the actor
+			transform.Rotate(0.0f, _fAmount, 0.0f, Space.Self);
 		}
 	}
 
