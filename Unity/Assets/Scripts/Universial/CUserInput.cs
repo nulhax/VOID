@@ -92,12 +92,6 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	public void OnDestroy()
-	{
-		// Empty
-	}
-
-
 	public void Update()
 	{
 		UpdateMouseMove();
@@ -106,6 +100,22 @@ public class CUserInput : MonoBehaviour
 		UpdateUse();
 		UpdateMovement();
 		UpdateMovementSpecial();
+	}
+	
+	
+	public void UnregisterAllEvents()
+	{
+		EventPrimary = null;
+		EventSecondary = null;
+		EventUse = null;
+		EventMoveForward = null;
+		EventMoveBackward = null;
+		EventMoveLeft = null;
+		EventMoveRight = null;
+		EventMoveJump = null;
+		EventMoveSprint = null;
+		EventMouseMoveX = null;
+		EventMouseMoveY = null;
 	}
 
 

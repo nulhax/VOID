@@ -87,6 +87,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		{
 			// Disable any main camera currently rendering
 			GameObject.Find("Main Camera").camera.enabled = false;
+			GameObject.Find("Main Camera").GetComponent<AudioListener>().enabled = false;
 		
 			// Add the ship camera to the actor observing the ship
 			m_cShipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerShipCamera"));

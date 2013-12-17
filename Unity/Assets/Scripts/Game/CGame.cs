@@ -560,6 +560,8 @@ public class CGame : CNetworkMonoBehaviour
 
     void OnConnect()
     {
+		m_mPlayersActor.Clear();
+		
         // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
         //if (!CNetwork.IsServer)    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
         //    m_Galaxy = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy).GetComponent<CGalaxy>();
@@ -568,10 +570,16 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnDisconnect()
 	{
+		UserInput.UnregisterAllEvents();
+		
 		GameObject.Find("Main Camera").camera.enabled = true;
-
-		m_mPlayersActor.Clear();
-		m_usShipViewId = 0;
+		GameObject.Find("Main Camera").GetComponent<AudioListener>().enabled = true;
+		
+		if(!CNetwork.IsServer)
+		{
+			m_usShipViewId = 0;
+		}
+			
         //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
         //    m_Galaxy = null;
 	}

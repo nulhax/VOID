@@ -74,6 +74,32 @@ NavMeshSettings:
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
   m_NavMesh: {fileID: 0}
+--- !u!1 &242194559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100010, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+  m_PrefabInternal: {fileID: 1869906051}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 242194560}
+  m_Layer: 0
+  m_Name: LaserNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &242194560
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400010, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+  m_PrefabInternal: {fileID: 1869906051}
+  m_GameObject: {fileID: 242194559}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -.423038721, y: -.0865092278, z: 3.54653311}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1165490971}
 --- !u!1 &469936913
 GameObject:
   m_ObjectHideFlags: 0
@@ -140,6 +166,7 @@ GameObject:
   - 20: {fileID: 624659157}
   - 92: {fileID: 624659156}
   - 124: {fileID: 624659155}
+  - 81: {fileID: 624659154}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -147,6 +174,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!81 &624659154
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 624659153}
+  m_Enabled: 0
 --- !u!124 &624659155
 Behaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cCameraObject: {fileID: 1549340061}
+  m_cBarrle: {fileID: 1165490970}
 --- !u!114 &1129533416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +372,8 @@ Transform:
   m_Children:
   - {fileID: 1549340062}
   - {fileID: 469936914}
+  - {fileID: 242194560}
+  - {fileID: 1621133936}
   m_Father: {fileID: 1129533417}
 --- !u!1001 &1243027373
 Prefab:
@@ -737,6 +774,32 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+--- !u!1 &1621133935
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 100012, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+  m_PrefabInternal: {fileID: 1869906051}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1621133936}
+  m_Layer: 0
+  m_Name: LaserNode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1621133936
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 400012, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
+  m_PrefabInternal: {fileID: 1869906051}
+  m_GameObject: {fileID: 1621133935}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: .335607767, y: -.0865087509, z: 3.54653311}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1165490971}
 --- !u!1001 &1688088628
 Prefab:
   m_ObjectHideFlags: 0

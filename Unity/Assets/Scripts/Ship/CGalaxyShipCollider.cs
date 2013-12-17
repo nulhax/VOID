@@ -28,7 +28,7 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Fields
 	public GameObject m_CompoundCollider = null;
 	
-	public List<GameObject> m_ActorsJustExitedShip = new List<GameObject>();
+	private List<GameObject> m_ActorsJustExitedShip = new List<GameObject>();
 	
 	
 	// Member Properies
@@ -37,13 +37,17 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		rigidbody.angularVelocity = Vector3.up * 0.5f;
-		rigidbody.angularDrag = 0.0f;
+		
 	}
 	
 	public void AttachNewCollider(string _ColliderPrefab, Vector3 _RelativePos, Quaternion _RelativeRot)
 	{
 		GameObject newCollider = (GameObject)GameObject.Instantiate(Resources.Load(_ColliderPrefab, typeof(GameObject)));
+		if(newCollider == null)
+		{
+			Debug.LogError("Collider prefab didn't exist! " + _ColliderPrefab);
+		}
+		
 		newCollider.transform.parent = m_CompoundCollider.transform;
 		newCollider.transform.localPosition = _RelativePos;
 		newCollider.transform.localRotation = _RelativeRot;

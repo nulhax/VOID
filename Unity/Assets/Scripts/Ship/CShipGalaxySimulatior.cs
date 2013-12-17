@@ -139,7 +139,7 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	private void UpdateGalaxyCameraTransforms()
 	{	
-		if(CGame.PlayerActor == null)
+		if(!CNetwork.IsConnectedToServer())
 			return;
 		
 		// If the cameras are gone remove the galaxy camera
