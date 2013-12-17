@@ -216,7 +216,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void UpdateGrounded()
 	{
-		
 		Vector3 vPos = m_physCollider.transform.position; 
 		vPos.y += 1.0f;
 		float fRayLength = m_physCollider.bounds.extents.y + 0.5f;				
@@ -264,7 +263,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void ProcessMovement()
 	{
-		rigidbody.transform.eulerAngles = new Vector3(rigidbody.transform.eulerAngles.x, m_fRotationY, rigidbody.transform.eulerAngles.z);
+		if(CGame.PlayerActor != gameObject)
+		{
+			rigidbody.transform.eulerAngles = new Vector3(rigidbody.transform.eulerAngles.x, m_fRotationY, rigidbody.transform.eulerAngles.z);
+		}
 
 		// Direction movement
 		/*

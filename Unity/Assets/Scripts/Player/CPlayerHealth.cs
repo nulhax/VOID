@@ -200,7 +200,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 			
 		}
 		
-		if(_cVarInstance == m_fActorHp)
+		if(_cVarInstance == m_fActorHp && m_LaughTrack != null)
 		{
 			m_LaughTrack.Play(1.0f, false, -1);
 			

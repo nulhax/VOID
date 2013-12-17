@@ -66,4 +66,15 @@ public class CShipOnboardActors : MonoBehaviour
 		
 		return(actorOnboardShip);
 	}
+	
+	public void RemoveActorFromShip(GameObject _Actor)
+	{
+		foreach(List<GameObject> actorsOnboardFacility in m_FacilitiesActorsOnboard.Values)
+		{
+			if(actorsOnboardFacility.Contains(_Actor))
+			{
+				actorsOnboardFacility.Remove(_Actor);
+			}
+		}
+	}
 }

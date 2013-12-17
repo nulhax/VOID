@@ -43,6 +43,10 @@ public class CEntryTrigger : MonoBehaviour
 			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
 			if(dynamicActor != null)
 			{
+				// Transfer to dynamic actor to ship space
+				dynamicActor.TransferActorToShipSpace();
+								
+				// Set the boarding state
 				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Boarding;
 			}
 		}

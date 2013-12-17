@@ -37,7 +37,8 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		
+		rigidbody.angularVelocity = Vector3.up * 0.5f;
+		rigidbody.angularDrag = 0.0f;
 	}
 	
 	public void AttachNewCollider(string _ColliderPrefab, Vector3 _RelativePos, Quaternion _RelativeRot)
