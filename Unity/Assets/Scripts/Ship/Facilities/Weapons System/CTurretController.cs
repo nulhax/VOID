@@ -84,18 +84,20 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_tRotation)
 		{
-			transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_tRotation.Get().y, transform.eulerAngles.z);
+			if (m_ulMountedPlayerId.Get() != CNetwork.PlayerId)
+			{
+				transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
+				m_cBarrle.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrle.transform.eulerAngles.y, m_cBarrle.transform.eulerAngles.z);
+			}
 		}
 		else if (_cSyncedVar == m_ulMountedPlayerId)
 		{
-			Debug.Log(m_ulMountedPlayerId.Get());
-			Debug.Log(m_ulMountedPlayerId.GetPrevious());
 			if (m_ulMountedPlayerId.Get() == CNetwork.PlayerId)
 			{
 				// Subscribe to input events
 				CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(RotateX);
 				CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
-				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(FireLasers);
+				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Enabled turret camera
 				m_cCameraObject.camera.enabled = true;
@@ -105,7 +107,7 @@ public class CTurretController : CNetworkMonoBehaviour
 				// Unsubscriber to input events
 				CGame.UserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(RotateX);
 				CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
-				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(FireLasers);
+				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Disable turret camera
 				m_cCameraObject.camera.enabled = false;
@@ -116,7 +118,11 @@ public class CTurretController : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Empty
+		for (int i = 0; i < m_cBarrle.transform.childCount; ++ i)
+		{
+			if (m_cBarrle.transform.GetChild(i).gameObject.name == "LaserNode")
+				m_cLaserNodes.Add(m_cBarrle.transform.GetChild(i).gameObject);
+		}
 	}
 
 
@@ -128,29 +134,35 @@ public class CTurretController : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		// Check to send rotation
+		if (CNetwork.IsServer)
+		{
+			m_fServerFireTimer += Time.deltaTime;
+		}
+		
+		// Sync rotation
 		if (m_bSendRotation)
 		{
 			// Write update rotation action
+			s_cSerializeStream.Write(NetworkView.ViewId);
 			s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
-			s_cSerializeStream.Write(transform.rotation.x);
-			s_cSerializeStream.Write(transform.rotation.y);
+			s_cSerializeStream.Write(m_cBarrle.transform.eulerAngles.x);
+			s_cSerializeStream.Write(transform.eulerAngles.y);
 
 			m_bSendRotation = true;
 		}
 
-		m_fFireTimer += Time.deltaTime;
+		// Fire lasers
+		m_fClientFireTimer += Time.deltaTime;
 
 		if (m_bFireLasers)
 		{
-			if (m_fFireTimer < m_fFireInterval)
+			if (m_fClientFireTimer > m_fClientFireInterval)
 			{
 				// Write fire lasers action
-				s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
-				s_cSerializeStream.Write(transform.rotation.x);
-				s_cSerializeStream.Write(transform.rotation.y);
+				s_cSerializeStream.Write(NetworkView.ViewId);
+				s_cSerializeStream.Write((byte)ENetworkAction.FireLasers);
 
-				m_fFireTimer = 0.0f;
+				m_fClientFireTimer = 0.0f;
 			}
 		}
 	}
@@ -159,7 +171,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	[AServerMethod]
 	public void Mount(ulong _ulPlayerId)
 	{
-		Debug.Log(string.Format("Player ({0}) mounted turret", _ulPlayerId));
+		//Debug.Log(string.Format("Player ({0}) mounted turret", _ulPlayerId));
 
 		m_ulMountedPlayerId.Set(_ulPlayerId);
 	}
@@ -168,7 +180,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	[AServerMethod]
 	public void Unmount()
 	{
-		Debug.Log(string.Format("Player ({0}) unmounted turret", m_ulMountedPlayerId.GetPrevious()));
+		//Debug.Log(string.Format("Player ({0}) unmounted turret", m_ulMountedPlayerId.Get()));
 
 		m_ulMountedPlayerId.Set(0);
 	}
@@ -209,9 +221,26 @@ public class CTurretController : CNetworkMonoBehaviour
 
 
 	[AClientMethod]
-	public void FireLasers(bool _bDown)
+	public void OnFireLasersCommand(bool _bDown)
 	{
 		m_bFireLasers = _bDown;
+	}
+
+
+	[AServerMethod]
+	public void FireLasers()
+	{
+		if (m_fServerFireTimer > m_fServerFireInterval)
+		{
+			GameObject cProjectile = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.TurretLaserProjectile);
+			cProjectile.GetComponent<CNetworkView>().SetPosition(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
+			cProjectile.GetComponent<CNetworkView>().SetRotation(m_cLaserNodes[m_iLaserNodeIndex].transform.eulerAngles);
+
+			++ m_iLaserNodeIndex;
+			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_cLaserNodes.Count) ? 0 : m_iLaserNodeIndex;
+
+			m_fServerFireTimer = 0.0f;
+		}
 	}
 
 
@@ -227,6 +256,29 @@ public class CTurretController : CNetworkMonoBehaviour
 	[AServerMethod]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
+		while (_cStream.HasUnreadData)
+		{
+			ushort usTurretViewId = _cStream.ReadUShort();
+			CTurretController cTurretController = CNetwork.Factory.FindObject(usTurretViewId).GetComponent<CTurretController>();
+			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+
+			switch (eAction)
+			{
+			case ENetworkAction.UpdateRotation:
+				float fRotationX = _cStream.ReadFloat();
+				float fRotationY = _cStream.ReadFloat();
+				cTurretController.m_tRotation.Set(new Vector2(fRotationX, fRotationY));
+				break;
+
+			case ENetworkAction.FireLasers:
+				cTurretController.FireLasers();
+				break;
+
+			default:
+				Debug.LogError(string.Format("Unknown network action ({0})", eAction));
+				break;
+			}
+		}
 	}
 
 
@@ -237,7 +289,11 @@ public class CTurretController : CNetworkMonoBehaviour
 	CNetworkVar<ulong> m_ulMountedPlayerId = null;
 
 
+	List<GameObject> m_cLaserNodes = new List<GameObject>();
+
+
 	public GameObject m_cCameraObject = null;
+	public GameObject m_cBarrle = null;
 
 
 	Vector3 m_vRotation = Vector3.zero;
@@ -247,8 +303,13 @@ public class CTurretController : CNetworkMonoBehaviour
 	Vector2 m_vMaxRotationX = new Vector2(0, 70);
 
 
-	float m_fFireTimer	  = 0.0f;
-	float m_fFireInterval = 0.1f;
+	float m_fClientFireTimer	= 0.0f;
+	float m_fClientFireInterval = 0.1f;
+	float m_fServerFireTimer	= 0.0f;
+	float m_fServerFireInterval = 0.1f;
+
+
+	int m_iLaserNodeIndex = 0;
 
 
 	bool m_bSendRotation = false;

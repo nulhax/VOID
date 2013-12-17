@@ -94,6 +94,7 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Un categorized
 		Turret,
+		TurretLaserProjectile,
 		
 		MAX
 	}
@@ -271,7 +272,8 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Facilities/Bridge/Cockpit");
 
 		// Un categorized
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Turrets/Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Facilities/Weapons System/Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TurretLaserProjectile, "Ship/Facilities/Weapons System/TurretLaserProjectile");
 	}
 
 	public void Update()

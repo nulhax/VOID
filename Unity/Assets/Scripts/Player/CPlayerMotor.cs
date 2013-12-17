@@ -172,7 +172,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 
-		rigidbody.isKinematic = true;
+		gameObject.GetComponent<Animator>().enabled = false;
 	}
 
 
@@ -182,7 +182,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 		if (!InputDisabled)
 		{
-			rigidbody.isKinematic = false;
+			gameObject.GetComponent<Animator>().enabled = true;
 		}
 	}
 

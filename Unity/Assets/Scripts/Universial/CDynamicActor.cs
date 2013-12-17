@@ -83,15 +83,16 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		}
         get 
 		{ 
-			return (new Vector3(m_EulerAngleX.Get(), (RotationYDisabled) ? transform.eulerAngles.y: m_EulerAngleY.Get(), m_EulerAngleZ.Get())); 
+			return (new Vector3(m_EulerAngleX.Get(), (RotationYDisabled) ? transform.eulerAngles.y : m_EulerAngleY.Get(), m_EulerAngleZ.Get())); 
 		}
     }
 
 	public bool RotationYDisabled
 	{
-		set;
-		get;
+		set { m_bRotationYDisabled = value; }
+		get { return (m_bRotationYDisabled); }
 	}
+	bool m_bRotationYDisabled = false;
 
 // Member Methods
 	public void Start()

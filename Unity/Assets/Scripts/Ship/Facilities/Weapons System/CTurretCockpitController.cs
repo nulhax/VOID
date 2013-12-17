@@ -128,6 +128,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 		if (CNetwork.IsServer)
 		{
 			ActiveTurretObject.GetComponent<CTurretController>().Unmount();
+			m_cTurretViewId.Set(0);
 		}
 	}
 

@@ -102,7 +102,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			else
 			{
 				// Lock player movement locally
-				if (m_cMountedPlayerId.Get() == CGame.PlayerActorViewId)
+				if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
 				{
 					CGame.PlayerActor.GetComponent<CPlayerMotor>().DisableInput(this);
 					CGame.PlayerActor.GetComponent<CPlayerHead>().DisableInput(this);
@@ -116,7 +116,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			}
 
 			// Unlock player movement locally
-			if (m_cMountedPlayerId.GetPrevious() == CGame.PlayerActorViewId)
+			if (m_cMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				CGame.PlayerActor.GetComponent<CPlayerMotor>().UndisableInput(this);
 				CGame.PlayerActor.GetComponent<CPlayerHead>().UndisableInput(this);
@@ -236,7 +236,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				// Rotate player in cockpit
 				cPlayerActor.transform.rotation = gameObject.transform.rotation;
 
-				Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerId));
+				//Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerId));
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class CCockpit : CNetworkMonoBehaviour
 		ushort cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		// Allow player to leave cockpit
-		if (MountedPlayerId == CNetwork.PlayerId)
+		if (MountedPlayerId == _ulPlayerId)
 		{
 			m_cMountedPlayerId.Set(0);
 
@@ -260,7 +260,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			// Enable player movement on server
 			cPlayerActor.GetComponent<CPlayerMotor>().UndisableInput(this);
 
-			Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
+			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
 		}
 	}
 

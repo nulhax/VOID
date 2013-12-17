@@ -337,6 +337,12 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+	public void SetRotation(Vector3 _vEulerAngles)
+	{
+		SetRotation(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
+	}
+
+
 	public void SetRotation(float _fX, float _fY, float _fZ)
 	{
 		// Ensure servers only set transforms
