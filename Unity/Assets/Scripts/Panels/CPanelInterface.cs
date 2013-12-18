@@ -20,6 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
+[RequireComponent(typeof(CInteractableObject))]
 public class CPanelInterface : MonoBehaviour
 {
 
@@ -47,12 +48,6 @@ public class CPanelInterface : MonoBehaviour
 
 
 // Member Functions
-
-
-	public void Awake()
-	{
-		
-	}
 
 
 	public void Start()

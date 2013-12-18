@@ -115,7 +115,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 		// Debug - Set default turret
 		if (CNetwork.IsServer)
 		{	
-			m_cTurretViewId.Set(5);
+			m_cTurretViewId.Set(GameObject.Find("Turret").GetComponent<CNetworkView>().ViewId);
 		}
 	}
 
