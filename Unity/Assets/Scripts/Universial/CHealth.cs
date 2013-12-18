@@ -22,12 +22,6 @@ public class CHealth : CNetworkMonoBehaviour
     {
         if (EventOnSetCallback != null)
             EventOnSetCallback(gameObject, this);
-
-        if (CNetwork.IsServer && destroyOnZeroHealth && health <= 0.0f)
-        {
-            CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
-            destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
-        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -43,6 +37,12 @@ public class CHealth : CNetworkMonoBehaviour
             //Debug.Log("CHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
 
             health -= healthLost;
+
+            if (health <= 0.0f && destroyOnZeroHealth)
+            {
+                CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+                destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
+            }
         }
     }
 }
