@@ -53,10 +53,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         public Quaternion mRotation;
         public Vector3 mLinearVelocity;
         public Vector3 mAngularVelocity;
+        public float mMassToHealthScalar;
         public bool mHasNetworkedEntityScript;
         public bool mHasRigidBody;
 
-        public SGubbinMeta(CGame.ENetworkRegisteredPrefab prefabID, SCellPos parentAbsoluteCell, float scale, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
+        public SGubbinMeta(CGame.ENetworkRegisteredPrefab prefabID, SCellPos parentAbsoluteCell, float scale, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, float massToHealthScalar, bool hasNetworkedEntityScript, bool hasRigidBody)
         {
             mPrefabID = prefabID;
             mParentAbsoluteCell = parentAbsoluteCell;
@@ -65,6 +66,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             mRotation = rotation;
             mLinearVelocity = linearVelocity;
             mAngularVelocity = angularVelocity;
+            mMassToHealthScalar = massToHealthScalar;
             mHasNetworkedEntityScript = hasNetworkedEntityScript;
             mHasRigidBody = hasRigidBody;
         }
@@ -210,7 +212,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
         //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
         //Profiler.EndSample();
-
+        
         // Galaxy is ready to update galaxyIEs.
         mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
 
@@ -643,6 +645,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                                                     Random.rotationUniform, // Rotation.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+                                                    0.5f,   // Mass to health scalar. Zero if there is no health script.
                                                     true,   // Has NetworkedEntity script.
                                                     true    // Has a rigid body.
                                                     ));
@@ -664,6 +667,23 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
+    public void DeregisterGubbin(GalaxyGubbin gubbinToDeregister)
+    {
+        for(int ui = 0; ui < mGubbins.Count; ++ui)
+        {
+            if (mGubbins[ui].mEntity == gubbinToDeregister.gameObject)
+            {
+                if(mGubbins[ui].mAwaitingCull)
+                    mGubbinsToUnload.Remove(mGubbins[ui]);
+
+                mGubbins.RemoveAt(ui);
+                break;
+            }
+        }
+
+        gubbinToDeregister.registeredWithGalaxy = false;
+    }
+
     public void LoadGubbin(SGubbinMeta gubbin)
     {
         Profiler.BeginSample("LoadGubbin");
@@ -678,6 +698,8 @@ public class CGalaxy : CNetworkMonoBehaviour
             Profiler.EndSample();   // LoadGubbin.
             return;
         }
+
+        gubbinObject.AddComponent<GalaxyGubbin>();
 
         // Grab components for future use.
         CNetworkView networkView = gubbinObject.GetComponent<CNetworkView>(); System.Diagnostics.Debug.Assert(networkView != null); // Get network view - the object is assumed to have one.
@@ -724,6 +746,13 @@ public class CGalaxy : CNetworkMonoBehaviour
         if (networkedEntity)
             networkedEntity.UpdateNetworkVars();
 
+        // Health.
+        if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
+        {
+            CHealth health = gubbinObject.GetComponent<CHealth>();
+            health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
+        }
+
         Profiler.BeginSample("Push gubbin to list of gubbins");
         mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
         Profiler.EndSample();
@@ -736,6 +765,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.BeginSample("UnloadGubbin");
 
         // Todo: Save gubbin to file.
+
+        gubbin.mEntity.GetComponent<GalaxyGubbin>().registeredWithGalaxy = false;
         mGubbins.Remove(gubbin);
         CNetwork.Factory.DestoryObject(gubbin.mNetworkViewID);
 
