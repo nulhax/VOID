@@ -114,25 +114,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		// Initialise the expansion ports
 		SearchExpansionPorts();
 		AddDebugPortNames();
-		
-		// Generic components to be added for all room types
-		//gameObject.AddComponent<CFacilityHull>();
-		gameObject.AddComponent<CFacilityGravity>();
-		//gameObject.AddComponent<CFacilityAtmosphere>();
-		gameObject.AddComponent<CFacilityPower>();
-		gameObject.AddComponent<CFacilityGeneral>();
-		
-		// Add the network view
-		gameObject.AddComponent<CNetworkView>();
 	}
 	
 	public void Start()
 	{
-		// Register this rooms internal triggers to the ship actors
-		CInteriorTrigger interiorTrigger = gameObject.GetComponentInChildren<CInteriorTrigger>();
-		interiorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacility);
-		interiorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(CGame.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacility);	
-		
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(Type)) + "Ext", transform.localPosition, transform.localRotation);

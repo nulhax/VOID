@@ -42,21 +42,11 @@ public class CFacilityGravity : MonoBehaviour
 	
 	
 	// Member Methods
-	public void Awake()
+	public void Start()
 	{
 		// Register the actors entering/exiting the trigger zone
-		CInteriorTrigger facilityInteriorTrigger = GetComponentInChildren<CInteriorTrigger>();
-		
-		if(facilityInteriorTrigger == null)
-		{
-			Debug.LogWarning("CFacilityGravity, no interior trigger to use for gravity application!");
-		}
-		
-		else
-		{
-			facilityInteriorTrigger.ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorEnteredGravityZone);
-			facilityInteriorTrigger.ActorExitedTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(ActorExitedGravityZone);
-		}
+		GetComponent<CFacilityOnboardActors>().ActorEnteredFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorEnteredGravityZone);
+		GetComponent<CFacilityOnboardActors>().ActorExitedFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorExitedGravityZone);
 	}
 	
 	public void AddGravitySource(GameObject _Source)

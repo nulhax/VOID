@@ -476,22 +476,22 @@ public class CGame : CNetworkMonoBehaviour
 		InvokeRpcAll("RegisterPlayerActor", _cPlayer.PlayerId, usActorNetworkViewId);
 		
 		// Placeholder Test stuff
-      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
+//      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
-
-        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
-		
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
+//
+//        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
+//		
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 
@@ -530,7 +530,7 @@ public class CGame : CNetworkMonoBehaviour
 		uint iCount = 1;
 		
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Bridge);
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.HallwayStraight, iCount, 0, 0);
+		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.HallwayStraight, iCount, 0, 0);
 		/*cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayCorner, iCount, 1, 1);
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 0, 0);

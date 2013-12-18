@@ -79,8 +79,9 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	public void Awake()
 	{
 		gameObject.GetComponent<CFacilityHull>().EventBreached += new CFacilityHull.NotifyBreached(OnHullBreach);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorEnter);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorExit);
+
+		//CGame.Ship.GetComponent<CShipOnboardActors>().RegisterActorsEnterEventHandler(gameObject, OnPlayerActorEnter);
+		//CGame.Ship.GetComponent<CShipOnboardActors>().RegisterActorsExitEventHandler(gameObject, OnPlayerActorExit);
 	}
 	
 	public void OnDestroy()
@@ -161,7 +162,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 	}
 	
-	void OnPlayerActorEnter(GameObject _Facility, GameObject _PlayerActor)
+	void OnPlayerActorEnter(GameObject _PlayerActor)
 	{
 		// If there is no oxygen, damage the player. 
 		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
@@ -173,7 +174,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 	}
 	
-	void OnPlayerActorExit(GameObject _Facility, GameObject _PlayerActor)
+	void OnPlayerActorExit(GameObject _PlayerActor)
 	{
 		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
 		{

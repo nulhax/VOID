@@ -36,6 +36,7 @@ public class CExitTrigger : MonoBehaviour
 	
 	
 	// Member Methods
+	[AServerMethod]
 	private void OnTriggerExit(Collider _Other)
 	{
 		if(_Other.rigidbody != null && CNetwork.IsServer)
@@ -51,6 +52,7 @@ public class CExitTrigger : MonoBehaviour
 					
 					// Set the disembarking state
 					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Disembarking;
+					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Offboard;
 				}
 			}
 		}

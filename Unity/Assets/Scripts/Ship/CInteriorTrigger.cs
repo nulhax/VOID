@@ -27,10 +27,7 @@ public class CInteriorTrigger : MonoBehaviour
 
 
 	// Member Delegates & Events
-	public delegate void FacilityActorInteriorTriggerHandler(GameObject _Facility, GameObject _Actor);
-	
-	public event FacilityActorInteriorTriggerHandler ActorEnteredTrigger;
-	public event FacilityActorInteriorTriggerHandler ActorExitedTrigger;
+
 		
 	// Member Fields
 	
@@ -39,35 +36,21 @@ public class CInteriorTrigger : MonoBehaviour
 	
 	
 	// Member Methods
+	[AServerMethod]
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(_Other.rigidbody != null)
+		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
-			OnActorEnter(transform.parent.gameObject, _Other.rigidbody.gameObject);
+			transform.parent.GetComponent<CFacilityOnboardActors>().ActorEnteredFacilityTrigger(_Other.rigidbody.gameObject);
 		}
 	}
-	
+
+	[AServerMethod]
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.rigidbody != null)
+		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
-			OnActorExit(transform.parent.gameObject, _Other.rigidbody.gameObject);
-		}
-	}
-	
-	private void OnActorEnter(GameObject _Facility, GameObject _Actor)
-	{
-		if(ActorEnteredTrigger != null)
-		{
-			ActorEnteredTrigger(_Facility, _Actor);
-		}
-	}
-	
-	private void OnActorExit(GameObject _Facility, GameObject _Actor)
-	{
-		if(ActorExitedTrigger != null)
-		{
-			ActorExitedTrigger(_Facility, _Actor);
+			transform.parent.GetComponent<CFacilityOnboardActors>().ActorExitedFacilityTrigger(_Other.rigidbody.gameObject);
 		}
 	}
 }

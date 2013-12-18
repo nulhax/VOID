@@ -36,6 +36,7 @@ public class CEntryTrigger : MonoBehaviour
 	
 	
 	// Member Methods
+	[AServerMethod]
 	private void OnTriggerEnter(Collider _Other)
 	{
 		if(_Other.rigidbody != null && CNetwork.IsServer)
@@ -48,6 +49,7 @@ public class CEntryTrigger : MonoBehaviour
 								
 				// Set the boarding state
 				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Boarding;
+				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Onboard;
 			}
 		}
 	}

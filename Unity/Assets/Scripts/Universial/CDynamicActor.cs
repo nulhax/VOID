@@ -17,11 +17,12 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CNetworkView))]
 public class CDynamicActor : CNetworkMonoBehaviour 
 {
 	
 // Member Types
-	public enum EBoardingState : int
+	public enum EBoardingState
 	{
 		INVALID,
 		
@@ -52,7 +53,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
     private CNetworkVar<float> m_EulerAngleY    = null;
     private CNetworkVar<float> m_EulerAngleZ    = null;
 	
-	private CNetworkVar<int> m_BoardingState = null;
+	private CNetworkVar<EBoardingState> m_BoardingState = null;
 	
 // Member Properties	
 	public Vector3 GravityAcceleration
@@ -63,8 +64,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	public EBoardingState BoardingState
 	{
-		set { m_BoardingState.Set((int)value); }
-		get { return ((EBoardingState)m_BoardingState.Get()); }
+		set { m_BoardingState.Set(value); }
+		get { return (m_BoardingState.Get()); }
 	}
 	
 	public Vector3 Position
@@ -117,27 +118,12 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			BoardingState = EBoardingState.Boarding;
 		}
 	}
-	
+
 	public void Update()
 	{
 		if(CNetwork.IsServer)
 		{
 			SyncTransform();
-		}
-	}
-	
-	public void LateUpdate()
-	{
-		if(CNetwork.IsServer)
-		{
-			if(BoardingState == EBoardingState.Disembarking)
-			{
-				BoardingState = EBoardingState.Offboard;
-			}
-			else if(BoardingState == EBoardingState.Boarding)
-			{
-				BoardingState = EBoardingState.Onboard;
-			}
 		}
 	}
 	
@@ -160,7 +146,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
-		m_BoardingState = new CNetworkVar<int>(OnNetworkVarSync, (int)EBoardingState.INVALID);
+		m_BoardingState = new CNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -183,6 +169,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		// Boarding state
  		if(_rSender == m_BoardingState)
 		{
+			Debug.LogError(BoardingState.ToString() + " " + GetComponent<CNetworkView>().ViewId);
+
 			if(BoardingState == EBoardingState.Boarding)
 			{
 				if(EventBoard != null)
