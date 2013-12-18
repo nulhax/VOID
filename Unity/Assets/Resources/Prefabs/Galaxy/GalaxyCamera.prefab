@@ -56,6 +56,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+  m_OcclusionCulling: 1
 --- !u!45 &4500000
 Skybox:
   m_ObjectHideFlags: 1

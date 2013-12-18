@@ -38,7 +38,7 @@ public class GalaxyIE : MonoBehaviour
 
     void Start()
     {
-        mGalaxyCamera = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/GalaxyCamera", typeof(GameObject)));
+        mGalaxyCamera = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Galaxy/GalaxyCamera", typeof(GameObject)));
 
         mGalaxyCamera.camera.enabled = false;   // Disable camera to control when it renders.
         camera.clearFlags = CameraClearFlags.Skybox;

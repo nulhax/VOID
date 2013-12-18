@@ -75,7 +75,7 @@ public class DungeonMaster : MonoBehaviour
 
             CGalaxy.SCellPos parentAbsoluteCell = CGalaxy.instance.PointToAbsoluteCell(CGame.GalaxyShip.transform.position);
             Vector3 pos = (CGame.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellCentrePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
-            CGalaxy.instance.LoadGubbin(new CGalaxy.SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1), parentAbsoluteCell, Random.Range(10.0f, 30.0f), pos, Random.rotationUniform, (CGame.GalaxyShip.transform.position - pos).normalized * 100.0f, Random.onUnitSphere * 50.0f, true, true));
+            CGalaxy.instance.LoadGubbin(new CGalaxy.SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1), parentAbsoluteCell, Random.Range(10.0f, 30.0f), pos, Random.rotationUniform, (CGame.GalaxyShip.transform.position - pos).normalized * 100.0f, Random.onUnitSphere * 50.0f, 0.125f, true, true));
         }
 	}
 
