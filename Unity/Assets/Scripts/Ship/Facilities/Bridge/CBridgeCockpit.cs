@@ -150,8 +150,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public void Awake()
 	{
-		gameObject.AddComponent<CInteractableObject>();
-		gameObject.AddComponent<CNetworkView>();
+		
 	}
 	
 	public void Start()

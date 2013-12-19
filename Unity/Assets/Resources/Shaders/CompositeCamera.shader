@@ -1,9 +1,12 @@
-﻿Shader "Hidden/Composite Camera Shader" 
+﻿Shader "Hidden/CompositeCameraShader" 
 {
 	Properties 
 	{
-		_MainTex ("Base (RGB)", 2D) = "white" {}
-		_SecondTex ("Base (RGB)", 2D) = "red" {}
+		_ForgroundTex ("Foreground Render Texture", 2D) = "black" {}
+		_BackgroundTex ("Background Render Texture", 2D) = "black" {}
+		_ForgroundDepth ("Foreground Depth Texture", 2D) = "black" {}
+		_BackgroundDepth ("Background Depth Texture", 2D) = "black" {} 
+		_ForgroundInBackground ("Forground has enteted Background", Float) = 0
 	}
 		
 	CGINCLUDE
@@ -12,50 +15,77 @@
 
 	struct v2f 
 	{ 
-		float4 pos	: POSITION;
-		float2 uv	: TEXCOORD0;
-		float2 uvD	: TEXCOORD1;
+		float4 pos	: POSITION; 
+   		float2 uv : TEXCOORD0; 
 	}; 
 
-	uniform sampler2D _MainTex;
-	uniform sampler2D _SecondTex;
-	
-	sampler2D _CameraDepthTexture; 
+	sampler2D _ForgroundTex;
+	sampler2D _BackgroundTex;
+	sampler2D _ForgroundDepth;
+	sampler2D _BackgroundDepth;
+	float _ForgroundInBackground;
 	
 	v2f vert(appdata_img v)
 	{
-		v2f o;
-		o.pos = mul (UNITY_MATRIX_MVP, v.vertex);
-		o.uv = MultiplyUV(UNITY_MATRIX_TEXTURE0, v.texcoord);
-		o.uvD = o.uv;
-		o.uvD.y = 1.0f - o.uvD.y;
+		v2f o; 
+		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);  
+		o.uv = v.texcoord.xy;  
+		
+	#if UNITY_UV_STARTS_AT_TOP
+		o.uv.y = 1 - o.uv.y;
+	#endif
 		
 		return o;
 	}
-	
-	float4 frag(v2f i) : COLOR
-	{
-		float centerDepth = Linear01Depth(UNITY_SAMPLE_DEPTH(tex2D(_CameraDepthTexture, i.uvD)));
 
-		float4 ret = centerDepth <= 1.0f ? tex2D(_MainTex, i.uv) : tex2D(_SecondTex, i.uv);
-
-		return centerDepth;
-	}
+ 	float4 frag(v2f i) : COLOR
+	{  
+		float4 foregroundCol = tex2D(_ForgroundTex, i.uv);
+		float4 backgroundCol = tex2D(_BackgroundTex, i.uv);
+		
+		float forgroundDepth = UNITY_SAMPLE_DEPTH(tex2D(_ForgroundDepth, i.uv));
+		float backgroundDepth = UNITY_SAMPLE_DEPTH(tex2D(_BackgroundDepth, i.uv));
+ 		   
+ 		float4 output = backgroundCol; 
+ 		if(forgroundDepth < backgroundDepth)
+ 		{
+ 			output = foregroundCol;  
+ 			
+ 			if(_ForgroundInBackground == 1)
+	 		{  
+	 			output.r = (foregroundCol.r) + (backgroundCol.r * (1.0 - foregroundCol.a));
+	 		 	output.g = (foregroundCol.g) + (backgroundCol.g * (1.0 - foregroundCol.a));
+	 		 	output.b = (foregroundCol.b) + (backgroundCol.b * (1.0 - foregroundCol.a)); 
+	 		}  
+ 		} 
+ 		
+ 		if(_ForgroundInBackground == 0)
+ 		{  
+ 			output.r = (foregroundCol.r) + (backgroundCol.r * (1.0 - foregroundCol.a));
+ 		 	output.g = (foregroundCol.g) + (backgroundCol.g * (1.0 - foregroundCol.a));
+ 		 	output.b = (foregroundCol.b) + (backgroundCol.b * (1.0 - foregroundCol.a)); 
+ 		} 
+ 	 
+ 		return output;
+ 	}
 	
-	ENDCG
+	ENDCG 
+	
+
 	 
 	SubShader 
 	{	
 		Pass 
 		{
-			ZTest Always Cull Off ZWrite Off
+			ZTest Off Cull Off ZWrite Off
 			Fog { Mode off } 
 			
 			CGPROGRAM 
 			#pragma vertex vert
 			#pragma fragment frag
-			ENDCG
-		}
-	}
+			#pragma target 3.0		
+			ENDCG 
+		}               
+	}                  
 	Fallback off
 } 

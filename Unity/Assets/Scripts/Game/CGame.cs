@@ -165,6 +165,11 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		get { return (Instance.GetComponent<CUserInput>()); }
 	}
+	
+	public static CCompositeCameraSystem CompositeCameraSystem
+	{
+		get { return (Instance.GetComponent<CCompositeCameraSystem>()); }
+	}
 
 // Member Functions
 
@@ -571,9 +576,6 @@ public class CGame : CNetworkMonoBehaviour
 	void OnDisconnect()
 	{
 		UserInput.UnregisterAllEvents();
-		
-		GameObject.Find("Main Camera").camera.enabled = true;
-		GameObject.Find("Main Camera").GetComponent<AudioListener>().enabled = true;
 		
 		if(!CNetwork.IsServer)
 		{

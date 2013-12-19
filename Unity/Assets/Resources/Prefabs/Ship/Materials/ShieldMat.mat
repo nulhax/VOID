@@ -26,16 +26,16 @@ Material:
         second: .699999988
       data:
         first:
+          name: _Alpha
+        second: .181346148
+      data:
+        first:
           name: _Range1
         second: 1.1596154
       data:
         first:
           name: _Range2
         second: 8.61538506
-      data:
-        first:
-          name: _Alpha
-        second: .181346148
       data:
         first:
           name: _InvFade

@@ -16,7 +16,7 @@ _Alpha("Alpha", Range(0,1) ) = 0.9
 		{
 "Queue"="Transparent"
 "IgnoreProjector"="True"
-"RenderType"="Opaque"
+"RenderType"="Transparent"
 
 		}
 
