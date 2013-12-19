@@ -28,8 +28,6 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		Onboard,
 		Offboard,
-		Boarding,
-		Disembarking,
 	}
 	
 // Member Delegates and Events
@@ -115,7 +113,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		// Set the dynamic actor as currently boarding
 		else
 		{
-			BoardingState = EBoardingState.Boarding;
+			BoardingState = EBoardingState.Onboard;
 		}
 	}
 
@@ -169,24 +167,18 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		// Boarding state
  		if(_rSender == m_BoardingState)
 		{
-			Debug.LogError(BoardingState.ToString() + " " + GetComponent<CNetworkView>().ViewId);
-
-			if(BoardingState == EBoardingState.Boarding)
+			if(BoardingState == EBoardingState.Onboard)
 			{
 				if(EventBoard != null)
 					EventBoard();
-			}
-			else if(BoardingState == EBoardingState.Disembarking)
-			{
-				if(EventDisembark != null)
-					EventDisembark();
-			}
-			else if(BoardingState == EBoardingState.Onboard)
-			{
+				
 				SetOriginalLayer();
 			}
 			else if(BoardingState == EBoardingState.Offboard)
 			{
+				if(EventDisembark != null)
+					EventDisembark();
+				
 				SetGalaxyLayer();
 			}
 		}

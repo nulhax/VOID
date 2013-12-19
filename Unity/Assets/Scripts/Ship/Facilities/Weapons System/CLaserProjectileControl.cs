@@ -50,7 +50,7 @@ public class CLaserProjectileControl : MonoBehaviour
 
 		GetComponent<CDynamicActor>().TransferActorToGalaxySpace();
 
-		GetComponent<CDynamicActor>().BoardingState = CDynamicActor.EBoardingState.Disembarking;
+		GetComponent<CDynamicActor>().BoardingState = CDynamicActor.EBoardingState.Offboard;
 	}
 
 

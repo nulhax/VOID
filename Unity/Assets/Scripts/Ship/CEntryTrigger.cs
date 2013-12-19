@@ -48,7 +48,6 @@ public class CEntryTrigger : MonoBehaviour
 				dynamicActor.TransferActorToShipSpace();
 								
 				// Set the boarding state
-				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Boarding;
 				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Onboard;
 			}
 		}

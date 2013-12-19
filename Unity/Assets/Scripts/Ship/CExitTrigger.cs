@@ -51,7 +51,6 @@ public class CExitTrigger : MonoBehaviour
 					dynamicActor.TransferActorToGalaxySpace();
 					
 					// Set the disembarking state
-					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Disembarking;
 					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Offboard;
 				}
 			}
