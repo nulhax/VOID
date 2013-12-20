@@ -232,7 +232,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-            //gameObject.AddComponent<DungeonMaster>();
+            gameObject.AddComponent<DungeonMaster>();
         }
     }
 
