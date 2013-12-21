@@ -48,14 +48,14 @@ public class CInteractableObject : CNetworkMonoBehaviour
     {
 		
 	}
-
-
+	
+	
 	public void Awake()
 	{
-		// Set the layer of myself and all children to be of "InteractableObject"
-		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("InteractableObject"));
+		if(gameObject.layer != LayerMask.NameToLayer("InteractableObject"))
+			Debug.LogError("Interactable object not set to the interactableobject layer! Make sure its set on the prefab!" + " " + gameObject.name);
 	}
-
+	
 
 	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{

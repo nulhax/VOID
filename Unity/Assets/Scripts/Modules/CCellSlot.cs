@@ -48,8 +48,7 @@ public class CCellSlot : CNetworkMonoBehaviour
 // Member Methods
 	public void Awake()
 	{
-		gameObject.AddComponent<CInteractableObject>();
-		gameObject.AddComponent<CNetworkView>();
+		
 	}
 	
 	

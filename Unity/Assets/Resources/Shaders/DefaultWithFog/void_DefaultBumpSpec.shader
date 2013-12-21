@@ -34,7 +34,7 @@ void surf (Input IN, inout SurfaceOutput o) {
 	float4 fogSample = void_SampleFog(IN.screenPos, tex.rgb * _Color.rgb);
 	o.Albedo = fogSample.rgb;
 	o.Gloss = tex.a;
-	o.Alpha = tex.a * _Color.a;
+	o.Alpha = _Color.a;
 	o.Specular = _Shininess;
 	o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 }

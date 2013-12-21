@@ -26,7 +26,6 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private GameObject m_GalaxyShip = null;
-	private GameObject m_PlayerGalaxyCamera = null;
 	
     protected CNetworkVar<float> m_GalaxyShipPositionX    = null;
     protected CNetworkVar<float> m_GalaxyShipPositionY    = null;
@@ -40,12 +39,6 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	public GameObject GalaxyShip
 	{
 		get { return(m_GalaxyShip); }
-	}
-	
-	public GameObject PlayerGalaxyCamera
-	{
-		get { return(m_PlayerGalaxyCamera); }
-		set { m_PlayerGalaxyCamera = value; }
 	}
 
 	public Vector3 Position
@@ -114,17 +107,8 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		}
 	}
 	
-	public void AddPlayerActorGalaxyCamera()
-	{		
-		// Create the galaxy camera and attach it to the galaxy ship
-		m_PlayerGalaxyCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerGalaxyCamera"));
-		m_PlayerGalaxyCamera.transform.parent = m_GalaxyShip.transform;
-	}
-	
 	public void LateUpdate()
 	{
-		UpdateGalaxyCameraTransforms();
-		
 		if(CNetwork.IsServer)
 		{
 			SyncGalaxyShipTransform();
@@ -135,45 +119,5 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 	{
 		Position = m_GalaxyShip.rigidbody.position;
 		EulerAngles = m_GalaxyShip.transform.eulerAngles;
-	}
-	
-	private void UpdateGalaxyCameraTransforms()
-	{	
-		if(!CNetwork.IsConnectedToServer())
-			return;
-		
-		// If the cameras are gone remove the galaxy camera
-		GameObject playerShipCamera = CGame.PlayerActor.GetComponent<CPlayerHead>().PlayerShipCamera;
-		if(playerShipCamera == null)
-		{
-			if(m_PlayerGalaxyCamera != null)
-			{
-				Destroy(m_PlayerGalaxyCamera);
-			}
-			
-			// Exit the method.
-			return;
-		}
-		
-		// Make sure we are using the correct relative transforms (i.e. When player is outside the ship)
-		bool camerasSwapped = CGame.PlayerActor.GetComponent<CPlayerHead>().CamerasSwapped;
-		if(camerasSwapped)
-		{
-			// Update the ship camera transform relative to the players galaxy camera from the galaxy ship
-			playerShipCamera.transform.position = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (m_PlayerGalaxyCamera.transform.position - m_GalaxyShip.transform.position) + transform.position;
-			playerShipCamera.transform.rotation = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * m_PlayerGalaxyCamera.transform.rotation;		
-		}
-		else
-		{
-			// Update the galaxy camera transform relative to the players ship camera from the ship
-			Vector3 relativePos = playerShipCamera.transform.position - transform.position;
-			Quaternion relativeRot = playerShipCamera.transform.rotation * Quaternion.Inverse(transform.rotation);
-			
-			if(m_PlayerGalaxyCamera.transform.localPosition != relativePos)
-				m_PlayerGalaxyCamera.transform.localPosition = relativePos;
-			
-			if(m_PlayerGalaxyCamera.transform.localRotation != relativeRot)
-				m_PlayerGalaxyCamera.transform.localRotation = relativeRot;
-		}
 	}
 }

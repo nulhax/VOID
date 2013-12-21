@@ -28,19 +28,19 @@ public class CPlayerShipCamera : MonoBehaviour
 // Member Methods
 	private void Awake()
 	{
-		camera.enabled = false;
+		//camera.enabled = true;
 	}
 	
 	private void Start()
 	{
-		camera.enabled = true;
+		//camera.enabled = true;
 	}
 	
 	private void OnGUI()
 	{
-		Rect textureRect = new Rect(Screen.width * 0.5f - (m_CrosshairTexture.width * 0.5f), Screen.height * 0.5f - (m_CrosshairTexture.height * 0.5f), 
-									m_CrosshairTexture.width, m_CrosshairTexture.height);
-		
-		GUI.DrawTexture(textureRect, m_CrosshairTexture);
+//		Rect textureRect = new Rect(Screen.width * 0.5f - (m_CrosshairTexture.width * 0.5f), Screen.height * 0.5f - (m_CrosshairTexture.height * 0.5f), 
+//									m_CrosshairTexture.width, m_CrosshairTexture.height);
+//		
+//		GUI.DrawTexture(textureRect, m_CrosshairTexture);
 	}
 }
