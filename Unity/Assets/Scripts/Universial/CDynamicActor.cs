@@ -240,7 +240,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			transform.parent = null;
 
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
-			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position);
+			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 			
 			// Sync over the network and apply the galaxy ship force
@@ -270,7 +270,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		if(!childOfPlayer)
 		{
 			// Get the inverse of the relative velocity of the actor boarding
-			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position) * -1.0f;
+			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
 
 			// Transfer the actor to ship space
 			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);

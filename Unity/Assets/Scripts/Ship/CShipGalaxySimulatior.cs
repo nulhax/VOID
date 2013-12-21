@@ -46,22 +46,22 @@ public class CShipGalaxySimulatior : MonoBehaviour
 		}
 	}
 
-	public Vector3 SimulationToGalaxyPos(Vector3 _SimulationPos)
+	public Vector3 GetSimulationToGalaxyPos(Vector3 _SimulationPos)
 	{
 		return(m_GalaxyShip.transform.rotation * (_SimulationPos - transform.position) + m_GalaxyShip.transform.position);
 	}
 
-	public Quaternion SimulationToGalaxyRot(Quaternion _SimulationRot)
+	public Quaternion GetSimulationToGalaxyRot(Quaternion _SimulationRot)
 	{
 		return(m_GalaxyShip.transform.rotation * _SimulationRot);
 	}
 
-	public Vector3 GalaxyToSimulationPos(Vector3 _GalaxyPos)
+	public Vector3 GetGalaxyToSimulationPos(Vector3 _GalaxyPos)
 	{
 		return(Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (_GalaxyPos - m_GalaxyShip.transform.position) + transform.position);
 	}
 	
-	public Quaternion GalaxyToSimulationRot(Quaternion _GalaxyRot)
+	public Quaternion GetGalaxyToSimulationRot(Quaternion _GalaxyRot)
 	{
 		return(Quaternion.Inverse(m_GalaxyShip.transform.rotation) *_GalaxyRot);
 	}
@@ -69,18 +69,18 @@ public class CShipGalaxySimulatior : MonoBehaviour
 	public void TransferFromSimulationToGalaxy(Vector3 _SimulationPos, Quaternion _SimulationRot, Transform _ToTransfer)
 	{
 		// Update the transform based off the transform relative to the ship
-		_ToTransfer.position = SimulationToGalaxyPos(_SimulationPos);
-		_ToTransfer.rotation = SimulationToGalaxyRot(_SimulationRot);
+		_ToTransfer.position = GetSimulationToGalaxyPos(_SimulationPos);
+		_ToTransfer.rotation = GetSimulationToGalaxyRot(_SimulationRot);
 	}
 
 	public void TransferFromGalaxyToSimulation(Vector3 _GalaxyPos, Quaternion _GalaxyRot, Transform _ToTransfer)
 	{
 		// Update the transform based off the transform relative to the galaxy ship
-		_ToTransfer.position = GalaxyToSimulationPos(_GalaxyPos);
-		_ToTransfer.rotation = GalaxyToSimulationRot(_GalaxyRot);
+		_ToTransfer.position = GetGalaxyToSimulationPos(_GalaxyPos);
+		_ToTransfer.rotation = GetGalaxyToSimulationRot(_GalaxyRot);
 	}
 	
-	public Vector3 PointVelocityWithinGalaxy(Vector3 _GalaxyPos)
+	public Vector3 GetGalaxyVelocityRelativeToShip(Vector3 _GalaxyPos)
 	{
 		Vector3 velocity = m_GalaxyShip.rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
 		return(velocity);

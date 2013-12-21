@@ -58,7 +58,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 		Vector3 velocity = transform.forward * k_fSpeed;
 
 		// Add the relative velocity from the ship
-		velocity += CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position);
+		velocity += CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 
 		// Add to the rigid body
 		rigidbody.AddForce(velocity, ForceMode.VelocityChange);
