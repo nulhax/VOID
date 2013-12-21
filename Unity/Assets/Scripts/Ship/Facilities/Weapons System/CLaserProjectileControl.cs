@@ -74,7 +74,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 				m_bDestroyed = true;
 			}
 		}
-		else
+		else if(CNetwork.IsServer)
 		{
 			CNetwork.Factory.DestoryObject(GetComponent<CNetworkView>().ViewId);
 		}
