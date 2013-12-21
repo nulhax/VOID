@@ -161,6 +161,11 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
 	}
 
+	public static bool IsClientReady
+	{
+		get { return(CNetwork.IsConnectedToServer() && ShipViewId != 0); }
+	}
+
 	public static CUserInput UserInput
 	{
 		get { return (Instance.GetComponent<CUserInput>()); }
@@ -463,9 +468,9 @@ public class CGame : CNetworkMonoBehaviour
 		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
 		
 		// Set the parent as the ship
-		cPlayerActor.transform.position = new Vector3(0.0f, -6.0f, -42.0f);
+		//cPlayerActor.transform.position = new Vector3(0.0f, -6.0f, -42.0f);
 		cPlayerActor.transform.parent = Ship.transform;
-		cPlayerActor.GetComponent<CNetworkView>().SyncTransformPosition();
+		//cPlayerActor.GetComponent<CNetworkView>().SyncTransformPosition();
 		cPlayerActor.GetComponent<CNetworkView>().SyncParent();
 		
 		// Get actor network view id

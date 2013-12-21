@@ -38,6 +38,10 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	
 // Member Fields
+	public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
+	public bool m_CanBoard = true;
+	public bool m_CanDisembark = true;
+
 	private int m_OriginalLayer = 0;
 	private bool m_bRotationYDisabled = false;
 	
@@ -110,10 +114,10 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		{
 			rigidbody.isKinematic = true;
 		}
-		// Set the dynamic actor as currently boarding
-		else
+		// Set the boarding state if it is still invalid
+		else if(BoardingState == EBoardingState.INVALID)
 		{
-			BoardingState = EBoardingState.Onboard;
+			BoardingState = m_InitialBoardingState;
 		}
 	}
 
@@ -144,7 +148,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		
-		m_BoardingState = new CNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
+		m_BoardingState = new CNetworkVar<EBoardingState>(OnNetworkVarSync, m_InitialBoardingState);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -167,15 +171,25 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		// Boarding state
  		if(_rSender == m_BoardingState)
 		{
-			if(BoardingState == EBoardingState.Onboard)
+			if(BoardingState == EBoardingState.Onboard && m_CanBoard)
 			{
+				if(CNetwork.IsServer)
+				{
+					TransferActorToShipSpace();
+				}
+
 				if(EventBoard != null)
 					EventBoard();
 				
 				SetOriginalLayer();
 			}
-			else if(BoardingState == EBoardingState.Offboard)
+			else if(BoardingState == EBoardingState.Offboard && m_CanDisembark)
 			{
+				if(CNetwork.IsServer)
+				{
+					TransferActorToGalaxySpace();
+				}
+
 				if(EventDisembark != null)
 					EventDisembark();
 				
@@ -203,9 +217,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	}
 	
 	[AServerMethod]
-	public void TransferActorToGalaxySpace()
+	private void TransferActorToGalaxySpace()
 	{	 	
-		GameObject galaxyShip =  CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
 		bool childOfPlayer = false;
 		
 		if(transform.parent != null)
@@ -214,25 +227,25 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		if(!childOfPlayer)
 		{
-			// Get the actors position relative to the ship
-			Vector3 relativePos = Quaternion.Inverse(CGame.Ship.transform.rotation) * (transform.position - CGame.Ship.transform.position);
-			Quaternion relativeRot = Quaternion.Inverse(CGame.Ship.transform.rotation) * transform.rotation;
-			
-			// Temporarily parent to galaxy ship
-			transform.parent = galaxyShip.transform;
-			
-			// Update the position and unparent
-			transform.localPosition = relativePos;
-			transform.localRotation = relativeRot;	
+			Vector3 newPos = Vector3.zero;
+			Quaternion newRot = Quaternion.identity;
+
+			// Transfer the actor to galaxy ship space
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromShipToGalaxyShipTransform(transform.position, transform.rotation, 
+			                                                                               out newPos, out newRot);
+			transform.position = newPos;
+			transform.rotation = newRot;
+
+			// Unparent Actor
 			transform.parent = null;
+
+			// Add a compensation force to the actor
+			Vector3 transferedVelocity = CGame.GalaxyShip.rigidbody.GetRelativePointVelocity(transform.position - CGame.GalaxyShip.transform.position);
+			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 			
 			// Sync over the network and apply the galaxy ship force
 			if(GetComponent<CNetworkView>() != null)
 			{
-				// Add a compensation force to the actor
-				Vector3 transferedVelocity = galaxyShip.rigidbody.GetRelativePointVelocity(relativePos);
-				rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
-				
 				// Sync the parent
 				GetComponent<CNetworkView>().SyncParent();
 				GetComponent<CNetworkView>().SyncTransformPosition();
@@ -246,9 +259,8 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	}
 	
 	[AServerMethod]
-	public void TransferActorToShipSpace()
+	private void TransferActorToShipSpace()
 	{
-		GameObject galaxyShip = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
 		bool childOfPlayer = false;
 		
 		if(transform.parent != null)
@@ -257,29 +269,29 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		if(!childOfPlayer)
 		{
-			// Get the actors position relative to the ship
-			Vector3 relativePos = Quaternion.Inverse(galaxyShip.transform.rotation) * (transform.position - galaxyShip.transform.position);
-			Quaternion relativeRot = Quaternion.Inverse(galaxyShip.transform.rotation) * transform.rotation;
-			
+			Vector3 newPos = Vector3.zero;
+			Quaternion newRot = Quaternion.identity;
+
+			// Transfer the actor to ship space
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromGalaxyShipToShipTransform(transform.position, transform.rotation, 
+			                                                                               out newPos, out newRot);
+			transform.position = newPos;
+			transform.rotation = newRot;
+
 			// Parent the actor to the ship
 			transform.parent = CGame.Ship.transform;
-			
-			// Update the position and unparent
-			transform.localPosition = relativePos;
-			transform.localRotation = relativeRot;	
+
+			// Add a compensation force to the actor
+			Vector3 transferedVelocity = -CGame.GalaxyShip.rigidbody.GetRelativePointVelocity(transform.position - CGame.GalaxyShip.transform.position);
+			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 			
 			// Sync over the network
 			if(GetComponent<CNetworkView>() != null)
 			{
-				// Add a compensation force to the actor
-				Vector3 transferedVelocity = -galaxyShip.rigidbody.GetRelativePointVelocity(relativePos);
-				rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
-				
 				// Sync the new states
 				GetComponent<CNetworkView>().SyncParent();
 				GetComponent<CNetworkView>().SyncTransformPosition();
 				GetComponent<CNetworkView>().SyncTransformRotation();
-				
 			}
 			else
 			{

@@ -47,9 +47,6 @@ public class CExitTrigger : MonoBehaviour
 				// Ensure the actor is not onboard any other facility before disembarking
 				if(!CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
 				{
-					// Transfer dynamic actor to galaxy space
-					dynamicActor.TransferActorToGalaxySpace();
-					
 					// Set the disembarking state
 					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Offboard;
 				}

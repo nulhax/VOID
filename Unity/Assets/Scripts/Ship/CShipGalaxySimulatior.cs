@@ -115,6 +115,20 @@ public class CShipGalaxySimulatior : CNetworkMonoBehaviour
 		}
 	}
 	
+	public void FromShipToGalaxyShipTransform(Vector3 _FromPos, Quaternion _FromRot, out Vector3 _NewPos, out Quaternion _NewRot)
+	{
+		// Update the transform based off the transform relative to the ship
+		_NewPos = m_GalaxyShip.transform.rotation * (_FromPos - transform.position) + m_GalaxyShip.transform.position;
+		_NewRot = m_GalaxyShip.transform.rotation * _FromRot;
+	}
+
+	public void FromGalaxyShipToShipTransform(Vector3 _FromPos, Quaternion _FromRot, out Vector3 _NewPos, out Quaternion _NewRot)
+	{
+		// Update the transform based off the transform relative to the galaxy ship
+		_NewPos = Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (_FromPos - m_GalaxyShip.transform.position) + transform.position;
+		_NewRot = Quaternion.Inverse(m_GalaxyShip.transform.rotation) *_FromRot;	
+	}
+	
 	private void SyncGalaxyShipTransform()
 	{
 		Position = m_GalaxyShip.rigidbody.position;

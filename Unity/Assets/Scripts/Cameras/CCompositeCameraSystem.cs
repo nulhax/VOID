@@ -51,6 +51,11 @@ public class CCompositeCameraSystem : MonoBehaviour
 
 	public void Update()
 	{
+		if(!CGame.IsClientReady)
+		{
+			return;
+		}
+
 		// Update the transforms of the cameras
 		UpdateCameraTransforms();
 	}
@@ -88,23 +93,32 @@ public class CCompositeCameraSystem : MonoBehaviour
         m_GalaxyCamera.gameObject.AddComponent<GalaxyObserver>();
         m_GalaxyCamera.gameObject.AddComponent<GalaxyShiftable>();
 	}
+
+	public void SetDefaultViewPerspective()
+	{
+		SetShipViewPerspective(CGame.PlayerActor.GetComponent<CPlayerHead>().ActorHead.transform);
+	}
 	
 	private void UpdateCameraTransforms()
-	{	
-		Transform shipTransform = CGame.Ship.transform;
-		Transform galaxyShipTransform = CGame.GalaxyShip.transform;
-		
+	{		
+		Vector3 newCamPos = Vector3.zero;
+		Quaternion newCamRot = Quaternion.identity;
+
 		if(!m_IsObserverOutside)
 		{
-			// Update the galaxy camera transform based off the ship camera relative to the ship
-			m_GalaxyCamera.transform.position = galaxyShipTransform.rotation * (m_ShipCamera.transform.position - shipTransform.position) + galaxyShipTransform.position;
-			m_GalaxyCamera.transform.rotation = galaxyShipTransform.rotation * m_ShipCamera.transform.rotation;
+			// Transfer the galaxy camera based off the ship camera
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromShipToGalaxyShipTransform(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, 
+			                                                                               out newCamPos, out newCamRot);
+			m_GalaxyCamera.transform.position = newCamPos;
+			m_GalaxyCamera.transform.rotation = newCamRot;
 		}
 		else
 		{
-			// Update the ship camera transform based off the galaxy camera relative to the galaxy ship
-			m_ShipCamera.transform.position = Quaternion.Inverse(galaxyShipTransform.rotation) * (m_GalaxyCamera.transform.position - galaxyShipTransform.transform.position) + shipTransform.position;
-			m_ShipCamera.transform.rotation = Quaternion.Inverse(galaxyShipTransform.rotation) * m_GalaxyCamera.transform.rotation;	
+			// Transfer the ship camera based off the galaxy camera
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromGalaxyShipToShipTransform(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, 
+			                                                                               out newCamPos, out newCamRot);	
+			m_ShipCamera.transform.position = newCamPos;
+			m_ShipCamera.transform.rotation = newCamRot;
 		}
 	}
 };

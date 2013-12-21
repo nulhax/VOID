@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CLaserProjectileControl : MonoBehaviour
+public class CLaserProjectileControl : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -38,25 +38,24 @@ public class CLaserProjectileControl : MonoBehaviour
 
 	static CLaserProjectileControl()
 	{
-		s_iAstroidLayer = LayerMask.NameToLayer("Galaxy");
 		s_iEnemyLayer   = 0;
 	}
 
+
+	public override void InstanceNetworkVars()
+	{
+
+	}
+	
+	public void OnNetworkVarSync(INetworkVar _rSender)
+	{
+
+   	}
 
 	public void Start()
 	{
 		// Precalculate velocity
 		m_vVelocty = transform.forward * k_fSpeed;
-
-		GetComponent<CDynamicActor>().TransferActorToGalaxySpace();
-
-		GetComponent<CDynamicActor>().BoardingState = CDynamicActor.EBoardingState.Offboard;
-	}
-
-
-	public void OnDestroy()
-	{
-		// Empty
 	}
 
 
@@ -72,35 +71,37 @@ public class CLaserProjectileControl : MonoBehaviour
 
 			if (m_fLifeTimer < 0.0f)
 			{
-				CNetwork.Factory.DestoryObject(GetComponent<CNetworkView>().ViewId);
+				m_bDestroyed = true;
 			}
+		}
+		else
+		{
+			CNetwork.Factory.DestoryObject(GetComponent<CNetworkView>().ViewId);
 		}
 	}
 
-
+	[AServerMethod]
 	void OnCollisionEnter(Collision _cCollision) 
 	{
-		if (!m_bDestroyed)
+		if (!m_bDestroyed && CNetwork.IsServer)
 		{
-			if ((_cCollision.gameObject.layer & s_iAstroidLayer) > 0)
-			{
-
-			}
-
-			// Create hit particles
-			GameObject cHitParticles = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Ship/Facilities/Weapons System/LaserHitParticles"));
-			
-			cHitParticles.transform.position = _cCollision.contacts[0].point;
-			cHitParticles.transform.rotation = Quaternion.LookRotation(transform.position - _cCollision.transform.position);
-			
-			// Destroy particles are 1 second
-			GameObject.Destroy(cHitParticles, 1.0f);
-
-			// Destroy self
-			CNetwork.Factory.DestoryObject(GetComponent<CNetworkView>().ViewId);
-			
 			m_bDestroyed = true;
+
+			InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
 		}
+	}
+
+	[ANetworkRpc]
+	void CreateHitParticles(Vector3 _HitPos, Quaternion _HitRot)
+	{
+		// Create hit particles
+		GameObject cHitParticles = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Ship/Facilities/Weapons System/LaserHitParticles"));
+		
+		cHitParticles.transform.position = _HitPos;
+		cHitParticles.transform.rotation = _HitRot;
+
+		// Destroy particles are 1 second
+		GameObject.Destroy(cHitParticles, 1.0f);
 	}
 
 
@@ -118,9 +119,6 @@ public class CLaserProjectileControl : MonoBehaviour
 
 	bool m_bDestroyed = false;
 
-
-	static int s_iAstroidLayer = 0;
+	
 	static int s_iEnemyLayer = 0;
-
-
 };

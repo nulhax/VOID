@@ -99,8 +99,8 @@ public class CTurretController : CNetworkMonoBehaviour
 				CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
 				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
-				// Enabled turret camera
-				m_cCameraObject.camera.enabled = true;
+				// Debug: Move camera to turret camera position
+				CGame.CompositeCameraSystem.SetShipViewPerspective(m_cCameraObject.transform);
 			}
 			else if (m_ulMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
@@ -109,8 +109,8 @@ public class CTurretController : CNetworkMonoBehaviour
 				CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
 				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
-				// Disable turret camera
-				m_cCameraObject.camera.enabled = false;
+				// Debug: Move camera to player head position
+				CGame.CompositeCameraSystem.SetDefaultViewPerspective();
 			}
 		}
 	}
@@ -232,9 +232,16 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
 		{
+			Vector3 projPos = Vector3.zero;
+			Quaternion projRot = Quaternion.identity;
+
+			// Find the position relative to the turrets lazer node in ship space
+			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromShipToGalaxyShipTransform(m_cLaserNodes[m_iLaserNodeIndex].transform.position, m_cLaserNodes[m_iLaserNodeIndex].transform.rotation, 
+			                                                                               out projPos, out projRot);
+
 			GameObject cProjectile = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.TurretLaserProjectile);
-			cProjectile.GetComponent<CNetworkView>().SetPosition(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
-			cProjectile.GetComponent<CNetworkView>().SetRotation(m_cLaserNodes[m_iLaserNodeIndex].transform.eulerAngles);
+			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
+			cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
 
 			++ m_iLaserNodeIndex;
 			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_cLaserNodes.Count) ? 0 : m_iLaserNodeIndex;

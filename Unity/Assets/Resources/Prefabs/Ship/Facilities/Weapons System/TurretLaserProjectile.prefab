@@ -137,6 +137,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c62355566030eb14a82121cc52a779b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_InitialBoardingState: 2
+  m_CanBoard: 0
+  m_CanDisembark: 0
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
