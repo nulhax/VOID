@@ -231,7 +231,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			Quaternion newRot = Quaternion.identity;
 
 			// Transfer the actor to galaxy ship space
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromShipToGalaxyShipTransform(transform.position, transform.rotation, 
+			CGame.ShipGalaxySimulator.FromShipToGalaxyShipTransform(transform.position, transform.rotation, 
 			                                                                               out newPos, out newRot);
 			transform.position = newPos;
 			transform.rotation = newRot;
@@ -273,7 +273,7 @@ public class CDynamicActor : CNetworkMonoBehaviour
 			Quaternion newRot = Quaternion.identity;
 
 			// Transfer the actor to ship space
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromGalaxyShipToShipTransform(transform.position, transform.rotation, 
+			CGame.ShipGalaxySimulator.FromGalaxyShipToShipTransform(transform.position, transform.rotation, 
 			                                                                               out newPos, out newRot);
 			transform.position = newPos;
 			transform.rotation = newRot;

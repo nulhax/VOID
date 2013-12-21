@@ -89,7 +89,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		GameObject pilotingCockpit = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
+		GameObject pilotingCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
 		
 		if(pilotingCockpit == null)
 			return;

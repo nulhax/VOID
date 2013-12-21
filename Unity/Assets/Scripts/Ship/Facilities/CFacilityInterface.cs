@@ -119,7 +119,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
+		CGalaxyShipCollider galaxyShipCollider = CGame.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(Type)) + "Ext", transform.localPosition, transform.localRotation);
 	}
 

@@ -155,6 +155,11 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		get { return (s_cInstance.m_usShipViewId); }
 	}
+
+	public static CShipGalaxySimulatior ShipGalaxySimulator
+	{
+		get { return (Ship.GetComponent<CShipGalaxySimulatior>()); }
+	}
 	
 	public static GameObject GalaxyShip
 	{
@@ -170,7 +175,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		get { return (Instance.GetComponent<CUserInput>()); }
 	}
-	
+
 	public static CCompositeCameraSystem CompositeCameraSystem
 	{
 		get { return (Instance.GetComponent<CCompositeCameraSystem>()); }

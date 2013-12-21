@@ -107,7 +107,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 		if(!m_IsObserverOutside)
 		{
 			// Transfer the galaxy camera based off the ship camera
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromShipToGalaxyShipTransform(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, 
+			CGame.ShipGalaxySimulator.FromShipToGalaxyShipTransform(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, 
 			                                                                               out newCamPos, out newCamRot);
 			m_GalaxyCamera.transform.position = newCamPos;
 			m_GalaxyCamera.transform.rotation = newCamRot;
@@ -115,7 +115,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 		else
 		{
 			// Transfer the ship camera based off the galaxy camera
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().FromGalaxyShipToShipTransform(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, 
+			CGame.ShipGalaxySimulator.FromGalaxyShipToShipTransform(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, 
 			                                                                               out newCamPos, out newCamRot);	
 			m_ShipCamera.transform.position = newCamPos;
 			m_ShipCamera.transform.rotation = newCamRot;
