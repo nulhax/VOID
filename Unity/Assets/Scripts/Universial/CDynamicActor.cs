@@ -208,12 +208,18 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	{
 		// Resursively set the galaxy layer on the actor
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
+
+		// Add the galaxy shiftable component
+		gameObject.AddComponent<GalaxyShiftable>();
 	}
 	
 	private void SetOriginalLayer()
 	{
 		// Resursively set the original layer on the actor
 		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
+
+		// Remove the galaxy shiftable component
+		Destroy(gameObject.GetComponent<GalaxyShiftable>());
 	}
 	
 	[AServerMethod]
@@ -227,20 +233,14 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		if(!childOfPlayer)
 		{
-			Vector3 newPos = Vector3.zero;
-			Quaternion newRot = Quaternion.identity;
-
 			// Transfer the actor to galaxy ship space
-			CGame.ShipGalaxySimulator.FromShipToGalaxyShipTransform(transform.position, transform.rotation, 
-			                                                                               out newPos, out newRot);
-			transform.position = newPos;
-			transform.rotation = newRot;
+			CGame.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
 
 			// Unparent Actor
 			transform.parent = null;
 
-			// Add a compensation force to the actor
-			Vector3 transferedVelocity = CGame.GalaxyShip.rigidbody.GetRelativePointVelocity(transform.position - CGame.GalaxyShip.transform.position);
+			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
+			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position);
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 			
 			// Sync over the network and apply the galaxy ship force
@@ -269,20 +269,16 @@ public class CDynamicActor : CNetworkMonoBehaviour
 		
 		if(!childOfPlayer)
 		{
-			Vector3 newPos = Vector3.zero;
-			Quaternion newRot = Quaternion.identity;
+			// Get the inverse of the relative velocity of the actor boarding
+			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position) * -1.0f;
 
 			// Transfer the actor to ship space
-			CGame.ShipGalaxySimulator.FromGalaxyShipToShipTransform(transform.position, transform.rotation, 
-			                                                                               out newPos, out newRot);
-			transform.position = newPos;
-			transform.rotation = newRot;
+			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 
 			// Parent the actor to the ship
 			transform.parent = CGame.Ship.transform;
 
-			// Add a compensation force to the actor
-			Vector3 transferedVelocity = -CGame.GalaxyShip.rigidbody.GetRelativePointVelocity(transform.position - CGame.GalaxyShip.transform.position);
+			// Apply the compensation velocity to the actor
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 			
 			// Sync over the network

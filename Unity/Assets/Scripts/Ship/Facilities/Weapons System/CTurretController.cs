@@ -232,12 +232,8 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
 		{
-			Vector3 projPos = Vector3.zero;
-			Quaternion projRot = Quaternion.identity;
-
-			// Find the position relative to the turrets lazer node in ship space
-			CGame.ShipGalaxySimulator.FromShipToGalaxyShipTransform(m_cLaserNodes[m_iLaserNodeIndex].transform.position, m_cLaserNodes[m_iLaserNodeIndex].transform.rotation, 
-			                                                                               out projPos, out projRot);
+			Vector3 projPos = CGame.ShipGalaxySimulator.SimulationToGalaxyPos(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
+			Quaternion projRot = CGame.ShipGalaxySimulator.SimulationToGalaxyRot(m_cLaserNodes[m_iLaserNodeIndex].transform.rotation);
 
 			GameObject cProjectile = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.TurretLaserProjectile);
 			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -101,24 +101,15 @@ public class CCompositeCameraSystem : MonoBehaviour
 	
 	private void UpdateCameraTransforms()
 	{		
-		Vector3 newCamPos = Vector3.zero;
-		Quaternion newCamRot = Quaternion.identity;
-
 		if(!m_IsObserverOutside)
 		{
 			// Transfer the galaxy camera based off the ship camera
-			CGame.ShipGalaxySimulator.FromShipToGalaxyShipTransform(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, 
-			                                                                               out newCamPos, out newCamRot);
-			m_GalaxyCamera.transform.position = newCamPos;
-			m_GalaxyCamera.transform.rotation = newCamRot;
+			CGame.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, m_GalaxyCamera.transform);
 		}
 		else
 		{
 			// Transfer the ship camera based off the galaxy camera
-			CGame.ShipGalaxySimulator.FromGalaxyShipToShipTransform(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, 
-			                                                                               out newCamPos, out newCamRot);	
-			m_ShipCamera.transform.position = newCamPos;
-			m_ShipCamera.transform.rotation = newCamRot;
+			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
 		}
 	}
 };

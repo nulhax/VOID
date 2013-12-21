@@ -55,7 +55,13 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Precalculate velocity
-		m_vVelocty = transform.forward * k_fSpeed;
+		Vector3 velocity = transform.forward * k_fSpeed;
+
+		// Add the relative velocity from the ship
+		velocity += CGame.ShipGalaxySimulator.PointVelocityWithinGalaxy(transform.position);
+
+		// Add to the rigid body
+		rigidbody.AddForce(velocity, ForceMode.VelocityChange);
 	}
 
 
@@ -63,9 +69,6 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 	{
 		if (!m_bDestroyed)
 		{
-			// Move
-			transform.position += m_vVelocty * Time.deltaTime;
-
 			// Life timer
 			m_fLifeTimer -= Time.deltaTime;
 
@@ -109,9 +112,6 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 
 
 	const float k_fSpeed = 40.0f;
-
-
-	Vector3 m_vVelocty;
 
 
 	float m_fLifeTimer = 5.0f;
