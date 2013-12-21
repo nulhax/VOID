@@ -4,13 +4,12 @@
 SceneSettings:
   m_ObjectHideFlags: 0
   m_PVSData: 
-  m_QueryMode: 1
   m_PVSObjectsArray: []
   m_PVSPortalsArray: []
   m_OcclusionBakeSettings:
-    viewCellSize: 1
-    bakeMode: 2
-    memoryUsage: 10485760
+    smallestOccluder: 5
+    smallestHole: .25
+    backfaceThreshold: 100
 --- !u!104 &2
 RenderSettings:
   m_Fog: 0
@@ -23,6 +22,7 @@ RenderSettings:
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: .5
   m_FlareStrength: 1
+  m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 0}
   m_ObjectHideFlags: 0
@@ -147,6 +147,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &469936916
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -246,7 +249,7 @@ Transform:
   m_PrefabInternal: {fileID: 1869906051}
   m_GameObject: {fileID: 1129533412}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.89488125, y: -5.70902538, z: 64.531868}
+  m_LocalPosition: {x: 2.89488125, y: -5.70902538, z: 34.8901253}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2130671407}
@@ -403,6 +406,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!65 &1321234128
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -467,6 +473,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!114 &1432749549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -554,7 +563,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99550eafd6bded648a5b4174ea9bfa65, type: 3}
+  m_Script: {fileID: 11500000, guid: ade98742c3676e44c9bb06edea73a5f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!20 &1432749557
@@ -565,7 +574,7 @@ Camera:
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: .192156866, g: .301960796, b: .474509805, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -577,7 +586,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 0
-  orthographic size: 100
+  orthographic size: 5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -585,6 +594,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+  m_OcclusionCulling: 1
 --- !u!1 &1484633827
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,6 +765,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+  m_OcclusionCulling: 1
 --- !u!1001 &1688088628
 Prefab:
   m_ObjectHideFlags: 0
@@ -812,7 +823,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 64.531868
+      value: 34.8901253
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 62b1516a29363114e85ffa189d50e4a5, type: 2}
       propertyPath: m_LocalRotation.x
@@ -922,6 +933,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!65 &2052166104
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -990,6 +1004,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &2130671409
 MeshFilter:
   m_ObjectHideFlags: 0

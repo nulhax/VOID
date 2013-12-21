@@ -43,7 +43,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 1
+  near clip plane: .300000012
   far clip plane: 5000
   field of view: 60
   orthographic: 0
@@ -55,6 +55,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
+  m_OcclusionCulling: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

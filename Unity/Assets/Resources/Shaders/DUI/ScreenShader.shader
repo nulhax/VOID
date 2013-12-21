@@ -22,9 +22,9 @@ _Alpha("Alpha", Range(0,1) ) = 0.9
 
 		
 Cull Back
-ZWrite On
-ZTest LEqual
-ColorMask RGBA
+Alphatest Greater 0 
+ZWrite Off 
+ColorMask RGB
 LOD 200
 Blend SrcAlpha OneMinusSrcAlpha
 Fog{
