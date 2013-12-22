@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -39,16 +39,16 @@ public class CExitTrigger : MonoBehaviour
 	[AServerMethod]
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.rigidbody != null && CNetwork.IsServer)
+		if(_Other.rigidbody != null && _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)
 		{
-			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
+			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
 			if(dynamicActor != null)
 			{
 				// Ensure the actor is not onboard any other facility before disembarking
 				if(!CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
 				{
 					// Set the disembarking state
-					dynamicActor.BoardingState = CDynamicActor.EBoardingState.Offboard;
+					dynamicActor.BoardingState = CActorBoardable.EBoardingState.Offboard;
 				}
 			}
 		}

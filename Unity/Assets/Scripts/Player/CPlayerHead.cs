@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -88,8 +88,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			TransferPlayerPerspectiveToShipSpace();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CDynamicActor>().EventBoard += new CDynamicActor.BoardingHandler(TransferPlayerPerspectiveToShipSpace);
-			gameObject.GetComponent<CDynamicActor>().EventDisembark += new CDynamicActor.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
+			gameObject.GetComponent<CActorBoardable>().EventBoard += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToShipSpace);
+			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
 
 			// Subscribe to mouse movement input
 			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);

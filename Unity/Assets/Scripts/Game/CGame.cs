@@ -90,7 +90,7 @@ public class CGame : CNetworkMonoBehaviour
 		ControlConsole,
 		
 		// Modules: Bridge
-		Cockpit,
+		BridgeCockpit,
 
 		// Un categorized
 		Turret,
@@ -260,8 +260,6 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolAk47, "Tools/ToolAk47");
-
-
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolMedical, "Tools/ToolMedical");
 
 
@@ -274,17 +272,17 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
 		
 		// Modules: General
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/General/BlackMatterCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/General/FuelCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/General/PlasmaCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/General/PowerCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/General/BioCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/General/ReplicatorCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/General/PanelFuseBox");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/General/DUI/CurvedMonitor_wide");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/BlackMatterCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/FuelCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/PlasmaCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/BioCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/ReplicatorCell");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/PanelFuseBox");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/DUI/CurvedMonitor_wide");
 		
 		// Modules: Bridge
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Cockpit, "Ship/Facilities/Bridge/Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
 
 		// Un categorized
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Facilities/Weapons System/Turret");
@@ -491,22 +489,19 @@ public class CGame : CNetworkMonoBehaviour
 		InvokeRpcAll("RegisterPlayerActor", _cPlayer.PlayerId, usActorNetworkViewId);
 		
 		// Placeholder Test stuff
-//      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
-//
-//        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
-//		
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
+      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
+//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
+        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
+
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
+		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 

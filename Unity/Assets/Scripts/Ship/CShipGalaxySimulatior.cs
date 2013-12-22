@@ -82,7 +82,7 @@ public class CShipGalaxySimulatior : MonoBehaviour
 	
 	public Vector3 GetGalaxyVelocityRelativeToShip(Vector3 _GalaxyPos)
 	{
-		Vector3 velocity = m_GalaxyShip.rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
+		Vector3 velocity = m_GalaxyShip.GetComponent<CGalaxyShipMotor>().GetRelativePointVelocity(_GalaxyPos);
 		return(velocity);
 	}
 }

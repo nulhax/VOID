@@ -13,7 +13,7 @@ GameObject:
   - 23: {fileID: 2300000}
   - 199: {fileID: 19900000}
   - 198: {fileID: 19800000}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ GameObject:
   - 65: {fileID: 6500002}
   - 23: {fileID: 2300002}
   - 65: {fileID: 6500004}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Plate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,11 +47,12 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400004}
+  - 114: {fileID: 11400006}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400006}
-  m_Layer: 0
+  - 114: {fileID: 11400008}
+  m_Layer: 8
   m_Name: FuseBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -66,7 +67,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400006}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FrontPlate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,11 +221,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 100004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 088d2e3c8ab913b41994724a51f9c516, type: 3}
+  m_Script: {fileID: 11500000, guid: af9ecabd7ad6dd64e9bf1a24fcb8af5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cFrontPlate: {fileID: 100006}
+  m_UseClientSidePhysics: 0
 --- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -235,18 +247,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3884c79d9fddae84b9a4a0cdf32bc03c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eType: 1
---- !u!114 &11400004
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c972bdee42a900c46a189d79241589dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_eType: 0
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -259,6 +260,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkViewId: 0
+--- !u!114 &11400008
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 088d2e3c8ab913b41994724a51f9c516, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cFrontPlate: {fileID: 0}
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1

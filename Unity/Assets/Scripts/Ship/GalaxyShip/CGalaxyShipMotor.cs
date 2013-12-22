@@ -152,6 +152,11 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	
 	private Vector3 m_Acceleration = Vector3.zero;
 	private Vector3 m_PreviousVelocity = Vector3.zero;
+		
+	private CNetworkVar<Vector3> m_Position = null;
+	private CNetworkVar<Vector3> m_EulerAngles = null;
+	private CNetworkVar<Vector3> m_Velocity = null;
+	private CNetworkVar<Vector3> m_AngularVelocity = null;
 	
 	// Member Properies
 	public GameObject PilotingCockpit
@@ -164,10 +169,47 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	{
 		get { return(m_Acceleration); }
 	}
-	
+
 	// Member Methods
 	public override void InstanceNetworkVars()
 	{
+		m_Position = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_EulerAngles = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Velocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_AngularVelocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+	}
+
+	public void OnNetworkVarSync(INetworkVar _rSender)
+	{
+		if(!CNetwork.IsServer)
+		{
+			// Position
+			if (_rSender == m_Position)
+			{
+				transform.position = m_Position.Get();
+			}
+			// Rotation
+			else if (_rSender == m_EulerAngles)
+			{	
+				transform.eulerAngles = m_EulerAngles.Get();
+			}
+		}
+	}
+
+	public void Start()
+	{
+		if(!CNetwork.IsServer)
+		{
+			rigidbody.isKinematic = true;
+		}
+	}
+
+	public void Update()
+	{
+		if(CNetwork.IsServer)
+		{
+			SyncTransform();
+		}
 	}
 	
 	public void FixedUpdate()
@@ -176,6 +218,38 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		{
 			ProcessMovementsAndRotations();
 		}
+	}
+
+	public Vector3 GetRelativePointVelocity(Vector3 _GalaxyPos)
+	{
+		Vector3 velocity = Vector3.zero;
+
+		if(CNetwork.IsServer)
+		{
+			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
+		}
+		else
+		{
+			// Set the rigidbody to dynamic and apply current velocities temporarily
+			rigidbody.isKinematic = false;
+			rigidbody.velocity = m_Velocity.Get();
+			rigidbody.angularVelocity = m_AngularVelocity.Get();
+
+			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
+
+			rigidbody.isKinematic = true;
+		}
+
+		return(velocity);
+	}
+
+	[AServerMethod]
+	private void SyncTransform()
+	{
+		m_Position.Set(transform.position);
+		m_EulerAngles.Set(transform.eulerAngles);
+		m_Velocity.Set(rigidbody.velocity);
+		m_AngularVelocity.Set(rigidbody.angularVelocity);
 	}
 	
 	private void ProcessMovementsAndRotations()

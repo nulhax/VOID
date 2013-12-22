@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -39,12 +39,12 @@ public class CEntryTrigger : MonoBehaviour
 	[AServerMethod]
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(_Other.rigidbody != null && CNetwork.IsServer)
+		if(_Other.rigidbody != null&& _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)
 		{
-			CDynamicActor dynamicActor = _Other.rigidbody.GetComponent<CDynamicActor>();
+			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
 			if(dynamicActor != null)
 			{			
-				dynamicActor.BoardingState = CDynamicActor.EBoardingState.Onboard;
+				dynamicActor.BoardingState = CActorBoardable.EBoardingState.Onboard;
 			}
 		}
 	}

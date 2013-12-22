@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -95,35 +95,17 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
 		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
 		m_bUsingGravity = new CNetworkVar<bool>(OnNetworkVarSync, true);
-
-
-		m_vPosition = new CNetworkVar<Vector3>(OnNetworkVarSync);
 	}
 
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_vPosition)
-		{
-			transform.position = m_vPosition.Get();
-		}
+
 	}
 
 
 	public void Start()
 	{
-		// Empty
-		if (!CNetwork.IsServer)
-		{
-			rigidbody.isKinematic = true;
-			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-		}
-
-		if (gameObject == CGame.PlayerActor)
-		{
-			gameObject.GetComponent<CDynamicActor>().RotationYDisabled = true;
-		}
-		
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		m_physCollider = GetComponent<CapsuleCollider>();
@@ -298,8 +280,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
 		}		
 		*/	
-		
-		m_vPosition.Set(transform.position);
 	}
 	
 		
@@ -502,9 +482,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fSprintSpeed = null;
 	CNetworkVar<float> m_fJumpSpeed = null;
 	CNetworkVar<bool> m_bUsingGravity = null;
-
-
-	CNetworkVar<Vector3> m_vPosition = null;
 
 
 	float m_fRotationY = 0.0f;

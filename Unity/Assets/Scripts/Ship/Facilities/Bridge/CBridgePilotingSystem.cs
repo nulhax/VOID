@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -53,7 +53,7 @@ public class CBridgePilotingSystem : MonoBehaviour
 	{
 		Transform cockpitTransform = transform.FindChild("Cockpit");
 
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Cockpit;
+		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.BridgeCockpit;
 		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 	
 		newConsoleObject.transform.position = cockpitTransform.position;

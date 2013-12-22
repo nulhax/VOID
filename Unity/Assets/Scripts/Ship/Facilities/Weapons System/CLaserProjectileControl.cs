@@ -55,7 +55,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Precalculate velocity
-		Vector3 velocity = transform.forward * k_fSpeed;
+		Vector3 velocity = transform.forward * m_InitialProjectileSpeed;
 
 		// Add the relative velocity from the ship
 		velocity += CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
@@ -111,7 +111,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 // Member Fields
 
 
-	const float k_fSpeed = 40.0f;
+	public float m_InitialProjectileSpeed = 500.0f;
 
 
 	float m_fLifeTimer = 5.0f;

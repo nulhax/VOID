@@ -118,7 +118,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
 			
 			// Get the intractable Object script from the object
-			CInteractableObject cInteractableObjectComponent = cHitObject.GetComponent<CInteractableObject>();
+			CActorInteractable cInteractableObjectComponent = cHitObject.GetComponent<CActorInteractable>();
 
 			// If this is a valid IO
 			if (cInteractableObjectComponent != null)
@@ -140,7 +140,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
 			else
 			{
-				cHitInteractableObject.GetComponent<CInteractableObject>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
+				cHitInteractableObject.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
 			}
 			
 			if (EventInteraction != null)

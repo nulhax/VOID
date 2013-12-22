@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CInteractableObject))]
+[RequireComponent(typeof(CActorInteractable))]
 public class CPanelInterface : MonoBehaviour
 {
 

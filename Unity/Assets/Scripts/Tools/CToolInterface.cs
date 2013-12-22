@@ -30,9 +30,9 @@ using System.Collections.Generic;
 //		Reload the Tool
 
 
-[RequireComponent(typeof(CNetworkView))]
-[RequireComponent(typeof(CInteractableObject))]
-[RequireComponent(typeof(CDynamicActor))]
+[RequireComponent(typeof(CActorInteractable))]
+[RequireComponent(typeof(CActorBoardable))]
+[RequireComponent(typeof(CActorGravity))]
 public class CToolInterface : CNetworkMonoBehaviour
 {
 
@@ -125,28 +125,30 @@ public class CToolInterface : CNetworkMonoBehaviour
 				if(CNetwork.IsServer)
 				{
                 	rigidbody.isKinematic = true;
+					rigidbody.detectCollisions = false;
 				}
 
-                // Disable dynamic actor
-				rigidbody.collider.isTrigger = true;
-                GetComponent<CDynamicActor>().enabled = false;
+				// Stop recieving syncronizations
+                GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
             }
             else
             {
                 gameObject.transform.parent = null;
 
-                // Turn on  dynamic physics
+                // Turn on dynamic physics
 				if(CNetwork.IsServer)
 				{
 					rigidbody.isKinematic = false;
+					rigidbody.detectCollisions = true;
 				}
 				
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
-                // Enable dynamic actor
-				rigidbody.collider.isTrigger = false;
-                GetComponent<CDynamicActor>().enabled = true;
+				// Recieve syncronizations
+				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
             }
         }
     }

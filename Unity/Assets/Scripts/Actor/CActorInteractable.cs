@@ -20,17 +20,14 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
-public class CInteractableObject : CNetworkMonoBehaviour 
+[RequireComponent(typeof(CActorNetworkSyncronized))]
+public class CActorInteractable : CNetworkMonoBehaviour 
 {
 
 // Member Delegates
 
 
 	public delegate void NotifyInteraction(RaycastHit _RayHit, ushort _usPlayerActorViewId);
-
-
-// Member Delegates & Events
 
 
 	public event NotifyInteraction EventPrimaryStart;

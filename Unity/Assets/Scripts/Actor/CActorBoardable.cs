@@ -17,8 +17,8 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CNetworkView))]
-public class CDynamicActor : CNetworkMonoBehaviour 
+[RequireComponent(typeof(CActorNetworkSyncronized))]
+public class CActorBoardable : CNetworkMonoBehaviour 
 {
 	
 // Member Types
@@ -36,68 +36,20 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	public event BoardingHandler EventBoard;
 	public event BoardingHandler EventDisembark;
 	
-	
 // Member Fields
 	public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
 	public bool m_CanBoard = true;
 	public bool m_CanDisembark = true;
 
 	private int m_OriginalLayer = 0;
-	private bool m_bRotationYDisabled = false;
-	
-	private Vector3 m_GravityAcceleration = Vector3.zero;
-	
-    private CNetworkVar<float> m_cPositionX    = null;
-    private CNetworkVar<float> m_cPositionY    = null;
-    private CNetworkVar<float> m_cPositionZ    = null;
-	
-    private CNetworkVar<float> m_EulerAngleX    = null;
-    private CNetworkVar<float> m_EulerAngleY    = null;
-    private CNetworkVar<float> m_EulerAngleZ    = null;
-	
+
 	private CNetworkVar<EBoardingState> m_BoardingState = null;
 	
-// Member Properties	
-	public Vector3 GravityAcceleration
-	{
-		set { m_GravityAcceleration = value; }
-		get { return(m_GravityAcceleration); }
-	}
-	
+// Member Properties		
 	public EBoardingState BoardingState
 	{
 		set { m_BoardingState.Set(value); }
 		get { return (m_BoardingState.Get()); }
-	}
-	
-	public Vector3 Position
-    {
-        set 
-		{ 
-			m_cPositionX.Set(value.x); m_cPositionY.Set(value.y); m_cPositionZ.Set(value.z); 
-		}
-        get 
-		{ 
-			return (new Vector3(m_cPositionX.Get(), m_cPositionY.Get(), m_cPositionZ.Get())); 
-		}
-    }
-	
-	public Vector3 EulerAngles
-    {
-        set 
-		{ 
-			m_EulerAngleX.Set(value.x); m_EulerAngleY.Set(value.y); m_EulerAngleZ.Set(value.z);
-		}
-        get 
-		{ 
-			return (new Vector3(m_EulerAngleX.Get(), (RotationYDisabled) ? transform.eulerAngles.y : m_EulerAngleY.Get(), m_EulerAngleZ.Get())); 
-		}
-    }
-
-	public bool RotationYDisabled
-	{
-		set { m_bRotationYDisabled = value; }
-		get { return (m_bRotationYDisabled); }
 	}
 
 // Member Methods
@@ -109,65 +61,20 @@ public class CDynamicActor : CNetworkMonoBehaviour
 	
 	public void Start()
 	{	
-		// Set to kinematic on the client
-		if(!CNetwork.IsServer)
-		{
-			rigidbody.isKinematic = true;
-		}
 		// Set the boarding state if it is still invalid
-		else if(BoardingState == EBoardingState.INVALID)
+		if(CNetwork.IsServer && BoardingState == EBoardingState.INVALID)
 		{
 			BoardingState = m_InitialBoardingState;
 		}
 	}
 
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			SyncTransform();
-		}
-	}
-	
-	public void FixedUpdate()
-	{
-		if(rigidbody != null && CNetwork.IsServer)
-		{	
-			// Apply the gravity to the rigid body
-			rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
-		}
-	}
-	
     public override void InstanceNetworkVars()
     {
-		m_cPositionX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cPositionY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_cPositionZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		
-        m_EulerAngleX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_EulerAngleY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_EulerAngleZ = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		
 		m_BoardingState = new CNetworkVar<EBoardingState>(OnNetworkVarSync, m_InitialBoardingState);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
 	{
-		if(!CNetwork.IsServer && CGame.PlayerActor != gameObject)
-		{
-			// Position
-	        if (_rSender == m_cPositionX || _rSender == m_cPositionY || _rSender == m_cPositionZ)
-			{
-				transform.position = Position;
-			}
-			
-			// Rotation
-	        else if (_rSender == m_EulerAngleX || _rSender == m_EulerAngleY || _rSender == m_EulerAngleZ)
-	        {	
-	            transform.eulerAngles = EulerAngles;
-	        }
-		}
-		
 		// Boarding state
  		if(_rSender == m_BoardingState)
 		{
@@ -196,12 +103,6 @@ public class CDynamicActor : CNetworkMonoBehaviour
 				SetGalaxyLayer();
 			}
 		}
-	}
-	
-	private void SyncTransform()
-	{
-		Position = rigidbody.position;
-		EulerAngles = transform.eulerAngles;
 	}
 	
 	private void SetGalaxyLayer()

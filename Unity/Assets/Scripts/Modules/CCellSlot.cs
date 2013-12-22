@@ -1,4 +1,4 @@
-﻿
+
 //  Auckland
 //  New Zealand
 //
@@ -97,9 +97,6 @@ public class CCellSlot : CNetworkMonoBehaviour
 				{
                 	InsertedCell.rigidbody.isKinematic = true;
 				}
-
-				// Disable dynamic actor
-				InsertedCell.GetComponent<CDynamicActor>().enabled = false;
 			}
 		}
 	}

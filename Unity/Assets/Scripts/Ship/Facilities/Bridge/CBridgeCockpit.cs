@@ -159,8 +159,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
 		
 		// Make this object interactable with action 1
-		CInteractableObject IO = GetComponent<CInteractableObject>();
-		IO.EventUse += HandlerPlayerActorUseAction;
+		GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(HandlerPlayerActorUseAction);
 	}
 	
 	public void Update()
@@ -177,12 +176,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
             m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
-			
-			CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
-			CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
-
-			bodyMotor.DisableInput(this);
-			headMotor.DisableInput(this);
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
@@ -272,6 +265,12 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	private void AttachPlayer(ushort _PlayerActorNetworkViewId)
 	{
 		m_AttachedPlayerActor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId);	
+
+		CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
+		CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
+		
+		bodyMotor.DisableInput(this);
+		headMotor.DisableInput(this);
 	}
 	
 	private void DetachPlayer()
@@ -280,8 +279,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		
 		CPlayerMotor bodyMotor = m_AttachedPlayerActor.GetComponent<CPlayerMotor>();
 		CPlayerHead headMotor = m_AttachedPlayerActor.GetComponent<CPlayerHead>();
-		
-		bodyMotor.collider.enabled = true;
 
 		bodyMotor.UndisableInput(this);
 		headMotor.UndisableInput(this);

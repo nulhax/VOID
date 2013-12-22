@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CToolInterface))]
 public class CAk47Control : CNetworkMonoBehaviour
 {
 
