@@ -112,6 +112,9 @@ public class CActorBoardable : CNetworkMonoBehaviour
 
 		// Add the galaxy shiftable component
 		gameObject.AddComponent<GalaxyShiftable>();
+
+		// Unparent Actor
+		transform.parent = null;
 	}
 	
 	private void SetOriginalLayer()
@@ -121,6 +124,9 @@ public class CActorBoardable : CNetworkMonoBehaviour
 
 		// Remove the galaxy shiftable component
 		Destroy(gameObject.GetComponent<GalaxyShiftable>());
+
+		// Parent the actor to the ship
+		transform.parent = CGame.Ship.transform;
 	}
 	
 	[AServerMethod]
@@ -137,25 +143,9 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			// Transfer the actor to galaxy ship space
 			CGame.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
 
-			// Unparent Actor
-			transform.parent = null;
-
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
 			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
-			
-			// Sync over the network and apply the galaxy ship force
-			if(GetComponent<CNetworkView>() != null)
-			{
-				// Sync the parent
-				GetComponent<CNetworkView>().SyncParent();
-				GetComponent<CNetworkView>().SyncTransformPosition();
-				GetComponent<CNetworkView>().SyncTransformRotation();
-			}
-			else
-			{
-				Debug.LogError("No network view found on dynamic actor!");
-			}
 		}
 	}
 	
@@ -176,24 +166,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			// Transfer the actor to ship space
 			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 
-			// Parent the actor to the ship
-			transform.parent = CGame.Ship.transform;
-
 			// Apply the compensation velocity to the actor
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
-			
-			// Sync over the network
-			if(GetComponent<CNetworkView>() != null)
-			{
-				// Sync the new states
-				GetComponent<CNetworkView>().SyncParent();
-				GetComponent<CNetworkView>().SyncTransformPosition();
-				GetComponent<CNetworkView>().SyncTransformRotation();
-			}
-			else
-			{
-				Debug.LogError("No network view found on dynamic actor!");
-			}
 		}
 	}
 }

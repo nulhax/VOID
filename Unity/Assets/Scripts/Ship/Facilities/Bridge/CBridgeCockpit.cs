@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CCockpit))]
 public class CBridgeCockpit : CNetworkMonoBehaviour 
 {
     // Member Types
@@ -165,7 +165,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-        return;
 		// Update the pilot states
 		if(m_AttachedPlayerActor != null)
 		{	
@@ -193,12 +192,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	private void UpdatePlayerInput()
 	{
 		m_CockpitPilotState.ResetStates();
-		
-		// Check if already trying to exit
-	//	if(m_CurrentPlayerInteractionEvent != EInteractionEvent.PlayerExit)
-		//	m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerPiloting;
-		//else
-		//	return;
 		
 		// Move forwards
         if (Input.GetKey(m_eMoveForwardKey))
@@ -260,7 +253,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
     private void DetachPlayer()
     {
-        m_AttachedPlayerActor.transform.position = transform.position + transform.up * 2.0f;
+		m_AttachedPlayerActor = null;
     }
 }
 
