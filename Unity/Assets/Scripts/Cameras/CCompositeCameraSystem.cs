@@ -40,15 +40,6 @@ public class CCompositeCameraSystem : MonoBehaviour
 
 	
 // Member Methods
-	public void Start()
-	{	
-		// Instantiate the galaxy camera (must be first!)
-		m_GalaxyCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera"))).camera;
-
-		// Instantiate the ship camera
-		m_ShipCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera"))).camera;
-	}
-
 	public void Update()
 	{
 		if(!CGame.IsClientReady)
@@ -59,7 +50,13 @@ public class CCompositeCameraSystem : MonoBehaviour
 		// Update the transforms of the cameras
 		UpdateCameraTransforms();
 	}
-	
+
+	public void Start()
+	{	
+		CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
+		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
+	}
+
 	public void SetShipViewPerspective(Transform _ShipPerspective)
 	{
 		m_IsObserverOutside = false;
@@ -110,6 +107,28 @@ public class CCompositeCameraSystem : MonoBehaviour
 		{
 			// Transfer the ship camera based off the galaxy camera
 			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
+		}
+	}
+
+	private void OnConnect()
+	{
+		// Instantiate the galaxy camera (must be first!)
+		m_GalaxyCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera"))).camera;
+		
+		// Instantiate the ship camera
+		m_ShipCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera"))).camera;
+	}
+
+	private void OnDisconnect()
+	{
+		if(m_GalaxyCamera != null)
+		{
+			Destroy(m_GalaxyCamera.gameObject);
+		}
+
+		if(m_ShipCamera != null)
+		{
+			Destroy(m_ShipCamera.gameObject);
 		}
 	}
 };

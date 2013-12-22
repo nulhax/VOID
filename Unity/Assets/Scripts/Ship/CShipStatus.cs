@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -133,7 +133,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 
 	void UpdateOxygen()
 	{
-        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EType.LifeSupportDome);
+        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EFacilityType.LifeSupportDome);
 
         if (aLifeSupportFacilities != null)
         {
@@ -164,7 +164,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fTotalOxygenConsumption;
 
 
-	Dictionary<CFacilityInterface.EType, List<GameObject>> m_RoomDictionary = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
+	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_RoomDictionary = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
 	List<GameObject> m_RoomsBridge = new List<GameObject>();
 	List<GameObject> m_RoomsFactory = new List<GameObject>();
 	List<GameObject> m_RoomsLifeSupport = new List<GameObject>();

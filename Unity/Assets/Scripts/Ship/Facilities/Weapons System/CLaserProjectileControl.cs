@@ -104,7 +104,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 		cHitParticles.transform.rotation = _HitRot;
 
 		// Destroy particles are 1 second
-		GameObject.Destroy(cHitParticles, 1.0f);
+		GameObject.Destroy(cHitParticles, cHitParticles.particleSystem.duration);
 	}
 
 

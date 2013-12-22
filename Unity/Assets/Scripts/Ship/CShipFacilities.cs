@@ -52,22 +52,21 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
-	public bool ValidateCreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId, uint _uiExpansionPortId)
+	public bool ValidateCreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId, uint _uiExpansionPortId)
 	{
 		return (true);
 	}
 
 
     [AServerMethod]
-	public GameObject CreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
+	public GameObject CreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
-
-
+		
 		if (_uiExpansionPortId != uint.MaxValue &&
 			_uiAttachToId != uint.MaxValue)
 		{
-			cExpansionPort = m_mFacilities[_uiFacilityId].GetComponent<CFacilityInterface>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
+			cExpansionPort = m_mFacilities[_uiFacilityId].GetComponent<CFacilityExpansion>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
 			
 			if(cExpansionPort.HasAttachedFacility == true)
 			{
@@ -88,7 +87,7 @@ public class CShipFacilities : MonoBehaviour
 		// Set facility properties
 		CFacilityInterface cFacilityInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
 		cFacilityInterface.FacilityId = uiFacilityId;
-		cFacilityInterface.Type = _eType;
+		cFacilityInterface.FacilityType = _eType;
 		
 		// Set facility parent
 		cNewFacilityObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
@@ -158,7 +157,7 @@ public class CShipFacilities : MonoBehaviour
 
 
     [AServerMethod]
-	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
+	public List<GameObject> FindFacilities(CFacilityInterface.EFacilityType _eType)
 	{
         if (m_mFacilityObjects.ContainsKey(_eType))
         {
@@ -178,7 +177,7 @@ public class CShipFacilities : MonoBehaviour
 
 
 	Dictionary<uint, GameObject> m_mFacilities = new Dictionary<uint, GameObject>();
-	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
+	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
 
 
 };

@@ -89,11 +89,14 @@ public class CGame : CNetworkMonoBehaviour
 		PanelFuseBox,
 		ControlConsole,
 		
-		// Modules: Bridge
+		// Cockpits
 		BridgeCockpit,
+		TurretCockpit,
 
-		// Un categorized
-		Turret,
+		// Turrets
+		LaserTurret,
+
+		// Turret: Projectile
 		TurretLaserProjectile,
 		
 		MAX
@@ -281,11 +284,12 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/PanelFuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/DUI/CurvedMonitor_wide");
 		
-		// Modules: Bridge
+		// Cockpits
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TurretCockpit, "Ship/Facilities/Weapons System/Turret Cockpit");
 
 		// Un categorized
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Turret, "Ship/Facilities/Weapons System/Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.LaserTurret, "Ship/Facilities/Weapons System/Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TurretLaserProjectile, "Ship/Facilities/Weapons System/TurretLaserProjectile");
 	}
 
@@ -539,7 +543,7 @@ public class CGame : CNetworkMonoBehaviour
 		
 		uint iCount = 1;
 		
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Bridge);
+		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge);
 		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.HallwayStraight, iCount, 0, 0);
 		/*cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayCorner, iCount, 1, 1);
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);

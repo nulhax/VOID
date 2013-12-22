@@ -107,8 +107,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			cockpit.CockpitPilotState.ResetStates();
 			break;
 		}
-		
-		cockpit.m_CurrentPlayerInteractionEvent = EInteractionEvent.Nothing;
     }
 
 	public static void UnserializeCockpitInteractions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
@@ -128,39 +126,28 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		}
     }
 
-
-    [AServerMethod]
+	
     void OnPlayerEnter(ulong _ulPlayerId)
     {
-        CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
-
-        if (bridgeCockpit.m_AttachedPlayerActor == null)
-            bridgeCockpit.m_AttachedPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-    }
-
-
-    [AServerMethod]
-    void OnPlayerLeave(ulong _ulPlayerId)
-    {
-        CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
-
-        if (bridgeCockpit.m_AttachedPlayerActor != null)
-            bridgeCockpit.m_AttachedPlayerActorViewId.Set(0);
+        if(m_AttachedPlayerActor == null && CNetwork.IsServer)
+		{
+			m_AttachedPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+		}
     }
 
 	
-	public void Awake()
-	{
-		
-	}
+    void OnPlayerLeave(ulong _ulPlayerId)
+    {
+		if(m_AttachedPlayerActor != null && CNetwork.IsServer)
+		{
+            m_AttachedPlayerActorViewId.Set(0);
+		}
+    }
 	
 	public void Start()
 	{
         gameObject.GetComponent<CCockpit>().EventPlayerEnter += new CCockpit.HandlePlayerEnter(OnPlayerEnter);
         gameObject.GetComponent<CCockpit>().EventPlayerLeave += new CCockpit.HandlePlayerLeave(OnPlayerLeave);
-
-		// Register this cockpit as the piloting cockpit of the ship
-		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
 	}
 	
 	public void Update()
@@ -248,12 +235,21 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
     private void AttachPlayer(ushort _PlayerActorNetworkViewId)
     {
+		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerPiloting;
+
         m_AttachedPlayerActor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId);
+
+		// Register this cockpit as the piloting cockpit of the ship
+		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
     }
 
     private void DetachPlayer()
     {
+		m_CurrentPlayerInteractionEvent = EInteractionEvent.Nothing;
+
 		m_AttachedPlayerActor = null;
+
+		m_CockpitPilotState.ResetStates();
     }
 }
 

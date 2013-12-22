@@ -52,7 +52,7 @@ public class CTurretController : CNetworkMonoBehaviour
 // Member Properties
 
 
-	public GameObject TurretCamera
+	public GameObject TurretCameraNode
 	{
 		get { return (m_cCameraObject); }
 	}
@@ -75,8 +75,8 @@ public class CTurretController : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync);
-		m_ulMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync);
+		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync, Vector2.zero);
+		m_ulMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
 
 

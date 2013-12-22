@@ -51,7 +51,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	
 	private Dictionary<CDUIButton, uint> m_buttonLocalPortPairs = new Dictionary<CDUIButton, uint>();
 	private Dictionary<CDUIButton, uint> m_buttonOtherPortPairs = new Dictionary<CDUIButton, uint>();
-	private Dictionary<CDUIButton, CFacilityInterface.EType> m_buttonFacilityTypePairs = new Dictionary<CDUIButton, CFacilityInterface.EType>();
+	private Dictionary<CDUIButton, CFacilityInterface.EFacilityType> m_buttonFacilityTypePairs = new Dictionary<CDUIButton, CFacilityInterface.EFacilityType>();
 	
 	private CNetworkVar<int> m_ServerCreateExpansionStage    	 	= null;
 	private EExpansionCreatePhase m_CreateExpansionStage 			= EExpansionCreatePhase.INVALID;
@@ -62,7 +62,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	
 	private uint m_LocalExpansionPortIdSelected = 0;
 	private uint m_OtherExpansionPortIdSelected = 0;
-	private CFacilityInterface.EType m_FacilitySelected = CFacilityInterface.EType.INVALID;
+	private CFacilityInterface.EFacilityType m_FacilitySelected = CFacilityInterface.EFacilityType.INVALID;
 	
 // Member Properties
 	public GameObject FacilityControlConsole { get{ return(m_FacilityControlConsole); } }
@@ -73,7 +73,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_ServerCreateExpansionStage = new CNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
 		m_ServerLocalExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 		m_ServerOtherExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_ServerFacilitySelected = new CNetworkVar<int>(OnNetworkVarSync, (int)CFacilityInterface.EType.INVALID);
+		m_ServerFacilitySelected = new CNetworkVar<int>(OnNetworkVarSync, (int)CFacilityInterface.EFacilityType.INVALID);
 	}
 	
 	
@@ -82,7 +82,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_CreateExpansionStage = (EExpansionCreatePhase)m_ServerCreateExpansionStage.Get();
 		m_LocalExpansionPortIdSelected = m_ServerLocalExpansionPortIdSelected.Get();
 		m_OtherExpansionPortIdSelected = m_ServerOtherExpansionPortIdSelected.Get();
-		m_FacilitySelected = (CFacilityInterface.EType)m_ServerFacilitySelected.Get();
+		m_FacilitySelected = (CFacilityInterface.EFacilityType)m_ServerFacilitySelected.Get();
     }
 	
 	public void Start()
@@ -130,7 +130,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 			{
 				CGame.Ship.GetComponent<CShipFacilities>().CreateFacility(m_FacilitySelected, GetComponent<CFacilityInterface>().FacilityId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
 				
-				m_FacilitySelected = CFacilityInterface.EType.INVALID;
+				m_FacilitySelected = CFacilityInterface.EFacilityType.INVALID;
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
 			}
@@ -160,7 +160,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	[AServerMethod]
 	private void ServerCreateDoors()
 	{
-		foreach(GameObject expansionPort in GetComponent<CFacilityInterface>().ExpansionPorts)
+		foreach(GameObject expansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
 		{
 			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Door;
 			GameObject newDoorObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
@@ -183,7 +183,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	[AServerMethod]
 	private void ServerCreateControlConsole()
 	{
-		Transform consoleTransform = transform.FindChild("ControlConsole");
+		Transform consoleTransform = transform.FindChild("ControlConsoleNode");
 
 		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.ControlConsole;
 		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
@@ -237,16 +237,16 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		diuField.LowerLeftViewPos = new Vector2(0.1f, 1.0f);
 		
 		// For each room type
-		for(int i = 0; i < (int)CFacilityInterface.EType.MAX; ++i)
+		for(int i = 0; i < (int)CFacilityInterface.EFacilityType.MAX; ++i)
 		{
-			CFacilityInterface.EType roomType = (CFacilityInterface.EType)i;
+			CFacilityInterface.EFacilityType roomType = (CFacilityInterface.EFacilityType)i;
 			
 			// Add the expansion port buttons
             CDUIButton duiBut = duiExpansionControl.AddButton(string.Format("Facility: {0}", roomType.ToString()));
             duiBut.PressDown += ExpansionSubviewSelectFacility;
 
 			// Set the positions
-			duiBut.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)((int)CFacilityInterface.EType.MAX + 1));
+			duiBut.MiddleLeftViewPos = new Vector2(0.1f, (float)(i + 1) / (float)((int)CFacilityInterface.EFacilityType.MAX + 1));
 			
 			m_buttonFacilityTypePairs[duiBut] = roomType;
 		}
@@ -263,7 +263,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		diuField.LowerLeftViewPos = new Vector2(0.1f, 1.0f);
 		
 		// For each expansion port add a button
-		List<GameObject> expansionPorts = GetComponent<CFacilityInterface>().ExpansionPorts;
+		List<GameObject> expansionPorts = GetComponent<CFacilityExpansion>().ExpansionPorts;
 		for(int i = 0; i < expansionPorts.Count; ++i)
 		{
 			GameObject expansionPort = expansionPorts[i];
@@ -294,7 +294,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		GameObject tempFacilityObject = GameObject.Instantiate(Resources.Load("Prefabs/" + prefabFile, typeof(GameObject))) as GameObject;
 		
 		// For each expansion port add a button
-		List<GameObject> expansionPorts = tempFacilityObject.GetComponent<CFacilityInterface>().ExpansionPorts;
+		List<GameObject> expansionPorts = tempFacilityObject.GetComponent<CFacilityExpansion>().ExpansionPorts;
 		for(int i = 0; i < expansionPorts.Count; ++i)
 		{
 			GameObject expansionPort = expansionPorts[i];
