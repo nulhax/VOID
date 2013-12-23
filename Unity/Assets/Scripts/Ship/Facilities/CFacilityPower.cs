@@ -32,7 +32,11 @@ public class CFacilityPower : CNetworkMonoBehaviour
 // Member Properties
 
 
-	float PowerConsumption { get { return (m_fPowerConsumption.Get()); } }
+	float PowerConsumption
+    {
+        set { m_fPowerConsumption.Set(value); }
+        get { return (m_fPowerConsumption.Get()); }
+    }
 
 
 // Member Functions
@@ -46,21 +50,25 @@ public class CFacilityPower : CNetworkMonoBehaviour
 
 	public void Start()
 	{
+        // Empty
 	}
 
 
 	public void OnDestroy()
 	{
+        // Empty
 	}
 
 
 	public void Update()
 	{
+        // Empty
 	}
 
 
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
+        // Empty
 	}
 
 

@@ -86,7 +86,7 @@ public class CFireHazard : MonoBehaviour {
             {
                 Debug.Log("Rigid body triggered. ---------------------------");
                 //Get actor health
-                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().Health;
+                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().HitPoints;
 				
 				if(hp <= 0.0f)
 				{

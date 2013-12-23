@@ -329,7 +329,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                                 mCellsToLoad.Remove(absoluteCell.Key);    // Deregister this cell for loading, as it is no longer necessary to load.
                                 mCells.Remove(absoluteCell.Key); // Remove this cell from the dictionary.
                                 restart = true; // Removing an element from a container while it is being iterated breaks the iterator, so the iteration must restart.
-                                Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
+                                //Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
                                 break;
 
                             case ECellState.Loaded:

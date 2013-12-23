@@ -21,6 +21,8 @@ using System;
 /* Implementation */
 
 [RequireComponent(typeof(CFacilityGravity))]
+[RequireComponent(typeof(CFacilityAtmosphere))]
+[RequireComponent(typeof(CFacilityHull))]
 [RequireComponent(typeof(CFacilityExpansion))]
 [RequireComponent(typeof(CFacilityTurrets))]
 [RequireComponent(typeof(CFacilityOnboardActors))]

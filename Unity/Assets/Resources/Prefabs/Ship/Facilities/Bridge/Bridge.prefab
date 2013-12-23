@@ -350,6 +350,8 @@ GameObject:
   - 114: {fileID: 11400024}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400028}
+  - 114: {fileID: 11400034}
+  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: Bridge
   m_TagString: Untagged
@@ -1126,6 +1128,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3ec0e93a234f974db1b5f843dc47150, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400034
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3cf67a98242640418e82b5556563308, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7aea93bd1efe554987dbd4a7f8bff2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!136 &13600000

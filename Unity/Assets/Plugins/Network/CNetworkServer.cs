@@ -195,6 +195,47 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
+    public void OnGUI()
+    {
+        if (IsActive)
+        {
+            RakNet.SystemAddress[] aRemoteSystems = null;
+            ushort sSystemsCount = 100;
+            m_cRnPeer.GetConnectionList(out aRemoteSystems, ref sSystemsCount);
+
+
+            uint uiSendBufferCount = 0;
+            uint uiSendBufferSize = 0;
+            uint uiReceieveBufferCount = 0;
+            uint uiReceieveBufferSize = 0;
+
+
+            foreach (RakNet.SystemAddress cSystemAddress in aRemoteSystems)
+            {
+                RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(cSystemAddress);
+
+                uiSendBufferCount += cStatistics.messageInSendBuffer[0];
+                uiSendBufferSize += (uint)cStatistics.bytesInSendBuffer[0];
+                uiReceieveBufferCount = cStatistics.messagesInResendBuffer;
+                uiReceieveBufferSize = (uint)cStatistics.bytesInResendBuffer;
+            }
+
+
+            string sStatistics = "";
+            sStatistics += string.Format("Server Statistics\n");
+            sStatistics += string.Format("Player Count ({0})\n", aRemoteSystems.Length);
+            sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", uiSendBufferCount, uiSendBufferSize);
+            sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", uiReceieveBufferCount, uiReceieveBufferSize);
+            //sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
+           // sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
+            //sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
+
+
+            GUI.Label(new Rect(Screen.width - 500, 0.0f, 250, 200), sStatistics);
+        }
+    }
+
+
     public bool IsActive
     {
 		get

@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public class CFacilityGravity : MonoBehaviour
+public class CFacilityGravity : CNetworkMonoBehaviour
 {
 	// Member Types
 
@@ -30,10 +30,19 @@ public class CFacilityGravity : MonoBehaviour
 
 	
 	// Member Fields
+
+    private CNetworkVar<bool> m_cGravityEnabled = null;
+
 	private List<GameObject> m_ActorsInsideGravityTrigger = new List<GameObject>();
 	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.8f, 0.0f);
 	
 	// Member Properties
+
+
+    public bool IsGravityEnabled
+    {
+        get { return (m_cGravityEnabled.Get()); }
+    }
 	
 	
 	// Member Methods
@@ -74,4 +83,14 @@ public class CFacilityGravity : MonoBehaviour
 			
 		m_ActorsInsideGravityTrigger.Remove(_Actor);
 	}
+
+    public override void InstanceNetworkVars()
+    {
+        m_cGravityEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
+    }
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+
+    }
 }

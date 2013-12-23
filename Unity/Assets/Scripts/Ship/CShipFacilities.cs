@@ -27,8 +27,10 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
-	public delegate void OnFacilityCreate(GameObject _Facilty);
-	public delegate void OnFacilityDestroy(GameObject _Facility);
+
+
+	public delegate void OnFacilityCreate(GameObject _cFacilty);
+	public delegate void OnFacilityDestroy(GameObject _cFacility);
 	
 	public event OnFacilityCreate EventOnFaciltiyCreate;
 	public event OnFacilityDestroy EventOnFaciltiyDestroy;
@@ -152,7 +154,14 @@ public class CShipFacilities : MonoBehaviour
     [AServerMethod]
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
-		return (m_mFacilities[_uiFacilityId]);
+        if (_uiFacilityId >= m_mFacilities.Count)
+        {
+            return (null);
+        }
+        else
+        {
+            return (m_mFacilities[_uiFacilityId]);
+        }
 	}
 
 

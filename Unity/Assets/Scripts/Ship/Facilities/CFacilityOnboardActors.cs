@@ -49,6 +49,13 @@ public class CFacilityOnboardActors : MonoBehaviour
 	{
 		if(!m_ActorsOnboard.Contains(_Actor))
 		{
+            // Check this is a player actor
+            if (_Actor.GetComponent<CPlayerLocator>() != null)
+            {
+                // Notify player actor has entered this facility
+                _Actor.GetComponent<CPlayerLocator>().SetContainingFacility(gameObject);
+            }
+
 			m_ActorsOnboard.Add(_Actor);
 			
 			OnActorEnter(_Actor);
