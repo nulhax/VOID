@@ -33,13 +33,18 @@ public class CUserInput : MonoBehaviour
 		SecondaryDown,
 		SecondaryUp,
 		Use,
-		Reload,
+		ReloadTool,
+        DropTool,
 		MoveForward,
 		MoveBackwards,
 		MoveLeft,
 		MoveRight,
 		Jump,
 		Sprint,
+        ToolSlot1,
+        ToolSlot2,
+        ToolSlot3,
+        ToolSlot4,
 	}
 
 
@@ -57,12 +62,18 @@ public class CUserInput : MonoBehaviour
 	public event NotifyKeyChange EventPrimary;
 	public event NotifyKeyChange EventSecondary;
 	public event NotifyKeyChange EventUse;
+    public event NotifyKeyChange EventReloadTool;
+    public event NotifyKeyChange EventDropTool;
 	public event NotifyKeyChange EventMoveForward;
 	public event NotifyKeyChange EventMoveBackward;
 	public event NotifyKeyChange EventMoveLeft;
 	public event NotifyKeyChange EventMoveRight;
 	public event NotifyKeyChange EventMoveJump;
 	public event NotifyKeyChange EventMoveSprint;
+
+
+    public delegate void NotifyChangeToolSlot(byte _bSlot, bool _bDown);
+    public event NotifyChangeToolSlot EventChangeToolSlot;
 
 
 // Member Properties
@@ -77,30 +88,6 @@ public class CUserInput : MonoBehaviour
 
 
 // Member Methods
-
-
-	public void Awake()
-	{
-		SensitivityX = 6.0f;
-		SensitivityY = 6.0f;
-	}
-
-
-	public void Start()
-	{
-		// Empty
-	}
-
-
-	public void Update()
-	{
-		UpdateMouseMove();
-		UpdatePrimary();
-		UpdateSecondary();
-		UpdateUse();
-		UpdateMovement();
-		UpdateMovementSpecial();
-	}
 	
 	
 	public void UnregisterAllEvents()
@@ -130,19 +117,49 @@ public class CUserInput : MonoBehaviour
 			case EInput.SecondaryDown:
 			case EInput.SecondaryUp: eKeyCode = s_eSecondaryKey; break;
 			case EInput.Use: eKeyCode = s_eUseKey; break;
-			case EInput.Reload: eKeyCode = s_eReloadToolKey; break;
+			case EInput.ReloadTool: eKeyCode = s_eReloadToolKey; break;
+            case EInput.DropTool: eKeyCode = s_eDropTool; break;
 			case EInput.MoveForward: eKeyCode = s_eMoveForwardKey; break;
 			case EInput.MoveBackwards: eKeyCode = s_eMoveBackwardsKey; break;
 			case EInput.MoveLeft: eKeyCode = s_eMoveLeftKey; break;
 			case EInput.MoveRight: eKeyCode = s_eMoveRightKey; break;
 			case EInput.Jump: eKeyCode = s_eJumpKey; break;
 			case EInput.Sprint: eKeyCode = s_eSprintKey; break;
+            case EInput.ToolSlot1: eKeyCode = s_eToolSlot1; break;
+            case EInput.ToolSlot2: eKeyCode = s_eToolSlot2; break;
+            case EInput.ToolSlot3: eKeyCode = s_eToolSlot3; break;
+            case EInput.ToolSlot4: eKeyCode = s_eToolSlot4; break;
 
 			default: Debug.LogError(string.Format("Unknown input type ({0})", _eInput)); break;
 		}
 
 		return (Input.GetKey(eKeyCode));
 	}
+
+
+    void Awake()
+    {
+        SensitivityX = 6.0f;
+        SensitivityY = 6.0f;
+    }
+
+
+    void Start()
+    {
+        // Empty
+    }
+
+
+    void Update()
+    {
+        UpdateMouseMove();
+        UpdatePrimary();
+        UpdateSecondary();
+        UpdateUse();
+        UpdateMovement();
+        UpdateMovementSpecial();
+        UpdateTools();
+    }
 
 
 	[AClientMethod]
@@ -275,7 +292,80 @@ public class CUserInput : MonoBehaviour
 	}
 
 
+    void UpdateTools()
+    {
+        // Drop
+        if (Input.GetKeyDown(s_eDropTool))
+        {
+            if (EventDropTool != null) EventDropTool(true);
+        }
+        else if (Input.GetKeyUp(s_eDropTool))
+        {
+            if (EventDropTool != null) EventDropTool(false);
+        }
+
+        // Reload
+        if (Input.GetKeyDown(s_eReloadTool))
+        {
+            if (EventReloadTool != null) EventReloadTool(true);
+        }
+        else if (Input.GetKeyUp(s_eReloadTool))
+        {
+            if (EventReloadTool != null) EventReloadTool(false);
+        }
+
+        // Slot 1
+        if (Input.GetKeyDown(s_eToolSlot1))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(1, true);
+        }
+        else if (Input.GetKeyUp(s_eToolSlot1))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(1, false);
+        }
+
+        // Slot 2
+        if (Input.GetKeyDown(s_eToolSlot2))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(2, true);
+        }
+        else if (Input.GetKeyUp(s_eToolSlot2))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(2, false);
+        }
+
+        // Slot 3
+        if (Input.GetKeyDown(s_eToolSlot3))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(3, true);
+        }
+        else if (Input.GetKeyUp(s_eToolSlot3))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(3, false);
+        }
+
+        // Slot 4
+        if (Input.GetKeyDown(s_eToolSlot4))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(4, true);
+        }
+        else if (Input.GetKeyUp(s_eToolSlot4))
+        {
+            if (EventChangeToolSlot != null) EventChangeToolSlot(4, false);
+        }
+    }
+
+
 // Member Fields
+
+
+    // Tools
+    static KeyCode s_eToolSlot1         = KeyCode.Alpha1;
+    static KeyCode s_eToolSlot2         = KeyCode.Alpha2;
+    static KeyCode s_eToolSlot3         = KeyCode.Alpha3;
+    static KeyCode s_eToolSlot4         = KeyCode.Alpha4;
+    static KeyCode s_eDropTool          = KeyCode.G;
+    static KeyCode s_eReloadTool        = KeyCode.R;
 
 
 	// Actions
