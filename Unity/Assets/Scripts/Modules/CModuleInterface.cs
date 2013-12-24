@@ -50,6 +50,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public delegate void NotifySwapped();
 	public event NotifySwapped EventSwapped;
+
+
 // Member Properties
 
 
@@ -92,7 +94,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 					rigidbody.detectCollisions = false;
 				}
 				
-				// Stop recieving syncronizations
+				// Stop receiving synchronizations
 				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
 				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
 			}
@@ -110,7 +112,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 				rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
 				rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 				
-				// Recieve syncronizations
+				// Receive synchronizations
 				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
 				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
 			}
@@ -118,73 +120,68 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	}
 
 
-	public void Awake()
+    [AServerMethod]
+    public void Pickup(ulong _ulPlayerId)
+    {
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
+
+        if (!IsHeld)
+        {
+            // Set owning player
+            m_ulOwnerPlayerId = _ulPlayerId;
+
+            // Set owning object view id
+            m_usOwnerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+
+            // Notify observers
+            if (EventPickedUp != null)
+            {
+                EventPickedUp();
+            }
+        }
+    }
+
+
+    [AServerMethod]
+    public void Drop()
+    {
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
+
+        // Check currently held
+        if (IsHeld)
+        {
+            // Remove owner player
+            m_ulOwnerPlayerId = 0;
+
+            // Set owning object view id
+            m_usOwnerActorViewId.Set(0);
+
+            // Notify observers
+            if (EventDropped != null)
+            {
+                EventDropped();
+            }
+        }
+    }
+
+
+	void Start()
 	{
 		// Empty
 	}
 
 
-	public void Start()
+	void OnDestroy()
 	{
 		// Empty
 	}
 
 
-	public void OnDestroy()
+	void Update()
 	{
 		// Empty
 	}
 
-
-	public void Update()
-	{
-		// Empty
-	}
-
-
-	[AServerMethod]
-	public void Pickup(ulong _ulPlayerId)
-	{
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-		if (!IsHeld)
-		{
-			// Set owning player
-			m_ulOwnerPlayerId = _ulPlayerId;
-
-			// Set owning object view id
-			m_usOwnerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-
-			// Notify observers
-			if (EventPickedUp != null)
-			{
-				EventPickedUp();
-			}
-		}
-	}
-
-
-	[AServerMethod]
-	public void Drop()
-	{
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-		// Check currently held
-		if (IsHeld)
-		{
-			// Remove owner player
-			m_ulOwnerPlayerId = 0;
-
-			// Set owning object view id
-			m_usOwnerActorViewId.Set(0);
-
-			// Notify observers
-			if (EventDropped != null)
-			{
-				EventDropped();
-			}
-		}
-	}
 
 // Member Fields
 
