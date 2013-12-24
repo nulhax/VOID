@@ -75,89 +75,45 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-	{
-		if (_cSyncedNetworkVar == m_usCarryingModuleViewId)
-		{
-			if (m_usCarryingModuleViewId.Get() == 0)
-			{
-
-			}
-		}
-	}
-
-
-	public void Start()
-	{
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnCellInsertRequest);
-		gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
-	}
+    [AServerMethod]
+    public void PickupModule(ulong _ulPlayerId, ushort _usModuleViewId)
+    {
+        if (!IsCarryingModule)
+        {
+            m_usCarryingModuleViewId.Set(_usModuleViewId);
+            CNetwork.Factory.FindObject(_usModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
+        }
+    }
 
 
-	public void OnPreDestroy()
-	{
-		if (CNetwork.IsServer)
-		{
-			if (IsCarryingModule)
-			{
-				DropModule();
-			}
-		}
-	}
+    [AServerMethod]
+    public void DropModule()
+    {
+        if (IsCarryingModule)
+        {
+            CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
+            m_usCarryingModuleViewId.Set(0);
+        }
+    }
 
 
-	public void OnDestroy()
-	{
-		// Empty
-	}
+    [AServerMethod]
+    public void InsertCell(ulong _ulPlayerId, ushort _usCellSlotViewId)
+    {
+        if (IsCarryingModule)
+        {
+            ushort CellToInsert = m_usCarryingModuleViewId.Get();
 
+            DropModule();
 
-	public void Update()
-	{
-		// Empty
-	}
+            ushort replacementCell = CNetwork.Factory.FindObject(_usCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
 
-
-	[AServerMethod]
-	void PickupModule(ulong _ulPlayerId, ushort _usModuleViewId)
-	{
-		if (!IsCarryingModule)
-		{
-			m_usCarryingModuleViewId.Set(_usModuleViewId);
-			CNetwork.Factory.FindObject(_usModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
-		}
-	}
-
-
-	[AServerMethod]
-	void DropModule()
-	{
-		if (IsCarryingModule)
-		{
-			CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
-			m_usCarryingModuleViewId.Set(0);
-		}
-	}
-	
-	
-	[AServerMethod]
-	void InsertCell(ulong _ulPlayerId, ushort _usCellSlotViewId)
-	{
-		if(IsCarryingModule)
-		{	
-			ushort CellToInsert = m_usCarryingModuleViewId.Get();
-			
-			DropModule();
-			
-			ushort replacementCell = CNetwork.Factory.FindObject(_usCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
-			
-			if(replacementCell != 0)
-			{
-				PickupModule(_ulPlayerId, replacementCell);
-			}
-		}
-	}
+            if (replacementCell != 0)
+            {
+                PickupModule(_ulPlayerId, replacementCell);
+            }
+        }
+    }
 
 
 	[AClientMethod]
@@ -248,6 +204,65 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+
+    void Start()
+    {
+        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
+        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnCellInsertRequest);
+        gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
+    }
+
+
+    void OnPreDestroy()
+    {
+        if (CNetwork.IsServer)
+        {
+            if (IsCarryingModule)
+            {
+                DropModule();
+            }
+        }
+    }
+
+
+    void Update()
+    {
+        // Empty
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+    {
+        if (_cSyncedNetworkVar == m_usCarryingModuleViewId)
+        {
+            if (m_usCarryingModuleViewId.Get() == 0)
+            {
+
+            }
+        }
+    }
+
+
+    void OnGUI()
+    {
+        if (gameObject == CGame.PlayerActor)
+        {
+            string sModuleText = "[Module] ";
+
+            if (m_usCarryingModuleViewId.Get() != 0)
+            {
+                sModuleText += ModuleObject.name;
+            }
+            else
+            {
+                sModuleText += "None";
+            }
+
+
+            GUI.Label(new Rect(10, Screen.height - 80, 500, 50), sModuleText);
+        }
+    }
 
 
 // Member Fields
