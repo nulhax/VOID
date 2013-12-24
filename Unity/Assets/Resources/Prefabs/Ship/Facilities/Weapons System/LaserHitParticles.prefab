@@ -339,12 +339,17 @@ ParticleSystem:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: .0888013542
+          value: .50245595
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - time: .103248946
-          value: .152139887
+        - time: .0357196182
+          value: .167791665
+          inSlope: -1.02975833
+          outSlope: -1.02975833
+          tangentMode: 0
+        - time: .10865435
+          value: .168204144
           inSlope: 1.74112332
           outSlope: 1.74112332
           tangentMode: 0
@@ -420,10 +425,10 @@ ParticleSystem:
           rgba: 4294967295
         key1:
           serializedVersion: 2
-          rgba: 3355443371
+          rgba: 4278190251
         key2:
           serializedVersion: 2
-          rgba: 3190039588
+          rgba: 1680090148
         key3:
           serializedVersion: 2
           rgba: 0
@@ -440,16 +445,16 @@ ParticleSystem:
           serializedVersion: 2
           rgba: 0
         ctime0: 0
-        ctime1: 2120
-        ctime2: 6168
+        ctime1: 1638
+        ctime2: 6554
         ctime3: 65535
         ctime4: 0
         ctime5: 0
         ctime6: 0
         ctime7: 0
         atime0: 0
-        atime1: 13493
-        atime2: 49344
+        atime1: 1638
+        atime2: 6554
         atime3: 65535
         atime4: 0
         atime5: 0
@@ -1103,7 +1108,7 @@ ParticleSystemRenderer:
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_SortMode: 0
+  m_SortMode: 2
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
