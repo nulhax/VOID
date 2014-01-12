@@ -220,6 +220,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 CFacilityAtmosphere cAtmosphere = cFacility.GetComponent<CFacilityAtmosphere>();
                 CFacilityGravity cGravity = cFacility.GetComponent<CFacilityGravity>();
                 CFacilityHull cHull = cFacility.GetComponent<CFacilityHull>();
+                CFacilityPower cPower = cFacility.GetComponent<CFacilityPower>();
 
                 // Facility pressure
                 GUI.Label(new Rect(Screen.width - kBoxWidth - kBoxMargin,
@@ -230,7 +231,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                                  "Pressure: " + Math.Round(cAtmosphere.Pressure * 100.0f, 2) + "%\n" +
                                  "Oxygen: " + Math.Round(cAtmosphere.Oxygen, 2) + " (" + Math.Round(cAtmosphere.OxygenPercent* 100.0f, 2) + "%)\n" +
                                  "Temperature: " + Math.Round(cAtmosphere.Temperature, 2) + "°\n" +
-                                 "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False"));
+                                 "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False") + "\n" +
+                                 "Power Consumption: " + cPower.PowerConsumption);
             }
         }
     }

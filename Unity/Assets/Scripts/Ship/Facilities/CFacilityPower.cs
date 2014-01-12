@@ -32,7 +32,7 @@ public class CFacilityPower : CNetworkMonoBehaviour
 // Member Properties
 
 
-	float PowerConsumption
+    public float PowerConsumption
     {
         set { m_fPowerConsumption.Set(value); }
         get { return (m_fPowerConsumption.Get()); }
