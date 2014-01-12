@@ -12,7 +12,6 @@ public class GalaxyIE : MonoBehaviour
     public Skybox mSkybox = null;
     public Material mSkyboxMaterial { get { return mSkybox.material; } set { mSkybox.material = value; } }
     //public Material mFogMaterial = null;
-    public float mFogStartDistance;
 
     private bool mRegisteredWithGalaxy = false;
     public bool mRegisterWithGalaxy
@@ -51,6 +50,15 @@ public class GalaxyIE : MonoBehaviour
         RenderSettings.skybox = mSkyboxMaterial;
     }
 
+	//void Update()
+	//{
+	//	if (camera != Camera.current && Camera.current != null)
+	//	{
+	//		Destroy(this);
+	//		Camera.current.gameObject.AddComponent<GalaxyIE>();
+	//	}
+	//}
+
     void OnDestroy()
     {
         mRegisterWithGalaxy = false;
@@ -68,8 +76,8 @@ public class GalaxyIE : MonoBehaviour
 
         float fovWHalf = CAMERA_FOV * 0.5f;
 
-        Vector3 toRight = camera.transform.right * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad) * CAMERA_ASPECT_RATIO;
-        Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+		Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+		Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
 
         Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
         float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;

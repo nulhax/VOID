@@ -179,10 +179,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
 
-        //// Initialise galaxy noises.
-        //for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-        //    mNoises[ui] = new PerlinSimplexNoise();
-
         // Load skyboxes.
         string[] skyboxFaces = new string[6];
         skyboxFaces[0] = "Left";
@@ -842,8 +838,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
 
         // Fog.
-        Shader.SetGlobalFloat("void_FogStartDistance", 20.0f);
-        Shader.SetGlobalFloat("void_FogEndDistance", 40.0f);
+        Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
+        Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
         Shader.SetGlobalFloat("void_FogDensity", 0.01f);
 
         Profiler.EndSample();
