@@ -52,8 +52,11 @@ public class CPlayerLocator : CNetworkMonoBehaviour
     {
         get
         {
-            if (m_cFacilityViewId.Get() == 9) return null;
-            
+			if (m_cFacilityViewId.Get() == 0)
+			{
+				return (null);
+			}
+
             return (CNetwork.Factory.FindObject(m_cFacilityViewId.Get()));
         }
     }
