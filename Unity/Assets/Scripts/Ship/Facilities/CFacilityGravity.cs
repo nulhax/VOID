@@ -55,16 +55,20 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-		// Remove actors that dont exist anymore
-		m_ActorsInsideGravityTrigger.RemoveAll((item) => item == null);
-		
-		// Apply the gravity to the actor every frame (so we can modify it if we want later)
-		foreach(GameObject actor in m_ActorsInsideGravityTrigger)
-		{	
-			actor.GetComponent<CActorGravity>().GravityAcceleration = m_FacilityGravityAcceleration;
+		if(CNetwork.IsServer)
+		{
+			// Remove actors that dont exist anymore
+			m_ActorsInsideGravityTrigger.RemoveAll((item) => item == null);
+			
+			// Apply the gravity to the actor every frame (so we can modify it if we want later)
+			foreach(GameObject actor in m_ActorsInsideGravityTrigger)
+			{	
+				actor.GetComponent<CActorGravity>().GravityAcceleration = m_FacilityGravityAcceleration;
+			}
 		}
 	}
-	
+
+	[AServerMethod]
 	private void ActorEnteredGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		// Only add to the list if there is a gravity component
@@ -73,7 +77,8 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 		
 		m_ActorsInsideGravityTrigger.Add(_Actor);
 	}
-	
+
+	[AServerMethod]
 	private void ActorExitedGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		if(!m_ActorsInsideGravityTrigger.Contains(_Actor))

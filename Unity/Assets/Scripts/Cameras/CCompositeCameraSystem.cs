@@ -40,7 +40,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 
 	
 // Member Methods
-	public void Update()
+	public void LateUpdate()
 	{
 		if(!CGame.IsClientReady)
 		{

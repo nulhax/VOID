@@ -156,7 +156,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 
-		gameObject.GetComponent<Animator>().enabled = false;
+		//gameObject.GetComponent<Animator>().enabled = false;
 	}
 
 
@@ -166,7 +166,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 		if (!InputDisabled)
 		{
-			gameObject.GetComponent<Animator>().enabled = true;
+			//gameObject.GetComponent<Animator>().enabled = true;
 		}
 	}
 

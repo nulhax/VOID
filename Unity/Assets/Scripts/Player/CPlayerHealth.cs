@@ -197,7 +197,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     void OnGUI()
     {
         const float kBoxMargin = 10.0f;
-        const float kBoxWidth = 150.0f;
+        const float kBoxWidth = 200.0f;
         const float kBoxHeight = 22.0f;
 
         
@@ -226,11 +226,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 GUI.Label(new Rect(Screen.width - kBoxWidth - kBoxMargin,
                                  Screen.height - kBoxHeight * 6 - kBoxMargin,
                                  kBoxWidth, kBoxHeight * 5),
-                                 "Facility Statuses" + "\n" +
+                                 "Facility Status'" + "\n" +
                                  "Is Breached: " + cHull.IsBreached + "\n" +
-                                 "Pressure: " + Math.Round(cAtmosphere.Pressure * 100.0f, 2) + "%\n" +
-                                 "Oxygen: " + Math.Round(cAtmosphere.Oxygen, 2) + " (" + Math.Round(cAtmosphere.OxygenPercent* 100.0f, 2) + "%)\n" +
-                                 "Temperature: " + Math.Round(cAtmosphere.Temperature, 2) + "°\n" +
+                                 "Atmosphere: " + Math.Round(cAtmosphere.AtmosphereQuantity, 2) + " (" + Math.Round(cAtmosphere.AtmospherePercentage* 100.0f, 2) + "%)\n" +
                                  "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False") + "\n" +
                                  "Power Consumption: " + cPower.PowerConsumption);
             }

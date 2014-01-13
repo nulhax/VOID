@@ -45,12 +45,13 @@ public class CFacilityOnboardActors : MonoBehaviour
 		ActorExitedFacility += new FacilityActorEnterExit(CGame.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger);
 	}
 
+	[AServerMethod]
 	public void ActorEnteredFacilityTrigger(GameObject _Actor)
 	{
 		if(!m_ActorsOnboard.Contains(_Actor))
 		{
             // Check this is a player actor
-            if (_Actor.GetComponent<CPlayerLocator>() != null)
+            if(_Actor.GetComponent<CPlayerLocator>() != null)
             {
                 // Notify player actor has entered this facility
                 _Actor.GetComponent<CPlayerLocator>().SetContainingFacility(gameObject);
@@ -61,7 +62,8 @@ public class CFacilityOnboardActors : MonoBehaviour
 			OnActorEnter(_Actor);
 		}
 	}
-	
+
+	[AServerMethod]
 	public void ActorExitedFacilityTrigger(GameObject _Actor)
 	{
 		if(m_ActorsOnboard.Contains(_Actor))

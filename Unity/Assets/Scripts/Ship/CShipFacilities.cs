@@ -140,12 +140,7 @@ public class CShipFacilities : MonoBehaviour
     [AServerMethod]
 	public List<GameObject> GetAllFacilities()
 	{
-		List<GameObject> ReturnList = new List<GameObject>();
-		
-		foreach (KeyValuePair<uint,GameObject> Entry in m_mFacilities)
-		{
-			ReturnList.Add(Entry.Value);
-		}
+		List<GameObject> ReturnList = new List<GameObject>(m_mFacilities.Values);
 		
 		return (ReturnList);
 	}

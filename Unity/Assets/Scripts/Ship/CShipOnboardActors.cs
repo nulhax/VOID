@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CShipInhabitants.cs
+//  File Name   :   CShipOnboardActors.cs
 //  Description :   --------------------------
 //
 //  Author  	:  

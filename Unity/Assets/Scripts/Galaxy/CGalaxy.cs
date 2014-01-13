@@ -84,6 +84,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         AsteroidDensity,
         FogDensity,
+        AsteroidResourceAmount,
         MAX
     }
 
@@ -113,7 +114,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
-    private System.Collections.Generic.List<GalaxyIE> mGalaxyIEs;   // Is only instantiated when this galaxy is ready to update galaxyIEs.
     private System.Collections.Generic.List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
     private System.Collections.Generic.List<SGubbinMeta> mGubbinsToLoad;
     private System.Collections.Generic.List<CRegisteredGubbin> mGubbinsToUnload;
@@ -179,10 +179,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
 
-        //// Initialise galaxy noises.
-        //for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-        //    mNoises[ui] = new PerlinSimplexNoise();
-
         // Load skyboxes.
         string[] skyboxFaces = new string[6];
         skyboxFaces[0] = "Left";
@@ -212,9 +208,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
         //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
         //Profiler.EndSample();
-        
-        // Galaxy is ready to update galaxyIEs.
-        mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
+
+        UpdateGalaxyAesthetic(mCentreCell);
 
         // Statistical data sometimes helps spot errors.
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
@@ -232,7 +227,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-            //gameObject.AddComponent<DungeonMaster>();
+            gameObject.AddComponent<DungeonMaster>();
         }
     }
 
@@ -275,7 +270,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 foreach (CRegisteredObserver observer in mObservers)
                 {
                     Vector3 observerPosition = observer.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = PointToRelativeCell(observerPosition);
+                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(observerPosition);
                     int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
                     int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                                                                                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
 
@@ -385,7 +380,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 foreach (CRegisteredGubbin gubbin in mGubbins)
                 {
                     Vector3 gubbinPosition = gubbin.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = PointToRelativeCell(gubbinPosition);
+                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(gubbinPosition);
                     int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
                     int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
 
@@ -460,7 +455,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 mfTimeUntilNextShiftTest = mfTimeBetweenShiftTests;   // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
 
                 // Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
-                SCellPos relativeCentrePos = PointToRelativeCell(CalculateAverageObserverPosition());
+                SCellPos relativeCentrePos = RelativePointToRelativeCell(CalculateAverageObserverPosition());
                 if (relativeCentrePos.x != 0)
                     mCentreCellX.Set(mCentreCell.x + relativeCentrePos.x);
                 if (relativeCentrePos.y != 0)
@@ -532,16 +527,22 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * cellDiameter, 0.0f, 0.0f));
         mCentreCell.x = mCentreCellX.Get();
+
+        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellY(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * cellDiameter, 0.0f));
         mCentreCell.y = mCentreCellY.Get();
+
+        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellZ(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * cellDiameter));
         mCentreCell.z = mCentreCellZ.Get();
+
+        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
     public void SyncMaxAsteroidsPerCell(INetworkVar sender) { muiMaxAsteroidsPerCell = mMaxAsteroidsPerCell.Get(); }
@@ -567,33 +568,6 @@ public class CGalaxy : CNetworkMonoBehaviour
             }
         }
 
-        Profiler.EndSample();
-    }
-
-    // Returns false if the galaxy is not ready to update galaxyIEs.
-    public bool RegisterGalaxyIE(GalaxyIE galaxyIE)
-    {
-        if (mGalaxyIEs != null) // Whether the galaxy is ready to update galaxyIEs or not is determined by whether the list is instantiated or not.
-        {
-            Profiler.BeginSample("RegisterGalaxyIE");
-
-            mGalaxyIEs.Add(galaxyIE);
-
-            // Provide initial assets.
-            UpdateGalaxyIE(mCentreCell, galaxyIE);
-
-            Profiler.EndSample();
-
-            return true;
-        }
-        else
-            return false;
-    }
-
-    public void DeregisterGalaxyIE(GalaxyIE galaxyIE)
-    {
-        Profiler.BeginSample("DeregisterGalaxyIE");
-        mGalaxyIEs.Remove(galaxyIE);
         Profiler.EndSample();
     }
 
@@ -711,7 +685,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         networkView.SyncParent();   // Sync the parent through the network view - the networked entity script does not handle this.
 
         // Position.
-        gubbinObject.transform.position = RelativeCellCentrePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
+        gubbinObject.transform.position = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
         if(!networkedEntity || !networkedEntity.Position)   // If the object does not have a networked entity script, or if the networked entity script does not update position...
             networkView.SyncTransformPosition();    // Sync the position through the network view.
 
@@ -773,46 +747,60 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
+    public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell)
+    {
+        return new Vector3((absoluteCell.x * cellDiameter / cellRadius), (absoluteCell.y * cellDiameter / cellRadius), (absoluteCell.z * cellDiameter / cellRadius));
+    }
+
     public float SampleNoise(float x, float y, float z, ENoiseLayer noiseLayer)
     {
-        return mNoises[(uint)noiseLayer].Generate(x, y, z);
+        return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(x, y, z);
     }
 
-    public Vector3 RelativeCellCentrePoint(SCellPos relativeCell)
+    public float SampleNoise(SCellPos absoluteCell, ENoiseLayer noiseLayer)
     {
-        Profiler.BeginSample("RelativeCellCentrePoint");
+        Vector3 samplePoint = AbsoluteCellNoiseSamplePoint(absoluteCell);
+        return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(samplePoint.x, samplePoint.y, samplePoint.z);
+    }
 
+    public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)
+    {
+        Profiler.BeginSample("RelativeCellToRelativePoint");
         Vector3 result = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
+        Profiler.EndSample();
+
+        return result;
+    }
+
+    public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
+    {
+        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+    }
+
+    public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
+    {
+        Profiler.BeginSample("RelativePointToRelativeCell");
+
+        relativePoint.x += cellRadius;
+        relativePoint.y += cellRadius;
+        relativePoint.z += cellRadius;
+        relativePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 
         Profiler.EndSample();
 
         return result;
     }
 
-    public SCellPos PointToAbsoluteCell(Vector3 point)
+    public SCellPos RelativePointToAbsoluteCell(Vector3 relativePoint)
     {
-        Profiler.BeginSample("PointToAbsoluteCell");
+        Profiler.BeginSample("RelativePointToAbsoluteCell");
 
-        point.x += cellRadius;
-        point.y += cellRadius;
-        point.z += cellRadius;
-        point /= cellDiameter;
-        SCellPos result = new SCellPos(Mathf.FloorToInt(point.x) + mCentreCell.x, Mathf.FloorToInt(point.y) + mCentreCell.y, Mathf.FloorToInt(point.z) + mCentreCell.z);
-
-        Profiler.EndSample();
-
-        return result;
-    }
-
-    public SCellPos PointToRelativeCell(Vector3 point)
-    {
-        Profiler.BeginSample("PointToRelativeCell");
-
-        point.x += cellRadius;
-        point.y += cellRadius;
-        point.z += cellRadius;
-        point /= cellDiameter;
-        SCellPos result = new SCellPos(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+        relativePoint.x += cellRadius;
+        relativePoint.y += cellRadius;
+        relativePoint.z += cellRadius;
+        relativePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
 
         Profiler.EndSample();
 
@@ -833,18 +821,51 @@ public class CGalaxy : CNetworkMonoBehaviour
     }
 
     // Set the aesthetic of the galaxy based on the observer's position.
-    void UpdateGalaxyIE(SCellPos absoluteCell, GalaxyIE galaxyIE)
+    void UpdateGalaxyAesthetic(SCellPos absoluteCell)
     {
-        Profiler.BeginSample("UpdateGalaxyIE");
+        Profiler.BeginSample("UpdateGalaxyAesthetic");
 
         // Skybox.
-        galaxyIE.mSkyboxMaterial.SetTexture("_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
-        galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
+        Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
 
-        // Fog.
-        Shader.SetGlobalFloat("void_FogStartDistance", 20.0f);
-        Shader.SetGlobalFloat("void_FogEndDistance", 40.0f);
+        if (RenderSettings.skybox == null)
+            RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));
+        RenderSettings.skybox.SetVector("_Tint", Color.grey);
+
+        Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
+        Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
         Shader.SetGlobalFloat("void_FogDensity", 0.01f);
+
+        // Calculate perspective warp.
+        Camera camera = Camera.current;
+        if (camera)
+        {
+            float CAMERA_NEAR = camera.nearClipPlane;
+            float CAMERA_FAR = camera.farClipPlane;
+            float CAMERA_FOV = camera.fieldOfView;
+            float CAMERA_ASPECT_RATIO = camera.aspect;
+
+            float fovWHalf = CAMERA_FOV * 0.5f;
+
+            Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+            Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
+
+            Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
+            float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;
+
+            topLeft.Normalize();
+            topLeft *= CAMERA_SCALE;
+
+            Vector3 topRight = (camera.transform.forward * CAMERA_NEAR + toRight + toTop).normalized * CAMERA_SCALE;
+            Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
+            Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
+
+            Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
+            Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
+            Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
+            Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
+            Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
+        }
 
         Profiler.EndSample();
     }

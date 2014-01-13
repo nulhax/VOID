@@ -218,9 +218,6 @@ public class CCockpit : CNetworkMonoBehaviour
 			{
 				m_cMountedPlayerId.Set(_ulPlayerId);
 
-				// Disable player movement on server
-				cPlayerActor.GetComponent<CPlayerMotor>().DisableInput(this);
-
 				// Save position on player when entering
 				m_vEnterPosition = cPlayerActor.transform.position;
 
@@ -250,9 +247,6 @@ public class CCockpit : CNetworkMonoBehaviour
 			// Teleport player back to entered position
 			cPlayerActor.transform.position = m_vEnterPosition;
 			m_vEnterPosition = Vector3.zero;
-
-			// Enable player movement on server
-			cPlayerActor.GetComponent<CPlayerMotor>().UndisableInput(this);
 
 			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
 		}
