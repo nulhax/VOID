@@ -84,6 +84,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         AsteroidDensity,
         FogDensity,
+        AsteroidResourceAmount,
         MAX
     }
 
@@ -271,7 +272,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 foreach (CRegisteredObserver observer in mObservers)
                 {
                     Vector3 observerPosition = observer.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = PointToRelativeCell(observerPosition);
+                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(observerPosition);
                     int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
                     int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                                                                                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
 
@@ -381,7 +382,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 foreach (CRegisteredGubbin gubbin in mGubbins)
                 {
                     Vector3 gubbinPosition = gubbin.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = PointToRelativeCell(gubbinPosition);
+                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(gubbinPosition);
                     int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
                     int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
 
@@ -456,7 +457,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 mfTimeUntilNextShiftTest = mfTimeBetweenShiftTests;   // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
 
                 // Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
-                SCellPos relativeCentrePos = PointToRelativeCell(CalculateAverageObserverPosition());
+                SCellPos relativeCentrePos = RelativePointToRelativeCell(CalculateAverageObserverPosition());
                 if (relativeCentrePos.x != 0)
                     mCentreCellX.Set(mCentreCell.x + relativeCentrePos.x);
                 if (relativeCentrePos.y != 0)
@@ -707,7 +708,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         networkView.SyncParent();   // Sync the parent through the network view - the networked entity script does not handle this.
 
         // Position.
-        gubbinObject.transform.position = RelativeCellCentrePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
+        gubbinObject.transform.position = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
         if(!networkedEntity || !networkedEntity.Position)   // If the object does not have a networked entity script, or if the networked entity script does not update position...
             networkView.SyncTransformPosition();    // Sync the position through the network view.
 
@@ -769,46 +770,60 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
+    public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell)
+    {
+        return new Vector3((absoluteCell.x * cellDiameter / cellRadius), (absoluteCell.y * cellDiameter / cellRadius), (absoluteCell.z * cellDiameter / cellRadius));
+    }
+
     public float SampleNoise(float x, float y, float z, ENoiseLayer noiseLayer)
     {
-        return mNoises[(uint)noiseLayer].Generate(x, y, z);
+        return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(x, y, z);
     }
 
-    public Vector3 RelativeCellCentrePoint(SCellPos relativeCell)
+    public float SampleNoise(SCellPos absoluteCell, ENoiseLayer noiseLayer)
     {
-        Profiler.BeginSample("RelativeCellCentrePoint");
+        Vector3 samplePoint = AbsoluteCellNoiseSamplePoint(absoluteCell);
+        return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(samplePoint.x, samplePoint.y, samplePoint.z);
+    }
 
+    public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)
+    {
+        Profiler.BeginSample("RelativeCellToRelativePoint");
         Vector3 result = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
+        Profiler.EndSample();
+
+        return result;
+    }
+
+    public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
+    {
+        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+    }
+
+    public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
+    {
+        Profiler.BeginSample("RelativePointToRelativeCell");
+
+        relativePoint.x += cellRadius;
+        relativePoint.y += cellRadius;
+        relativePoint.z += cellRadius;
+        relativePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 
         Profiler.EndSample();
 
         return result;
     }
 
-    public SCellPos PointToAbsoluteCell(Vector3 point)
+    public SCellPos RelativePointToAbsoluteCell(Vector3 relativePoint)
     {
-        Profiler.BeginSample("PointToAbsoluteCell");
+        Profiler.BeginSample("RelativePointToAbsoluteCell");
 
-        point.x += cellRadius;
-        point.y += cellRadius;
-        point.z += cellRadius;
-        point /= cellDiameter;
-        SCellPos result = new SCellPos(Mathf.FloorToInt(point.x) + mCentreCell.x, Mathf.FloorToInt(point.y) + mCentreCell.y, Mathf.FloorToInt(point.z) + mCentreCell.z);
-
-        Profiler.EndSample();
-
-        return result;
-    }
-
-    public SCellPos PointToRelativeCell(Vector3 point)
-    {
-        Profiler.BeginSample("PointToRelativeCell");
-
-        point.x += cellRadius;
-        point.y += cellRadius;
-        point.z += cellRadius;
-        point /= cellDiameter;
-        SCellPos result = new SCellPos(Mathf.FloorToInt(point.x), Mathf.FloorToInt(point.y), Mathf.FloorToInt(point.z));
+        relativePoint.x += cellRadius;
+        relativePoint.y += cellRadius;
+        relativePoint.z += cellRadius;
+        relativePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
 
         Profiler.EndSample();
 
