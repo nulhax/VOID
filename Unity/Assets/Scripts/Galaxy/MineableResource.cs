@@ -8,8 +8,11 @@ public class MineableResource : CNetworkMonoBehaviour
 
 	void Start()
     {
-        Vector3 samplePoint = CGalaxy.instance.AbsoluteCellNoiseSamplePoint(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
-        resourceAmount = CGalaxy.instance.SampleNoise(samplePoint.x, samplePoint.y, samplePoint.z, CGalaxy.ENoiseLayer.AsteroidResourceAmount);
+		if(CNetwork.IsServer)
+		{
+       	 	Vector3 samplePoint = CGalaxy.instance.AbsoluteCellNoiseSamplePoint(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
+        	resourceAmount = CGalaxy.instance.SampleNoise(samplePoint.x, samplePoint.y, samplePoint.z, CGalaxy.ENoiseLayer.AsteroidResourceAmount);
+		}
 	}
 
     public override void InstanceNetworkVars()

@@ -32,36 +32,17 @@ public class CShipAtmosphereSystem : MonoBehaviour
 	// Member Fields
 	private List<GameObject> m_AtmosphereDistributors = new List<GameObject>();
 
+
 	// Member Properties
 
 	
 	// Member Methods
 	public void Update()
 	{
-		// Get the facilities that are leaking and requiring refill
-		var facilitiesRequiringRefilling = 
-			from facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities()
-			where facility.GetComponent<CFacilityAtmosphere>().IsAtmosphereRefillingEnabled && facility.GetComponent<CFacilityAtmosphere>().IsAtmosphereLeaking
-			select facility;
-
-		// If there are facilities requiring this, calculate the refilling
-		if(facilitiesRequiringRefilling.ToArray().Length != 0)
+		if(CNetwork.IsServer)
 		{
-			// Get the combined output of all atmosphere distributors
-			float combinedOutput = 0.0f;
-			foreach(GameObject dist in m_AtmosphereDistributors)
-			{
-				combinedOutput += dist.GetComponent<CLifeSupportAtmosphereDistribution>().AtmosphereDistributionRate;
-			}
-
-			// Calculate the output for each facility evenly
-			float evenDistribution = combinedOutput / facilitiesRequiringRefilling.ToArray().Length;
-
-			// Apply this regeneration to the facilities
-			foreach(GameObject facility in facilitiesRequiringRefilling)
-			{
-				//facility.GetComponent<CFacilityAtmosphere>().
-			}
+			UpdateFacilityAtmosphereRefilling();
+			//UpdateFacilityAtmosphereQuality();
 		}
 	}
 
@@ -78,6 +59,35 @@ public class CShipAtmosphereSystem : MonoBehaviour
 		if(m_AtmosphereDistributors.Contains(_LifeSupportDistributor))
 		{
 			m_AtmosphereDistributors.Remove(_LifeSupportDistributor);
+		}
+	}
+
+	private void UpdateFacilityAtmosphereRefilling()
+	{
+		// Get the facilities that are requiring refill
+		var facilitiesRequiringRefilling = 
+			from facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities()
+				where facility.GetComponent<CFacilityAtmosphere>().RequiresAtmosphereRefill
+				select facility;
+		
+		// If there are facilities requiring this, calculate the refilling
+		if(facilitiesRequiringRefilling.ToArray().Length != 0)
+		{
+			// Get the combined output of all atmosphere distributors
+			float combinedOutput = 0.0f;
+			foreach(GameObject dist in m_AtmosphereDistributors)
+			{
+				combinedOutput += dist.GetComponent<CLifeSupportAtmosphereDistribution>().AtmosphereDistributionRate;
+			}
+			
+			// Calculate the output for each facility evenly
+			float evenDistribution = combinedOutput / facilitiesRequiringRefilling.ToArray().Length;
+			
+			// Apply this refilling value to the facilities that need it
+			foreach(GameObject facility in facilitiesRequiringRefilling)
+			{
+				facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = evenDistribution;
+			}
 		}
 	}
 }

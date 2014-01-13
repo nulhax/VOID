@@ -28,10 +28,14 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 	
 	
 	// Member Fields
-	private float m_OptimalAtmosphereGenerationRate = 10.0f;
+	public float m_AtmosphereGenerationRate = 20.0f;
 	
 	// Member Properties
 	
 	
 	// Member Methods
+	public void Start()
+	{
+		gameObject.GetComponent<CLifeSupportAtmosphereDistribution>().AtmosphereDistributionRate = m_AtmosphereGenerationRate;
+	}
 }

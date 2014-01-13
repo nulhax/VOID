@@ -31,93 +31,108 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 // Member Fields
 		
-	private CNetworkVar<float> m_AtmosphereTemperature;
 	private CNetworkVar<float> m_AtmosphereQuantity;
-
-	private CNetworkVar<float> m_AtmosphereRefillRate;
-	private CNetworkVar<float> m_AtmosphereEmptyRate;
-
-	private CNetworkVar<bool> m_AtmosphereLeaking;
-	private CNetworkVar<bool> m_AtmosphereRefillingEnabled;
 	
+	private List<GameObject> m_AtmosphericConsumers = new List<GameObject>();
+
+	private float m_fAtmosphereRefillRate = 0.0f;
+
 	private float m_fAtmosphereVolume = 1000.0f;
 
 
 // Member Properties
-
-	// If hull breach ocurrs, temp = zero. But, if the room has no pressure, the temp is unchanged.
-    public float AtmosphereTemperature
-    {
-        get { return (m_AtmosphereTemperature.Get()); }
-    }
 	
-	// Oxygen cannot be higher than the pressure multiplied by the area volume
     public float AtmosphereQuantity
     {
         get { return (m_AtmosphereQuantity.Get()); }
     }
 
-	public float AtmosphereRefillRate
-	{
-		get { return (m_AtmosphereRefillRate.Get()); } 
-	}
-
-	public float AtmosphereEmptyRate
-	{
-		get { return (m_AtmosphereEmptyRate.Get()); } 
-	}
-
     public float AtmospherePercentage
     {
 		get { return (AtmosphereQuantity / m_fAtmosphereVolume); }
     }
-	
-    public bool IsAtmosphereRefillingEnabled
-    { 
-        get { return (m_AtmosphereRefillingEnabled.Get()); }
-    }
 
-	public bool IsAtmosphereLeaking
-	{ 
-		get { return (m_AtmosphereLeaking.Get()); }
+	public float AtmosphereVolume
+	{
+		get { return (m_fAtmosphereVolume); } 
 	}
 
-    public float AtmosphereVolume
-    {
-        get { return (m_fAtmosphereVolume); } 
-    }
+	public float AtmosphereRefillRate
+	{
+		get { return(m_fAtmosphereRefillRate); }
+		set { m_fAtmosphereRefillRate = value; }
+	}
+
+	public float AtmosphereConsumeRate
+	{
+		get 
+		{ 
+			// Calulate the combined consumption rate within the facility
+			float consumptionRate = 0.0f;
+			foreach(GameObject consumer in m_AtmosphericConsumers)
+			{
+				consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
+			}
+			return(consumptionRate); 
+		}
+	}
+
+	public bool RequiresAtmosphereRefill
+	{					
+		get { return(AtmosphereQuantity != AtmosphereVolume); } 
+	}
 
 
 // Member Methods
 	
     public override void InstanceNetworkVars()
     {
-        m_AtmosphereTemperature = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_AtmosphereQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_AtmosphereRefillRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_AtmosphereEmptyRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_AtmosphereLeaking = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_AtmosphereRefillingEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
     }
 
-	void Awake()
+	public void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
-		gameObject.GetComponent<CFacilityHull>().EventBreached += new CFacilityHull.NotifyBreached(OnHullBreach);
+
 	}
 	
-	void OnDestroy()
+	public void Update()
 	{
-		// Empty
-	}
-	
-	void Update()
-	{
-		UpdateAtmosphereQuantity();
+		if(CNetwork.IsServer)
+		{
+			UpdateAtmosphereRefill();
+			UpdateAtmosphereConsumption();
+		}
 	}
 
-    void UpdateAtmosphereQuantity()
+	public void LateUpdate()
+	{
+		if(CNetwork.IsServer)
+		{
+			// Reset the refill rate
+			AtmosphereRefillRate = 0.0f;
+		}
+	}
+
+	public void AddAtmosphericConsumer(GameObject _Consumer)
+	{
+		if(!m_AtmosphericConsumers.Contains(_Consumer))
+		{
+			m_AtmosphericConsumers.Add(_Consumer);
+		}
+	}
+	
+	public void RemoveAtmosphericConsumer(GameObject _Consumer)
+	{
+		if(m_AtmosphericConsumers.Contains(_Consumer))
+		{
+			m_AtmosphericConsumers.Remove(_Consumer);
+		}
+	}
+
+	private void UpdateAtmosphereRefill()
     {
-		if (!IsAtmosphereLeaking)
+		// If the facility requires a refill, do so
+		if(RequiresAtmosphereRefill)
         {
 			// Check atmosphere level is below area volume 
             if (AtmosphereQuantity < AtmosphereVolume)
@@ -134,38 +149,26 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
                 m_AtmosphereQuantity.Set(fNewQuantity);
             }
         }
-        else
-        {
-			// Check atmosphere is higher than 0
-			if (AtmosphereQuantity > 0.0f)
-            {
-				float fNewQuantity = AtmosphereQuantity - AtmosphereEmptyRate * Time.deltaTime;
-				
-				// Clamp atmosphere to gas capacity
-				if (fNewQuantity < 0.0f)
-				{
-					fNewQuantity = 0.0f;
-				}
+	}
 
-				// Increase atmosphere amount
-				m_AtmosphereQuantity.Set(fNewQuantity);
-            }
-        }
+	private void UpdateAtmosphereConsumption()
+	{
+		// Check atmosphere is higher than 0 and that there are consumers
+		if (AtmosphereQuantity > 0.0f && m_AtmosphericConsumers.Count != 0)
+	    {
+			// Remove obsolete consumers
+			m_AtmosphericConsumers.RemoveAll((item) => item == null);
+
+			float fNewQuantity = AtmosphereQuantity - AtmosphereConsumeRate * Time.deltaTime;
+			
+			// Clamp atmosphere to gas capacity
+			if (fNewQuantity < 0.0f)
+			{
+				fNewQuantity = 0.0f;
+			}
+
+			// Increase atmosphere amount
+			m_AtmosphereQuantity.Set(fNewQuantity);
+    	}
     }
-
-
-    void OnNetworkVarSync(INetworkVar _cVarInstance)
-    {
-        // Empty
-    }
-
-
-    void OnHullBreach()
-    {
-		if(CNetwork.IsServer)
-		{
-			m_AtmosphereLeaking.Set(true);
-		}
-    }
-
 };

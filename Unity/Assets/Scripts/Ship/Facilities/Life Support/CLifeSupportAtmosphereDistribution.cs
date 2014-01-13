@@ -43,7 +43,7 @@ public class CLifeSupportAtmosphereDistribution : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars()
 	{
-		m_DistributionActive = new CNetworkVar<bool>(OnNetworkVarSync, true);
+		m_DistributionActive = new CNetworkVar<bool>(OnNetworkVarSync);
 	}
 
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
@@ -61,9 +61,10 @@ public class CLifeSupportAtmosphereDistribution : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Update()
+	public void Start()
 	{
-		
+		if(CNetwork.IsServer)
+			ActivateDistribution();
 	}
 
 	[AServerMethod]

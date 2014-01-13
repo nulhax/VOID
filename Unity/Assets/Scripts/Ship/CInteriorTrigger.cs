@@ -39,18 +39,36 @@ public class CInteriorTrigger : MonoBehaviour
 	[AServerMethod]
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(_Other.rigidbody != null && CNetwork.IsServer)
+		if(!CNetwork.IsServer)
+			return;
+
+		if(_Other.rigidbody != null)
 		{
 			transform.parent.GetComponent<CFacilityOnboardActors>().ActorEnteredFacilityTrigger(_Other.rigidbody.gameObject);
+
+			// Check if the rigid body is a atmospheric consumer
+			if(_Other.rigidbody.gameObject.GetComponent<CActorAtmosphericConsumer>() != null)
+			{
+				transform.parent.GetComponent<CFacilityAtmosphere>().AddAtmosphericConsumer(_Other.rigidbody.gameObject);
+			}
 		}
 	}
 
 	[AServerMethod]
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.rigidbody != null && CNetwork.IsServer)
+		if(!CNetwork.IsServer)
+			return;
+
+		if(_Other.rigidbody != null)
 		{
 			transform.parent.GetComponent<CFacilityOnboardActors>().ActorExitedFacilityTrigger(_Other.rigidbody.gameObject);
+
+			// Check if the rigid body is a atmospheric consumer
+			if(_Other.rigidbody.gameObject.GetComponent<CActorAtmosphericConsumer>() != null)
+			{
+				transform.parent.GetComponent<CFacilityAtmosphere>().RemoveAtmosphericConsumer(_Other.rigidbody.gameObject);
+			}
 		}
 	}
 }
