@@ -19,7 +19,6 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
 public class CBridgeLifeSupportSystem: MonoBehaviour 
 {
 	// Member Types
@@ -29,15 +28,10 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 	
 	
 	// Member Fields
-	
+	private float m_OptimalAtmosphereGenerationRate = 10.0f;
 	
 	// Member Properties
 	
 	
 	// Member Methods
-	public void Update()
-	{
-
-	}
-
 }
