@@ -20,14 +20,16 @@ using System;
 
 /* Implementation */
 
-[RequireComponent(typeof(CFacilityGravity))]
+
 [RequireComponent(typeof(CFacilityAtmosphere))]
-[RequireComponent(typeof(CFacilityHull))]
+[RequireComponent(typeof(CFacilityComponents))]
 [RequireComponent(typeof(CFacilityExpansion))]
-[RequireComponent(typeof(CFacilityTurrets))]
-[RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityGeneral))]
+[RequireComponent(typeof(CFacilityGravity))]
+[RequireComponent(typeof(CFacilityHull))]
+[RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityPower))]
+[RequireComponent(typeof(CFacilityTurrets))]
 [RequireComponent(typeof(CNetworkView))]
 public class CFacilityInterface : CNetworkMonoBehaviour
 {

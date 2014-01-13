@@ -86,8 +86,11 @@ public class CGame : CNetworkMonoBehaviour
 		PowerCell,
 		BioCell,
 		ReplicatorCell,
-		PanelFuseBox,
 		ControlConsole,
+
+		// Facility Components
+		PanelFuseBox,
+		PlayerSpawner,
 		
 		// Cockpits
 		BridgeCockpit,
@@ -281,8 +284,12 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/BioCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/ReplicatorCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/PanelFuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/DUI/CurvedMonitor_wide");
+
+		// Facility Components
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Ship/Facilities/Components/FuseBox");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerSpawner, "Ship/Facilities/Components/PlayerSpawner");
+
 		
 		// Cockpits
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
@@ -482,6 +489,13 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Get actor network view id
 		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+
+		List<GameObject> aPlayerSpawners = CFacilityComponentInterface.FindFacilityComponents(CFacilityComponentInterface.EType.PlayerSpawner);
+
+		int iRandomSpawnerId = Random.Range(0, aPlayerSpawners.Count);
+
+		cPlayerActor.GetComponent<CNetworkView>().SetPosition(aPlayerSpawners[iRandomSpawnerId].GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
+		cPlayerActor.GetComponent<CNetworkView>().SetRotation(aPlayerSpawners[iRandomSpawnerId].GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
 
 		// Sync current players actor view ids with new player
 		foreach (KeyValuePair<ulong, ushort> tEntry in m_mPlayersActor)

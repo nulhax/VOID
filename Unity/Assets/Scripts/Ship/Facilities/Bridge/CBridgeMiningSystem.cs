@@ -61,6 +61,7 @@ public class CBridgeMiningSystem : MonoBehaviour
 	
 	private void ServerCreateMiningTurretCockpits()
 	{
+		/*
 		List<Transform> turretCockpitNodes = new List<Transform>();
 		for(int i = 0; i < transform.childCount; ++i)
 		{
@@ -83,6 +84,7 @@ public class CBridgeMiningSystem : MonoBehaviour
 			newCockpitObject.GetComponent<CNetworkView>().SyncTransformPosition();
 			newCockpitObject.GetComponent<CNetworkView>().SyncTransformRotation();
 		}
+		*/
 	}
 }
 
