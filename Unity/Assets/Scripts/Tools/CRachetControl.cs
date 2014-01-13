@@ -102,7 +102,7 @@ public class CRachetControl : CNetworkMonoBehaviour
 			{
 				switch (cPanelInterface.PanelType)
 				{
-					case CPanelInterface.EType.FuseBox: 
+					case CPanelInterface.EType.FuseBox:
 						HandleFuseBoxInteraction(_cInteractableObject); 
 						break;
 				}

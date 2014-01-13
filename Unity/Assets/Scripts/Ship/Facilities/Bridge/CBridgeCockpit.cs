@@ -163,7 +163,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
-            m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = transform.parent.parent.rotation;
+			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = CGame.Ship.transform.rotation;
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
