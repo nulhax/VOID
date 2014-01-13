@@ -26,7 +26,6 @@ half _Shininess;
 struct Input {
 	float2 uv_MainTex;
 	float2 uv_BumpMap;
-	float3 normal;	// First float3 is the normal.
 	float3 viewDir;
 	float4 screenPos;
 };
