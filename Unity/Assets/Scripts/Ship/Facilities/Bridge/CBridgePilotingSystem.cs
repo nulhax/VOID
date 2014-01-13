@@ -37,7 +37,10 @@ public class CBridgePilotingSystem : MonoBehaviour
     // Member Methods
 	public void Start()
 	{	
-		m_Cockpit = GetComponent<CFacilityComponents>().FindFacilityComponents(CFacilityComponentInterface.EType.PilotCockpit)[0];
+		if (CNetwork.IsServer)
+		{
+			m_Cockpit = GetComponent<CFacilityComponents>().FindFacilityComponents(CFacilityComponentInterface.EType.PilotCockpit)[0];
+		}
 
 		//if(CNetwork.IsServer)
 		//{
