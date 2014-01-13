@@ -3,8 +3,7 @@
 
 #include "UnityCG.cginc"
 
-CBUFFER_START(VoidFog)
-	uniform sampler2D	void_FogTex;
+CBUFFER_START(VoidVariables)
 	uniform float3		void_FrustumCornerTopLeft;
 	uniform float3		void_FrustumCornerTopRight;
 	uniform float3		void_FrustumCornerBottomRight;
@@ -14,9 +13,12 @@ CBUFFER_START(VoidFog)
 	uniform float		void_FogStartDistanceInverse;
 	uniform float		void_FogDensity;
 	uniform float		void_CameraScale;
+	
+	uniform samplerCUBE	void_Skybox1;
+	uniform samplerCUBE	void_Skybox2;
 CBUFFER_END
 
-float4 void_SampleFog(fixed4 screenPos, fixed3 sourceColour)	// Returns [red,green,blue,fogIntensity]
+float4 void_SampleFog(fixed4 screenPos, fixed3 viewDir, fixed3 sourceColour)	// Returns [red,green,blue,fogIntensity]
 {
 	//return float4(sourceColour, 0.0f);
 	float2 screenUV = screenPos.xy / screenPos.w;
@@ -27,7 +29,7 @@ float4 void_SampleFog(fixed4 screenPos, fixed3 sourceColour)	// Returns [red,gre
 	float actualDistance = screenPos.z * distanceScalar;
 	//float fogIntensity = saturate(actualDistance / _ProjectionParams.z);
 	float fogIntensity = 1.0f - saturate((void_FogEndDistance - actualDistance) / (void_FogEndDistance - void_FogStartDistance));
-	return float4(lerp(sourceColour, tex2D(void_FogTex, screenUV).rgb, fogIntensity), fogIntensity);
+	return float4(lerp(sourceColour, texCUBE(void_Skybox1, viewDir).rgb, fogIntensity), fogIntensity);
 }
 
 #endif	// VOID_SHADER_VARIABLES_INCLUDED

@@ -114,7 +114,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
-    private System.Collections.Generic.List<GalaxyIE> mGalaxyIEs;   // Is only instantiated when this galaxy is ready to update galaxyIEs.
     private System.Collections.Generic.List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
     private System.Collections.Generic.List<SGubbinMeta> mGubbinsToLoad;
     private System.Collections.Generic.List<CRegisteredGubbin> mGubbinsToUnload;
@@ -209,9 +208,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
         //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
         //Profiler.EndSample();
-        
-        // Galaxy is ready to update galaxyIEs.
-        mGalaxyIEs = new System.Collections.Generic.List<GalaxyIE>();
+
+        UpdateGalaxyAesthetic(mCentreCell);
 
         // Statistical data sometimes helps spot errors.
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
@@ -567,33 +565,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    // Returns false if the galaxy is not ready to update galaxyIEs.
-    public bool RegisterGalaxyIE(GalaxyIE galaxyIE)
-    {
-        if (mGalaxyIEs != null) // Whether the galaxy is ready to update galaxyIEs or not is determined by whether the list is instantiated or not.
-        {
-            Profiler.BeginSample("RegisterGalaxyIE");
-
-            mGalaxyIEs.Add(galaxyIE);
-
-            // Provide initial assets.
-            UpdateGalaxyIE(mCentreCell, galaxyIE);
-
-            Profiler.EndSample();
-
-            return true;
-        }
-        else
-            return false;
-    }
-
-    public void DeregisterGalaxyIE(GalaxyIE galaxyIE)
-    {
-        Profiler.BeginSample("DeregisterGalaxyIE");
-        mGalaxyIEs.Remove(galaxyIE);
-        Profiler.EndSample();
-    }
-
     public void RegisterShiftableEntity(Transform shiftableTransform)
     {
         Profiler.BeginSample("RegisterShiftableEntity");
@@ -844,18 +815,51 @@ public class CGalaxy : CNetworkMonoBehaviour
     }
 
     // Set the aesthetic of the galaxy based on the observer's position.
-    void UpdateGalaxyIE(SCellPos absoluteCell, GalaxyIE galaxyIE)
+    void UpdateGalaxyAesthetic(SCellPos absoluteCell)
     {
-        Profiler.BeginSample("UpdateGalaxyIE");
+        Profiler.BeginSample("UpdateGalaxyAesthetic");
 
         // Skybox.
-        galaxyIE.mSkyboxMaterial.SetTexture("_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
-        galaxyIE.mSkyboxMaterial.SetVector("_Tint", Color.grey);
+        Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
 
-        // Fog.
+        if (RenderSettings.skybox == null)
+            RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));
+        RenderSettings.skybox.SetVector("_Tint", Color.grey);
+
         Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
         Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
         Shader.SetGlobalFloat("void_FogDensity", 0.01f);
+
+        // Calculate perspective warp.
+        Camera camera = Camera.current;
+        if (camera)
+        {
+            float CAMERA_NEAR = camera.nearClipPlane;
+            float CAMERA_FAR = camera.farClipPlane;
+            float CAMERA_FOV = camera.fieldOfView;
+            float CAMERA_ASPECT_RATIO = camera.aspect;
+
+            float fovWHalf = CAMERA_FOV * 0.5f;
+
+            Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
+            Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
+
+            Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
+            float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;
+
+            topLeft.Normalize();
+            topLeft *= CAMERA_SCALE;
+
+            Vector3 topRight = (camera.transform.forward * CAMERA_NEAR + toRight + toTop).normalized * CAMERA_SCALE;
+            Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
+            Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
+
+            Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
+            Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
+            Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
+            Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
+            Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
+        }
 
         Profiler.EndSample();
     }

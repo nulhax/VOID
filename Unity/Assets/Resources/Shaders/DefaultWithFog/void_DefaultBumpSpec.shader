@@ -26,12 +26,14 @@ half _Shininess;
 struct Input {
 	float2 uv_MainTex;
 	float2 uv_BumpMap;
+	float3 normal;	// First float3 is the normal.
+	float3 viewDir;
 	float4 screenPos;
 };
 
 void FogPass(Input IN, SurfaceOutput o, inout fixed4 colour)
 {
-	colour = void_SampleFog(IN.screenPos, colour);
+	colour = void_SampleFog(IN.screenPos, IN.viewDir, colour);
 }
 
 void surf (Input IN, inout SurfaceOutput o) {
