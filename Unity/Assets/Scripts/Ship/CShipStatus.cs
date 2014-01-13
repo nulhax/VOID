@@ -133,19 +133,19 @@ public class CShipStatus : CNetworkMonoBehaviour
 
 	void UpdateOxygen()
 	{
-        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EFacilityType.LifeSupportDome);
-
-        if (aLifeSupportFacilities != null)
-        {
-            float fTotalOxygen = 0.0f;
-
-            foreach (GameObject cFacility in aLifeSupportFacilities)
-            {
-                fTotalOxygen += cFacility.GetComponent<COxygenProduction>().fOxygens;
-            }
-
-            m_fTotalOxygenOutput.Set(fTotalOxygen);
-        }
+//        List<GameObject> aLifeSupportFacilities = CGame.Ship.GetComponent<CShipFacilities>().FindFacilities(CFacilityInterface.EFacilityType.LifeSupportDome);
+//
+//        if (aLifeSupportFacilities != null)
+//        {
+//            float fTotalOxygen = 0.0f;
+//
+//            foreach (GameObject cFacility in aLifeSupportFacilities)
+//            {
+//                fTotalOxygen += cFacility.GetComponent<COxygenProduction>().fOxygens;
+//            }
+//
+//            m_fTotalOxygenOutput.Set(fTotalOxygen);
+//        }
     }
 
 

@@ -4,9 +4,6 @@
 	{
 		_Blend		("Blend", Range(0.0,1.0)) = 0.0
 		_Tint		("Tint Color", Color) = (.5, .5, .5, .5)
-
-		_Skybox1	("Cubemap", Cube) = "White" {}
-		_Skybox2	("Cubemap", Cube) = "White" {}
 	}
 
 	SubShader
@@ -18,11 +15,9 @@
 		ZWrite Off
 	
 		CGINCLUDE
-
 		#include "UnityCG.cginc"
-		
+		#include"VoidShaderVariables.cginc"
 		uniform fixed4 _Tint;
-		
 		ENDCG
 	
 		Pass
@@ -31,8 +26,6 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma fragmentoption ARB_precision_hint_fastest
-
-			samplerCUBE _Skybox1;
 		
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -54,7 +47,7 @@
 
 			fixed4 frag (v2f i) : COLOR
 			{
-				fixed4 tex = texCUBE (_Skybox1, i.texcoord);
+				fixed4 tex = texCUBE(void_Skybox1, i.texcoord);
 				fixed4 col;
 				col.rgb = tex.rgb + _Tint.rgb - unity_ColorSpaceGrey;
 				col.a = tex.a * _Tint.a;

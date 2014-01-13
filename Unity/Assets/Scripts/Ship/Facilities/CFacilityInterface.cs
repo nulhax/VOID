@@ -27,6 +27,7 @@ using System;
 [RequireComponent(typeof(CFacilityTurrets))]
 [RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityGeneral))]
+[RequireComponent(typeof(CFacilityPower))]
 [RequireComponent(typeof(CNetworkView))]
 public class CFacilityInterface : CNetworkMonoBehaviour
 {

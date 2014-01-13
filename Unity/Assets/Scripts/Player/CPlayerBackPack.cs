@@ -172,6 +172,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerMethod]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{

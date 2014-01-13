@@ -220,6 +220,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 CFacilityAtmosphere cAtmosphere = cFacility.GetComponent<CFacilityAtmosphere>();
                 CFacilityGravity cGravity = cFacility.GetComponent<CFacilityGravity>();
                 CFacilityHull cHull = cFacility.GetComponent<CFacilityHull>();
+                CFacilityPower cPower = cFacility.GetComponent<CFacilityPower>();
 
                 // Facility pressure
                 GUI.Label(new Rect(Screen.width - kBoxWidth - kBoxMargin,
@@ -227,10 +228,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                                  kBoxWidth, kBoxHeight * 5),
                                  "Facility Statuses" + "\n" +
                                  "Is Breached: " + cHull.IsBreached + "\n" +
-                                 "Pressure: " + Math.Round(cAtmosphere.Pressure * 100.0f, 2) + "%\n" +
-                                 "Oxygen: " + Math.Round(cAtmosphere.Oxygen, 2) + " (" + Math.Round(cAtmosphere.OxygenPercent* 100.0f, 2) + "%)\n" +
-                                 "Temperature: " + Math.Round(cAtmosphere.Temperature, 2) + "°\n" +
-                                 "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False"));
+                                 //"Pressure: " + Math.Round(cAtmosphere.AtmospherePressure * 100.0f, 2) + "%\n" +
+                                 //"Oxygen: " + Math.Round(cAtmosphere.AtmosphereQuantity, 2) + " (" + Math.Round(cAtmosphere.AtmospherePercentage* 100.0f, 2) + "%)\n" +
+                                 //"Temperature: " + Math.Round(cAtmosphere.AtmosphereTemperature, 2) + "ï¿½\n" +
+                                 "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False") + "\n" +
+                                 "Power Consumption: " + cPower.PowerConsumption);
             }
         }
     }
