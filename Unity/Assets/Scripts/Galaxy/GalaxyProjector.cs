@@ -7,7 +7,7 @@ public class GalaxyProjector : MonoBehaviour
     public float radius = 3.0f;
 
     public CGalaxy.SCellPos absoluteCellCentreOfProjection = new CGalaxy.SCellPos(0,0,0);
-    public float zoom = 1.0f;   // 1 = Maximum zoom out. 0 = infinite zoom.
+    public float zoom = 1.0f;   // 1 = Maximum zoom out (-1 to +1). 0 = infinite zoom.
 
     public int samplesPerAxis = 28; // 25 with particle scale 2.5f
     public float particleScale = 2.0f;  // This changes how much each particle overlaps neighbouring particles.

@@ -29,7 +29,7 @@ float4 void_SampleFog(fixed4 screenPos, fixed3 viewDir, fixed4 sourceColour)	// 
 	float actualDistance = screenPos.z * distanceScalar;
 	//float fogIntensity = saturate(actualDistance / _ProjectionParams.z);
 	float fogIntensity = 1.0f - saturate((void_FogEndDistance - actualDistance) / (void_FogEndDistance - void_FogStartDistance));
-	return float4(lerp(sourceColour, texCUBE(void_Skybox1, viewDir), fogIntensity));
+	return lerp(sourceColour, texCUBE(void_Skybox1, viewDir), fogIntensity);
 }
 
 #endif	// VOID_SHADER_VARIABLES_INCLUDED

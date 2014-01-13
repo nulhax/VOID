@@ -3,75 +3,80 @@ using System.Collections;
 
 public class DungeonMaster : MonoBehaviour
 {
-    public enum EDifficultyModifier : uint
-    {
-        // Level 1
-        TotalDistanceTravelled, // +(√km)%
-        TotalShipWorth, // Up to 100,000 nanites - +0% to +50%
-        RandomFluctuation,  // -cos(0)*0.25 → (beginning at -25%, and oscillating up to +25%)
-        // Level 2
-        ShipDamage, // -0% to -50%
-        // Highest level
-        DifficultyChoice,   // -50% easy | 0% normal | 50% hard | variable from -100% to +∞%
+    //public enum EDifficultyModifier : uint
+    //{
+    //    // Group
+    //    TotalDistanceTravelled, // +(√km)%
+    //    TotalShipWorth, // Up to 100,000 nanites - +0% to +50%
+    //    RandomFluctuation,  // -cos(0)*0.25 → (beginning at -25%, and oscillating up to +25%)
+    //    // Group
+    //    ShipDamage, // -0% to -50%
+    //    // Group
+    //    DifficultyChoice,   // -50% easy | 0% normal | 50% hard | variable from -100% to +∞%
 
-        MAX
+    //    MAX
+    //}
+
+    public delegate void Behaviour();
+    public struct SDynamicEvent
+    {
+        public SDynamicEvent(float _cost, Behaviour _behaviour) { cost = _cost; behaviour = _behaviour; timeEventLastOccurred = 0.0f; }
+
+        float cost;
+        float timeEventLastOccurred;
+        Behaviour behaviour;
     }
 
-    private class CDifficultyModifier { public float value = 0.0f;}  // Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
+    // Difficulty modifiers are individual factors that influence the overall difficulty.
+    // Difficulty modifiers are split into groups.
+    // Difficulty modifiers in the same group add together to form the group value, and group values are multiplied together to produce the overall difficulty.
+    // E.g. In its own group; a difficulty modifier of -0.5 will halve difficulty, +1.0 will double difficulty, -1.0 will erase difficulty entirely.
+    public class CDifficultyModifier   // Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
+    {
+        public CDifficultyModifier() { }
+        public CDifficultyModifier(float value) { value_internal = value; }
+        public CDifficultyModifier(uint group) { DungeonMaster.instance.AddDifficultyModifierToGroup(this, group); }
+        public CDifficultyModifier(float value, uint group) { value_internal = value; DungeonMaster.instance.AddDifficultyModifierToGroup(this, group); }
+        public CDifficultyModifier(uint group, float value) { value_internal = value; DungeonMaster.instance.AddDifficultyModifierToGroup(this, group); }
 
-    private CDifficultyModifier[] mDifficultyModifiers = new CDifficultyModifier[(uint)EDifficultyModifier.MAX];
-    private System.Collections.Generic.List<System.Collections.Generic.List<CDifficultyModifier>> mDifficultyFactors = new System.Collections.Generic.List<System.Collections.Generic.List<CDifficultyModifier>>();
+        public void AddToGroup(uint group) { DungeonMaster.instance.AddDifficultyModifierToGroup(this, group); }
+
+        public float value { get { return value_internal; } set { value_internal = value; DungeonMaster.instance.DifficultyNeedsUpdating(); } }
+
+        private float value_internal = 0.0f;
+    }
+
+    private static DungeonMaster sDM = null;
+    public static DungeonMaster instance { get { return sDM; } }
+    private System.Collections.Generic.SortedList<uint, System.Collections.Generic.List<CDifficultyModifier>> mDifficultyFactors = new System.Collections.Generic.SortedList<uint, System.Collections.Generic.List<CDifficultyModifier>>();
     private bool mbDifficultyNeedsUpdating = false;
-    private float mfDifficulty_internal;
-    private float mfMyntslag = 0.0f;
+    private float mfDifficulty_internal = 1.0f;
 
-    public float mDifficulty { get { if (mbDifficultyNeedsUpdating)UpdateDifficulty(); return mfDifficulty_internal; } }
+    private System.Collections.Generic.List<SDynamicEvent> mDynamicEvents = new System.Collections.Generic.List<SDynamicEvent>();
+
+    private float mfPengar = 0.0f;
+
+    public float difficulty { get { if (mbDifficultyNeedsUpdating)UpdateDifficulty(); return mfDifficulty_internal; } }
 
     public DungeonMaster()
     {
-        // Create difficulty modifiers.
-        for (uint x = 0; x < (uint)EDifficultyModifier.MAX; ++x)
-            mDifficultyModifiers[x] = new CDifficultyModifier();
-
-        // Level 1:
-        System.Collections.Generic.List<CDifficultyModifier> level1 = new System.Collections.Generic.List<CDifficultyModifier>();
-        level1.Add(mDifficultyModifiers[(uint)EDifficultyModifier.TotalDistanceTravelled]);
-        level1.Add(mDifficultyModifiers[(uint)EDifficultyModifier.TotalShipWorth]);
-        level1.Add(mDifficultyModifiers[(uint)EDifficultyModifier.RandomFluctuation]);
-        mDifficultyFactors.Add(level1);
-
-        // Level 2:
-        System.Collections.Generic.List<CDifficultyModifier> level2 = new System.Collections.Generic.List<CDifficultyModifier>();
-        level2.Add(mDifficultyModifiers[(uint)EDifficultyModifier.ShipDamage]);
-        mDifficultyFactors.Add(level2);
-
-        // Level 3:
-        System.Collections.Generic.List<CDifficultyModifier> level3 = new System.Collections.Generic.List<CDifficultyModifier>();
-        level3.Add(mDifficultyModifiers[(uint)EDifficultyModifier.DifficultyChoice]);
-        mDifficultyFactors.Add(level3);
+        sDM = this;
     }
 
 	void Start()
     {
-        // Initialise difficulty modifiers.
-        SetDifficultyModifier(EDifficultyModifier.DifficultyChoice, -0.5f);
-        // Etc...
-        // Etc...
-        // Etc...
+
 	}
 	
 	void Update()
     {
-	    // Update difficulty modifiers.
-        SetDifficultyModifier(EDifficultyModifier.RandomFluctuation, -0.25f + Mathf.PingPong(Time.time, 0.5f));
-
         // Update coinage.
-        mfMyntslag += Time.deltaTime * mDifficulty;
+        mfPengar += Time.deltaTime * difficulty;
 
         // Decide what to do.
-        while (mfMyntslag >= 2.0f)
+        while (mfPengar >= 2.0f)
         {
-            mfMyntslag -= 2.0f;
+            mfPengar -= 2.0f;
 
             CGalaxy.SCellPos parentAbsoluteCell = CGalaxy.instance.RelativePointToAbsoluteCell(CGame.GalaxyShip.transform.position);
             Vector3 pos = (CGame.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellToRelativePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
@@ -79,31 +84,57 @@ public class DungeonMaster : MonoBehaviour
         }
 	}
 
-    void SetDifficultyModifier(EDifficultyModifier difficultyModifier, float value)
+    public void AddDynamicEvent(SDynamicEvent dynamicEvent)
     {
-        mDifficultyModifiers[(uint)difficultyModifier].value = value;
+
+    }
+
+    public void AddDifficultyModifierToGroup(CDifficultyModifier difficultyModifier, uint group)
+    {
+        System.Collections.Generic.List<CDifficultyModifier> difficultyModifiers;
+        if (!mDifficultyFactors.TryGetValue(group, out difficultyModifiers))
+        {
+            difficultyModifiers = new System.Collections.Generic.List<CDifficultyModifier>();
+            mDifficultyFactors.Add(group, difficultyModifiers);
+        }
+
+        difficultyModifiers.Add(difficultyModifier);
+
         mbDifficultyNeedsUpdating = true;
     }
 
-    float GetDifficultyModifier(EDifficultyModifier difficultyModifier) { return mDifficultyModifiers[(uint)difficultyModifier].value; }
+    public void DifficultyNeedsUpdating()
+    {
+        mbDifficultyNeedsUpdating = true;
+    }
     
     void UpdateDifficulty()
     {
         mfDifficulty_internal = 1.0f;
 
-        foreach (System.Collections.Generic.List<CDifficultyModifier> factors in mDifficultyFactors)
+        foreach (System.Collections.Generic.KeyValuePair<uint, System.Collections.Generic.List<CDifficultyModifier>> factors in mDifficultyFactors)
         {
-            float difficultyModifier = 1.0f;
-            foreach (CDifficultyModifier modifier in factors)
-                difficultyModifier += modifier.value;
+            float groupDifficulty = 1.0f;
+            foreach (CDifficultyModifier modifier in factors.Value)
+                groupDifficulty += modifier.value;
 
-            if (difficultyModifier < 0.0f)
-                difficultyModifier = 0.0f;
+            if (groupDifficulty < 0.0f)
+                groupDifficulty = 0.0f;  // Difficulty can not be negative.
 
-            mfDifficulty_internal *= difficultyModifier;
+            mfDifficulty_internal *= groupDifficulty;
         }
 
         mbDifficultyNeedsUpdating = false;
         //Debug.Log("Difficulty set to: " + Mathf.RoundToInt((mfDifficulty_internal*100)).ToString() + "%");
+    }
+
+    void OnGUI()
+    {
+        GUIStyle style = new GUIStyle();
+        style.alignment = TextAnchor.MiddleRight;
+        style.fontStyle = FontStyle.Bold;
+        float boxWidth = 0.1f;
+        float boxHeight = 0.06f;
+        GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
     }
 }
