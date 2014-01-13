@@ -15,7 +15,7 @@ CGINCLUDE
 ENDCG
 	
 CGPROGRAM
-#pragma surface surf BlinnPhong
+#pragma surface surf BlinnPhong finalcolor:FogPass
 #pragma target 3.0
 
 sampler2D _MainTex;
@@ -26,13 +26,18 @@ half _Shininess;
 struct Input {
 	float2 uv_MainTex;
 	float2 uv_BumpMap;
+	float3 viewDir;
 	float4 screenPos;
 };
 
+void FogPass(Input IN, SurfaceOutput o, inout fixed4 colour)
+{
+	colour = void_SampleFog(IN.screenPos, IN.viewDir, colour);
+}
+
 void surf (Input IN, inout SurfaceOutput o) {
 	fixed4 tex = tex2D(_MainTex, IN.uv_MainTex);
-	float4 fogSample = void_SampleFog(IN.screenPos, tex.rgb * _Color.rgb);
-	o.Albedo = fogSample.rgb;
+	o.Albedo = tex.rgb * _Color.rgb;
 	o.Gloss = tex.a;
 	o.Alpha = _Color.a;
 	o.Specular = _Shininess;

@@ -6,11 +6,11 @@ public class GalaxyProjector : MonoBehaviour
 {
     public float radius = 3.0f;
 
-    public Vector3 centreOfProjection = new Vector3(0.0f, 0.0f, 0.0f);
+    public CGalaxy.SCellPos absoluteCellCentreOfProjection = new CGalaxy.SCellPos(0,0,0);
     public float zoom = 1.0f;   // 1 = Maximum zoom out. 0 = infinite zoom.
 
-    public int samplesPerAxis = 25;
-    public float particleScale = 2.5f;  // This changes how much each particle overlaps neighbouring particles.
+    public int samplesPerAxis = 28; // 25 with particle scale 2.5f
+    public float particleScale = 2.0f;  // This changes how much each particle overlaps neighbouring particles.
 
     private bool mUpToDate = false;
 
@@ -45,13 +45,15 @@ public class GalaxyProjector : MonoBehaviour
                     for (int z = 0; z < samplesPerAxis; ++z)
                     {
                         Vector3 unitPos = new Vector3(x - centreSample.x, y - centreSample.y, z - centreSample.z) / (0.5f * samplesPerAxis);    // -1 to +1 on each axis.
-                        float asteroidDensity = 0.5f + 0.5f * galaxy.SampleNoise(centreOfProjection.x + unitPos.x * zoom, centreOfProjection.y + unitPos.y * zoom, centreOfProjection.z + unitPos.z * zoom, CGalaxy.ENoiseLayer.AsteroidDensity);
+                        Vector3 centreOfProjectionSamplePos = galaxy.AbsoluteCellNoiseSamplePoint(absoluteCellCentreOfProjection);
+                        float asteroidDensity = galaxy.SampleNoise(centreOfProjectionSamplePos.x + unitPos.x /** zoom*/, centreOfProjectionSamplePos.y + unitPos.y /** zoom*/, centreOfProjectionSamplePos.z + unitPos.z /** zoom*/, CGalaxy.ENoiseLayer.AsteroidDensity);
                         float asteroidDensityAlpha = asteroidDensity * asteroidDensity * asteroidDensity * asteroidDensity;
                         asteroidDensityAlpha = (1.0f - unitPos.sqrMagnitude) * asteroidDensityAlpha;
-                        if (asteroidDensityAlpha < 0.0f)
-                            asteroidDensityAlpha = 0.0f;
+                        //if (asteroidDensityAlpha < 0.0f)
+                        //    asteroidDensityAlpha = 0.0f;
 
-                        emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, asteroidDensityAlpha));
+                        if(asteroidDensityAlpha >= 0.0625f)
+                            emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, asteroidDensityAlpha));
                     }
 
             mUpToDate = true;
