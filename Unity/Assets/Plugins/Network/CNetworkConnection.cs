@@ -282,6 +282,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(m_cServerSystemAddress);
 
 			string sStatistics = "";
+            sStatistics += string.Format("Connection Statistics\n");
 			sStatistics += string.Format("Server ({0})\n", m_cServerSystemAddress.ToString());
 			sStatistics += string.Format("Ping ({0}) Average ({0})\n", m_cRnPeer.GetLastPing(m_cServerSystemAddress), m_cRnPeer.GetAveragePing(m_cServerSystemAddress));
 			sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", cStatistics.messageInSendBuffer[0], cStatistics.bytesInSendBuffer[0]);

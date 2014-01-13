@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -82,25 +82,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public void Start()
 	{	
-		// Add components for owned actor
 		if(CGame.PlayerActor == gameObject)
 		{
-			// Disable any main camera currently rendering
-			GameObject.Find("Main Camera").camera.enabled = false;
-			GameObject.Find("Main Camera").GetComponent<AudioListener>().enabled = false;
-		
-			// Add the ship camera to the actor observing the ship
-			m_cShipCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Player/Cameras/PlayerShipCamera"));
-			m_cShipCamera.transform.parent = ActorHead.transform;
-			m_cShipCamera.transform.localPosition = Vector3.zero;
-			m_cShipCamera.transform.localRotation = Quaternion.identity;
-			
-			// Add the galaxy camera to the ship galaxy simulator
-			CGame.Ship.GetComponent<CShipGalaxySimulatior>().AddPlayerActorGalaxyCamera();
+			// Set the ship view perspective of the camera to the actors head
+			TransferPlayerPerspectiveToShipSpace();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CDynamicActor>().EventBoard += new CDynamicActor.BoardingHandler(TransferCamerasOnShip);
-			gameObject.GetComponent<CDynamicActor>().EventDisembark += new CDynamicActor.BoardingHandler(TransferCamerasOffShip);
+			gameObject.GetComponent<CActorBoardable>().EventBoard += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToShipSpace);
+			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
 
 			// Subscribe to mouse movement input
 			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
@@ -151,41 +140,20 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	private void TransferCamerasOnShip()
+	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		GameObject galaxyShip = CGame.Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip;
-		GameObject playerGalaxyCamera = CGame.Ship.GetComponent<CShipGalaxySimulatior>().PlayerGalaxyCamera;
-	
-		if(playerGalaxyCamera.transform.parent != galaxyShip.transform)
-		{
-			// Swap the cameras parenthood
-			playerGalaxyCamera.transform.parent = galaxyShip.transform;
-			PlayerShipCamera.transform.parent = ActorHead.transform;
-			
-			// Update the transform of the player ship camera
-			PlayerShipCamera.transform.localPosition = Vector3.zero;
-			PlayerShipCamera.transform.localRotation = Quaternion.identity;
+		CGame.CompositeCameraSystem.SetShipViewPerspective(m_cActorHead.transform);
 
-            Destroy(gameObject.GetComponent<GalaxyObserver>());
-            Destroy(gameObject.GetComponent<GalaxyShiftable>());
-		}
+		// Remove the galaxy observer component
+		Destroy(gameObject.GetComponent<GalaxyObserver>());
 	}
 	
-	private void TransferCamerasOffShip()
+	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CShipGalaxySimulatior shipGalaxySim = CGame.Ship.GetComponent<CShipGalaxySimulatior>();
-		GameObject playerGalaxyCamera = shipGalaxySim.PlayerGalaxyCamera;
-	
-		// Swap the cameras parenthood
-		playerGalaxyCamera.transform.parent = ActorHead.transform;
-		PlayerShipCamera.transform.parent = shipGalaxySim.gameObject.transform;
-		
-		// Update the transform of the player galaxy camera
-		playerGalaxyCamera.transform.localPosition = Vector3.zero;
-		playerGalaxyCamera.transform.localRotation = Quaternion.identity;
+		CGame.CompositeCameraSystem.SetGalaxyViewPerspective(m_cActorHead.transform);
 
-        gameObject.AddComponent<GalaxyObserver>();
-        gameObject.AddComponent<GalaxyShiftable>();
+		// Add the galaxy observer component
+		gameObject.AddComponent<GalaxyObserver>();
 	}
 
 	private void OnMouseMoveX(float _fAmount)

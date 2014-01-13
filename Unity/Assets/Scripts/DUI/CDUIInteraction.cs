@@ -19,7 +19,7 @@ using System;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CActorInteractable))]
 public class CDUIInteraction : CNetworkMonoBehaviour 
 {	
 	// Member Types
@@ -86,7 +86,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	public void Initialise()
 	{
 		// Register the interactable object event
-		CInteractableObject IO = GetComponent<CInteractableObject>();
+		CActorInteractable IO = GetComponent<CActorInteractable>();
 		IO.EventPrimaryStart += HandlerPlayerActorLeftClick;
 		
 		if(CNetwork.IsServer)

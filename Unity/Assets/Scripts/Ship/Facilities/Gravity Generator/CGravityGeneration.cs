@@ -60,7 +60,7 @@ public class CGravityGeneration : CNetworkMonoBehaviour
 			{
 				NearbyFacilities.Add(_Facility);
 				
-				CGame.Ship.GetComponent<CFacilityGravity>().AddGravitySource(gameObject);
+				//CGame.Ship.GetComponent<CFacilityGravity>().AddGravitySource(gameObject);
 			}
 			
 			// Default
@@ -83,7 +83,7 @@ public class CGravityGeneration : CNetworkMonoBehaviour
 			{
 				NearbyFacilities.Remove(_Facility);
 				
-				CGame.Ship.GetComponent<CFacilityGravity>().RemoveGravitySource(gameObject);
+				//CGame.Ship.GetComponent<CFacilityGravity>().RemoveGravitySource(gameObject);
 			}
 			
 			// Default

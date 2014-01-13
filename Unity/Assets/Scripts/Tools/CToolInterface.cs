@@ -30,6 +30,9 @@ using System.Collections.Generic;
 //		Reload the Tool
 
 
+[RequireComponent(typeof(CActorInteractable))]
+[RequireComponent(typeof(CActorBoardable))]
+[RequireComponent(typeof(CActorGravity))]
 public class CToolInterface : CNetworkMonoBehaviour
 {
 
@@ -73,15 +76,27 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public GameObject OwnerPlayerActorObject
+    public GameObject OwnerPlayerActor
     {
-		get { if (!IsHeld) return null; return (CNetwork.Factory.FindObject(m_usOwnerPlayerActorViewId.Get())); }
+		get
+		{
+			if (!IsHeld) 
+				return null; 
+
+			return (CGame.FindPlayerActor(OwnerPlayerId)); 
+		}
     }
+
+
+	public ulong OwnerPlayerId
+	{
+		get { return (m_ulOwnerPlayerId.Get()); }
+	}
 
 
     public bool IsHeld
     {
-		get { return (m_usOwnerPlayerActorViewId.Get() != 0); }
+		get { return (m_ulOwnerPlayerId.Get() != 0); }
     }
 
 
@@ -90,17 +105,17 @@ public class CToolInterface : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars()
     {
-        m_usOwnerPlayerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
+        m_ulOwnerPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
 
 
     public void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-        if (_cVarInstance == m_usOwnerPlayerActorViewId)
+        if (_cVarInstance == m_ulOwnerPlayerId)
         {
 			if (IsHeld)
             {
-                GameObject cOwnerPlayerActor = OwnerPlayerActorObject;
+                GameObject cOwnerPlayerActor = OwnerPlayerActor;
 
                 gameObject.transform.parent = cOwnerPlayerActor.transform;
                 gameObject.transform.localPosition = new Vector3(0.5f, 0.36f, 0.5f);
@@ -110,28 +125,30 @@ public class CToolInterface : CNetworkMonoBehaviour
 				if(CNetwork.IsServer)
 				{
                 	rigidbody.isKinematic = true;
+					rigidbody.detectCollisions = false;
 				}
 
-                // Disable dynamic actor
-				rigidbody.collider.isTrigger = true;
-                GetComponent<CDynamicActor>().enabled = false;
+				// Stop recieving syncronizations
+                GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
             }
             else
             {
                 gameObject.transform.parent = null;
 
-                // Turn on  dynamic physics
+                // Turn on dynamic physics
 				if(CNetwork.IsServer)
 				{
 					rigidbody.isKinematic = false;
+					rigidbody.detectCollisions = true;
 				}
 				
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
-                // Enable dynamic actor
-				rigidbody.collider.isTrigger = false;
-                GetComponent<CDynamicActor>().enabled = true;
+				// Recieve syncronizations
+				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
             }
         }
     }
@@ -159,7 +176,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		if (IsHeld)
         {
-            gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActorObject.GetComponent<CPlayerHead>().HeadEulerX, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
+            gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActor.GetComponent<CPlayerHead>().HeadEulerX, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
         }
 	}
 
@@ -237,11 +254,8 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 		if (!IsHeld)
 		{
-			// Set owning player
-			m_ulOwnerPlayerId = _ulPlayerId;
-
-            // Set owning object view id
-            m_usOwnerPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+            // Set owner player
+			m_ulOwnerPlayerId.Set(_ulPlayerId);
 
             // Notify observers
             if (EventPickedUp != null)
@@ -260,11 +274,8 @@ public class CToolInterface : CNetworkMonoBehaviour
 		// Check currently held
 		if (IsHeld)
 		{
-			// Remove owner player
-            m_ulOwnerPlayerId = 0;
-
             // Set owning object view id
-            m_usOwnerPlayerActorViewId.Set(0);
+            m_ulOwnerPlayerId.Set(0);
 
             // Notify observers
             if (EventDropped != null)
@@ -310,10 +321,11 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<ushort> m_usOwnerPlayerActorViewId = null;
+    CNetworkVar<ulong> m_ulOwnerPlayerId = null;
 
 
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
-    ulong m_ulOwnerPlayerId = 0;
+
+
 };

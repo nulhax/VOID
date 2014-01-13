@@ -52,7 +52,7 @@ public class CTurretController : CNetworkMonoBehaviour
 // Member Properties
 
 
-	public GameObject TurretCamera
+	public GameObject TurretCameraNode
 	{
 		get { return (m_cCameraObject); }
 	}
@@ -75,8 +75,8 @@ public class CTurretController : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync);
-		m_ulMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync);
+		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync, Vector2.zero);
+		m_ulMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
 
 
@@ -99,8 +99,8 @@ public class CTurretController : CNetworkMonoBehaviour
 				CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
 				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
-				// Enabled turret camera
-				m_cCameraObject.camera.enabled = true;
+				// Debug: Move camera to turret camera position
+				CGame.CompositeCameraSystem.SetShipViewPerspective(m_cCameraObject.transform);
 			}
 			else if (m_ulMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
@@ -109,8 +109,8 @@ public class CTurretController : CNetworkMonoBehaviour
 				CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
 				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
-				// Disable turret camera
-				m_cCameraObject.camera.enabled = false;
+				// Debug: Move camera to player head position
+				CGame.CompositeCameraSystem.SetDefaultViewPerspective();
 			}
 		}
 	}
@@ -232,9 +232,12 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
 		{
+			Vector3 projPos = CGame.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
+			Quaternion projRot = CGame.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cLaserNodes[m_iLaserNodeIndex].transform.rotation);
+
 			GameObject cProjectile = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.TurretLaserProjectile);
-			cProjectile.GetComponent<CNetworkView>().SetPosition(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
-			cProjectile.GetComponent<CNetworkView>().SetRotation(m_cLaserNodes[m_iLaserNodeIndex].transform.eulerAngles);
+			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
+			cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
 
 			++ m_iLaserNodeIndex;
 			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_cLaserNodes.Count) ? 0 : m_iLaserNodeIndex;

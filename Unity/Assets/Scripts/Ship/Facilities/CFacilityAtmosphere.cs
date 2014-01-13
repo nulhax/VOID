@@ -24,20 +24,6 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 {
 
 // Member Types
-	const float k_fO2FillRate = 17.0f;
-	const float k_fO2DecrementRate = 40.0f;
-	const float k_fPressurizingRate = 34.0f;
-	const float k_fDepressurizingRate = 60.0f;
-
-    enum EPriority
-    {
-        Invalid = -1,
-        Low,
-        Medium,
-        High,
-        Critical,
-        Max
-    }
 
 
 // Member Delegates & Events
@@ -45,21 +31,39 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 // Member Properties
 
+
 	// If hull breach ocurrs, temp = zero. But, if the room has no pressure, the temp is unchanged.
-    float Temperature      { get { return (m_fTemperature.Get()); } }
+    public float Temperature
+    {
+        get { return (m_fTemperature.Get()); }
+    }
 	
-	// Oxygen cannot be higher than the pressure multiplied by the volume
-    float Oxygen           { get { return (m_fOxygen.Get()); } }
-	
-    float Radiation        { get { return (m_fRadiation.Get()); } }
-	
+	// Oxygen cannot be higher than the pressure multiplied by the area volume
+    public float Oxygen
+    {
+        get { return (m_fOxygen.Get()); }
+    }
+
+    public float OxygenPercent
+    {
+        get { return (Oxygen / m_fAreaVolume); }
+    }
+
 	// Pressure is between 0 and 1
-    float Pressure         { get { return (m_fPressure.Get()); } }
-	
-	bool  IsReceivingO2    { get { return (m_bO2ReceiveEnabled.Get()); } }
-    EPriority Priority     { get { return (m_ePriority.Get()); } }
-	
-	float Volume		   { get { return (m_fVolume); } }
+    public float Pressure
+    {
+        get { return (m_fPressure.Get()); }
+    }
+
+    public bool IsOxygenRefillingEnabled
+    { 
+        get { return (m_bOxygenRefillingEnabled.Get()); }
+    }
+
+    public float AreaVolume
+    {
+        get { return (m_fAreaVolume); } 
+    }
 
 
 // Member Functions
@@ -69,132 +73,167 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     {
         m_fTemperature = new CNetworkVar<float>(OnNetworkVarSync);
         m_fOxygen = new CNetworkVar<float>(OnNetworkVarSync);
-        m_fRadiation = new CNetworkVar<float>(OnNetworkVarSync);
         m_fPressure = new CNetworkVar<float>(OnNetworkVarSync);
-		m_ePriority = new CNetworkVar<EPriority>(OnNetworkVarSync, EPriority.Medium);
-		m_bO2ReceiveEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_bIsO2Avaliable = new CNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bOxygenRefillingEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
     }
 
-	public void Awake()
+	void Awake()
 	{
 		gameObject.GetComponent<CFacilityHull>().EventBreached += new CFacilityHull.NotifyBreached(OnHullBreach);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorEnter);
-		gameObject.GetComponentInChildren<CInteriorTrigger>().ActorEnteredTrigger += new CInteriorTrigger.FacilityActorInteriorTriggerHandler(OnPlayerActorExit);
 	}
 	
-	public void OnDestroy()
+	void OnDestroy()
 	{
-		
+		// Empty
 	}
 
 
-	public void Update()
+	void Update()
 	{
-		bool bIsBreached = gameObject.GetComponent<CFacilityHull>().IsBreached;
-		
-		if(!bIsBreached)
-		{
-			// Increment pressure
-			if(Pressure < 1.0f)
-			{
-				m_fPressure.Set(Pressure + k_fPressurizingRate * Time.deltaTime);
-				
-				if(Pressure > 1.0f)
-				{
-					m_fPressure.Set(1.0f);
-				}
-			}
-			
-			// Increment oxygen
-			if(Oxygen < Volume)
-			{
-				
-				float fPressureVolume = Pressure * Volume;
-				
-				if( Oxygen <  fPressureVolume)
-				{
-					m_fOxygen.Set(Oxygen + k_fO2FillRate * Time.deltaTime);
-				}
-				else
-				{
-					m_fOxygen.Set(fPressureVolume);
-				}
-			}
-		}
-		else
-		{
-			// Pressure is decreasing
-			if(Pressure > 0.0f)
-			{
-				m_fPressure.Set(Pressure - k_fDepressurizingRate * Time.deltaTime);
-			}
-			
-			// If pressure is decreasing, decrease oxygen.
-			if(Oxygen > Pressure * Volume)
-			{
-				m_fOxygen.Set ( Oxygen - k_fO2DecrementRate * Time.deltaTime);
-				
-				// Damage the player if there is no oxygen.
-				if(Oxygen < 100.0f)
-				{
-					m_bIsO2Avaliable.Set(false);
-				}
-				else
-				{
-					m_bIsO2Avaliable.Set(true);
-				}
-			}
-		}
+        if (CNetwork.IsServer)
+        {
+            bool bIsBreached = gameObject.GetComponent<CFacilityHull>().IsBreached;
+
+            UpdatePressure(bIsBreached);
+            UpdateOxygen(bIsBreached);
+            UpdateTemperature(bIsBreached);
+        }
 	}
+
+
+    void UpdatePressure(bool _bHullBreached)
+    {
+        if (!_bHullBreached)
+        {
+            // Check pressure is not at its maxium
+            if (Pressure < 1.0f)
+            {
+                float fNewPressure = Pressure + (k_fPressurizingRate / m_fAreaVolume) * Time.deltaTime;
+
+                // Clamp pressure to 1
+                if (fNewPressure > 1.0f)
+                {
+                    fNewPressure = 1.0f;
+                }
+
+                m_fPressure.Set(fNewPressure);
+            }
+        }
+        else
+        {
+            // Check pressure is not at its mininum
+            if (Pressure > 0.0f)
+            {
+                float fNewPressure = Pressure - (k_fDepressurizingRate / m_fAreaVolume) * Time.deltaTime;
+
+                // Clamp pressure to 0
+                if (fNewPressure < 0.0f)
+                {
+                    fNewPressure = 0.0f;
+                }
+
+                m_fPressure.Set(fNewPressure);
+            }
+        }
+    }
+
+
+    void UpdateOxygen(bool _bHullBreached)
+    {
+        float fFacilityGasCapacity = Pressure * AreaVolume;
+
+        if (!_bHullBreached)
+        {
+            // Check oxygen level is below area volume 
+            if (Oxygen < fFacilityGasCapacity)
+            {
+                float fNewOxygen = Oxygen + k_fOxygenFillRate * Time.deltaTime;
+
+                // Clamp oxygen to gas capacity
+                if (fNewOxygen > fFacilityGasCapacity)
+                {
+                    fNewOxygen = fFacilityGasCapacity;
+                }
+
+                // Increase oxygen amount
+                m_fOxygen.Set(fNewOxygen);
+            }
+        }
+        else
+        {
+            // Check oxygen is higher then the gas capacity
+            if (Oxygen > fFacilityGasCapacity)
+            {
+                // Set oxygen to gas capacity
+                m_fOxygen.Set(fFacilityGasCapacity);
+            }
+        }
+    }
+
+
+    void UpdateTemperature(bool _bHullBreached)
+    {
+        if (!_bHullBreached)
+        {
+            if (Temperature < k_fPerfectTemperature)
+            {
+                float fNewTemperature = Temperature + 1 * Time.deltaTime;
+
+                if (fNewTemperature > k_fPerfectTemperature)
+                {
+                    fNewTemperature = k_fPerfectTemperature;
+                }
+
+                m_fTemperature.Set(fNewTemperature);
+            }
+        }
+        else
+        {
+            if (Temperature > 0.0f)
+            {
+                float fNewTemperature = Temperature - 3 * Time.deltaTime;
+
+                if (fNewTemperature < 0.0f)
+                {
+                    fNewTemperature = 0.0f;
+                }
+
+                // Set oxygen to gas capacity
+                m_fTemperature.Set(fNewTemperature);
+            }
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
+        // Empty
     }
 
-	void OnHullBreach()
-	{
-		if(CNetwork.IsServer)
-		{
-			m_fTemperature.Set(0.0f);
-		}
-	}
-	
-	void OnPlayerActorEnter(GameObject _Facility, GameObject _PlayerActor)
-	{
-		// If there is no oxygen, damage the player. 
-		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
-		{
-			if(m_bIsO2Avaliable.Get() == false)
-			{
-				gameObject.GetComponent<CPlayerHealth>().ApplyDamage(5.0f);
-			}
-		}
-	}
-	
-	void OnPlayerActorExit(GameObject _Facility, GameObject _PlayerActor)
-	{
-		if(CNetwork.IsServer && _PlayerActor.tag == "Player")
-		{
-			m_bIsO2Avaliable.Set(true);
-		}
-	}
+
+    void OnHullBreach()
+    {
+        // Empty
+    }
 	
 	
 // Member Fields
 
 
+    public const float k_fOxygenFillRate        = 17.0f;
+    public const float k_fO2DecrementRate       = 40.0f;
+    public const float k_fPressurizingRate      = 34.0f;
+    public const float k_fDepressurizingRate    = 60.0f;
+    public const float k_fPerfectTemperature    = 21.0f;
+
+
     CNetworkVar<float> m_fTemperature;
     CNetworkVar<float> m_fOxygen;
-    CNetworkVar<float> m_fRadiation;
     CNetworkVar<float> m_fPressure;
-	CNetworkVar<bool> m_bO2ReceiveEnabled;
-	CNetworkVar<bool> m_bIsO2Avaliable;
-	float m_fVolume = 1000.0f;
+	CNetworkVar<bool> m_bOxygenRefillingEnabled;
 
 
-    CNetworkVar<EPriority> m_ePriority;
+	float m_fAreaVolume = 1000.0f;
 
 
 };

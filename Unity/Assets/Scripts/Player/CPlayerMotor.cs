@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -93,37 +93,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, -9.81f);
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
-		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
+		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 1.0f);
 		m_bUsingGravity = new CNetworkVar<bool>(OnNetworkVarSync, true);
-
-
-		m_vPosition = new CNetworkVar<Vector3>(OnNetworkVarSync);
 	}
 
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_vPosition)
-		{
-			transform.position = m_vPosition.Get();
-		}
+
 	}
 
 
 	public void Start()
 	{
-		// Empty
-		if (!CNetwork.IsServer)
-		{
-			rigidbody.isKinematic = true;
-			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
-		}
-
-		if (gameObject == CGame.PlayerActor)
-		{
-			gameObject.GetComponent<CDynamicActor>().RotationYDisabled = true;
-		}
-		
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		m_physCollider = GetComponent<CapsuleCollider>();
@@ -136,6 +118,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 				m_cueFootSteps = 	cue;
 			}
 		}
+
+        gameObject.GetComponent<Animator>().enabled = false;
 	}
 
 
@@ -152,8 +136,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 		
 		//Update animation and audio based on movement states.
-		UpdateThirdPersonAnimation();
-		UpdateAudio();
+		//UpdateThirdPersonAnimation();
+		//UpdateAudio();
 	}
 	
 	public void FixedUpdate()
@@ -257,7 +241,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EPlayerMovementState.MoveRight		: (uint)0;
 		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.Jump)			? (uint)EPlayerMovementState.Jump			: (uint)0;
 		m_uiMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.Sprint)			? (uint)EPlayerMovementState.Sprint			: (uint)0;
-		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)        ? (uint)EPlayerMovementState.Crouch       : (uint)0;			
+		m_uiMovementStates |= Input.GetKey(s_eCrouchKey)                                    ? (uint)EPlayerMovementState.Crouch         : (uint)0;			
 	}
 
 
@@ -269,7 +253,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 
 		// Direction movement
-		/*
+
 		Vector3 vMovementVelocity = new Vector3();
 		vMovementVelocity += ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
 		vMovementVelocity -= ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
@@ -288,18 +272,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 
 		// Apply movement velocity
-		if (!rigidbody.isKinematic)
-		rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
-		rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+        if (!rigidbody.isKinematic)
+        {
+            rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+            rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+        }
 
-		// Set latest position
-		if (CNetwork.IsServer)
-		{
-			GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
-		}		
-		*/	
-		
-		m_vPosition.Set(transform.position);
+        /*
+        // Set latest position
+        if (CNetwork.IsServer)
+        {
+            GetComponent<CNetworkInterpolatedObject>().SetCurrentPosition(transform.position);
+        }		
+        */	
 	}
 	
 		
@@ -502,9 +487,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fSprintSpeed = null;
 	CNetworkVar<float> m_fJumpSpeed = null;
 	CNetworkVar<bool> m_bUsingGravity = null;
-
-
-	CNetworkVar<Vector3> m_vPosition = null;
 
 
 	float m_fRotationY = 0.0f;

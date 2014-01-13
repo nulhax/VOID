@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CLaserProjectileControl : MonoBehaviour
+public class CLaserProjectileControl : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,23 +36,89 @@ public class CLaserProjectileControl : MonoBehaviour
 // Member Methods
 
 
-	public void Start()
+	static CLaserProjectileControl()
 	{
+		s_iEnemyLayer   = 0;
 	}
 
 
-	public void OnDestroy()
+	public override void InstanceNetworkVars()
 	{
+
+	}
+	
+	public void OnNetworkVarSync(INetworkVar _rSender)
+	{
+
+   	}
+
+	public void Start()
+	{
+		// Precalculate velocity
+		Vector3 velocity = transform.forward * m_InitialProjectileSpeed;
+
+		// Add the relative velocity from the ship
+		velocity += CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
+
+		// Add to the rigid body
+		rigidbody.AddForce(velocity, ForceMode.VelocityChange);
 	}
 
 
 	public void Update()
 	{
-		transform.position = transform.position + transform.forward * 40.0f * Time.deltaTime;
+		if (!m_bDestroyed)
+		{
+			// Life timer
+			m_fLifeTimer -= Time.deltaTime;
+
+			if (m_fLifeTimer < 0.0f)
+			{
+				m_bDestroyed = true;
+			}
+		}
+		else if(CNetwork.IsServer)
+		{
+			CNetwork.Factory.DestoryObject(GetComponent<CNetworkView>().ViewId);
+		}
+	}
+
+	[AServerMethod]
+	void OnCollisionEnter(Collision _cCollision) 
+	{
+		if (!m_bDestroyed && CNetwork.IsServer)
+		{
+			m_bDestroyed = true;
+
+			InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
+		}
+	}
+
+	[ANetworkRpc]
+	void CreateHitParticles(Vector3 _HitPos, Quaternion _HitRot)
+	{
+		// Create hit particles
+		GameObject cHitParticles = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Ship/Facilities/Weapons System/LaserHitParticles"));
+		
+		cHitParticles.transform.position = _HitPos;
+		cHitParticles.transform.rotation = _HitRot;
+
+		// Destroy particles are 1 second
+		GameObject.Destroy(cHitParticles, cHitParticles.particleSystem.duration);
 	}
 
 
 // Member Fields
 
 
+	public float m_InitialProjectileSpeed = 500.0f;
+
+
+	float m_fLifeTimer = 5.0f;
+
+
+	bool m_bDestroyed = false;
+
+	
+	static int s_iEnemyLayer = 0;
 };

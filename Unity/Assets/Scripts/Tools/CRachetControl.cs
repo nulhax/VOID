@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CToolInterface))]
 public class CRachetControl : CNetworkMonoBehaviour
 {
 
@@ -59,7 +59,7 @@ public class CRachetControl : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate   += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
 		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
 	}
 
@@ -102,7 +102,9 @@ public class CRachetControl : CNetworkMonoBehaviour
 			{
 				switch (cPanelInterface.PanelType)
 				{
-					case CPanelInterface.EType.FuseBox: HandleFuseBoxInteraction(_cInteractableObject); break;
+					case CPanelInterface.EType.FuseBox: 
+						HandleFuseBoxInteraction(_cInteractableObject); 
+						break;
 				}
 			}
 		}
@@ -116,10 +118,21 @@ public class CRachetControl : CNetworkMonoBehaviour
 	}
 
 
+	[AServerMethod]
 	void HandleFuseBoxInteraction(GameObject _cFuseBox)
 	{
 		m_bActive.Set(true);
-		Debug.LogError("Interacted with fuse box");
+
+		if (_cFuseBox.GetComponent<CFuseBoxControl>().IsOpened)
+		{
+			_cFuseBox.GetComponent<CFuseBoxControl>().CloseFrontPlate();
+		}
+		else
+		{
+			_cFuseBox.GetComponent<CFuseBoxControl>().OpenFrontPlate();
+		}
+		
+		//Debug.LogError("Interacted with fuse box");
 	}
 
 

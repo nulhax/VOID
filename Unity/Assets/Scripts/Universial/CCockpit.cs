@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CActorInteractable))]
 public class CCockpit : CNetworkMonoBehaviour
 {
 
@@ -127,14 +127,8 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Make sure the game object has a intractable object component
-		if (gameObject.GetComponent<CInteractableObject>() == null)
-		{
-			gameObject.AddComponent<CInteractableObject>();
-		}
-
 		// Sign up for event
-		gameObject.GetComponent<CInteractableObject>().EventUse += new CInteractableObject.NotifyInteraction(OnUseInteraction);
+		gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUseInteraction);
 
 
 		CGame.UserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);

@@ -18,7 +18,7 @@ using System.Collections;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CDUIInteraction))]
 public class CDUIConsole : MonoBehaviour 
 {
 	// Retarded public fields for the editor

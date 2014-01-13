@@ -29,25 +29,34 @@ public class CFacilityHull : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 	
+
 	public delegate void NotifyBreached();
 	public event NotifyBreached EventBreached;
 
+
+    public delegate void NotifyBreachFixed();
+    public event NotifyBreachFixed EventBreachFixed;
+
+
 // Member Properties
 	
+
 	public bool IsBreached
 	{
-		get { return(true); }
+        get { return (m_bBreached.Get()); }
 	}
-	 
-	
-	public override void InstanceNetworkVars()
-    {
 
-    }
+
 // Member Methods
 
 
-	public void Start()
+    public override void InstanceNetworkVars()
+    {
+        m_bBreached = new CNetworkVar<bool>(OnNetworkVarSync, false);
+    }
+
+
+	void Start()
 	{
 		if(EventBreached != null)
 		{
@@ -56,21 +65,52 @@ public class CFacilityHull : CNetworkMonoBehaviour
 	}
 
 
-	public void OnDestroy()
+	void OnDestroy()
 	{
+        // Empty
 	}
 
 
-	public void Update()
+	void Update()
 	{
+        // Empty
+
+        // Debug
+        if (CNetwork.IsServer &&
+            Input.GetKeyDown(KeyCode.P))
+        {
+            if (IsBreached)
+            {
+                m_bBreached.Set(false);
+            }
+            else
+            {
+                m_bBreached.Set(true);
+            }
+        }
 	}
 	
+
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
+        if (_cVarInstance == m_bBreached)
+        {
+            if (m_bBreached.Get())
+            {
+                if (EventBreached != null) EventBreached();
+            }
+            else
+            {
+                if (EventBreachFixed != null) EventBreachFixed();
+            }
+        }
     }
 
 
 // Member Fields
+
+
+    CNetworkVar<bool> m_bBreached = null;
 
 
 };

@@ -28,7 +28,7 @@ public class CShipOnboardActors : MonoBehaviour
 
 	// Member Delegates & Events
 
-
+	
 	// Member Fields
 	private Dictionary<GameObject, List<GameObject>> m_FacilitiesActorsOnboard = new Dictionary<GameObject, List<GameObject>>();
 	
@@ -36,25 +36,33 @@ public class CShipOnboardActors : MonoBehaviour
 	
 	
 	// Member Methods
-	public void ActorEnteredFacility(GameObject _Facility, GameObject _Actor)
+
+	public void ActorEnteredFacilityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		if(!m_FacilitiesActorsOnboard.ContainsKey(_Facility))
 		{
 			m_FacilitiesActorsOnboard.Add(_Facility, new List<GameObject>());
 		}
-		
-		m_FacilitiesActorsOnboard[_Facility].Add(_Actor);
+
+		if(!m_FacilitiesActorsOnboard[_Facility].Contains(_Actor))
+		{
+			m_FacilitiesActorsOnboard[_Facility].Add(_Actor);
+		}
 	}
 	
-	public void ActorExitedFacility(GameObject _Facility, GameObject _Actor)
+	public void ActorExitedFacilityTrigger(GameObject _Facility, GameObject _Actor)
 	{
-		m_FacilitiesActorsOnboard[_Facility].Remove(_Actor);
+		if(m_FacilitiesActorsOnboard[_Facility].Contains(_Actor))
+		{
+			m_FacilitiesActorsOnboard[_Facility].Remove(_Actor);
+		}
 	}
 	
 	public bool IsActorOnboardShip(GameObject _Actor)
 	{
-		// Check if this actor is onboard any other facility
 		bool actorOnboardShip = false;
+
+		// Check if this actor is onboard any other facility
 		foreach(List<GameObject> actorsOnboardFacility in m_FacilitiesActorsOnboard.Values)
 		{
 			if(actorsOnboardFacility.Contains(_Actor))
@@ -65,16 +73,5 @@ public class CShipOnboardActors : MonoBehaviour
 		}
 		
 		return(actorOnboardShip);
-	}
-	
-	public void RemoveActorFromShip(GameObject _Actor)
-	{
-		foreach(List<GameObject> actorsOnboardFacility in m_FacilitiesActorsOnboard.Values)
-		{
-			if(actorsOnboardFacility.Contains(_Actor))
-			{
-				actorsOnboardFacility.Remove(_Actor);
-			}
-		}
 	}
 }

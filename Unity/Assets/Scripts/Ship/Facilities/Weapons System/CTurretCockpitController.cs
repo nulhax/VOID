@@ -20,7 +20,6 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
 [RequireComponent(typeof(CCockpit))]
 public class CTurretCockpitController : CNetworkMonoBehaviour
 {
@@ -57,12 +56,13 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 			if (m_cTurretViewId.Get() != 0)
 			{
 				// Check player is in cockpit
-				if (m_cCockpit.MountedPlayerId != 0)
+				CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
+				if (cCockpit.MountedPlayerId != 0)
 				{
 					if (CNetwork.IsServer)
 					{
 						// Notify turret that it has been mounted by player
-						ActiveTurretObject.GetComponent<CTurretController>().Mount(m_cCockpit.MountedPlayerId);
+						ActiveTurretObject.GetComponent<CTurretController>().Mount(cCockpit.MountedPlayerId);
 					}
 				}
 
@@ -82,11 +82,11 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		m_cCockpit = gameObject.GetComponent<CCockpit>();
+		CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
 
 		// Subscribe to cockpit events
-		m_cCockpit.EventPlayerEnter += new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
-		m_cCockpit.EventPlayerLeave += new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
+		cCockpit.EventPlayerEnter += new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
+		cCockpit.EventPlayerLeave += new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
 	}
 
 
@@ -112,10 +112,15 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 	[AClientMethod]
 	void OnPlayerEnterCockpit(ulong _ulPlayerId)
 	{
-		// Debug - Set default turret
+		// Debug - Search for avaiable turret nodes from parent
 		if (CNetwork.IsServer)
 		{	
-			m_cTurretViewId.Set(5);
+			List<GameObject> unmountedTurrets = transform.parent.GetComponent<CFacilityTurrets>().GetAllUnmountedTurrets();
+
+			if(unmountedTurrets.Count != 0)
+			{
+				m_cTurretViewId.Set(unmountedTurrets[0].GetComponent<CNetworkView>().ViewId);
+			}
 		}
 	}
 
@@ -138,10 +143,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 
 	CNetworkVar<ushort> m_cTurretViewId = null;
 
-
-	CCockpit m_cCockpit = null;
-
-
+	
 	float m_fFireTimer		= 0.0f;
 	float m_fFireInterval	= 0.2f;
 
