@@ -594,7 +594,12 @@ public class CGame : CNetworkMonoBehaviour
 		uint iCount = 1;
 		
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge);
-		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.HallwayStraight, iCount, 0, 0);
+
+		// Debug add new facility
+		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge, 0, 0, 0);
+		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge, 0, 1, 1);
+
+
 		/*cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayCorner, iCount, 1, 1);
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);
 		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 0, 0);
@@ -662,7 +667,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	[AClientMethod]
+	[AClientOnly]
 	void RegisterPlayerActor(ulong _ulPlayerId, ushort _usPlayerActorId)
 	{
 		m_mPlayersActor.Add(_ulPlayerId, _usPlayerActorId);
@@ -670,7 +675,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	[AClientMethod]
+	[AClientOnly]
 	void UnregisterPlayerActor(ulong _ulPlayerId)
 	{
 		m_mPlayersActor.Remove(_ulPlayerId);

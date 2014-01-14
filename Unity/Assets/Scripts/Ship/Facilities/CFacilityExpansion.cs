@@ -45,12 +45,13 @@ public class CFacilityExpansion : MonoBehaviour
 	{	
 		DebugAddPortNames();
 	}
-	
-	public void Start()
+
+	public GameObject GetExpansionPort(uint _ExpansionPortId)
 	{
+		return(m_ExpansionPorts[_ExpansionPortId]);
 	}
 
-	public void SearchExpansionPorts()
+	public void InitialiseExpansionPorts()
 	{
 		uint counter = 0;
 		foreach(CExpansionPortInterface port in gameObject.GetComponentsInChildren<CExpansionPortInterface>())
@@ -58,11 +59,6 @@ public class CFacilityExpansion : MonoBehaviour
 			m_ExpansionPorts.Add(counter++, port.gameObject);
 			port.ExpansionPortId = counter;
 		}
-	}
-
-	public GameObject GetExpansionPort(uint _ExpansionPortId)
-	{
-		return(m_ExpansionPorts[_ExpansionPortId]);
 	}
 
 	private void DebugAddPortNames()

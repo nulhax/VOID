@@ -51,7 +51,7 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 		but.PressDown += SpawnTool;	
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
     void SpawnTool(CDUIButton _sender)
     {
         // Create a new prefab and tool

@@ -168,7 +168,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void Mount(ulong _ulPlayerId)
 	{
 		//Debug.Log(string.Format("Player ({0}) mounted turret", _ulPlayerId));
@@ -177,7 +177,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void Unmount()
 	{
 		//Debug.Log(string.Format("Player ({0}) unmounted turret", m_ulMountedPlayerId.Get()));
@@ -186,7 +186,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public void RotateX(float _fAmount)
 	{
 		m_vRotation.y += _fAmount;
@@ -204,7 +204,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public void RotateY(float _fAmount)
 	{
 		// Retrieve new rotations
@@ -220,14 +220,14 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public void OnFireLasersCommand(bool _bDown)
 	{
 		m_bFireLasers = _bDown;
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void FireLasers()
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
@@ -247,7 +247,7 @@ public class CTurretController : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		_cStream.Write(s_cSerializeStream);
@@ -256,7 +256,7 @@ public class CTurretController : CNetworkMonoBehaviour
     }
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		while (_cStream.HasUnreadData)

@@ -53,7 +53,7 @@ public class CWiringKitControl : MonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void OnRepair(GameObject _cInteractableObject)
 	{
 		if (_cInteractableObject != null &&

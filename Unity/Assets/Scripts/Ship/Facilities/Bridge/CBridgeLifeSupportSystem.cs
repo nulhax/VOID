@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
+[RequireComponent(typeof(CLifeSupportSystem))]
 public class CBridgeLifeSupportSystem: MonoBehaviour 
 {
 	// Member Types
@@ -28,14 +29,28 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_AtmosphereGenerationRate = 20.0f;
-	
+	public float m_AtmosphereGenerationRate = 15.0f;
+	public float m_AtmosphereCapacitySupport = 2000.0f;
+
+	private float m_PrevAtmosphereGenerationRate = 0.0f;
+	private float m_PrevAtmosphereCapacitySupport = 0.0f;
+
 	// Member Properties
 	
 	
 	// Member Methods
-	public void Start()
+	public void Update()
 	{
-		gameObject.GetComponent<CLifeSupportAtmosphereDistribution>().AtmosphereDistributionRate = m_AtmosphereGenerationRate;
+		if(m_PrevAtmosphereGenerationRate != m_AtmosphereGenerationRate || 
+		   m_AtmosphereCapacitySupport != m_PrevAtmosphereCapacitySupport)
+		{
+			CLifeSupportSystem lifeSupportSystem = gameObject.GetComponent<CLifeSupportSystem>();
+
+			lifeSupportSystem.AtmosphereDistributionRate = m_AtmosphereGenerationRate;
+			lifeSupportSystem.AtmosphereCapacitySupport = m_AtmosphereCapacitySupport;
+
+			m_PrevAtmosphereGenerationRate = m_AtmosphereGenerationRate;
+			m_PrevAtmosphereCapacitySupport = m_AtmosphereCapacitySupport;
+		}
 	}
 }

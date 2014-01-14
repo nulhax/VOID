@@ -439,6 +439,8 @@ GameObject:
   - 114: {fileID: 11400036}
   - 114: {fileID: 11400038}
   - 114: {fileID: 11400040}
+  - 114: {fileID: 11400058}
+  - 114: {fileID: 11400060}
   m_Layer: 0
   m_Name: Bridge
   m_TagString: Untagged
@@ -1478,6 +1480,30 @@ MonoBehaviour:
   zoom: 1
   samplesPerAxis: 28
   particleScale: 2.5
+--- !u!114 &11400058
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bc52d1f6e9f60498d8475f5e1ba2a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400060
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84d0c3970d87936438ee2cae10be9d51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AtmosphereGenerationRate: 15
+  m_AtmosphereCapacitySupport: 2000
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

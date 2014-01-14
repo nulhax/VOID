@@ -91,14 +91,14 @@ public class CAk47Control : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	void OnUseStart(GameObject _cInteractableObject)
 	{
 		m_bShoot = true;
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	void OnUseEnd()
 	{
 		m_bShoot = false;

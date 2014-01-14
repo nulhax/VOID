@@ -36,10 +36,10 @@ public class CEntryTrigger : MonoBehaviour
 	
 	
 	// Member Methods
-	[AServerMethod]
+	[AServerOnly]
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(_Other.rigidbody != null&& _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)
+		if(_Other.rigidbody != null && _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)
 		{
 			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
 			if(dynamicActor != null)

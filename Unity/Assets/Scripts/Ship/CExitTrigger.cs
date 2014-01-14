@@ -36,7 +36,7 @@ public class CExitTrigger : MonoBehaviour
 	
 	
 	// Member Methods
-	[AServerMethod]
+	[AServerOnly]
 	private void OnTriggerExit(Collider _Other)
 	{
 		if(_Other.rigidbody != null && _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)

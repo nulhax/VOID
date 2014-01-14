@@ -157,7 +157,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ServerCreateDoors()
 	{
 		foreach(GameObject expansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
@@ -180,7 +180,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ServerCreateControlConsole()
 	{
 		Transform consoleTransform = transform.FindChild("ControlConsoleNode");
@@ -313,7 +313,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		Destroy(tempFacilityObject);
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ExpansionSubviewSelectLocalPort(CDUIButton _sender)
     {
         m_ServerLocalExpansionPortIdSelected.Set(m_buttonLocalPortPairs[_sender]);
@@ -321,7 +321,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectOtherExpansionPort);
     }
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ExpansionSubviewSelectFacility(CDUIButton _sender)
     {
    	 	m_ServerFacilitySelected.Set((int)m_buttonFacilityTypePairs[_sender]);
@@ -329,7 +329,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.SelectLocalExpansionPort);
     }
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ExpansionSubviewSelectOtherPort(CDUIButton _sender)
     {
        	m_ServerOtherExpansionPortIdSelected.Set(m_buttonOtherPortPairs[_sender]);
@@ -337,7 +337,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_ServerCreateExpansionStage.Set((int)EExpansionCreatePhase.CreateExpansion);
     }
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void OpenCloseDoor(CDUIButton _sender)
     {
         CDoorMotor door = m_buttonDoorPairs[_sender];

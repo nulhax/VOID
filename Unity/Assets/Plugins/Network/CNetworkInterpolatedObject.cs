@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -119,7 +119,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetCurrentPosition(Vector3 _vPosition)
 	{
 		return;

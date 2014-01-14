@@ -71,7 +71,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void SetContainingFacility(GameObject _cFacility)
     {
         m_cFacilityViewId.Set(_cFacility.GetComponent<CNetworkView>().ViewId);

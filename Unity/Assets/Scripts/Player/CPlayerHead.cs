@@ -104,14 +104,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
     }
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void UndisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());

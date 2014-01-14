@@ -31,13 +31,14 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 // Member Fields
 		
-	private CNetworkVar<float> m_AtmosphereQuantity;
+	private CNetworkVar<float> m_AtmosphereQuantity = null;
+
+	private CNetworkVar<float> m_fAtmosphereConsumptionRate = null;
+	private CNetworkVar<float> m_fAtmosphereRefillRate = null;
 	
 	private List<GameObject> m_AtmosphericConsumers = new List<GameObject>();
-
-	private float m_fAtmosphereRefillRate = 0.0f;
-
-	private float m_fAtmosphereVolume = 1000.0f;
+	
+	private float m_AtmosphereVolume = 1000.0f;
 
 
 // Member Properties
@@ -49,37 +50,33 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
     public float AtmospherePercentage
     {
-		get { return (AtmosphereQuantity / m_fAtmosphereVolume); }
+		get { return ((AtmosphereQuantity / m_AtmosphereVolume) * 100.0f); }
     }
 
 	public float AtmosphereVolume
 	{
-		get { return (m_fAtmosphereVolume); } 
+		get { return (m_AtmosphereVolume); } 
 	}
 
 	public float AtmosphereRefillRate
 	{
-		get { return(m_fAtmosphereRefillRate); }
-		set { m_fAtmosphereRefillRate = value; }
+		get { return(m_fAtmosphereRefillRate.Get()); }
+
+		[AServerOnly]
+		set { m_fAtmosphereRefillRate.Set(value); }
 	}
 
 	public float AtmosphereConsumeRate
 	{
-		get 
-		{ 
-			// Calulate the combined consumption rate within the facility
-			float consumptionRate = 0.0f;
-			foreach(GameObject consumer in m_AtmosphericConsumers)
-			{
-				consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
-			}
-			return(consumptionRate); 
-		}
+		get { return(m_fAtmosphereConsumptionRate.Get()); }
+
+		[AServerOnly]
+		set { m_fAtmosphereConsumptionRate.Set(value); }
 	}
 
 	public bool RequiresAtmosphereRefill
-	{					
-		get { return(AtmosphereQuantity != AtmosphereVolume); } 
+	{
+		get { return(AtmosphereConsumeRate != 0.0f && AtmospherePercentage != 1.0f); } 
 	}
 
 
@@ -88,6 +85,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     public override void InstanceNetworkVars()
     {
         m_AtmosphereQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereRefillRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereConsumptionRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
 	public void OnNetworkVarSync(INetworkVar _cVarInstance)
@@ -99,17 +98,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			UpdateAtmosphereRefill();
-			UpdateAtmosphereConsumption();
-		}
-	}
-
-	public void LateUpdate()
-	{
-		if(CNetwork.IsServer)
-		{
-			// Reset the refill rate
-			AtmosphereRefillRate = 0.0f;
+			CalculateConsumptionRate();
+			UpdateAtmosphereQuantity();
 		}
 	}
 
@@ -129,46 +119,57 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 	}
 
-	private void UpdateAtmosphereRefill()
-    {
-		// If the facility requires a refill, do so
-		if(RequiresAtmosphereRefill)
-        {
-			// Check atmosphere level is below area volume 
-            if (AtmosphereQuantity < AtmosphereVolume)
-            {
-                float fNewQuantity = AtmosphereQuantity + AtmosphereRefillRate * Time.deltaTime;
+	private void CalculateConsumptionRate()
+	{
+		// Calulate the combined consumption rate within the facility
+		float consumptionRate = 0.0f;
+		foreach(GameObject consumer in m_AtmosphericConsumers)
+		{
+			consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
+		}
 
-                // Clamp atmosphere to gas capacity
-				if (fNewQuantity > AtmosphereVolume)
-                {
-					fNewQuantity = AtmosphereVolume;
-                }
-
-                // Increase atmosphere amount
-                m_AtmosphereQuantity.Set(fNewQuantity);
-            }
-        }
+		// Set the consumption rate
+		AtmosphereConsumeRate = consumptionRate;
 	}
 
-	private void UpdateAtmosphereConsumption()
-	{
-		// Check atmosphere is higher than 0 and that there are consumers
-		if (AtmosphereQuantity > 0.0f && m_AtmosphericConsumers.Count != 0)
-	    {
+	private void UpdateAtmosphereQuantity()
+    {
+		float consumptionAmount = 0.0f;
+		float refillAmount = 0.0f;
+
+		// If the atmosphere is being consumed, calculate the consumption rate
+		if(m_AtmosphericConsumers.Count != 0)
+		{
 			// Remove obsolete consumers
 			m_AtmosphericConsumers.RemoveAll((item) => item == null);
 
-			float fNewQuantity = AtmosphereQuantity - AtmosphereConsumeRate * Time.deltaTime;
-			
-			// Clamp atmosphere to gas capacity
-			if (fNewQuantity < 0.0f)
-			{
-				fNewQuantity = 0.0f;
-			}
+			// Calculate the consumption amount
+			consumptionAmount = -AtmosphereConsumeRate * Time.deltaTime;
+		}
 
-			// Increase atmosphere amount
-			m_AtmosphereQuantity.Set(fNewQuantity);
-    	}
-    }
+		// If the facility requires a refill, calculate the refill rate
+		if(RequiresAtmosphereRefill)
+        {
+			refillAmount = AtmosphereRefillRate * Time.deltaTime;
+        }
+
+		// Combine the refill and consumption amounts to get the final rate
+		float finalRate = consumptionAmount + refillAmount;
+
+		// Calculate the new quantity
+		float newQuantity = AtmosphereQuantity + finalRate;
+
+		// Clamp atmosphere
+		if(newQuantity > AtmosphereVolume)
+		{
+			newQuantity = AtmosphereVolume;
+		}
+		else if(newQuantity < 0.0f)
+		{
+			newQuantity = 0.0f;
+		}
+		
+		// Increase atmosphere amount
+		m_AtmosphereQuantity.Set(newQuantity);
+	}
 };

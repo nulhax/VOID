@@ -71,6 +71,8 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public uint FacilityId 
 	{
 		get{return(m_FacilityID.Get());}			
+
+		[AServerOnly]
 		set
 		{
 			if(m_FacilityID.Get() == uint.MaxValue)
@@ -88,6 +90,8 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public EFacilityType FacilityType 
 	{
 		get { return(m_FacilityType.Get()); }
+
+		[AServerOnly]
 		set
 		{
 			if(m_FacilityType.Get() == EFacilityType.INVALID)
@@ -119,6 +123,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGame.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+	
+		// Add self to the shipfacilities
+		if(!CNetwork.IsServer)
+			CGame.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
 	}
 	
 	public static CGame.ENetworkRegisteredPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
