@@ -503,7 +503,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public Vector3 CalculateAverageObserverPosition()
+    private Vector3 CalculateAverageObserverPosition()
     {
         Profiler.BeginSample("CalculateAverageObserverPosition");
 
@@ -527,22 +527,16 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * cellDiameter, 0.0f, 0.0f));
         mCentreCell.x = mCentreCellX.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellY(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * cellDiameter, 0.0f));
         mCentreCell.y = mCentreCellY.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellZ(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * cellDiameter));
         mCentreCell.z = mCentreCellZ.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
     public void SyncMaxAsteroidsPerCell(INetworkVar sender) { muiMaxAsteroidsPerCell = mMaxAsteroidsPerCell.Get(); }

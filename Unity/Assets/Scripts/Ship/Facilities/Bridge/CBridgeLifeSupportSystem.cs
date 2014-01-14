@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
+[RequireComponent(typeof(CLifeSupportSystem))]
 public class CBridgeLifeSupportSystem: MonoBehaviour 
 {
 	// Member Types
@@ -28,8 +29,8 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_AtmosphereGenerationRate = 0.0f;
-	public float m_AtmosphereCapacitySupport = 0.0f;
+	public float m_AtmosphereGenerationRate = 15.0f;
+	public float m_AtmosphereCapacitySupport = 2000.0f;
 
 	private float m_PrevAtmosphereGenerationRate = 0.0f;
 	private float m_PrevAtmosphereCapacitySupport = 0.0f;

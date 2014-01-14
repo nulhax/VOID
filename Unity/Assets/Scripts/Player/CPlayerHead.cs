@@ -120,11 +120,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		// Retrieve my actors head
-		CPlayerHead cMyActorHead = CGame.PlayerActor.GetComponent<CPlayerHead>();
+		if (CGame.PlayerActor != null)
+		{
+			// Retrieve my actors head
+			CPlayerHead cMyActorHead = CGame.PlayerActor.GetComponent<CPlayerHead>();
 
-		// Write my head's x-rotation
-		_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
+			// Write my head's x-rotation
+			_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
+		}
 	}
 
 

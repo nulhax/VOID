@@ -86,8 +86,11 @@ public class CGame : CNetworkMonoBehaviour
 		PowerCell,
 		BioCell,
 		ReplicatorCell,
-		PanelFuseBox,
 		ControlConsole,
+
+		// Facility Components
+		PanelFuseBox,
+		PlayerSpawner,
 		
 		// Cockpits
 		BridgeCockpit,
@@ -131,7 +134,15 @@ public class CGame : CNetworkMonoBehaviour
 	
 	public static ushort PlayerActorViewId
 	{
-		get { return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]); }
+		get 
+		{ 
+			if (!s_cInstance.m_mPlayersActor.ContainsKey(CNetwork.PlayerId))
+			{
+				return (0);
+			}
+
+			return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]);
+		 }
 	}
 	
 	public static List<GameObject> PlayerActors
@@ -281,8 +292,12 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/BioCell");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/ReplicatorCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Modules/PanelFuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/DUI/CurvedMonitor_wide");
+
+		// Facility Components
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Ship/Facilities/Components/FuseBox");
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerSpawner, "Ship/Facilities/Components/PlayerSpawner");
+
 		
 		// Cockpits
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
@@ -296,6 +311,41 @@ public class CGame : CNetworkMonoBehaviour
 	public void Update()
 	{
 		DebugProcessInputs();
+
+
+		if (CNetwork.IsServer &&
+		    m_aUnspawnedPlayers.Count > 0)
+		{
+			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
+			{
+				List<GameObject> aPlayerSpawners = CFacilityComponentInterface.FindFacilityComponents(CFacilityComponentInterface.EType.PlayerSpawner);
+
+				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
+				{
+					if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+					{
+						// Create new player's actor
+						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
+						
+						// Set the parent as the ship
+						cPlayerActor.transform.parent = Ship.transform;
+						cPlayerActor.GetComponent<CNetworkView>().SyncParent();
+						
+						// Get actor network view id
+						ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+						
+						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
+						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
+						
+						// Sync player actor view id with everyone
+						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, usActorNetworkViewId);
+
+						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
+						break;
+					}
+				}
+			}
+		}
 	}
 
 
@@ -340,6 +390,17 @@ public class CGame : CNetworkMonoBehaviour
         {
 			DrawLobbyGui();
         }
+
+		if (PlayerActor == null)
+		{
+			// Draw unspawned message
+			GUIStyle cStyle = new GUIStyle();
+			cStyle.fontSize = 40;
+			cStyle.normal.textColor = Color.white;
+
+			GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
+			          "Waiting for spawner to be available...", cStyle);
+		}
     }
 	
 
@@ -470,18 +531,6 @@ public class CGame : CNetworkMonoBehaviour
 		
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
-		
-		// Create new player's actor
-		GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
-		
-		// Set the parent as the ship
-		//cPlayerActor.transform.position = new Vector3(0.0f, -6.0f, -42.0f);
-		cPlayerActor.transform.parent = Ship.transform;
-		//cPlayerActor.GetComponent<CNetworkView>().SyncTransformPosition();
-		cPlayerActor.GetComponent<CNetworkView>().SyncParent();
-		
-		// Get actor network view id
-		ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		// Sync current players actor view ids with new player
 		foreach (KeyValuePair<ulong, ushort> tEntry in m_mPlayersActor)
@@ -489,9 +538,6 @@ public class CGame : CNetworkMonoBehaviour
 			InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
 		}
 
-		// Sync player actor view id with everyone
-		InvokeRpcAll("RegisterPlayerActor", _cPlayer.PlayerId, usActorNetworkViewId);
-		
 		// Placeholder Test stuff
       	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
 		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
@@ -509,22 +555,26 @@ public class CGame : CNetworkMonoBehaviour
 
 		_cPlayer.SetDownloadingInitialGameStateComplete();
 
+		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
+
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 
 
 	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
-		ushort usPlayerActorNetworkViewId = m_mPlayersActor[_cPlayer.PlayerId];
+		ushort usPlayerActorNetworkViewId = FindPlayerActorViewId(_cPlayer.PlayerId);
+
+		if (usPlayerActorNetworkViewId != 0)
+		{
+			CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
+
+			// Sync unregister player actor view id with everyone
+			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
 
 
-		CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
-
-		// Sync unregister player actor view id with everyone
-		InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
-
-
-		Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
+			Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
+		}
 	}
 
 
@@ -649,6 +699,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	Dictionary<ulong, ushort> m_mPlayersActor = new Dictionary<ulong, ushort>();
+	List<ulong> m_aUnspawnedPlayers = new List<ulong>();
 
 	
 	static CGame s_cInstance = null;

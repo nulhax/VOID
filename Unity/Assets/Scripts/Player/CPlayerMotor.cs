@@ -173,12 +173,15 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		// Retrieve my actor motor
-		CPlayerMotor cMyActorMotor = CGame.PlayerActor.GetComponent<CPlayerMotor>();
+		if (CGame.PlayerActor != null)
+		{
+			// Retrieve my actor motor
+			CPlayerMotor cMyActorMotor = CGame.PlayerActor.GetComponent<CPlayerMotor>();
 
-		// Write movement states
-		_cStream.Write(cMyActorMotor.m_uiMovementStates);
-		_cStream.Write(cMyActorMotor.transform.eulerAngles.y);
+			// Write movement states
+			_cStream.Write(cMyActorMotor.m_uiMovementStates);
+			_cStream.Write(cMyActorMotor.transform.eulerAngles.y);
+		}
 	}
 
 
