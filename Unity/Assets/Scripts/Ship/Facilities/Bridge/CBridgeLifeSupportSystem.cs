@@ -48,6 +48,9 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 
 	public void Update()
 	{
+		if(!CNetwork.IsServer)
+			return;
+
 		if(m_PrevAtmosphereGenerationRate != m_AtmosphereGenerationRate || 
 		   m_AtmosphereCapacitySupport != m_PrevAtmosphereCapacitySupport)
 		{

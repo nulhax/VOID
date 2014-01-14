@@ -46,6 +46,9 @@ public class CBridgePowerSystem: MonoBehaviour
 	
 	public void Update()
 	{
+		if(!CNetwork.IsServer)
+			return;
+
 		if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
 		{
 			CPowerGeneratorSystem poweerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
