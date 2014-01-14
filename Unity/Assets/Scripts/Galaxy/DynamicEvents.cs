@@ -5,7 +5,7 @@ public class DynamicEvent_RogueAsteroid
 {
     public DynamicEvent_RogueAsteroid()
     {
-        DungeonMaster.instance.AddDynamicEvent(new DungeonMaster.SDynamicEvent(2.0f, Behaviour));
+        DungeonMaster.instance.AddDynamicEvent(new DungeonMaster.DynamicEvent(2.0f, Behaviour));
     }
 
     public static void Behaviour()

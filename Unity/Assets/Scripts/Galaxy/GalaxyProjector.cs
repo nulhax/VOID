@@ -46,7 +46,7 @@ public class GalaxyProjector : MonoBehaviour
                     {
                         Vector3 unitPos = new Vector3(x - centreSample.x, y - centreSample.y, z - centreSample.z) / (0.5f * samplesPerAxis);    // -1 to +1 on each axis.
                         Vector3 centreOfProjectionSamplePos = galaxy.AbsoluteCellNoiseSamplePoint(absoluteCellCentreOfProjection);
-                        float asteroidDensity = galaxy.SampleNoise(centreOfProjectionSamplePos.x + unitPos.x /** zoom*/, centreOfProjectionSamplePos.y + unitPos.y /** zoom*/, centreOfProjectionSamplePos.z + unitPos.z /** zoom*/, CGalaxy.ENoiseLayer.AsteroidDensity);
+                        float asteroidDensity = galaxy.SampleNoise(centreOfProjectionSamplePos.x + unitPos.x /** zoom*/, centreOfProjectionSamplePos.y + unitPos.y /** zoom*/, centreOfProjectionSamplePos.z + unitPos.z /** zoom*/, CGalaxy.ENoiseLayer.SparseAsteroidCount);
                         float asteroidDensityAlpha = asteroidDensity * asteroidDensity * asteroidDensity * asteroidDensity;
                         asteroidDensityAlpha = (1.0f - unitPos.sqrMagnitude) * asteroidDensityAlpha;
                         //if (asteroidDensityAlpha < 0.0f)
