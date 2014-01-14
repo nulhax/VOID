@@ -60,6 +60,6 @@ public class CFacilityComponentNode : MonoBehaviour
 
 
 	public CFacilityComponentInterface.EType m_eComponentType;
-
+		
 
 };

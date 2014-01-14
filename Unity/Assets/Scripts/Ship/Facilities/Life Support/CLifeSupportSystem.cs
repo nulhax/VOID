@@ -29,21 +29,20 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 	
 
 	// Member Fields
-	private CNetworkVar<float> m_AtmosphereDistributionRate;
+	private CNetworkVar<float> m_AtmosphereGenerationRate;
 	private CNetworkVar<float> m_AtmosphereCapacitySupport;
-	private CNetworkVar<bool> m_LifeSupportActive;
+	private CNetworkVar<bool> m_AtmosphereGenerationActive;
+
 
 	// Member Properties
-	[AServerOnly]
-	public float AtmosphereDistributionRate
+	public float AtmosphereGenerationRate
 	{
-		get { return(m_AtmosphereDistributionRate.Get()); }
+		get { return(m_AtmosphereGenerationRate.Get()); }
 
 		[AServerOnly]
-		set { m_AtmosphereDistributionRate.Set(value); }
+		set { m_AtmosphereGenerationRate.Set(value); }
 	}
-
-	[AServerOnly]
+	
 	public float AtmosphereCapacitySupport
 	{
 		get { return(m_AtmosphereCapacitySupport.Get()); }
@@ -51,20 +50,28 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 		[AServerOnly]
 		set { m_AtmosphereCapacitySupport.Set(value); }
 	}
+	
+	public bool AtmosphereGenerationActive
+	{
+		get { return(m_AtmosphereGenerationActive.Get()); }
+		
+		[AServerOnly]
+		set { m_AtmosphereGenerationActive.Set(value); }
+	}
 
 	// Member Methods
 	public override void InstanceNetworkVars()
 	{
-		m_LifeSupportActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_AtmosphereDistributionRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_AtmosphereGenerationActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_AtmosphereGenerationRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_AtmosphereCapacitySupport = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
 	{
-		if(_cVarInstance == m_LifeSupportActive)
+		if(_cVarInstance == m_AtmosphereGenerationActive)
 		{
-			if(m_LifeSupportActive.Get() == true)
+			if(m_AtmosphereGenerationActive.Get() == true)
 			{	
 				CGame.Ship.GetComponent<CShipLifeSupportSystem>().RegisterLifeSupportSystem(gameObject);
 			}
@@ -84,12 +91,12 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 	[AServerOnly]
 	public void ActivateLifeSupport()
 	{
-		m_LifeSupportActive.Set(true);
+		m_AtmosphereGenerationActive.Set(true);
 	}
 
 	[AServerOnly]
 	public void DeactivateLifeSupport()
 	{
-		m_LifeSupportActive.Set(false);
+		m_AtmosphereGenerationActive.Set(false);
 	}
 }

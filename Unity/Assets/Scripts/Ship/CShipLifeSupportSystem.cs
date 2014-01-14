@@ -63,19 +63,19 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	public void RegisterLifeSupportSystem(GameObject _LifeSupportDistributor)
+	public void RegisterLifeSupportSystem(GameObject _LifeSupportSystem)
 	{
-		if(!m_LifeSupportSystems.Contains(_LifeSupportDistributor))
+		if(!m_LifeSupportSystems.Contains(_LifeSupportSystem))
 		{
-			m_LifeSupportSystems.Add(_LifeSupportDistributor);
+			m_LifeSupportSystems.Add(_LifeSupportSystem);
 		}
 	}
 
-	public void UnregisterLifeSupportSystem(GameObject _LifeSupportDistributor)
+	public void UnregisterLifeSupportSystem(GameObject _LifeSupportSystem)
 	{
-		if(m_LifeSupportSystems.Contains(_LifeSupportDistributor))
+		if(m_LifeSupportSystems.Contains(_LifeSupportSystem))
 		{
-			m_LifeSupportSystems.Remove(_LifeSupportDistributor);
+			m_LifeSupportSystems.Remove(_LifeSupportSystem);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 			float combinedOutput = 0.0f;
 			foreach(GameObject dist in m_LifeSupportSystems)
 			{
-				combinedOutput += dist.GetComponent<CLifeSupportSystem>().AtmosphereDistributionRate;
+				combinedOutput += dist.GetComponent<CLifeSupportSystem>().AtmosphereGenerationRate;
 			}
 			
 			// Calculate the output for each facility evenly
@@ -155,7 +155,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 			lifeSupportOutput += string.Format("\tFacility [{0}] Type [{1}] AtmosDist: {2} AtmosSupp: {3}\n", 
 			                                  ls.GetComponent<CFacilityInterface>().FacilityId, 
 			                                  ls.GetComponent<CFacilityInterface>().FacilityType,
-			                                  Math.Round(ls.GetComponent<CLifeSupportSystem>().AtmosphereDistributionRate, 2),
+			                                  Math.Round(ls.GetComponent<CLifeSupportSystem>().AtmosphereGenerationRate, 2),
 			                                  Math.Round(ls.GetComponent<CLifeSupportSystem>().AtmosphereCapacitySupport, 2));	                                  
 		}
 

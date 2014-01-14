@@ -33,7 +33,7 @@ public class CFacilityComponentInterface : MonoBehaviour
 		FuseBox,
 		PlayerSpawner,
 		TurretCockpit,
-		PilotCockpit
+		PilotCockpit,
 	}
 
 
