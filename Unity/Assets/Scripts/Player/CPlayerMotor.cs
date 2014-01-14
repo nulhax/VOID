@@ -117,7 +117,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 			{
 				m_cueFootSteps = 	cue;
 			}
-		}       
+		}  
 	}
 
 
@@ -202,12 +202,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	void UpdateGrounded()
 	{
 		Vector3 vPos = m_physCollider.transform.position; 
-		vPos.y += m_physCollider.bounds.extents.y;
+		vPos.y += m_physCollider.bounds.extents.y ;
 		float fRayLength = m_physCollider.bounds.extents.y + 0.05f;				
 		Vector3 vTarget = vPos - (transform.up * fRayLength);
-	
-		//Grounded should only be set to false if the player hasn't touched the ground for a slight amount of time.		
-		m_bGrounded = Physics.Linecast(vPos, vTarget);
+		int iIgnoreLayer = 1 << 13;
+		iIgnoreLayer = ~iIgnoreLayer;
+
+		//Grounded should only be set to false if the player hasn't touched the ground for a slight amount of time.
+		RaycastHit hitInfo;
+		m_bGrounded = Physics.Linecast(vPos, vTarget, out hitInfo, iIgnoreLayer);	
+
+		Debug.DrawLine(vPos, vTarget);
+
+		m_ThirdPersonAnim.SetFloat("DistanceToGround", hitInfo.distance); 
 	}
 
 
@@ -255,7 +262,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         {
             rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
             rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
-        }    
+        }      
 	}
 	
 		
@@ -268,13 +275,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		bool bCrouch;
 		bool bStrafeLeft;
 		bool bStrafeRight;
-						
+		
+				
 		bWalkForward = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveForward) > 0) ? true : false;	
-
-		if(bWalkForward)
-		{
-			int i = 0;
-		}
 		bWalkBack = ((m_uiMovementStates & (uint)EPlayerMovementState.MoveBackward) > 0) ? true : false;	
 		bJump = ((m_uiMovementStates & (uint)EPlayerMovementState.Jump) > 0) ? true : false;	
 		bCrouch = ((m_uiMovementStates & (uint)EPlayerMovementState.Crouch) > 0) ? true : false;	
@@ -292,7 +295,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		}
 			
 		m_ThirdPersonAnim.SetFloat("Direction",  m_fDirection);
-		m_ThirdPersonAnim.SetBool("WalkForward", bWalkForward);	
+		m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
 		m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
 		m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 		m_ThirdPersonAnim.SetBool("Jump", bJump);
@@ -467,9 +470,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	float m_fRotationY = 0.0f;
 
 
-	uint m_uiMovementStates = 0;	
+	uint m_uiMovementStates = 0;
+	
 	
 	bool m_bInputDisabled = false;
+	bool m_bCurrentlyGround = false;
 	bool m_bGrounded = false;
 
 	static KeyCode s_eCrouchKey = KeyCode.C;
@@ -496,7 +501,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	bool m_bPreviousCrouchState = false;
 	
 	bool m_bUsedSlide = false;
-
+	
+	float m_fTimeLastGrounded = 0.0f;
+	float m_fGroundedTimer = 0.0f;
+	
 	AudioCue m_cueFootSteps;
+	bool m_bFootStepCoolDown = false;
 	float m_fLastFootStep;
 };
