@@ -68,7 +68,7 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 		}
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	private void ActorEnteredGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		// Only add to the list if there is a gravity component
@@ -78,7 +78,7 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 		m_ActorsInsideGravityTrigger.Add(_Actor);
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	private void ActorExitedGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		if(!m_ActorsInsideGravityTrigger.Contains(_Actor))

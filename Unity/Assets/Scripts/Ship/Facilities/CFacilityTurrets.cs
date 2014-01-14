@@ -55,7 +55,7 @@ public class CFacilityTurrets : CNetworkMonoBehaviour
 		SearchTurretNodes();
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	public void CreateTurret(uint _TurretNodeId, CTurretInterface.ETurretType _TurretType)
 	{
 		// Get the turret node

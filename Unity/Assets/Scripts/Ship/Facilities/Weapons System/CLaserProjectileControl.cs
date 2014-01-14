@@ -83,7 +83,7 @@ public class CLaserProjectileControl : CNetworkMonoBehaviour
 		}
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	void OnCollisionEnter(Collision _cCollision) 
 	{
 		if (!m_bDestroyed && CNetwork.IsServer)

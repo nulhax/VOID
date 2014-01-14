@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -36,7 +36,7 @@ public class CInteriorTrigger : MonoBehaviour
 	
 	
 	// Member Methods
-	[AServerMethod]
+	[AServerOnly]
 	private void OnTriggerEnter(Collider _Other)
 	{
 		if(!CNetwork.IsServer)
@@ -54,7 +54,7 @@ public class CInteriorTrigger : MonoBehaviour
 		}
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	private void OnTriggerExit(Collider _Other)
 	{
 		if(!CNetwork.IsServer)

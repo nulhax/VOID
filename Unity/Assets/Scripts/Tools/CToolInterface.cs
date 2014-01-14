@@ -181,7 +181,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetPrimaryActive(bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check not already active
@@ -214,7 +214,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetSecondaryActive(bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check not already active
@@ -247,7 +247,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void PickUp(ulong _ulPlayerId)
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
@@ -266,7 +266,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void Drop()
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
@@ -286,7 +286,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void Reload()
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
@@ -303,7 +303,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void Use(GameObject _cInteractableObject)
 	{
 		// Check currently held

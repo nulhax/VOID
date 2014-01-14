@@ -75,7 +75,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void ApplyDamage(float _fAmount)
     {
         m_fHitPoints.Set(m_fHitPoints.Get() - _fAmount);
@@ -85,7 +85,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void ApplyHeal(float _fAmount)
     {
         m_fHitPoints.Set(m_fHitPoints.Get() + _fAmount);
@@ -126,13 +126,13 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     void UpdateAtmosphereEffects()
     {
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
 	void UpdatePlayerAlive()
 	{
         if (Alive)
@@ -217,6 +217,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
             if (cFacility != null)
             {
+				CShipLifeSupportSystem shipLifeSupport = CGame.Ship.GetComponent<CShipLifeSupportSystem>();
                 CFacilityAtmosphere cAtmosphere = cFacility.GetComponent<CFacilityAtmosphere>();
                 CFacilityGravity cGravity = cFacility.GetComponent<CFacilityGravity>();
                 CFacilityHull cHull = cFacility.GetComponent<CFacilityHull>();
@@ -228,7 +229,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                                  kBoxWidth, kBoxHeight * 5),
                                  "Facility Status'" + "\n" +
                                  "Is Breached: " + cHull.IsBreached + "\n" +
-                                 "Atmosphere: " + Math.Round(cAtmosphere.AtmosphereQuantity, 2) + " (" + Math.Round(cAtmosphere.AtmospherePercentage* 100.0f, 2) + "%)\n" +
                                  "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False") + "\n" +
                                  "Power Consumption: " + cPower.PowerConsumption);
             }

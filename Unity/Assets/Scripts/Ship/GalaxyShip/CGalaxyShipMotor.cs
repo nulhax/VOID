@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -243,7 +243,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		return(velocity);
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	private void SyncTransform()
 	{
 		m_Position.Set(transform.position);

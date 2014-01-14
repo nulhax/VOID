@@ -98,7 +98,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetToolPrimaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
@@ -111,7 +111,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetToolSecondaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
@@ -124,7 +124,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void PickupTool(ulong _ulPlayerId, GameObject _cInteractableObject)
 	{
 		// Check object exists
@@ -159,7 +159,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void UseTool(byte _bSlotId, GameObject _cInteractableObject)
 	{
 		// Check tool exists
@@ -170,7 +170,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void ChangeTool(byte _bSlotId)
 	{
 		// Check tool exists
@@ -185,7 +185,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void ReloadTool(byte _bSlotId)
 	{
 		// Check tool exists
@@ -197,7 +197,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void DropTool(byte _bSlotId)
 	{
 		// Check tool exists
@@ -233,7 +233,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-    [AClientMethod]
+    [AClientOnly]
     public static void SerializeBeltState(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -242,7 +242,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         GameObject cPlayerObject = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
@@ -338,7 +338,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-	[AClientMethod]
+	[AClientOnly]
     void OnInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		bool bWriteViewId = true;
@@ -383,7 +383,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnNoInteraction(CPlayerInteractor.EInteractionType _eType, RaycastHit _cRayHit)
 	{
 		OnInteraction(_eType, null, _cRayHit);

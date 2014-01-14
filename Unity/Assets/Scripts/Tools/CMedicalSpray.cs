@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -97,14 +97,14 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void OnUseStart(GameObject _cInteractableObject)
     {
         m_bActive.Set(true);
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void OnUseEnd()
     {
         m_bActive.Set(false);
