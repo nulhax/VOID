@@ -155,7 +155,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		_cStream.Write(s_cSerializeStream);
@@ -164,7 +164,7 @@ public class CCockpit : CNetworkMonoBehaviour
     }
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		while (_cStream.HasUnreadData)
@@ -195,7 +195,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 	
-	[AClientMethod]
+	[AClientOnly]
 	void OnUseInteraction(RaycastHit _cRayHit, CNetworkViewId _cPlayerActorViewId)	
 	{
 		// Check there is no one in the cockpit locally
@@ -208,7 +208,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	void HandleEnterCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGame.FindPlayerActor(_ulPlayerId);
@@ -236,7 +236,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	void HandleLeaveCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGame.FindPlayerActor(_ulPlayerId);
@@ -256,7 +256,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnInputUseChange(bool _bDown)
 	{
 		if (_bDown &&

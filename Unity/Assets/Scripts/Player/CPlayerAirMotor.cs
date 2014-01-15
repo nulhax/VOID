@@ -65,7 +65,7 @@ public class CPlayerAirMotor : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
 		GameObject cSelfActor = CGame.PlayerActor;
@@ -85,7 +85,7 @@ public class CPlayerAirMotor : MonoBehaviour
 	}
 	
 	
-	[AServerMethod]
+	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		GameObject cPlayerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);

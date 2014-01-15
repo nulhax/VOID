@@ -664,7 +664,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	[AClientMethod]
+	[AClientOnly]
 	void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
 	{
 		m_mPlayersActor.Add(_ulPlayerId, _cPlayerActorId);
@@ -672,7 +672,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	[AClientMethod]
+	[AClientOnly]
 	void UnregisterPlayerActor(ulong _ulPlayerId)
 	{
 		m_mPlayersActor.Remove(_ulPlayerId);

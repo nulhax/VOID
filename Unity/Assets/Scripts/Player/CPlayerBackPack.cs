@@ -75,7 +75,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void PickupModule(ulong _ulPlayerId, CNetworkViewId _cModuleViewId)
     {
         if (!IsCarryingModule)
@@ -86,7 +86,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void DropModule()
     {
         if (IsCarryingModule)
@@ -97,7 +97,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void InsertCell(ulong _ulPlayerId, CNetworkViewId _cCellSlotViewId)
     {
         if (IsCarryingModule)
@@ -116,7 +116,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     }
 
 
-	[AClientMethod]
+	[AClientOnly]
 	public void OnPickupModuleRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		if (_eType == CPlayerInteractor.EInteractionType.Use &&
@@ -130,7 +130,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AClientMethod]
+	[AClientOnly]
 	public void OnCellInsertRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		if (_eType == CPlayerInteractor.EInteractionType.PrimaryStart &&
@@ -155,7 +155,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		// Drop
@@ -173,7 +173,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		GameObject cPlayerObject = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);

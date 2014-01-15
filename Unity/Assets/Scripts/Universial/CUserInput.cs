@@ -317,7 +317,7 @@ public class CUserInput : MonoBehaviour
 		}
 	}
 	
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateAirMovement()
 	{
 		// Fly up

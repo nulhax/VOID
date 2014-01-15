@@ -107,7 +107,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AClientMethod]
+	[AClientOnly]
 	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Get the UI from the console hit
@@ -131,13 +131,13 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void HandleSubviewChange(uint _iActiveSubview)
 	{
 		m_CurrentActiveSubviewId.Set(_iActiveSubview);
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void ButtonPressedDown(CNetworkViewId _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
 	{
 		CDUI dui = CNetwork.Factory.FindObject(_duiConsoleNetworkId).GetComponent<CDUIConsole>().DUI;
