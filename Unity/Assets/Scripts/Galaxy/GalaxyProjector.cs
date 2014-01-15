@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CNetworkView))]
 [RequireComponent(typeof(ParticleEmitter))]
 public class GalaxyProjector : CNetworkMonoBehaviour
 {
