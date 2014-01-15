@@ -93,7 +93,7 @@ public class CodexWrapper : MonoBehaviour
 		//m_DecodeThread = new Thread(new ParameterizedThreadStart(DecodeAudio));		
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	void OnRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream)
 	{		
 		GameObject playerActor = CGame.FindPlayerActor(_cPlayer.PlayerId);
@@ -124,7 +124,7 @@ public class CodexWrapper : MonoBehaviour
 		}
 	}
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream)
 	{
 		s_framesToDecode.Enqueue(_cAudioDataStream);

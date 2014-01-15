@@ -178,7 +178,7 @@ public class CUserInput : MonoBehaviour
     }
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateMouseMove()
 	{
 		MouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
@@ -196,7 +196,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdatePrimary()
 	{
 		if (Input.GetKeyDown(s_ePrimaryKey))
@@ -210,7 +210,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateSecondary()
 	{
 		if (Input.GetKeyDown(s_eSecondaryKey))
@@ -224,7 +224,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateUse()
 	{
 		if (Input.GetKeyDown(s_eUseKey))
@@ -238,7 +238,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateMovement()
 	{
 		// Forward
@@ -283,7 +283,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void UpdateMovementSpecial()
 	{
 		// Jump

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -91,13 +91,13 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 		}
 	}
 			
-	[AServerMethod]
+	[AServerOnly]
 	void UpdateTriggerRadius(float _fNewTriggerRadius)
 	{
 		m_fTriggerRadius.Set(_fNewTriggerRadius);
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	void UpdateCurrentGravityOutput(float _fNewCurrentGravityOutput)
 	{
 		m_fCurrentGravityOutput.Set(_fNewCurrentGravityOutput);

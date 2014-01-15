@@ -1,4 +1,4 @@
-﻿
+
 //  Auckland
 //  New Zealand
 //
@@ -25,7 +25,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	public enum EBoardingState
 	{
 		INVALID,
-		
+
+		Boarding,
 		Onboard,
 		Offboard,
 	}
@@ -48,8 +49,10 @@ public class CActorBoardable : CNetworkMonoBehaviour
 // Member Properties		
 	public EBoardingState BoardingState
 	{
-		set { m_BoardingState.Set(value); }
 		get { return (m_BoardingState.Get()); }
+
+		[AServerOnly]
+		set { m_BoardingState.Set(value); }
 	}
 
 // Member Methods
@@ -66,6 +69,15 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		{
 			BoardingState = m_InitialBoardingState;
 		}
+	}
+
+	public void Update()
+	{
+//		// If the actor is not onboard 
+//		if(CNetwork.IsServer && BoardingState == EBoardingState.Onboard && !CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(gameObject))
+//		{
+//			BoardingState = EBoardingState.Offboard;
+//		}
 	}
 
     public override void InstanceNetworkVars()
@@ -129,7 +141,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		transform.parent = CGame.Ship.transform;
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void TransferActorToGalaxySpace()
 	{	 	
 		bool childOfPlayer = false;
@@ -149,7 +161,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void TransferActorToShipSpace()
 	{
 		bool childOfPlayer = false;

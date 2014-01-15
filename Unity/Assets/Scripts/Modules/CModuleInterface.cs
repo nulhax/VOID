@@ -120,7 +120,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void Pickup(ulong _ulPlayerId)
     {
         Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
@@ -142,7 +142,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void Drop()
     {
         Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");

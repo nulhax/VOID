@@ -71,7 +71,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 	}
 
 
-    [AServerMethod]
+    [AServerOnly]
     public void SetContainingFacility(GameObject _cFacility)
     {
 		if (_cFacility != null)

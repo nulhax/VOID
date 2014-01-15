@@ -102,8 +102,8 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
-	[AClientMethod]
+	[AServerOnly]
+	[AClientOnly]
 	void OnPlayerEnterCockpit(ulong _ulPlayerId)
 	{
 		// Debug - Search for avaiable turret nodes from parent
@@ -119,8 +119,8 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
-	[AClientMethod]
+	[AServerOnly]
+	[AClientOnly]
 	void OnPlayerLeaveCockpit(ulong _ulPlayerId)
 	{
 		// Debug - Set default turret

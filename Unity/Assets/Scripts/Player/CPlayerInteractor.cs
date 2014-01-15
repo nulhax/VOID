@@ -78,7 +78,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	}
 
 	
-	[AClientMethod]
+	[AClientOnly]
 	private void CheckInteraction(EInteractionType _eIneractionType)
 	{
 		// Find the origin, direction, distance of the players interaction cursor
@@ -174,21 +174,21 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
     }
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnInputPrimaryChange(bool _bDown)
 	{
 		CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnInputSecondaryChange(bool _bDown)
 	{
 		CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnInputUseChange(bool _bDown)
 	{
 		if (_bDown)

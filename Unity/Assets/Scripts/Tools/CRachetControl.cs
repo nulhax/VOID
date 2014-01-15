@@ -91,7 +91,7 @@ public class CRachetControl : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void OnUseStart(GameObject _cInteractableObject)
 	{
 		if (_cInteractableObject != null)
@@ -111,14 +111,14 @@ public class CRachetControl : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void OnUseEnd()
 	{
 		m_bActive.Set(false);
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	void HandleFuseBoxInteraction(GameObject _cFuseBox)
 	{
 		m_bActive.Set(true);

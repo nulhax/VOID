@@ -10,8 +10,7 @@ public class MineableResource : CNetworkMonoBehaviour
     {
 		if(CNetwork.IsServer)
 		{
-       	 	Vector3 samplePoint = CGalaxy.instance.AbsoluteCellNoiseSamplePoint(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
-        	resourceAmount = CGalaxy.instance.SampleNoise(samplePoint.x, samplePoint.y, samplePoint.z, CGalaxy.ENoiseLayer.AsteroidResourceAmount);
+            resourceAmount = CGalaxy.instance.CalculateAsteroidResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
 		}
 	}
 
@@ -21,6 +20,7 @@ public class MineableResource : CNetworkMonoBehaviour
     }
 
     // This function is for convenience.
+    // Returns the amount actually obtained from an amount wanted.
     public float Mine(float amountWanted)
     {
         if (amountWanted <= m_ResourceAmount.Get())
@@ -38,6 +38,6 @@ public class MineableResource : CNetworkMonoBehaviour
 
     public void SyncResourceAmount(INetworkVar sender)
     {
-        // Todo: Retexture asteroid based on resource amount.
+        gameObject.renderer.material.SetColor("_Color", new Color(1.0f - resourceAmount, 1.0f - resourceAmount, 1.0f));
     }
 }

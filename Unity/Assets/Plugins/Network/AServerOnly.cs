@@ -3,7 +3,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   AClientMethod.h
+//  File Name   :   AServerMethod.h
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -20,8 +20,8 @@ using System;
 /* Implementation */
 
 
-[AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public sealed class AClientMethod : Attribute
+[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true)]
+public sealed class AServerOnly : Attribute
 {
 
 // Member Types

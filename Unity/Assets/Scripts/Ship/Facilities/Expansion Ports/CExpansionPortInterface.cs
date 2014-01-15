@@ -34,7 +34,7 @@ public class CExpansionPortInterface : MonoBehaviour
 	
 	public uint ExpansionPortId 
 	{
-		get{return(m_uiPortID);}			
+		get{return(m_uiPortID);}	
 		set
 		{
 			if(m_uiPortID == 0)

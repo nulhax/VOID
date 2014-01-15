@@ -82,7 +82,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public enum ENoiseLayer : uint
     {
-        AsteroidDensity,
+        SparseAsteroidCount,
+        AsteroidClusterCount,
+        DebrisDensity,
+
         FogDensity,
         AsteroidResourceAmount,
         MAX
@@ -128,10 +131,6 @@ public class CGalaxy : CNetworkMonoBehaviour
     private uint muiNumCellSubsets = 20; // Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
     protected CNetworkVar<uint> mNumCellSubsets;
     public uint numCellSubsets { get { return muiNumCellSubsets; } }
-
-    private uint muiMaxAsteroidsPerCell = 5;
-    protected CNetworkVar<uint> mMaxAsteroidsPerCell;
-    public uint maxAsteroidsPerCell { get { return muiMaxAsteroidsPerCell; } }
 
     public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.15f;
     private float mfTimeUntilNextQueueCellToLoadOrUnload =      0.0f;
@@ -228,6 +227,12 @@ public class CGalaxy : CNetworkMonoBehaviour
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
             gameObject.AddComponent<DungeonMaster>();
+            new DynamicEvent_RogueAsteroid();
+            new DifficultyModifier_DifficultyChoice();
+            gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
+            new DifficultyModifier_ShipDamage();
+            gameObject.AddComponent < DifficultyModifier_TotalDistanceTravelled>();
+            new DifficultyModifier_TotalShipWorth();
         }
     }
 
@@ -247,7 +252,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         mCentreCellY = new CNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
         mCentreCellZ = new CNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
         mGalaxySize = new CNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
-        mMaxAsteroidsPerCell = new CNetworkVar<uint>(SyncMaxAsteroidsPerCell, muiMaxAsteroidsPerCell);
         mNumCellSubsets = new CNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
 
         Profiler.EndSample();
@@ -503,7 +507,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public Vector3 CalculateAverageObserverPosition()
+    private Vector3 CalculateAverageObserverPosition()
     {
         Profiler.BeginSample("CalculateAverageObserverPosition");
 
@@ -527,25 +531,18 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         ShiftEntities(new Vector3((mCentreCell.x - mCentreCellX.Get()) * cellDiameter, 0.0f, 0.0f));
         mCentreCell.x = mCentreCellX.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellY(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, (mCentreCell.y - mCentreCellY.Get()) * cellDiameter, 0.0f));
         mCentreCell.y = mCentreCellY.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncCentreCellZ(INetworkVar sender)
     {
         ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * cellDiameter));
         mCentreCell.z = mCentreCellZ.Get();
-
-        UpdateGalaxyAesthetic(mCentreCell);
     }
     public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
-    public void SyncMaxAsteroidsPerCell(INetworkVar sender) { muiMaxAsteroidsPerCell = mMaxAsteroidsPerCell.Get(); }
     public void SyncNumCellSubsets(INetworkVar sender) { muiNumCellSubsets = mNumCellSubsets.Get(); }
 
     public void RegisterObserver(GameObject observer, float boundingRadius)
@@ -604,28 +601,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         //else    // This cell is not on file, so it has not been visited...
         {
             // Generate the content in the cell.
-            float fCellRadius = cellRadius;
-
-            // 1) For asteroids.
-            uint uiNumAsteroids = (uint)Mathf.RoundToInt(muiMaxAsteroidsPerCell * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.AsteroidDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z))) /*Mathf.RoundToInt(PerlinSimplexNoise.(ENoiseLayer.AsteroidDensity, absoluteCell))*/;
-            for (uint ui = 0; ui < uiNumAsteroids; ++ui)
-            {
-                Profiler.BeginSample("Create asteroid meta and queue for creation");
-                
-                mGubbinsToLoad.Add(new SGubbinMeta( (CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST+1),    // Random asteroid prefab.
-                                                    absoluteCell,   // Parent cell.
-                                                    Random.Range(10.0f, 150.0f),    // Scale.
-                                                    new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
-                                                    Random.rotationUniform, // Rotation.
-                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                    0.5f,   // Mass to health scalar. Zero if there is no health script.
-                                                    true,   // Has NetworkedEntity script.
-                                                    true    // Has a rigid body.
-                                                    ));
-
-                Profiler.EndSample();
-            }
+            LoadAsteroidClusters(absoluteCell);
+            LoadSparseAsteroids(absoluteCell);
+            LoadDebris(absoluteCell);
         }
 
         Profiler.EndSample();
@@ -868,6 +846,86 @@ public class CGalaxy : CNetworkMonoBehaviour
         }
 
         Profiler.EndSample();
+    }
+
+    public uint CalculateSparseAsteroidCount(SCellPos absoluteCell)
+    {
+        return (uint)Mathf.RoundToInt(10/*maxAsteroids*/ * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.SparseAsteroidCount].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z)));
+    }
+
+    public uint CalculateAsteroidClusterCount(SCellPos absoluteCell)
+    {
+        return (uint)Mathf.RoundToInt(1/*maxClusters*/ * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.AsteroidClusterCount].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z)));
+    }
+
+    public float CalculateDebrisDensity(SCellPos absoluteCell)
+    {
+        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.DebrisDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
+    }
+
+    public float CalculateFogDensity(SCellPos absoluteCell)
+    {
+        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.FogDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
+    }
+
+    public float CalculateAsteroidResourceAmount(SCellPos absoluteCell)
+    {
+        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.FogDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
+    }
+
+    private void LoadSparseAsteroids(SCellPos absoluteCell)
+    {
+        float fCellRadius = cellRadius;
+
+        uint uiNumAsteroids = CalculateSparseAsteroidCount(absoluteCell);
+        for (uint ui = 0; ui < uiNumAsteroids; ++ui)
+        {
+            Profiler.BeginSample("Create asteroid meta and queue for creation");
+
+            mGubbinsToLoad.Add(new SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
+                                                absoluteCell,   // Parent cell.
+                                                Random.Range(10.0f, 150.0f),    // Scale.
+                                                new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
+                                                Random.rotationUniform, // Rotation.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+                                                0.5f,   // Mass to health scalar. Zero if there is no health script.
+                                                true,   // Has NetworkedEntity script.
+                                                true    // Has a rigid body.
+                                                ));
+
+            Profiler.EndSample();
+        }
+    }
+
+    private void LoadAsteroidClusters(SCellPos absoluteCell)
+    {
+        float fCellRadius = cellRadius;
+
+        uint uiNumAsteroidClusters = CalculateAsteroidClusterCount(absoluteCell);
+        for (uint ui = 0; ui < uiNumAsteroidClusters; ++ui)
+        {
+            Profiler.BeginSample("Create asteroid meta and queue for creation");
+
+            mGubbinsToLoad.Add(new SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
+                                                absoluteCell,   // Parent cell.
+                                                Random.Range(10.0f, 150.0f),    // Scale.
+                                                new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
+                                                Random.rotationUniform, // Rotation.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+                                                0.5f,   // Mass to health scalar. Zero if there is no health script.
+                                                true,   // Has NetworkedEntity script.
+                                                true    // Has a rigid body.
+                                                ));
+
+            Profiler.EndSample();
+        }
+    }
+
+    private void LoadDebris(SCellPos absoluteCell)
+    {
+
     }
 
     void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
