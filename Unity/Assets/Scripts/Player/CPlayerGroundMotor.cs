@@ -178,7 +178,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 						_cStream.ReadFloat();
 					}
 
-					cPlayerActorMotor.m_bStates.Set(cPlayerActorMotor.m_uiMovementStates);
+					cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);
 				}
 				break;
 
@@ -302,7 +302,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		if (_cSyncedNetworkVar == m_bStates)
 		{
 			// Notify event observers
-			if (EventStatesChange != null) EventStatesChange(Previous, States);
+			if (EventStatesChange != null) EventStatesChange(PreviousStates, States);
 		}
 	}
 
