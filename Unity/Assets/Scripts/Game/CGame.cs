@@ -123,7 +123,7 @@ public class CGame : CNetworkMonoBehaviour
 		{ 
 			GameObject playerActor = null;
 			
-			if(PlayerActorViewId != 0)
+			if(PlayerActorViewId != null)
 			{
 				playerActor = CNetwork.Factory.FindObject(PlayerActorViewId);
 			}
@@ -132,13 +132,13 @@ public class CGame : CNetworkMonoBehaviour
 		}
 	}
 	
-	public static ushort PlayerActorViewId
+	public static CNetworkViewId PlayerActorViewId
 	{
 		get 
 		{ 
 			if (!s_cInstance.m_mPlayersActor.ContainsKey(CNetwork.PlayerId))
 			{
-				return (0);
+				return (null);
 			}
 
 			return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]);
@@ -151,7 +151,7 @@ public class CGame : CNetworkMonoBehaviour
 		{ 
 			List<GameObject> actors = new List<GameObject>();
 				
-			foreach(ushort playerID in s_cInstance.m_mPlayersActor.Values)
+			foreach(CNetworkViewId playerID in s_cInstance.m_mPlayersActor.Values)
 			{
 				actors.Add(CNetwork.Factory.FindObject(playerID));
 			}
@@ -162,12 +162,12 @@ public class CGame : CNetworkMonoBehaviour
 
 	public static GameObject Ship
 	{
-		get { return (CNetwork.Factory.FindObject(s_cInstance.m_usShipViewId)); }
+		get { return (CNetwork.Factory.FindObject(s_cInstance.m_cShipViewId)); }
 	}
 
-	public static ushort ShipViewId
+	public static CNetworkViewId ShipViewId
 	{
-		get { return (s_cInstance.m_usShipViewId); }
+		get { return (s_cInstance.m_cShipViewId); }
 	}
 
 	public static CShipGalaxySimulatior ShipGalaxySimulator
@@ -182,7 +182,7 @@ public class CGame : CNetworkMonoBehaviour
 
 	public static bool IsClientReady
 	{
-		get { return(CNetwork.IsConnectedToServer() && ShipViewId != 0); }
+		get { return(CNetwork.IsConnectedToServer() && ShipViewId != null); }
 	}
 
 	public static CUserInput UserInput
@@ -225,12 +225,13 @@ public class CGame : CNetworkMonoBehaviour
 		RegisterPrefabs();
 
 		// Register serialization targets
-        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerMotor.SerializePlayerState, CPlayerMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerGroundMotor.SerializePlayerState, CPlayerGroundMotor.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState, CPlayerHead.UnserializePlayerState);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
        	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound, CCockpit.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CTurretController.SerializeOutbound, CTurretController.UnserializeInbound);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound, CPlayerAirMotor.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
 		
@@ -332,13 +333,13 @@ public class CGame : CNetworkMonoBehaviour
 						cPlayerActor.GetComponent<CNetworkView>().SyncParent();
 						
 						// Get actor network view id
-						ushort usActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 						
 						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
 						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
 						
 						// Sync player actor view id with everyone
-						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, usActorNetworkViewId);
+						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
@@ -410,7 +411,7 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	public static ushort FindPlayerActorViewId(ulong _ulPlayerId)
+	public static CNetworkViewId FindPlayerActorViewId(ulong _ulPlayerId)
 	{
 		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
 	}
@@ -527,13 +528,13 @@ public class CGame : CNetworkMonoBehaviour
 	void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
 		// Tell connecting player which is the ship's network view id
-        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_usShipViewId);
+        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_cShipViewId);
 		
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
 
 		// Sync current players actor view ids with new player
-		foreach (KeyValuePair<ulong, ushort> tEntry in m_mPlayersActor)
+		foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActor)
 		{
 			InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
 		}
@@ -563,11 +564,11 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
-		ushort usPlayerActorNetworkViewId = FindPlayerActorViewId(_cPlayer.PlayerId);
+		CNetworkViewId cPlayerActorNetworkViewId = FindPlayerActorViewId(_cPlayer.PlayerId);
 
-		if (usPlayerActorNetworkViewId != 0)
+		if (cPlayerActorNetworkViewId != null)
 		{
-			CNetwork.Factory.DestoryObject(usPlayerActorNetworkViewId);
+			CNetwork.Factory.DestoryObject(cPlayerActorNetworkViewId);
 
 			// Sync unregister player actor view id with everyone
 			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
@@ -589,7 +590,7 @@ public class CGame : CNetworkMonoBehaviour
 		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
 
 		// Save view id
-		m_usShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
+		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 		
 		uint iCount = 1;
 		
@@ -618,7 +619,7 @@ public class CGame : CNetworkMonoBehaviour
         System.Diagnostics.Debug.Assert(CNetwork.IsServer);
 
 		m_mPlayersActor.Clear();
-        m_usShipViewId = 0;
+        m_cShipViewId = null;
 	}
 
 
@@ -635,10 +636,11 @@ public class CGame : CNetworkMonoBehaviour
 	void OnDisconnect()
 	{
 		UserInput.UnregisterAllEvents();
+		m_mPlayersActor.Clear();
 		
 		if(!CNetwork.IsServer)
 		{
-			m_usShipViewId = 0;
+			m_cShipViewId = null;
 		}
 			
         //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
@@ -652,20 +654,20 @@ public class CGame : CNetworkMonoBehaviour
 
 
     [ANetworkRpc]
-    void SetShipNetworkViewId(ushort _usShipViewId)
+    void SetShipNetworkViewId(CNetworkViewId _cShipViewId)
     {
-        m_usShipViewId = _usShipViewId;
+        m_cShipViewId = _cShipViewId;
 
         // Notice
-        Logger.Write("The ship's network view id is ({0})", m_usShipViewId);
+        Logger.Write("The ship's network view id is ({0})", m_cShipViewId);
     }
 
 
 	[ANetworkRpc]
 	[AClientMethod]
-	void RegisterPlayerActor(ulong _ulPlayerId, ushort _usPlayerActorId)
+	void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
 	{
-		m_mPlayersActor.Add(_ulPlayerId, _usPlayerActorId);
+		m_mPlayersActor.Add(_ulPlayerId, _cPlayerActorId);
 	}
 
 
@@ -690,10 +692,10 @@ public class CGame : CNetworkMonoBehaviour
 	int m_iActiveTab = 1;
 
 
-	ushort m_usShipViewId = 0;
+	CNetworkViewId m_cShipViewId = null;
 
 
-	Dictionary<ulong, ushort> m_mPlayersActor = new Dictionary<ulong, ushort>();
+	Dictionary<ulong, CNetworkViewId> m_mPlayersActor = new Dictionary<ulong, CNetworkViewId>();
 	List<ulong> m_aUnspawnedPlayers = new List<ulong>();
 
 	

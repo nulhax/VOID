@@ -92,7 +92,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
 
 			// Subscribe to mouse movement input
-			CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(OnMouseMoveX);
 			CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
 		}
 	}
@@ -157,24 +156,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
-	}
-
-	private void OnMouseMoveX(float _fAmount)
-	{
-		if (!InputDisabled)
-		{
-			m_vRotation.y += _fAmount;
-
-			// Keep y rotation within 360 range
-			m_vRotation.y -= (m_vRotation.y >= 360.0f) ? 360.0f : 0.0f;
-			m_vRotation.y += (m_vRotation.y <= -360.0f) ? 360.0f : 0.0f;
-
-			// Clamp rotation
-			m_vRotation.y = Mathf.Clamp(m_vRotation.y, m_vCameraMinRotation.y, m_vCameraMaxRotation.y);
-
-			// Apply yaw to the actor
-			transform.Rotate(0.0f, _fAmount, 0.0f, Space.Self);
-		}
 	}
 
 

@@ -261,8 +261,8 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			ushort usTurretViewId = _cStream.ReadUShort();
-			CTurretController cTurretController = CNetwork.Factory.FindObject(usTurretViewId).GetComponent<CTurretController>();
+			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
+			CTurretController cTurretController = CNetwork.Factory.FindObject(cTurretViewId).GetComponent<CTurretController>();
 			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
 
 			switch (eAction)

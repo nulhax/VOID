@@ -41,7 +41,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	private EInteractionEvent m_CurrentPlayerInteractionEvent = EInteractionEvent.Nothing;
 	
 	private GameObject m_AttachedPlayerActor = null;
-	private CNetworkVar<ushort> m_AttachedPlayerActorViewId = null;
+	private CNetworkVar<CNetworkViewId> m_AttachedPlayerActorViewId = null;
 	
 	static KeyCode m_eMoveForwardKey = KeyCode.W;
     static KeyCode m_eMoveBackwardsKey = KeyCode.S;
@@ -65,7 +65,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     // Member Methods
 	public override void InstanceNetworkVars()
     {
-		m_AttachedPlayerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
+		m_AttachedPlayerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 	
 	public void OnNetworkVarSync(INetworkVar _NetworkVar)
@@ -73,12 +73,12 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         if (_NetworkVar == m_AttachedPlayerActorViewId)
         {
 			// Attach the pilot if it isnt attached
-			if(m_AttachedPlayerActorViewId.Get() != 0)
+			if(m_AttachedPlayerActorViewId.Get() != null)
 			{
 				AttachPlayer(m_AttachedPlayerActorViewId.Get());
 			}
 			// Detach the pilot if it needs to detach
-			else if(m_AttachedPlayerActorViewId.Get() == 0)
+			else if(m_AttachedPlayerActorViewId.Get() == null)
 			{
 				DetachPlayer();
 			}
@@ -140,7 +140,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     {
 		if(m_AttachedPlayerActor != null && CNetwork.IsServer)
 		{
-            m_AttachedPlayerActorViewId.Set(0);
+            m_AttachedPlayerActorViewId.Set(null);
 		}
     }
 	
@@ -170,7 +170,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			{
 				if(!CGame.PlayerActor.GetComponent<CPlayerHealth>().Alive)
 				{
-					m_AttachedPlayerActorViewId.Set(0);
+					m_AttachedPlayerActorViewId.Set(null);
 				}
 			}
 		}
@@ -233,7 +233,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		m_CockpitPilotState.Rotation = rotationState;
 	}
 
-    private void AttachPlayer(ushort _PlayerActorNetworkViewId)
+    private void AttachPlayer(CNetworkViewId _PlayerActorNetworkViewId)
     {
 		m_CurrentPlayerInteractionEvent = EInteractionEvent.PlayerPiloting;
 

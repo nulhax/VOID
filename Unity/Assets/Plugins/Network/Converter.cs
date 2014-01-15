@@ -131,13 +131,10 @@ public class Converter
         {
             int iTypeSize = GetSizeOf(_cType);
 
-
             IntPtr ipBuffer = Marshal.AllocHGlobal(iTypeSize);
-
 
             Marshal.Copy(_baByteArray, 0, ipBuffer, iTypeSize);
             cConvertedObject = Marshal.PtrToStructure(ipBuffer, _cType);
-
 
             Marshal.FreeHGlobal(ipBuffer);
         }
@@ -145,7 +142,6 @@ public class Converter
         {
             cConvertedObject = Encoding.UTF8.GetString(_baByteArray, 0, _baByteArray.Length);
         }
-
 
         return (cConvertedObject);
     }

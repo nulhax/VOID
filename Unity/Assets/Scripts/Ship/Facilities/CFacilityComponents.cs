@@ -46,37 +46,20 @@ public class CFacilityComponents : MonoBehaviour
 	}
 
 
+	public void RegisterComponent(CFacilityComponentInterface _cComponentInterface)
+	{
+		if (!m_mComponents.ContainsKey(_cComponentInterface.FacilityComponentType))
+		{
+			m_mComponents.Add(_cComponentInterface.FacilityComponentType, new List<GameObject>());
+		}
+
+		m_mComponents[_cComponentInterface.FacilityComponentType].Add(_cComponentInterface.gameObject);
+	}
+
+
 	void Start()
 	{
-		if (CNetwork.IsServer)
-		{
-			CFacilityComponentNode[] cComponentNodes = transform.GetComponentsInChildren<CFacilityComponentNode>();
-		
-			foreach (var cComponetNode in cComponentNodes)
-			{
-				GameObject cChild = cComponetNode.gameObject;
-
-				if (cComponetNode != null)
-				{
-					CFacilityComponentInterface.EType eComponentType = cComponetNode.GetComponentType();
-
-					if (!m_mComponents.ContainsKey(eComponentType))
-					{
-						m_mComponents.Add(eComponentType, new List<GameObject>());
-					}
-
-					// Create facility component prefab
-					CGame.ENetworkRegisteredPrefab eNetworkPrefabType = CFacilityComponentInterface.GetPrefabType(eComponentType);
-
-					GameObject cFacilityComponentObject = CNetwork.Factory.CreateObject(eNetworkPrefabType);
-					cFacilityComponentObject.GetComponent<CNetworkView>().SetPosition(cChild.transform.position);
-					cFacilityComponentObject.GetComponent<CNetworkView>().SetRotation(cChild.transform.rotation.eulerAngles);
-					cFacilityComponentObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
-
-					m_mComponents[eComponentType].Add(cFacilityComponentObject);
-				}
-			}
-		}
+		// Empty
 	}
 
 

@@ -104,7 +104,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				// Lock player movement locally
 				if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
 				{
-					CGame.PlayerActor.GetComponent<CPlayerMotor>().DisableInput(this);
+					CGame.PlayerActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
 					CGame.PlayerActor.GetComponent<CPlayerHead>().DisableInput(this);
 
 					// Move player head into rotation
@@ -118,7 +118,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			// Unlock player movement locally
 			if (m_cMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
-				CGame.PlayerActor.GetComponent<CPlayerMotor>().UndisableInput(this);
+				CGame.PlayerActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
 				CGame.PlayerActor.GetComponent<CPlayerHead>().UndisableInput(this);
 			}
 		}
@@ -169,10 +169,13 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			ushort usCockpitObjectViewId = _cStream.ReadUShort();
+			CNetworkViewId cCockpitObjectViewId = _cStream.ReadNetworkViewId();
 			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
 
-			CCockpit cCockpit = CNetwork.Factory.FindObject(usCockpitObjectViewId).GetComponent<CCockpit>();
+
+			GameObject cCockpitObject = CNetwork.Factory.FindObject(cCockpitObjectViewId);
+
+			CCockpit cCockpit = cCockpitObject.GetComponent<CCockpit>();
 
 			switch (eAction)
 			{
@@ -193,7 +196,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	
 	[AClientMethod]
-	void OnUseInteraction(RaycastHit _cRayHit, ushort _usPlayerActorViewId)	
+	void OnUseInteraction(RaycastHit _cRayHit, CNetworkViewId _cPlayerActorViewId)	
 	{
 		// Check there is no one in the cockpit locally
 		if (MountedPlayerId == 0)
@@ -209,7 +212,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	void HandleEnterCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGame.FindPlayerActor(_ulPlayerId);
-		ushort cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+		CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		if (MountedPlayerId == 0)
 		{
@@ -237,7 +240,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	void HandleLeaveCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGame.FindPlayerActor(_ulPlayerId);
-		ushort cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+		CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		// Allow player to leave cockpit
 		if (MountedPlayerId == _ulPlayerId)

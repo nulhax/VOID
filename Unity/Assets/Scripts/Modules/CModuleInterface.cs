@@ -57,13 +57,13 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public GameObject OwnerPlayerActor
 	{
-		get { return (CNetwork.Factory.FindObject(m_usOwnerActorViewId.Get())); }
+		get { return (CNetwork.Factory.FindObject(m_cOwnerActorViewId.Get())); }
 	}
 
 
 	public bool IsHeld
 	{
-		get { return (m_usOwnerActorViewId.Get() != 0); }
+		get { return (m_cOwnerActorViewId.Get() != null); }
 	}
 
 // Member Functions
@@ -71,13 +71,13 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_usOwnerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
+		m_cOwnerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_usOwnerActorViewId)
+		if (_cSyncedNetworkVar == m_cOwnerActorViewId)
 		{
 			if (IsHeld)
 			{
@@ -131,7 +131,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
             m_ulOwnerPlayerId = _ulPlayerId;
 
             // Set owning object view id
-            m_usOwnerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+            m_cOwnerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
 
             // Notify observers
             if (EventPickedUp != null)
@@ -154,7 +154,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
             m_ulOwnerPlayerId = 0;
 
             // Set owning object view id
-            m_usOwnerActorViewId.Set(0);
+            m_cOwnerActorViewId.Set(null);
 
             // Notify observers
             if (EventDropped != null)
@@ -189,7 +189,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public EType m_eType;
 
 
-	CNetworkVar<ushort> m_usOwnerActorViewId = null;
+	CNetworkVar<CNetworkViewId> m_cOwnerActorViewId = null;
 
 	ulong m_ulOwnerPlayerId = 0;
 

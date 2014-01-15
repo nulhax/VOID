@@ -113,8 +113,6 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 			if (m_cContainedPlayers.Count == 0)
 			{
 				m_bBlocked.Set(false);
-				
-				Debug.LogError("Spawner Now Free");
 			}
 		}
 	}

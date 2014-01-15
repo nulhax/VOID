@@ -42,7 +42,7 @@ public class CCellSlot : CNetworkMonoBehaviour
 		m_bIsFunctionalityAllowed = new CNetworkVar<bool>(OnNetworkVarSync, true);
 		m_bIsCellBroken = new CNetworkVar<bool>(OnNetworkVarSync, false);
 		m_bIsCellMatchingSlot = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_usCurrentCell = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
+		m_cCurrentCell = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 // Member Methods
@@ -81,11 +81,11 @@ public class CCellSlot : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-		if(_cVarInstance == m_usCurrentCell)
+		if(_cVarInstance == m_cCurrentCell)
 		{
-			if(m_usCurrentCell.Get() != 0)
+			if(m_cCurrentCell.Get() != null)
 			{
-				GameObject InsertedCell = CNetwork.Factory.FindObject(m_usCurrentCell.Get());
+				GameObject InsertedCell = CNetwork.Factory.FindObject(m_cCurrentCell.Get());
 				InsertedCell.transform.position = transform.position + transform.up * 1.0f;
 				InsertedCell.transform.rotation = transform.rotation;
 				
@@ -101,15 +101,15 @@ public class CCellSlot : CNetworkMonoBehaviour
 		}
 	}
 	
-	public ushort Insert (ushort _CellNetworkID)
+	public CNetworkViewId Insert (CNetworkViewId _CellNetworkID)
 	{
-		ushort usCurrentCell = 0;
+		CNetworkViewId cCurrentCell = null;
 		if(CNetwork.IsServer)
 		{
-			usCurrentCell = m_usCurrentCell.Get();
-			m_usCurrentCell.Set(_CellNetworkID);
+			cCurrentCell = m_cCurrentCell.Get();
+			m_cCurrentCell.Set(_CellNetworkID);
 		}
-		return(usCurrentCell);
+		return(cCurrentCell);
 	}
 	
 	private void CellInserted()
@@ -122,9 +122,9 @@ public class CCellSlot : CNetworkMonoBehaviour
 		m_bIsFunctionalityAllowed.Set (false);
 	}
 	
-	public ushort GetCell()
+	public CNetworkViewId GetCell()
 	{
-		return(m_usCurrentCell.Get());
+		return(m_cCurrentCell.Get());
 	}
 	
 // Member Fields
@@ -132,5 +132,5 @@ public class CCellSlot : CNetworkMonoBehaviour
 	CNetworkVar<bool> m_bIsFunctionalityAllowed;
 	CNetworkVar<bool> m_bIsCellBroken;
 	CNetworkVar<bool> m_bIsCellMatchingSlot;
-	CNetworkVar<ushort> m_usCurrentCell;
+	CNetworkVar<CNetworkViewId> m_cCurrentCell;
 };
