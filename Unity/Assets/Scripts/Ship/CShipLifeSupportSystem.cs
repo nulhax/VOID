@@ -31,25 +31,26 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private List<GameObject> m_LifeSupportSystems = new List<GameObject>();
-	private CNetworkVar<float> m_fShipAtmosphericQuality = null;
+
+	private CNetworkVar<float> m_ShipAtmosphericQuality = null;
 
 	// Member Properties
 	public float ShipAtmosphericQuality
 	{
-		get { return(m_fShipAtmosphericQuality.Get()); }
+		get { return(m_ShipAtmosphericQuality.Get()); }
 		
 		[AServerOnly]
-		set { m_fShipAtmosphericQuality.Set(value); }
+		set { m_ShipAtmosphericQuality.Set(value); }
 	}
 
 	
 	// Member Methods
 	public override void InstanceNetworkVars()
 	{
-		m_fShipAtmosphericQuality = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_ShipAtmosphericQuality = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 	
-	public void OnNetworkVarSync(INetworkVar _cVarInstance)
+	public void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
 		
 	}
@@ -100,9 +101,14 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		{
 			// Get the combined output of all atmosphere distributors
 			float combinedOutput = 0.0f;
-			foreach(GameObject dist in m_LifeSupportSystems)
+			foreach(GameObject ls in m_LifeSupportSystems)
 			{
-				combinedOutput += dist.GetComponent<CLifeSupportSystem>().AtmosphereGenerationRate;
+				CLifeSupportSystem lss = ls.GetComponent<CLifeSupportSystem>();
+
+				if(lss.IsAtmosphereGenerationActive)
+				{
+					combinedOutput += lss.AtmosphereGenerationRate;
+				}
 			}
 			
 			// Calculate the output for each facility evenly
@@ -146,34 +152,41 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 	public void OnGUI()
 	{
 		string shipLifeSupportOutput = "ShipLifeSupportInfo\n";
-		shipLifeSupportOutput += string.Format("\tAtmosQual: {0}%\n", 
+		shipLifeSupportOutput += string.Format("\tQuality: [{0}%]\n", 
 		                                       Math.Round(ShipAtmosphericQuality * 100.0f, 1)); 
 
 		string lifeSupportOutput = "LifeSupportInfo\n";
 		foreach(GameObject ls in m_LifeSupportSystems)
 		{
-			lifeSupportOutput += string.Format("\tFacility [{0}] Type [{1}] AtmosDist: {2} AtmosSupp: {3}\n", 
-			                                  ls.GetComponent<CFacilityInterface>().FacilityId, 
-			                                  ls.GetComponent<CFacilityInterface>().FacilityType,
-			                                  Math.Round(ls.GetComponent<CLifeSupportSystem>().AtmosphereGenerationRate, 2),
-			                                  Math.Round(ls.GetComponent<CLifeSupportSystem>().AtmosphereCapacitySupport, 2));	                                  
+			CFacilityInterface fi = ls.GetComponent<CFacilityInterface>();
+			CLifeSupportSystem lss = ls.GetComponent<CLifeSupportSystem>();
+
+			lifeSupportOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tIsGenActive: [{2}] GenRate: [{3}] SupportCap: [{4}]\n", 
+			                                   fi.FacilityId, 
+			                                   fi.FacilityType,
+			                                   lss.IsAtmosphereGenerationActive,
+			                                   Math.Round(lss.AtmosphereGenerationRate, 2),
+			                                   Math.Round(lss.AtmosphereCapacitySupport, 2));	                                  
 		}
 
 		string facilitiesOutput = "FacilityAtmosphereInfo\n";
 		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
 		{
-			facilitiesOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tAtmosTotVol: {3} AtmosQuant: {2} AtmosRefil: {4} AtmosCons: {5}\n", 
-			                                  facility.GetComponent<CFacilityInterface>().FacilityId, 
-			                                  facility.GetComponent<CFacilityInterface>().FacilityType,
-			                                  Math.Round(facility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantity, 2),
-			                                  Math.Round(facility.GetComponent<CFacilityAtmosphere>().AtmosphereVolume, 2),
-			                                  Math.Round(facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate, 2),
-			                                  Math.Round(facility.GetComponent<CFacilityAtmosphere>().AtmosphereConsumeRate, 2));
+			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
+			CFacilityAtmosphere fa = facility.GetComponent<CFacilityAtmosphere>();
+
+			facilitiesOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tTotalVol: [{2}] Quantity: [{3}] RefilRate: [{4}] ConsRate: [{5}]\n", 
+			                                  fi.FacilityId, 
+			                                  fi.FacilityType,
+			                                  Math.Round(fa.AtmosphereVolume, 2),
+			                                  Math.Round(fa.AtmosphereQuantity, 2),
+			                                  Math.Round(fa.AtmosphereRefillRate, 2),
+			                                  Math.Round(fa.AtmosphereConsumeRate, 2));
 
 		}
 		
-		float boxWidth = 600;
-		float boxHeight = 250;
+		float boxWidth = 500;
+		float boxHeight = 600;
 		GUI.Label(new Rect(Screen.width / 2, 0.0f, boxWidth, boxHeight),
 			          "Atmosphere Status'\n" + shipLifeSupportOutput + lifeSupportOutput + facilitiesOutput);
 	}

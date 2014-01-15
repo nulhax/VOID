@@ -31,9 +31,11 @@ public class CBridgePowerSystem: MonoBehaviour
 	
 	// Member Fields
 	public float m_PowerGenerationRate = 15.0f;
+	public float m_PowerBatteryCapacity = 1000.0f;
 	public GameObject m_PowerGeneratorStation = null;
 	
 	private float m_PrevPowerGenerationRate = 0.0f;
+	private float m_PrevPowerBatteryCapacity = 0.0f;
 	
 	// Member Properties
 	
@@ -42,6 +44,14 @@ public class CBridgePowerSystem: MonoBehaviour
 	public void Start()
 	{
 		DebugAddPowerGeneratorLabel();
+
+		CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+
+		// Debug: Set the charge to half its total capacity
+		powerGenSystem.BatteryCapacity = m_PowerBatteryCapacity;
+		powerGenSystem.BatteryCharge = powerGenSystem.BatteryCapacity / 2;
+
+		m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
 	}
 	
 	public void Update()
@@ -51,11 +61,20 @@ public class CBridgePowerSystem: MonoBehaviour
 
 		if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
 		{
-			CPowerGeneratorSystem poweerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
 			
-			poweerGenSystem.PowerGenerationRate = m_PowerGenerationRate;
-			
+			powerGenSystem.PowerGenerationRate = m_PowerGenerationRate;
+		
 			m_PrevPowerGenerationRate = m_PowerGenerationRate;
+		}
+
+		if(m_PrevPowerBatteryCapacity != m_PowerBatteryCapacity)
+		{
+			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+
+			powerGenSystem.BatteryCapacity = m_PowerBatteryCapacity;
+
+			m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
 		}
 	}
 	

@@ -76,7 +76,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 	public bool RequiresAtmosphereRefill
 	{
-		get { return(AtmosphereConsumeRate != 0.0f && AtmospherePercentage != 1.0f); } 
+		get { return(AtmosphereConsumeRate != 0.0f || AtmospherePercentage != 1.0f); } 
 	}
 
 
@@ -89,7 +89,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		m_fAtmosphereConsumptionRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
-	public void OnNetworkVarSync(INetworkVar _cVarInstance)
+	public void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
 
 	}

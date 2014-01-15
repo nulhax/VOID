@@ -29,9 +29,9 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 	
 
 	// Member Fields
-	private CNetworkVar<float> m_AtmosphereGenerationRate;
-	private CNetworkVar<float> m_AtmosphereCapacitySupport;
-	private CNetworkVar<bool> m_AtmosphereGenerationActive;
+	private CNetworkVar<float> m_AtmosphereGenerationRate = null;
+	private CNetworkVar<float> m_AtmosphereCapacitySupport = null;
+	private CNetworkVar<bool> m_AtmosphereGenerationActive = null;
 
 
 	// Member Properties
@@ -51,12 +51,9 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 		set { m_AtmosphereCapacitySupport.Set(value); }
 	}
 	
-	public bool AtmosphereGenerationActive
+	public bool IsAtmosphereGenerationActive
 	{
 		get { return(m_AtmosphereGenerationActive.Get()); }
-		
-		[AServerOnly]
-		set { m_AtmosphereGenerationActive.Set(value); }
 	}
 
 	// Member Methods
@@ -67,9 +64,9 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 		m_AtmosphereCapacitySupport = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
-	void OnNetworkVarSync(INetworkVar _cVarInstance)
+	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		if(_cVarInstance == m_AtmosphereGenerationActive)
+		if(_VarInstance == m_AtmosphereGenerationActive)
 		{
 			if(m_AtmosphereGenerationActive.Get() == true)
 			{	

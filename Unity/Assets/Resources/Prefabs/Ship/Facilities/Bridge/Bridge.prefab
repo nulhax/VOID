@@ -1426,6 +1426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3fa40c4138cd2e48b74bb897f2e3d15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_CurrentPowerConsumption: 10
 --- !u!114 &11400040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1584,6 +1585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PowerGenerationRate: 15
+  m_PowerBatteryCapacity: 200
   m_PowerGeneratorStation: {fileID: 100046}
 --- !u!136 &13600000
 CapsuleCollider:
