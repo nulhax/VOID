@@ -41,7 +41,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public bool mAlternator;   // This is used for culling purposes.
         public bool mAwaitingCull = false;  // Objects get culled over time.
 
-        public CRegisteredGubbin(GameObject entity, float boundingRadius, CNetworkViewId networkViewID, bool alternatorValue) {mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
+        public CRegisteredGubbin(GameObject entity, float boundingRadius, CNetworkViewId networkViewID, bool alternatorValue) { mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
     public struct SGubbinMeta
@@ -132,22 +132,22 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<uint> mNumCellSubsets;
     public uint numCellSubsets { get { return muiNumCellSubsets; } }
 
-    public const float mfTimeBetweenQueueCellsToLoadOrUnload =  0.15f;
-    private float mfTimeUntilNextQueueCellToLoadOrUnload =      0.0f;
-    public const float mfTimeBetweenCellLoads =                 0.1f;
-    private float mfTimeUntilNextCellLoad =                     0.0f;
-    public const float mfTimeBetweenCellUnloads =               mfTimeBetweenCellLoads;
-    private float mfTimeUntilNextCellUnload =                   mfTimeBetweenCellLoads / 2;
+    public const float mfTimeBetweenQueueCellsToLoadOrUnload = 0.15f;
+    private float mfTimeUntilNextQueueCellToLoadOrUnload = 0.0f;
+    public const float mfTimeBetweenCellLoads = 0.1f;
+    private float mfTimeUntilNextCellLoad = 0.0f;
+    public const float mfTimeBetweenCellUnloads = mfTimeBetweenCellLoads;
+    private float mfTimeUntilNextCellUnload = mfTimeBetweenCellLoads / 2;
 
-    public const float mfTimeBetweenQueueGubbinsToUnload =      mfTimeBetweenQueueCellsToLoadOrUnload;
-    private float mfTimeUntilNextQueueGubbinToUnload =          mfTimeBetweenQueueCellsToLoadOrUnload / 2;
-    public const float mfTimeBetweenGubbinLoads =               0.01f;
-    private float mfTimeUntilNextGubbinLoad =                   0.0f;
-    public const float mfTimeBetweenGubbinUnloads =             mfTimeBetweenGubbinLoads;
-    private float mfTimeUntilNextGubbinUnload =                 mfTimeBetweenGubbinLoads / 2;
+    public const float mfTimeBetweenQueueGubbinsToUnload = mfTimeBetweenQueueCellsToLoadOrUnload;
+    private float mfTimeUntilNextQueueGubbinToUnload = mfTimeBetweenQueueCellsToLoadOrUnload / 2;
+    public const float mfTimeBetweenGubbinLoads = 0.01f;
+    private float mfTimeUntilNextGubbinLoad = 0.0f;
+    public const float mfTimeBetweenGubbinUnloads = mfTimeBetweenGubbinLoads;
+    private float mfTimeUntilNextGubbinUnload = mfTimeBetweenGubbinLoads / 2;
 
-    public const float mfTimeBetweenShiftTests =                0.5f;
-    private float mfTimeUntilNextShiftTest =                    0.0f;
+    public const float mfTimeBetweenShiftTests = 0.5f;
+    private float mfTimeUntilNextShiftTest = 0.0f;
 
     private uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
     public uint numExtraNeighbourCells { get { return mNumExtraNeighbourCells; } }
@@ -156,7 +156,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     private bool mbValidGubbinValue = false;    // Used for culling gubbins that are too far away from cells.
 
     public float cellDiameter { get { return mfGalaxySize / numCellsInRow; } }
-    public float cellRadius { get { return mfGalaxySize / (numCellsInRow*2u); } }
+    public float cellRadius { get { return mfGalaxySize / (numCellsInRow * 2u); } }
     public ulong numCells { get { /*return (uint)Mathf.Pow(8, muiNumCellSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ul *= 8u; return ul; } }
     public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
 
@@ -223,7 +223,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             mCellsToUnload = new System.Collections.Generic.List<SCellPos>();
 
             // Seed galaxy noises through the network variable to sync the seed across all clients.
-            for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
                 mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
             gameObject.AddComponent<DungeonMaster>();
@@ -231,7 +231,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             new DifficultyModifier_DifficultyChoice();
             gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
             new DifficultyModifier_ShipDamage();
-            gameObject.AddComponent < DifficultyModifier_TotalDistanceTravelled>();
+            gameObject.AddComponent<DifficultyModifier_TotalDistanceTravelled>();
             new DifficultyModifier_TotalShipWorth();
         }
     }
@@ -324,17 +324,17 @@ public class CGalaxy : CNetworkMonoBehaviour
                             // This cell is not within proximity of any observers.
                             switch (absoluteCell.Value.mState)  // Determine how to unload the cell based on its state.
                             {
-                            case ECellState.Loading:    // This cell, which is not within proximity to any observers, is waiting to load.
-                                mCellsToLoad.Remove(absoluteCell.Key);    // Deregister this cell for loading, as it is no longer necessary to load.
-                                mCells.Remove(absoluteCell.Key); // Remove this cell from the dictionary.
-                                restart = true; // Removing an element from a container while it is being iterated breaks the iterator, so the iteration must restart.
-                                //Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
-                                break;
+                                case ECellState.Loading:    // This cell, which is not within proximity to any observers, is waiting to load.
+                                    mCellsToLoad.Remove(absoluteCell.Key);    // Deregister this cell for loading, as it is no longer necessary to load.
+                                    mCells.Remove(absoluteCell.Key); // Remove this cell from the dictionary.
+                                    restart = true; // Removing an element from a container while it is being iterated breaks the iterator, so the iteration must restart.
+                                    //Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
+                                    break;
 
-                            case ECellState.Loaded:
-                                mCellsToUnload.Add(absoluteCell.Key);   // Register this cell for unloading.
-                                absoluteCell.Value.mState = ECellState.Unloading;   // Mark the cell as waiting to unload.
-                                break;
+                                case ECellState.Loaded:
+                                    mCellsToUnload.Add(absoluteCell.Key);   // Register this cell for unloading.
+                                    absoluteCell.Value.mState = ECellState.Unloading;   // Mark the cell as waiting to unload.
+                                    break;
                             }
 
                             if (restart)    // If a restart is required...
@@ -522,8 +522,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public void SyncNoiseSeed(INetworkVar sender)
     {
-        for(uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            if(mNoiseSeeds[ui] == sender)
+        for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
+            if (mNoiseSeeds[ui] == sender)
                 mNoises[ui].Seed(mNoiseSeeds[ui].Get());
     }
 
@@ -591,8 +591,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         mCells[absoluteCell] = new CCellContent(mbValidCellValue, ECellState.Loaded); // Create cell with updated alternator to indicate cell is within proximity of observer.
         Profiler.EndSample();
 
-        SCellPos relativeCell = absoluteCell - mCentreCell;
-
         // Load the content for the cell.
         //if (false)   // TODO: If the content for the cell is on file...
         //{
@@ -621,11 +619,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public void DeregisterGubbin(GalaxyGubbin gubbinToDeregister)
     {
-        for(int ui = 0; ui < mGubbins.Count; ++ui)
+        for (int ui = 0; ui < mGubbins.Count; ++ui)
         {
             if (mGubbins[ui].mEntity == gubbinToDeregister.gameObject)
             {
-                if(mGubbins[ui].mAwaitingCull)
+                if (mGubbins[ui].mAwaitingCull)
                     mGubbinsToUnload.Remove(mGubbins[ui]);
 
                 mGubbins.RemoveAt(ui);
@@ -664,7 +662,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
         // Position.
         gubbinObject.transform.position = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
-        if(!networkedEntity || !networkedEntity.Position)   // If the object does not have a networked entity script, or if the networked entity script does not update position...
+        if (!networkedEntity || !networkedEntity.Position)   // If the object does not have a networked entity script, or if the networked entity script does not update position...
             networkView.SyncTransformPosition();    // Sync the position through the network view.
 
         // Rotation.

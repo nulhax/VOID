@@ -37,22 +37,22 @@ public class NeuralNetwork
                     synapse.Fire(propagateAlternator);
     }
 
-    public void Backpropagate(float[] expectedOutputs, float learningRate)
-    {
-        int thisOutputID = expectedOutputs.Length - 1;
-        System.Collections.Generic.LinkedListNode<Neuron> neuronIter = mNeurons.Last;
-        do
-        {
-            Neuron neuron = neuronIter.Value;
+    //public void Backpropagate(float[] expectedOutputs, float learningRate)
+    //{
+    //    int thisOutputID = expectedOutputs.Length - 1;
+    //    System.Collections.Generic.LinkedListNode<Neuron> neuronIter = mNeurons.Last;
+    //    do
+    //    {
+    //        Neuron neuron = neuronIter.Value;
 
-            float error = neuron.input - expectedOutputs[thisOutputID]; // "Output was +0.5 of the expected output."
-            float correction = error * -learningRate;   // "Correct 
+    //        float error = neuron.input - expectedOutputs[thisOutputID]; // "Output was +0.5 of the expected output."
+    //        float correction = error * -learningRate;   // "Correct 
 
 
 
-            neuronIter = neuronIter.Previous;
-        } while(--thisOutputID >= 0 && neuronIter != null);
-    }
+    //        neuronIter = neuronIter.Previous;
+    //    } while(--thisOutputID >= 0 && neuronIter != null);
+    //}
 
     //void Backpropagate_Recursive(float correction
 }
