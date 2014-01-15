@@ -44,7 +44,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
     {
-		m_cTurretViewId = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
+		m_cTurretViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 
 	
@@ -53,7 +53,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 		if (_cSyncedVar == m_cTurretViewId)
 		{
 			// Check is connected to turret
-			if (m_cTurretViewId.Get() != 0)
+			if (m_cTurretViewId.Get() != null)
 			{
 				// Check player is in cockpit
 				CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
@@ -98,13 +98,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
-
-		if (cCockpit.IsMounted &&
-			cCockpit.MountedPlayerId == CGame.PlayerActorViewId)
-		{
-			//if (Input.GetKeyDown(KeyCode.Space))
-		}
+		// Empty
 	}
 
 
@@ -133,7 +127,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 		if (CNetwork.IsServer)
 		{
 			ActiveTurretObject.GetComponent<CTurretController>().Unmount();
-			m_cTurretViewId.Set(0);
+			m_cTurretViewId.Set(null);
 		}
 	}
 
@@ -141,7 +135,7 @@ public class CTurretCockpitController : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkVar<ushort> m_cTurretViewId = null;
+	CNetworkVar<CNetworkViewId> m_cTurretViewId = null;
 
 	
 	float m_fFireTimer		= 0.0f;

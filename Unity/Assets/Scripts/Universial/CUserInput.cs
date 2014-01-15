@@ -39,8 +39,13 @@ public class CUserInput : MonoBehaviour
 		MoveBackwards,
 		MoveLeft,
 		MoveRight,
+		FlyUp,
+		FlyDown,
+		FlyRollLeft,
+		FlyRollRight,
 		Jump,
 		Sprint,
+		Crouch,
         ToolSlot1,
         ToolSlot2,
         ToolSlot3,
@@ -70,6 +75,11 @@ public class CUserInput : MonoBehaviour
 	public event NotifyKeyChange EventMoveRight;
 	public event NotifyKeyChange EventMoveJump;
 	public event NotifyKeyChange EventMoveSprint;
+	public event NotifyKeyChange EventCrouch;
+	public event NotifyKeyChange EventFlyUp;
+	public event NotifyKeyChange EventFlyDown;
+	public event NotifyKeyChange EventFlyRollLeft;
+	public event NotifyKeyChange EventFlyRollRight;
 
 
     public delegate void NotifyChangeToolSlot(byte _bSlot, bool _bDown);
@@ -125,6 +135,11 @@ public class CUserInput : MonoBehaviour
 			case EInput.MoveRight: eKeyCode = s_eMoveRightKey; break;
 			case EInput.Jump: eKeyCode = s_eJumpKey; break;
 			case EInput.Sprint: eKeyCode = s_eSprintKey; break;
+			case EInput.Crouch: eKeyCode = m_eCrouchKey; break;
+			case EInput.FlyUp: eKeyCode = m_eFlyUp; break;
+			case EInput.FlyDown: eKeyCode = m_eFlyDown; break;
+			case EInput.FlyRollLeft: eKeyCode = m_eFlyRollLeft; break;
+			case EInput.FlyRollRight: eKeyCode = m_eFlyRollRight; break;
             case EInput.ToolSlot1: eKeyCode = s_eToolSlot1; break;
             case EInput.ToolSlot2: eKeyCode = s_eToolSlot2; break;
             case EInput.ToolSlot3: eKeyCode = s_eToolSlot3; break;
@@ -158,6 +173,7 @@ public class CUserInput : MonoBehaviour
         UpdateUse();
         UpdateMovement();
         UpdateMovementSpecial();
+		UpdateAirMovement();
         UpdateTools();
     }
 
@@ -289,6 +305,60 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventMoveSprint != null) EventMoveSprint(false);
 		}
+
+		// Crouch
+		if (Input.GetKeyDown(m_eCrouchKey))
+		{
+			if (EventCrouch != null) EventCrouch(true);
+		}
+		else if (Input.GetKeyUp(m_eCrouchKey))
+		{
+			if (EventCrouch != null) EventCrouch(false);
+		}
+	}
+	
+	[AClientOnly]
+	void UpdateAirMovement()
+	{
+		// Fly up
+		if (Input.GetKeyDown(m_eFlyUp))
+		{
+			if (EventFlyUp != null) EventFlyUp(true);
+		}
+		else if (Input.GetKeyUp(m_eFlyUp))
+		{
+			if (EventFlyUp != null) EventFlyUp(false);
+		}
+
+		// Fly down
+		if (Input.GetKeyDown(m_eFlyDown))
+		{
+			if (EventFlyDown != null) EventFlyDown(true);
+		}
+		else if (Input.GetKeyUp(m_eFlyDown))
+		{
+			if (EventFlyDown != null) EventFlyDown(false);
+		}
+
+		// Fly roll left
+		if (Input.GetKeyDown(m_eFlyRollLeft))
+		{
+			if (EventFlyRollLeft != null) EventFlyRollLeft(true);
+		}
+		else if (Input.GetKeyUp(m_eFlyRollLeft))
+		{
+			if (EventFlyRollLeft != null) EventFlyRollLeft(false);
+		}
+		
+		// Fly roll right
+		if (Input.GetKeyDown(m_eFlyRollRight))
+		{
+			if (EventFlyRollRight != null) EventFlyRollRight(true);
+		}
+		else if (Input.GetKeyUp(m_eFlyRollRight))
+		{
+			if (EventFlyRollRight != null) EventFlyRollRight(false);
+		}
 	}
 
 
@@ -382,9 +452,17 @@ public class CUserInput : MonoBehaviour
 	static KeyCode s_eMoveRightKey		= KeyCode.D;
 
 
+	// Air Movement
+	static KeyCode m_eFlyUp				= KeyCode.Space;
+	static KeyCode m_eFlyDown			= KeyCode.LeftControl;
+	static KeyCode m_eFlyRollLeft		= KeyCode.Z;
+	static KeyCode m_eFlyRollRight		= KeyCode.X;
+
+
 	// Movement Special
 	static KeyCode s_eJumpKey			= KeyCode.Space;
 	static KeyCode s_eSprintKey			= KeyCode.LeftShift;
+	static KeyCode m_eCrouchKey			= KeyCode.LeftControl;
 
 
 	// Tools

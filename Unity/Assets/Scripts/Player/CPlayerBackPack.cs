@@ -44,7 +44,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	{
 		get
 		{
-			if (CarryingModuleViewId != 0)
+			if (CarryingModuleViewId != null)
 			{
 				return (CNetwork.Factory.FindObject(CarryingModuleViewId));
 			}
@@ -54,15 +54,15 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	public ushort CarryingModuleViewId
+	public CNetworkViewId CarryingModuleViewId
 	{
-		get { return (m_usCarryingModuleViewId.Get()); }
+		get { return (m_cCarryingModuleViewId.Get()); }
 	}
 
 
 	public bool IsCarryingModule
 	{
-		get { return (CarryingModuleViewId != 0); }
+		get { return (CarryingModuleViewId != null); }
 	}
 
 
@@ -71,17 +71,17 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_usCarryingModuleViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
+		m_cCarryingModuleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 	}
 
 
     [AServerOnly]
-    public void PickupModule(ulong _ulPlayerId, ushort _usModuleViewId)
+    public void PickupModule(ulong _ulPlayerId, CNetworkViewId _cModuleViewId)
     {
         if (!IsCarryingModule)
         {
-            m_usCarryingModuleViewId.Set(_usModuleViewId);
-            CNetwork.Factory.FindObject(_usModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
+            m_cCarryingModuleViewId.Set(_cModuleViewId);
+            CNetwork.Factory.FindObject(_cModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
         }
     }
 
@@ -92,23 +92,23 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
         if (IsCarryingModule)
         {
             CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
-            m_usCarryingModuleViewId.Set(0);
+            m_cCarryingModuleViewId.Set(null);
         }
     }
 
 
     [AServerOnly]
-    public void InsertCell(ulong _ulPlayerId, ushort _usCellSlotViewId)
+    public void InsertCell(ulong _ulPlayerId, CNetworkViewId _cCellSlotViewId)
     {
         if (IsCarryingModule)
         {
-            ushort CellToInsert = m_usCarryingModuleViewId.Get();
+            CNetworkViewId CellToInsert = m_cCarryingModuleViewId.Get();
 
             DropModule();
 
-            ushort replacementCell = CNetwork.Factory.FindObject(_usCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
+            CNetworkViewId replacementCell = CNetwork.Factory.FindObject(_cCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
 
-            if (replacementCell != 0)
+            if (replacementCell != null)
             {
                 PickupModule(_ulPlayerId, replacementCell);
             }
@@ -189,8 +189,8 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			switch (eAction)
 			{
 				case ENetworkAction.PickupModule:
-					ushort usModuleViewId = _cStream.ReadUShort();
-					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, usModuleViewId);
+					CNetworkViewId cModuleViewId = _cStream.ReadNetworkViewId();
+					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, cModuleViewId);
 					
 					break;
 
@@ -199,8 +199,8 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 					break;
 				
 				case ENetworkAction.InsertCell:
-					ushort usCellSlotViewId = _cStream.ReadUShort();
-					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, usCellSlotViewId);
+					CNetworkViewId cCellSlotViewId = _cStream.ReadNetworkViewId();
+					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, cCellSlotViewId);
 					break;
 			}
 		}
@@ -235,9 +235,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
     {
-        if (_cSyncedNetworkVar == m_usCarryingModuleViewId)
+        if (_cSyncedNetworkVar == m_cCarryingModuleViewId)
         {
-            if (m_usCarryingModuleViewId.Get() == 0)
+            if (m_cCarryingModuleViewId.Get() == null)
             {
 
             }
@@ -251,7 +251,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
         {
             string sModuleText = "[Module] ";
 
-            if (m_usCarryingModuleViewId.Get() != 0)
+            if (m_cCarryingModuleViewId.Get() != null)
             {
                 sModuleText += ModuleObject.name;
             }
@@ -269,7 +269,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkVar<ushort> m_usCarryingModuleViewId = null;
+	CNetworkVar<CNetworkViewId> m_cCarryingModuleViewId = null;
 
 
 	static KeyCode s_eDropKey = KeyCode.H;

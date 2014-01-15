@@ -53,7 +53,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	{
 		get 
 		{
-			if (ActiveToolViewId != 0)
+			if (ActiveToolViewId != null)
 			{
 				return (CNetwork.Factory.FindObject(ActiveToolViewId));
 			}
@@ -69,9 +69,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	public ushort ActiveToolViewId
+	public CNetworkViewId ActiveToolViewId
 	{
-		get { return (m_ausToolsViewId[ActiveSlotId].Get()); }
+		get { return (m_acToolsViewId[ActiveSlotId].Get()); }
 	}
 
 
@@ -86,11 +86,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars()
     {
-		m_ausToolsViewId = new CNetworkVar<ushort>[k_uiMaxNumTools];
+		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_uiMaxNumTools];
 
 		for (uint i = 0; i < k_uiMaxNumTools; ++i)
 		{
-			m_ausToolsViewId[i] = new CNetworkVar<ushort>(OnNetworkVarSync);
+			m_acToolsViewId[i] = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
 		m_bToolCapacity = new CNetworkVar<byte>(OnNetworkVarSync, 2);
@@ -102,7 +102,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void SetToolPrimaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetPrimaryActive(_bActive, _cInteractableObject);
 
@@ -115,7 +115,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void SetToolSecondaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetSecondaryActive(_bActive, _cInteractableObject);
 
@@ -133,7 +133,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 			// Find free slot
 			for (uint i = 0; i < ToolCapacity; ++i)
 			{
-				if (GetToolViewId(i) == 0)
+				if (GetToolViewId(i) == null)
 				{
 					// Retrieve tool interface script
 					CToolInterface cToolInterface = _cInteractableObject.GetComponent<CToolInterface>();
@@ -146,7 +146,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 					}
 					else
 					{
-						m_ausToolsViewId[i].Set(cToolNetworkView.ViewId);
+						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);
 						cToolInterface.PickUp(_ulPlayerId);
 						ChangeTool((byte)i);
 						Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolObjectName({1}) SlotId({2})", _ulPlayerId, _cInteractableObject.name, i));
@@ -163,7 +163,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void UseTool(byte _bSlotId, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Use(_cInteractableObject);
 		}
@@ -176,7 +176,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		// Check tool exists
 		if (_bSlotId >= 0 &&
             _bSlotId < k_uiMaxNumTools &&
-            GetToolViewId(_bSlotId) != 0)
+            GetToolViewId(_bSlotId) != null)
 		{
 			m_bActiveToolId.Set(_bSlotId);
 
@@ -189,7 +189,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void ReloadTool(byte _bSlotId)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Reload();
 			Debug.Log("Reloading active tool");
@@ -201,15 +201,15 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	public void DropTool(byte _bSlotId)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Drop();
-            m_ausToolsViewId[_bSlotId].Set(0);
+            m_acToolsViewId[_bSlotId].Set(null);
 
             // Change tool to next available tool
             for (int i = (int)k_uiMaxNumTools - 1; i >= 0; --i)
             {
-                if (m_ausToolsViewId[i].Get() != 0)
+                if (m_acToolsViewId[i].Get() != null)
                 {
                     ChangeTool((byte)i);
                     break;
@@ -227,9 +227,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	public ushort GetToolViewId(uint _bSlotId)
+	public CNetworkViewId GetToolViewId(uint _bSlotId)
 	{
-		return (m_ausToolsViewId[_bSlotId].Get());
+		return (m_acToolsViewId[_bSlotId].Get());
 	}
 
 
@@ -265,11 +265,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 case ENetworkAction.PickupTool:
                 case ENetworkAction.UseTool:
                     {
-                        ushort usInteractableObjectViewId = _cStream.ReadUShort();
+                        CNetworkViewId cInteractableObjectViewId = _cStream.ReadNetworkViewId();
 
-                        if (usInteractableObjectViewId != 0)
+                        if (cInteractableObjectViewId != null)
                         {
-                            cInteractableObject = CNetwork.Factory.FindObject(usInteractableObjectViewId);
+                            cInteractableObject = CNetwork.Factory.FindObject(cInteractableObjectViewId);
                         }
 
                         break;
@@ -372,7 +372,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			if (_cInteractableObject == null)
 			{
-				s_cSerializeStream.Write((ushort)0);
+				s_cSerializeStream.Write((CNetworkViewId)null);
 			}
 			else
 			{
@@ -394,9 +394,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     {
         for (uint i = 0; i < k_uiMaxNumTools; ++i)
         {
-            if (m_ausToolsViewId[i] == _cVarInstance)
+            if (m_acToolsViewId[i] == _cVarInstance)
             {
-                ushort usNewValue = m_ausToolsViewId[i].Get();
+                CNetworkViewId cNewValue = m_acToolsViewId[i].Get();
             }
         }
     }
@@ -408,7 +408,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         {
             for (uint i = 0; i < k_uiMaxNumTools; ++i)
             {
-                if (m_ausToolsViewId[i].Get() != 0)
+                if (m_acToolsViewId[i].Get() != null)
                 {
                     GetTool(i).GetComponent<CToolInterface>().Drop();
                 }
@@ -428,7 +428,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 sToolText += "[Tool Slot "+ i +"] ";
 
 
-                if (GetToolViewId(i) != 0)
+                if (GetToolViewId(i) != null)
                 {
                     sToolText += GetTool(i).name;
 
@@ -481,7 +481,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     // Member Fields
 
 
-	CNetworkVar<ushort>[] m_ausToolsViewId = null;
+	CNetworkVar<CNetworkViewId>[] m_acToolsViewId = null;
 	CNetworkVar<byte> m_bToolCapacity = null;
 	CNetworkVar<byte> m_bActiveToolId = null;
 

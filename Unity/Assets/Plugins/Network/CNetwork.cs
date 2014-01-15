@@ -39,28 +39,25 @@ public class CNetwork : MonoBehaviour
 	{
 		// Ensure there is only one of this instance type
 		Logger.WriteErrorOn(s_cInstance != null, "There can only be one CNetwork instance. Two now exist");
-
+		
 		// Store instance
 		s_cInstance = this;
-
+		
 		gameObject.AddComponent<CNetworkScanner>();
 		gameObject.AddComponent<CNetworkFactory>();
-
+		
 		// Make sure the connection happens before the server
 		gameObject.AddComponent<CNetworkConnection>();
 		gameObject.AddComponent<CNetworkServer>();
-
+		
 		// Network view needs to be added last
 		gameObject.AddComponent<CNetworkView>();
-
-
-		gameObject.GetComponent<CNetworkView>().ViewId = 1;
 	}
 
 
 	public void Start()
 	{
-		
+		//gameObject.GetComponent<CNetworkView>().ViewId = 1;
 	}
 
 

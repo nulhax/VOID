@@ -37,11 +37,11 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         public GameObject mEntity;
         public float mBoundingRadius;   // Bounding sphere.
-        public ushort mNetworkViewID;
+        public CNetworkViewId mNetworkViewID;
         public bool mAlternator;   // This is used for culling purposes.
         public bool mAwaitingCull = false;  // Objects get culled over time.
 
-        public CRegisteredGubbin(GameObject entity, float boundingRadius, ushort networkViewID, bool alternatorValue) {mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
+        public CRegisteredGubbin(GameObject entity, float boundingRadius, CNetworkViewId networkViewID, bool alternatorValue) {mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
     public struct SGubbinMeta

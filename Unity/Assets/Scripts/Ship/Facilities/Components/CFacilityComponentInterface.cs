@@ -108,13 +108,13 @@ public class CFacilityComponentInterface : MonoBehaviour
 
 	void Start()
 	{
-		// Empty
+		transform.parent.GetComponent<CFacilityComponents>().RegisterComponent(this);
 	}
 
 
 	void OnDestroy()
 	{
-		// Empty
+		s_mComponentObjects[FacilityComponentType].Remove(gameObject);
 	}
 
 

@@ -167,14 +167,14 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // Player is alive
             if (m_bAlive.Get())
             {
-                transform.GetComponent<CPlayerMotor>().UndisableInput(this);
+                transform.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
                 transform.GetComponent<CPlayerHead>().UndisableInput(this);
             }
 
             // Player is dead
             else
             {
-                transform.GetComponent<CPlayerMotor>().DisableInput(this);
+                transform.GetComponent<CPlayerGroundMotor>().DisableInput(this);
                 transform.GetComponent<CPlayerHead>().DisableInput(this);
             }
         }
@@ -239,7 +239,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Fields
 
 
-	const float k_fMaxHealth = 100.0f;
+	const float k_fMaxHealth = 1000.0f;
 
 
 	CNetworkVar<float> m_fHitPoints;

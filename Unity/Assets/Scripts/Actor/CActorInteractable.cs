@@ -27,7 +27,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
 // Member Delegates
 
 
-	public delegate void NotifyInteraction(RaycastHit _RayHit, ushort _usPlayerActorViewId);
+	public delegate void NotifyInteraction(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId);
 
 
 	public event NotifyInteraction EventPrimaryStart;
@@ -56,24 +56,23 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{
-		ushort networkViewId = GetComponent<CNetworkView>().ViewId;
-		ushort usPlayerActorViewId = _PlayerInteractor.GetComponent<CNetworkView>().ViewId;
+		CNetworkViewId cNetworkViewId = GetComponent<CNetworkView>().ViewId;
 
 		switch(_InteractionEvent)
 		{
 		case CPlayerInteractor.EInteractionType.PrimaryStart:
 			if(EventPrimaryStart != null)
-				EventPrimaryStart(_RayHit, usPlayerActorViewId);
+				EventPrimaryStart(_RayHit, cNetworkViewId);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.SecondaryStart:
 			if(EventSecondaryStart != null)
-				EventSecondaryStart(_RayHit, usPlayerActorViewId);
+				EventSecondaryStart(_RayHit, cNetworkViewId);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.Use:
 			if (EventUse != null)
-				EventUse(_RayHit, usPlayerActorViewId);
+				EventUse(_RayHit, cNetworkViewId);
 			break;
 			
 		default:

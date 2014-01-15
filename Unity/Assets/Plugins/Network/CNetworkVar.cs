@@ -67,7 +67,8 @@ public class CNetworkVar<TYPE> : INetworkVar
         }
         else
         {
-			if (!(_NewValue).Equals(m_Value))
+			if ((_NewValue == null && m_Value != null) ||
+			    !(_NewValue).Equals(m_Value))
 			{
 				m_PreviousValue = m_Value;
 				m_Value = _NewValue;
@@ -128,7 +129,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public override Type GetValueType()
     {
-        return (m_Value.GetType());
+		return (typeof(TYPE));
     }
 
 
@@ -140,7 +141,8 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public override bool IsDefault()
 	{
-		return (m_Value.Equals(m_StartValue));
+		return ((m_StartValue == null && m_Value == null) || 
+		        m_Value.Equals(m_StartValue));
 	}
 
 

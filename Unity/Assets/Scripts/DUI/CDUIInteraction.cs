@@ -61,7 +61,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		{
 			// Get the interaction event and network view from the stream
 			EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-			ushort duiConsoleNetworkViewId = _cStream.ReadUShort();
+			CNetworkViewId duiConsoleNetworkViewId = _cStream.ReadNetworkViewId();
 			
 			switch(interactionEvent)
 			{
@@ -108,7 +108,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	}
 	
 	[AClientOnly]
-	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, ushort _usPlayerActorViewId)
+	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
@@ -138,7 +138,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	private void ButtonPressedDown(ushort _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
+	private void ButtonPressedDown(CNetworkViewId _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
 	{
 		CDUI dui = CNetwork.Factory.FindObject(_duiConsoleNetworkId).GetComponent<CDUIConsole>().DUI;
 		

@@ -30,7 +30,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 
 
     public delegate void NotifyEnterShip();
-    public event NotifyEnterShip EnterShip;
+    public event NotifyEnterShip EventEnterShip;
 
 
     public delegate void NotifyLeaveShip();
@@ -52,7 +52,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
     {
         get
         {
-			if (m_cFacilityViewId.Get() == 0)
+			if (m_cFacilityViewId.Get() == null)
 			{
 				return (null);
 			}
@@ -67,14 +67,23 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-        m_cFacilityViewId = new CNetworkVar<ushort>(OnNetworkVarSync, 0);
+		m_cFacilityViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
     [AServerOnly]
     public void SetContainingFacility(GameObject _cFacility)
     {
-        m_cFacilityViewId.Set(_cFacility.GetComponent<CNetworkView>().ViewId);
+		if (_cFacility != null)
+		{
+			m_cFacilityViewId.Set(_cFacility.GetComponent<CNetworkView>().ViewId);
+		}
+		else
+		{
+			m_cFacilityViewId.Set(null);
+		}
+
+		//Debug.LogError("Contain facility:"+ _cFacility);
     }
 
 
@@ -101,19 +110,29 @@ public class CPlayerLocator : CNetworkMonoBehaviour
         if (_cSyncedNetworkVar == m_cFacilityViewId)
         {
             // Not in any facility anymore
-            if (m_cFacilityViewId.Get() == 0)
+            if (m_cFacilityViewId.Get() == null)
             {
+				// Notify leave facility observers
+				if (EventEnterFacility != null) EventLeaveFacility(CNetwork.Factory.FindObject(m_cFacilityViewId.GetPrevious()));
+
                 // Was in a facility before
-                if (m_cFacilityViewId.GetPrevious() != 0)
+                if (m_cFacilityViewId.GetPrevious() != null)
                 {
-                    // Notify leave facility observers
-                    if (EventEnterFacility != null) EventLeaveFacility(CNetwork.Factory.FindObject(m_cFacilityViewId.GetPrevious()));
+					// Notify leave ship observers
+					if (EventLeaveShip != null) EventLeaveShip();
                 }
             }
             else
             {
                 // Notify enter facility observers
                 if (EventEnterFacility != null) EventEnterFacility(CNetwork.Factory.FindObject(m_cFacilityViewId.Get()));
+
+				// Was not in a facility before
+				if (m_cFacilityViewId.GetPrevious() == null)
+				{
+					// Notify enter ship observers
+					if (EventEnterShip != null) EventEnterShip();
+				}
             }
         }
     }
@@ -122,7 +141,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<ushort> m_cFacilityViewId = null;
+    CNetworkVar<CNetworkViewId> m_cFacilityViewId = null;
 
 
 };

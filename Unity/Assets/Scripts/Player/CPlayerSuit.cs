@@ -55,7 +55,10 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 	void Update()
 	{
-		
+		if (CNetwork.IsServer)
+		{
+
+		}
 	}
 
 
