@@ -49,6 +49,10 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+	public delegate void NotifyStatesChange(byte _bPreviousStates, byte _bNewSates);
+	public event NotifyStatesChange EventStatesChange;
+
+
 // Member Properties
 
 
@@ -85,6 +89,18 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	}
 
 
+	public byte States
+	{
+		get { return (m_bStates.Get()); }
+	}
+
+	
+	public byte PreviousStates
+	{
+		get { return (m_bStates.GetPrevious()); }
+	}
+
+
 // Member Methods
 
 
@@ -94,6 +110,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
 		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 2.0f);
+		m_bStates = new CNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
 
 
@@ -160,6 +177,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 					{
 						_cStream.ReadFloat();
 					}
+
+					cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);
 				}
 				break;
 
@@ -280,7 +299,11 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		// Empty
+		if (_cSyncedNetworkVar == m_bStates)
+		{
+			// Notify event observers
+			if (EventStatesChange != null) EventStatesChange(PreviousStates, States);
+		}
 	}
 
 
@@ -294,6 +317,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fMovementSpeed = null;
 	CNetworkVar<float> m_fSprintSpeed = null;
 	CNetworkVar<float> m_fJumpSpeed = null;
+	CNetworkVar<byte>  m_bStates = null;
 
 
 	float m_fRotationY = 0.0f;
