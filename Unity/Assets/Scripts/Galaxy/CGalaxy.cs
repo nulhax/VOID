@@ -699,7 +699,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         // Health.
         if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
         {
-            CHealth health = gubbinObject.GetComponent<CHealth>();
+            CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
             health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
         }
 

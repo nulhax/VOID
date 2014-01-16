@@ -2,26 +2,34 @@
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
-public class CHealth : CNetworkMonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class CActorHealth : CNetworkMonoBehaviour
 {
-    public delegate void OnSetCallback(GameObject gameObject, CHealth health);
+    public delegate void OnSetCallback(GameObject gameObject, float prevHealth, float currHealth);
     public event OnSetCallback EventOnSetCallback;
 
     public bool destroyOnZeroHealth = false;
     public bool takeDamageOnImpact = false;
 
-    protected CNetworkVar<float> m_health;
-    public float health { get { return m_health.Get(); } set { m_health.Set(value); } }
+    [SerializeField] private float initialHealth = 1.0f;
+    [HideInInspector] public float health_previous;
+    protected CNetworkVar<float> health_internal;
+    public float health { get { return health_internal.Get(); } set { health_internal.Set(value); } }
 
     public override void InstanceNetworkVars()
     {
-        m_health = new CNetworkVar<float>(OnNetworkVarSync, 1.0f);
+        health_internal = new CNetworkVar<float>(OnNetworkVarSync, initialHealth);
+
+        // Set before Start()
+        health_previous = health;
     }
 
     void OnNetworkVarSync(INetworkVar sender)
     {
         if (EventOnSetCallback != null)
-            EventOnSetCallback(gameObject, this);
+            EventOnSetCallback(gameObject, health_previous, health);
+
+        health_previous = health;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -34,7 +42,7 @@ public class CHealth : CNetworkMonoBehaviour
             else
                 Debug.LogError("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts.");
 
-            //Debug.Log("CHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
+            //Debug.Log("CActorHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
 
             health -= healthLost;
 
@@ -47,40 +55,40 @@ public class CHealth : CNetworkMonoBehaviour
     }
 }
 
-//public class CHealth : MonoBehaviour
+//public class CActorHealth : MonoBehaviour
 //{
 //    public Health m_health = null;
 //
-//    public CHealth() { m_health = new Health(); }
-//    public CHealth(GameObject gameObject = null, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(GameObject gameObject = null, float initialHealth = 0.0f, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(GameObject gameObject = null, bool callCallbackNow = false, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(GameObject gameObject = null, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, GameObject gameObject = null, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, bool callCallbackNow = false, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, float initialHealth = 0.0f, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, bool callCallbackNow = false, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, GameObject gameObject = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, float initialHealth = 0.0f, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, GameObject gameObject = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, bool callCallbackNow = false, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, GameObject gameObject = null, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, float initialHealth = 0.0f, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
-//    public CHealth(bool callCallbackNow = false, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth() { m_health = new Health(); }
+//    public CActorHealth(GameObject gameObject = null, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(GameObject gameObject = null, float initialHealth = 0.0f, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(GameObject gameObject = null, bool callCallbackNow = false, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(GameObject gameObject = null, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, GameObject gameObject = null, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, bool callCallbackNow = false, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, float initialHealth = 0.0f, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, bool callCallbackNow = false, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, GameObject gameObject = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, bool callCallbackNow = false, float initialHealth = 0.0f, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, GameObject gameObject = null, bool callCallbackNow = false) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, bool callCallbackNow = false, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, GameObject gameObject = null, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null, float initialHealth = 0.0f) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, Health.OnSetCallback onSetCallback = null, float initialHealth = 0.0f, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, float initialHealth = 0.0f, GameObject gameObject = null, Health.OnSetCallback onSetCallback = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
+//    public CActorHealth(bool callCallbackNow = false, float initialHealth = 0.0f, Health.OnSetCallback onSetCallback = null, GameObject gameObject = null) { m_health = new Health(gameObject, initialHealth, onSetCallback, callCallbackNow); }
 //
-//    public static implicit operator Health(CHealth rhs) { return rhs.m_health; } // CHealth to Health.
-//    public static implicit operator float(CHealth rhs) { return rhs.m_health; } // CHealth to float health.
-//    //public static CHealth operator +(CHealth lhs, float rhs) { return new Health(lhs.m_GameObject, lhs.m_health + rhs, lhs.m_OnSetCallback, true); }
-//    //public static CHealth operator -(CHealth lhs, float rhs) { return new Health(lhs.m_GameObject, lhs.m_health - rhs, lhs.m_OnSetCallback, true); }
+//    public static implicit operator Health(CActorHealth rhs) { return rhs.m_health; } // CActorHealth to Health.
+//    public static implicit operator float(CActorHealth rhs) { return rhs.m_health; } // CActorHealth to float health.
+//    //public static CActorHealth operator +(CActorHealth lhs, float rhs) { return new Health(lhs.m_GameObject, lhs.m_health + rhs, lhs.m_OnSetCallback, true); }
+//    //public static CActorHealth operator -(CActorHealth lhs, float rhs) { return new Health(lhs.m_GameObject, lhs.m_health - rhs, lhs.m_OnSetCallback, true); }
 //}
 //
 //public class Health
