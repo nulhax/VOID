@@ -2,7 +2,6 @@
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
-[RequireComponent(typeof(Rigidbody))]
 public class CActorHealth : CNetworkMonoBehaviour
 {
     public delegate void OnSetCallback(GameObject gameObject, float prevHealth, float currHealth);
@@ -36,15 +35,15 @@ public class CActorHealth : CNetworkMonoBehaviour
     {
         if (CNetwork.IsServer && takeDamageOnImpact)
         {
-            float healthLost = 0.0f;
+            float impulse = 0.0f;
             if (collision.transform.rigidbody != null)
-                healthLost = collision.relativeVelocity.magnitude * (collision.transform.rigidbody.mass / rigidbody.mass);
+                impulse = (collision.rigidbody.mass * collision.relativeVelocity / (rigidbody.mass + collision.transform.rigidbody.mass)).magnitude;
             else
                 Debug.LogError("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts.");
 
             //Debug.Log("CActorHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
 
-            health -= healthLost;
+            health -= impulse;
 
             if (health <= 0.0f && destroyOnZeroHealth)
             {

@@ -5,7 +5,7 @@ using System.Collections;
 public class CActorBreakable : MonoBehaviour
 {
     public delegate void Callback(GameObject gameObject);
-    public event Callback Event_OnBroken;
+    public event Callback Event_OnBreak;
     public event Callback Event_OnFixed;
 
     void Start()
@@ -16,12 +16,15 @@ public class CActorBreakable : MonoBehaviour
 
     public void Break()
     {
-        if (Event_OnBroken != null)
-            Event_OnBroken(gameObject);
+        Debug.LogWarning("CActorBreakable: " + gameObject.ToString() + " broke");
+        if (Event_OnBreak != null)
+            Event_OnBreak(gameObject);
     }
 
     public void Fix()
     {
+        Debug.LogWarning("CActorBreakable: " + gameObject.ToString() + " fixed");
+
         if (Event_OnFixed != null)
             Event_OnFixed(gameObject);
     }
