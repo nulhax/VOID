@@ -325,4 +325,10 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		// Apply the torque force
 		rigidbody.AddRelativeTorque(angularForce, ForceMode.Acceleration);
 	}
+
+	public void OnGUI()
+	{
+
+	}
 }
+

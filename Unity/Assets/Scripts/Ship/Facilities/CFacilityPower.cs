@@ -27,10 +27,13 @@ public class CFacilityPower : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-	public delegate void FacilityPowerToggleHandler();
+	public delegate void FacilityPowerToggleHandler(GameObject _Sender);
 
-	public event FacilityPowerToggleHandler FacilityPowerActivated;
-	public event FacilityPowerToggleHandler FacilityPowerDeactivated;
+	public event FacilityPowerToggleHandler EventFacilityPowerActivated;
+	public event FacilityPowerToggleHandler EventFacilityPowerDeactivated;
+
+	[AServerOnly]
+	public event FacilityPowerToggleHandler EventFacilityInsufficientPower;
 
 // Member Fields
 
@@ -76,13 +79,13 @@ public class CFacilityPower : CNetworkMonoBehaviour
 		{
 			if(IsPowerActive)
 			{
-				if(FacilityPowerActivated != null) 
-					FacilityPowerActivated();
+				if(EventFacilityPowerActivated != null) 
+					EventFacilityPowerActivated(gameObject);
 			}
 			else
 			{
-				if(FacilityPowerDeactivated != null) 
-					FacilityPowerDeactivated();
+				if(EventFacilityPowerDeactivated != null) 
+					EventFacilityPowerDeactivated(gameObject);
 			}
 		}
 	}
@@ -95,14 +98,14 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-		if(!CNetwork.IsServer)
-			return;
-		
-		if(m_PrevPowerConsumptionRate != m_CurrentPowerConsumption)
+		if(CNetwork.IsServer)
 		{
-			PowerConsumption = m_CurrentPowerConsumption;
+			if(m_PrevPowerConsumptionRate != m_CurrentPowerConsumption)
+			{
+				PowerConsumption = m_CurrentPowerConsumption;
 
-			m_PrevPowerConsumptionRate = m_CurrentPowerConsumption;
+				m_PrevPowerConsumptionRate = m_CurrentPowerConsumption;
+			}
 		}
 	}
 
@@ -116,5 +119,14 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	public void DeactivatePower()
 	{
 		m_PowerActive.Set(false);
+	}
+
+	[AServerOnly]
+	public void InsufficienttPower()
+	{
+		if(EventFacilityInsufficientPower != null)
+			EventFacilityInsufficientPower(gameObject);
+
+		DeactivatePower();
 	}
 };

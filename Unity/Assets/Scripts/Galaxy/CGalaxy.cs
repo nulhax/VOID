@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class CGalaxy : CNetworkMonoBehaviour
 {
@@ -115,14 +116,14 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<int> mCentreCellZ;
     public SCellPos centreCell { get { return mCentreCell; } }
 
-    private System.Collections.Generic.List<Transform> mShiftableTransforms = new System.Collections.Generic.List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
-    private System.Collections.Generic.List<CRegisteredObserver> mObservers = new System.Collections.Generic.List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
-    private System.Collections.Generic.List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
-    private System.Collections.Generic.List<SGubbinMeta> mGubbinsToLoad;
-    private System.Collections.Generic.List<CRegisteredGubbin> mGubbinsToUnload;
-    private System.Collections.Generic.Dictionary<SCellPos, CCellContent> mCells;
-    private System.Collections.Generic.List<SCellPos> mCellsToLoad;
-    private System.Collections.Generic.List<SCellPos> mCellsToUnload;
+    private List<Transform> mShiftableTransforms = new List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
+    private List<CRegisteredObserver> mObservers = new List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
+    private List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
+    private List<SGubbinMeta> mGubbinsToLoad;
+    private List<CRegisteredGubbin> mGubbinsToUnload;
+    private Dictionary<SCellPos, CCellContent> mCells;
+    private List<SCellPos> mCellsToLoad;
+    private List<SCellPos> mCellsToUnload;
 
     private float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
     protected CNetworkVar<float> mGalaxySize;

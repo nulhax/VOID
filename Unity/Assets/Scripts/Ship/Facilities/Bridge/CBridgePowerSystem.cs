@@ -32,7 +32,8 @@ public class CBridgePowerSystem: MonoBehaviour
 	// Member Fields
 	public float m_PowerGenerationRate = 15.0f;
 	public float m_PowerBatteryCapacity = 1000.0f;
-	public GameObject m_PowerGeneratorStation = null;
+
+	public GameObject m_AttachedFuseBox = null;
 	
 	private float m_PrevPowerGenerationRate = 0.0f;
 	private float m_PrevPowerBatteryCapacity = 0.0f;
@@ -45,47 +46,75 @@ public class CBridgePowerSystem: MonoBehaviour
 	{
 		DebugAddPowerGeneratorLabel();
 
-		CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+		// Register for when the fusebox breaks/fixes
+		CFuseBoxControl fbc = m_AttachedFuseBox.GetComponent<CFuseBoxControl>();
+		fbc.EventBroken += HandleFuseBoxBreaking;
+		fbc.EventFixed += HandleFuseBoxFixing;
 
 		// Debug: Set the charge to half its total capacity
-		powerGenSystem.BatteryCapacity = m_PowerBatteryCapacity;
-		powerGenSystem.BatteryCharge = powerGenSystem.BatteryCapacity / 2;
-
-		m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
-	}
-	
-	public void Update()
-	{
-		if(!CNetwork.IsServer)
-			return;
-
-		if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
-		{
-			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
-			
-			powerGenSystem.PowerGenerationRate = m_PowerGenerationRate;
-		
-			m_PrevPowerGenerationRate = m_PowerGenerationRate;
-		}
-
-		if(m_PrevPowerBatteryCapacity != m_PowerBatteryCapacity)
+		if(CNetwork.IsServer)
 		{
 			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
 
 			powerGenSystem.BatteryCapacity = m_PowerBatteryCapacity;
+			powerGenSystem.BatteryCharge = powerGenSystem.BatteryCapacity / 2;
 
 			m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
+		}
+	}
+	
+	public void Update()
+	{
+		if(CNetwork.IsServer)
+		{
+			if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
+			{
+				CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+				
+				powerGenSystem.PowerGenerationRate = m_PowerGenerationRate;
+			
+				m_PrevPowerGenerationRate = m_PowerGenerationRate;
+			}
+
+			if(m_PrevPowerBatteryCapacity != m_PowerBatteryCapacity)
+			{
+				CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+
+				powerGenSystem.BatteryCapacity = m_PowerBatteryCapacity;
+
+				m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
+			}
+		}
+	}
+
+	private void HandleFuseBoxBreaking(GameObject _FuseBox)
+	{
+		if(CNetwork.IsServer)
+		{
+			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+
+			powerGenSystem.DeactivatePowerGeneration();
+		}
+	}
+
+	private void HandleFuseBoxFixing(GameObject _FuseBox)
+	{
+		if(CNetwork.IsServer)
+		{
+			CPowerGeneratorSystem powerGenSystem = gameObject.GetComponent<CPowerGeneratorSystem>();
+			
+			powerGenSystem.ActivatePowerGeneration();
 		}
 	}
 	
 	private void DebugAddPowerGeneratorLabel()
 	{
 		// Add the mesh renderer
-		MeshRenderer mr = m_PowerGeneratorStation.AddComponent<MeshRenderer>();
+		MeshRenderer mr = gameObject.AddComponent<MeshRenderer>();
 		mr.material = (Material)Resources.Load("Fonts/Arial", typeof(Material));
 		
 		// Add the text mesh
-		TextMesh textMesh = m_PowerGeneratorStation.AddComponent<TextMesh>();
+		TextMesh textMesh = gameObject.AddComponent<TextMesh>();
 		textMesh.fontSize = 72;
 		textMesh.characterSize = 0.10f;
 		textMesh.color = Color.green;
@@ -93,6 +122,6 @@ public class CBridgePowerSystem: MonoBehaviour
 		textMesh.anchor = TextAnchor.MiddleCenter;
 		textMesh.offsetZ = -0.01f;
 		textMesh.fontStyle = FontStyle.Italic;
-		textMesh.text = m_PowerGeneratorStation.name;
+		textMesh.text = gameObject.name;
 	}
 }

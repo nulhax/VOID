@@ -30,21 +30,13 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void HandleOpenStart();
-	public event HandleOpenStart EventOpenStart;
+	public delegate void FuseBoxStateHandler(GameObject _Sender);
+	
+	public event FuseBoxStateHandler EventOpened;
+	public event FuseBoxStateHandler EventClosed;
 
-
-	public delegate void HandleCloseStart();
-	public event HandleCloseStart EventCloseStart;
-
-
-	public delegate void HandleOpened();
-	public event HandleOpened EventOpened;
-
-
-	public delegate void HandleClosed();
-	public event HandleClosed EventClosed;
-
+	public event FuseBoxStateHandler EventBroken;
+	public event FuseBoxStateHandler EventFixed;
 
 // Member Properties
 
@@ -67,7 +59,7 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars()
 	{
 		m_bOpened = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_bWiresBroken = new CNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bWiresBroken = new CNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	
@@ -75,17 +67,30 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_bOpened)
 		{
+			if (IsOpened)
+			{
+				if(EventOpened != null)
+					EventOpened(gameObject);
+			}
+			else
+			{
+				if(EventClosed != null)
+					EventClosed(gameObject);
+			}
+
 			m_fFrontPlateRotateTimer = 0.0f;
 		}
 		else if (_cSyncedVar == m_bWiresBroken)
 		{
 			if (IsBroken)
 			{
-				Debug.Log("Fuse box broke");
+				if(EventBroken != null)
+					EventBroken(gameObject);
 			}
 			else
 			{
-				Debug.Log("Fuse box now fixed");
+				if(EventFixed != null)
+					EventFixed(gameObject);
 			}
 		}
 
@@ -110,7 +115,7 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Debug - Break
+
 	}
 
 
@@ -148,6 +153,10 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 			{
 				m_bWiresBroken.Set(true);
 			}
+			if (Input.GetKeyDown(KeyCode.N))
+			{
+				m_bWiresBroken.Set(false);
+			}
 		}
 	}
 
@@ -162,11 +171,15 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 	{
 		m_bOpened.Set(false);
 	}
-
+	
+	public void Break()
+	{
+		m_bWiresBroken.Set(true);
+	}
 
 	public void Fix()
 	{
-		if (IsOpened)
+		if(IsOpened)
 		{
 			m_bWiresBroken.Set(false);
 		}

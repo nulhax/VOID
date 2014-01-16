@@ -105,7 +105,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 				CFacilityPower fp = facility.GetComponent<CFacilityPower>();
 				
 				if(fp.IsPowerActive)
-					fp.DeactivatePower();
+					fp.InsufficienttPower();
 			}
 		}
 		else
@@ -146,7 +146,12 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		string powerGeneratorOutput = "PowerGeneratorInfo\n";
 		foreach(GameObject pg in m_PowerGenerators)
 		{
-			CFacilityInterface fi = pg.GetComponent<CFacilityInterface>();
+			CFacilityInterface fi = null;
+			if(pg.GetComponent<CBridgePowerSystem>() == null)
+				fi = pg.GetComponent<CFacilityInterface>();
+			else
+				fi = pg.transform.parent.GetComponent<CFacilityInterface>();
+
 			CPowerGeneratorSystem pgs = pg.GetComponent<CPowerGeneratorSystem>();
 
 			powerGeneratorOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tIsGenActive: [{2}] GenRate: [{3}] \n\t\tIsBatteryChargAvail: [{4}] BatteryCap: [{5}] BatteryCharge: [{6}]\n", 

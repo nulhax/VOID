@@ -212,27 +212,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                              Screen.height - kBoxHeight - kBoxMargin,
                              kBoxWidth, kBoxHeight),
                              "Health: " + Math.Round(m_fHitPoints.Get(), 2) + "/" + k_fMaxHealth);
-
-            GameObject cFacility = gameObject.GetComponent<CPlayerLocator>().Facility;
-
-            if (cFacility != null)
-            {
-				CShipLifeSupportSystem shipLifeSupport = CGame.Ship.GetComponent<CShipLifeSupportSystem>();
-                CFacilityAtmosphere cAtmosphere = cFacility.GetComponent<CFacilityAtmosphere>();
-                CFacilityGravity cGravity = cFacility.GetComponent<CFacilityGravity>();
-                CFacilityHull cHull = cFacility.GetComponent<CFacilityHull>();
-                CFacilityPower cPower = cFacility.GetComponent<CFacilityPower>();
-
-                // Facility pressure
-                GUI.Label(new Rect(Screen.width - kBoxWidth - kBoxMargin,
-                                 Screen.height - kBoxHeight * 6 - kBoxMargin,
-                                 kBoxWidth, kBoxHeight * 5),
-                                 "Facility Status'" + "\n" +
-                                 "Is Breached: " + cHull.IsBreached + "\n" +
-                                 "Gravity: " + (cGravity.IsGravityEnabled ? "True" : "False") + "\n" +
-                                 "Power Consumption: " + cPower.PowerConsumption);
-            }
-        }
+		}
     }
 	
 
@@ -251,4 +231,4 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
 }
-
+	

@@ -35,182 +35,136 @@ public class CDoorMotor : CNetworkMonoBehaviour
 	
 	
 // Member Delegates & Events
-	public delegate void DoorStateHandler(CDoorMotor _sender);
-    public event DoorStateHandler StateChanged;
-	
+	public delegate void DoorStateHandler(GameObject _Sender);
+   
+	public event DoorStateHandler EventDoorStateOpened;
+	public event DoorStateHandler EventDoorStateOpening;
+	public event DoorStateHandler EventDoorStateClosed;
+	public event DoorStateHandler EventDoorStateClosing;
 	
 // Member Fields
-	EDoorState m_DoorState 					= EDoorState.Closed;
-	bool m_StateChanged						= true;
-	
-	CNetworkVar<int> m_ServerDoorState    	= null;
-	
-	public AudioClip m_audioClipOpen		= null;
-	public AudioClip m_audioClipClose		= null;
-  	AudioSource m_audioSource				= null;
-	
-// Static Fields
-	float s_OpenAmount						= 3.5f;
-	
+	public float m_DoorOpenTime = 1.0f;
+	public float m_CloseTime = 1.0f;
+
+	private CNetworkVar<EDoorState> m_DoorState = null;
+
+	private Vector3 m_OpenedPosition = Vector3.zero;
+	private Vector3 m_ClosedPosition = Vector3.zero;
+	private float m_StateChangeTimer = 0.0f;
+
+	public AudioClip m_audioClipOpen = null;
+	public AudioClip m_audioClipClose = null;
+	private AudioSource m_AudioSource = null;
 
 // Member Properties
-    public EDoorState State 
-	{ 
-		get 
-		{ 
-			return(m_DoorState); 
-		}
-		set 
-		{ 
-			m_DoorState = value;
-			m_StateChanged = true;
-		}
-	}
 	
-	
-	public EDoorState NetworkState 
+	public EDoorState DoorState 
 	{ 
-		get 
-		{ 
-			return((EDoorState)m_ServerDoorState.Get()); 
-		}
-		set 
-		{ 
-			m_ServerDoorState.Set((int)value);
-			State = value;
-		}
+		get { return((EDoorState)m_DoorState.Get()); }
+
+		[AServerOnly]
+		set { m_DoorState.Set(value); }
 	}
 
 
 // Member Methods
-	public void OnEnable()
-	{
-		// Uglyfix for on enable
-		if(CNetwork.IsServer)
-		{
-			if(m_DoorState == EDoorState.Opening)
-			{
-				StartCoroutine("Open");
-			}
-			else if(m_DoorState == EDoorState.Closing)
-			{
-				StartCoroutine("Close");
-			}
-		}
-	}
-	
-	
+
 	public override void InstanceNetworkVars()
     {
-		m_ServerDoorState = new CNetworkVar<int>(OnNetworkVarSync, (int)EDoorState.INVALID);
+		m_DoorState = new CNetworkVar<EDoorState>(OnNetworkVarSync, EDoorState.INVALID);
 	}
-	
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
     {
-		if(!Network.isServer)
+		// Door State
+		if(_rSender == m_DoorState)
 		{
-			// Door State
-			if(_rSender == m_ServerDoorState)
+			if(DoorState == EDoorState.Opened)
 			{
-				State = NetworkState;				
+				if(EventDoorStateOpened != null)
+					EventDoorStateOpened(gameObject);			
+			}
+			else if(DoorState == EDoorState.Closed)
+			{
+				if(EventDoorStateClosed != null)
+					EventDoorStateClosed(gameObject);
 			}
 		}
     }
 	
 	public void Awake()
 	{
-		m_audioSource = gameObject.GetComponent<AudioSource>();
+		m_AudioSource = gameObject.GetComponent<AudioSource>();
+	}
+
+	public void Start()
+	{
+		m_ClosedPosition = transform.position;
+		m_OpenedPosition = m_ClosedPosition + new Vector3(0.0f, collider.bounds.size.y);
+
+		// Debug: Open the door
+		if(CNetwork.IsServer)
+			OpenDoor();
 	}
 	
 	public void Update()
 	{
-		if(m_StateChanged)
+		if(CNetwork.IsServer)
 		{
-			OnStateChange();
-			m_StateChanged = false;
+			UpdateDoorStateTransitions();
 		}
 	}
-	
-	
+
+	public void UpdateDoorStateTransitions()
+	{
+		if(DoorState == EDoorState.Opening)
+		{
+			m_StateChangeTimer += Time.deltaTime;
+			
+			if(m_StateChangeTimer > m_DoorOpenTime)
+			{
+				m_StateChangeTimer = m_DoorOpenTime;
+				DoorState = EDoorState.Opened;
+			}
+			
+			transform.position = Vector3.Lerp(m_ClosedPosition, m_OpenedPosition, m_StateChangeTimer/m_DoorOpenTime);
+		}
+		else if(DoorState == EDoorState.Closing)
+		{
+			m_StateChangeTimer += Time.deltaTime;
+			
+			if(m_StateChangeTimer > m_CloseTime)
+			{
+				m_StateChangeTimer = m_CloseTime;
+				DoorState = EDoorState.Closed;
+			}
+			
+			transform.position = Vector3.Lerp(m_OpenedPosition, m_ClosedPosition, m_StateChangeTimer/m_CloseTime);
+		}
+	}
+
+	[AServerOnly]
     public void OpenDoor()
     {
-		Logger.Write("Opening Door with network id ({0})", GetComponent<CNetworkView>().ViewId);
-			
-        StartCoroutine("Open");
-    }
-	
+		if(DoorState == EDoorState.Closed)
+			m_StateChangeTimer = 0.0f;
 
+		if(DoorState != EDoorState.Opened)
+		{
+
+			DoorState = EDoorState.Opening;
+		}
+    }
+
+	[AServerOnly]
     public void CloseDoor()
     {
-		Logger.Write("Closing Door with network id ({0})", GetComponent<CNetworkView>().ViewId);
-		
-		StartCoroutine("Close");
-    }
-	
+		if(DoorState == EDoorState.Opened)
+			m_StateChangeTimer = 0.0f;
 
-    private IEnumerator Open()
-    {
-        float d = 0.0f;
-        Vector3 pos = transform.position;
-
-        NetworkState = EDoorState.Opening;
-			
-		//Play audio
-		m_audioSource.clip = m_audioClipOpen;
-		AudioSystem.Play(m_audioSource, 0.1f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
-		
-		while (d < s_OpenAmount)
-        {
-            d += Time.deltaTime;
-            if (d > s_OpenAmount)
-                d = s_OpenAmount;
-
-            Vector3 newPos = pos;
-            newPos.y += d;
-
-            transform.position = newPos;
-
-            yield return null;
-        }
-		
-		NetworkState = EDoorState.Opened;
-    }
-	
-	
-    private IEnumerator Close()
-    {
-        float d = 0.0f;
-        Vector3 pos = transform.position;
-
-        NetworkState = EDoorState.Closing;
-		
-		//Play audio
-		m_audioSource.clip = m_audioClipClose;
-		AudioSystem.Play(m_audioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
-
-		
-		while (d < s_OpenAmount)
-        {
-            d += Time.deltaTime;
-            if (d > s_OpenAmount)
-                d = s_OpenAmount;
-
-            Vector3 newPos = pos;
-            newPos.y -= d;
-
-            transform.position = newPos;
-
-            yield return null;
-        }	
-				
-        NetworkState = EDoorState.Closed;
-    }
-	
-	
-    private void OnStateChange()
-    {
-        if (StateChanged != null)
-            StateChanged(this);
+		if(DoorState != EDoorState.Closed)
+		{
+			DoorState = EDoorState.Opening;
+		}
     }
 }

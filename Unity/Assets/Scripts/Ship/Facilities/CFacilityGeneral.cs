@@ -39,8 +39,8 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	
 	
 // Member Fields
-	private GameObject m_FacilityControlConsole = null;
-	private List<GameObject> m_Doors = new List<GameObject>();
+	public GameObject m_FacilityControlConsole = null;
+	public List<GameObject> m_Doors = new List<GameObject>();
 	
 	private GameObject m_DoorControlSubView;
 	
@@ -65,7 +65,10 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	private CFacilityInterface.EFacilityType m_FacilitySelected = CFacilityInterface.EFacilityType.INVALID;
 	
 // Member Properties
-	public GameObject FacilityControlConsole { get{ return(m_FacilityControlConsole); } }
+	public GameObject FacilityControlConsole 
+	{ 
+		get { return(m_FacilityControlConsole); } 
+	}
 
 // Member Methods
 	public override void InstanceNetworkVars()
@@ -87,23 +90,8 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	
 	public void Start()
 	{	
-		if(CNetwork.IsServer)
-		{
-			ServerCreateDoors();
-			ServerCreateControlConsole();
-		}
-		
-		// Get the console script from the children
-		CDUIConsole console = GetComponentInChildren<CDUIConsole>();
-		
-		// Store the room control console game object
- 		m_FacilityControlConsole = console.gameObject;
-		
-		// Get the door interface scripts from the children
-		foreach(CDoorInterface door in GetComponentsInChildren<CDoorInterface>())
-		{
-			m_Doors.Add(door.gameObject);
-		}
+		// Get the dui console from the control console
+		CDUIConsole console = m_FacilityControlConsole.GetComponent<CDUIConsole>();
 		
 		 // Initialise the console
         console.Initialise(EQuality.VeryHigh, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
@@ -157,46 +145,6 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerOnly]
-	private void ServerCreateDoors()
-	{
-		foreach(GameObject expansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
-		{
-			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Door;
-			GameObject newDoorObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-		
-			newDoorObject.transform.position = expansionPort.transform.position + new Vector3(0.0f, newDoorObject.collider.bounds.extents.y, 0.0f);
-			newDoorObject.transform.rotation = expansionPort.transform.rotation;
-			newDoorObject.transform.parent = transform;	
-			
-			newDoorObject.GetComponent<CDoorInterface>().DoorId = (uint)m_Doors.Count;
-			
-			newDoorObject.GetComponent<CNetworkView>().SyncParent();
-			newDoorObject.GetComponent<CNetworkView>().SyncTransformPosition();
-			newDoorObject.GetComponent<CNetworkView>().SyncTransformRotation();
-			
-			// Debug: Make the door open by default
-			newDoorObject.GetComponent<CDoorMotor>().OpenDoor();
-		}
-	}
-	
-	[AServerOnly]
-	private void ServerCreateControlConsole()
-	{
-		Transform consoleTransform = transform.FindChild("ControlConsoleNode");
-
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.ControlConsole;
-		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-	
-		newConsoleObject.transform.position = consoleTransform.position;
-		newConsoleObject.transform.rotation = consoleTransform.rotation;
-		newConsoleObject.transform.parent = transform;	
-		
-		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
-		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
-		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
-	}
-	
 	private void SetupDoorsSubview()
 	{
 		CDUISubView duiDoorControl = m_DoorControlSubView.GetComponent<CDUISubView>();
@@ -222,7 +170,10 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 			duiBut.MiddleLeftViewPos = new Vector2(duiDoorState.MiddleRightViewPos.x + 0.1f, duiDoorState.MiddleRightViewPos.y);
 			
 			// Register the statechange
-			door.StateChanged += DoorStateChanged;
+			door.EventDoorStateOpened += DoorStateChanged;
+			door.EventDoorStateOpening += DoorStateChanged;
+			door.EventDoorStateClosed += DoorStateChanged;
+			door.EventDoorStateClosing += DoorStateChanged;
         }
 	}
 	
@@ -342,26 +293,27 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
     {
         CDoorMotor door = m_buttonDoorPairs[_sender];
 
-        if (door.State == CDoorMotor.EDoorState.Closed)
+        if (door.DoorState == CDoorMotor.EDoorState.Closed)
         {
             m_buttonDoorPairs[_sender].OpenDoor();
             
         }
-        else if (door.State == CDoorMotor.EDoorState.Opened)
+		else if (door.DoorState == CDoorMotor.EDoorState.Opened)
         {
             m_buttonDoorPairs[_sender].CloseDoor();
         }
     }
 
-    private void DoorStateChanged(CDoorMotor _sender)
+    private void DoorStateChanged(GameObject _Sender)
     {	
+		CDoorMotor dm = _Sender.GetComponent<CDoorMotor>();
 		Vector2 buttonMiddleLeftViewPos = Vector2.zero;
 		
 		foreach(CDUIField field in m_fieldDoorPairs.Keys)
 		{
-			if(m_fieldDoorPairs[field] == _sender)
+			if(m_fieldDoorPairs[field] == dm)
 			{
-				switch (_sender.State)
+				switch (dm.DoorState)
                 {
                 case CDoorMotor.EDoorState.Opened: 
                     field.Text = field.Text.Replace("Opening", "Open");
@@ -387,9 +339,9 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		
 		foreach(CDUIButton button in m_buttonDoorPairs.Keys)
 		{
-			if(m_buttonDoorPairs[button] == _sender)
+			if(m_buttonDoorPairs[button] == dm)
 			{
-				switch (_sender.State)
+				switch (dm.DoorState)
                 {
 					case CDoorMotor.EDoorState.Opened: 
                     	button.Text = "Close";

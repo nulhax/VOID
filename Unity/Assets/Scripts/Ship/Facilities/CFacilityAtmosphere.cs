@@ -93,6 +93,15 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	{
 
 	}
+
+	public void Start()
+	{
+		if(CNetwork.IsServer)
+		{
+			// Debug: Atmosphere starts at half the total volume
+			m_AtmosphereQuantity.Set(AtmosphereVolume / 2);
+		}
+	}
 	
 	public void Update()
 	{

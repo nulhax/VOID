@@ -85,21 +85,13 @@ public class CPowerGeneratorSystem : CNetworkMonoBehaviour
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		if(_VarInstance == m_PowerGenerationActive)
-		{
-			if(m_PowerGenerationActive.Get() == true)
-			{	
-				CGame.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
-			}
-			else
-			{
-				CGame.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
-			}
-		}
+
 	}
 
 	public void Start()
 	{
+		CGame.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
+
 		if(CNetwork.IsServer)
 		{
 			ActivatePowerGeneration();

@@ -108,7 +108,19 @@ public class CFacilityComponentInterface : MonoBehaviour
 
 	void Start()
 	{
-		transform.parent.GetComponent<CFacilityComponents>().RegisterComponent(this);
+		Transform parent = transform.parent;
+		while(parent.GetComponent<CFacilityComponents>() == null)
+		{
+			parent = parent.parent;
+			if(parent == null)
+			{
+				Debug.LogError("Parent with facility components not found!");
+				return;
+			}
+			
+		}
+
+		parent.GetComponent<CFacilityComponents>().RegisterComponent(this);
 	}
 
 

@@ -66,21 +66,13 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		if(_VarInstance == m_AtmosphereGenerationActive)
-		{
-			if(m_AtmosphereGenerationActive.Get() == true)
-			{	
-				CGame.Ship.GetComponent<CShipLifeSupportSystem>().RegisterLifeSupportSystem(gameObject);
-			}
-			else
-			{
-				CGame.Ship.GetComponent<CShipLifeSupportSystem>().UnregisterLifeSupportSystem(gameObject);
-			}
-		}
+
 	}
 
 	public void Start()
 	{
+		CGame.Ship.GetComponent<CShipLifeSupportSystem>().RegisterLifeSupportSystem(gameObject);
+
 		if(CNetwork.IsServer)
 			ActivateLifeSupport();
 	}

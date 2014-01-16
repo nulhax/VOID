@@ -158,7 +158,12 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		string lifeSupportOutput = "LifeSupportInfo\n";
 		foreach(GameObject ls in m_LifeSupportSystems)
 		{
-			CFacilityInterface fi = ls.GetComponent<CFacilityInterface>();
+			CFacilityInterface fi = null;
+			if(ls.GetComponent<CBridgeLifeSupportSystem>() == null)
+				fi = ls.GetComponent<CFacilityInterface>();
+			else
+				fi = ls.transform.parent.GetComponent<CFacilityInterface>();
+
 			CLifeSupportSystem lss = ls.GetComponent<CLifeSupportSystem>();
 
 			lifeSupportOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tIsGenActive: [{2}] GenRate: [{3}] SupportCap: [{4}]\n", 
