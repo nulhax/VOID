@@ -127,8 +127,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		UpdateGrounded();
 
 		// Process input only for client owned actors
-		if (CGame.PlayerActor != null &&
-			CGame.PlayerActor == gameObject)
+		if (CGame.SelfActor != null &&
+			CGame.SelfActor == gameObject)
 		{
 			UpdateInput();				
 		}
@@ -171,10 +171,10 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		if (CGame.PlayerActor != null)
+		if (CGame.SelfActor != null)
 		{
 			// Retrieve my actor motor
-			CPlayerMotor cMyActorMotor = CGame.PlayerActor.GetComponent<CPlayerMotor>();
+			CPlayerMotor cMyActorMotor = CGame.SelfActor.GetComponent<CPlayerMotor>();
 
 			// Write movement states
 			_cStream.Write(cMyActorMotor.m_uiMovementStates);
@@ -233,7 +233,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void ProcessMovement()
 	{
-		if(CGame.PlayerActor != gameObject)
+		if(CGame.SelfActor != gameObject)
 		{
 			rigidbody.transform.eulerAngles = new Vector3(rigidbody.transform.eulerAngles.x, m_fRotationY, rigidbody.transform.eulerAngles.z);
 		}

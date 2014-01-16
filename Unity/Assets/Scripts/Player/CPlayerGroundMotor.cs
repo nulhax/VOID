@@ -135,7 +135,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGame.PlayerActor;
+		GameObject cSelfActor = CGame.SelfActor;
 
 		if (cSelfActor != null)
 		{
@@ -167,7 +167,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 				{
 					cPlayerActorMotor.m_uiMovementStates = _cStream.ReadByte();
 
-					if (cPlayerActor != CGame.PlayerActor)
+					if (cPlayerActor != CGame.SelfActor)
 					{
 						cPlayerActor.transform.eulerAngles = new Vector3(cPlayerActor.transform.eulerAngles.x, 
 						                                                 _cStream.ReadFloat(),
@@ -213,8 +213,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 			UpdateGrounded();
 			
 			// Process input only for client owned actors
-			if (CGame.PlayerActor != null &&
-			    CGame.PlayerActor == gameObject)
+			if (CGame.SelfActor != null &&
+			    CGame.SelfActor == gameObject)
 			{
 				UpdateRotation();
 				UpdateInput();				

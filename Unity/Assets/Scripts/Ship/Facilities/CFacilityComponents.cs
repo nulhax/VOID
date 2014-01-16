@@ -35,7 +35,7 @@ public class CFacilityComponents : MonoBehaviour
 // Member Methods
 
 
-	public List<GameObject> FindFacilityComponents(CFacilityComponentInterface.EType _eComponentType)
+	public List<GameObject> FindFacilityComponents(CComponentInterface.EType _eComponentType)
 	{
 		if (!m_mComponents.ContainsKey(_eComponentType))
 		{
@@ -46,14 +46,15 @@ public class CFacilityComponents : MonoBehaviour
 	}
 
 
-	public void RegisterComponent(CFacilityComponentInterface _cComponentInterface)
+	public void RegisterComponent(CComponentInterface _cComponentInterface)
 	{
-		if (!m_mComponents.ContainsKey(_cComponentInterface.FacilityComponentType))
+		// Add component it a list based on its component type
+		if (!m_mComponents.ContainsKey(_cComponentInterface.ComponentType))
 		{
-			m_mComponents.Add(_cComponentInterface.FacilityComponentType, new List<GameObject>());
+			m_mComponents.Add(_cComponentInterface.ComponentType, new List<GameObject>());
 		}
 
-		m_mComponents[_cComponentInterface.FacilityComponentType].Add(_cComponentInterface.gameObject);
+		m_mComponents[_cComponentInterface.ComponentType].Add(_cComponentInterface.gameObject);
 	}
 
 
@@ -72,13 +73,31 @@ public class CFacilityComponents : MonoBehaviour
 	void Update()
 	{
 		// Empty
+
+		// Debug
+		if (CNetwork.IsServer &&
+		    Input.GetKeyDown(KeyCode.M))
+		{
+			List<GameObject> aAlarmObjects = FindFacilityComponents(CComponentInterface.EType.Alarm);
+
+			if (aAlarmObjects != null &&
+			    aAlarmObjects.Count > 0)
+			{
+				bool bToggle = aAlarmObjects[0].GetComponent<CAlarmBehaviour>().IsActive;
+
+				foreach (GameObject cAlarmObject in aAlarmObjects)
+				{
+					cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(!bToggle);
+				}
+			}
+		}
 	}
 
 
 // Member Fields
 
 
-	Dictionary<CFacilityComponentInterface.EType, List<GameObject>> m_mComponents = new Dictionary<CFacilityComponentInterface.EType, List<GameObject>>();
+	Dictionary<CComponentInterface.EType, List<GameObject>> m_mComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
 
 
 };

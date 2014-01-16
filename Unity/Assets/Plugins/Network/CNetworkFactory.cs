@@ -122,9 +122,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 			{
 				// Extract the network view from this object
 				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
-				
-                // Invoke set parent rpc
-                cSelfView.SyncParent();
 
 				// Only sync if position is not default
 				if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
@@ -154,6 +151,12 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 				// Tell object to sync all their network vars with the player
 				cNetworkView.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
+
+				// Have children network views to sync their values
+				foreach (KeyValuePair<byte, CNetworkView> tEntity in cNetworkView.ChildrenNetworkViews)
+				{
+					tEntity.Value.SyncNetworkVarsWithPlayer(_cNetworkPlayer.PlayerId);
+				}
 			}
         }
     }
@@ -163,7 +166,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	{
 		GameObject cGameObject = CNetworkView.FindUsingViewId(_cNetworkViewId).gameObject;
 
-		Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.SubId);
+		Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.ChildId);
 
 		return (cGameObject);
 	}

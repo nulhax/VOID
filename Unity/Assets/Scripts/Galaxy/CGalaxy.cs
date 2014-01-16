@@ -658,8 +658,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         Rigidbody rigidBody = gubbin.mHasRigidBody ? gubbinObject.GetComponent<Rigidbody>() : null; // Get rigid body IF it has one.
 
         // Parent object.
-        gubbinObject.transform.parent = gameObject.transform;   // Set the object's parent as the galaxy.
-        networkView.SyncParent();   // Sync the parent through the network view - the networked entity script does not handle this.
+        gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.
+        //networkView.SyncParent();   // Sync the parent through the network view - the networked entity script does not handle this. - Does not have to be called anymore
 
         // Position.
         gubbinObject.transform.position = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.

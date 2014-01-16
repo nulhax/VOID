@@ -91,6 +91,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Facility Components
 		PanelFuseBox,
 		PlayerSpawner,
+		Alarm,
 		
 		// Cockpits
 		BridgeCockpit,
@@ -117,22 +118,22 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (s_cInstance); }
 	}
 	
-	public static GameObject PlayerActor
+	public static GameObject SelfActor
 	{
 		get 
 		{ 
 			GameObject playerActor = null;
 			
-			if(PlayerActorViewId != null)
+			if(SelfActorViewId != null)
 			{
-				playerActor = CNetwork.Factory.FindObject(PlayerActorViewId);
+				playerActor = CNetwork.Factory.FindObject(SelfActorViewId);
 			}
 			
 			return(playerActor); 
 		}
 	}
 	
-	public static CNetworkViewId PlayerActorViewId
+	public static CNetworkViewId SelfActorViewId
 	{
 		get 
 		{ 
@@ -298,7 +299,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Facility Components
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Ship/Facilities/Components/FuseBox");
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerSpawner, "Ship/Facilities/Components/PlayerSpawner");
-
+		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Alarm, "Ship/Facilities/Components/Alarm");
 		
 		// Cockpits
 		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
@@ -319,7 +320,7 @@ public class CGame : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-				List<GameObject> aPlayerSpawners = CFacilityComponentInterface.FindFacilityComponents(CFacilityComponentInterface.EType.PlayerSpawner);
+				List<GameObject> aPlayerSpawners = CComponentInterface.FindFacilityComponents(CComponentInterface.EType.PlayerSpawner);
 
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{
@@ -329,8 +330,7 @@ public class CGame : CNetworkMonoBehaviour
 						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
 						
 						// Set the parent as the ship
-						cPlayerActor.transform.parent = Ship.transform;
-						cPlayerActor.GetComponent<CNetworkView>().SyncParent();
+						cPlayerActor.GetComponent<CNetworkView>().SetParent(Ship.GetComponent<CNetworkView>().ViewId);
 						
 						// Get actor network view id
 						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
@@ -392,7 +392,7 @@ public class CGame : CNetworkMonoBehaviour
 			DrawLobbyGui();
         }
 
-		if (PlayerActor == null)
+		if (SelfActor == null)
 		{
 			// Draw unspawned message
 			GUIStyle cStyle = new GUIStyle();
@@ -413,6 +413,11 @@ public class CGame : CNetworkMonoBehaviour
 
 	public static CNetworkViewId FindPlayerActorViewId(ulong _ulPlayerId)
 	{
+		if (!s_cInstance.m_mPlayersActor.ContainsKey(_ulPlayerId))
+		{
+			return (null);
+		}
+
 		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
 	}
 

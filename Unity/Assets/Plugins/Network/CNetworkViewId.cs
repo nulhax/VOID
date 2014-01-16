@@ -37,6 +37,11 @@ public class CNetworkViewId
 
 	public ushort Id
 	{
+		set
+		{
+			m_usViewId = value;
+		}
+
 		get
 		{ 
 			Logger.WriteErrorOn(m_usViewId == 0, "View id has not be registered for a view id");
@@ -46,20 +51,21 @@ public class CNetworkViewId
 	}
 
 
-	public byte SubId
+	public byte ChildId
 	{
-		get 
-		{
-			//Logger.WriteErrorOn(m_bSubViewId == 0, "View id has not be registered for a sub view id");
-
-			return (m_bSubViewId);
-		}
+		get { return (m_bChildViewId);}
 	}
 
 
-	public bool IsSubViewId
+	public bool IsChildViewId
 	{
-		get { return (m_bSubViewId != 0); }
+		get { return (m_bChildViewId != 0); }
+	}
+
+
+	public GameObject GameObject
+	{
+		get { return (CNetworkView.FindUsingViewId(this).gameObject); }
 	}
 
 
@@ -74,7 +80,7 @@ public class CNetworkViewId
 	public CNetworkViewId(ushort _usViewId, byte _bSubViewId)
 	{
 		m_usViewId = _usViewId;
-		m_bSubViewId = _bSubViewId;
+		m_bChildViewId = _bSubViewId;
 	}
 
 
@@ -88,25 +94,22 @@ public class CNetworkViewId
 		}
 		
 		return (m_usViewId == cRight.m_usViewId &&
-		        m_bSubViewId == cRight.m_bSubViewId);
+		        m_bChildViewId == cRight.m_bChildViewId);
 	}
 	
 	public override int GetHashCode()
 	{
-		return ((int)(Mathf.Pow(m_usViewId, 2) + Mathf.Pow(m_bSubViewId, 3)));
+		return ((int)(Mathf.Pow(m_usViewId, 2) + Mathf.Pow(m_bChildViewId, 3)));
 	}
 
 
 // Member Fields
 
 
-	List<CNetworkViewId> m_aSubViewIds = null;
-
-
 	ushort m_usViewId = 0;
 
 
-	byte m_bSubViewId = 0;
+	byte m_bChildViewId = 0;
 
 
 };

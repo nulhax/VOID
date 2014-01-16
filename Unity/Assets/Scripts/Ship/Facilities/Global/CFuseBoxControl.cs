@@ -131,14 +131,14 @@ public class CFuseBoxControl : CNetworkMonoBehaviour
 		{
 			if (m_bOpened.Get())
 			{
-				m_cFrontPlate.transform.eulerAngles = Vector3.Lerp(new Vector3(0.0f, 0.0f, 0.0f),
-				                                                   new Vector3(0.0f, 90.0f, 0.0f), 
+				m_cFrontPlate.transform.eulerAngles = Vector3.Lerp(transform.eulerAngles,
+				                                                   transform.eulerAngles + new Vector3(0.0f, 90.0f, 0.0f), 
 				                                                   m_fFrontPlateRotateTimer);
 			}
 			else
 			{
-				m_cFrontPlate.transform.eulerAngles = Vector3.Lerp(new Vector3(0.0f, 90.0f, 0.0f),
-				                                                   new Vector3(0.0f, 0.0f, 0.0f), 
+				m_cFrontPlate.transform.eulerAngles = Vector3.Lerp(transform.eulerAngles + new Vector3(0.0f, 90.0f, 0.0f), 
+				                                                   transform.eulerAngles, 
 				                                                   m_fFrontPlateRotateTimer);	
 			}
 

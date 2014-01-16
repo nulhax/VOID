@@ -93,7 +93,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			return;
 		
 		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
-		if(cockpit.m_AttachedPlayerActor != null && CGame.PlayerActor != cockpit.m_AttachedPlayerActor)
+		if(cockpit.m_AttachedPlayerActor != null && CGame.SelfActor != cockpit.m_AttachedPlayerActor)
 			return;
 			
 		switch(cockpit.m_CurrentPlayerInteractionEvent)
@@ -156,7 +156,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		if(m_AttachedPlayerActor != null)
 		{	
 			// Get the players input
-			if(CGame.PlayerActor == m_AttachedPlayerActor)
+			if(CGame.SelfActor == m_AttachedPlayerActor)
 			{
 				UpdatePlayerInput();
 			}
@@ -168,7 +168,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
 			{
-				if(!CGame.PlayerActor.GetComponent<CPlayerHealth>().Alive)
+				if(!CGame.SelfActor.GetComponent<CPlayerHealth>().Alive)
 				{
 					m_AttachedPlayerActorViewId.Set(null);
 				}

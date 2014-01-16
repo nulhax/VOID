@@ -86,26 +86,7 @@ public class CNetworkStream
 		else
 		{
 			this.Write(_cNetworkViewId.Id);
-			this.Write(_cNetworkViewId.SubId);
-		}
-	}
-
-
-	public CNetworkViewId ReadNetworkViewId()
-	{
-		ushort usViewId = ReadUShort();
-		byte bSubViewId = ReadByte();
-		
-		if (usViewId == ushort.MaxValue &&
-		    bSubViewId == byte.MaxValue)
-		{
-			return (null);
-			//Debug.LogError(string.Format("Read null network view id"));
-		}
-		else
-		{
-			return (new CNetworkViewId(usViewId, bSubViewId));
-			//Debug.LogError(string.Format("Read view id({0}) sub view id({1})", usViewId, bSubViewId));
+			this.Write(_cNetworkViewId.ChildId);
 		}
 	}
 
@@ -122,7 +103,7 @@ public class CNetworkStream
 			else
 			{
 				this.Write(((CNetworkViewId)_cObject).Id);
-				this.Write(((CNetworkViewId)_cObject).SubId);
+				this.Write(((CNetworkViewId)_cObject).ChildId);
 			}
 		}
 		else
@@ -229,6 +210,23 @@ public class CNetworkStream
 	public void IgnoreBytes(uint _uiNumBytes)
 	{
 		m_cBitStream.IgnoreBytes(_uiNumBytes);
+	}
+
+
+	public CNetworkViewId ReadNetworkViewId()
+	{
+		ushort usViewId = ReadUShort();
+		byte bSubViewId = ReadByte();
+		
+		if (usViewId == ushort.MaxValue &&
+		    bSubViewId == byte.MaxValue)
+		{
+			return (null);
+		}
+		else
+		{
+			return (new CNetworkViewId(usViewId, bSubViewId));
+		}
 	}
 
 

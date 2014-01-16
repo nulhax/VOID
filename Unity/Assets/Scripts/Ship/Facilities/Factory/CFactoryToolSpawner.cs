@@ -60,13 +60,9 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 		
 		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
 		
-		newTool.transform.position = transform.position;
-		newTool.transform.rotation = TempQuat;
-		newTool.transform.parent   = transform.parent;
-		
-		newTool.GetComponent<CNetworkView>().SyncParent();
-		newTool.GetComponent<CNetworkView>().SyncTransformPosition();
-		newTool.GetComponent<CNetworkView>().SyncTransformRotation();
+		newTool.GetComponent<CNetworkView>().SetPosition(transform.position);
+		newTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
+		newTool.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
     }
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)

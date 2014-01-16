@@ -93,7 +93,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 
 	public void SetDefaultViewPerspective()
 	{
-		SetShipViewPerspective(CGame.PlayerActor.GetComponent<CPlayerHead>().ActorHead.transform);
+		SetShipViewPerspective(CGame.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
 	}
 	
 	private void UpdateCameraTransforms()

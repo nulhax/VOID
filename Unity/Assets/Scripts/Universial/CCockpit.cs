@@ -104,11 +104,11 @@ public class CCockpit : CNetworkMonoBehaviour
 				// Lock player movement locally
 				if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
 				{
-					CGame.PlayerActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
-					CGame.PlayerActor.GetComponent<CPlayerHead>().DisableInput(this);
+					CGame.SelfActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
+					CGame.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
 
 					// Move player head into rotation
-					CGame.PlayerActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
+					CGame.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
 				}
 
 				// Notify observers
@@ -118,8 +118,8 @@ public class CCockpit : CNetworkMonoBehaviour
 			// Unlock player movement locally
 			if (m_cMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
-				CGame.PlayerActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
-				CGame.PlayerActor.GetComponent<CPlayerHead>().UndisableInput(this);
+				CGame.SelfActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
+				CGame.SelfActor.GetComponent<CPlayerHead>().UndisableInput(this);
 			}
 		}
 	}

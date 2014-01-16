@@ -35,9 +35,9 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	public enum EState : ushort
 	{
-		FlyForward		= 1 << 0,
+		FlyForward	= 1 << 0,
 		FlyBackward	= 1 << 1,
-		FlyUp			= 1 << 2,
+		FlyUp		= 1 << 2,
 		Down		= 1 << 3,
 		StrafeLeft	= 1 << 4,
 		StrafeRight	= 1 << 5,
@@ -58,7 +58,7 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	void Start()
 	{
-		if (gameObject == CGame.PlayerActor)
+		if (gameObject == CGame.SelfActor)
 		{
 			gameObject.GetComponent<CPlayerLocator>().EventEnterShip += new CPlayerLocator.NotifyEnterShip(OnEventEnterShip);
 		}
@@ -68,7 +68,7 @@ public class CPlayerAirMotor : MonoBehaviour
 	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGame.PlayerActor;
+		GameObject cSelfActor = CGame.SelfActor;
 
 		if (cSelfActor != null)
 		{
@@ -103,7 +103,7 @@ public class CPlayerAirMotor : MonoBehaviour
 				case ENetworkAction.UpdateStates:
 					cAirMotor.m_usMovementStates = (ushort)_cStream.ReadUShort();
 
-					if (cPlayerActor != CGame.PlayerActor)
+					if (cPlayerActor != CGame.SelfActor)
 					{
 						cAirMotor.transform.eulerAngles = new Vector3(_cStream.ReadFloat(),
 						                                              _cStream.ReadFloat(),
@@ -137,8 +137,8 @@ public class CPlayerAirMotor : MonoBehaviour
 		if (cSelfLocator.Facility == null ||
 		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
 		{
-			if (CGame.PlayerActor != null &&
-			    CGame.PlayerActor == gameObject)
+			if (CGame.SelfActor != null &&
+			    CGame.SelfActor == gameObject)
 			{
 				UpdateInput();
 			}

@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CLASSNAME.cs
+//  File Name   :   CComponentInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,7 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CFacilityComponentInterface : MonoBehaviour
+[RequireComponent(typeof(CNetworkView))]
+public class CComponentInterface : MonoBehaviour
 {
 
 // Member Types
@@ -34,6 +35,7 @@ public class CFacilityComponentInterface : MonoBehaviour
 		PlayerSpawner,
 		TurretCockpit,
 		PilotCockpit,
+		Alarm,
 	}
 
 
@@ -43,7 +45,7 @@ public class CFacilityComponentInterface : MonoBehaviour
 // Member Properties
 
 
-	public EType FacilityComponentType
+	public EType ComponentType
 	{
 		get { return (m_eComponentType); }
 	}
@@ -86,6 +88,10 @@ public class CFacilityComponentInterface : MonoBehaviour
 			ePrefabType = CGame.ENetworkRegisteredPrefab.BridgeCockpit;
 			break;
 
+		case EType.Alarm:
+			ePrefabType = CGame.ENetworkRegisteredPrefab.Alarm;
+			break;
+
 		default:
 			Debug.LogError(string.Format("Unknown component type. Type({0})", _eFacilityComponentType));
 			break;
@@ -97,6 +103,7 @@ public class CFacilityComponentInterface : MonoBehaviour
 
 	void Awake()
 	{
+		// Add self to the global list of components
 		if (!s_mComponentObjects.ContainsKey(m_eComponentType))
 		{
 			s_mComponentObjects.Add(m_eComponentType, new List<GameObject>());
@@ -108,25 +115,37 @@ public class CFacilityComponentInterface : MonoBehaviour
 
 	void Start()
 	{
-		Transform parent = transform.parent;
-		while(parent.GetComponent<CFacilityComponents>() == null)
+		// Ensure a type of defined for component
+		if (m_eComponentType == EType.INVALID)
 		{
-			parent = parent.parent;
-			if(parent == null)
-			{
-				Debug.LogError("Parent with facility components not found!");
-				return;
-			}
-			
+			Debug.LogError("This component has not been given a compoent type");
 		}
 
-		parent.GetComponent<CFacilityComponents>().RegisterComponent(this);
+		// Register self with parent facility
+		Transform cParent = transform.parent;
+
+		for (int i = 0; i < 20; ++ i)
+		{
+			if (cParent.GetComponent<CFacilityComponents>() != null)
+			{
+				cParent.GetComponent<CFacilityComponents>().RegisterComponent(this);
+				break;
+			}
+
+			cParent = cParent.parent;
+
+			if (i == 19)
+			{
+				Debug.LogError("Could not find facility to register to");
+			}
+		}
 	}
 
 
 	void OnDestroy()
 	{
-		s_mComponentObjects[FacilityComponentType].Remove(gameObject);
+		// Remove self from global list of components
+		s_mComponentObjects[ComponentType].Remove(gameObject);
 	}
 
 
@@ -142,7 +161,7 @@ public class CFacilityComponentInterface : MonoBehaviour
 	public EType m_eComponentType = EType.INVALID;
 
 
-	static Dictionary<CFacilityComponentInterface.EType, List<GameObject>> s_mComponentObjects = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<CComponentInterface.EType, List<GameObject>> s_mComponentObjects = new Dictionary<EType, List<GameObject>>();
 
 
 };

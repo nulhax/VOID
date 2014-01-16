@@ -52,6 +52,12 @@ public class CNetworkView : CNetworkMonoBehaviour
 	public event NotiftyPreDestory EventPreDestory;
 
 
+	public Dictionary<byte, CNetworkView> ChildrenNetworkViews
+	{
+		get { return (m_mChildrenNetworkViews); }
+	}
+
+
 // Member Functions
     
     // public:
@@ -59,7 +65,23 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		// Empty
+		m_cParentViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+	}
+
+
+	void OnNetworkVarSync(INetworkVar _cSyncedVar)
+	{
+		if (_cSyncedVar == m_cParentViewId)
+		{
+			if (m_cParentViewId.Get() == null)
+			{
+				transform.parent = null;
+			}
+			else
+			{
+				transform.parent = m_cParentViewId.Get().GameObject.transform;
+			}
+		}
 	}
 
 
@@ -68,52 +90,41 @@ public class CNetworkView : CNetworkMonoBehaviour
         // Run class initialisers
         InitialiseNetworkVars();
 		InitialiseNetworkRpcs();
+
+		// Since I have a parent on creation, I am a child network view 
+		// and i need to register with the main network view which was
+		// created through the network factory
+		if (transform.parent != null)
+		{
+			Transform cParent = transform.parent;
+			
+			for (int i = 0; cParent.parent != null && i < 25; ++ i)
+			{
+				cParent = cParent.parent;
+
+					//Logger.WriteError("Could not find parent to register for sub view id");
+					//break;
+				//}
+			}
+
+			// Register for sub network view id
+			cParent.GetComponent<CNetworkView>().RegisterChildNetworkView(this);
+			
+			if (ViewId.ChildId == 0)
+				Debug.LogError("I do not have a sub view id!");
+		}
     }
 
 
     public void Start()
     {
-        // Generate static view id if server did not
-        // provide one when this object was created
 		if (m_cNetworkViewId == null)
 		{
+			// Generate static view id if server did not
+			// provide one when this object was created
 			if (transform.parent == null)
 			{
 				this.ViewId = GenerateStaticViewId();
-			}
-			else
-			{
-				Transform cParent = transform.parent;
-
-				for (int i = 0; m_cNetworkViewId == null && i < 25; ++ i)
-				{
-					Logger.WriteErrorOn(cParent == null, "Could not find parent to register for sub view id");
-
-					if (cParent.GetComponent<CNetworkView>() != null)
-					{
-						if ( cParent.GetComponent<CNetworkView>().ViewId.Id != 0 &&
-						    !cParent.GetComponent<CNetworkView>().ViewId.IsSubViewId)
-						{
-							cParent.GetComponent<CNetworkView>().RegisterSubNetworkView(this);
-						}
-						else
-						{
-							cParent = cParent.parent;
-						}
-					}
-					else
-					{
-						cParent = cParent.parent;
-					}
-				}
-
-				//Debug.LogError("Generated view id:" +  this.ViewId.Id);
-				
-				if (ViewId.SubId == 0)
-					Debug.LogError("I do not have a sub view id!");
-				
-				
-				//Debug.LogError(string.Format("Registered sub newwork view with ViewId({0}) SubViewId({1})", ViewId.Id, ViewId.SubId));
 			}
 
 			if (ViewId.Id == 0)
@@ -334,31 +345,12 @@ public class CNetworkView : CNetworkMonoBehaviour
         Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's rigid body mass!!!");
 
 		InvokeRpcAll("RemoteSetRigidBodyMass", rigidbody.mass);
-    }
-
-
-	public void SyncParent()
-	{
-		if (transform.parent != null)
-		{
-			SetParent(transform.parent.GetComponent<CNetworkView>().ViewId);
-		}
-		else
-		{
-			SetParent(null);
-		}
 	}
 
 
 	public void SetParent(CNetworkViewId _cParentViewId)
 	{
-		// Ensure servers only sync parents
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's parents!!!");
-
-		// Ensure transform has a network view for parent
-		Logger.WriteErrorOn(_cParentViewId != null && FindUsingViewId(_cParentViewId) == null, "Syncing to a parent requires a parent with a network view!!!");
-
-		InvokeRpcAll("RemoteSetParent", _cParentViewId);
+		m_cParentViewId.Set(_cParentViewId);
 	}
 
 
@@ -396,7 +388,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		set
 		{
-			if (value.IsSubViewId)
+			if (value.IsChildViewId)
 			{
 				m_cNetworkViewId = value;
 			}
@@ -439,7 +431,17 @@ public class CNetworkView : CNetworkMonoBehaviour
 					{
 						Logger.WriteError("Somethign went wrong when setting the network view id ({0})", value);
 					}
-			}
+				}
+
+				if ( ViewId != null &&
+				    !ViewId.IsChildViewId)
+				{
+					// Update children
+					foreach (KeyValuePair<byte, CNetworkView> tEntity in ChildrenNetworkViews)
+					{
+						tEntity.Value.ViewId.Id = ViewId.Id;
+					}
+				}
 			}
 		}
 
@@ -488,7 +490,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 			cNetworkView = s_cNetworkViews[_cViewId.Id];
 		}
 
-		if (_cViewId.IsSubViewId)
+		if (_cViewId.IsChildViewId)
 		{
 			/*
 			foreach (KeyValuePair<byte, CNetworkView> Entry in cNetworkView.m_SubNetworkViews)
@@ -498,9 +500,9 @@ public class CNetworkView : CNetworkMonoBehaviour
 			}
 			*/
 
-			cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.SubId);
+			cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 
-			Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.SubId);
+			Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
 		}
 
         return (cNetworkView);
@@ -509,12 +511,12 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public CNetworkView FindChildNetworkView(byte _bSubViewId)
 	{
-		if (!m_SubNetworkViews.ContainsKey(_bSubViewId))
+		if (!m_mChildrenNetworkViews.ContainsKey(_bSubViewId))
 		{
 			return (null);
 		}
 
-		return (m_SubNetworkViews[_bSubViewId]);
+		return (m_mChildrenNetworkViews[_bSubViewId]);
 	}
 
 
@@ -780,35 +782,21 @@ public class CNetworkView : CNetworkMonoBehaviour
     void RemoteSetRigidBodyMass(float _fMass)
     {
         rigidbody.mass = _fMass;
-    }
-
-
-	[ANetworkRpc]
-	void RemoteSetParent(CNetworkViewId _cParentViewId)
-	{
-		if (_cParentViewId != null)
-		{
-			transform.parent = CNetwork.Factory.FindObject(_cParentViewId).transform;
-		}
-		else
-		{
-			transform.parent = null;
-		}
 	}
 
 
-	void RegisterSubNetworkView(CNetworkView _cSubView)
+	void RegisterChildNetworkView(CNetworkView _cChildView)
 	{
-		Logger.WriteErrorOn(_cSubView.ViewId != null, "Sub network view has already been registered a network view id");
+		Logger.WriteErrorOn(_cChildView.ViewId != null, "Child network view has already been registered a network view id");
 		
 		for (byte i = 1; i < byte.MaxValue; ++ i)
 		{
-			if (!m_SubNetworkViews.ContainsKey(i))
+			if (!m_mChildrenNetworkViews.ContainsKey(i))
 			{
-				m_SubNetworkViews.Add(i, _cSubView);
-				_cSubView.ViewId = new CNetworkViewId(m_cNetworkViewId.Id, i);
+				m_mChildrenNetworkViews.Add(i, _cChildView);
+				_cChildView.ViewId = new CNetworkViewId(0, i);
 
-				//Debug.LogError(string.Format("Registered sub newwork view with ViewId({0}) SubViewId({1})", _cSubView.ViewId.Id, _cSubView.ViewId.SubId));
+				//Debug.LogError(string.Format("Registered ({0}) sub newwork view with ViewId({1}) SubViewId({2})", _cSubView.gameObject.name, _cSubView.ViewId.Id, _cSubView.ViewId.ChildId));
 
 				break;
 			}
@@ -825,11 +813,14 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
     public CNetworkViewId m_cNetworkViewId = null;
+
+
+	CNetworkVar<CNetworkViewId> m_cParentViewId = null;
     
 
     Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();
     Dictionary<byte, TRpcMethod> m_mNetworkRpcs = new Dictionary<byte, TRpcMethod>();
-	Dictionary<byte, CNetworkView> m_SubNetworkViews = new Dictionary<byte, CNetworkView>();
+	Dictionary<byte, CNetworkView> m_mChildrenNetworkViews = new Dictionary<byte, CNetworkView>();
 
 
 	static Dictionary<ushort, CNetworkView> s_cNetworkViews = new Dictionary<ushort, CNetworkView>();
