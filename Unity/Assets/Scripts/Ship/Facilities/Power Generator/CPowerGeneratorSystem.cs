@@ -90,7 +90,7 @@ public class CPowerGeneratorSystem : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		CGame.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
+		CGameShips.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
 
 		if(CNetwork.IsServer)
 		{

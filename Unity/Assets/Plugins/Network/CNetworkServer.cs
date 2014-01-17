@@ -415,6 +415,9 @@ public class CNetworkServer : MonoBehaviour
 
         // Update server info, player count
         UpdateServerInfo();
+
+		// Tell player that he has been given the initial game state
+		cNetworkPlayer.SetDownloadingInitialGameStateComplete();
     }
 
 

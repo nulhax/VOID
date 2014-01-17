@@ -245,7 +245,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        GameObject cPlayerObject = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+        GameObject cPlayerObject = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
         CPlayerBelt cPlayerBelt = cPlayerObject.GetComponent<CPlayerBelt>();
 
 
@@ -419,7 +419,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGame.SelfActor)
+        if (gameObject == CGamePlayers.SelfActor)
         {
             string sToolText = "";
 

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -95,13 +95,13 @@ public class CTurretInterface : CNetworkMonoBehaviour
 		}
 	}
 
-	public static CGame.ENetworkRegisteredPrefab GetTurretPrefab(ETurretType _TurretType)
+	public static CGameRegistrator.ENetworkPrefab GetTurretPrefab(ETurretType _TurretType)
 	{
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.INVALID;
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.INVALID;
 		
 		switch (_TurretType)
 		{
-			case ETurretType.Laser: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.LaserTurret; break;		
+			case ETurretType.Laser: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.LaserTurret; break;		
 		}
 		
 		return (eRegisteredPrefab);

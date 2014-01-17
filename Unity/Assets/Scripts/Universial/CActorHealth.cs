@@ -39,7 +39,7 @@ public class CActorHealth : CNetworkMonoBehaviour
             if (collision.transform.rigidbody != null)
                 impulse = (collision.rigidbody.mass * collision.relativeVelocity / (rigidbody.mass + collision.transform.rigidbody.mass)).magnitude;
             else
-                Debug.LogError("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts.");
+				Debug.LogError(string.Format("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts. GameObject1({0}) GameObject2({1})", gameObject.name, collision.transform.gameObject.name));
 
             //Debug.Log("CActorHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
 

@@ -35,9 +35,9 @@ public class CShipDamageOnCollision : MonoBehaviour
             // Find all components within radius and apply damage.
             foreach (ContactPoint contact in collision.contacts)
             {
-                Vector3 contactPointOnShip = CGame.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
+                Vector3 contactPointOnShip = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
 
-                CActorBreakable[] breakableActors = CGame.Ship.GetComponentsInChildren<CActorBreakable>();
+                CActorBreakable[] breakableActors = CGameShips.Ship.GetComponentsInChildren<CActorBreakable>();
                 foreach (CActorBreakable breakableActor in breakableActors)
                 {
                     float actorDistanceToImpact = (breakableActor.gameObject.transform.position - contactPointOnShip).magnitude;

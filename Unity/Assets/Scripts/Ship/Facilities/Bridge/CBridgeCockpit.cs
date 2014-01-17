@@ -87,13 +87,13 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	
 	public static void SerializeCockpitInteractions(CNetworkStream _cStream)
     {
-		GameObject pilotingCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
+		GameObject pilotingCockpit = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit;
 		
 		if(pilotingCockpit == null)
 			return;
 		
 		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
-		if(cockpit.m_AttachedPlayerActor != null && CGame.SelfActor != cockpit.m_AttachedPlayerActor)
+		if(cockpit.m_AttachedPlayerActor != null && CGamePlayers.SelfActor != cockpit.m_AttachedPlayerActor)
 			return;
 			
 		switch(cockpit.m_CurrentPlayerInteractionEvent)
@@ -112,7 +112,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	public static void UnserializeCockpitInteractions(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {	
 		EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-		CBridgeCockpit bridgeCockpit = CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
+		CBridgeCockpit bridgeCockpit = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit.GetComponent<CBridgeCockpit>();
 		
 		switch(interactionEvent)
 		{
@@ -131,7 +131,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     {
         if(m_AttachedPlayerActor == null && CNetwork.IsServer)
 		{
-			m_AttachedPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+			m_AttachedPlayerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
 		}
     }
 
@@ -156,19 +156,19 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		if(m_AttachedPlayerActor != null)
 		{	
 			// Get the players input
-			if(CGame.SelfActor == m_AttachedPlayerActor)
+			if(CGamePlayers.SelfActor == m_AttachedPlayerActor)
 			{
 				UpdatePlayerInput();
 			}
 			
 			m_AttachedPlayerActor.transform.position = transform.position;
 			m_AttachedPlayerActor.transform.rotation = transform.rotation;
-			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = CGame.Ship.transform.rotation;
+			m_AttachedPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = CGameShips.Ship.transform.rotation;
 			
 			// Make sure the actor is still alive
 			if(CNetwork.IsServer)
 			{
-				if(!CGame.SelfActor.GetComponent<CPlayerHealth>().Alive)
+				if(!CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Alive)
 				{
 					m_AttachedPlayerActorViewId.Set(null);
 				}
@@ -240,7 +240,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         m_AttachedPlayerActor = CNetwork.Factory.FindObject(_PlayerActorNetworkViewId);
 
 		// Register this cockpit as the piloting cockpit of the ship
-		CGame.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
+		CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>().PilotingCockpit = gameObject;
     }
 
     private void DetachPlayer()

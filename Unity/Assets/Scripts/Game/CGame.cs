@@ -18,8 +18,12 @@ using System.Collections.Generic;
 
 
 /* Implementation */
+using System.Xml.Linq;
 
 
+[RequireComponent(typeof(CGamePlayers))]
+[RequireComponent(typeof(CGameRegistrator))]
+[RequireComponent(typeof(CGameShips))]
 public class CGame : CNetworkMonoBehaviour
 {
 
@@ -27,84 +31,6 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	public const ushort kusServerPort = 9836;
-
-
-	public enum ENetworkRegisteredPrefab : ushort
-	{
-		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
-		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
-		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
-		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
-		
-		INVALID,
-		
-		// Ships
-		Ship,
-		GalaxyShip,
-		
-		// Ship: Facilities
-		FacilityBridge, 
-		FacilityFactory,
-		FacilityScanner,
-		FacilityReplicator,
-		FacilityEngine,
-		FacilityGravityGenerator, 
-		FacilityShieldGenerator, 
-		FacilityLifeSupport,
-		
-		// Ship: Doors
-		Door,
-		
-		// Ship: Hallways
-		HallwayStraight,
-		HallwayCorner,
-		HallwayTSection, 
-		HallwayXSection,
-		
-		// Player
-        PlayerActor,
-		
-		// Register prefabs: Tools
-        ToolTorch, 
-		ToolRachet, 
-		ToolExtinguisher,
-		ToolAk47,
-        ToolMedical,
-		
-		// Galaxy
-		Galaxy,
-		Asteroid_FIRST,
-		Asteroid_LAST = Asteroid_FIRST + 3,
-		
-		// Hazards
-        Fire,
-		
-		// Modules: General
-		BlackMatterCell,
-		FuelCell,
-		PlasmaCell,
-		PowerCell,
-		BioCell,
-		ReplicatorCell,
-		ControlConsole,
-
-		// Facility Components
-		PanelFuseBox,
-		PlayerSpawner,
-		Alarm,
-		
-		// Cockpits
-		BridgeCockpit,
-		TurretCockpit,
-
-		// Turrets
-		LaserTurret,
-
-		// Turret: Projectile
-		TurretLaserProjectile,
-		
-		MAX
-	}
 
 
 // Member Delegates & Events
@@ -117,74 +43,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		get { return (s_cInstance); }
 	}
-	
-	public static GameObject SelfActor
-	{
-		get 
-		{ 
-			GameObject playerActor = null;
-			
-			if(SelfActorViewId != null)
-			{
-				playerActor = CNetwork.Factory.FindObject(SelfActorViewId);
-			}
-			
-			return(playerActor); 
-		}
-	}
-	
-	public static CNetworkViewId SelfActorViewId
-	{
-		get 
-		{ 
-			if (!s_cInstance.m_mPlayersActor.ContainsKey(CNetwork.PlayerId))
-			{
-				return (null);
-			}
 
-			return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]);
-		 }
-	}
-	
-	public static List<GameObject> PlayerActors
-	{
-		get 
-		{ 
-			List<GameObject> actors = new List<GameObject>();
-				
-			foreach(CNetworkViewId playerID in s_cInstance.m_mPlayersActor.Values)
-			{
-				actors.Add(CNetwork.Factory.FindObject(playerID));
-			}
-			
-			return (actors); 
-		}
-	}
-
-	public static GameObject Ship
-	{
-		get { return (CNetwork.Factory.FindObject(s_cInstance.m_cShipViewId)); }
-	}
-
-	public static CNetworkViewId ShipViewId
-	{
-		get { return (s_cInstance.m_cShipViewId); }
-	}
-
-	public static CShipGalaxySimulatior ShipGalaxySimulator
-	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>()); }
-	}
-	
-	public static GameObject GalaxyShip
-	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
-	}
-
-	public static bool IsClientReady
-	{
-		get { return(CNetwork.IsConnectedToServer() && ShipViewId != null); }
-	}
 
 	public static CUserInput UserInput
 	{
@@ -215,27 +74,10 @@ public class CGame : CNetworkMonoBehaviour
     public void Start()
     {
 		// Sign up to events
-		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnPlayerJoin);
-		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
-        CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
         CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
-		
-		// Register Prefabs. Register your prefabs inside this function
-		RegisterPrefabs();
-
-		// Register serialization targets
-        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerGroundMotor.SerializePlayerState, CPlayerGroundMotor.UnserializePlayerState);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState, CPlayerHead.UnserializePlayerState);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions, CBridgeCockpit.UnserializeCockpitInteractions);
-       	CNetworkConnection.RegisterThrottledSerializationTarget(CDUIInteraction.SerializeDUIInteractions, CDUIInteraction.UnserializeDUIInteraction);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound, CCockpit.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CTurretController.SerializeOutbound, CTurretController.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound, CPlayerAirMotor.UnserializeInbound);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
-		
+	
 		// Start server (Development Only)
 		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
 
@@ -243,110 +85,10 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
 	
-	private void RegisterPrefabs()
-	{
-		// Ships
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Ship, "Ship/Ship");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.GalaxyShip, "Ship/GalaxyShip");
-		
-		// Ship: Facilities
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityBridge, "Ship/Facilities/Bridge/Bridge");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityFactory, "Ship/Facilities/Factory/Factory");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityScanner, "Ship/Facilities/Scanner/Scanner");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityReplicator, "Ship/Facilities/Replicator/Replicator");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityEngine, "Ship/Facilities/Engine/Engine");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityGravityGenerator, "Ship/Facilities/Gravity Generator/GravityGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityShieldGenerator, "Ship/Facilities/Shield Generator/ShieldGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FacilityLifeSupport, "Ship/Facilities/Life Support/LifeSupport");
-		
-		// Ship: Doors
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Door, "Ship/Doors/Door");
-		
-		// Ship: Hallways
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayStraight, "Ship/Hallways/HallwayStraight");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayCorner, "Ship/Hallways/HallwayCorner");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayTSection, "Ship/Hallways/HallwayTSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.HallwayXSection, "Ship/Hallways/HallwayXSection");
-		
-		// Player
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerActor, "Player/Player Actor");
-		
-		// Register prefabs: Tools
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolTorch, "Tools/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolRachet, "Tools/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolExtinguisher, "Tools/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolAk47, "Tools/ToolAk47");
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ToolMedical, "Tools/ToolMedical");
-
-
-		// Galaxy
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Galaxy, "Galaxy/Galaxy");
-        for(ushort us = 0; us <= ENetworkRegisteredPrefab.Asteroid_LAST - ENetworkRegisteredPrefab.Asteroid_FIRST; ++us)    // All asteroids.
-            CNetwork.Factory.RegisterPrefab((ushort)((ushort)ENetworkRegisteredPrefab.Asteroid_FIRST + us), "Galaxy/Asteroid" + us.ToString());
-		
-		// Hazards
-        CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Fire, "Hazards/Fire");
-		
-		// Modules: General
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BlackMatterCell, "Modules/BlackMatterCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.FuelCell, "Modules/FuelCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlasmaCell, "Modules/PlasmaCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PowerCell, "Modules/PowerCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BioCell, "Modules/BioCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ReplicatorCell, "Modules/ReplicatorCell");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.ControlConsole, "Modules/DUI/CurvedMonitor_wide");
-
-		// Facility Components
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PanelFuseBox, "Ship/Facilities/Components/FuseBox");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.PlayerSpawner, "Ship/Facilities/Components/PlayerSpawner");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.Alarm, "Ship/Facilities/Components/Alarm");
-		
-		// Cockpits
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.BridgeCockpit, "Ship/Facilities/Bridge/Cockpit");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TurretCockpit, "Ship/Facilities/Weapons System/Turret Cockpit");
-
-		// Un categorized
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.LaserTurret, "Ship/Facilities/Weapons System/Turret");
-		CNetwork.Factory.RegisterPrefab(ENetworkRegisteredPrefab.TurretLaserProjectile, "Ship/Facilities/Weapons System/TurretLaserProjectile");
-	}
 
 	public void Update()
 	{
 		DebugProcessInputs();
-
-
-		if (CNetwork.IsServer &&
-		    m_aUnspawnedPlayers.Count > 0)
-		{
-			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
-			{
-				List<GameObject> aPlayerSpawners = CComponentInterface.FindFacilityComponents(CComponentInterface.EType.PlayerSpawner);
-
-				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
-				{
-					if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
-					{
-						// Create new player's actor
-						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)ENetworkRegisteredPrefab.PlayerActor);
-						
-						// Set the parent as the ship
-						cPlayerActor.GetComponent<CNetworkView>().SetParent(Ship.GetComponent<CNetworkView>().ViewId);
-						
-						// Get actor network view id
-						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
-						
-						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
-						
-						// Sync player actor view id with everyone
-						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
-
-						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
-						break;
-					}
-				}
-			}
-		}
 	}
 
 
@@ -392,7 +134,7 @@ public class CGame : CNetworkMonoBehaviour
 			DrawLobbyGui();
         }
 
-		if (SelfActor == null)
+		if (CGamePlayers.SelfActor == null)
 		{
 			// Draw unspawned message
 			GUIStyle cStyle = new GUIStyle();
@@ -403,23 +145,6 @@ public class CGame : CNetworkMonoBehaviour
 			          "Waiting for spawner to be available...", cStyle);
 		}
     }
-	
-
-	public static GameObject FindPlayerActor(ulong _ulPlayerId)
-	{
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
-	}
-
-
-	public static CNetworkViewId FindPlayerActorViewId(ulong _ulPlayerId)
-	{
-		if (!s_cInstance.m_mPlayersActor.ContainsKey(_ulPlayerId))
-		{
-			return (null);
-		}
-
-		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
-	}
 
 
 	void DrawLobbyGui()
@@ -530,108 +255,15 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	void OnPlayerJoin(CNetworkPlayer _cPlayer)
-	{
-		// Tell connecting player which is the ship's network view id
-        InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_cShipViewId);
-		
-		// Send created objects to new player
-		CNetwork.Factory.SyncPlayer(_cPlayer);
-
-		// Sync current players actor view ids with new player
-		foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActor)
-		{
-			InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
-		}
-
-		// Placeholder Test stuff
-      	CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolTorch);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolRachet);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolAk47);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolExtinguisher);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Fire);
-        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ToolMedical);
-
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BlackMatterCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.FuelCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PlasmaCell);
-		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.PowerCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.BioCell);
-//		CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.ReplicatorCell);
-
-		_cPlayer.SetDownloadingInitialGameStateComplete();
-
-		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
-
-		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
-	}
-
-
-	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
-	{
-		CNetworkViewId cPlayerActorNetworkViewId = FindPlayerActorViewId(_cPlayer.PlayerId);
-
-		if (cPlayerActorNetworkViewId != null)
-		{
-			CNetwork.Factory.DestoryObject(cPlayerActorNetworkViewId);
-
-			// Sync unregister player actor view id with everyone
-			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
-
-
-			Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
-		}
-	}
-
-
 	void OnServerStartup()
 	{
-        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
-
         // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
-        CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-
-		// Create ship object
-		GameObject cShipObject = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Ship);
-
-		// Save view id
-		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
-		
-		uint iCount = 1;
-		
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge);
-		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.HallwayStraight, iCount, 0, 0);
-		/*cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayCorner, iCount, 1, 1);
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 0, 0);
-		
-		for(uint i = 0; i < 10; ++i)
-		{
-			cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);
-			cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.HallwayStraight, ++iCount, 1, 0);
-		}
-		
-		for(uint i = 0; i < 3; ++i)
-		{
-			cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Replicator, ++iCount, 1, 0);
-			cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Replicator, ++iCount, 1, 0);
-		}*/
-	}
-
-
-	void OnServerShutdown()
-	{
-        System.Diagnostics.Debug.Assert(CNetwork.IsServer);
-
-		m_mPlayersActor.Clear();
-        m_cShipViewId = null;
+		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
 	}
 
 
     void OnConnect()
     {
-		m_mPlayersActor.Clear();
-		
         // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
         //if (!CNetwork.IsServer)    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
         //    m_Galaxy = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy).GetComponent<CGalaxy>();
@@ -641,13 +273,6 @@ public class CGame : CNetworkMonoBehaviour
 	void OnDisconnect()
 	{
 		UserInput.UnregisterAllEvents();
-		m_mPlayersActor.Clear();
-		
-		if(!CNetwork.IsServer)
-		{
-			m_cShipViewId = null;
-		}
-			
         //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
         //    m_Galaxy = null;
 	}
@@ -655,32 +280,6 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnApplicationFocus(bool _bFocused)
 	{
-	}
-
-
-    [ANetworkRpc]
-    void SetShipNetworkViewId(CNetworkViewId _cShipViewId)
-    {
-        m_cShipViewId = _cShipViewId;
-
-        // Notice
-        Logger.Write("The ship's network view id is ({0})", m_cShipViewId);
-    }
-
-
-	[ANetworkRpc]
-	[AClientOnly]
-	void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
-	{
-		m_mPlayersActor.Add(_ulPlayerId, _cPlayerActorId);
-	}
-
-
-	[ANetworkRpc]
-	[AClientOnly]
-	void UnregisterPlayerActor(ulong _ulPlayerId)
-	{
-		m_mPlayersActor.Remove(_ulPlayerId);
 	}
 
 
@@ -695,13 +294,6 @@ public class CGame : CNetworkMonoBehaviour
 	
 
 	int m_iActiveTab = 1;
-
-
-	CNetworkViewId m_cShipViewId = null;
-
-
-	Dictionary<ulong, CNetworkViewId> m_mPlayersActor = new Dictionary<ulong, CNetworkViewId>();
-	List<ulong> m_aUnspawnedPlayers = new List<ulong>();
 
 	
 	static CGame s_cInstance = null;

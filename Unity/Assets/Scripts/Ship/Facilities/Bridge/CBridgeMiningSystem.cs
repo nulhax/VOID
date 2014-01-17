@@ -73,7 +73,7 @@ public class CBridgeMiningSystem : MonoBehaviour
 
 		foreach(Transform t in turretCockpitNodes)
 		{
-			CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.TurretCockpit;
+			CGameResourceLoader.ENetworkRegisteredPrefab eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.TurretCockpit;
 			GameObject newCockpitObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 				
 			newCockpitObject.transform.position = t.position;

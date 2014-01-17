@@ -232,10 +232,10 @@ public class CTurretController : CNetworkMonoBehaviour
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
 		{
-			Vector3 projPos = CGame.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
-			Quaternion projRot = CGame.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cLaserNodes[m_iLaserNodeIndex].transform.rotation);
+			Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cLaserNodes[m_iLaserNodeIndex].transform.position);
+			Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cLaserNodes[m_iLaserNodeIndex].transform.rotation);
 
-			GameObject cProjectile = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.TurretLaserProjectile);
+			GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.TurretLaserProjectile);
 			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
 			cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
 

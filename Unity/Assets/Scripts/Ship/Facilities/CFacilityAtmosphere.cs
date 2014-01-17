@@ -132,10 +132,20 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	{
 		// Calulate the combined consumption rate within the facility
 		float consumptionRate = 0.0f;
+		bool bHasNullGameObject = false;
 		foreach(GameObject consumer in m_AtmosphericConsumers)
 		{
-			consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
+			if (consumer != null)
+			{
+				consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
+			}
+			else
+			{
+				bHasNullGameObject = true;
+			}
 		}
+
+		m_AtmosphericConsumers.RemoveAll(cEntry => cEntry == null);
 
 		// Set the consumption rate
 		AtmosphereConsumeRate = consumptionRate;

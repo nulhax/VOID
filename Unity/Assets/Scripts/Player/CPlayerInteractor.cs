@@ -63,7 +63,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		if (gameObject == CGame.SelfActor)
+		if (gameObject == CGamePlayers.SelfActor)
 		{
 			CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnInputPrimaryChange);
 			CGame.UserInput.EventSecondary += new CUserInput.NotifyKeyChange(OnInputSecondaryChange);
@@ -82,7 +82,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	private void CheckInteraction(EInteractionType _eIneractionType)
 	{
 		// Find the origin, direction, distance of the players interaction cursor
-		CPlayerHead cPlayerHeadMotor = CGame.SelfActor.GetComponent<CPlayerHead>();
+		CPlayerHead cPlayerHeadMotor = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
 		Vector3 vOrigin = cPlayerHeadMotor.ActorHead.transform.position;
 		Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
 		float fDistance = 5.0f;

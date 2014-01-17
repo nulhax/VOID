@@ -72,7 +72,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
     public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
     {
 		// Head Rotation
-		if (CGame.SelfActor != gameObject && 
+		if (CGamePlayers.SelfActor != gameObject && 
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
 	        m_cActorHead.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
@@ -82,7 +82,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public void Start()
 	{	
-		if(CGame.SelfActor == gameObject)
+		if(CGamePlayers.SelfActor == gameObject)
 		{
 			// Set the ship view perspective of the camera to the actors head
 			TransferPlayerPerspectiveToShipSpace();
@@ -119,10 +119,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		if (CGame.SelfActor != null)
+		if (CGamePlayers.SelfActor != null)
 		{
 			// Retrieve my actors head
-			CPlayerHead cMyActorHead = CGame.SelfActor.GetComponent<CPlayerHead>();
+			CPlayerHead cMyActorHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
 
 			// Write my head's x-rotation
 			_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
@@ -133,7 +133,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		// Retrieve player actors head
-		CPlayerHead cMyActorHead = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerHead>();
+		CPlayerHead cMyActorHead = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerHead>();
 
 		// Write my head's x-rotation
 		float fRotationX = _cStream.ReadFloat();

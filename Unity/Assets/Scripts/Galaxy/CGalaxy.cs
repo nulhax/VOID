@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -47,7 +47,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public struct SGubbinMeta
     {
-        public CGame.ENetworkRegisteredPrefab mPrefabID;
+        public CGameRegistrator.ENetworkPrefab mPrefabID;
         public SCellPos mParentAbsoluteCell;
         public float mScale;
         public Vector3 mPosition;
@@ -58,7 +58,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public bool mHasNetworkedEntityScript;
         public bool mHasRigidBody;
 
-        public SGubbinMeta(CGame.ENetworkRegisteredPrefab prefabID, SCellPos parentAbsoluteCell, float scale, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, float massToHealthScalar, bool hasNetworkedEntityScript, bool hasRigidBody)
+        public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, float scale, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, float massToHealthScalar, bool hasNetworkedEntityScript, bool hasRigidBody)
         {
             mPrefabID = prefabID;
             mParentAbsoluteCell = parentAbsoluteCell;
@@ -166,6 +166,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public CGalaxy()
     {
+		sGalaxy = this;
+
         // Instantiate galaxy noises.
         for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
             mNoises[ui] = new PerlinSimplexNoise();
@@ -173,8 +175,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     void Start()
     {
-        sGalaxy = this;
-
         // Fog and skybox are controlled by the galaxy.
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
@@ -881,7 +881,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         {
             Profiler.BeginSample("Create asteroid meta and queue for creation");
 
-            mGubbinsToLoad.Add(new SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
+            mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                 absoluteCell,   // Parent cell.
                                                 Random.Range(10.0f, 150.0f),    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
@@ -906,7 +906,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         {
             Profiler.BeginSample("Create asteroid meta and queue for creation");
 
-            mGubbinsToLoad.Add(new SGubbinMeta((CGame.ENetworkRegisteredPrefab)Random.Range((ushort)CGame.ENetworkRegisteredPrefab.Asteroid_FIRST, (ushort)CGame.ENetworkRegisteredPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
+            mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                 absoluteCell,   // Parent cell.
                                                 Random.Range(10.0f, 150.0f),    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.

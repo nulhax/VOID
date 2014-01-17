@@ -59,7 +59,7 @@ public class CBridgePilotingSystem : MonoBehaviour
 		/*
 		Transform cockpitTransform = transform.FindChild("PilotCockpitNode");
 
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.BridgeCockpit;
+		CGameResourceLoader.ENetworkRegisteredPrefab eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.BridgeCockpit;
 		GameObject newCockpitObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 	
 		newCockpitObject.transform.position = cockpitTransform.position;

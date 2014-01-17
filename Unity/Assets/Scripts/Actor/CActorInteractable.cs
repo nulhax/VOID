@@ -50,7 +50,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
 	void Start()
 	{
 		if(gameObject.layer != LayerMask.NameToLayer("InteractableObject"))
-			Debug.LogError("Interactable object not set to the interactableobject layer! Make sure its set on the prefab!" + " " + gameObject.name);
+			Debug.LogWarning("Interactable object not set to the interactableobject layer! Make sure its set on the prefab!" + " " + gameObject.name);
 	}
 	
 

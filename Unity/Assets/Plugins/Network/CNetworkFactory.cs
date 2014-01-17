@@ -70,7 +70,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	public string GetRegisteredPrefabFile(object _cPrefabId)
 	{
 		// Ensure the prefab file exists
-		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!!");
+		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!! PrefabId({0})({1})", _cPrefabId, (ushort)_cPrefabId);
 			
 		return (m_mPrefabs[(ushort)_cPrefabId]);
 	}
@@ -89,6 +89,17 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
         return (CNetworkView.FindUsingViewId(cObjectViewId).gameObject);
     }
+
+
+	public void DestoryObject(GameObject _cObject)
+	{
+		if (_cObject.GetComponent<CNetworkView>() == null)
+		{
+			Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
+		}
+
+		DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+	}
 
 
     public void DestoryObject(CNetworkViewId _cObjectNetworkViewId)
@@ -120,6 +131,17 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 			// Sync parents for each transform
 			foreach (KeyValuePair<CNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
 			{
+				if (tEntry.Value.cGameObject == null)
+				{
+					Debug.LogError(string.Format("Gameobject({0}) is null. PrefabId({1})", tEntry.Value.cGameObject, tEntry.Value.usPrefab));
+				}
+
+
+				if (tEntry.Value.cGameObject.GetComponent<CNetworkView>() == null)
+				{
+					Debug.LogError(string.Format("Gameobject({0}) does not have a networkview. PrefabId({1})", tEntry.Value.cGameObject, tEntry.Value.usPrefab));
+				}
+
 				// Extract the network view from this object
 				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 

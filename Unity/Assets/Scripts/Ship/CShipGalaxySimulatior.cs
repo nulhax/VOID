@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -38,7 +38,7 @@ public class CShipGalaxySimulatior : MonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			m_GalaxyShip = CNetwork.Factory.CreateObject(CGame.ENetworkRegisteredPrefab.GalaxyShip);
+			m_GalaxyShip = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.GalaxyShip);
 		}
 		else
 		{

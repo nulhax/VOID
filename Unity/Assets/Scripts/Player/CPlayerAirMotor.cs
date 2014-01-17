@@ -58,7 +58,7 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	void Start()
 	{
-		if (gameObject == CGame.SelfActor)
+		if (gameObject == CGamePlayers.SelfActor)
 		{
 			gameObject.GetComponent<CPlayerLocator>().EventEnterShip += new CPlayerLocator.NotifyEnterShip(OnEventEnterShip);
 		}
@@ -68,7 +68,7 @@ public class CPlayerAirMotor : MonoBehaviour
 	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGame.SelfActor;
+		GameObject cSelfActor = CGamePlayers.SelfActor;
 
 		if (cSelfActor != null)
 		{
@@ -88,7 +88,7 @@ public class CPlayerAirMotor : MonoBehaviour
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		GameObject cPlayerActor = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
 
 		if (cPlayerActor != null)
 		{
@@ -103,7 +103,7 @@ public class CPlayerAirMotor : MonoBehaviour
 				case ENetworkAction.UpdateStates:
 					cAirMotor.m_usMovementStates = (ushort)_cStream.ReadUShort();
 
-					if (cPlayerActor != CGame.SelfActor)
+					if (cPlayerActor != CGamePlayers.SelfActor)
 					{
 						cAirMotor.transform.eulerAngles = new Vector3(_cStream.ReadFloat(),
 						                                              _cStream.ReadFloat(),
@@ -137,8 +137,8 @@ public class CPlayerAirMotor : MonoBehaviour
 		if (cSelfLocator.Facility == null ||
 		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
 		{
-			if (CGame.SelfActor != null &&
-			    CGame.SelfActor == gameObject)
+			if (CGamePlayers.SelfActor != null &&
+			    CGamePlayers.SelfActor == gameObject)
 			{
 				UpdateInput();
 			}

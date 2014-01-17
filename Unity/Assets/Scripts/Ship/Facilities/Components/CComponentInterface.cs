@@ -66,30 +66,30 @@ public class CComponentInterface : MonoBehaviour
 	}
 
 
-	public static CGame.ENetworkRegisteredPrefab GetPrefabType(EType _eFacilityComponentType)
+	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityComponentType)
 	{
-		CGame.ENetworkRegisteredPrefab ePrefabType = CGame.ENetworkRegisteredPrefab.INVALID;
+		CGameRegistrator.ENetworkPrefab ePrefabType = CGameRegistrator.ENetworkPrefab.INVALID;
 		
 		switch (_eFacilityComponentType)
 		{
 		case EType.FuseBox:
-			ePrefabType = CGame.ENetworkRegisteredPrefab.PanelFuseBox;
+			ePrefabType = CGameRegistrator.ENetworkPrefab.PanelFuseBox;
 			break;
 
 		case EType.PlayerSpawner:
-			ePrefabType = CGame.ENetworkRegisteredPrefab.PlayerSpawner;
+			ePrefabType = CGameRegistrator.ENetworkPrefab.PlayerSpawner;
 			break;
 
 		case EType.TurretCockpit:
-			ePrefabType = CGame.ENetworkRegisteredPrefab.TurretCockpit;
+			ePrefabType = CGameRegistrator.ENetworkPrefab.TurretCockpit;
 			break;
 
 		case EType.PilotCockpit:
-			ePrefabType = CGame.ENetworkRegisteredPrefab.BridgeCockpit;
+			ePrefabType = CGameRegistrator.ENetworkPrefab.BridgeCockpit;
 			break;
 
 		case EType.Alarm:
-			ePrefabType = CGame.ENetworkRegisteredPrefab.Alarm;
+			ePrefabType = CGameRegistrator.ENetworkPrefab.Alarm;
 			break;
 
 		default:

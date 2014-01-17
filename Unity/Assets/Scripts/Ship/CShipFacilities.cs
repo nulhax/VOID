@@ -69,7 +69,7 @@ public class CShipFacilities : MonoBehaviour
 		uint uiFacilityId = m_uiFacilityIdCount;
 		
 		// Retrieve the facility prefab
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CFacilityInterface.GetFacilityPrefab(_eType);
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CFacilityInterface.GetFacilityPrefab(_eType);
 
 		// Create facility
 		GameObject cNewFacilityObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);

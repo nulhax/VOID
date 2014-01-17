@@ -226,7 +226,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 		if(CNetwork.IsServer)
 		{
-			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
+			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGameShips.GalaxyShip.transform.position);
 		}
 		else
 		{
@@ -235,7 +235,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 			rigidbody.velocity = m_Velocity.Get();
 			rigidbody.angularVelocity = m_AngularVelocity.Get();
 
-			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGame.GalaxyShip.transform.position);
+			velocity = rigidbody.GetRelativePointVelocity(_GalaxyPos - CGameShips.GalaxyShip.transform.position);
 
 			rigidbody.isKinematic = true;
 		}

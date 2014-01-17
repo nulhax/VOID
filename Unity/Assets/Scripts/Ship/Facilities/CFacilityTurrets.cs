@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -62,7 +62,7 @@ public class CFacilityTurrets : CNetworkMonoBehaviour
 		GameObject turretNode = m_TurretNodes[_TurretNodeId];
 
 		// Retrieve the turret prefab
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CTurretInterface.GetTurretPrefab(_TurretType);
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CTurretInterface.GetTurretPrefab(_TurretType);
 		
 		// Create the turret
 		GameObject newTurretObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);

@@ -42,7 +42,8 @@ public class CCompositeCameraSystem : MonoBehaviour
 // Member Methods
 	public void LateUpdate()
 	{
-		if(!CGame.IsClientReady)
+		if(!CNetwork.Connection.IsConnected ||
+		    CNetwork.Connection.IsDownloadingInitialGameData)
 		{
 			return;
 		}
@@ -93,7 +94,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 
 	public void SetDefaultViewPerspective()
 	{
-		SetShipViewPerspective(CGame.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
+		SetShipViewPerspective(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
 	}
 	
 	private void UpdateCameraTransforms()
@@ -101,12 +102,12 @@ public class CCompositeCameraSystem : MonoBehaviour
 		if(!m_IsObserverOutside)
 		{
 			// Transfer the galaxy camera based off the ship camera
-			CGame.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, m_GalaxyCamera.transform);
+			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, m_GalaxyCamera.transform);
 		}
 		else
 		{
 			// Transfer the ship camera based off the galaxy camera
-			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
+			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
 		}
 	}
 

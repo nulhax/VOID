@@ -121,32 +121,32 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = CGame.GalaxyShip.GetComponent<CGalaxyShipCollider>();
+		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
 	
 		// Add self to the shipfacilities
 		if(!CNetwork.IsServer)
-			CGame.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
+			CGameShips.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
 	}
 	
-	public static CGame.ENetworkRegisteredPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
+	public static CGameRegistrator.ENetworkPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
 	{
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.INVALID;
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.INVALID;
 		
 		switch (_eFacilityType)
 		{
-			case EFacilityType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityBridge; break;
-			case EFacilityType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityFactory; break;
-			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityGravityGenerator; break;
-			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityLifeSupport; break;
-			case EFacilityType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
-			case EFacilityType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
-			case EFacilityType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
-			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
-			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
-			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
-			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
-			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayXSection; break;			
+			case EFacilityType.Bridge: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityBridge; break;
+			case EFacilityType.Factory: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityFactory; break;
+			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityGravityGenerator; break;
+			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityLifeSupport; break;
+			case EFacilityType.Engine: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityEngine; break;
+			case EFacilityType.Replicator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityReplicator; break;
+			case EFacilityType.Scanner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityScanner; break;
+			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
+			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayStraight; break;
+			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayCorner; break;
+			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayTSection; break;
+			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayXSection; break;			
 		}
 		
 		return (eRegisteredPrefab);

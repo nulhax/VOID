@@ -55,7 +55,7 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
     void SpawnTool(CDUIButton _sender)
     {
         // Create a new prefab and tool
-        CGame.ENetworkRegisteredPrefab ToolPrefab = CGame.ENetworkRegisteredPrefab.ToolRachet;
+        CGameRegistrator.ENetworkPrefab ToolPrefab = CGameRegistrator.ENetworkPrefab.ToolRachet;
         GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
 		
 		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);

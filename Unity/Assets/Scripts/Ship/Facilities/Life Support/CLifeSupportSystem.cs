@@ -71,7 +71,7 @@ public class CLifeSupportSystem : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		CGame.Ship.GetComponent<CShipLifeSupportSystem>().RegisterLifeSupportSystem(gameObject);
+		CGameShips.Ship.GetComponent<CShipLifeSupportSystem>().RegisterLifeSupportSystem(gameObject);
 
 		if(CNetwork.IsServer)
 			ActivateLifeSupport();

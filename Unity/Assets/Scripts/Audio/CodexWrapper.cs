@@ -96,7 +96,7 @@ public class CodexWrapper : MonoBehaviour
 	[AServerOnly]
 	void OnRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream)
 	{		
-		GameObject playerActor = CGame.FindPlayerActor(_cPlayer.PlayerId);
+		GameObject playerActor = CGamePlayers.FindPlayerActor(_cPlayer.PlayerId);
 		CNetworkViewId playerViewID = playerActor.GetComponent<CNetworkView>().ViewId;
 			
 		_cAudioDataStream.SetReadOffset(0);		

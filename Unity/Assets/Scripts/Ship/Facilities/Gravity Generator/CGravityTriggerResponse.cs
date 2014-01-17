@@ -42,8 +42,8 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	void Start()
 	{	
 		// Signup for events
-		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate  += new CShipFacilities.OnFacilityCreate(OnFacilityCreate);
-		CGame.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += new CShipFacilities.OnFacilityDestroy(OnFacilityDestroy);
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate  += new CShipFacilities.OnFacilityCreate(OnFacilityCreate);
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += new CShipFacilities.OnFacilityDestroy(OnFacilityDestroy);
 	}
 
 

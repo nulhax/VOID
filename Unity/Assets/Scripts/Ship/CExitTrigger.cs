@@ -45,7 +45,7 @@ public class CExitTrigger : MonoBehaviour
 			if(dynamicActor != null)
 			{
 				// Ensure the actor is not onboard any other facility before disembarking
-				if(!CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
+				if(!CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
 				{
 					// Set the disembarking state
 					dynamicActor.BoardingState = CActorBoardable.EBoardingState.Offboard;

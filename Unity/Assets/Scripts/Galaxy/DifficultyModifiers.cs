@@ -18,7 +18,7 @@ public class DifficultyModifier_TotalDistanceTravelled : MonoBehaviour  // +(√
 
     void Update()
     {
-        distanceTravelled += (CGame.GalaxyShip.rigidbody.velocity * Time.deltaTime).magnitude;
+        distanceTravelled += (CGameShips.GalaxyShip.rigidbody.velocity * Time.deltaTime).magnitude;
         totalDistanceTravelled.value = Mathf.Sqrt(distanceTravelled) * 0.005f;
     }
 }

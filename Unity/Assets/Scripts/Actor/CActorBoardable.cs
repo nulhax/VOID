@@ -74,7 +74,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	public void Update()
 	{
 //		// If the actor is not onboard 
-//		if(CNetwork.IsServer && BoardingState == EBoardingState.Onboard && !CGame.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(gameObject))
+//		if(CNetwork.IsServer && BoardingState == EBoardingState.Onboard && !CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(gameObject))
 //		{
 //			BoardingState = EBoardingState.Offboard;
 //		}
@@ -138,7 +138,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		Destroy(gameObject.GetComponent<GalaxyShiftable>());
 
 		// Parent the actor to the ship
-		transform.parent = CGame.Ship.transform;
+		transform.parent = CGameShips.Ship.transform;
 	}
 	
 	[AServerOnly]
@@ -153,10 +153,10 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		if(!childOfPlayer)
 		{
 			// Transfer the actor to galaxy ship space
-			CGame.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
+			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
 
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
-			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
+			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 		}
 	}
@@ -173,10 +173,10 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		if(!childOfPlayer)
 		{
 			// Get the inverse of the relative velocity of the actor boarding
-			Vector3 transferedVelocity = CGame.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
+			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
 
 			// Transfer the actor to ship space
-			CGame.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
+			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 
 			// Apply the compensation velocity to the actor
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
