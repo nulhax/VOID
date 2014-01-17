@@ -27,7 +27,8 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	{
 		INVALID,
 		
-		ButtonPressedDown,
+		ButtonPressed,
+		ButtonReleased,
 		
 		MAX
 	}
@@ -65,7 +66,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 			
 			switch(interactionEvent)
 			{
-			case EInteractionEvent.ButtonPressedDown:
+			case EInteractionEvent.ButtonPressed:
 				uint duiViewId = _cStream.ReadUInt();
 				uint duiButtonId = _cStream.ReadUInt();
 				CNetwork.Factory.FindObject(duiConsoleNetworkViewId).GetComponent<CDUIInteraction>().
@@ -87,7 +88,8 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	{
 		// Register the interactable object event
 		CActorInteractable IO = GetComponent<CActorInteractable>();
-		IO.EventPrimaryStart += HandlerPlayerActorLeftClick;
+		IO.EventPrimaryStart += HandlerPlayerPrimaryStart;
+		IO.EventPrimaryEnd += HandlerPlayerPrimaryEnd;
 		
 		if(CNetwork.IsServer)
 		{
@@ -108,7 +110,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	}
 	
 	[AClientOnly]
-	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
+	private void HandlerPlayerPrimaryStart(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
@@ -123,7 +125,31 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 			if(duiElement.ElementType == CDUIElement.EElementType.Button)
 			{
 				// Add this information to the network stream to serialise
-				s_CurrentDUIInteractions.Write((byte)EInteractionEvent.ButtonPressedDown);
+				s_CurrentDUIInteractions.Write((byte)EInteractionEvent.ButtonPressed);
+				s_CurrentDUIInteractions.Write(GetComponent<CNetworkView>().ViewId);
+				s_CurrentDUIInteractions.Write(duiElement.ParentViewID);
+				s_CurrentDUIInteractions.Write(duiElement.ElementID);
+			}
+		}
+	}
+
+	[AClientOnly]
+	private void HandlerPlayerPrimaryEnd(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
+	{	
+		// Get the UI from the console hit
+		CDUI dui = GetComponent<CDUIConsole>().DUI;
+		
+		// Find the element hit
+		GameObject hitElement = dui.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
+		
+		// If it did get the element pressed on the screen
+		if(hitElement != null)
+		{
+			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
+			if(duiElement.ElementType == CDUIElement.EElementType.Button)
+			{
+				// Add this information to the network stream to serialise
+				s_CurrentDUIInteractions.Write((byte)EInteractionEvent.ButtonReleased);
 				s_CurrentDUIInteractions.Write(GetComponent<CNetworkView>().ViewId);
 				s_CurrentDUIInteractions.Write(duiElement.ParentViewID);
 				s_CurrentDUIInteractions.Write(duiElement.ElementID);

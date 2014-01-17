@@ -32,6 +32,8 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 	public event NotifyInteraction EventPrimaryStart;
 	public event NotifyInteraction EventSecondaryStart;
+	public event NotifyInteraction EventPrimaryEnd;
+	public event NotifyInteraction EventSecondaryEnd;
 	public event NotifyInteraction EventUse;
 	
 	
@@ -68,6 +70,16 @@ public class CActorInteractable : CNetworkMonoBehaviour
 		case CPlayerInteractor.EInteractionType.SecondaryStart:
 			if(EventSecondaryStart != null)
 				EventSecondaryStart(_RayHit, cNetworkViewId);
+			break;
+
+		case CPlayerInteractor.EInteractionType.PrimaryEnd:
+			if(EventPrimaryEnd != null)
+				EventPrimaryEnd(_RayHit, cNetworkViewId);
+			break;
+			
+		case CPlayerInteractor.EInteractionType.SecondaryEnd:
+			if(EventSecondaryEnd != null)
+				EventSecondaryEnd(_RayHit, cNetworkViewId);
 			break;
 			
 		case CPlayerInteractor.EInteractionType.Use:
