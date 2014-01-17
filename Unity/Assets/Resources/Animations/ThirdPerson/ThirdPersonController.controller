@@ -86,6 +86,18 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: Falling
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: ColliderOrientation
+    m_Type: 1
+    m_DefaultFloat: 1
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 3
     m_Name: Base Layer
@@ -95,7 +107,7 @@ AnimatorController:
     m_SyncedLayerIndex: -1
     m_StateMachineMotionSetIndex: 0
     m_DefaultWeight: 0
-    m_IKPass: 0
+    m_IKPass: 1
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 3
@@ -593,7 +605,7 @@ State:
   m_Speed: 1
   m_CycleOffset: 0
   m_Motions:
-  - {fileID: 7400002, guid: cdc684828be63b345893bf74cbc0a0dc, type: 3}
+  - {fileID: 7400000, guid: fdc39e3202ebc4d4a8a473fd95fcff55, type: 3}
   - {fileID: 0}
   m_ParentStateMachine: {fileID: 110700000}
   m_Position: {x: -204, y: 132, z: 0}
@@ -657,7 +669,7 @@ State:
   m_Speed: 1
   m_CycleOffset: 0
   m_Motions:
-  - {fileID: 7400004, guid: cdc684828be63b345893bf74cbc0a0dc, type: 3}
+  - {fileID: 7400000, guid: fdc39e3202ebc4d4a8a473fd95fcff55, type: 3}
   - {fileID: 0}
   m_ParentStateMachine: {fileID: 110700000}
   m_Position: {x: -204, y: -12, z: 0}

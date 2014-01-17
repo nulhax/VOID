@@ -197,8 +197,6 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 			rigidbody.isKinematic = true;
 			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 		}
-
-		gameObject.GetComponent<Animator>().enabled = false;
 	}
 	
 	
