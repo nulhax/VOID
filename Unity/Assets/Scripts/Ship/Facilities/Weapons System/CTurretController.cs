@@ -95,9 +95,9 @@ public class CTurretController : CNetworkMonoBehaviour
 			if (m_ulMountedPlayerId.Get() == CNetwork.PlayerId)
 			{
 				// Subscribe to input events
-				CGame.UserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(RotateX);
-				CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
-				CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+				CUserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(RotateX);
+				CUserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
+				CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Debug: Move camera to turret camera position
 				CGame.CompositeCameraSystem.SetShipViewPerspective(m_cCameraObject.transform);
@@ -105,9 +105,9 @@ public class CTurretController : CNetworkMonoBehaviour
 			else if (m_ulMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				// Unsubscriber to input events
-				CGame.UserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(RotateX);
-				CGame.UserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
-				CGame.UserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+				CUserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(RotateX);
+				CUserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
+				CUserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Debug: Move camera to player head position
 				CGame.CompositeCameraSystem.SetDefaultViewPerspective();

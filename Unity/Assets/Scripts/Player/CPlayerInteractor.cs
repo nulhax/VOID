@@ -65,9 +65,9 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	{
 		if (gameObject == CGamePlayers.SelfActor)
 		{
-			CGame.UserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnInputPrimaryChange);
-			CGame.UserInput.EventSecondary += new CUserInput.NotifyKeyChange(OnInputSecondaryChange);
-			CGame.UserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
+			CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnInputPrimaryChange);
+			CUserInput.EventSecondary += new CUserInput.NotifyKeyChange(OnInputSecondaryChange);
+			CUserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
 		}
 	}
 	

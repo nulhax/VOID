@@ -92,7 +92,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
 
 			// Subscribe to mouse movement input
-			CGame.UserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
+			CUserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
 		}
 	}
 

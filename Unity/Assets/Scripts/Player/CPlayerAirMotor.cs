@@ -164,18 +164,18 @@ public class CPlayerAirMotor : MonoBehaviour
 	void UpdateInput()
 	{
 		m_usMovementStates  = 0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveForward)	? (ushort)EState.FlyForward		: (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (ushort)EState.FlyBackward	: (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (ushort)EState.StrafeLeft	: (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (ushort)EState.StrafeRight	: (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.FlyUp)			? (ushort)EState.FlyUp			: (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.FlyDown)        ? (ushort)EState.Down        : (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.FlyRollLeft)    ? (ushort)EState.RollLeft    : (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.FlyRollRight)   ? (ushort)EState.RollRight   : (ushort)0;
-		m_usMovementStates |= CGame.UserInput.IsInputDown(CUserInput.EInput.Sprint)  		? (ushort)EState.Turbo     	: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveForward)	? (ushort)EState.FlyForward		: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (ushort)EState.FlyBackward	: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (ushort)EState.StrafeLeft	: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (ushort)EState.StrafeRight	: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyUp)			? (ushort)EState.FlyUp			: (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyDown)        ? (ushort)EState.Down        : (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft)    ? (ushort)EState.RollLeft    : (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight)   ? (ushort)EState.RollRight   : (ushort)0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)  		? (ushort)EState.Turbo     	: (ushort)0;
 
-		transform.Rotate(new Vector3(0.0f, CGame.UserInput.MouseMovementX, 0.0f));
-		transform.Rotate(new Vector3(CGame.UserInput.MouseMovementY, 0.0f, 0.0f));
+		transform.Rotate(new Vector3(0.0f, CUserInput.MouseMovementX, 0.0f));
+		transform.Rotate(new Vector3(CUserInput.MouseMovementY, 0.0f, 0.0f));
 	}
 
 

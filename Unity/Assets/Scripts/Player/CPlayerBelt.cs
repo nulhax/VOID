@@ -326,9 +326,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction += new CPlayerInteractor.HandleNoInteraction(OnNoInteraction);
         gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
 
-        CGame.UserInput.EventReloadTool += new CUserInput.NotifyKeyChange(OnReloadToolKey);
-        CGame.UserInput.EventDropTool += new CUserInput.NotifyKeyChange(OnDropToolKey);
-        CGame.UserInput.EventChangeToolSlot += new CUserInput.NotifyChangeToolSlot(OnChangeSlotKey);
+        CUserInput.EventReloadTool += new CUserInput.NotifyKeyChange(OnReloadToolKey);
+        CUserInput.EventDropTool += new CUserInput.NotifyKeyChange(OnDropToolKey);
+        CUserInput.EventChangeToolSlot += new CUserInput.NotifyChangeToolSlot(OnChangeSlotKey);
     }
 
 
@@ -354,6 +354,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 				if (_cInteractableObject != null &&
 					_cInteractableObject.GetComponent<CToolInterface>() != null)
 				{
+				Debug.LogError("Started to pick up tool" + _eType);
 					s_cSerializeStream.Write((byte)ENetworkAction.PickupTool);
 				}
 				else

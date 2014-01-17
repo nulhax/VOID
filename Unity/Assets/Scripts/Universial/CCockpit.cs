@@ -131,7 +131,7 @@ public class CCockpit : CNetworkMonoBehaviour
 		gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUseInteraction);
 
 
-		CGame.UserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
+		CUserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
 	}
 
 
