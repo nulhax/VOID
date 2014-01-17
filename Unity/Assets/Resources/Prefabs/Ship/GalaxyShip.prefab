@@ -15,6 +15,7 @@ GameObject:
   - 114: {fileID: 11400008}
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400010}
+  - 114: {fileID: 11400012}
   m_Layer: 10
   m_Name: GalaxyShip
   m_TagString: GalaxyShip
@@ -263,6 +264,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c12ac2a931d7a84094d11461c75c608, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impulseToRadius: .0625
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
