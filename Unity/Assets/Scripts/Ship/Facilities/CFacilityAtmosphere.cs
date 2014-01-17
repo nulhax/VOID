@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -14,6 +14,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
@@ -25,74 +26,169 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Types
 
 
-    enum EPriority
-    {
-        Invalid = -1,
-        Low,
-        Medium,
-        High,
-        Critical,
-        Max
-    }
-
-
 // Member Delegates & Events
 
 
+// Member Fields
+		
+	private CNetworkVar<float> m_AtmosphereQuantity = null;
+
+	private CNetworkVar<float> m_fAtmosphereConsumptionRate = null;
+	private CNetworkVar<float> m_fAtmosphereRefillRate = null;
+	
+	private List<GameObject> m_AtmosphericConsumers = new List<GameObject>();
+	
+	private float m_AtmosphereVolume = 1000.0f;
+
+
 // Member Properties
-
-
-    float Temperature      { get { return (m_fTemperature.Get()); } }
-    float Oxygen           { get { return (m_fOxygen.Get()); } }
-    float Radiation        { get { return (m_fRadiation.Get()); } }
-    float Pressure         { get { return (m_fPressure.Get()); } }
-
-    EPriority Priority     { get { return (m_ePriority.Get()); } }
-
-
-// Member Functions
-
-
-    public override void InstanceNetworkVars()
+	
+    public float AtmosphereQuantity
     {
-        m_fTemperature = new CNetworkVar<float>(OnNetworkVarSync);
-        m_fOxygen = new CNetworkVar<float>(OnNetworkVarSync);
-        m_fRadiation = new CNetworkVar<float>(OnNetworkVarSync);
-        m_fPressure = new CNetworkVar<float>(OnNetworkVarSync);
-		m_ePriority = new CNetworkVar<EPriority>(OnNetworkVarSync, EPriority.Medium);
+        get { return (m_AtmosphereQuantity.Get()); }
     }
 
+    public float AtmospherePercentage
+    {
+		get { return ((AtmosphereQuantity / m_AtmosphereVolume) * 100.0f); }
+    }
+
+	public float AtmosphereVolume
+	{
+		get { return (m_AtmosphereVolume); } 
+	}
+
+	public float AtmosphereRefillRate
+	{
+		get { return(m_fAtmosphereRefillRate.Get()); }
+
+		[AServerOnly]
+		set { m_fAtmosphereRefillRate.Set(value); }
+	}
+
+	public float AtmosphereConsumeRate
+	{
+		get { return(m_fAtmosphereConsumptionRate.Get()); }
+
+		[AServerOnly]
+		set { m_fAtmosphereConsumptionRate.Set(value); }
+	}
+
+	public bool RequiresAtmosphereRefill
+	{
+		get { return(AtmosphereConsumeRate != 0.0f || AtmospherePercentage != 1.0f); } 
+	}
+
+
+// Member Methods
+	
+    public override void InstanceNetworkVars()
+    {
+        m_AtmosphereQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereRefillRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereConsumptionRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+    }
+
+	public void OnNetworkVarSync(INetworkVar _VarInstance)
+	{
+
+	}
 
 	public void Start()
 	{
+		if(CNetwork.IsServer)
+		{
+			// Debug: Atmosphere starts at half the total volume
+			m_AtmosphereQuantity.Set(AtmosphereVolume / 2);
+		}
 	}
-
-
-	public void OnDestroy()
-	{
-	}
-
-
+	
 	public void Update()
 	{
+		if(CNetwork.IsServer)
+		{
+			CalculateConsumptionRate();
+			UpdateAtmosphereQuantity();
+		}
 	}
 
+	public void AddAtmosphericConsumer(GameObject _Consumer)
+	{
+		if(!m_AtmosphericConsumers.Contains(_Consumer))
+		{
+			m_AtmosphericConsumers.Add(_Consumer);
+		}
+	}
+	
+	public void RemoveAtmosphericConsumer(GameObject _Consumer)
+	{
+		if(m_AtmosphericConsumers.Contains(_Consumer))
+		{
+			m_AtmosphericConsumers.Remove(_Consumer);
+		}
+	}
 
-    void OnNetworkVarSync(INetworkVar _cVarInstance)
+	private void CalculateConsumptionRate()
+	{
+		// Calulate the combined consumption rate within the facility
+		float consumptionRate = 0.0f;
+		bool bHasNullGameObject = false;
+		foreach(GameObject consumer in m_AtmosphericConsumers)
+		{
+			if (consumer != null)
+			{
+				consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
+			}
+			else
+			{
+				bHasNullGameObject = true;
+			}
+		}
+
+		m_AtmosphericConsumers.RemoveAll(cEntry => cEntry == null);
+
+		// Set the consumption rate
+		AtmosphereConsumeRate = consumptionRate;
+	}
+
+	private void UpdateAtmosphereQuantity()
     {
-    }
+		float consumptionAmount = 0.0f;
+		float refillAmount = 0.0f;
 
+		// If the atmosphere is being consumed, calculate the consumption rate
+		if(m_AtmosphericConsumers.Count != 0)
+		{
+			// Remove obsolete consumers
+			m_AtmosphericConsumers.RemoveAll((item) => item == null);
 
-// Member Fields
+			// Calculate the consumption amount
+			consumptionAmount = -AtmosphereConsumeRate * Time.deltaTime;
+		}
 
+		// If the facility requires a refill, calculate the refill rate
+		if(RequiresAtmosphereRefill)
+        {
+			refillAmount = AtmosphereRefillRate * Time.deltaTime;
+        }
 
-    CNetworkVar<float> m_fTemperature;
-    CNetworkVar<float> m_fOxygen;
-    CNetworkVar<float> m_fRadiation;
-    CNetworkVar<float> m_fPressure;
+		// Combine the refill and consumption amounts to get the final rate
+		float finalRate = consumptionAmount + refillAmount;
 
+		// Calculate the new quantity
+		float newQuantity = AtmosphereQuantity + finalRate;
 
-    CNetworkVar<EPriority> m_ePriority;
-
-
+		// Clamp atmosphere
+		if(newQuantity > AtmosphereVolume)
+		{
+			newQuantity = AtmosphereVolume;
+		}
+		else if(newQuantity < 0.0f)
+		{
+			newQuantity = 0.0f;
+		}
+		
+		// Increase atmosphere amount
+		m_AtmosphereQuantity.Set(newQuantity);
+	}
 };

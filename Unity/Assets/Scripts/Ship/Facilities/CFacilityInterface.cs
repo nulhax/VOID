@@ -15,18 +15,29 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 /* Implementation */
 
 
-public class CFacilityInterface : MonoBehaviour
+[RequireComponent(typeof(CFacilityAtmosphere))]
+[RequireComponent(typeof(CFacilityComponents))]
+[RequireComponent(typeof(CFacilityExpansion))]
+[RequireComponent(typeof(CFacilityGeneral))]
+[RequireComponent(typeof(CFacilityGravity))]
+[RequireComponent(typeof(CFacilityHull))]
+[RequireComponent(typeof(CFacilityOnboardActors))]
+[RequireComponent(typeof(CFacilityPower))]
+[RequireComponent(typeof(CFacilityTurrets))]
+[RequireComponent(typeof(CNetworkView))]
+public class CFacilityInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
 
 
-	public enum EFacilityType
+    public enum EFacilityType
 	{
 		INVALID = -1,
 		
@@ -42,167 +53,102 @@ public class CFacilityInterface : MonoBehaviour
 		HallwayCorner,
 		HallwayTSection,
 		HallwayXSection,
-		
-		MAX
+
+		MAX,
 	}
 
 
 // Member Delegates & Events
 
 
+	
+// Member Fields
+	private CNetworkVar<uint> m_FacilityID = null;
+	private CNetworkVar<EFacilityType> m_FacilityType = null;
+
+
 // Member Properties
-	
-	
 	public uint FacilityId 
 	{
-		get{return(m_uiFacilityID);}			
+		get{return(m_FacilityID.Get());}			
+
+		[AServerOnly]
 		set
 		{
-			if(m_uiFacilityID == uint.MaxValue)
+			if(m_FacilityID.Get() == uint.MaxValue)
 			{
-				m_uiFacilityID = value;
+				m_FacilityID.Set(value);
 			}
 			else
 			{
-				Debug.LogError("Cannot set room ID value twice!");
-			}			
+				Debug.LogError("Cannot set facility ID value twice!");
+			}
 		}			
 	}
 	
 	
 	public EFacilityType FacilityType 
 	{
-		get{return(m_eType);}			
+		get { return(m_FacilityType.Get()); }
+
+		[AServerOnly]
 		set
 		{
-			if(m_eType == EFacilityType.INVALID)
+			if(m_FacilityType.Get() == EFacilityType.INVALID)
 			{
-				m_eType = value;
+				m_FacilityType.Set(value);
 			}
 			else
 			{
-				Debug.LogError("Cannot set room type value twice!");
-			}			
-		}			
+				Debug.LogError("Cannot set facility type value twice!");
+			}
+		}
 	}
 
 
-// Member Functions
-	public void Awake()
-	{	
-		// Initialise the expansion ports
-		SearchExpansionPorts();
-		AddDebugPortNames();
-		
-		// Generic components to be added for all room types
-		gameObject.AddComponent<CFacilityGravity>();
-		gameObject.AddComponent<CFacilityAtmosphere>();
-		gameObject.AddComponent<CFacilityPower>();
-		gameObject.AddComponent<CFacilityGeneral>();
-			
-		// Add the network view
-		gameObject.AddComponent<CNetworkView>();
-	}
-
-
-	public GameObject GetExpansionPort(uint _uiExpansionPortId)
+// Member Methods
+	public override void InstanceNetworkVars()
 	{
-		return (m_aExpansionPorts[(int)_uiExpansionPortId]);
-	}
-
-
-	public List<GameObject> ExpansionPorts
-	{
-		get { return (m_aExpansionPorts); } 
-	}
-
-
-	public uint ExpansionPortsCount
-	{
-		get { return ((uint)m_aExpansionPorts.Count); }
+		m_FacilityID = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_FacilityType = new CNetworkVar<EFacilityType>(OnNetworkVarSync, EFacilityType.INVALID);
 	}
 	
-	
-	public static CGame.ENetworkRegisteredPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
+	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.INVALID;
+
+	}
+
+	public void Start()
+	{
+		// Attach the collider for the facility to the galaxy ship
+		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
+		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+	
+		// Add self to the shipfacilities
+		if(!CNetwork.IsServer)
+			CGameShips.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
+	}
+	
+	public static CGameRegistrator.ENetworkPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
+	{
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.INVALID;
 		
 		switch (_eFacilityType)
 		{
-			case EFacilityType.Bridge: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityBridge; break;
-			case EFacilityType.Factory: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityFactory; break;
-			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityGravityGenerator; break;
-			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityLifeSupport; break;
-			case EFacilityType.Engine: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityEngine; break;
-			case EFacilityType.Replicator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityReplicator; break;
-			case EFacilityType.Scanner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityScanner; break;
-			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
-			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayStraight; break;
-			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayCorner; break;
-			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayTSection; break;
-			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.HallwayXSection; break;			
+			case EFacilityType.Bridge: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityBridge; break;
+			case EFacilityType.Factory: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityFactory; break;
+			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityGravityGenerator; break;
+			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityLifeSupport; break;
+			case EFacilityType.Engine: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityEngine; break;
+			case EFacilityType.Replicator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityReplicator; break;
+			case EFacilityType.Scanner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityScanner; break;
+			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
+			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayStraight; break;
+			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayCorner; break;
+			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayTSection; break;
+			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayXSection; break;			
 		}
 		
 		return (eRegisteredPrefab);
 	}
-
-
-	private void SearchExpansionPorts()
-	{
-		int iCount = 0;
-		for (int i = 0; i < transform.childCount; ++i)
-		{
-			if (transform.GetChild(i).name == CExpansionPortInterface.s_GameObjectName)
-			{
-				transform.GetChild(i).gameObject.GetComponent<CExpansionPortInterface>().ExpansionPortId = (uint)iCount++;
-				m_aExpansionPorts.Add(transform.GetChild(i).gameObject);
-			}
-		}
-	}
-	
-	private void FindInteriorTrigger()
-	{
-		m_InteriorTrigger = transform.FindChild("InteriorTrigger").gameObject;
-		
-		if(m_InteriorTrigger == null)
-			Debug.LogError("Interior Trigger not founf for this facility! Gravity and atmosphere will not function!");
-	}
-	
-	private void AddDebugPortNames()
-	{
-		for(int i = 0; i < m_aExpansionPorts.Count; i++) 
-		{
-			CDUIField portName = m_aExpansionPorts[i].gameObject.AddComponent<CDUIField>();
-			int PortId = i + 1;
-			portName.Initialise("Port " + PortId, Color.green, 72, 0.10f);
-		}
-	}
-	
-	private void OnTriggerEnter(Collider _Entity)
-	{
-		//If this room is intersecting another room, panic.
-		if(_Entity.gameObject.tag == "Facility")
-		{
-			m_bIntersecting = true;
-		}
-	}   
-	
-	private void OnTriggerExit(Collider _Entity)
-	{
-		if(_Entity.gameObject.tag == "Facility")
-		{
-			m_bIntersecting = false;
-		}
-	}
-
-	// Member Fields
-	
-	EFacilityType m_eType = EFacilityType.INVALID;
-	
-	uint m_uiFacilityID = uint.MaxValue;
-	bool m_bIntersecting = false;
-	
-	List<GameObject> m_aExpansionPorts = new List<GameObject>();
-	GameObject m_InteriorTrigger = null;
-
 };

@@ -33,7 +33,7 @@ public class CodexWrapper : MonoBehaviour
 	struct DecodeInformation
 	{
 		public short[] saDecodedData;
-		public ushort usSenderViewID;
+		public CNetworkViewId cSenderViewID;
 		public int iNumSamples;
 		public int iFrequency;
 	};
@@ -93,11 +93,11 @@ public class CodexWrapper : MonoBehaviour
 		//m_DecodeThread = new Thread(new ParameterizedThreadStart(DecodeAudio));		
 	}
 
-	[AServerMethod]
+	[AServerOnly]
 	void OnRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream)
 	{		
-		GameObject playerActor = CGame.FindPlayerActor(_cPlayer.PlayerId);
-		ushort playerViewID = playerActor.GetComponent<CNetworkView>().ViewId;
+		GameObject playerActor = CGamePlayers.FindPlayerActor(_cPlayer.PlayerId);
+		CNetworkViewId playerViewID = playerActor.GetComponent<CNetworkView>().ViewId;
 			
 		_cAudioDataStream.SetReadOffset(0);		
 		byte[] streamData =  _cAudioDataStream.ReadBytes(_cAudioDataStream.NumUnreadBytes);
@@ -124,7 +124,7 @@ public class CodexWrapper : MonoBehaviour
 		}
 	}
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream)
 	{
 		s_framesToDecode.Enqueue(_cAudioDataStream);
@@ -132,8 +132,8 @@ public class CodexWrapper : MonoBehaviour
 
 	void Update()
 	{	
-		EncodingUpdate();	
-		DecodingUpdate();
+		//EncodingUpdate();	
+		//DecodingUpdate();
 	}
 	
 	void EncodingUpdate()
@@ -208,7 +208,7 @@ public class CodexWrapper : MonoBehaviour
 			short[] saDecodedFrames = decodedFrame.saDecodedData;
 			int numSamples = decodedFrame.iNumSamples;
 			int frequency = decodedFrame.iFrequency;
-			ushort senderViewID = decodedFrame.usSenderViewID;
+			CNetworkViewId senderViewID = decodedFrame.cSenderViewID;
 			
 			float[] faDecodedAudioData = new float[numSamples];
 	
@@ -218,7 +218,7 @@ public class CodexWrapper : MonoBehaviour
 			}
 	
 			// Play audio at location of sender
-			CNetworkView senderNetworkView = CNetworkView.FindUsingViewId(senderViewID);
+			GameObject senderNetworkView = CNetworkView.FindUsingViewId(senderViewID).gameObject;
 			AudioSource senderAudioSource = senderNetworkView.gameObject.GetComponent<AudioSource>();
 			
 			AudioClip newClip = AudioClip.Create("Test", faDecodedAudioData.Length, 1, frequency, true, false);
@@ -228,7 +228,7 @@ public class CodexWrapper : MonoBehaviour
 			senderAudioSource.volume = 1.0f;
 			
 			//AudioSystem.GetInstance.Play(newClip, senderNetworkView.gameObject.transform.position, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
-			AudioSystem.GetInstance.Play(senderAudioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);								
+			AudioSystem.Play(senderAudioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);								
 		}
 		
 		if(s_framesToDecode.Count > 0)
@@ -275,7 +275,7 @@ public class CodexWrapper : MonoBehaviour
 		int iNumSamples = _cAudioDataStream.ReadInt();
 		int iNumEncodedBytes = _cAudioDataStream.ReadInt();
 		byte[] baEncodedData = _cAudioDataStream.ReadBytes(iNumEncodedBytes);
-		ushort usSenderViewID = 	_cAudioDataStream.ReadUShort();	
+		CNetworkViewId cSenderViewID = 	_cAudioDataStream.ReadNetworkViewId();	
 		
 		// Decode
 		short[] saDecodedFrames = new short[iNumSamples];
@@ -286,7 +286,7 @@ public class CodexWrapper : MonoBehaviour
 		DecodeInformation decodedFrameInfo;		
 		decodedFrameInfo.saDecodedData = saDecodedFrames;
 		decodedFrameInfo.iFrequency = iFrequency;
-		decodedFrameInfo.usSenderViewID = usSenderViewID;
+		decodedFrameInfo.cSenderViewID = cSenderViewID;
 		decodedFrameInfo.iNumSamples = iNumSamples;
 		
 		s_decodedFrames.Enqueue(decodedFrameInfo);	

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(GalaxyShiftable))]
 public class GalaxyObserver : MonoBehaviour
 {
     void Start()
@@ -12,42 +13,7 @@ public class GalaxyObserver : MonoBehaviour
             CGame game = CGame.Instance; System.Diagnostics.Debug.Assert(game);
             CGalaxy galaxy = CGalaxy.instance; System.Diagnostics.Debug.Assert(galaxy);
 
-            // Depending on the type of model; it may use a mesh renderer, an animator, or something else.
-            float observationRadius = 1.0f;
-            {
-                Rigidbody body = gameObject.GetComponent<Rigidbody>();
-                if (body && body.collider != null)
-                    observationRadius = Mathf.Sqrt(body.collider.bounds.extents.sqrMagnitude);
-                else
-                {
-                    Collider collider = gameObject.GetComponent<Collider>();
-                    if (collider)
-                        observationRadius = Mathf.Sqrt(collider.bounds.extents.sqrMagnitude);
-                    else
-                    {
-                        MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-                        if (meshRenderer)
-                            observationRadius = Mathf.Sqrt(meshRenderer.bounds.extents.sqrMagnitude);
-                        else
-                        {
-                            bool gotSomethingFromAnimator = false;
-                            Animator anim = gameObject.GetComponent<Animator>();
-                            if (anim)
-                            {
-                                gotSomethingFromAnimator =  anim.renderer || anim.collider || anim.rigidbody;
-                                if (anim.renderer)          observationRadius = Mathf.Sqrt(anim.renderer.bounds.extents.sqrMagnitude);
-                                else if (anim.collider)     observationRadius = Mathf.Sqrt(anim.collider.bounds.extents.sqrMagnitude);
-                                else if (anim.rigidbody)    observationRadius = Mathf.Sqrt(anim.rigidbody.collider.bounds.extents.sqrMagnitude);
-                            }
-
-                            if (!gotSomethingFromAnimator)
-                                Debug.LogWarning("GalaxyObserver: No RigidBody, Collider, MeshRenderer, or Animator on " + gameObject.name + ". Bounding sphere radius set to 1");
-                        }
-                    }
-                }
-            }
-
-            galaxy.RegisterObserver(this.gameObject, observationRadius/*Mathf.Sqrt(this.gameObject.rigidbody.collider.bounds.extents.sqrMagnitude)*/);
+            galaxy.RegisterObserver(this.gameObject, CGalaxy.GetBoundingRadius(gameObject));
 
             //textObject = new GameObject();
             //textObject.transform.parent = this.gameObject.transform;

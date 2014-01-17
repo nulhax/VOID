@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CNetworkView))]
 public class NetworkedEntity : CNetworkMonoBehaviour
 {
     public bool Position = true;

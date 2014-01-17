@@ -30,6 +30,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	{
 		PickupModule,
 		DropModule,
+		InsertCell
 	}
 
 
@@ -43,7 +44,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	{
 		get
 		{
-			if (CarryingModuleViewId != 0)
+			if (CarryingModuleViewId != null)
 			{
 				return (CNetwork.Factory.FindObject(CarryingModuleViewId));
 			}
@@ -53,15 +54,15 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	public ushort CarryingModuleViewId
+	public CNetworkViewId CarryingModuleViewId
 	{
-		get { return (m_usCarryingModuleViewId.Get()); }
+		get { return (m_cCarryingModuleViewId.Get()); }
 	}
 
 
 	public bool IsCarryingModule
 	{
-		get { return (CarryingModuleViewId != 0); }
+		get { return (CarryingModuleViewId != null); }
 	}
 
 
@@ -70,76 +71,52 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		m_usCarryingModuleViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
+		m_cCarryingModuleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 	}
 
 
-	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-	{
-		if (_cSyncedNetworkVar == m_usCarryingModuleViewId)
-		{
-			if (m_usCarryingModuleViewId.Get() == 0)
-			{
-
-			}
-		}
-	}
-
-
-	public void Start()
-	{
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
-		gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
-	}
+    [AServerOnly]
+    public void PickupModule(ulong _ulPlayerId, CNetworkViewId _cModuleViewId)
+    {
+        if (!IsCarryingModule)
+        {
+            m_cCarryingModuleViewId.Set(_cModuleViewId);
+            CNetwork.Factory.FindObject(_cModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
+        }
+    }
 
 
-	public void OnPreDestroy()
-	{
-		if (CNetwork.IsServer)
-		{
-			if (IsCarryingModule)
-			{
-				DropModule();
-			}
-		}
-	}
+    [AServerOnly]
+    public void DropModule()
+    {
+        if (IsCarryingModule)
+        {
+            CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
+            m_cCarryingModuleViewId.Set(null);
+        }
+    }
 
 
-	public void OnDestroy()
-	{
-		// Empty
-	}
+    [AServerOnly]
+    public void InsertCell(ulong _ulPlayerId, CNetworkViewId _cCellSlotViewId)
+    {
+        if (IsCarryingModule)
+        {
+            CNetworkViewId CellToInsert = m_cCarryingModuleViewId.Get();
+
+            DropModule();
+
+            CNetworkViewId replacementCell = CNetwork.Factory.FindObject(_cCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
+
+            if (replacementCell != null)
+            {
+                PickupModule(_ulPlayerId, replacementCell);
+            }
+        }
+    }
 
 
-	public void Update()
-	{
-		// Empty
-	}
-
-
-	[AServerMethod]
-	void PickupModule(ulong _ulPlayerId, ushort _usModuleViewId)
-	{
-		if (!IsCarryingModule)
-		{
-			m_usCarryingModuleViewId.Set(_usModuleViewId);
-			CNetwork.Factory.FindObject(_usModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
-		}
-	}
-
-
-	[AServerMethod]
-	void DropModule()
-	{
-		if (IsCarryingModule)
-		{
-			CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
-			m_usCarryingModuleViewId.Set(0);
-		}
-	}
-
-
-	[AClientMethod]
+	[AClientOnly]
 	public void OnPickupModuleRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		if (_eType == CPlayerInteractor.EInteractionType.Use &&
@@ -152,9 +129,33 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
 		}
 	}
+	
+	[AClientOnly]
+	public void OnCellInsertRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+	{
+		if (_eType == CPlayerInteractor.EInteractionType.PrimaryStart &&
+			_cInteractableObject.GetComponent<CCellSlot>() != null &&
+			IsCarryingModule)
+		{
+			CModuleInterface.EType carryingCellType = CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().m_eType;
+			CModuleInterface.EType cellSlotType = _cInteractableObject.GetComponent<CCellSlot>().m_CellSlotType;
+			
+			if(carryingCellType == cellSlotType)
+			{
+				// Function to insert the cell here
+				Debug.Log("Ima sliding my " + carryingCellType.ToString() + " into a " + cellSlotType.ToString() + " slot.");
+				
+				// Action
+				s_cSerializeStream.Write((byte)ENetworkAction.InsertCell);
+
+				// Target tool view id
+				s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
+			}
+		}
+	}
 
 
-	[AClientMethod]
+	[AClientOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		// Drop
@@ -171,10 +172,11 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 		}
 	}
 
-	[AServerMethod]
+
+	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		GameObject cPlayerObject = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
+		GameObject cPlayerObject = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
 		CPlayerBackPack cPlayerBackPack = cPlayerObject.GetComponent<CPlayerBackPack>();
 
 		// Process stream data
@@ -187,23 +189,87 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			switch (eAction)
 			{
 				case ENetworkAction.PickupModule:
-					ushort usModuleViewId = _cStream.ReadUShort();
-					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, usModuleViewId);
+					CNetworkViewId cModuleViewId = _cStream.ReadNetworkViewId();
+					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, cModuleViewId);
 					
 					break;
 
 				case ENetworkAction.DropModule:
 					cPlayerBackPack.DropModule();
 					break;
+				
+				case ENetworkAction.InsertCell:
+					CNetworkViewId cCellSlotViewId = _cStream.ReadNetworkViewId();
+					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, cCellSlotViewId);
+					break;
 			}
 		}
 	}
 
 
+    void Start()
+    {
+        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
+        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnCellInsertRequest);
+        gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
+    }
+
+
+    void OnPreDestroy()
+    {
+        if (CNetwork.IsServer)
+        {
+            if (IsCarryingModule)
+            {
+                DropModule();
+            }
+        }
+    }
+
+
+    void Update()
+    {
+        // Empty
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+    {
+        if (_cSyncedNetworkVar == m_cCarryingModuleViewId)
+        {
+            if (m_cCarryingModuleViewId.Get() == null)
+            {
+
+            }
+        }
+    }
+
+
+    void OnGUI()
+    {
+        if (gameObject == CGamePlayers.SelfActor)
+        {
+            string sModuleText = "[Module] ";
+
+            if (m_cCarryingModuleViewId.Get() != null)
+            {
+                sModuleText += ModuleObject.name;
+            }
+            else
+            {
+                sModuleText += "None";
+            }
+
+
+            GUI.Label(new Rect(10, Screen.height - 80, 500, 50), sModuleText);
+        }
+    }
+
+
 // Member Fields
 
 
-	CNetworkVar<ushort> m_usCarryingModuleViewId = null;
+	CNetworkVar<CNetworkViewId> m_cCarryingModuleViewId = null;
 
 
 	static KeyCode s_eDropKey = KeyCode.H;

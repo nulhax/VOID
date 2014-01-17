@@ -19,7 +19,9 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CActorInteractable))]
+[RequireComponent(typeof(CActorBoardable))]
+[RequireComponent(typeof(CActorGravity))]
 public class CModuleInterface : CNetworkMonoBehaviour
 {
 
@@ -31,7 +33,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		PowerCell,
 		PlasmaCell,
 		FuelCell,
-		BlackMatterCell
+		BlackMatterCell,
+		BioCell,
+		ReplicatorCell
 	}
 
 
@@ -44,138 +48,138 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public delegate void NotifyDropped();
 	public event NotifyDropped EventDropped;
 
+	public delegate void NotifySwapped();
+	public event NotifySwapped EventSwapped;
+
 
 // Member Properties
 
 
-	public GameObject OwnerPlayerActorObject
+	public GameObject OwnerPlayerActor
 	{
-		get { return (CNetwork.Factory.FindObject(m_usOwnerPlayerActorViewId.Get())); }
+		get { return (CNetwork.Factory.FindObject(m_cOwnerActorViewId.Get())); }
 	}
 
 
 	public bool IsHeld
 	{
-		get { return (m_usOwnerPlayerActorViewId.Get() != 0); }
+		get { return (m_cOwnerActorViewId.Get() != null); }
 	}
-
 
 // Member Functions
 
 
 	public override void InstanceNetworkVars()
 	{
-		m_usOwnerPlayerActorViewId = new CNetworkVar<ushort>(OnNetworkVarSync);
+		m_cOwnerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if (_cSyncedNetworkVar == m_usOwnerPlayerActorViewId)
+		if (_cSyncedNetworkVar == m_cOwnerActorViewId)
 		{
 			if (IsHeld)
 			{
-				GameObject cOwnerPlayerActor = OwnerPlayerActorObject;
-
+				GameObject cOwnerPlayerActor = OwnerPlayerActor;
+				
 				gameObject.transform.parent = cOwnerPlayerActor.transform;
-				gameObject.transform.localPosition = new Vector3(-0.43f, 0.41f, 0.34f);
+				gameObject.transform.localPosition = new Vector3(-0.5f, 0.36f, 0.5f);
 				gameObject.transform.localRotation = Quaternion.identity;
-
-				// Turn off  dynamic physics
-				rigidbody.detectCollisions = false;
-				rigidbody.isKinematic = true;
-
-				// Disable dynamic actor
-				GetComponent<CDynamicActor>().enabled = false;
+				
+				// Turn off dynamic physics
+				if(CNetwork.IsServer)
+				{
+					rigidbody.isKinematic = true;
+					rigidbody.detectCollisions = false;
+				}
+				
+				// Stop receiving synchronizations
+				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
 			}
 			else
 			{
 				gameObject.transform.parent = null;
-
-				// Turn on  dynamic physics
-				rigidbody.detectCollisions = true;
-				rigidbody.isKinematic = false;
+				
+				// Turn on dynamic physics
+				if(CNetwork.IsServer)
+				{
+					rigidbody.isKinematic = false;
+					rigidbody.detectCollisions = true;
+				}
+				
 				rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
 				rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
-
-				// Disable dynamic actor
-				GetComponent<CDynamicActor>().enabled = true;
+				
+				// Receive synchronizations
+				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
 			}
 		}
 	}
 
 
-	public void Awake()
-	{
-		gameObject.AddComponent<Rigidbody>();
-		gameObject.AddComponent<CDynamicActor>();
-		gameObject.AddComponent<CInteractableObject>();
-		gameObject.AddComponent<CNetworkView>();
-		
-		gameObject.rigidbody.useGravity = false;
-	}
+    [AServerOnly]
+    public void Pickup(ulong _ulPlayerId)
+    {
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
+
+        if (!IsHeld)
+        {
+            // Set owning player
+            m_ulOwnerPlayerId = _ulPlayerId;
+
+            // Set owning object view id
+            m_cOwnerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+
+            // Notify observers
+            if (EventPickedUp != null)
+            {
+                EventPickedUp();
+            }
+        }
+    }
 
 
-	public void Start()
+    [AServerOnly]
+    public void Drop()
+    {
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
+
+        // Check currently held
+        if (IsHeld)
+        {
+            // Remove owner player
+            m_ulOwnerPlayerId = 0;
+
+            // Set owning object view id
+            m_cOwnerActorViewId.Set(null);
+
+            // Notify observers
+            if (EventDropped != null)
+            {
+                EventDropped();
+            }
+        }
+    }
+
+
+	void Start()
 	{
 		// Empty
 	}
 
 
-	public void OnDestroy()
+	void OnDestroy()
 	{
 		// Empty
 	}
 
 
-	public void Update()
+	void Update()
 	{
 		// Empty
-	}
-
-
-	[AServerMethod]
-	public void Pickup(ulong _ulPlayerId)
-	{
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-		if (!IsHeld)
-		{
-			// Set owning player
-			m_ulOwnerPlayerId = _ulPlayerId;
-
-			// Set owning object view id
-			m_usOwnerPlayerActorViewId.Set(CGame.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-
-			// Notify observers
-			if (EventPickedUp != null)
-			{
-				EventPickedUp();
-			}
-		}
-	}
-
-
-	[AServerMethod]
-	public void Drop()
-	{
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-		// Check currently held
-		if (IsHeld)
-		{
-			// Remove owner player
-			m_ulOwnerPlayerId = 0;
-
-			// Set owning object view id
-			m_usOwnerPlayerActorViewId.Set(0);
-
-			// Notify observers
-			if (EventDropped != null)
-			{
-				EventDropped();
-			}
-		}
 	}
 
 
@@ -185,10 +189,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public EType m_eType;
 
 
-	CNetworkVar<ushort> m_usOwnerPlayerActorViewId = null;
-
+	CNetworkVar<CNetworkViewId> m_cOwnerActorViewId = null;
 
 	ulong m_ulOwnerPlayerId = 0;
-
 
 };

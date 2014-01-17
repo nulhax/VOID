@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -37,32 +37,39 @@ public class CBridgePilotingSystem : MonoBehaviour
     // Member Methods
 	public void Start()
 	{	
-		if(CNetwork.IsServer)
+		if (CNetwork.IsServer)
 		{
-			ServerCreateControlCockpit();
+			m_Cockpit = GetComponent<CFacilityComponents>().FindFacilityComponents(CComponentInterface.EType.PilotCockpit)[0];
 		}
+
+		//if(CNetwork.IsServer)
+		//{
+			//ServerCreateControlCockpit();
+		//}
 		
 		// Get the console script from the children
-		CBridgeCockpit cockpit = GetComponentInChildren<CBridgeCockpit>();
+		//CBridgeCockpit cockpit = GetComponentInChildren<CBridgeCockpit>();
 		
 		// Store the room control console game object
- 		m_Cockpit = cockpit.gameObject;
+ 		//m_Cockpit = cockpit.gameObject;
 	}
 	
 	private void ServerCreateControlCockpit()
 	{
-		Transform consoleTransform = transform.FindChild("Cockpit");
+		/*
+		Transform cockpitTransform = transform.FindChild("PilotCockpitNode");
 
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CGame.ENetworkRegisteredPrefab.Cockpit;
-		GameObject newConsoleObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
+		CGameResourceLoader.ENetworkRegisteredPrefab eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.BridgeCockpit;
+		GameObject newCockpitObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 	
-		newConsoleObject.transform.position = consoleTransform.position;
-		newConsoleObject.transform.rotation = consoleTransform.rotation;
-		newConsoleObject.transform.parent = transform;	
+		newCockpitObject.transform.position = cockpitTransform.position;
+		newCockpitObject.transform.rotation = cockpitTransform.rotation;
+		newCockpitObject.transform.parent = transform;	
 		
-		newConsoleObject.GetComponent<CNetworkView>().SyncParent();
-		newConsoleObject.GetComponent<CNetworkView>().SyncTransformPosition();
-		newConsoleObject.GetComponent<CNetworkView>().SyncTransformRotation();
+		newCockpitObject.GetComponent<CNetworkView>().SyncParent();
+		newCockpitObject.GetComponent<CNetworkView>().SyncTransformPosition();
+		newCockpitObject.GetComponent<CNetworkView>().SyncTransformRotation();
+		*/
 	}
 }
 

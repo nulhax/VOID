@@ -3,11 +3,11 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CShipHull.cs
+//  File Name   :   CShipFacilities.cs
 //  Description :   --------------------------
 //
-//  Author  	:  
-//  Mail    	:  @hotmail.com
+//  Author  	:  Multiple
+//  Mail    	:  N/A
 //
 
 
@@ -29,13 +29,15 @@ public class CShipFacilities : MonoBehaviour
 // Member Delegates & Events
 
 
+	public delegate void OnFacilityCreate(GameObject _cFacilty);
+	public delegate void OnFacilityDestroy(GameObject _cFacility);
+	
+	public event OnFacilityCreate EventOnFaciltiyCreate;
+	public event OnFacilityDestroy EventOnFaciltiyDestroy;
+
+
 // Member Properties
-	
-	
-// Member Fields
-	uint m_uiFacilityIdCount;	
-	Dictionary<uint, GameObject> m_Facilities = new Dictionary<uint, GameObject>();
-	
+
 
 // Member Methods
 
@@ -46,75 +48,138 @@ public class CShipFacilities : MonoBehaviour
 	}
 
 
-	public void OnDestroy()
-	{
-		
-	}
-
-
-	public bool ValidateCreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId, uint _uiExpansionPortId)
-	{
-		return (true);
-	}
-
-
+    [AServerOnly]
 	public GameObject CreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
-		if(_uiExpansionPortId != uint.MaxValue && _uiAttachToId != uint.MaxValue)
+		
+		if (_uiExpansionPortId != uint.MaxValue &&
+			_uiAttachToId != uint.MaxValue)
 		{
-			cExpansionPort = m_Facilities[_uiFacilityId].GetComponent<CFacilityInterface>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
+			cExpansionPort = m_mFacilities[_uiFacilityId].GetComponent<CFacilityExpansion>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
 			
 			if(cExpansionPort.HasAttachedFacility == true)
 			{
-				Debug.LogWarning("Failed to create new room. Port already in use");
+				Debug.LogWarning("Failed to create new room. Port is already in use.");
 				return(null);
 			}
 		}
 		
-		uint uiFacilityId = ++m_uiFacilityIdCount;
+		// Generate facility identifier
+		uint uiFacilityId = m_uiFacilityIdCount;
 		
-		CGame.ENetworkRegisteredPrefab eRegisteredPrefab = CFacilityInterface.GetFacilityPrefab(_eType);
+		// Retrieve the facility prefab
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CFacilityInterface.GetFacilityPrefab(_eType);
+
+		// Create facility
 		GameObject cNewFacilityObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
 		
-		CFacilityInterface roomInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
-		roomInterface.FacilityId = uiFacilityId;
-		roomInterface.FacilityType = _eType;
+		// Set facility properties
+		CFacilityInterface cFacilityInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
+		cFacilityInterface.FacilityId = uiFacilityId;
+		cFacilityInterface.FacilityType = _eType;
+		m_uiFacilityIdCount++;
 		
-		cNewFacilityObject.transform.parent = transform;
+		// Set facility parent
+		cNewFacilityObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
+
+		// Attach facility expansion port to parent expansion port
+		if (cExpansionPort != null)
+		{
+			cExpansionPort.Attach(_uiAttachToId, cNewFacilityObject);
+		}
+
+		// Initialise the facility expansion ports
+		cNewFacilityObject.GetComponent<CFacilityExpansion>().InitialiseExpansionPorts();
 		
-		if(cExpansionPort != null)
-			cExpansionPort.Attach(_uiAttachToId, cNewFacilityObject);			
-			
-		cNewFacilityObject.GetComponent<CNetworkView>().SyncParent();
+		// Sync position & rotation
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformPosition();
 		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformRotation();
-		
-		m_Facilities.Add(uiFacilityId, cNewFacilityObject);
-		
-		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = gameObject.GetComponent<CShipGalaxySimulatior>().GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(eRegisteredPrefab) + "Ext", 
-												cNewFacilityObject.transform.localPosition, cNewFacilityObject.transform.localRotation);
-		
+
+		// Server adds the facility instantaniously
+		AddNewlyCreatedFacility(cNewFacilityObject, uiFacilityId, _eType);
+
+		// Notify facility creation observers
+		if (EventOnFaciltiyCreate != null)
+		{
+			EventOnFaciltiyCreate(cNewFacilityObject);
+		}
+
 		return (cNewFacilityObject);
 	}
-	
-	
+
+	public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EFacilityType _FacilityType)
+	{
+		// Index facility against its Facility Id
+		m_mFacilities.Add(_FacilityId, _Facility);
+		
+		// Index facility against its Facility Type
+		if (!m_mFacilityObjects.ContainsKey(_FacilityType))
+		{
+			m_mFacilityObjects.Add(_FacilityType, new List<GameObject>());
+		}
+		
+		m_mFacilityObjects[_FacilityType].Add(_Facility);
+	}
+
+
+    [AServerOnly]
+	public void DestroyFacility(GameObject _Facility)
+	{
+		if (EventOnFaciltiyDestroy != null)
+		{
+			EventOnFaciltiyDestroy(_Facility);
+		}
+		
+		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
+	}
+
+
+    [AServerOnly]
 	public List<GameObject> GetAllFacilities()
 	{
-		List<GameObject> ReturnList = new List<GameObject>();
-		
-		foreach (KeyValuePair<uint,GameObject> Entry in m_Facilities)
-		{
-			ReturnList.Add(Entry.Value);
-		}
+		List<GameObject> ReturnList = new List<GameObject>(m_mFacilities.Values);
 		
 		return (ReturnList);
 	}
 
+
+    [AServerOnly]
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
-		return (m_Facilities[_uiFacilityId]);
+        if (_uiFacilityId >= m_mFacilities.Count)
+        {
+            return (null);
+        }
+        else
+        {
+            return (m_mFacilities[_uiFacilityId]);
+        }
 	}
+
+
+    [AServerOnly]
+	public List<GameObject> FindFacilities(CFacilityInterface.EFacilityType _eType)
+	{
+        if (m_mFacilityObjects.ContainsKey(_eType))
+        {
+            return (m_mFacilityObjects[_eType]);
+        }
+        else
+        {
+            return (null);
+        }
+	}
+
+
+	// Member Fields
+
+
+	uint m_uiFacilityIdCount = 0;
+
+
+	Dictionary<uint, GameObject> m_mFacilities = new Dictionary<uint, GameObject>();
+	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
+
+
 };

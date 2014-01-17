@@ -19,7 +19,7 @@ using System;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CActorInteractable))]
 public class CDUIInteraction : CNetworkMonoBehaviour 
 {	
 	// Member Types
@@ -61,7 +61,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		{
 			// Get the interaction event and network view from the stream
 			EInteractionEvent interactionEvent = (EInteractionEvent)_cStream.ReadByte();
-			ushort duiConsoleNetworkViewId = _cStream.ReadUShort();
+			CNetworkViewId duiConsoleNetworkViewId = _cStream.ReadNetworkViewId();
 			
 			switch(interactionEvent)
 			{
@@ -86,8 +86,8 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	public void Initialise()
 	{
 		// Register the interactable object event
-		CInteractableObject IO = GetComponent<CInteractableObject>();
-		IO.InteractionPrimaryStart += HandlerPlayerActorLeftClick;
+		CActorInteractable IO = GetComponent<CActorInteractable>();
+		IO.EventPrimaryStart += HandlerPlayerActorLeftClick;
 		
 		if(CNetwork.IsServer)
 		{
@@ -107,8 +107,8 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AClientMethod]
-	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit)
+	[AClientOnly]
+	private void HandlerPlayerActorLeftClick(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Get the UI from the console hit
 		CDUI dui = GetComponent<CDUIConsole>().DUI;
@@ -131,14 +131,14 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 		}
 	}
 	
-	[AServerMethod]
+	[AServerOnly]
 	private void HandleSubviewChange(uint _iActiveSubview)
 	{
 		m_CurrentActiveSubviewId.Set(_iActiveSubview);
 	}
 	
-	[AServerMethod]
-	private void ButtonPressedDown(ushort _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
+	[AServerOnly]
+	private void ButtonPressedDown(CNetworkViewId _duiConsoleNetworkId, uint _duiViewId, uint _duiButtonId)
 	{
 		CDUI dui = CNetwork.Factory.FindObject(_duiConsoleNetworkId).GetComponent<CDUIConsole>().DUI;
 		

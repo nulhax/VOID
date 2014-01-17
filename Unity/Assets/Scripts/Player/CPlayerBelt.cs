@@ -26,7 +26,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Types
 
 
-    const uint k_uiMaxNumTools = 3;
+    const uint k_uiMaxNumTools = 4;
 
 
     public enum ENetworkAction
@@ -53,7 +53,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	{
 		get 
 		{
-			if (ActiveToolViewId != 0)
+			if (ActiveToolViewId != null)
 			{
 				return (CNetwork.Factory.FindObject(ActiveToolViewId));
 			}
@@ -69,9 +69,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	public ushort ActiveToolViewId
+	public CNetworkViewId ActiveToolViewId
 	{
-		get { return (m_ausToolsViewId[ActiveSlotId].Get()); }
+		get { return (m_acToolsViewId[ActiveSlotId].Get()); }
 	}
 
 
@@ -84,19 +84,13 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-	static CPlayerBelt()
-	{
-		s_aeSelectToolKeys = new KeyCode[3] { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3 };
-	}
-
-
     public override void InstanceNetworkVars()
     {
-		m_ausToolsViewId = new CNetworkVar<ushort>[k_uiMaxNumTools];
+		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_uiMaxNumTools];
 
 		for (uint i = 0; i < k_uiMaxNumTools; ++i)
 		{
-			m_ausToolsViewId[i] = new CNetworkVar<ushort>(OnNetworkVarSync);
+			m_acToolsViewId[i] = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
 		m_bToolCapacity = new CNetworkVar<byte>(OnNetworkVarSync, 2);
@@ -104,52 +98,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-	public void OnNetworkVarSync(INetworkVar _cVarInstance)
-	{
-		for (uint i = 0; i < k_uiMaxNumTools; ++ i)
-		{
-			if (m_ausToolsViewId[i] == _cVarInstance)
-			{
-				ushort usNewValue = m_ausToolsViewId[i].Get();
-			}
-		}
-	}
-
-
-	public void Start()
-	{
-        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnInteraction);
-		gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction += new CPlayerInteractor.HandleNoInteraction(OnNoInteraction);
-		gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
-	}
-
-
-	public void OnPreDestroy()
-	{
-        if (CNetwork.IsServer)
-        {
-            for (uint i = 0; i < k_uiMaxNumTools; ++i)
-            {
-				if (m_ausToolsViewId[i].Get() != 0)
-				{
-					GetTool(i).GetComponent<CToolInterface>().Drop();
-				}
-            }
-        }
-	}
-
-
-	public void Update()
-	{
-		// Empty
-	}
-
-
-	[AServerMethod]
+	[AServerOnly]
 	public void SetToolPrimaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetPrimaryActive(_bActive, _cInteractableObject);
 
@@ -158,11 +111,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetToolSecondaryActive(byte _bSlotId, bool _bActive, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().SetSecondaryActive(_bActive, _cInteractableObject);
 
@@ -171,8 +124,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
-	void PickupTool(ulong _ulPlayerId, GameObject _cInteractableObject)
+	[AServerOnly]
+	public void PickupTool(ulong _ulPlayerId, GameObject _cInteractableObject)
 	{
 		// Check object exists
 		if (_cInteractableObject != null)
@@ -180,7 +133,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 			// Find free slot
 			for (uint i = 0; i < ToolCapacity; ++i)
 			{
-				if (GetToolViewId(i) == 0)
+				if (GetToolViewId(i) == null)
 				{
 					// Retrieve tool interface script
 					CToolInterface cToolInterface = _cInteractableObject.GetComponent<CToolInterface>();
@@ -193,7 +146,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 					}
 					else
 					{
-						m_ausToolsViewId[i].Set(cToolNetworkView.ViewId);
+						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);
 						cToolInterface.PickUp(_ulPlayerId);
 						ChangeTool((byte)i);
 						Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolObjectName({1}) SlotId({2})", _ulPlayerId, _cInteractableObject.name, i));
@@ -206,35 +159,37 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void UseTool(byte _bSlotId, GameObject _cInteractableObject)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Use(_cInteractableObject);
 		}
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void ChangeTool(byte _bSlotId)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (_bSlotId >= 0 &&
+            _bSlotId < k_uiMaxNumTools &&
+            GetToolViewId(_bSlotId) != null)
 		{
 			m_bActiveToolId.Set(_bSlotId);
 
-            //Debug.Log(string.Format("Changing tool to SlotId({0})", _bSlotId));
+            Debug.Log(string.Format("Changing tool to SlotId({0})", _bSlotId));
 		}
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void ReloadTool(byte _bSlotId)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Reload();
 			Debug.Log("Reloading active tool");
@@ -242,19 +197,19 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void DropTool(byte _bSlotId)
 	{
 		// Check tool exists
-		if (GetToolViewId(_bSlotId) != 0)
+		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Drop();
-            m_ausToolsViewId[_bSlotId].Set(0);
+            m_acToolsViewId[_bSlotId].Set(null);
 
             // Change tool to next available tool
             for (int i = (int)k_uiMaxNumTools - 1; i >= 0; --i)
             {
-                if (m_ausToolsViewId[i].Get() != 0)
+                if (m_acToolsViewId[i].Get() != null)
                 {
                     ChangeTool((byte)i);
                     break;
@@ -272,13 +227,118 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	public ushort GetToolViewId(uint _bSlotId)
+	public CNetworkViewId GetToolViewId(uint _bSlotId)
 	{
-		return (m_ausToolsViewId[_bSlotId].Get());
+		return (m_acToolsViewId[_bSlotId].Get());
 	}
 
 
-	[AClientMethod]
+    [AClientOnly]
+    public static void SerializeBeltState(CNetworkStream _cStream)
+    {
+        // Write in internal stream
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
+    }
+
+
+    [AServerOnly]
+    public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        GameObject cPlayerObject = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+        CPlayerBelt cPlayerBelt = cPlayerObject.GetComponent<CPlayerBelt>();
+
+
+        // Process stream data
+        while (_cStream.HasUnreadData)
+        {
+            // Extract action
+            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            GameObject cInteractableObject = null;
+
+            switch (eAction)
+            {
+                case ENetworkAction.ActivateToolPrimary:
+                case ENetworkAction.DeactivateToolPrimary:
+                case ENetworkAction.ActivateToolSecondary:
+                case ENetworkAction.DeactivateToolSeconary:
+                case ENetworkAction.PickupTool:
+                case ENetworkAction.UseTool:
+                    {
+                        CNetworkViewId cInteractableObjectViewId = _cStream.ReadNetworkViewId();
+
+                        if (cInteractableObjectViewId != null)
+                        {
+                            cInteractableObject = CNetwork.Factory.FindObject(cInteractableObjectViewId);
+                        }
+
+                        break;
+                    }
+            }
+
+            // Handle action
+            switch (eAction)
+            {
+                case ENetworkAction.ActivateToolPrimary:
+                    cPlayerBelt.SetToolPrimaryActive(cPlayerBelt.ActiveSlotId, true, cInteractableObject);
+                    break;
+
+                case ENetworkAction.DeactivateToolPrimary:
+                    cPlayerBelt.SetToolPrimaryActive(cPlayerBelt.ActiveSlotId, false, cInteractableObject);
+                    break;
+
+                case ENetworkAction.ActivateToolSecondary:
+                    cPlayerBelt.SetToolSecondaryActive(cPlayerBelt.ActiveSlotId, true, cInteractableObject);
+                    break;
+
+                case ENetworkAction.DeactivateToolSeconary:
+                    cPlayerBelt.SetToolSecondaryActive(cPlayerBelt.ActiveSlotId, false, cInteractableObject);
+                    break;
+
+                case ENetworkAction.PickupTool:
+                    cPlayerBelt.PickupTool(_cNetworkPlayer.PlayerId, cInteractableObject);
+                    break;
+
+                case ENetworkAction.UseTool:
+                    cPlayerBelt.UseTool(cPlayerBelt.ActiveSlotId, cInteractableObject);
+                    break;
+
+                case ENetworkAction.ChangeTool:
+                    byte bSlotId = _cStream.ReadByte();
+                    cPlayerBelt.ChangeTool(bSlotId);
+                    break;
+
+                case ENetworkAction.ReloadActiveTool:
+                    cPlayerBelt.ReloadTool(cPlayerBelt.ActiveSlotId);
+                    break;
+
+                case ENetworkAction.DropActiveTool:
+                    cPlayerBelt.DropTool(cPlayerBelt.ActiveSlotId);
+                    break;
+            }
+        }
+    }
+
+
+    void Start()
+    {
+        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnInteraction);
+        gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction += new CPlayerInteractor.HandleNoInteraction(OnNoInteraction);
+        gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
+
+        CUserInput.EventReloadTool += new CUserInput.NotifyKeyChange(OnReloadToolKey);
+        CUserInput.EventDropTool += new CUserInput.NotifyKeyChange(OnDropToolKey);
+        CUserInput.EventChangeToolSlot += new CUserInput.NotifyChangeToolSlot(OnChangeSlotKey);
+    }
+
+
+    void Update()
+    {
+        // Empty
+    }
+
+
+	[AClientOnly]
     void OnInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		bool bWriteViewId = true;
@@ -294,6 +354,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 				if (_cInteractableObject != null &&
 					_cInteractableObject.GetComponent<CToolInterface>() != null)
 				{
+				Debug.LogError("Started to pick up tool" + _eType);
 					s_cSerializeStream.Write((byte)ENetworkAction.PickupTool);
 				}
 				else
@@ -312,7 +373,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			if (_cInteractableObject == null)
 			{
-				s_cSerializeStream.Write((ushort)0);
+				s_cSerializeStream.Write((CNetworkViewId)null);
 			}
 			else
 			{
@@ -323,157 +384,109 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	[AClientMethod]
+	[AClientOnly]
 	void OnNoInteraction(CPlayerInteractor.EInteractionType _eType, RaycastHit _cRayHit)
 	{
 		OnInteraction(_eType, null, _cRayHit);
 	}
 
 
-	[AClientMethod]
-    public static void SerializeBeltState(CNetworkStream _cStream)
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-		GameObject cPlayerObject = CGame.PlayerActor;
-		
-		
-		if (cPlayerObject != null)
-		{
-			CPlayerBelt cPlayerBelt = cPlayerObject.GetComponent<CPlayerBelt>();
-	
-	
-			if (cPlayerBelt == null)
-			{
-				Debug.LogError("The player actor does not have the CPlayerBelt component");
-			}
-			else
-			{
-				// Reload
-				if (Input.GetKeyDown(s_eReloadToolKey))
-				{
-					_cStream.Write((byte)ENetworkAction.ReloadActiveTool);
-				}
-	
-				// Drop tool
-				else if (Input.GetKeyDown(s_eDropToolKey))
-				{
-					_cStream.Write((byte)ENetworkAction.DropActiveTool);
-				}
-
-				// Change tool
-				for (uint i = 0; i < cPlayerBelt.ToolCapacity; ++i)
-				{
-					// Check key for slot was pressed
-					if (Input.GetKeyDown(s_aeSelectToolKeys[i]))
-					{
-						_cStream.Write((byte)ENetworkAction.ChangeTool);
-
-						// Write target tool id
-						_cStream.Write((byte)i);
-
-						break;
-					}
-				}
-			}
-		}
-
-		// Write in internal stream
-		if (s_cSerializeStream.Size > 0)
-		{
-			_cStream.Write(s_cSerializeStream);
-			s_cSerializeStream.Clear();
-		}
+        for (uint i = 0; i < k_uiMaxNumTools; ++i)
+        {
+            if (m_acToolsViewId[i] == _cVarInstance)
+            {
+                CNetworkViewId cNewValue = m_acToolsViewId[i].Get();
+            }
+        }
     }
 
 
-	[AServerMethod]
-    public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    void OnPreDestroy()
     {
-		GameObject cPlayerObject = CGame.FindPlayerActor(_cNetworkPlayer.PlayerId);
-		CPlayerBelt cPlayerBelt = cPlayerObject.GetComponent<CPlayerBelt>();
+        if (CNetwork.IsServer)
+        {
+            for (uint i = 0; i < k_uiMaxNumTools; ++i)
+            {
+                if (m_acToolsViewId[i].Get() != null)
+                {
+                    GetTool(i).GetComponent<CToolInterface>().Drop();
+                }
+            }
+        }
+    }
 
 
-		// Process stream data
-		while (_cStream.HasUnreadData)
-		{
-			// Extract action
-			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-			GameObject cInteractableObject = null;
+    void OnGUI()
+    {
+        if (gameObject == CGamePlayers.SelfActor)
+        {
+            string sToolText = "";
 
-			switch (eAction)
-			{
-				case ENetworkAction.ActivateToolPrimary:
-				case ENetworkAction.DeactivateToolPrimary:
-				case ENetworkAction.ActivateToolSecondary:
-				case ENetworkAction.DeactivateToolSeconary:
-				case ENetworkAction.PickupTool:
-				case ENetworkAction.UseTool:
-				{
-					ushort usInteractableObjectViewId = _cStream.ReadUShort();
+            for (uint i = 0; i < m_bToolCapacity.Get(); ++i)
+            {
+                sToolText += "[Tool Slot "+ i +"] ";
 
-					if (usInteractableObjectViewId != 0)
-					{
-						cInteractableObject = CNetwork.Factory.FindObject(usInteractableObjectViewId);
-					}
 
-					break;
-				}
-			}
+                if (GetToolViewId(i) != null)
+                {
+                    sToolText += GetTool(i).name;
 
-			// Handle action
-			switch (eAction)
-			{
-				case ENetworkAction.ActivateToolPrimary:
-					cPlayerBelt.SetToolPrimaryActive(cPlayerBelt.ActiveSlotId, true, cInteractableObject);
-					break;
+                    if (ActiveSlotId == i)
+                    {
+                        sToolText += " - ACTIVE";
+                    }
+                }
+                else
+                {
+                    sToolText += "None";
+                }
 
-				case ENetworkAction.DeactivateToolPrimary:
-					cPlayerBelt.SetToolPrimaryActive(cPlayerBelt.ActiveSlotId, false, cInteractableObject);
-					break;
+                sToolText += "\n";
+            }
 
-				case ENetworkAction.ActivateToolSecondary:
-					cPlayerBelt.SetToolSecondaryActive(cPlayerBelt.ActiveSlotId, true, cInteractableObject);
-					break;
+            GUI.Label(new Rect(10, Screen.height - 50, 500, 300), sToolText);
+        }
+    }
 
-				case ENetworkAction.DeactivateToolSeconary:
-					cPlayerBelt.SetToolSecondaryActive(cPlayerBelt.ActiveSlotId, false, cInteractableObject);
-					break;
 
-				case ENetworkAction.PickupTool:
-					cPlayerBelt.PickupTool(_cNetworkPlayer.PlayerId, cInteractableObject);
-					break;
+    void OnDropToolKey(bool _bDown)
+    {
+        if (_bDown)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.DropActiveTool);
+        }
+    }
 
-				case ENetworkAction.UseTool:
-					cPlayerBelt.UseTool(cPlayerBelt.ActiveSlotId, cInteractableObject);
-					break;
 
-				case ENetworkAction.ChangeTool:
-					byte bSlotId = _cStream.ReadByte();
-					cPlayerBelt.ChangeTool(bSlotId);
-					break;
+    void OnReloadToolKey(bool _bDown)
+    {
+        if (_bDown)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.ReloadActiveTool);
+        }
+    }
 
-				case ENetworkAction.ReloadActiveTool:
-					cPlayerBelt.ReloadTool(cPlayerBelt.ActiveSlotId);
-					break;
 
-				case ENetworkAction.DropActiveTool:
-					cPlayerBelt.DropTool(cPlayerBelt.ActiveSlotId);
-					break;
-			}
-		}
+    void OnChangeSlotKey(byte _bSlot, bool _bDown)
+    {
+        if (_bDown)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.ChangeTool);
+            s_cSerializeStream.Write((byte)(_bSlot - 1));
+        }
     }
 
 
     // Member Fields
 
 
-	CNetworkVar<ushort>[] m_ausToolsViewId = null;
+	CNetworkVar<CNetworkViewId>[] m_acToolsViewId = null;
 	CNetworkVar<byte> m_bToolCapacity = null;
 	CNetworkVar<byte> m_bActiveToolId = null;
 
 
-	static KeyCode[] s_aeSelectToolKeys = null;
-	static KeyCode s_eReloadToolKey = KeyCode.R;
-	static KeyCode s_eDropToolKey = KeyCode.G;
 	static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 

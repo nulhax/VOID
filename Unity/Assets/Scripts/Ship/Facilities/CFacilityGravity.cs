@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public class CFacilityGravity : MonoBehaviour 
+public class CFacilityGravity : CNetworkMonoBehaviour
 {
 	// Member Types
 
@@ -30,51 +30,72 @@ public class CFacilityGravity : MonoBehaviour
 
 	
 	// Member Fields
-	private List<GameObject> m_ActorsInsideTrigger = new List<GameObject>();
-	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.81f, 0.0f);
+
+    private CNetworkVar<bool> m_cGravityEnabled = null;
+
+	private List<GameObject> m_ActorsInsideGravityTrigger = new List<GameObject>();
+	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.8f, 0.0f);
 	
 	// Member Properties
+
+
+    public bool IsGravityEnabled
+    {
+        get { return (m_cGravityEnabled.Get()); }
+    }
 	
 	
 	// Member Methods
-	public void Awake()
+	public void Start()
 	{
 		// Register the actors entering/exiting the trigger zone
-		CInteriorTrigger facilityInteriorTrigger = GetComponentInChildren<CInteriorTrigger>();
-		
-		if(facilityInteriorTrigger == null)
-			Debug.LogError("CFacilityGravity, no interior trigger to use for gravity application!");
-		
-		facilityInteriorTrigger.ActorEnteredTrigger += ActorEnteredGravityZone;
-		facilityInteriorTrigger.ActorExitedTrigger += ActorExitedGravityZone;
+		GetComponent<CFacilityOnboardActors>().ActorEnteredFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorEnteredGravityTrigger);
+		GetComponent<CFacilityOnboardActors>().ActorExitedFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorExitedGravityTrigger);
 	}
-	
 	
 	public void Update()
 	{
-		// Apply the gravity to the actor every frame (so we can modify it if we want later)
-		foreach(GameObject actor in m_ActorsInsideTrigger)
+		if(CNetwork.IsServer)
 		{
-			actor.GetComponent<CDynamicActor>().GravityAcceleration = m_FacilityGravityAcceleration;
+			// Remove actors that dont exist anymore
+			m_ActorsInsideGravityTrigger.RemoveAll((item) => item == null);
+			
+			// Apply the gravity to the actor every frame (so we can modify it if we want later)
+			foreach(GameObject actor in m_ActorsInsideGravityTrigger)
+			{	
+				actor.GetComponent<CActorGravity>().GravityAcceleration = m_FacilityGravityAcceleration;
+			}
 		}
 	}
-	
-	private void ActorEnteredGravityZone(GameObject _Actor)
+
+	[AServerOnly]
+	private void ActorEnteredGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
-		// Only add to the list if there is a dynamic actor
-		if(_Actor.GetComponent<CDynamicActor>() == null)
+		// Only add to the list if there is a gravity component
+		if(_Actor.GetComponent<CActorGravity>() == null)
 			return;
 		
-		m_ActorsInsideTrigger.Add(_Actor);
+		m_ActorsInsideGravityTrigger.Add(_Actor);
 	}
-	
-	private void ActorExitedGravityZone(GameObject _Actor)
+
+	[AServerOnly]
+	private void ActorExitedGravityTrigger(GameObject _Facility, GameObject _Actor)
 	{
-		if(!m_ActorsInsideTrigger.Contains(_Actor))
+		if(!m_ActorsInsideGravityTrigger.Contains(_Actor))
 			return;
-		
-		_Actor.GetComponent<CDynamicActor>().GravityAcceleration = Vector3.zero;
+
+		_Actor.GetComponent<CActorGravity>().GravityAcceleration = Vector3.zero;
 			
-		m_ActorsInsideTrigger.Remove(_Actor);
+		m_ActorsInsideGravityTrigger.Remove(_Actor);
 	}
+
+    public override void InstanceNetworkVars()
+    {
+        m_cGravityEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
+    }
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+
+    }
 }

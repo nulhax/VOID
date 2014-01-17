@@ -11,6 +11,7 @@ GameObject:
   - 26: {fileID: 2600000}
   - 15: {fileID: 1500000}
   - 114: {fileID: 11400000}
+  - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: GalaxyProjector
   m_TagString: Untagged
@@ -74,6 +75,9 @@ ParticleRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
   serializedVersion: 2
   m_CameraVelocityScale: 0
   m_StretchParticles: 0
@@ -95,11 +99,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20c1e29c4ed3ed4aad67efe9469fc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 3
-  centreOfProjection: {x: 0, y: 0, z: 0}
-  zoom: 1
-  samplesPerAxis: 20
+  initialRadius: 3
+  initialZoom: 1
+  samplesPerAxis: 28
   particleScale: 2.5
+  framesPerSecond: 10
+--- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

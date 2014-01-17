@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -81,6 +81,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 	public void Update()
 	{
+		return;
 		//if (CGame.PlayerActor == gameObject)
 		{
 			//return;
@@ -118,9 +119,10 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void SetCurrentPosition(Vector3 _vPosition)
 	{
+		return;
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers can set the interpolated objects current position");
 
 		m_tPosition.Set(new TPosition(_vPosition.x, _vPosition.y, _vPosition.z));
@@ -129,6 +131,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 	void InsertNewPosition()
 	{
+		return;
 		float fSyncedTime = m_tPosition.GetLastSyncedTick();
 
 		// Calcuate which tick to put the position

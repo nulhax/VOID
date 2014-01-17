@@ -27,13 +27,13 @@ public class CLifeSupportPlants : MonoBehaviour
 
 
 	const string ksPlantObjectName = "Plant";
-
+	const float ckfMaxO2Production = 100.0f;
 
 	public struct TPlant
 	{
 		public GameObject cObject;
 		public float fHealth;
-		public float fLight;
+		public float fAge;
 	}
 
 

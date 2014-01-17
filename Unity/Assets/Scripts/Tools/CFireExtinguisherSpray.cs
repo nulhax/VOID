@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CToolInterface))]
 public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 {
 
@@ -97,14 +97,14 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void OnUseStart(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(true);
 	}
 
 
-	[AServerMethod]
+	[AServerOnly]
 	public void OnUseEnd()
 	{
 		m_bActive.Set(false);
