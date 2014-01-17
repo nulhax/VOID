@@ -89,7 +89,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkViewId: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -123,7 +122,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c65282d65a5fa3940ab524772892d423, type: 3}
   m_Name: 
@@ -141,6 +140,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyOnZeroHealth: 1
   takeDamageOnImpact: 1
+  initialHealth: 1
+  health_previous: 0
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

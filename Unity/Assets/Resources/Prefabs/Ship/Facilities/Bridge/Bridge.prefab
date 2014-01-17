@@ -849,6 +849,8 @@ GameObject:
   - 114: {fileID: 11400118}
   - 114: {fileID: 11400116}
   - 114: {fileID: 11400114}
+  - 114: {fileID: 11400182}
+  - 114: {fileID: 11400184}
   m_Layer: 0
   m_Name: Support_Power
   m_TagString: Untagged
@@ -867,6 +869,8 @@ GameObject:
   - 114: {fileID: 11400150}
   - 114: {fileID: 11400148}
   - 114: {fileID: 11400120}
+  - 114: {fileID: 11400178}
+  - 114: {fileID: 11400180}
   m_Layer: 0
   m_Name: Support_LifeSupport
   m_TagString: Untagged
@@ -891,6 +895,8 @@ GameObject:
   - 82: {fileID: 8200000}
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400128}
+  - 114: {fileID: 11400162}
+  - 114: {fileID: 11400164}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -915,6 +921,8 @@ GameObject:
   - 82: {fileID: 8200002}
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400130}
+  - 114: {fileID: 11400166}
+  - 114: {fileID: 11400168}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -1054,6 +1062,8 @@ GameObject:
   - 114: {fileID: 11400140}
   - 114: {fileID: 11400138}
   - 82: {fileID: 8200004}
+  - 114: {fileID: 11400174}
+  - 114: {fileID: 11400176}
   m_Layer: 8
   m_Name: CurvedMonitor_wide
   m_TagString: Untagged
@@ -1123,6 +1133,8 @@ GameObject:
   - 114: {fileID: 11400154}
   - 114: {fileID: 11400156}
   - 82: {fileID: 8200006}
+  - 114: {fileID: 11400170}
+  - 114: {fileID: 11400172}
   m_Layer: 0
   m_Name: Alarm
   m_TagString: Untagged
@@ -4747,6 +4759,162 @@ MonoBehaviour:
   samplesPerAxis: 20
   particleScale: 2.5
   framesPerSecond: 10
+--- !u!114 &11400162
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 1000
+  health_previous: 0
+--- !u!114 &11400164
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400166
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 1000
+  health_previous: 0
+--- !u!114 &11400168
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400170
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 500
+  health_previous: 0
+--- !u!114 &11400172
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400174
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 1000
+  health_previous: 0
+--- !u!114 &11400176
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 2000
+  health_previous: 0
+--- !u!114 &11400180
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 0
+  initialHealth: 2000
+  health_previous: 0
+--- !u!114 &11400184
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

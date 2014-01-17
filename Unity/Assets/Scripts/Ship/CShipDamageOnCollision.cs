@@ -30,7 +30,7 @@ public class CShipDamageOnCollision : MonoBehaviour
                 Debug.LogError("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts.");
 
             float radius = impulse * impulseToRadius;
-            Debug.LogWarning("Impulse: " + impulse.ToString() + "\nRadius: " + radius.ToString() + " units\nForce: " + force.ToString() + " newtons");
+            //Debug.LogWarning("Impulse: " + impulse.ToString() + "\nRadius: " + radius.ToString() + " units\nForce: " + force.ToString() + " newtons");
 
             // Find all components within radius and apply damage.
             foreach (ContactPoint contact in collision.contacts)
@@ -46,10 +46,10 @@ public class CShipDamageOnCollision : MonoBehaviour
                     {
                         float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
                         breakableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
-                        Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and took " + damage.ToString() + " damage");
+                        //Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and took " + damage.ToString() + " damage");
                     }
-                    else
-                        Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and avoided damage");
+                    //else
+                        //Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and avoided damage");
                 }
             }
         }
