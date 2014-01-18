@@ -182,6 +182,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		
 		// Placeholder Test stuff
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+        CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
@@ -244,6 +245,21 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		m_mPlayersActor.Remove(_ulPlayerId);
 		m_aUnspawnedPlayers.Remove(_ulPlayerId);
 	}
+
+
+    void OnGUI()
+    {
+        if (CGamePlayers.SelfActor == null)
+        {
+            // Draw un-spawned message
+            GUIStyle cStyle = new GUIStyle();
+            cStyle.fontSize = 40;
+            cStyle.normal.textColor = Color.white;
+
+            GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
+                      "Waiting for spawner to be available...", cStyle);
+        }
+    }
 
 
 // Member Fields

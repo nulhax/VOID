@@ -48,7 +48,16 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public GameObject Facility
+    public CNetworkViewId ContainingFacilityViewId
+    {
+        get
+        {
+            return (m_cFacilityViewId.Get());
+        }
+    }
+
+
+    public GameObject ContainingFacility
     {
         get
         {

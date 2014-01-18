@@ -128,17 +128,6 @@ public class CGame : CNetworkMonoBehaviour
         {
 			DrawLobbyGui();
         }
-
-		if (CGamePlayers.SelfActor == null)
-		{
-			// Draw unspawned message
-			GUIStyle cStyle = new GUIStyle();
-			cStyle.fontSize = 40;
-			cStyle.normal.textColor = Color.white;
-
-			GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
-			          "Waiting for spawner to be available...", cStyle);
-		}
     }
 
 

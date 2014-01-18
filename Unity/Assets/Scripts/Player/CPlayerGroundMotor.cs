@@ -194,8 +194,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility != null &&
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		if (cSelfLocator.ContainingFacility != null &&
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
 		{
 			// Process grounded check on server and client
 			UpdateGrounded();
@@ -214,8 +214,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility != null &&
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		if (cSelfLocator.ContainingFacility != null &&
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
 		{
 			// Needs to be in fixed update!
 			

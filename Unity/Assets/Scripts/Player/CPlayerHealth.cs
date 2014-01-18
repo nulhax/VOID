@@ -181,7 +181,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         else  if (_cVarInstance == m_fHitPoints &&
                   m_LaughTrack != null)
         {
-            m_LaughTrack.Play(1.0f, false, -1);
+            //m_LaughTrack.Play(1.0f, false, -1);
 
             if (CNetwork.IsServer)
             {

@@ -122,8 +122,8 @@ public class CPlayerAirMotor : MonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility == null ||
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+		if (cSelfLocator.ContainingFacility == null ||
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
 		{
 			if (CGamePlayers.SelfActor != null &&
 			    CGamePlayers.SelfActor == gameObject)
@@ -138,8 +138,8 @@ public class CPlayerAirMotor : MonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility == null ||
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+		if (cSelfLocator.ContainingFacility == null ||
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
 		{
 			if (CNetwork.IsServer)
 			{
