@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CModule.cs
+//  File Name   :   CComponentInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -19,10 +19,9 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-[RequireComponent(typeof(CActorInteractable))]
-[RequireComponent(typeof(CActorBoardable))]
-[RequireComponent(typeof(CActorGravity))]
-public class CModuleInterface : CNetworkMonoBehaviour
+
+[RequireComponent(typeof(CNetworkView))]
+public class CModuleInterface : MonoBehaviour
 {
 
 // Member Types
@@ -30,150 +29,123 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public enum EType
 	{
-		PowerCell,
-		PlasmaCell,
-		FuelCell,
-		BlackMatterCell,
-		BioCell,
-		ReplicatorCell
+		INVALID,
+
+		FuseBox,
+		PlayerSpawner,
+		TurretCockpit,
+		PilotCockpit,
+		Alarm,
 	}
 
 
 // Member Delegates & Events
 
 
-	public delegate void NotifyPickedUp();
-	public event NotifyPickedUp EventPickedUp;
-
-	public delegate void NotifyDropped();
-	public event NotifyDropped EventDropped;
-
-	public delegate void NotifySwapped();
-	public event NotifySwapped EventSwapped;
-
-
 // Member Properties
 
 
-	public GameObject OwnerPlayerActor
+	public EType ModuleType
 	{
-		get { return (CNetwork.Factory.FindObject(m_cOwnerActorViewId.Get())); }
+		get { return (m_eComponentType); }
 	}
 
 
-	public bool IsHeld
+// Member Methods
+
+
+
+	public static List<GameObject> FindComponentsByType(EType _eFacilityComponentType)
 	{
-		get { return (m_cOwnerActorViewId.Get() != null); }
-	}
-
-// Member Functions
-
-
-	public override void InstanceNetworkVars()
-	{
-		m_cOwnerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
-	}
-
-
-	public void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-	{
-		if (_cSyncedNetworkVar == m_cOwnerActorViewId)
+		if (!s_mComponentObjects.ContainsKey(_eFacilityComponentType))
 		{
-			if (IsHeld)
+			return (null);
+		}
+
+		return (s_mComponentObjects[_eFacilityComponentType]);
+	}
+
+
+	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityComponentType)
+	{
+		CGameRegistrator.ENetworkPrefab ePrefabType = CGameRegistrator.ENetworkPrefab.INVALID;
+		
+		switch (_eFacilityComponentType)
+		{
+		case EType.FuseBox:
+			ePrefabType = CGameRegistrator.ENetworkPrefab.PanelFuseBox;
+			break;
+
+		case EType.PlayerSpawner:
+			ePrefabType = CGameRegistrator.ENetworkPrefab.PlayerSpawner;
+			break;
+
+		case EType.TurretCockpit:
+			ePrefabType = CGameRegistrator.ENetworkPrefab.TurretCockpit;
+			break;
+
+		case EType.PilotCockpit:
+			ePrefabType = CGameRegistrator.ENetworkPrefab.BridgeCockpit;
+			break;
+
+		case EType.Alarm:
+			ePrefabType = CGameRegistrator.ENetworkPrefab.Alarm;
+			break;
+
+		default:
+			Debug.LogError(string.Format("Unknown component type. Type({0})", _eFacilityComponentType));
+			break;
+		}
+
+		return (ePrefabType);
+	}
+
+
+	void Awake()
+	{
+		// Add self to the global list of components
+		if (!s_mComponentObjects.ContainsKey(m_eComponentType))
+		{
+			s_mComponentObjects.Add(m_eComponentType, new List<GameObject>());
+		}
+	
+		s_mComponentObjects[m_eComponentType].Add(gameObject);
+	}
+
+
+	void Start()
+	{
+		// Ensure a type of defined for component
+		if (m_eComponentType == EType.INVALID)
+		{
+			Debug.LogError("This component has not been given a component type");
+		}
+
+		// Register self with parent facility
+		Transform cParent = transform.parent;
+
+		for (int i = 0; i < 20; ++ i)
+		{
+			if (cParent.GetComponent<CFacilityModules>() != null)
 			{
-				GameObject cOwnerPlayerActor = OwnerPlayerActor;
-				
-				gameObject.transform.parent = cOwnerPlayerActor.transform;
-				gameObject.transform.localPosition = new Vector3(-0.5f, 0.36f, 0.5f);
-				gameObject.transform.localRotation = Quaternion.identity;
-				
-				// Turn off dynamic physics
-				if(CNetwork.IsServer)
-				{
-					rigidbody.isKinematic = true;
-					rigidbody.detectCollisions = false;
-				}
-				
-				// Stop receiving synchronizations
-				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+				cParent.GetComponent<CFacilityModules>().RegisterModule(this);
+				break;
 			}
-			else
+
+			cParent = cParent.parent;
+
+			if (i == 19)
 			{
-				gameObject.transform.parent = null;
-				
-				// Turn on dynamic physics
-				if(CNetwork.IsServer)
-				{
-					rigidbody.isKinematic = false;
-					rigidbody.detectCollisions = true;
-				}
-				
-				rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
-				rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
-				
-				// Receive synchronizations
-				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
+				Debug.LogError("Could not find facility to register to");
 			}
 		}
 	}
 
 
-    [AServerOnly]
-    public void Pickup(ulong _ulPlayerId)
-    {
-        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-        if (!IsHeld)
-        {
-            // Set owning player
-            m_ulOwnerPlayerId = _ulPlayerId;
-
-            // Set owning object view id
-            m_cOwnerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-
-            // Notify observers
-            if (EventPickedUp != null)
-            {
-                EventPickedUp();
-            }
-        }
-    }
-
-
-    [AServerOnly]
-    public void Drop()
-    {
-        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-        // Check currently held
-        if (IsHeld)
-        {
-            // Remove owner player
-            m_ulOwnerPlayerId = 0;
-
-            // Set owning object view id
-            m_cOwnerActorViewId.Set(null);
-
-            // Notify observers
-            if (EventDropped != null)
-            {
-                EventDropped();
-            }
-        }
-    }
-
-
-	void Start()
-	{
-		// Empty
-	}
-
-
 	void OnDestroy()
 	{
-		// Empty
+		// Remove self from global list of components
+		s_mComponentObjects[ModuleType].Remove(gameObject);
 	}
 
 
@@ -186,11 +158,10 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
-	public EType m_eType;
+	public EType m_eComponentType = EType.INVALID;
 
 
-	CNetworkVar<CNetworkViewId> m_cOwnerActorViewId = null;
+	static Dictionary<CModuleInterface.EType, List<GameObject>> s_mComponentObjects = new Dictionary<EType, List<GameObject>>();
 
-	ulong m_ulOwnerPlayerId = 0;
 
 };

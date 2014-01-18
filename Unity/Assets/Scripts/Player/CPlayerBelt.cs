@@ -354,7 +354,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 				if (_cInteractableObject != null &&
 					_cInteractableObject.GetComponent<CToolInterface>() != null)
 				{
-				Debug.LogError("Started to pick up tool" + _eType);
+				    //Debug.LogError("Started to pick up tool" + _eType);
 					s_cSerializeStream.Write((byte)ENetworkAction.PickupTool);
 				}
 				else

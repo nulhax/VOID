@@ -193,6 +193,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	{
 		if (_bDown)
 		{
+            //Debug.LogError("Hit twice" + gameObject.name);
 			CheckInteraction(EInteractionType.Use);
 		}
 	}

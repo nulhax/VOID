@@ -135,7 +135,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-				List<GameObject> aPlayerSpawners = CComponentInterface.FindFacilityComponents(CComponentInterface.EType.PlayerSpawner);
+				List<GameObject> aPlayerSpawners = CModuleInterface.FindComponentsByType(CModuleInterface.EType.PlayerSpawner);
 				
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{

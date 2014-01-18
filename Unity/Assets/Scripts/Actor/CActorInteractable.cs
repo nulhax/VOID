@@ -43,7 +43,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
     {
-		
+		// Empty
 	}
 
 

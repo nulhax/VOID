@@ -81,7 +81,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
         if (!IsCarryingModule)
         {
             m_cCarryingModuleViewId.Set(_cModuleViewId);
-            CNetwork.Factory.FindObject(_cModuleViewId).GetComponent<CModuleInterface>().Pickup(_ulPlayerId);
+            CNetwork.Factory.FindObject(_cModuleViewId).GetComponent<CPartInterface>().Pickup(_ulPlayerId);
         }
     }
 
@@ -91,7 +91,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     {
         if (IsCarryingModule)
         {
-            CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().Drop();
+            CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CPartInterface>().Drop();
             m_cCarryingModuleViewId.Set(null);
         }
     }
@@ -120,7 +120,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	public void OnPickupModuleRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		if (_eType == CPlayerInteractor.EInteractionType.Use &&
-			_cInteractableObject.GetComponent<CModuleInterface>() != null)
+			_cInteractableObject.GetComponent<CPartInterface>() != null)
 		{
 			// Action
 			s_cSerializeStream.Write((byte)ENetworkAction.PickupModule);
@@ -137,8 +137,8 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			_cInteractableObject.GetComponent<CCellSlot>() != null &&
 			IsCarryingModule)
 		{
-			CModuleInterface.EType carryingCellType = CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CModuleInterface>().m_eType;
-			CModuleInterface.EType cellSlotType = _cInteractableObject.GetComponent<CCellSlot>().m_CellSlotType;
+			CPartInterface.EType carryingCellType = CNetwork.Factory.FindObject(CarryingModuleViewId).GetComponent<CPartInterface>().m_eType;
+			CPartInterface.EType cellSlotType = _cInteractableObject.GetComponent<CCellSlot>().m_CellSlotType;
 			
 			if(carryingCellType == cellSlotType)
 			{
