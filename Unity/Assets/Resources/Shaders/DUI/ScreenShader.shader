@@ -5,7 +5,7 @@ Shader "ScreenShader"
 _MainTex("Base (RGB) Gloss (A)", 2D) = "white" {}
 _SpecularColor("Specular Color", Color) = (1,1,1,1)
 _SpecPower("Specular Power", Range(0.01,1) ) = 0.078125
-_EmissionPow("Emmision Power", Range(0,10) ) = 1.5
+_EmissionPow("Emmision Power", Range(0,10) ) = 1.0
 _Alpha("Alpha", Range(0,1) ) = 0.9
 
 	}
@@ -113,6 +113,9 @@ o.Emission = Multiply0;
 o.Specular = _SpecPower.xxxx;
 o.Gloss = _SpecularColor;
 o.Alpha = _Alpha.xxxx;
+
+if(Tex2D0.a == 0)
+	o.Alpha = 0;
 
 				o.Normal = normalize(o.Normal);
 			}

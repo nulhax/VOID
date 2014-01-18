@@ -89,25 +89,18 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
     }
 	
 	public void Start()
-	{	
-		// Get the dui console from the control console
-		CDUIConsole console = m_FacilityControlConsole.GetComponent<CDUIConsole>();
-		
-		 // Initialise the console
-        console.Initialise(EQuality.VeryHigh, ELayoutStyle.Layout_1, new Vector2(2.0f, 1.0f));
-		console.DUI.MainView.AddSprite();
-		
-		// Add the room control subview
-        m_DoorControlSubView = console.DUI.AddSubView().gameObject;
-		
-		// Setup the doors subview
-		SetupDoorsSubview();
-		
-		// Add the expansion control subview
-        m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
-		
-		// Set the initialise create expansion stage.
-		SetupExpansionSubviewStageOne();
+	{		
+//		// Add the room control subview
+//        m_DoorControlSubView = console.DUI.AddSubView().gameObject;
+//		
+//		// Setup the doors subview
+//		SetupDoorsSubview();
+//		
+//		// Add the expansion control subview
+//        m_ExpansionControlSubView = console.DUI.AddSubView().gameObject;
+//		
+//		// Set the initialise create expansion stage.
+//		SetupExpansionSubviewStageOne();
 	}
 	
 	public void Update()

@@ -28,7 +28,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	{
 		INVALID = -1,
 		
-		Nothing,
+		Hover,
 		PrimaryStart,
 		PrimaryEnd,
 		SecondaryStart,
@@ -74,7 +74,8 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		// Empty
+		// Check interaction for objects when nothing is clicked
+		CheckInteraction(EInteractionType.Hover);
 	}
 
 	
@@ -87,72 +88,61 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
 		float fDistance = 5.0f;
 		RaycastHit cRayHit = new RaycastHit();
-		GameObject cHitInteractableObject = null;
-
+		GameObject hitActorInteractable = null;
 		
 		// Check if the player cast a ray on the screen
 		if(CheckInteractableObjectRaycast(vOrigin, vDirection, fDistance, out cRayHit))
 		{
 			// Get the game object which owns this mesh
-			GameObject cHitObject = cRayHit.collider.gameObject;
+			GameObject hitObject = cRayHit.collider.gameObject;
 			
-			// Check the parents until we find the one that is not of layer InteractableObject
-			int IOLayer = LayerMask.NameToLayer("InteractableObject");
-			for(int i = 0; i < 10; ++i)
+			// Check the parents until we find the one that has CActorInteractable on it
+			while(hitObject.GetComponent<CActorInteractable>() == null)
 			{
-				// Break endless loop
-				if(i == 9)
+				if (hitObject.transform.parent != null)
 				{
-					Debug.LogError("Couldn't find the intractable objects parent!");
-				}
-
-                if (cHitObject.transform.parent != null &&
-                    cHitObject.transform.parent.gameObject.layer == IOLayer)
-				{
-					cHitObject = cHitObject.transform.parent.gameObject;
+					hitObject = hitObject.transform.parent.gameObject;
 				}
 				else
 				{
+					Debug.LogError("PlayerInteractor hit game object without any CActorInteractable attached!");
 					break;
 				}
 			}
-			
-			// Get the intractable Object script from the object
-			CActorInteractable cInteractableObjectComponent = cHitObject.GetComponent<CActorInteractable>();
 
-			// If this is a valid IO
-			if (cInteractableObjectComponent != null)
-			{				
-				cHitInteractableObject = cHitObject;
-				CGamePlayers.SelfActor.GetComponent<CPlayerIKController>().RightHandIKTarget = cRayHit.point;	
-			}
+
+			hitActorInteractable = hitObject;			
+
+			CGamePlayers.SelfActor.GetComponent<CPlayerIKController>().RightHandIKTarget = cRayHit.point;	
 		}
 
-
-		// If this is a valid IO
-		if (cHitInteractableObject != null)
+		// If this is a valid interactable actor
+		if (hitActorInteractable != null)
 		{
 			// Get the network view id of the intractable object
-			CNetworkView cNetworkView = cHitInteractableObject.GetComponent<CNetworkView>();
+			CNetworkView networkView = hitActorInteractable.GetComponent<CNetworkView>();
 
-			if (cNetworkView == null)
+			if(networkView != null)
 			{
-				Debug.LogError("CheckInteractionObjects. Something has gone wrong here... There was no CNetworkView component!");
+				// Fire the interactable event for the actor that was interacted with
+				hitActorInteractable.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
 			}
 			else
 			{
-				cHitInteractableObject.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
+				Debug.LogError("Something has gone wrong here... There was no CNetworkView component on CActorInteractable!");
 			}
 			
 			if (EventInteraction != null)
 			{
-				EventInteraction(_eIneractionType, cHitInteractableObject, cRayHit);
+				// Fire the interaction event for the player interactor
+				EventInteraction(_eIneractionType, hitActorInteractable, cRayHit);
 			}
 		}
 		else
 		{
 			if (EventNoInteraction != null)
 			{
+				// Fire the no interaction event for the player interactor
 				EventNoInteraction(_eIneractionType, cRayHit);
 			}
 		}

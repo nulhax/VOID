@@ -43,26 +43,14 @@ public class CDUIConsole : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
+		// Create the DUI object
+		CreateDUI();
+
 		// Attach the render texture material
         DUI.AttatchRenderTexture(m_ScreenObject.renderer.material);
 	}
 	
-    public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
-    {
-		// Check the screen is assigned in the editor
-		if(m_ScreenObject == null)
-		{
-			Debug.LogError("CDUIConsole Initialise failed. ScreenObj hasn't been assigned!");
-		}
-		
-		// Create the DUI object
-		CreateDUI(_Quality, _Layout, _Dimensions);
-		
-		// Initialise the duiInteraction script
-		GetComponent<CDUIInteraction>().Initialise();
-    }
-	
-    private void CreateDUI(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions)
+    private void CreateDUI()
 	{
 		// Create the DUI game object
         m_DUI = new GameObject();
@@ -73,9 +61,7 @@ public class CDUIConsole : MonoBehaviour
 		
         // Add the DUI component
         CDUI dui = m_DUI.AddComponent<CDUI>();
-
-        // Initialise the DUI Component
-        dui.Initialise(_Quality, _Layout, _Dimensions, gameObject);
+		dui.Console = gameObject;
 		
 		// Increment the offset
 		s_UIOffset += 2.0f;
