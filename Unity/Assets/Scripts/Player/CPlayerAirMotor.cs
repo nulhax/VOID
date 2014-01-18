@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CPlayerSuit))]
-public class CPlayerAirMotor : MonoBehaviour
+public class CPlayerAirMotor : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -54,6 +54,12 @@ public class CPlayerAirMotor : MonoBehaviour
 
 
 // Member Methods
+
+
+    public override void InstanceNetworkVars()
+    {
+        m_vRotation = new CNetworkVar<Vector3>(OnNetworkVarSync, new Vector3());
+    }
 
 
 	void Start()
@@ -136,16 +142,20 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		if (cSelfLocator.ContainingFacility == null ||
-		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
-		{
-			if (CNetwork.IsServer)
-			{
-				UpdateMovement();
-			}
-		}
+        if (CNetwork.IsServer)
+        {
+            CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
+
+            if (cSelfLocator.ContainingFacility == null ||
+                cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+            {
+
+                UpdateMovement();
+
+                m_vRotation.Set(transform.eulerAngles);
+
+            }
+        }
 	}
 
 
@@ -211,7 +221,22 @@ public class CPlayerAirMotor : MonoBehaviour
 	}
 
 
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_vRotation)
+        {
+            if (gameObject != CGamePlayers.SelfActor)
+            {
+                transform.eulerAngles = m_vRotation.Get();
+            }
+        }
+    }
+
+
 // Member Fields
+
+
+    CNetworkVar<Vector3> m_vRotation = null;
 
 
 	float m_fMovementSpeed = 20.5f;
