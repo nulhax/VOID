@@ -30,6 +30,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
 	public delegate void NotifyInteraction(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId);
 
 
+	public event NotifyInteraction EventHover;
 	public event NotifyInteraction EventPrimaryStart;
 	public event NotifyInteraction EventSecondaryStart;
 	public event NotifyInteraction EventPrimaryEnd;
@@ -62,6 +63,11 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 		switch(_InteractionEvent)
 		{
+		case CPlayerInteractor.EInteractionType.Hover:
+			if(EventHover != null)
+				EventHover(_RayHit, cNetworkViewId);
+			break; 
+
 		case CPlayerInteractor.EInteractionType.PrimaryStart:
 			if(EventPrimaryStart != null)
 				EventPrimaryStart(_RayHit, cNetworkViewId);

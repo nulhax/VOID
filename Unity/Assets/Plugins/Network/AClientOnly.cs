@@ -20,7 +20,7 @@ using System;
 /* Implementation */
 
 
-[AttributeUsage(AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 public sealed class AClientOnly : Attribute
 {
 

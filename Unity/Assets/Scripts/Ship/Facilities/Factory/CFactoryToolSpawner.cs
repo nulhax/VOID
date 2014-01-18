@@ -40,15 +40,15 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 	
 	public void Start()
 	{
-		// Placeholder DUI stuff ************************
-		CDUI consoleDUI = transform.parent.gameObject.GetComponent<CFacilityGeneral>().FacilityControlConsole.GetComponent<CDUIConsole>().DUI;
-		
-		CDUISubView factory = consoleDUI.AddSubView();
-		
-		CDUIButton but = factory.AddButton("SpawnTool");
-		
-		but.MiddleCenterViewPos = new Vector2(0.5f, 0.5f);
-		but.PressDown += SpawnTool;	
+//		// Placeholder DUI stuff ************************
+//		CDUI consoleDUI = transform.parent.gameObject.GetComponent<CFacilityGeneral>().FacilityControlConsole.GetComponent<CDUIConsole>().DUI;
+//		
+//		CDUISubView factory = consoleDUI.AddSubView();
+//		
+//		CDUIButton but = factory.AddButton("SpawnTool");
+//		
+//		but.MiddleCenterViewPos = new Vector2(0.5f, 0.5f);
+//		but.PressDown += SpawnTool;	
 	}
 	
 	[AServerOnly]

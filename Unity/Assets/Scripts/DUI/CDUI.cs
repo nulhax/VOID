@@ -27,7 +27,7 @@ public class CDUI : MonoBehaviour
 	public event Action<uint> SubviewChanged;
 	
     // Member Fields
-    private EQuality m_Quality = EQuality.INVALID;
+	private EQuality m_Quality = EQuality.VeryHigh;
 	
 	private GameObject m_Console = null;
     private GameObject m_RenderCamera = null;
@@ -45,7 +45,13 @@ public class CDUI : MonoBehaviour
 	// Member Methods
 	
     // Member Properties
-	public Camera RenderCamera 
+	public GameObject Console 
+	{ 
+		get { return(m_Console); } 
+		set { m_Console = value; } 
+	}
+
+	public Camera DUICamera 
 	{ 
 		get { return(m_RenderCamera.camera); } 
 	}
@@ -55,26 +61,20 @@ public class CDUI : MonoBehaviour
 		get { return(m_MainView.GetComponent<CDUIMainView>()); }
 	}
 	
-	public GameObject Console
-	{
-		get { return(m_Console); }
-	}
-
-	
     // Member Methods
     private void Update()
 	{
 		// Render using the render camrea
-        RenderCamera.Render();
+        DUICamera.Render();
     }
 
-    public void Initialise(EQuality _Quality, ELayoutStyle _Layout, Vector2 _Dimensions, GameObject _Console)
-    {
-		m_Console = _Console;
-        m_Quality = _Quality;
-		
-        // Setup the main view
-        SetupMainView(_Layout, _Dimensions);
+    public void Awake()
+    {	
+		// Test: Create the new thing
+		m_MainView = (GameObject)GameObject.Instantiate(Resources.Load ("Prefabs/DUI/Message Root"));
+		m_MainView.transform.parent = transform;
+		m_MainView.transform.localRotation = Quaternion.identity;
+		m_MainView.transform.localPosition = Vector3.zero;
 
         // Setup the render texture
         SetupRenderTex();
@@ -82,113 +82,11 @@ public class CDUI : MonoBehaviour
         // Setup the render camera
         SetupRenderCamera();
     }
-
-    public CDUISubView AddSubView()
-    {
-        // Create the DUI game object
-        GameObject subView = new GameObject();
-        subView.transform.parent = transform;
-        subView.name = "SubView " + m_SubViews.Count.ToString();
-        subView.layer = gameObject.layer;
-        subView.transform.localRotation = Quaternion.identity;
-		
-		// Add the DUI component
-        CDUISubView duiSubView = subView.AddComponent<CDUISubView>();
-		duiSubView.ViewID = ++m_ViewIdCount;
-		
-		// Get the MainView component and setup the subview
-		CDUIMainView duiMainView = m_MainView.GetComponent<CDUIMainView>();
-        CDUIButton navButton = duiMainView.SetupSubViewAndNavButton(duiSubView);
-		
-		// Register the button for the event
-        navButton.PressDown += NavButtonPressed;
-		
-		// Add to the dictionaries
-        m_SubViews[duiSubView.ViewID] = subView;
-		
-		// Set as the active subview on the server
-		if(CNetwork.IsServer)
-		{
-			OnSubviewChange(duiSubView.ViewID);
-		}
-		
-        return(duiSubView);
-    }
-	
-	public CDUISubView GetSubView(uint _SubViewId)
-	{
-		GameObject subView = null;
-			
-		if(m_SubViews.ContainsKey(_SubViewId))
-		{ 	
-			subView = m_SubViews[_SubViewId];
-		}
-		else
-		{
-			Debug.LogError("GetSubView, id sent in doesn't exsist!");
-		}
-		
-		return(subView.GetComponent<CDUISubView>());
-	}
-	
-	public void SetActiveSubView(GameObject _SubView)
-	{
-		// Reposition all of the subviews out of view of the camera
-		foreach(GameObject subView in m_SubViews.Values)
-		{
-			float x = MainView.m_SubViewAreaRect.center.x * MainView.Dimensions.x - (MainView.Dimensions.x * 0.5f);
-        	float y = MainView.m_SubViewAreaRect.center.y * MainView.Dimensions.y - (MainView.Dimensions.y * 0.5f);
-			
-			subView.transform.localPosition = new Vector3(x, y, -1.5f);
-		}
-		
-		// Move this subview back into view
-		if(m_SubViews.ContainsValue(_SubView))
-		{
-			m_ActiveSubView = _SubView;
-			
-			m_ActiveSubView.transform.localPosition = new Vector3(m_ActiveSubView.transform.localPosition.x, m_ActiveSubView.transform.localPosition.y, 0.0f);
-		}
-		else
-		{
-			Debug.Log("SetActiveSubView, subview doesn't belong to this DUI!!");
-		}
-	}
 	
     public void AttatchRenderTexture(Material _sharedScreenMat)
     {
         // Set the render text onto the material of the screen
         _sharedScreenMat.SetTexture("_MainTex", m_RenderTex); 
-    }
-	
-	private void NavButtonPressed(CDUIButton _sender)
-    {
-		// Call the subview changed event
-		OnSubviewChange(MainView.GetSubviewFromNavButton(_sender).GetComponent<CDUISubView>().ViewID);
-    }
-	
-	private void SetupMainView(ELayoutStyle _Layout, Vector2 _Dimensions)
-    {
-//		// Create the DUI game object
-//        m_MainView = new GameObject();
-//        m_MainView.transform.parent = transform;
-//        m_MainView.name = "MainView";
-//        m_MainView.layer = gameObject.layer;
-//        m_MainView.transform.localRotation = Quaternion.identity;
-//		m_MainView.transform.localPosition = Vector3.zero;
-//		
-//        // Add the DUI component
-//        CDUIMainView duiMainView = m_MainView.AddComponent<CDUIMainView>();
-//
-//        // Initialise the DUI Component
-//        duiMainView.Initialise(_Layout, _Dimensions);
-//		duiMainView.ViewID = 0;
-
-		// Test: Create the new thing
-		m_MainView = (GameObject)GameObject.Instantiate(Resources.Load ("Prefabs/DUI/Message Root"));
-		m_MainView.transform.parent = transform;
-		m_MainView.transform.localRotation = Quaternion.identity;
-		m_MainView.transform.localPosition = Vector3.zero;
     }
 	
     private void SetupRenderTex()

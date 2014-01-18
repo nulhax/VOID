@@ -353,6 +353,10 @@ public class UICamera : MonoBehaviour
 	Camera mCam = null;
 	float mTooltipTime = 0f;
 	float mNextRaycast = 0f;
+	
+	/// <CUSTOM_CODE> Is this a DUI camera or is it a standard NGUI camera
+	bool m_IsDUICamera = false;
+	bool isDUICamera { get { return (m_IsDUICamera); } }
 
 	/// <summary>
 	/// Helper function that determines if this script should be handling the events.
