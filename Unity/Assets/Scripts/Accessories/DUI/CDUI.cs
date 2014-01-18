@@ -30,7 +30,7 @@ public class CDUI : MonoBehaviour
 	private EQuality m_Quality = EQuality.VeryHigh;
 	
 	private GameObject m_Console = null;
-    private GameObject m_RenderCamera = null;
+    private GameObject m_DUICamera = null;
     private RenderTexture m_RenderTex = null; 
 	
 	private GameObject m_MainView = null;
@@ -51,9 +51,9 @@ public class CDUI : MonoBehaviour
 		set { m_Console = value; } 
 	}
 
-	public Camera DUICamera 
+	public GameObject DUICamera 
 	{ 
-		get { return(m_RenderCamera.camera); } 
+		get { return(m_DUICamera); } 
 	}
 	
 	public CDUIMainView MainView
@@ -65,7 +65,7 @@ public class CDUI : MonoBehaviour
     private void Update()
 	{
 		// Render using the render camrea
-        DUICamera.Render();
+        DUICamera.camera.Render();
     }
 
     public void Awake()
@@ -80,7 +80,7 @@ public class CDUI : MonoBehaviour
         SetupRenderTex();
 
         // Setup the render camera
-        SetupRenderCamera();
+        SetupDUICamera();
     }
 	
     public void AttatchRenderTexture(Material _sharedScreenMat)
@@ -114,60 +114,46 @@ public class CDUI : MonoBehaviour
         m_RenderTex.Create();
     }
 
-    private void SetupRenderCamera()
+    private void SetupDUICamera()
     {
 		UIPanel panel = m_MainView.GetComponent<UIPanel>();
 		
         // Create the camera game object
-        m_RenderCamera = new GameObject();
-        m_RenderCamera.name = "RenderCamera";
-        m_RenderCamera.transform.parent = transform;
-		m_RenderCamera.transform.localPosition = new Vector3(0.0f, 0.0f, -1.0f);
-        m_RenderCamera.transform.localRotation = Quaternion.identity;
-        m_RenderCamera.layer = gameObject.layer;
+		m_DUICamera = new GameObject();
+        m_DUICamera.name = "RenderCamera";
+        m_DUICamera.transform.parent = transform;
+		m_DUICamera.transform.localPosition = new Vector3(0.0f, 0.0f, -1.0f);
+        m_DUICamera.transform.localRotation = Quaternion.identity;
+        m_DUICamera.layer = gameObject.layer;
 
         // Get the render camera and set its target as the render texture
-        Camera camera = m_RenderCamera.AddComponent<Camera>();
+        Camera camera = m_DUICamera.AddComponent<Camera>();
         camera.cullingMask = 1 << gameObject.layer;
 		camera.clearFlags = CameraClearFlags.Color;
-        camera.orthographic = true;
         camera.backgroundColor = Color.clear;
-        camera.nearClipPlane = 0.0f;
+		camera.fieldOfView = 60.0f;
+        camera.nearClipPlane = 0.01f;
         camera.farClipPlane = 2.0f;
         camera.targetTexture = m_RenderTex;
-		camera.orthographicSize = panel.height * 0.5f;
 		camera.enabled = false;
 
 		// Add the NGUI camera component
-		m_RenderCamera.AddComponent<UICamera>();
+		UICamera uiCam = m_DUICamera.AddComponent<UICamera>();
+		uiCam.IsDUICamera = true;
+		uiCam.DiegeticViewDimensions = new Vector2(panel.width, panel.height);
     }
-	
-	public GameObject FindDUIElementCollisions(float _texCoordU, float _texCoordV)
-    {
+
+	public Vector3 DUICameraViewportPos(Vector2 _screenTexCoord)
+	{
 		UIPanel panel = m_MainView.GetComponent<UIPanel>();
-
-		Vector3 offset = new Vector3(_texCoordU * panel.width - panel.width * 0.5f,
-		                             _texCoordV * panel.height - panel.height * 0.5f, 0.0f);
-
-        offset = transform.rotation * offset;
-        Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
-
-        Ray ray = new Ray(rayOrigin, transform.forward);
-
-		GameObject element = null;
 		
-//        if (Physics.Raycast(ray, out hit, rayLength, 1 << LayerMask.NameToLayer("DUI")))
-//        {
-//            element = hit.collider.gameObject;
-//			
-//            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.green, 0.5f);
-//        }
-//        else
-//        {
-//            Debug.DrawLine(ray.origin, ray.origin + ray.direction * rayLength, Color.red, 0.5f);
-//        }
+		Vector3 offset = new Vector3(_screenTexCoord.x * panel.width,
+		                             _screenTexCoord.y * panel.height, 0.0f);
 		
-		return(element);
+		offset = transform.rotation * offset;
+		Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
+		
+		return(rayOrigin);
 	}
 	
 	private void OnSubviewChange(uint _iActiveSubview)

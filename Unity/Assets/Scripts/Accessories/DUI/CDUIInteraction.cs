@@ -39,7 +39,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	// Member Properties
 	public CDUI DUI
 	{
-		get { return(gameObject.GetComponent<CDUI>());}
+		get { return(gameObject.GetComponent<CDUIConsole>().DUI.GetComponent<CDUI>());}
 	}
 
 	// Member Methods
@@ -81,7 +81,7 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	{
 	}
 	
-	public void Initialise()
+	public void Start()
 	{
 		// Register the interactable object event
 		CActorInteractable IO = GetComponent<CActorInteractable>();
@@ -93,49 +93,51 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	[AClientOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
+		UICamera uiCam = DUI.DUICamera.GetComponent<UICamera>();
+
 		// Update the NGUI camera ray position
-		//DUI.DUICamera.GetComponent<>()
+		uiCam.CurrentVeiwPortPos = DUI.DUICameraViewportPos(_RayHit.textureCoord);
 	}
 	
 	[AClientOnly]
 	private void HandlePlayerPrimaryStart(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
-		// Find the element hit
-		GameObject hitElement = DUI.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
-		
-		// If it did get the element pressed on the screen
-		if(hitElement != null)
-		{
-			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
-			if(duiElement.ElementType == CDUIElement.EElementType.Button)
-			{
+//		// Find the element hit
+//		GameObject hitElement = DUI.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
+//		
+//		// If it did get the element pressed on the screen
+//		if(hitElement != null)
+//		{
+//			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
+//			if(duiElement.ElementType == CDUIElement.EElementType.Button)
+//			{
 //				// Add this information to the network stream to serialise
 //				s_DUIInteractions.Write((byte)EInteractionEvent.ButtonPressed);
 //				s_DUIInteractions.Write(GetComponent<CNetworkView>().ViewId);
 //				s_DUIInteractions.Write(duiElement.ParentViewID);
 //				s_DUIInteractions.Write(duiElement.ElementID);
-			}
-		}
+//			}
+//		}
 	}
 
 	[AClientOnly]
 	private void HandlePlayerPrimaryEnd(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
-		// Find the element hit
-		GameObject hitElement = DUI.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
-		
-		// If it did get the element pressed on the screen
-		if(hitElement != null)
-		{
-			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
-			if(duiElement.ElementType == CDUIElement.EElementType.Button)
-			{
+//		// Find the element hit
+//		GameObject hitElement = DUI.FindDUIElementCollisions(_RayHit.textureCoord.x, _RayHit.textureCoord.y);
+//		
+//		// If it did get the element pressed on the screen
+//		if(hitElement != null)
+//		{
+//			CDUIElement duiElement = hitElement.GetComponent<CDUIElement>();
+//			if(duiElement.ElementType == CDUIElement.EElementType.Button)
+//			{
 //				// Add this information to the network stream to serialise
 //				s_DUIInteractions.Write((byte)EInteractionEvent.ButtonReleased);
 //				s_DUIInteractions.Write(GetComponent<CNetworkView>().ViewId);
 //				s_DUIInteractions.Write(duiElement.ParentViewID);
 //				s_DUIInteractions.Write(duiElement.ElementID);
-			}
-		}
+//			}
+//		}
 	}
 }

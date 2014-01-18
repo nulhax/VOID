@@ -293,8 +293,16 @@ public class UICamera : MonoBehaviour
 	{
 		get
 		{
-			return (currentCamera != null && currentTouch != null) ?
-				currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
+			if(current != null && current.IsDUICamera)
+			{
+				return (currentCamera != null && currentTouch != null) ?
+					UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, current.DiegeticViewDimensions) : new Ray();
+			}
+			else
+			{
+				return (currentCamera != null && currentTouch != null) ?
+					currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
+			}
 		}
 	}
 
@@ -354,9 +362,39 @@ public class UICamera : MonoBehaviour
 	float mTooltipTime = 0f;
 	float mNextRaycast = 0f;
 	
-	/// <CUSTOM_CODE> Is this a DUI camera or is it a standard NGUI camera
+	/// <CUSTOM_CODE> 
+
 	bool m_IsDUICamera = false;
-	bool isDUICamera { get { return (m_IsDUICamera); } }
+	Vector3 m_DiegeticPos = Vector3.zero;
+	Vector2 m_DiegeticViewDimensions = Vector2.zero;
+
+	public bool IsDUICamera 
+	{ 
+		get { return (m_IsDUICamera); } 
+		set { m_IsDUICamera = value; } 
+	}
+
+	public Vector3 CurrentVeiwPortPos 
+	{ 
+		get { return (m_DiegeticPos); } 
+		set { m_DiegeticPos = value; } 
+	}
+
+	public Vector3 DiegeticViewDimensions 
+	{ 
+		get { return (m_DiegeticViewDimensions); } 
+		set { m_DiegeticViewDimensions = value; } 
+	}
+
+	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos, Vector3 _DiegeticViewDimensions)
+	{
+		float dx = _DiegeticPos.x / _DiegeticViewDimensions.x;
+		float dy = _DiegeticPos.y / _DiegeticViewDimensions.y;
+
+		return(currentCamera.ViewportPointToRay(new Vector3(dx, dy)));
+	}
+
+	/// </CUSTOM_CODE>
 
 	/// <summary>
 	/// Helper function that determines if this script should be handling the events.
@@ -583,7 +621,17 @@ public class UICamera : MonoBehaviour
 			if (pos.x < 0f || pos.x > 1f || pos.y < 0f || pos.y > 1f) continue;
 
 			// Cast a ray into the screen
-			Ray ray = currentCamera.ScreenPointToRay(inPos);
+			Ray ray = new Ray();
+			if(cam.IsDUICamera)
+			{
+				ray = UICamera.DiegeticPointToRay(cam.CurrentVeiwPortPos, cam.DiegeticViewDimensions);
+			}
+			else
+			{
+				ray = currentCamera.ScreenPointToRay(inPos);
+			}
+
+			Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 1.0f);
 
 			// Raycast into the screen
 			int mask = currentCamera.cullingMask & (int)cam.eventReceiverMask;
