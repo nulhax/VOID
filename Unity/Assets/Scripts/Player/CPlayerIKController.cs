@@ -18,72 +18,119 @@ using System.Collections;
 
 /* Implementation */
 
-public class CPlayerIKController : MonoBehaviour {
+public class CPlayerIKController : CNetworkMonoBehaviour
+{
 
 	//Member Types
-
-	//Member Delegates & Events
-	
-	// Member Properties
-	public Vector3 RightHandIKTarget
+	public enum ENetworkAction : byte
 	{
-		set { m_RightHandTarget = value; m_fRightHandWeightTarget = 1; }
-		get { return (m_RightHandTarget); }
+		UpdateTarget,
 	}
 
+	//Member Delegates & Events
+	public delegate void NotifyTargetChange(Vector3 _bNewTarget);
+	public event NotifyTargetChange EventTargetChange;
+	
+	// Member Properties
+	
+	public Vector3 RightHandIKTarget
+	{
+		set { m_RightHandTarget = value; m_fRightHandWeightTarget = 1; m_fLerpTimer = 0; }
+		get { return (m_RightHandTarget); }
+	}	
+	
 	//Member variables
 	Animator m_ThirdPersonAnim;
 
 	float m_fRightHandIKWeight;
 	float m_fRightHandWeightTarget;
-	public Vector3 m_RightHandTarget;
+	Vector3 m_RightHandTarget;
 
 	float m_fLerpTime = 0.5f;
 	float m_fLerpTimer = 0.0f;
-
+	
+	CNetworkVar<Vector3> m_NetworkedTarget;
+	
 	//Member Methods
 
 	// Use this for initialization
 	void Start () 
-	{
+	{		
 		m_ThirdPersonAnim = GetComponent<Animator>();
+		EventTargetChange += UpdateTarget;
+	}
+	
+	public override void InstanceNetworkVars()
+	{
+		m_NetworkedTarget = new CNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+	}
+			
+	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	{
+		if(_cSyncedNetworkVar == m_NetworkedTarget)
+		{
+			EventTargetChange(m_NetworkedTarget.Get());
+		}
+	}
+	
+	void UpdateTarget(Vector3 _newTarget)
+	{
+		RightHandIKTarget = _newTarget;
+	}
+		
+	public static void SerializeIKTarget(CNetworkStream _cStream)
+	{
+		GameObject cSelfActor = CGamePlayers.SelfActor;
+
+		if (cSelfActor != null)
+		{
+			// Retrieve my actor motor
+			CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
+
+			// Write movement and rotation states
+			_cStream.Write((byte)ENetworkAction.UpdateTarget);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.x);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.y);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.z);			
+		}
+	}
+	
+	public static void UnserializeIKTarget(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+	{
+		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+
+		if (cPlayerActor != null)
+		{
+			// Retrieve player actor motor
+			CPlayerIKController cPlayerIKController = cPlayerActor.GetComponent<CPlayerIKController>();
+
+			ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+		
+			switch (eNetworkAction)
+			{
+			case ENetworkAction.UpdateTarget:
+				{						
+					cPlayerIKController.m_RightHandTarget.x = _cStream.ReadFloat();
+					cPlayerIKController.m_RightHandTarget.y = _cStream.ReadFloat();
+					cPlayerIKController.m_RightHandTarget.z = _cStream.ReadFloat();	
+				
+					cPlayerIKController.m_NetworkedTarget.Set(cPlayerIKController.m_RightHandTarget);					
+				}
+				break;
+
+			default:
+				Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
+				break;
+			}
+		}
+	
 	}
 	
 	// Update is called once per frame
 	void Update ()
-	{
-		IKTest();
-		LerpToTarget();
+	{	
+		LerpToTarget();		
 	}
-
-	void IKTest()
-	{
-		int iIgnoreLayer = 1 << 13;
-		iIgnoreLayer = ~ iIgnoreLayer;
-		
-		Vector3 rayCastPos = transform.position;
-		rayCastPos.y += 1.0f;
-		
-		if(Input.GetMouseButtonDown(0))
-		{
-			//Raycast for right hand
-			RaycastHit RightHandHit;
-			
-			CPlayerHead cPlayerHeadMotor = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
-			Vector3 vOrigin = cPlayerHeadMotor.ActorHead.transform.position;
-			Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
-			
-			if(Physics.Raycast(vOrigin, vDirection, out RightHandHit,  2.0f, iIgnoreLayer))
-			{
-				m_RightHandTarget = RightHandHit.point;
-				m_fRightHandWeightTarget = 1;
-			}
-			
-			Debug.DrawLine(vOrigin, vDirection, Color.magenta, 0.1f);
-		}
-	}
-
-
 
 	void LerpToTarget()
 	{

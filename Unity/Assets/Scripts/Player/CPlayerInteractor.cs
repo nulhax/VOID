@@ -122,8 +122,9 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 			// If this is a valid IO
 			if (cInteractableObjectComponent != null)
-			{
+			{				
 				cHitInteractableObject = cHitObject;
+				CGamePlayers.SelfActor.GetComponent<CPlayerIKController>().RightHandIKTarget = cRayHit.point;	
 			}
 		}
 

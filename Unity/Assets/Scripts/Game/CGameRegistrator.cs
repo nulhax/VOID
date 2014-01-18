@@ -28,6 +28,10 @@ public class CGameRegistrator : MonoBehaviour
 
 	public enum ENetworkPrefab : ushort
 	{
+		//^^												^^
+		//^^ Learn to spell Registrar and I'll consider it. ^^
+		//^^												^^
+		
 		INVALID,
 
         // Player
@@ -213,6 +217,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound           , CPlayerAirMotor.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget, CPlayerIKController.UnserializeIKTarget);
 	}
 
 
