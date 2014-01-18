@@ -58,49 +58,49 @@ public class CUserInput : MonoBehaviour
 
 	public delegate void NotifyMouseInput(float _fAmount);
 
-	public event NotifyMouseInput EventMouseMoveX;
-	public event NotifyMouseInput EventMouseMoveY;
+	public static event NotifyMouseInput EventMouseMoveX;
+	public static event NotifyMouseInput EventMouseMoveY;
 
 
 	public delegate void NotifyKeyChange(bool _bDown);
 
-	public event NotifyKeyChange EventPrimary;
-	public event NotifyKeyChange EventSecondary;
-	public event NotifyKeyChange EventUse;
-    public event NotifyKeyChange EventReloadTool;
-    public event NotifyKeyChange EventDropTool;
-	public event NotifyKeyChange EventMoveForward;
-	public event NotifyKeyChange EventMoveBackward;
-	public event NotifyKeyChange EventMoveLeft;
-	public event NotifyKeyChange EventMoveRight;
-	public event NotifyKeyChange EventMoveJump;
-	public event NotifyKeyChange EventMoveSprint;
-	public event NotifyKeyChange EventCrouch;
-	public event NotifyKeyChange EventFlyUp;
-	public event NotifyKeyChange EventFlyDown;
-	public event NotifyKeyChange EventFlyRollLeft;
-	public event NotifyKeyChange EventFlyRollRight;
+	public static event NotifyKeyChange EventPrimary;
+	public static event NotifyKeyChange EventSecondary;
+	public static event NotifyKeyChange EventUse;
+	public static event NotifyKeyChange EventReloadTool;
+	public static event NotifyKeyChange EventDropTool;
+	public static event NotifyKeyChange EventMoveForward;
+	public static event NotifyKeyChange EventMoveBackward;
+	public static event NotifyKeyChange EventMoveLeft;
+	public static event NotifyKeyChange EventMoveRight;
+	public static event NotifyKeyChange EventMoveJump;
+	public static event NotifyKeyChange EventMoveSprint;
+	public static event NotifyKeyChange EventCrouch;
+	public static event NotifyKeyChange EventFlyUp;
+	public static event NotifyKeyChange EventFlyDown;
+	public static event NotifyKeyChange EventFlyRollLeft;
+	public static event NotifyKeyChange EventFlyRollRight;
 
 
     public delegate void NotifyChangeToolSlot(byte _bSlot, bool _bDown);
-    public event NotifyChangeToolSlot EventChangeToolSlot;
+	public static event NotifyChangeToolSlot EventChangeToolSlot;
 
 
 // Member Properties
 
 
-	public float SensitivityX { get; set; }
-	public float SensitivityY { get; set; }
+	public static float SensitivityX { get; set; }
+	public static float SensitivityY { get; set; }
 
 
-	public float MouseMovementX { get; set; }
-	public float MouseMovementY { get; set; }
+	public static float MouseMovementX { get; set; }
+	public static float MouseMovementY { get; set; }
 
 
 // Member Methods
 	
 	
-	public void UnregisterAllEvents()
+	public static void UnregisterAllEvents()
 	{
 		EventPrimary = null;
 		EventSecondary = null;
@@ -116,7 +116,7 @@ public class CUserInput : MonoBehaviour
 	}
 
 
-	public bool IsInputDown(EInput _eInput)
+	public static bool IsInputDown(EInput _eInput)
 	{
 		KeyCode eKeyCode = KeyCode.A;
 
@@ -154,6 +154,8 @@ public class CUserInput : MonoBehaviour
 
     void Awake()
     {
+		s_cInstance = this;
+
         SensitivityX = 6.0f;
         SensitivityY = 6.0f;
     }
@@ -473,6 +475,9 @@ public class CUserInput : MonoBehaviour
 	// Cockpits
 	static KeyCode s_eStrafeLeft		= KeyCode.Q;
 	static KeyCode s_eStrafeRight		= KeyCode.E;
+
+
+	static CUserInput s_cInstance 		= null;
 
 
 };

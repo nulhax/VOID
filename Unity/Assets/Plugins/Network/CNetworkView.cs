@@ -544,7 +544,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 			if (fSyncedTick < 0.0f)
 			{
 				fSyncedTick = CNetworkServer.k_fSendRate - fSyncedTick;
-				Debug.Log(fSyncedTick);
+				//Debug.Log(fSyncedTick);
 			}
 		}
 

@@ -45,11 +45,6 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-	public static CUserInput UserInput
-	{
-		get { return (Instance.GetComponent<CUserInput>()); }
-	}
-
 	public static CCompositeCameraSystem CompositeCameraSystem
 	{
 		get { return (Instance.GetComponent<CCompositeCameraSystem>()); }
@@ -272,7 +267,7 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnDisconnect()
 	{
-		UserInput.UnregisterAllEvents();
+		CUserInput.UnregisterAllEvents();
         //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
         //    m_Galaxy = null;
 	}
