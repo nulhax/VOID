@@ -135,18 +135,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGamePlayers.SelfActor;
-
-		if (cSelfActor != null)
-		{
-			// Retrieve my actor motor
-			CPlayerGroundMotor cSelfActorMotor = cSelfActor.GetComponent<CPlayerGroundMotor>();
-
-			// Write movement and rotation states
-			_cStream.Write((byte)ENetworkAction.UpdateStates);
-			_cStream.Write((byte)cSelfActorMotor.m_uiMovementStates);
-			_cStream.Write(cSelfActorMotor.transform.eulerAngles.y);
-		}
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
 	}
 
 
@@ -262,7 +252,12 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EState.MoveRight	: (uint)0;
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Jump)			? (uint)EState.Jump			: (uint)0;
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)			? (uint)EState.Sprint		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Crouch)         ? (uint)EState.Crouch       : (uint)0;	
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Crouch)         ? (uint)EState.Crouch       : (uint)0;
+
+
+        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
+        s_cSerializeStream.Write((byte)m_uiMovementStates);
+        s_cSerializeStream.Write(transform.eulerAngles.y);
 	}
 
 
@@ -325,6 +320,9 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	
 	bool m_bGrounded = false;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

@@ -68,20 +68,8 @@ public class CPlayerAirMotor : MonoBehaviour
 	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGamePlayers.SelfActor;
-
-		if (cSelfActor != null)
-		{
-			uint uiMovementStates = cSelfActor.GetComponent<CPlayerAirMotor>().m_usMovementStates;
-			float fMouseMovementX = cSelfActor.GetComponent<CPlayerAirMotor>().m_fMouseMovementX;
-			float fMouseMovementY = cSelfActor.GetComponent<CPlayerAirMotor>().m_fMouseMovementY;
-
-			_cStream.Write((byte)ENetworkAction.UpdateStates);
-			_cStream.Write((ushort)uiMovementStates);
-			_cStream.Write(cSelfActor.transform.eulerAngles.x);
-			_cStream.Write(cSelfActor.transform.eulerAngles.y);
-			_cStream.Write(cSelfActor.transform.eulerAngles.z);
-		}
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
 	}
 	
 	
@@ -176,6 +164,13 @@ public class CPlayerAirMotor : MonoBehaviour
 
 		transform.Rotate(new Vector3(0.0f, CUserInput.MouseMovementX, 0.0f));
 		transform.Rotate(new Vector3(CUserInput.MouseMovementY, 0.0f, 0.0f));
+
+
+        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
+        s_cSerializeStream.Write((ushort)m_usMovementStates);
+        s_cSerializeStream.Write(transform.eulerAngles.x);
+        s_cSerializeStream.Write(transform.eulerAngles.y);
+        s_cSerializeStream.Write(transform.eulerAngles.z);
 	}
 
 
@@ -212,7 +207,7 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	void OnEventEnterShip()
 	{
-		gameObject.transform.rotation = Quaternion.identity;
+        gameObject.transform.eulerAngles = new Vector3(0.0f, gameObject.transform.eulerAngles.y, 0.0f);
 	}
 
 
@@ -227,6 +222,9 @@ public class CPlayerAirMotor : MonoBehaviour
 	float m_fMouseMovementX = 0;
 	float m_fMouseMovementY = 0;
 	ushort m_usMovementStates = 0;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };
