@@ -93,10 +93,8 @@ public class CDUIInteraction : CNetworkMonoBehaviour
 	[AClientOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
-		UICamera uiCam = DUI.DUICamera.GetComponent<UICamera>();
-
-		// Update the NGUI camera ray position
-		uiCam.CurrentVeiwPortPos = DUI.DUICameraViewportPos(_RayHit.textureCoord);
+		// Update the camera viewport positions
+		DUI.UpdateCameraViewportPositions(_RayHit.textureCoord);
 	}
 	
 	[AClientOnly]

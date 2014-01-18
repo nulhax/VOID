@@ -296,7 +296,7 @@ public class UICamera : MonoBehaviour
 			if(current != null && current.IsDUICamera)
 			{
 				return (currentCamera != null && currentTouch != null) ?
-					UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, current.DiegeticViewDimensions) : new Ray();
+					UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, new Vector2(currentCamera.pixelWidth, currentCamera.pixelHeight)) : new Ray();
 			}
 			else
 			{
@@ -378,12 +378,6 @@ public class UICamera : MonoBehaviour
 	{ 
 		get { return (m_DiegeticPos); } 
 		set { m_DiegeticPos = value; } 
-	}
-
-	public Vector3 DiegeticViewDimensions 
-	{ 
-		get { return (m_DiegeticViewDimensions); } 
-		set { m_DiegeticViewDimensions = value; } 
 	}
 
 	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos, Vector3 _DiegeticViewDimensions)
@@ -624,7 +618,7 @@ public class UICamera : MonoBehaviour
 			Ray ray = new Ray();
 			if(cam.IsDUICamera)
 			{
-				ray = UICamera.DiegeticPointToRay(cam.CurrentVeiwPortPos, cam.DiegeticViewDimensions);
+				ray = UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, new Vector2(currentCamera.pixelWidth, currentCamera.pixelHeight));
 			}
 			else
 			{

@@ -53,15 +53,17 @@ public class CDUIConsole : MonoBehaviour
     private void CreateDUI()
 	{
 		// Create the DUI game object
-        m_DUI = new GameObject();
-        m_DUI.name = name + "_DUI";
-        m_DUI.layer = LayerMask.NameToLayer("DUI");
+		m_DUI = (GameObject)GameObject.Instantiate(Resources.Load ("Prefabs/NGUI DUI/DUI Test"));
 		m_DUI.transform.rotation = Quaternion.identity;
         m_DUI.transform.position = new Vector3(0.0f, 0.0f, s_UIOffset);
 		
         // Add the DUI component
-        CDUI dui = m_DUI.AddComponent<CDUI>();
+        CDUI dui = m_DUI.GetComponent<CDUI>();
 		dui.Console = gameObject;
+
+		// Setup the render texure and cameras
+		dui.SetupRenderTexture();
+		dui.SetupUICameras();
 		
 		// Increment the offset
 		s_UIOffset += 2.0f;
