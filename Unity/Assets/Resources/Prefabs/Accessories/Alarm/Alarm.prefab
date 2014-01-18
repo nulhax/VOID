@@ -26,8 +26,8 @@ GameObject:
   - 4: {fileID: 400002}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400002}
-  - 114: {fileID: 11400004}
   - 82: {fileID: 8200000}
+  - 114: {fileID: 11400004}
   m_Layer: 0
   m_Name: Alarm
   m_TagString: Untagged
@@ -296,10 +296,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
+  m_Script: {fileID: 11500000, guid: cb2fb7a869003db46935184690678a94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eComponentType: 5
+  m_eAccessoryType: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

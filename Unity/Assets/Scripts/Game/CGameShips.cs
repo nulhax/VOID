@@ -110,7 +110,7 @@ public class CGameShips : CNetworkMonoBehaviour
 
 		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EFacilityType.Bridge);
+		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Bridge);
 	}
 
 

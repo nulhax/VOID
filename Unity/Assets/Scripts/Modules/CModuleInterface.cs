@@ -31,11 +31,14 @@ public class CModuleInterface : MonoBehaviour
 	{
 		INVALID,
 
-		FuseBox,
-		PlayerSpawner,
-		TurretCockpit,
-		PilotCockpit,
-		Alarm,
+        PlayerSpawner,
+        TurretCockpit,
+        PilotCockpit,
+        Turret,
+        LifeSupport1,
+        Power1,
+
+        MAX
 	}
 
 
@@ -47,78 +50,83 @@ public class CModuleInterface : MonoBehaviour
 
 	public EType ModuleType
 	{
-		get { return (m_eComponentType); }
+		get { return (m_eModuleType); }
 	}
 
 
 // Member Methods
 
 
+    public List<GameObject> FindAttachedComponentsByType(CComponentInterface.EType _eAccessoryType)
+    {
+        if (!m_mAttachedComponents.ContainsKey(_eAccessoryType))
+        {
+            return (null);
+        }
 
-	public static List<GameObject> FindComponentsByType(EType _eFacilityComponentType)
+        return (m_mAttachedComponents[_eAccessoryType]);
+    }
+
+
+    public void RegisterAttachedComponent(CComponentInterface _cComponentInterface)
+    {
+        if (!m_mAttachedComponents.ContainsKey(_cComponentInterface.ComponentType))
+        {
+            m_mAttachedComponents.Add(_cComponentInterface.ComponentType, new List<GameObject>());
+        }
+
+        m_mAttachedComponents[_cComponentInterface.ComponentType].Add(_cComponentInterface.gameObject);
+    }
+
+
+	public static List<GameObject> FindModulesByType(EType _eComponentType)
 	{
-		if (!s_mComponentObjects.ContainsKey(_eFacilityComponentType))
+		if (!s_mModuleObjects.ContainsKey(_eComponentType))
 		{
 			return (null);
 		}
 
-		return (s_mComponentObjects[_eFacilityComponentType]);
+		return (s_mModuleObjects[_eComponentType]);
 	}
 
 
-	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityComponentType)
-	{
-		CGameRegistrator.ENetworkPrefab ePrefabType = CGameRegistrator.ENetworkPrefab.INVALID;
-		
-		switch (_eFacilityComponentType)
-		{
-		case EType.FuseBox:
-			ePrefabType = CGameRegistrator.ENetworkPrefab.PanelFuseBox;
-			break;
+    public static void RegisterPrefab(EType _eModuleType, CGameRegistrator.ENetworkPrefab _ePrefab)
+    {
+        s_mRegisteredPrefabs.Add(_eModuleType, _ePrefab);
+    }
 
-		case EType.PlayerSpawner:
-			ePrefabType = CGameRegistrator.ENetworkPrefab.PlayerSpawner;
-			break;
 
-		case EType.TurretCockpit:
-			ePrefabType = CGameRegistrator.ENetworkPrefab.TurretCockpit;
-			break;
+    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eModuleType)
+    {
+        if (!s_mRegisteredPrefabs.ContainsKey(_eModuleType))
+        {
+            Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eModuleType));
 
-		case EType.PilotCockpit:
-			ePrefabType = CGameRegistrator.ENetworkPrefab.BridgeCockpit;
-			break;
+            return (CGameRegistrator.ENetworkPrefab.INVALID);
+        }
 
-		case EType.Alarm:
-			ePrefabType = CGameRegistrator.ENetworkPrefab.Alarm;
-			break;
-
-		default:
-			Debug.LogError(string.Format("Unknown component type. Type({0})", _eFacilityComponentType));
-			break;
-		}
-
-		return (ePrefabType);
-	}
+        return (s_mRegisteredPrefabs[_eModuleType]);
+    }
 
 
 	void Awake()
 	{
 		// Add self to the global list of components
-		if (!s_mComponentObjects.ContainsKey(m_eComponentType))
+		if (!s_mModuleObjects.ContainsKey(m_eModuleType))
 		{
-			s_mComponentObjects.Add(m_eComponentType, new List<GameObject>());
+			s_mModuleObjects.Add(m_eModuleType, new List<GameObject>());
 		}
 	
-		s_mComponentObjects[m_eComponentType].Add(gameObject);
+		s_mModuleObjects[m_eModuleType].Add(gameObject);
 	}
 
 
 	void Start()
 	{
-		// Ensure a type of defined for component
-		if (m_eComponentType == EType.INVALID)
+		// Ensure a type of defined 
+		if (m_eModuleType == EType.INVALID)
 		{
-			Debug.LogError("This component has not been given a component type");
+            Debug.LogError(string.Format("This module has not been given a module type. GameObjectName({0})", gameObject.name));
 		}
 
 		// Register self with parent facility
@@ -126,13 +134,16 @@ public class CModuleInterface : MonoBehaviour
 
 		for (int i = 0; i < 20; ++ i)
 		{
-			if (cParent.GetComponent<CFacilityModules>() != null)
-			{
-				cParent.GetComponent<CFacilityModules>().RegisterModule(this);
-				break;
-			}
+            if (cParent != null)
+            {
+                if (cParent.GetComponent<CFacilityInterface>() != null)
+                {
+                    cParent.GetComponent<CFacilityInterface>().RegisterModule(this);
+                    break;
+                }
 
-			cParent = cParent.parent;
+                cParent = cParent.parent;
+            }
 
 			if (i == 19)
 			{
@@ -145,7 +156,7 @@ public class CModuleInterface : MonoBehaviour
 	void OnDestroy()
 	{
 		// Remove self from global list of components
-		s_mComponentObjects[ModuleType].Remove(gameObject);
+		s_mModuleObjects[ModuleType].Remove(gameObject);
 	}
 
 
@@ -158,10 +169,14 @@ public class CModuleInterface : MonoBehaviour
 // Member Fields
 
 
-	public EType m_eComponentType = EType.INVALID;
+	public EType m_eModuleType = EType.INVALID;
 
 
-	static Dictionary<CModuleInterface.EType, List<GameObject>> s_mComponentObjects = new Dictionary<EType, List<GameObject>>();
+    Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
+
+
+    static Dictionary<EType, List<GameObject>> s_mModuleObjects = new Dictionary<EType, List<GameObject>>();
+    static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 };

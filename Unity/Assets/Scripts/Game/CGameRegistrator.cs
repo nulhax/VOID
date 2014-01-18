@@ -63,9 +63,10 @@ public class CGameRegistrator : MonoBehaviour
         Alarm,
         ControlConsole,
 		Door,
+        DuiMontior,
 		
         // Modules
-        BridgeCockpit,
+        PilotCockpit,
         TurretCockpit,
         PlayerSpawner,
         LaserTurret,
@@ -73,6 +74,7 @@ public class CGameRegistrator : MonoBehaviour
 		
 		// Components
 		PanelFuseBox,
+        CellSlot,
 
         // Parts
         BlackMatterCell,
@@ -115,6 +117,10 @@ public class CGameRegistrator : MonoBehaviour
 	void Start()
 	{
 		RegisterSerailizationTargets();
+        RegisterFacilities();
+        RegisterAccessories();
+        RegisterModules();
+        RegisterComponents();
 	}
 
 
@@ -162,15 +168,18 @@ public class CGameRegistrator : MonoBehaviour
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/DUI/CurvedMonitor_wide");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Door,                        "Accessories/Doors/Door");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,               "Accessories/PlayerSpawner");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BridgeCockpit,               "Modules/Pilot Cockpit/Cockpit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,                "Modules/Pilot Cockpit/Cockpit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,               "Modules/Player Spawner/PlayerSpawner");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,               "Modules/Turret Cockpit/TurretCockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,                 "Modules/Turret/Turret");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,       "Modules/Turret/TurretLaserProjectile");
+
+        // Components
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
 
         // Parts
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
@@ -205,6 +214,40 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
 	}
+
+
+
+    void RegisterFacilities()
+    {
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Bridge, CGameRegistrator.ENetworkPrefab.FacilityBridge);
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayStraight, CGameRegistrator.ENetworkPrefab.HallwayStraight);
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayCorner, CGameRegistrator.ENetworkPrefab.HallwayCorner);
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayTSection, CGameRegistrator.ENetworkPrefab.HallwayTSection);
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayXSection, CGameRegistrator.ENetworkPrefab.HallwayXSection);
+    }
+
+
+    void RegisterAccessories()
+    {
+        CAccessoryInterface.RegisterPrefab(CAccessoryInterface.EType.Alarm, ENetworkPrefab.Alarm);
+        //CModuleInterface.RegisterPrefab(CAccessoryInterface.EType.DuiMonitor, ENetworkPrefab.);
+    }
+
+
+    void RegisterModules()
+    {
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit, ENetworkPrefab.PilotCockpit);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner, ENetworkPrefab.PlayerSpawner);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit, ENetworkPrefab.TurretCockpit);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Turret, ENetworkPrefab.LaserTurret);
+    }
+
+
+    void RegisterComponents()
+    {
+        CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
+        CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
+    }
 
 
 // Member Fields

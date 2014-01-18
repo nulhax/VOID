@@ -22,7 +22,6 @@ using System;
 
 
 [RequireComponent(typeof(CFacilityAtmosphere))]
-[RequireComponent(typeof(CFacilityModules))]
 [RequireComponent(typeof(CFacilityExpansion))]
 [RequireComponent(typeof(CFacilityGeneral))]
 [RequireComponent(typeof(CFacilityGravity))]
@@ -37,7 +36,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-    public enum EFacilityType
+    public enum EType
 	{
 		INVALID = -1,
 		
@@ -61,23 +60,19 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	
-// Member Fields
-	private CNetworkVar<uint> m_FacilityID = null;
-	private CNetworkVar<EFacilityType> m_FacilityType = null;
-
-
 // Member Properties
+
+
 	public uint FacilityId 
 	{
-		get{return(m_FacilityID.Get());}			
+		get{return(m_FacilityId.Get());}			
 
 		[AServerOnly]
 		set
 		{
-			if(m_FacilityID.Get() == uint.MaxValue)
+			if(m_FacilityId.Get() == uint.MaxValue)
 			{
-				m_FacilityID.Set(value);
+				m_FacilityId.Set(value);
 			}
 			else
 			{
@@ -87,14 +82,14 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	}
 	
 	
-	public EFacilityType FacilityType 
+	public EType FacilityType 
 	{
 		get { return(m_FacilityType.Get()); }
 
 		[AServerOnly]
 		set
 		{
-			if(m_FacilityType.Get() == EFacilityType.INVALID)
+			if(m_FacilityType.Get() == EType.INVALID)
 			{
 				m_FacilityType.Set(value);
 			}
@@ -107,48 +102,132 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 
 // Member Methods
+
+
 	public override void InstanceNetworkVars()
 	{
-		m_FacilityID = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_FacilityType = new CNetworkVar<EFacilityType>(OnNetworkVarSync, EFacilityType.INVALID);
-	}
-	
-	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
-	{
-
+		m_FacilityId = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_FacilityType = new CNetworkVar<EType>(OnNetworkVarSync, EType.INVALID);
 	}
 
-	public void Start()
+
+    public List<GameObject> FindAccessoriesByType(CAccessoryInterface.EType _eAccessoryType)
+    {
+        if (!m_mAccessories.ContainsKey(_eAccessoryType))
+        {
+            return (null);
+        }
+
+        return (m_mAccessories[_eAccessoryType]);
+    }
+
+
+    public List<GameObject> FindModulesByType(CModuleInterface.EType _eModuleType)
+    {
+        if (!m_mModules.ContainsKey(_eModuleType))
+        {
+            return (null);
+        }
+
+        return (m_mModules[_eModuleType]);
+    }
+
+
+    public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
+    {
+        if (!m_mAccessories.ContainsKey(_cAccessoryInterface.AccessoryType))
+        {
+            m_mAccessories.Add(_cAccessoryInterface.AccessoryType, new List<GameObject>());
+        }
+
+        m_mAccessories[_cAccessoryInterface.AccessoryType].Add(_cAccessoryInterface.gameObject);
+    }
+
+
+    public void RegisterModule(CModuleInterface _cModuleInterface)
+    {
+        if (!m_mModules.ContainsKey(_cModuleInterface.ModuleType))
+        {
+            m_mModules.Add(_cModuleInterface.ModuleType, new List<GameObject>());
+        }
+
+        m_mModules[_cModuleInterface.ModuleType].Add(_cModuleInterface.gameObject);
+    }
+
+
+    public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
+    {
+        s_mRegisteredPrefabs.Add(_eFacilityType, _ePrefab);
+    }
+
+
+    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityType)
+    {
+        if (!s_mRegisteredPrefabs.ContainsKey(_eFacilityType))
+        {
+            Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eFacilityType));
+
+            return (CGameRegistrator.ENetworkPrefab.INVALID);
+        }
+
+        return (s_mRegisteredPrefabs[_eFacilityType]);
+    }
+
+
+	void Start()
 	{
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetFacilityPrefab(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetPrefabType(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
 	
-		// Add self to the shipfacilities
-		if(!CNetwork.IsServer)
-			CGameShips.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
+		// Add self to the ship facilities
+        if (!CNetwork.IsServer)
+        {
+            CGameShips.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
+        }
 	}
-	
-	public static CGameRegistrator.ENetworkPrefab GetFacilityPrefab(EFacilityType _eFacilityType)
-	{
-		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.INVALID;
-		
-		switch (_eFacilityType)
-		{
-			case EFacilityType.Bridge: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityBridge; break;
-			case EFacilityType.Factory: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityFactory; break;
-			case EFacilityType.GravityGenerator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityGravityGenerator; break;
-			case EFacilityType.LifeSupportDome: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityLifeSupport; break;
-			case EFacilityType.Engine: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityEngine; break;
-			case EFacilityType.Replicator: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityReplicator; break;
-			case EFacilityType.Scanner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.FacilityScanner; break;
-			//case EFacilityType.ShieldGenerator: eRegisteredPrefab = CGameResourceLoader.ENetworkRegisteredPrefab.FacilityShieldGenerator; break;
-			case EFacilityType.HallwayStraight: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayStraight; break;
-			case EFacilityType.HallwayCorner: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayCorner; break;
-			case EFacilityType.HallwayTSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayTSection; break;
-			case EFacilityType.HallwayXSection: eRegisteredPrefab = CGameRegistrator.ENetworkPrefab.HallwayXSection; break;			
-		}
-		
-		return (eRegisteredPrefab);
-	}
+
+
+    void Update()
+    {
+        if (CNetwork.IsServer &&
+            Input.GetKeyDown(KeyCode.M))
+        {
+            List<GameObject> aAlarmObjects = FindAccessoriesByType(CAccessoryInterface.EType.Alarm);
+
+            if (aAlarmObjects != null &&
+                aAlarmObjects.Count > 0)
+            {
+                bool bToggle = aAlarmObjects[0].GetComponent<CAlarmBehaviour>().IsActive;
+
+                foreach (GameObject cAlarmObject in aAlarmObjects)
+                {
+                    cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(!bToggle);
+                }
+            }
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+
+    }
+
+
+    // Member Fields
+
+
+    CNetworkVar<uint> m_FacilityId = null;
+    CNetworkVar<EType> m_FacilityType = null;
+
+
+    Dictionary<CAccessoryInterface.EType, List<GameObject>> m_mAccessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
+    Dictionary<CModuleInterface.EType, List<GameObject>> m_mModules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
+
+
+    static Dictionary<EType, List<GameObject>> s_mModuleObjects = new Dictionary<EType, List<GameObject>>();
+    static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+
+
 };

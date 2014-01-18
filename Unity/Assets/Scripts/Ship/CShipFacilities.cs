@@ -49,7 +49,7 @@ public class CShipFacilities : MonoBehaviour
 
 
     [AServerOnly]
-	public GameObject CreateFacility(CFacilityInterface.EFacilityType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
+	public GameObject CreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
 	{
 		CExpansionPortInterface cExpansionPort = null;
 		
@@ -69,7 +69,7 @@ public class CShipFacilities : MonoBehaviour
 		uint uiFacilityId = m_uiFacilityIdCount;
 		
 		// Retrieve the facility prefab
-		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CFacilityInterface.GetFacilityPrefab(_eType);
+		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CFacilityInterface.GetPrefabType(_eType);
 
 		// Create facility
 		GameObject cNewFacilityObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
@@ -108,7 +108,7 @@ public class CShipFacilities : MonoBehaviour
 		return (cNewFacilityObject);
 	}
 
-	public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EFacilityType _FacilityType)
+	public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
 	{
 		// Index facility against its Facility Id
 		m_mFacilities.Add(_FacilityId, _Facility);
@@ -159,7 +159,7 @@ public class CShipFacilities : MonoBehaviour
 
 
     [AServerOnly]
-	public List<GameObject> FindFacilities(CFacilityInterface.EFacilityType _eType)
+	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
 	{
         if (m_mFacilityObjects.ContainsKey(_eType))
         {
@@ -179,7 +179,7 @@ public class CShipFacilities : MonoBehaviour
 
 
 	Dictionary<uint, GameObject> m_mFacilities = new Dictionary<uint, GameObject>();
-	Dictionary<CFacilityInterface.EFacilityType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EFacilityType, List<GameObject>>();
+	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
 
 
 };

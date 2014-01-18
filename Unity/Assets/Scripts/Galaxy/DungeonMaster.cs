@@ -71,6 +71,7 @@ public class DungeonMaster : MonoBehaviour
 	
 	void Update()
     {
+        return; // <- Fuck you
         // Update coinage.
         mfPengar += Time.deltaTime * difficulty;
 
