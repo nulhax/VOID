@@ -33,6 +33,10 @@ public class CGameRegistrator : MonoBehaviour
 		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
 		// DO NOT MAKE THIS LOOK SHIT - put your shit in a LOGICAL place please!
 		
+		//^^												^^
+		//^^ Learn to spell Registrar and I'll consider it. ^^
+		//^^												^^
+		
 		INVALID,
 		
 		// Ships
@@ -220,6 +224,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound, CPlayerAirMotor.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState, CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound, CPlayerBackPack.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget, CPlayerIKController.UnserializeIKTarget);
 	}
 
 
