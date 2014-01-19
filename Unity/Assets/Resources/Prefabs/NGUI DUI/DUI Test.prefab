@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
+  - 114: {fileID: 11400042}
   - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: DUI Test
@@ -1088,8 +1089,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9389e28eda35b341bf9ee379117e052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UICamera2D: {fileID: 100024}
-  m_UICamera3D: {fileID: 100028}
+  m_DUICamera2D: {fileID: 100024}
+  m_DUICamera3D: {fileID: 100028}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1101,7 +1102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400004
 MonoBehaviour:
@@ -1612,6 +1613,17 @@ MonoBehaviour:
   restriction: 1
   cloneOnDrag: 0
   prefab: {fileID: 100000, guid: 8d847f26b6745fb4d9076f59a3cf0151, type: 2}
+--- !u!114 &11400042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1685,7 +1697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400058
 MonoBehaviour:
@@ -1903,7 +1915,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400090
 MonoBehaviour:
@@ -2119,7 +2131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400142
 MonoBehaviour:
@@ -2150,7 +2162,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400146
 MonoBehaviour:
@@ -2497,7 +2509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f02842fa4878db54f9587ff4de7d9f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollView: {fileID: 0}
+  scrollView: {fileID: 11400006}
   draggablePanel: {fileID: 0}
 --- !u!114 &11400180
 MonoBehaviour:

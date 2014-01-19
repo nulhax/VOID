@@ -98,6 +98,9 @@ public class CGameRegistrator : MonoBehaviour
 
         // Hazards
         Fire,
+
+		// User Interfaces
+		DUITest,
 		
 		MAX
 	}
@@ -203,6 +206,9 @@ public class CGameRegistrator : MonoBehaviour
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire");
+
+		// User Interface
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/DUI Test");
 	}
 
 
