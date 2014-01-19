@@ -296,7 +296,7 @@ public class UICamera : MonoBehaviour
 			if(current != null && current.IsDUICamera)
 			{
 				return (currentCamera != null && currentTouch != null) ?
-					UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, new Vector2(currentCamera.pixelWidth, currentCamera.pixelHeight)) : new Ray();
+					UICamera.DiegeticPointToRay(currentTouch.pos) : new Ray();
 			}
 			else
 			{
@@ -380,10 +380,10 @@ public class UICamera : MonoBehaviour
 		set { m_DiegeticPos = value; } 
 	}
 
-	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos, Vector3 _DiegeticViewDimensions)
+	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos)
 	{
-		float dx = _DiegeticPos.x / _DiegeticViewDimensions.x;
-		float dy = _DiegeticPos.y / _DiegeticViewDimensions.y;
+		float dx = _DiegeticPos.x / currentCamera.pixelWidth;
+		float dy = _DiegeticPos.y / currentCamera.pixelHeight;
 
 		return(currentCamera.ViewportPointToRay(new Vector3(dx, dy)));
 	}
@@ -618,7 +618,7 @@ public class UICamera : MonoBehaviour
 			Ray ray = new Ray();
 			if(cam.IsDUICamera)
 			{
-				ray = UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, new Vector2(currentCamera.pixelWidth, currentCamera.pixelHeight));
+				ray = UICamera.DiegeticPointToRay(inPos);
 			}
 			else
 			{
@@ -1017,7 +1017,7 @@ public class UICamera : MonoBehaviour
 	public void ProcessMouse ()
 	{
 		// Update the position and delta
-		lastTouchPosition = Input.mousePosition;
+		lastTouchPosition = IsDUICamera ? CurrentVeiwPortPos : Input.mousePosition;
 		mMouse[0].delta = lastTouchPosition - mMouse[0].pos;
 		mMouse[0].pos = lastTouchPosition;
 		bool posChanged = mMouse[0].delta.sqrMagnitude > 0.001f;
@@ -1052,7 +1052,7 @@ public class UICamera : MonoBehaviour
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
 		{
 			mNextRaycast = RealTime.time + 0.02f;
-			if (!Raycast(Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
+			if (!Raycast(current.IsDUICamera ? current.CurrentVeiwPortPos : Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
 			if (hoveredObject == null) hoveredObject = genericEventHandler;
 			for (int i = 0; i < 3; ++i) mMouse[i].current = hoveredObject;
 		}

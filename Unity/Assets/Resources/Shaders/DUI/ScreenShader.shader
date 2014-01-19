@@ -3,8 +3,6 @@ Shader "ScreenShader"
 	Properties 
 	{
 _MainTex("Base (RGB) Gloss (A)", 2D) = "white" {}
-_SpecularColor("Specular Color", Color) = (1,1,1,1)
-_SpecPower("Specular Power", Range(0.01,1) ) = 0.078125
 _EmissionPow("Emmision Power", Range(0,10) ) = 1.0
 _Alpha("Alpha", Range(0,1) ) = 0.9
 
@@ -37,8 +35,6 @@ Fog{
 
 
 sampler2D _MainTex;
-float4 _SpecularColor;
-float _SpecPower;
 float _EmissionPow;
 float _Alpha;
 
@@ -94,7 +90,8 @@ float4 VertexOutputMaster0_3_NoInput = float4(0,0,0,0);
 			}
 			
 
-			void surf (Input IN, inout EditorSurfaceOutput o) {
+			void surf (Input IN, inout EditorSurfaceOutput o) 
+			{
 				o.Normal = float3(0.0,0.0,1.0);
 				o.Alpha = 1.0;
 				o.Albedo = 0.0;
@@ -103,19 +100,14 @@ float4 VertexOutputMaster0_3_NoInput = float4(0,0,0,0);
 				o.Specular = 0.0;
 				o.Custom = 0.0;
 				
-float4 Tex2D0=tex2D(_MainTex,(IN.uv_MainTex.xyxy).xy);
-float4 Multiply0=Tex2D0 * _EmissionPow.xxxx;
-float4 Master0_0_NoInput = float4(0,0,0,0);
-float4 Master0_1_NoInput = float4(0,0,1,1);
-float4 Master0_7_NoInput = float4(0,0,0,0);
-float4 Master0_6_NoInput = float4(1,1,1,1);
-o.Emission = Multiply0;
-o.Specular = _SpecPower.xxxx;
-o.Gloss = _SpecularColor;
-o.Alpha = _Alpha.xxxx;
-
-if(Tex2D0.a == 0)
-	o.Alpha = 0;
+				float4 Tex2D0 = tex2D(_MainTex,(IN.uv_MainTex.xyxy).xy);
+				float4 Multiply0 = Tex2D0 * _EmissionPow.xxxx;
+				float4 Master0_0_NoInput = float4(0,0,0,0);
+				float4 Master0_1_NoInput = float4(0,0,1,1);
+				float4 Master0_7_NoInput = float4(0,0,0,0);
+				float4 Master0_6_NoInput = float4(1,1,1,1);
+				o.Emission = Multiply0;
+				o.Alpha = Tex2D0.a * _Alpha;
 
 				o.Normal = normalize(o.Normal);
 			}

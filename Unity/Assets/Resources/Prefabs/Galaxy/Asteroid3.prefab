@@ -17,7 +17,7 @@ GameObject:
   - 135: {fileID: 13500000}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400008}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: Asteroid3
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
