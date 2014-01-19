@@ -106,14 +106,21 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
 	void OnPlayerEnterCockpit(ulong _ulPlayerId)
 	{
-		// Debug - Search for avaiable turret nodes from parent
+		// Debug - Search for available turret nodes from parent
 		if (CNetwork.IsServer)
-		{	
-			List<GameObject> unmountedTurrets = transform.parent.GetComponent<CFacilityTurrets>().GetAllUnmountedTurrets();
+		{
+            List<GameObject> acTurrets = GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityInterface>().FindModulesByType(CModuleInterface.EType.Turret);
 
-			if(unmountedTurrets.Count != 0)
+            if (acTurrets != null &&
+                acTurrets.Count > 0)
 			{
-				m_cTurretViewId.Set(unmountedTurrets[0].GetComponent<CNetworkView>().ViewId);
+                foreach (GameObject cTurretObject in acTurrets)
+                {
+                    if (!cTurretObject.GetComponent<CTurretBehaviour>().IsMounted)
+                    {
+                        m_cTurretViewId.Set(cTurretObject.GetComponent<CNetworkView>().ViewId);
+                    }
+                }
 			}
 		}
 	}
