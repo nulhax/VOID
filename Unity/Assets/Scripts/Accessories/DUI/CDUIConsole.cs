@@ -75,6 +75,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
     private void CreateDUI()
 	{

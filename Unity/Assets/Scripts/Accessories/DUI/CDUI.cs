@@ -82,21 +82,32 @@ public class CDUI : CNetworkMonoBehaviour
 		}
 	}
 
-    public void Update()
+	public void Update()
 	{
-//		// Render using the render cameras
-//      UICamera2D.camera.Render();
-//		UICamera3D.camera.Render();
-    }
+		if(m_DUICamera2D != null)
+			m_DUICamera2D.GetComponent<UICamera>().enabled = false;
+
+		if(m_DUICamera3D != null)
+			m_DUICamera3D.GetComponent<UICamera>().enabled = false;
+	}
 
 	public void UpdateCameraViewportPositions(Vector2 _screenTexCoord)
 	{
+		UICamera current = DUICamera2D.GetComponent<UICamera>();
+		current.enabled = true;
+
 		Vector3 viewPortPos = DUICameraViewportPos(_screenTexCoord);
 
-		if(DUICamera2D != null) 
-			DUICamera2D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
-		if(DUICamera3D != null) 
-			DUICamera3D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
+		if(m_DUICamera2D != null) 
+		{
+			m_DUICamera2D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
+			m_DUICamera2D.GetComponent<UICamera>().enabled = true;
+		}
+		if(m_DUICamera3D != null) 
+		{
+			m_DUICamera3D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
+			m_DUICamera3D.GetComponent<UICamera>().enabled = true;
+		}
 	}
 	
 	private void AttatchRenderTexture(Material _ScreenMaterial)

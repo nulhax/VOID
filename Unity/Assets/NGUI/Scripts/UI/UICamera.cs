@@ -893,7 +893,7 @@ public class UICamera : MonoBehaviour
 	/// Check the input and send out appropriate events.
 	/// </summary>
 
-	void Update ()
+	public void Update ()
 	{
 		// Only the first UI layer should be processing events
 		if (!Application.isPlaying || !handlesEvents) 
