@@ -316,6 +316,21 @@ public class AudioSystem : MonoBehaviour
 		
 		return(_source);
 	}
+
+	public static AudioSource Play(AudioSource _source, float _volume, SoundType _soundType,  bool _useOcclusion)
+	{
+
+		_source.volume = _volume;
+		
+		_source.loop = false;
+		
+		s_activeAudio.Add(new ClipInfo { fadeInTime = 0, fadeInTimer = 0, fadeOutTime = 0, audioSource = _source, defaultVolume = _volume,
+			soundType = _soundType, useOcclusion = _useOcclusion});
+		
+		_source.Play();
+		
+		return(_source);
+	}
 	
 	private static void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 
 	{

@@ -72,6 +72,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 			{
 				m_PreviousValue = m_Value;
 				m_Value = _NewValue;
+
+				if (m_nSetNotifyCallback == null)
+				{
+					Debug.LogError("cupcakes");
+				}
+
 				m_nSetNotifyCallback(m_bNetworkVarId);
 			}
         }

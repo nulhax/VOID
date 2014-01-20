@@ -106,6 +106,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
+        m_fRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, -9.81f);
 		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
 		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
@@ -135,18 +136,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGamePlayers.SelfActor;
-
-		if (cSelfActor != null)
-		{
-			// Retrieve my actor motor
-			CPlayerGroundMotor cSelfActorMotor = cSelfActor.GetComponent<CPlayerGroundMotor>();
-
-			// Write movement and rotation states
-			_cStream.Write((byte)ENetworkAction.UpdateStates);
-			_cStream.Write((byte)cSelfActorMotor.m_uiMovementStates);
-			_cStream.Write(cSelfActorMotor.transform.eulerAngles.y);
-		}
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
 	}
 
 
@@ -204,8 +195,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility != null &&
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		if (cSelfLocator.ContainingFacility != null &&
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
 		{
 			// Process grounded check on server and client
 			UpdateGrounded();
@@ -222,19 +213,18 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void FixedUpdate()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
+        if (CNetwork.IsServer)
+        {
+		    CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility != null &&
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled)
-		{
-			// Needs to be in fixed update!
-			
-			// Process movement on server and client
-			if (CNetwork.IsServer)
-			{
-				ProcessMovement();				
-			}
-		}
+		    if (cSelfLocator.ContainingFacility != null &&
+		        cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		    {
+                ProcessMovement();
+
+                m_fRotationY.Set(transform.eulerAngles.y);
+		    }
+        }
 	}
 
 
@@ -262,7 +252,12 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EState.MoveRight	: (uint)0;
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Jump)			? (uint)EState.Jump			: (uint)0;
 		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)			? (uint)EState.Sprint		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Crouch)         ? (uint)EState.Crouch       : (uint)0;	
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Crouch)         ? (uint)EState.Crouch       : (uint)0;
+
+
+        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
+        s_cSerializeStream.Write((byte)m_uiMovementStates);
+        s_cSerializeStream.Write(transform.eulerAngles.y);
 	}
 
 
@@ -295,13 +290,22 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	}
 
 
-	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		if (_cSyncedNetworkVar == m_bStates)
+		if (_cSyncedVar == m_bStates)
 		{
 			// Notify event observers
 			if (EventStatesChange != null) EventStatesChange(PreviousStates, States);
 		}
+        else if (_cSyncedVar == m_fRotationY)
+        {
+            if (gameObject != CGamePlayers.SelfActor)
+            {
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x,
+                                                    m_fRotationY.Get(),
+                                                    transform.eulerAngles.z);
+            }
+        }
 	}
 
 
@@ -311,6 +315,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	List<Type> m_cInputDisableQueue = new List<Type>();
 
 
+    CNetworkVar<float> m_fRotationY = null;
 	CNetworkVar<float> m_fGravity = null;
 	CNetworkVar<float> m_fMovementSpeed = null;
 	CNetworkVar<float> m_fSprintSpeed = null;
@@ -318,13 +323,13 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	CNetworkVar<byte>  m_bStates = null;
 
 
-	float m_fRotationY = 0.0f;
-
-
 	uint m_uiMovementStates = 0;
 	
 	
 	bool m_bGrounded = false;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

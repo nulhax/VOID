@@ -53,12 +53,8 @@ public class CTorchLight : CNetworkMonoBehaviour
 			else
 			{
 				light.intensity = 2;
-			}
-			
-			if(m_torchPowerSwitchCue != null)
-			{
-				m_torchPowerSwitchCue.Play(1.0f, false, -1);
-			}
+			}			
+
 		}
 		else if (_cVarInstance == m_bTorchColour)
 		{
@@ -77,11 +73,6 @@ public class CTorchLight : CNetworkMonoBehaviour
 					light.color = new Color(0, 0, 1.0f);
 					break;
 			}
-			
-			if(m_torchColourToggleCue != null)
-			{
-				m_torchColourToggleCue.Play(1.0f, false, -1);
-			}
 		}
     }
 
@@ -98,18 +89,6 @@ public class CTorchLight : CNetworkMonoBehaviour
 		
 		//Get audio cues
 		AudioCue[] cues = gameObject.GetComponents<AudioCue>();
-				
-		foreach(AudioCue cue in cues)
-		{
-			if(cue.m_strCueName == "TorchClick")
-			{
-				m_torchPowerSwitchCue = cue;
-			}
-			if(cue.m_strCueName == "TorchToggle")
-			{
-				m_torchColourToggleCue = cue;
-			}			
-		}
 	}
 
 
@@ -155,6 +134,4 @@ public class CTorchLight : CNetworkMonoBehaviour
 
     CNetworkVar<bool> m_bTorchLit = null;
 	CNetworkVar<byte> m_bTorchColour = null;
-	AudioCue m_torchPowerSwitchCue;
-	AudioCue m_torchColourToggleCue;
 };

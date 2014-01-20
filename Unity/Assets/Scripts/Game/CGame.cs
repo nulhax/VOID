@@ -74,7 +74,7 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
+		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, "DefaultName", 8);
 
 		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
@@ -101,11 +101,14 @@ public class CGame : CNetworkMonoBehaviour
 			m_fNumSlots = GUI.HorizontalSlider(new Rect(fScreenCenterX - 230, fScreenCenterY - 50, 200, 30), m_fNumSlots, 1.0f, 32.0f);
 			GUI.Label(new Rect(fScreenCenterX - 158, fScreenCenterY - 80, 100, 30), "Slots: " + ((uint)m_fNumSlots).ToString());
 
+			GUI.Label(new Rect(fScreenCenterX + 226, fScreenCenterY - 180, 100, 30), "Player Name");
+			m_sPlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+
 			if (GUI.Button(new Rect(fScreenCenterX + 60, fScreenCenterY - 80, 160, 50), "Start Server") &&
 				m_sServerTitle.Length > 1 &&
 				m_fNumSlots > 0)
 			{
-				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, (uint)m_fNumSlots);
+				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
 			}
         }
 
@@ -128,17 +131,6 @@ public class CGame : CNetworkMonoBehaviour
         {
 			DrawLobbyGui();
         }
-
-		if (CGamePlayers.SelfActor == null)
-		{
-			// Draw unspawned message
-			GUIStyle cStyle = new GUIStyle();
-			cStyle.fontSize = 40;
-			cStyle.normal.textColor = Color.white;
-
-			GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
-			          "Waiting for spawner to be available...", cStyle);
-		}
     }
 
 
@@ -282,6 +274,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	string m_sServerTitle = System.Environment.UserDomainName + ": " + System.Environment.UserName;
+	string m_sPlayerName = "Enter name";
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
 
 

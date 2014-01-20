@@ -249,7 +249,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     {
         if (gameObject == CGamePlayers.SelfActor)
         {
-            string sModuleText = "[Module] ";
+            string sModuleText = "Part: ";
 
             if (m_cCarryingModuleViewId.Get() != null)
             {
@@ -260,8 +260,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
                 sModuleText += "None";
             }
 
-
-            GUI.Label(new Rect(10, Screen.height - 80, 500, 50), sModuleText);
+            GUI.Box(new Rect(10, Screen.height - 140, 150, 40),
+                    "[Backpack]\n" +
+                    sModuleText);
         }
     }
 

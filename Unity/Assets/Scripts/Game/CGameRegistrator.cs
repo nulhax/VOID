@@ -222,9 +222,10 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound                  , CCockpit.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CTurretBehaviour.SerializeOutbound          , CTurretBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound           , CPlayerAirMotor.UnserializeInbound);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerIKController.SerializeIKTarget		, CPlayerIKController.UnserializeIKTarget);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CGamePlayers.SerializeData					, CGamePlayers.UnserializeData);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget				, CPlayerIKController.UnserializeIKTarget);
 		CNetworkConnection.RegisterSerializationTarget(CDUIElement.SerializeElementEvents    				, CDUIElement.UnserializeElementEvents);
 	}
 

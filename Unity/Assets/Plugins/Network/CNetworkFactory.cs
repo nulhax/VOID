@@ -186,9 +186,17 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public GameObject FindObject(CNetworkViewId _cNetworkViewId)
 	{
-		GameObject cGameObject = CNetworkView.FindUsingViewId(_cNetworkViewId).gameObject;
+		CNetworkView cObjectNetworkView = CNetworkView.FindUsingViewId(_cNetworkViewId);
+		GameObject cGameObject = null;
 
-		Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.ChildId);
+		if (cObjectNetworkView != null)
+		{
+			cGameObject = cObjectNetworkView.gameObject;
+		}
+		else
+		{
+			Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.ChildId);
+		}
 
 		return (cGameObject);
 	}

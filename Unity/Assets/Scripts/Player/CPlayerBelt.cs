@@ -426,8 +426,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
             for (uint i = 0; i < m_bToolCapacity.Get(); ++i)
             {
-                sToolText += "[Tool Slot "+ i +"] ";
-
+                sToolText += "Slot "+ i +": ";
 
                 if (GetToolViewId(i) != null)
                 {
@@ -446,7 +445,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 sToolText += "\n";
             }
 
-            GUI.Label(new Rect(10, Screen.height - 50, 500, 300), sToolText);
+            GUI.Box(new Rect(10, Screen.height - 90, 240, 56),
+                    "[Belt]\n" +
+                    sToolText);
         }
     }
 

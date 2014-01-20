@@ -54,6 +54,12 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
+    public GameObject ParentFacility
+    {
+        get { return (m_cParentFacility); }
+    }
+
+
 // Member Methods
 
 
@@ -139,6 +145,7 @@ public class CModuleInterface : MonoBehaviour
                 if (cParent.GetComponent<CFacilityInterface>() != null)
                 {
                     cParent.GetComponent<CFacilityInterface>().RegisterModule(this);
+                    m_cParentFacility = cParent.gameObject;
                     break;
                 }
 
@@ -170,6 +177,9 @@ public class CModuleInterface : MonoBehaviour
 
 
 	public EType m_eModuleType = EType.INVALID;
+
+
+    GameObject m_cParentFacility = null;
 
 
     Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();

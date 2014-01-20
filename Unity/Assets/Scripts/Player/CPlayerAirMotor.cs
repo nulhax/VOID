@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CPlayerSuit))]
-public class CPlayerAirMotor : MonoBehaviour
+public class CPlayerAirMotor : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -56,6 +56,12 @@ public class CPlayerAirMotor : MonoBehaviour
 // Member Methods
 
 
+    public override void InstanceNetworkVars()
+    {
+        m_vRotation = new CNetworkVar<Vector3>(OnNetworkVarSync, new Vector3());
+    }
+
+
 	void Start()
 	{
 		if (gameObject == CGamePlayers.SelfActor)
@@ -68,20 +74,8 @@ public class CPlayerAirMotor : MonoBehaviour
 	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
-		GameObject cSelfActor = CGamePlayers.SelfActor;
-
-		if (cSelfActor != null)
-		{
-			uint uiMovementStates = cSelfActor.GetComponent<CPlayerAirMotor>().m_usMovementStates;
-			float fMouseMovementX = cSelfActor.GetComponent<CPlayerAirMotor>().m_fMouseMovementX;
-			float fMouseMovementY = cSelfActor.GetComponent<CPlayerAirMotor>().m_fMouseMovementY;
-
-			_cStream.Write((byte)ENetworkAction.UpdateStates);
-			_cStream.Write((ushort)uiMovementStates);
-			_cStream.Write(cSelfActor.transform.eulerAngles.x);
-			_cStream.Write(cSelfActor.transform.eulerAngles.y);
-			_cStream.Write(cSelfActor.transform.eulerAngles.z);
-		}
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
 	}
 	
 	
@@ -134,8 +128,8 @@ public class CPlayerAirMotor : MonoBehaviour
 	{
 		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
 		
-		if (cSelfLocator.Facility == null ||
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+		if (cSelfLocator.ContainingFacility == null ||
+		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
 		{
 			if (CGamePlayers.SelfActor != null &&
 			    CGamePlayers.SelfActor == gameObject)
@@ -148,16 +142,20 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	public void FixedUpdate()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		if (cSelfLocator.Facility == null ||
-		    cSelfLocator.Facility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
-		{
-			if (CNetwork.IsServer)
-			{
-				UpdateMovement();
-			}
-		}
+        if (CNetwork.IsServer)
+        {
+            CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
+
+            if (cSelfLocator.ContainingFacility == null ||
+                cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+            {
+
+                UpdateMovement();
+
+                m_vRotation.Set(transform.eulerAngles);
+
+            }
+        }
 	}
 
 
@@ -176,6 +174,13 @@ public class CPlayerAirMotor : MonoBehaviour
 
 		transform.Rotate(new Vector3(0.0f, CUserInput.MouseMovementX, 0.0f));
 		transform.Rotate(new Vector3(CUserInput.MouseMovementY, 0.0f, 0.0f));
+
+
+        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
+        s_cSerializeStream.Write((ushort)m_usMovementStates);
+        s_cSerializeStream.Write(transform.eulerAngles.x);
+        s_cSerializeStream.Write(transform.eulerAngles.y);
+        s_cSerializeStream.Write(transform.eulerAngles.z);
 	}
 
 
@@ -212,11 +217,26 @@ public class CPlayerAirMotor : MonoBehaviour
 
 	void OnEventEnterShip()
 	{
-		gameObject.transform.rotation = Quaternion.identity;
+        gameObject.transform.eulerAngles = new Vector3(0.0f, gameObject.transform.eulerAngles.y, 0.0f);
 	}
 
 
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_vRotation)
+        {
+            if (gameObject != CGamePlayers.SelfActor)
+            {
+                transform.eulerAngles = m_vRotation.Get();
+            }
+        }
+    }
+
+
 // Member Fields
+
+
+    CNetworkVar<Vector3> m_vRotation = null;
 
 
 	float m_fMovementSpeed = 20.5f;
@@ -227,6 +247,9 @@ public class CPlayerAirMotor : MonoBehaviour
 	float m_fMouseMovementX = 0;
 	float m_fMouseMovementY = 0;
 	ushort m_usMovementStates = 0;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };
