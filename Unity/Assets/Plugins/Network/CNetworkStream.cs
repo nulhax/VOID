@@ -417,7 +417,7 @@ public class CNetworkStream
 		
 		byte[] baSerializedValue = this.ReadBytes(iSize);
 		
-		return (Converter.ToObject(baSerializedValue, typeof(string)));
+		return ((string)Converter.ToObject(baSerializedValue, typeof(string)));
 	}
 
 
