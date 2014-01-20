@@ -51,19 +51,19 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 //		but.PressDown += SpawnTool;	
 	}
 	
-	[AServerOnly]
-    void SpawnTool(CDUIButton _sender)
-    {
-        // Create a new prefab and tool
-        CGameRegistrator.ENetworkPrefab ToolPrefab = CGameRegistrator.ENetworkPrefab.ToolRachet;
-        GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
-		
-		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-		
-		newTool.GetComponent<CNetworkView>().SetPosition(transform.position);
-		newTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
-		newTool.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-    }
+//	[AServerOnly]
+//    void SpawnTool(CDUIButton _sender)
+//    {
+//        // Create a new prefab and tool
+//        CGameRegistrator.ENetworkPrefab ToolPrefab = CGameRegistrator.ENetworkPrefab.ToolRachet;
+//        GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
+//		
+//		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+//		
+//		newTool.GetComponent<CNetworkView>().SetPosition(transform.position);
+//		newTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
+//		newTool.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
+//    }
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {

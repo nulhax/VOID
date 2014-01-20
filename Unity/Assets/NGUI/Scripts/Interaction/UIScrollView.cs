@@ -666,9 +666,19 @@ public class UIScrollView : MonoBehaviour
 				mDragStartOffset = UICamera.currentTouch.totalDelta;
 			}
 
-			Ray ray = smoothDragStart ?
-				UICamera.currentCamera.ScreenPointToRay(UICamera.currentTouch.pos - mDragStartOffset) :
-				UICamera.currentCamera.ScreenPointToRay(UICamera.currentTouch.pos);
+			Vector2 pos = smoothDragStart ?
+				UICamera.currentTouch.pos - mDragStartOffset :
+				UICamera.currentTouch.pos;
+
+			Ray ray = new Ray();
+			if(UICamera.current.IsDUICamera)
+			{
+				ray = UICamera.DiegeticPointToRay(UICamera.currentCamera, pos);
+			}
+			else
+			{
+				ray = UICamera.currentCamera.ScreenPointToRay(pos);
+			}
 
 			float dist = 0f;
 

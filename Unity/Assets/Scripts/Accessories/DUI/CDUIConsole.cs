@@ -24,8 +24,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 {
 	// Member Fields 
 	public GameObject m_ScreenObject = null;
-
-	private GameObject m_DUI = null;
+	public int m_TestDUI = 0;
 
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	
@@ -80,21 +79,24 @@ public class CDUIConsole : CNetworkMonoBehaviour
     private void CreateDUI()
 	{
 		// Create the DUI game object
-		m_DUI = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.DUITest);
-		m_DUI.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
-		m_DUI.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
+		GameObject dui = CNetwork.Factory.CreateObject(m_TestDUI == 0 ? CGameRegistrator.ENetworkPrefab.DUITest : CGameRegistrator.ENetworkPrefab.DUITest2);
+		dui.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
+		dui.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
 
 		// Set the view id of this console to the monitor
-		m_DUI.GetComponent<CDUI>().ConsoleViewId = GetComponent<CNetworkView>().ViewId;
+		dui.GetComponent<CDUI>().ConsoleViewId = GetComponent<CNetworkView>().ViewId;
+
+		// Save the network view of the DUI
+		DUIViewId = dui.GetComponent<CNetworkView>().ViewId;
 
 		// Increment the offset
-		s_UIOffset += 2.0f;
+		s_UIOffset += 5.0f;
 	}
 
 	[AClientOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Update the camera viewport positions
-		m_DUI.GetComponent<CDUI>().UpdateCameraViewportPositions(_RayHit.textureCoord);
+		DUI.GetComponent<CDUI>().UpdateCameraViewportPositions(_RayHit.textureCoord);
 	}
 }

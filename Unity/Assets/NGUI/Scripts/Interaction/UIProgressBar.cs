@@ -271,7 +271,18 @@ public class UIProgressBar : UIWidgetContainer
 
 		// If the ray doesn't hit the plane, do nothing
 		float dist;
-		Ray ray = cachedCamera.ScreenPointToRay(screenPos);
+
+		// Cast a ray into the screen
+		Ray ray = new Ray();
+		if(cachedCamera.GetComponent<UICamera>().IsDUICamera)
+		{
+			ray = UICamera.DiegeticPointToRay(cachedCamera, screenPos);
+		}
+		else
+		{
+			ray = cachedCamera.ScreenPointToRay(screenPos);
+		}
+
 		if (!plane.Raycast(ray, out dist)) return value;
 
 		// Transform the point from world space to local space

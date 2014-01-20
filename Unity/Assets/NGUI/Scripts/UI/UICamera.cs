@@ -296,7 +296,7 @@ public class UICamera : MonoBehaviour
 			if(current != null && current.IsDUICamera)
 			{
 				return (currentCamera != null && currentTouch != null) ?
-					UICamera.DiegeticPointToRay(currentTouch.pos) : new Ray();
+					UICamera.DiegeticPointToRay(currentCamera, currentTouch.pos) : new Ray();
 			}
 			else
 			{
@@ -365,8 +365,7 @@ public class UICamera : MonoBehaviour
 	/// <CUSTOM_CODE> 
 
 	bool m_IsDUICamera = false;
-	Vector3 m_DiegeticPos = Vector3.zero;
-	Vector2 m_DiegeticViewDimensions = Vector2.zero;
+	Vector3 m_DiegeticPos = new Vector3(-1.0f, -1.0f);
 
 	public bool IsDUICamera 
 	{ 
@@ -380,12 +379,12 @@ public class UICamera : MonoBehaviour
 		set { m_DiegeticPos = value; } 
 	}
 
-	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos)
+	static public Ray DiegeticPointToRay(Camera _Camera, Vector3 _DiegeticPos)
 	{
-		float dx = _DiegeticPos.x / currentCamera.pixelWidth;
-		float dy = _DiegeticPos.y / currentCamera.pixelHeight;
+		float dx = _DiegeticPos.x / _Camera.pixelWidth;
+		float dy = _DiegeticPos.y / _Camera.pixelHeight;
 
-		return(currentCamera.ViewportPointToRay(new Vector3(dx, dy)));
+		return(_Camera.ViewportPointToRay(new Vector3(dx, dy)));
 	}
 
 	/// </CUSTOM_CODE>
@@ -618,7 +617,7 @@ public class UICamera : MonoBehaviour
 			Ray ray = new Ray();
 			if(cam.IsDUICamera)
 			{
-				ray = UICamera.DiegeticPointToRay(inPos);
+				ray = UICamera.DiegeticPointToRay(currentCamera, inPos);
 			}
 			else
 			{
@@ -1007,7 +1006,10 @@ public class UICamera : MonoBehaviour
 				ShowTooltip(true);
 			}
 		}
-		current = null;
+
+		// <CUSTOM>
+		//current = null;
+		// </CUSTOM>
 	}
 
 	/// <summary>
@@ -1052,7 +1054,7 @@ public class UICamera : MonoBehaviour
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
 		{
 			mNextRaycast = RealTime.time + 0.02f;
-			if (!Raycast(current.IsDUICamera ? current.CurrentVeiwPortPos : Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
+			if (!Raycast(IsDUICamera ? CurrentVeiwPortPos : Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
 			if (hoveredObject == null) hoveredObject = genericEventHandler;
 			for (int i = 0; i < 3; ++i) mMouse[i].current = hoveredObject;
 		}
@@ -1108,7 +1110,10 @@ public class UICamera : MonoBehaviour
 			ProcessTouch(pressed, unpressed);
 			currentKey = KeyCode.None;
 		}
-		currentTouch = null;
+
+		// <CUSTOM>
+		//currentTouch = null;
+		// </CUSTOM>
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
@@ -1330,8 +1335,10 @@ public class UICamera : MonoBehaviour
 			Notify(mCurrentSelection, "OnKey", KeyCode.Escape);
 		}
 
-		currentTouch = null;
-		currentKey = KeyCode.None;
+		// <CUSTOM>
+		//currentTouch = null;
+		//currentKey = KeyCode.None;
+		// </CUSTOM>
 	}
 
 	/// <summary>

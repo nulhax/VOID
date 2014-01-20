@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CNetworkView))]
 public class CDUI : CNetworkMonoBehaviour
 {
 	// Member Types
@@ -93,8 +93,10 @@ public class CDUI : CNetworkMonoBehaviour
 	{
 		Vector3 viewPortPos = DUICameraViewportPos(_screenTexCoord);
 
-		DUICamera2D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
-		DUICamera3D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
+		if(DUICamera2D != null) 
+			DUICamera2D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
+		if(DUICamera3D != null) 
+			DUICamera3D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
 	}
 	
 	private void AttatchRenderTexture(Material _ScreenMaterial)
@@ -116,13 +118,17 @@ public class CDUI : CNetworkMonoBehaviour
 	
 	private void SetupUICameras()
 	{
-		// Set the render target for the cameras
-		m_DUICamera2D.camera.targetTexture = m_RenderTex;
-		m_DUICamera3D.camera.targetTexture = m_RenderTex;
-		
-		// Set as DUI cameras
-		m_DUICamera2D.GetComponent<UICamera>().IsDUICamera = true;
-		m_DUICamera3D.GetComponent<UICamera>().IsDUICamera = true;
+		if(m_DUICamera2D != null)
+		{
+			m_DUICamera2D.camera.targetTexture = m_RenderTex;
+			m_DUICamera2D.GetComponent<UICamera>().IsDUICamera = true;
+		}
+
+		if(m_DUICamera3D != null)
+		{
+			m_DUICamera3D.camera.targetTexture = m_RenderTex;
+			m_DUICamera3D.GetComponent<UICamera>().IsDUICamera = true;
+		}
 	}
 	
 	private Vector3 DUICameraViewportPos(Vector2 _screenTexCoord)
