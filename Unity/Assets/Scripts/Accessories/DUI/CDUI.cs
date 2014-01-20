@@ -94,9 +94,9 @@ public class CDUI : CNetworkMonoBehaviour
 		Vector3 viewPortPos = DUICameraViewportPos(_screenTexCoord);
 
 		if(DUICamera2D != null) 
-			DUICamera2D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
+			DUICamera2D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
 		if(DUICamera3D != null) 
-			DUICamera3D.GetComponent<UICamera>().CurrentVeiwPortPos = viewPortPos;
+			DUICamera3D.GetComponent<UICamera>().m_ViewPortPos = viewPortPos;
 	}
 	
 	private void AttatchRenderTexture(Material _ScreenMaterial)
@@ -121,13 +121,11 @@ public class CDUI : CNetworkMonoBehaviour
 		if(m_DUICamera2D != null)
 		{
 			m_DUICamera2D.camera.targetTexture = m_RenderTex;
-			m_DUICamera2D.GetComponent<UICamera>().IsDUICamera = true;
 		}
 
 		if(m_DUICamera3D != null)
 		{
 			m_DUICamera3D.camera.targetTexture = m_RenderTex;
-			m_DUICamera3D.GetComponent<UICamera>().IsDUICamera = true;
 		}
 	}
 	

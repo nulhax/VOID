@@ -293,16 +293,8 @@ public class UICamera : MonoBehaviour
 	{
 		get
 		{
-			if(current != null && current.IsDUICamera)
-			{
-				return (currentCamera != null && currentTouch != null) ?
-					UICamera.DiegeticPointToRay(currentCamera, currentTouch.pos) : new Ray();
-			}
-			else
-			{
-				return (currentCamera != null && currentTouch != null) ?
-					currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
-			}
+			return (currentCamera != null && currentTouch != null) ?
+				currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
 		}
 	}
 
@@ -361,33 +353,12 @@ public class UICamera : MonoBehaviour
 	Camera mCam = null;
 	float mTooltipTime = 0f;
 	float mNextRaycast = 0f;
-	
-	/// <CUSTOM_CODE> 
 
-	bool m_IsDUICamera = false;
-	Vector3 m_DiegeticPos = new Vector3(-1.0f, -1.0f);
+	// <CUSTOM>
 
-	public bool IsDUICamera 
-	{ 
-		get { return (m_IsDUICamera); } 
-		set { m_IsDUICamera = value; } 
-	}
+	public Vector3 m_ViewPortPos = Vector3.zero;
 
-	public Vector3 CurrentVeiwPortPos 
-	{ 
-		get { return (m_DiegeticPos); } 
-		set { m_DiegeticPos = value; } 
-	}
-
-	static public Ray DiegeticPointToRay(Camera _Camera, Vector3 _DiegeticPos)
-	{
-		float dx = _DiegeticPos.x / _Camera.pixelWidth;
-		float dy = _DiegeticPos.y / _Camera.pixelHeight;
-
-		return(_Camera.ViewportPointToRay(new Vector3(dx, dy)));
-	}
-
-	/// </CUSTOM_CODE>
+	// </CUSTOM>
 
 	/// <summary>
 	/// Helper function that determines if this script should be handling the events.
@@ -614,17 +585,7 @@ public class UICamera : MonoBehaviour
 			if (pos.x < 0f || pos.x > 1f || pos.y < 0f || pos.y > 1f) continue;
 
 			// Cast a ray into the screen
-			Ray ray = new Ray();
-			if(cam.IsDUICamera)
-			{
-				ray = UICamera.DiegeticPointToRay(currentCamera, inPos);
-			}
-			else
-			{
-				ray = currentCamera.ScreenPointToRay(inPos);
-			}
-
-			Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 1.0f);
+			Ray ray = currentCamera.ScreenPointToRay(inPos);
 
 			// Raycast into the screen
 			int mask = currentCamera.cullingMask & (int)cam.eventReceiverMask;
@@ -886,8 +847,8 @@ public class UICamera : MonoBehaviour
 		}
 
 		// Save the starting mouse position
-		mMouse[0].pos.x = Input.mousePosition.x;
-		mMouse[0].pos.y = Input.mousePosition.y;
+		mMouse[0].pos.x = m_ViewPortPos.x;
+		mMouse[0].pos.y = m_ViewPortPos.y;
 
 		for (int i = 1; i < 3; ++i)
 		{
@@ -935,7 +896,8 @@ public class UICamera : MonoBehaviour
 	void Update ()
 	{
 		// Only the first UI layer should be processing events
-		if (!Application.isPlaying || !handlesEvents) return;
+		if (!Application.isPlaying || !handlesEvents) 
+			return;
 
 		current = this;
 
@@ -1006,10 +968,7 @@ public class UICamera : MonoBehaviour
 				ShowTooltip(true);
 			}
 		}
-
-		// <CUSTOM>
-		//current = null;
-		// </CUSTOM>
+		current = null;
 	}
 
 	/// <summary>
@@ -1019,7 +978,7 @@ public class UICamera : MonoBehaviour
 	public void ProcessMouse ()
 	{
 		// Update the position and delta
-		lastTouchPosition = IsDUICamera ? CurrentVeiwPortPos : Input.mousePosition;
+		lastTouchPosition = m_ViewPortPos;
 		mMouse[0].delta = lastTouchPosition - mMouse[0].pos;
 		mMouse[0].pos = lastTouchPosition;
 		bool posChanged = mMouse[0].delta.sqrMagnitude > 0.001f;
@@ -1054,7 +1013,7 @@ public class UICamera : MonoBehaviour
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
 		{
 			mNextRaycast = RealTime.time + 0.02f;
-			if (!Raycast(IsDUICamera ? CurrentVeiwPortPos : Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
+			if (!Raycast(m_ViewPortPos, out lastHit)) hoveredObject = fallThrough;
 			if (hoveredObject == null) hoveredObject = genericEventHandler;
 			for (int i = 0; i < 3; ++i) mMouse[i].current = hoveredObject;
 		}
@@ -1110,10 +1069,7 @@ public class UICamera : MonoBehaviour
 			ProcessTouch(pressed, unpressed);
 			currentKey = KeyCode.None;
 		}
-
-		// <CUSTOM>
-		//currentTouch = null;
-		// </CUSTOM>
+		currentTouch = null;
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
@@ -1204,7 +1160,7 @@ public class UICamera : MonoBehaviour
 			currentTouch = mMouse[0];
 			currentTouch.touchBegan = pressed;
 
-			Vector2 pos = Input.mousePosition;
+			Vector2 pos = m_ViewPortPos;
 			currentTouch.delta = pressed ? Vector2.zero : pos - currentTouch.pos;
 			currentTouch.pos = pos;
 
@@ -1335,10 +1291,8 @@ public class UICamera : MonoBehaviour
 			Notify(mCurrentSelection, "OnKey", KeyCode.Escape);
 		}
 
-		// <CUSTOM>
-		//currentTouch = null;
-		//currentKey = KeyCode.None;
-		// </CUSTOM>
+		currentTouch = null;
+		currentKey = KeyCode.None;
 	}
 
 	/// <summary>

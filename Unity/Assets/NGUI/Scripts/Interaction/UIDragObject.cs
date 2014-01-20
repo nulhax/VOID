@@ -184,16 +184,7 @@ public class UIDragObject : MonoBehaviour
 		{
 			UICamera.currentTouch.clickNotification = UICamera.ClickNotification.BasedOnDelta;
 
-			Ray ray = new Ray();
-			if(UICamera.current.IsDUICamera)
-			{
-				ray = UICamera.DiegeticPointToRay(UICamera.currentCamera, UICamera.currentTouch.pos);
-			}
-			else
-			{
-				ray = UICamera.currentCamera.ScreenPointToRay(UICamera.currentTouch.pos);
-			}
-
+			Ray ray = UICamera.currentCamera.ScreenPointToRay(UICamera.currentTouch.pos);
 			float dist = 0f;
 
 			if (mPlane.Raycast(ray, out dist))
