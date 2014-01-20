@@ -124,9 +124,10 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-    public bool Startup(ushort _usPort, string _sTitle, uint _uiNumSlots)
+    public bool Startup(ushort _usPort, string _sTitle, string _sPlayerName, uint _uiNumSlots)
     {
         m_sTitle = _sTitle;
+		m_sPlayerName = _sPlayerName;
 		m_usPort = _usPort;
         bool bServerStarted = true;
 
@@ -521,6 +522,7 @@ public class CNetworkServer : MonoBehaviour
 
 
     string m_sTitle = "Untitled";
+	string m_sPlayerName = "Untitled";
 
 
     ushort m_usPort = 0;

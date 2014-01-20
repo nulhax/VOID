@@ -24,7 +24,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 {
 
 // Member Types
+	enum ENetworkAction
+	{
+		INVALID,
 
+		ActionSendPlayerName,
+
+		MAX
+	}
 
 // Member Delegates & Events
 
@@ -46,7 +53,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			return(playerActor); 
 		}
 	}
-	
+
+
 	public static CNetworkViewId SelfActorViewId
 	{
 		get 
@@ -81,7 +89,56 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars()
 	{
-		// Empty
+		m_sNetworkedPlayerName = new CNetworkVar<string>(OnNetworkVarSync, "");
+	}
+
+	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	{
+		if(_cSyncedNetworkVar == m_sNetworkedPlayerName)
+		{
+			bool bAddToList = true;
+
+			foreach(string Name in m_PlayerNamesList)
+			{
+				if(Name == m_sNetworkedPlayerName.Get ())
+				{
+					bAddToList = false;
+				}
+			}
+
+			if(bAddToList)
+			{
+				m_PlayerNamesList.Add(m_sNetworkedPlayerName.Get());
+				Debug.Log("Added " + m_sNetworkedPlayerName.Get() + " to game");
+			}
+			else
+			{
+				Debug.Log("Name " + m_sNetworkedPlayerName.Get() + " Was already taken!");
+			}
+		}
+	}
+		
+	public static void SerializeData(CNetworkStream _cStream)
+	{
+		_cStream.Write((byte)ENetworkAction.ActionSendPlayerName);
+		_cStream.WriteString(m_sPlayerName);
+	}
+
+	
+	public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+	{
+		ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+		
+		switch (eNetworkAction)
+		{
+			case ENetworkAction.ActionSendPlayerName:
+			{
+				m_sPlayerName = _cStream.ReadString();
+				s_cInstance.m_sNetworkedPlayerName.Set(m_sPlayerName);
+
+				break;
+			}
+		}
 	}
 
 
@@ -102,10 +159,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			return (null);
 		}
-		
+
 		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
 	}
-
 
 	public void Awake()
 	{
@@ -135,7 +191,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-				List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
 				
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{
@@ -268,6 +324,10 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	Dictionary<ulong, CNetworkViewId> m_mPlayersActor = new Dictionary<ulong, CNetworkViewId>();
 	List<ulong> m_aUnspawnedPlayers = new List<ulong>();
 
+	CNetworkVar<string> m_sNetworkedPlayerName = null;
+	List<string> m_PlayerNamesList = new List<string>();
+
+	static string m_sPlayerName = System.Environment.UserDomainName + ": " + System.Environment.UserName;
 
 	static CGamePlayers s_cInstance = null;
 
