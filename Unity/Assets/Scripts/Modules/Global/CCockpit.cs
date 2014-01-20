@@ -36,10 +36,12 @@ public class CCockpit : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+	[AServerOnly]
 	public delegate void HandlePlayerEnter(ulong _ulPlayerId);
 	public event HandlePlayerEnter EventPlayerEnter;
 
 
+	[AServerOnly]
 	public delegate void HandlePlayerLeave(ulong _ulPlayerId);
 	public event HandlePlayerLeave EventPlayerLeave;
 
@@ -90,16 +92,11 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	public void OnNetworkVarSync(INetworkVar _cSynedNetworkVar)
+	public void OnNetworkVarSync(INetworkVar _cSynedVar)
 	{
-		if (_cSynedNetworkVar == m_cMountedPlayerId)
+		if (_cSynedVar == m_cMountedPlayerId)
 		{
-			if (m_cMountedPlayerId.Get() == 0)
-			{
-				// Notify observers
-				if (EventPlayerLeave != null) EventPlayerLeave(m_cMountedPlayerId.GetPrevious());
-			}
-			else
+			if (m_cMountedPlayerId.Get() != 0)
 			{
 				// Lock player movement locally
 				if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
@@ -110,9 +107,6 @@ public class CCockpit : CNetworkMonoBehaviour
 					// Move player head into rotation
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
 				}
-
-				// Notify observers
-				if (EventPlayerEnter != null) EventPlayerEnter(m_cMountedPlayerId.Get());
 			}
 
 			// Unlock player movement locally
@@ -129,9 +123,10 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		// Sign up for event
 		gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUseInteraction);
+		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 
 
-		CUserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUseChange);
+		CUserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUse);
 	}
 
 
@@ -143,15 +138,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		/*
-		// Orient self to cockpit orientation 
-		if (CGame.PlayerActorViewId != 0 &&
-			ContainedPlayerActorViewId == CGame.PlayerActorViewId)
-		{
-			CGame.PlayerActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
-			CGame.PlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.rotation = Quaternion.identity;
-		}
-		*/
+		// Empty
 	}
 
 
@@ -171,7 +158,6 @@ public class CCockpit : CNetworkMonoBehaviour
 		{
 			CNetworkViewId cCockpitObjectViewId = _cStream.ReadNetworkViewId();
 			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-
 
 			GameObject cCockpitObject = CNetwork.Factory.FindObject(cCockpitObjectViewId);
 
@@ -194,12 +180,24 @@ public class CCockpit : CNetworkMonoBehaviour
 		}
 	}
 
+
+	[AClientOnly]
+	void OnInputUse(bool _bDown)
+	{
+		if (_bDown &&
+		    MountedPlayerId == CNetwork.PlayerId)
+		{
+			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
+			s_cSerializeStream.Write((byte)ENetworkAction.LeaveCockpit);
+		}
+	}
+
 	
 	[AClientOnly]
 	void OnUseInteraction(RaycastHit _cRayHit, CNetworkViewId _cPlayerActorViewId)	
 	{
 		// Check there is no one in the cockpit locally
-		if (MountedPlayerId == 0)
+		if (!IsMounted)
 		{
 			// Write in enter cockpit action
 			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
@@ -209,29 +207,40 @@ public class CCockpit : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
+	void OnPlayerDisconnect(CNetworkPlayer _cNetworkPlayer)
+	{
+		if (MountedPlayerId == _cNetworkPlayer.PlayerId)
+		{
+			HandleLeaveCockpit(_cNetworkPlayer.PlayerId);
+		}
+	}
+
+
+	[AServerOnly]
 	void HandleEnterCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
-		CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
-		if (MountedPlayerId == 0)
+		if ( cPlayerActor != null &&
+		    !IsMounted)
 		{
-			// Allow player to enter cockpit
-			if (cPlayerActor != null)
-			{
-				m_cMountedPlayerId.Set(_ulPlayerId);
+			CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
-				// Save position on player when entering
-				m_vEnterPosition = cPlayerActor.transform.position;
+			m_cMountedPlayerId.Set(_ulPlayerId);
 
-				// Teleport player in cockpit
-				cPlayerActor.transform.position = gameObject.transform.position;
+			// Save position on player when entering
+			m_vEnterPosition = cPlayerActor.transform.position;
 
-				// Rotate player in cockpit
-				cPlayerActor.transform.rotation = gameObject.transform.rotation;
+			// Teleport player in cockpit
+			cPlayerActor.transform.position = gameObject.transform.position;
 
-				//Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerId));
-			}
+			// Rotate player in cockpit
+			cPlayerActor.transform.rotation = gameObject.transform.rotation;
+
+			// Notify observers
+			if (EventPlayerEnter != null) EventPlayerEnter(m_cMountedPlayerId.Get());
+
+			//Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerId));
 		}
 	}
 
@@ -240,30 +249,23 @@ public class CCockpit : CNetworkMonoBehaviour
 	void HandleLeaveCockpit(ulong _ulPlayerId)
 	{
 		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
-		CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		// Allow player to leave cockpit
-		if (MountedPlayerId == _ulPlayerId)
+		if (cPlayerActor != null &&
+		    MountedPlayerId == _ulPlayerId)
 		{
+			CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+
 			m_cMountedPlayerId.Set(0);
 
 			// Teleport player back to entered position
 			cPlayerActor.transform.position = m_vEnterPosition;
 			m_vEnterPosition = Vector3.zero;
 
+			// Notify observers
+			if (EventPlayerLeave != null) EventPlayerLeave(m_cMountedPlayerId.GetPrevious());
+
 			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
-		}
-	}
-
-
-	[AClientOnly]
-	void OnInputUseChange(bool _bDown)
-	{
-		if (_bDown &&
-			MountedPlayerId == CNetwork.PlayerId)
-		{
-			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
-			s_cSerializeStream.Write((byte)ENetworkAction.LeaveCockpit);
 		}
 	}
 

@@ -58,15 +58,15 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	public ulong MountedPlayerId
+	public ulong ControllerPlayerId
 	{
 		get { return (m_ulMountedPlayerId.Get()); }
 	}
 
 
-	public bool IsMounted
+	public bool IsUnderControl
 	{
-		get { return (MountedPlayerId != 0); }
+		get { return (ControllerPlayerId != 0); }
 	}
 
 
@@ -84,19 +84,17 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_tRotation)
 		{
-			if (m_ulMountedPlayerId.Get() != CNetwork.PlayerId)
+			if (ControllerPlayerId != CNetwork.PlayerId)
 			{
-				transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
-				m_cBarrle.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrle.transform.eulerAngles.y, m_cBarrle.transform.eulerAngles.z);
+				//transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
+				//m_cBarrel.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrel.transform.eulerAngles.y, m_cBarrel.transform.eulerAngles.z);
 			}
 		}
 		else if (_cSyncedVar == m_ulMountedPlayerId)
 		{
-			if (m_ulMountedPlayerId.Get() == CNetwork.PlayerId)
+			if (ControllerPlayerId == CNetwork.PlayerId)
 			{
 				// Subscribe to input events
-				CUserInput.EventMouseMoveX += new CUserInput.NotifyMouseInput(RotateX);
-				CUserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(RotateY);
 				CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Debug: Move camera to turret camera position
@@ -105,8 +103,6 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			else if (m_ulMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				// Unsubscriber to input events
-				CUserInput.EventMouseMoveX -= new CUserInput.NotifyMouseInput(RotateX);
-				CUserInput.EventMouseMoveY -= new CUserInput.NotifyMouseInput(RotateY);
 				CUserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
 
 				// Debug: Move camera to player head position
@@ -118,10 +114,12 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		for (int i = 0; i < m_cBarrle.transform.childCount; ++ i)
+		for (int i = 0; i < m_cBarrel.transform.childCount; ++ i)
 		{
-			if (m_cBarrle.transform.GetChild(i).gameObject.name == "LaserNode")
-				m_cLaserNodes.Add(m_cBarrle.transform.GetChild(i).gameObject);
+			if (m_cBarrel.transform.GetChild(i).gameObject.name == "LaserNode")
+			{
+				m_cLaserNodes.Add(m_cBarrel.transform.GetChild(i).gameObject);
+			}
 		}
 	}
 
@@ -139,29 +137,52 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			m_fServerFireTimer += Time.deltaTime;
 		}
 		
-		// Sync rotation
-		if (m_bSendRotation)
+		if (ControllerPlayerId == CNetwork.PlayerId)
 		{
-			// Write update rotation action
-			s_cSerializeStream.Write(NetworkView.ViewId);
-			s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
-			s_cSerializeStream.Write(m_cBarrle.transform.eulerAngles.x);
-			s_cSerializeStream.Write(transform.eulerAngles.y);
-
-			m_bSendRotation = true;
+			UpdateRotation();
+			UpdateFiring();
 		}
+	}
 
+
+	[AClientOnly]
+	void UpdateRotation()
+	{
+		Vector3 vRotation = transform.rotation.eulerAngles;
+
+		// Update rotations
+		vRotation.x += CUserInput.MouseMovementY * m_fRotationSpeed;
+		vRotation.y += CUserInput.MouseMovementX * m_fRotationSpeed;
+		
+		// Clamp rotation
+		vRotation.x = Mathf.Clamp(vRotation.x, vRotation.x, vRotation.x);
+
+		// Apply rotations to objects
+		m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+		transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+
+		// Write update rotation action
+		s_cSerializeStream.Write(ThisNetworkView.ViewId);
+		s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
+		s_cSerializeStream.Write(vRotation.x);
+		s_cSerializeStream.Write(vRotation.y);
+	}
+
+
+	[AClientOnly]
+	void UpdateFiring()
+	{
 		// Fire lasers
 		m_fClientFireTimer += Time.deltaTime;
-
+		
 		if (m_bFireLasers)
 		{
 			if (m_fClientFireTimer > m_fClientFireInterval)
 			{
 				// Write fire lasers action
-				s_cSerializeStream.Write(NetworkView.ViewId);
+				s_cSerializeStream.Write(ThisNetworkView.ViewId);
 				s_cSerializeStream.Write((byte)ENetworkAction.FireLasers);
-
+				
 				m_fClientFireTimer = 0.0f;
 			}
 		}
@@ -169,7 +190,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void Mount(ulong _ulPlayerId)
+	public void TakeControl(ulong _ulPlayerId)
 	{
 		//Debug.Log(string.Format("Player ({0}) mounted turret", _ulPlayerId));
 
@@ -178,45 +199,11 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void Unmount()
+	public void ReleaseControl()
 	{
 		//Debug.Log(string.Format("Player ({0}) unmounted turret", m_ulMountedPlayerId.Get()));
 
 		m_ulMountedPlayerId.Set(0);
-	}
-
-
-	[AClientOnly]
-	public void RotateX(float _fAmount)
-	{
-		m_vRotation.y += _fAmount;
-
-		// Keep y rotation within 360 range
-		m_vRotation.y -= (m_vRotation.y >= 360.0f) ? 360.0f : 0.0f;
-		m_vRotation.y += (m_vRotation.y <= -360.0f) ? 360.0f : 0.0f;
-
-		// Clamp rotation
-		m_vRotation.y = Mathf.Clamp(m_vRotation.y, m_vMinRotationY.y, m_vMaxRotationY.y);
-
-		transform.localEulerAngles = new Vector3(0.0f, m_vRotation.y, 0.0f);
-
-		m_bSendRotation = true;
-	}
-
-
-	[AClientOnly]
-	public void RotateY(float _fAmount)
-	{
-		// Retrieve new rotations
-		m_vRotation.x += _fAmount;
-
-		// Clamp rotation
-		m_vRotation.x = Mathf.Clamp(m_vRotation.x, m_vMinRotationX.x, m_vMaxRotationX.x);
-
-		// Apply the pitch to the camera
-		transform.FindChild("TurretBarrels").localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
-
-		m_bSendRotation = true;
 	}
 
 
@@ -262,24 +249,29 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		while (_cStream.HasUnreadData)
 		{
 			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
-			CTurretBehaviour cTurretController = CNetwork.Factory.FindObject(cTurretViewId).GetComponent<CTurretBehaviour>();
-			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
 
-			switch (eAction)
+			if (cTurretObject != null)
 			{
-			case ENetworkAction.UpdateRotation:
-				float fRotationX = _cStream.ReadFloat();
-				float fRotationY = _cStream.ReadFloat();
-				cTurretController.m_tRotation.Set(new Vector2(fRotationX, fRotationY));
-				break;
+				CTurretBehaviour cTurretBehaviour = cTurretObject.GetComponent<CTurretBehaviour>();
+				ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
 
-			case ENetworkAction.FireLasers:
-				cTurretController.FireLasers();
-				break;
+				switch (eAction)
+				{
+				case ENetworkAction.UpdateRotation:
+					float fRotationX = _cStream.ReadFloat();
+					float fRotationY = _cStream.ReadFloat();
+					cTurretBehaviour.m_tRotation.Set(new Vector2(fRotationX, fRotationY));
+					break;
 
-			default:
-				Debug.LogError(string.Format("Unknown network action ({0})", eAction));
-				break;
+				case ENetworkAction.FireLasers:
+					cTurretBehaviour.FireLasers();
+					break;
+
+				default:
+					Debug.LogError(string.Format("Unknown network action ({0})", eAction));
+					break;
+				}
 			}
 		}
 	}
@@ -296,16 +288,16 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 
 	public GameObject m_cCameraObject = null;
-	public GameObject m_cBarrle = null;
+	public GameObject m_cBarrel = null;
 
 
-	Vector3 m_vRotation = Vector3.zero;
 	Vector2 m_vMinRotationY = new Vector2(-50.0f, -360.0f);
 	Vector2 m_vMaxRotationY = new Vector2(60.0f, 360.0f);
 	Vector2 m_vMinRotationX = new Vector2(-80, -60);
 	Vector2 m_vMaxRotationX = new Vector2(0, 70);
 
 
+	float m_fRotationSpeed		= 2.0f;
 	float m_fClientFireTimer	= 0.0f;
 	float m_fClientFireInterval = 0.1f;
 	float m_fServerFireTimer	= 0.0f;
@@ -315,7 +307,6 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	int m_iLaserNodeIndex = 0;
 
 
-	bool m_bSendRotation = false;
 	bool m_bFireLasers   = false;
 
 
