@@ -52,10 +52,6 @@ public class CDoorMotor : CNetworkMonoBehaviour
 	private Vector3 m_ClosedPosition = Vector3.zero;
 	private float m_StateChangeTimer = 0.0f;
 
-	public AudioClip m_audioClipOpen = null;
-	public AudioClip m_audioClipClose = null;
-	private AudioSource m_AudioSource = null;
-
 // Member Properties
 	
 	public EDoorState DoorState 
@@ -94,7 +90,7 @@ public class CDoorMotor : CNetworkMonoBehaviour
 	
 	public void Awake()
 	{
-		m_AudioSource = gameObject.GetComponent<AudioSource>();
+
 	}
 
 	public void Start()

@@ -31,10 +31,7 @@ public class CDUIButton : CDUIElement
 
     // Member Fields
 	private GameObject m_TextField = null;
-	
-	static private string s_PressDownSoundFile = "Audio/DUI/ButtonPress";
-	static private AudioClip s_PressDownSound = null;
-	
+		
     // Member Properties
     public string Text
     {
@@ -53,11 +50,6 @@ public class CDUIButton : CDUIElement
 	public void Awake()
 	{
 		ElementType = CDUIElement.EElementType.Button;
-		
-		if(s_PressDownSound == null)
-		{
-			s_PressDownSound = (AudioClip)Resources.Load(s_PressDownSoundFile, typeof(AudioClip));
-		}
 	}
 	
     public void Initialise(string _text)
@@ -126,12 +118,7 @@ public class CDUIButton : CDUIElement
         if (PressDown != null)
         {
             PressDown(this);
-        }
-		
-		AudioSource conosleAudio = transform.parent.parent.GetComponent<CDUI>().Console.GetComponent<AudioSource>();
-		conosleAudio.clip = s_PressDownSound;
-		
-		AudioSystem.Play(conosleAudio, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, false);
+        }	
     }
 	
 	public void OnPressUp()
