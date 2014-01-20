@@ -135,6 +135,12 @@ public class CNetworkStream
     }
 
 
+	public void WriteString(string _sString)
+	{
+		Write(_sString, typeof(string));
+	}
+
+
 	public void Write(byte[] _baData)
 	{
 		m_cBitStream.Write(_baData, (uint)_baData.Length);
@@ -402,6 +408,16 @@ public class CNetworkStream
 
 		
 		return (fValue);
+	}
+
+
+	public string ReadString()
+	{
+		int	iSize = this.ReadByte();
+		
+		byte[] baSerializedValue = this.ReadBytes(iSize);
+		
+		return (Converter.ToObject(baSerializedValue, typeof(string)));
 	}
 
 

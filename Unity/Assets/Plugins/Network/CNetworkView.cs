@@ -481,28 +481,32 @@ public class CNetworkView : CNetworkMonoBehaviour
     {
 		CNetworkView cNetworkView = null;
 
-		if (!s_cNetworkViews.ContainsKey(_cViewId.Id))
+		if (_cViewId != null)
 		{
-			Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
-		}
-		else
-		{
-			cNetworkView = s_cNetworkViews[_cViewId.Id];
-		}
-
-		if (_cViewId.IsChildViewId)
-		{
-			/*
-			foreach (KeyValuePair<byte, CNetworkView> Entry in cNetworkView.m_SubNetworkViews)
+			if (!s_cNetworkViews.ContainsKey(_cViewId.Id))
 			{
-				Debug.LogError(string.Format("MyViewId({0}) ChildId({1}) ChildViewId({2}) ChildSubViewId({3}) ",
-				                             cNetworkView.ViewId.Id, Entry.Key, Entry.Value.ViewId.Id, Entry.Value.ViewId.SubId));
+				Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
 			}
-			*/
+			else
+			{
+				cNetworkView = s_cNetworkViews[_cViewId.Id];
+			}
 
-			cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
+			if (_cViewId != null &&
+			    _cViewId.IsChildViewId)
+			{
+				/*
+				foreach (KeyValuePair<byte, CNetworkView> Entry in cNetworkView.m_SubNetworkViews)
+				{
+					Debug.LogError(string.Format("MyViewId({0}) ChildId({1}) ChildViewId({2}) ChildSubViewId({3}) ",
+					                             cNetworkView.ViewId.Id, Entry.Key, Entry.Value.ViewId.Id, Entry.Value.ViewId.SubId));
+				}
+				*/
 
-			Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
+
+				Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+			}
 		}
 
         return (cNetworkView);

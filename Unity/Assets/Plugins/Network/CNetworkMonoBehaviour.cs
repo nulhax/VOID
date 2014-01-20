@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -36,17 +36,17 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 
     public void InvokeRpc(ulong _ulPlayerId, string _sMethodName, params object[] _caParameters)
     {
-        NetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
+        ThisNetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
     }
 
 
     public void InvokeRpcAll(string _sMethodName, params object[] _caParameters)
     {
-        NetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
+        ThisNetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
     }
 
 
-    public CNetworkView NetworkView
+    public CNetworkView ThisNetworkView
     {
         get { return (gameObject.GetComponent<CNetworkView>()); }
     }
