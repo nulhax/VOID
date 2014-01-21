@@ -1145,7 +1145,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
                 GL.End();
 
-                float noiseValue = SampleNoise_AsteroidCluster(pair.Key);
+                float noiseValue = SampleNoise_SparseAsteroid(pair.Key);
                 Gizmos.color = new Color(1.0f, 1.0f, 1.0f, noiseValue);
                 Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
             }
