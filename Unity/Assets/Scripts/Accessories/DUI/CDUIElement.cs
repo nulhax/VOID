@@ -27,9 +27,10 @@ using System;
 public class CDUIElement : CNetworkMonoBehaviour 
 {
 	// Member Types
-	public enum EEventNotificationType : byte
+	public enum EElementNotificationType : byte
 	{
 		INVALID,
+
 		OnClick,
 		OnDoubleClick,
 		OnPress,
@@ -38,131 +39,141 @@ public class CDUIElement : CNetworkMonoBehaviour
 		OnDrag,
 		OnDragStart,
 		OnDragEnd,
-		OnScroll
+		OnScroll,
 	}
 	
 	// Member Delegates & Events
 	
 	
 	// Member Fields
-	static protected CNetworkStream s_ElementNotificationStream = new CNetworkStream();
+	public bool m_SyncOnClick = false;
+	public bool m_SyncOnDoubleClick = false;
+	public bool m_SyncOnPress = false;
+	public bool m_SyncOnSelect = false;
+	public bool m_SyncOnHover = false;
+	public bool m_SyncOnDrag = false;
+	public bool m_SyncOnDragStart = false;
+	public bool m_SyncOnDragEnd = false;
+	public bool m_SyncOnScroll = false;
+
+	static public bool s_IsSyncingNetworkCallbacks = false;
+	static private CNetworkStream s_ElementNotificationStream = new CNetworkStream();
 
 	// Member Properties
-
+	public CNetworkStream ElementNotificationStream
+	{
+		get { return(s_ElementNotificationStream); }
+	}
 	
 	// Member Methods
 	public override void InstanceNetworkVars()
 	{
-		//m_NetworkedTarget = new CNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+
 	}
 	
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-//		if(_cSyncedNetworkVar == m_NetworkedTarget)
-//		{
-//			
-//		}
-	}
 
-	[AClientOnly]
+	}
+	
 	protected void OnClick() 
 	{
-		//Debug.Log("OnClick [" + gameObject.name + "] " + UICamera.currentTouchID.ToString());
+		if(!m_SyncOnClick)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnClick);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnClick);
 		s_ElementNotificationStream.Write(UICamera.currentTouchID);
 	}
-
-	[AClientOnly]
+	
 	protected void OnDoubleClick() 
 	{
-		//Debug.Log("OnDoubleClick [" + gameObject.name + "] " + UICamera.currentTouchID.ToString());
+		if(!m_SyncOnDoubleClick)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnDoubleClick);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnDoubleClick);
 		s_ElementNotificationStream.Write(UICamera.currentTouchID);
 	}
-
-	[AClientOnly]
+	
 	protected void OnPress(bool _IsPressed)
 	{
-		//Debug.Log("OnPress [" + gameObject.name + "] " + _IsPressed.ToString());
+		if(!m_SyncOnPress)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnPress);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnPress);
 		s_ElementNotificationStream.Write((byte)(_IsPressed ? 1 : 0));
 	}
-
-	[AClientOnly]
+	
 	protected void OnSelect(bool _IsSelected)
 	{
-		//Debug.Log("OnSelect [" + gameObject.name + "] " + _IsSelected.ToString());
+		if(!m_SyncOnSelect)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnSelect);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnSelect);
 		s_ElementNotificationStream.Write((byte)(_IsSelected ? 1 : 0));
 	}
 
-	[AClientOnly]
 	protected void OnHover(bool _IsHovered) 
 	{
-		//Debug.Log("OnHover [" + gameObject.name + "] " + b.ToString());
+		if(!m_SyncOnHover)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnHover);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnHover);
 		s_ElementNotificationStream.Write((byte)(_IsHovered ? 1 : 0));
 	}
-
-	[AClientOnly]
+	
 	private void OnDrag(Vector2 _Delta) 
 	{
-		//Debug.Log("OnDrag [" + gameObject.name + "] " + d.ToString());
+		if(!m_SyncOnDrag)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnDrag);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnDrag);
 		s_ElementNotificationStream.Write(_Delta.x);
 		s_ElementNotificationStream.Write(_Delta.y);
 	}
-
-	[AClientOnly]
+	
 	protected void OnDragStart() 
 	{
-		//Debug.Log("OnDragStart[" + gameObject.name + "] ");
+		if(!m_SyncOnDragStart)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnDragStart);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnDragStart);
 	}
-
-	[AClientOnly]
+	
 	protected void OnDragEnd() 
 	{
-		//Debug.Log("OnDragEnd[" + gameObject.name + "] ");
+		if(!m_SyncOnDragEnd)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnDragEnd);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnDragEnd);
 	}
-
-	[AClientOnly]
+	
 	protected void OnScroll(float _Delta)
 	{
-		//Debug.Log("OnScroll [" + gameObject.name + "] " + d.ToString());
+		if(!m_SyncOnScroll)
+			return;
 
 		// Serialise the event to the server
 		s_ElementNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-		s_ElementNotificationStream.Write((byte)EEventNotificationType.OnScroll);
+		s_ElementNotificationStream.Write((byte)EElementNotificationType.OnScroll);
 		s_ElementNotificationStream.Write(_Delta);
 	}
-
-	[AClientOnly]
+	
 	static public void SerializeElementEvents(CNetworkStream _cStream)
 	{
 		_cStream.Write(s_ElementNotificationStream);
@@ -178,51 +189,51 @@ public class CDUIElement : CNetworkMonoBehaviour
 			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.ReadNetworkViewId()).GetComponent<CDUIElement>();
 
 			// Get the interaction notification
-			EEventNotificationType notification = (EEventNotificationType)_cStream.ReadByte();
+			EElementNotificationType notification = (EElementNotificationType)_cStream.ReadByte();
 
 			// Based on the notification type, update the clients of the event
 			switch(notification) 
 			{
-			case EEventNotificationType.OnClick:
+			case EElementNotificationType.OnClick:
 				int click = _cStream.ReadInt();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { click });
 				break;
 			
-			case EEventNotificationType.OnDoubleClick:
+			case EElementNotificationType.OnDoubleClick:
 				int dClick = _cStream.ReadInt();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { dClick });
 				break;
 
-			case EEventNotificationType.OnPress:
+			case EElementNotificationType.OnPress:
 				bool isPressed = _cStream.ReadByte() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isPressed });
 				break;
 
-			case EEventNotificationType.OnSelect: 
+			case EElementNotificationType.OnSelect: 
 				bool isSelected = _cStream.ReadByte() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isSelected });
 				break;
 
-			case EEventNotificationType.OnHover:
+			case EElementNotificationType.OnHover:
 				bool isHovered = _cStream.ReadByte() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isHovered });
 				break;
 
-			case EEventNotificationType.OnDrag:
+			case EElementNotificationType.OnDrag:
 				float deltaX = _cStream.ReadFloat();
 				float deltaY = _cStream.ReadFloat();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { deltaX, deltaY });
 				break;
 
-			case EEventNotificationType.OnDragStart:
+			case EElementNotificationType.OnDragStart:
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, null);
 				break;
 
-			case EEventNotificationType.OnDragEnd:
+			case EElementNotificationType.OnDragEnd:
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, null);
 				break;
 
-			case EEventNotificationType.OnScroll:
+			case EElementNotificationType.OnScroll:
 				float delta = _cStream.ReadFloat();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { delta });
 				break;
@@ -234,7 +245,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	static protected void NotifyOnEvent(CNetworkPlayer _cNetworkPlayer, CDUIElement _DUIElement, EEventNotificationType _NotificationType, object[] _Arguments)
+	static protected void NotifyOnEvent(CNetworkPlayer _cNetworkPlayer, CDUIElement _DUIElement, EElementNotificationType _NotificationType, object[] _Arguments)
 	{
 		ulong ignorePlayer = _cNetworkPlayer.PlayerId;
 
@@ -250,66 +261,67 @@ public class CDUIElement : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	protected void InvokeOnClick(int _Click) 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnClick, null);
+		InvokeWithinComponents(EElementNotificationType.OnClick, null);
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnDoubleClick(int _Click) 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnDoubleClick, null);
+		InvokeWithinComponents(EElementNotificationType.OnDoubleClick, null);
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnPress(bool _IsPressed)
 	{
-		InvokeWithinComponents(EEventNotificationType.OnPress, new object[] { _IsPressed });
+		InvokeWithinComponents(EElementNotificationType.OnPress, new object[] { _IsPressed });
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnSelect(bool _IsSelected)
 	{
-		InvokeWithinComponents(EEventNotificationType.OnSelect, new object[] { _IsSelected });
+		InvokeWithinComponents(EElementNotificationType.OnSelect, new object[] { _IsSelected });
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnHover(bool _IsHovered) 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnHover, new object[] { _IsHovered });
+		InvokeWithinComponents(EElementNotificationType.OnHover, new object[] { _IsHovered });
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnDrag(float _DeltaX, float _DeltaY) 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnDrag, new object[] { new Vector2(_DeltaX, _DeltaY) });
+		InvokeWithinComponents(EElementNotificationType.OnDrag, new object[] { new Vector2(_DeltaX, _DeltaY) });
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnDragStart() 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnDragStart, null);
+		InvokeWithinComponents(EElementNotificationType.OnDragStart, null);
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnDragEnd() 
 	{
-		InvokeWithinComponents(EEventNotificationType.OnDragEnd, null);
+		InvokeWithinComponents(EElementNotificationType.OnDragEnd, null);
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnScroll(float _Delta)
 	{
-		InvokeWithinComponents(EEventNotificationType.OnScroll, new object[] { _Delta });
+		InvokeWithinComponents(EElementNotificationType.OnScroll, new object[] { _Delta });
 	}
 
-	private void InvokeWithinComponents(EEventNotificationType _Notification, object[] _Arguments)
+	private void InvokeWithinComponents(EElementNotificationType _Notification, object[] _Arguments)
 	{
 		// Get all of the components that are not this component within the element
 		var targets = 
 			from component in GetComponents<MonoBehaviour>()
 				where component != this
 				select component;
-		
+
 		// Invoke the correct callback method on all other components
+		s_IsSyncingNetworkCallbacks = true;
 		foreach(Component component in targets)
 		{
 			Type type = component.GetType();
@@ -321,6 +333,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 				mi.Invoke(component, _Arguments);
 			}
 		}
+		s_IsSyncingNetworkCallbacks = false;
 		
 		// Debug...
 		Debug.Log("Recieved Notification: " + _Notification.ToString() + " [" + gameObject.name + "]");

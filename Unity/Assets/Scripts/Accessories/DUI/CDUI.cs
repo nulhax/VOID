@@ -32,6 +32,7 @@ public class CDUI : CNetworkMonoBehaviour
     // Member Fields
 	public GameObject m_DUICamera2D = null;
 	public GameObject m_DUICamera3D = null;
+	public bool m_Debug = false;
 
     private RenderTexture m_RenderTex = null; 
 
@@ -84,11 +85,33 @@ public class CDUI : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if(m_DUICamera2D != null)
-			m_DUICamera2D.GetComponent<UICamera>().enabled = false;
+		RenderTexture temp = RenderTexture.active;
 
 		if(m_DUICamera3D != null)
-			m_DUICamera3D.GetComponent<UICamera>().enabled = false;
+		{
+			if(m_DUICamera3D.GetComponent<UICamera>().enabled || m_Debug)
+				m_DUICamera3D.GetComponent<UICamera>().enabled = m_Debug ? true : false;
+
+			RenderTexture.active = m_DUICamera3D.camera.targetTexture;
+			m_DUICamera3D.camera.Render();
+
+			if(m_Debug) 
+				m_DUICamera3D.GetComponent<UICamera>().m_ViewPortPos = Input.mousePosition;
+		}
+
+		if(m_DUICamera2D != null)
+		{
+			if(m_DUICamera2D.GetComponent<UICamera>().enabled || m_Debug) 
+				m_DUICamera2D.GetComponent<UICamera>().enabled = m_Debug ? true : false;
+
+			RenderTexture.active = m_DUICamera2D.camera.targetTexture;
+			m_DUICamera2D.camera.Render();
+
+			if(m_Debug) 
+				m_DUICamera2D.GetComponent<UICamera>().m_ViewPortPos = Input.mousePosition;
+		}
+
+		RenderTexture.active = temp;
 	}
 
 	public void UpdateCameraViewportPositions(Vector2 _screenTexCoord)
@@ -132,11 +155,13 @@ public class CDUI : CNetworkMonoBehaviour
 		if(m_DUICamera2D != null)
 		{
 			m_DUICamera2D.camera.targetTexture = m_RenderTex;
+			m_DUICamera2D.camera.enabled = false;
 		}
 
 		if(m_DUICamera3D != null)
 		{
 			m_DUICamera3D.camera.targetTexture = m_RenderTex;
+			m_DUICamera3D.camera.enabled = false;
 		}
 	}
 	

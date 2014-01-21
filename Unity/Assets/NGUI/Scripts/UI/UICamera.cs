@@ -355,7 +355,7 @@ public class UICamera : MonoBehaviour
 	float mNextRaycast = 0f;
 
 	// <CUSTOM>
-
+	
 	public Vector3 m_ViewPortPos = Vector3.zero;
 
 	// </CUSTOM>
@@ -422,7 +422,7 @@ public class UICamera : MonoBehaviour
 					currentCamera = uicam.mCam;
 					UICamera.currentScheme = scheme;
 					Notify(mCurrentSelection, "OnSelect", false);
-					current = null;
+					//current = null;
 				}
 			}
 
@@ -456,7 +456,7 @@ public class UICamera : MonoBehaviour
 			currentCamera = mCam;
 			UICamera.currentScheme = mNextScheme;
 			Notify(mCurrentSelection, "OnSelect", true);
-			current = null;
+			//current = null;
 		}
 	}
 
@@ -968,7 +968,7 @@ public class UICamera : MonoBehaviour
 				ShowTooltip(true);
 			}
 		}
-		current = null;
+		//current = null;
 	}
 
 	/// <summary>
@@ -1069,7 +1069,7 @@ public class UICamera : MonoBehaviour
 			ProcessTouch(pressed, unpressed);
 			currentKey = KeyCode.None;
 		}
-		currentTouch = null;
+		//currentTouch = null;
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
@@ -1128,7 +1128,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			currentTouch = null;
+			//currentTouch = null;
 
 			// Don't consider other touches
 			if (!allowMultiTouch) break;
@@ -1181,7 +1181,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			currentTouch = null;
+			//currentTouch = null;
 		}
 	}
 
@@ -1291,8 +1291,8 @@ public class UICamera : MonoBehaviour
 			Notify(mCurrentSelection, "OnKey", KeyCode.Escape);
 		}
 
-		currentTouch = null;
-		currentKey = KeyCode.None;
+		//currentTouch = null;
+		//currentKey = KeyCode.None;
 	}
 
 	/// <summary>

@@ -210,7 +210,7 @@ public class CGameRegistrator : MonoBehaviour
 
 		// User Interface
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/DUI Test 2");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                     "NGUI DUI/DUI Test");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/DUI Test");
 	}
 
 
@@ -226,7 +226,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CGamePlayers.SerializeData					, CGamePlayers.UnserializeData);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
-		CNetworkConnection.RegisterSerializationTarget(CDUIElement.SerializeElementEvents    				, CDUIElement.UnserializeElementEvents);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
 	}
 
 

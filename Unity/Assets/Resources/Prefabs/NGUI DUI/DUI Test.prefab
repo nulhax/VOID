@@ -710,7 +710,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100014}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 90, y: 0, z: 0}
+  m_LocalPosition: {x: 100, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400012}
@@ -1318,6 +1318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100066}
   m_DUICamera3D: {fileID: 100028}
+  m_Debug: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1363,7 +1364,7 @@ MonoBehaviour:
   movement: 0
   dragEffect: 2
   restrictWithinPanel: 1
-  disableDragIfFits: 1
+  disableDragIfFits: 0
   smoothDragStart: 1
   iOSDragEmulation: 1
   scrollWheelFactor: 1
@@ -1785,7 +1786,7 @@ MonoBehaviour:
   startingRenderQueue: 3001
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: 1068.5, y: -1.52587891e-05, z: 2237, w: 139.999969}
+  mClipRange: {x: 1058.5, y: -1.52587891e-05, z: 2237, w: 139.999969}
   mClipSoftness: {x: 10, y: 10}
   mDepth: 2
 --- !u!114 &11400038
@@ -2453,6 +2454,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2571,6 +2581,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2725,6 +2744,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2904,6 +2932,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400122
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3058,6 +3095,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3128,6 +3174,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400140
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3150,6 +3205,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3172,6 +3236,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400148
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3194,6 +3267,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400152
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3216,6 +3298,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2eaf543c19571d489fb027261fac17e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SyncOnClick: 1
+  m_SyncOnDoubleClick: 1
+  m_SyncOnPress: 1
+  m_SyncOnSelect: 1
+  m_SyncOnHover: 1
+  m_SyncOnDrag: 1
+  m_SyncOnDragStart: 1
+  m_SyncOnDragEnd: 1
+  m_SyncOnScroll: 1
 --- !u!114 &11400156
 MonoBehaviour:
   m_ObjectHideFlags: 1
