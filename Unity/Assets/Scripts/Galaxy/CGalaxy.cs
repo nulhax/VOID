@@ -963,7 +963,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
+    public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
     public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * SampleNoise_AsteroidCluster(absoluteCell)); }
     public float DebrisDensity(SCellPos absoluteCell) { return SampleNoise_DebrisDensity(absoluteCell); }
     public float FogDensity(SCellPos absoluteCell) { return SampleNoise_FogDensity(absoluteCell); }
@@ -971,8 +971,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public float SampleNoise_SparseAsteroid(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.SparseAsteroidCount);   // Sample range is 1% of the noise.
-        float start = 0.4f, end = 0.8f;
+        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);   // Sample range is 1% of the noise.
+        float start = 0.5f, end = 0.9f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
@@ -995,8 +995,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public float SampleNoise_FogDensity(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.FogDensity);   // Sample range is 1% of the noise.
-        float start = 0.1f, end = 0.9f;
+        float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.FogDensity);   // Sample range is 1% of the noise.
+        float start = 0.4f, end = 0.8f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
@@ -1145,7 +1145,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
                 GL.End();
 
-                float noiseValue = SampleNoise_SparseAsteroid(pair.Key);
+                float noiseValue = SampleNoise_AsteroidCluster(pair.Key);
                 Gizmos.color = new Color(1.0f, 1.0f, 1.0f, noiseValue);
                 Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
             }
