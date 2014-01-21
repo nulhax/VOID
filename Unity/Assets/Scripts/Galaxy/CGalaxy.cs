@@ -45,7 +45,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public CRegisteredGubbin(GameObject entity, float boundingRadius, CNetworkViewId networkViewID, bool alternatorValue) { mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
     }
 
-    public struct SGubbinMeta
+    public class SGubbinMeta
     {
         public CGameRegistrator.ENetworkPrefab mPrefabID;
         public SCellPos mParentAbsoluteCell;
@@ -128,22 +128,27 @@ public class CGalaxy : CNetworkMonoBehaviour
     private float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
     protected CNetworkVar<float> mGalaxySize;
     public float galaxySize { get { return mfGalaxySize; } }
+    public float galaxyRadius { get { return galaxySize * 0.5f; } }
 
     private uint muiNumCellSubsets = 20; // Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
     protected CNetworkVar<uint> mNumCellSubsets;
     public uint numCellSubsets { get { return muiNumCellSubsets; } }
 
-    public const float mfTimeBetweenQueueCellsToLoadOrUnload = 0.15f;
-    private float mfTimeUntilNextQueueCellToLoadOrUnload = 0.0f;
-    public const float mfTimeBetweenCellLoads = 0.1f;
+    public const float mfTimeBetweenUpdateCellLoadUnloadQueues = 0.15f;
+    private float mfTimeUntilNextUpdateCellLoadUnloadQueues = 0.0f;
+
+    public const float mfTimeBetweenCellLoads = 0.05f;
     private float mfTimeUntilNextCellLoad = 0.0f;
+
     public const float mfTimeBetweenCellUnloads = mfTimeBetweenCellLoads;
     private float mfTimeUntilNextCellUnload = mfTimeBetweenCellLoads / 2;
 
-    public const float mfTimeBetweenQueueGubbinsToUnload = mfTimeBetweenQueueCellsToLoadOrUnload;
-    private float mfTimeUntilNextQueueGubbinToUnload = mfTimeBetweenQueueCellsToLoadOrUnload / 2;
+    public const float mfTimeBetweenUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues;
+    private float mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues / 2;
+
     public const float mfTimeBetweenGubbinLoads = 0.01f;
     private float mfTimeUntilNextGubbinLoad = 0.0f;
+
     public const float mfTimeBetweenGubbinUnloads = mfTimeBetweenGubbinLoads;
     private float mfTimeUntilNextGubbinUnload = mfTimeBetweenGubbinLoads / 2;
 
@@ -262,240 +267,299 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            // Queue cells to load/unload based on proximity to observers.
-            mfTimeUntilNextQueueCellToLoadOrUnload -= Time.deltaTime;
-            if (mfTimeUntilNextQueueCellToLoadOrUnload <= 0.0f)  // Running more than once per frame does nothing extra.
+            mfTimeUntilNextUpdateCellLoadUnloadQueues   -= Time.deltaTime;
+            mfTimeUntilNextCellUnload                   -= Time.deltaTime;
+            mfTimeUntilNextUpdateGubbinUnloadQueue      -= Time.deltaTime;
+            mfTimeUntilNextGubbinUnload                 -= Time.deltaTime;
+            mfTimeUntilNextShiftTest                    -= Time.deltaTime;
+            mfTimeUntilNextCellLoad                     -= Time.deltaTime;
+            mfTimeUntilNextGubbinLoad                   -= Time.deltaTime;
+
+            if (mfTimeUntilNextUpdateCellLoadUnloadQueues <= 0.0f)
+            { UpdateCellLoadingUnloadingQueues(); mfTimeUntilNextUpdateCellLoadUnloadQueues = mfTimeBetweenUpdateCellLoadUnloadQueues; }
+
+            if (mfTimeUntilNextCellUnload <= 0.0f)
+            { UnloadQueuedCell(); mfTimeUntilNextCellUnload = mfTimeBetweenCellUnloads; }
+
+            if (mfTimeUntilNextUpdateGubbinUnloadQueue <= 0.0f)
+            { UpdateGubbinUnloadingQueue(); mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateGubbinUnloadQueue; }
+
+            while (mfTimeUntilNextGubbinUnload <= 0.0f)
+            { UnloadQueuedGubbin(); mfTimeUntilNextGubbinUnload += mfTimeBetweenGubbinUnloads; }
+
+            if (mfTimeUntilNextShiftTest <= 0.0f)
+            { ShiftGalaxy(); mfTimeUntilNextShiftTest = mfTimeBetweenShiftTests; }
+
+            while (mfTimeUntilNextCellLoad <= 0.0f)
+            { LoadQueuedCell(); mfTimeUntilNextCellLoad += mfTimeBetweenCellLoads; }
+
+            while (mfTimeUntilNextGubbinLoad <= 0.0f)
+            { LoadQueuedGubbin(); mfTimeUntilNextGubbinLoad += mfTimeBetweenGubbinLoads; }
+        }
+    }
+
+    private void UpdateCellLoadingUnloadingQueues()
+    {
+        Profiler.BeginSample("UpdateCellLoadingUnloadingQueues");
+
+        UpdateCellLoadingQueue();
+        UpdateCellUnloadingQueue();
+
+        Profiler.EndSample();
+    }
+
+    private void UpdateCellLoadingQueue()
+    {
+        Profiler.BeginSample("UpdateCellLoadingQueue");
+            
+        mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.;
+
+        // Queue for loading: unloaded cells within proximity to observers.
+        foreach (CRegisteredObserver observer in mObservers)
+        {
+            Vector3 observerPosition = observer.mEntity.transform.position;
+            SCellPos occupiedRelativeCell = RelativePointToRelativeCell(observerPosition);
+            int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
+            int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                                                                                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
+
+            for (int x = -iNeighboursPerDirection; x <= iNeighboursPerDirection; ++x)
             {
-                mfTimeUntilNextQueueCellToLoadOrUnload = mfTimeBetweenQueueCellsToLoadOrUnload;    // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
-
-                mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.
-
-                // Queue for loading: unloaded cells within proximity to observers.
-                Profiler.BeginSample("Check for cells to queue for loading");
-                foreach (CRegisteredObserver observer in mObservers)
+                for (int y = -iNeighboursPerDirection; y <= iNeighboursPerDirection; ++y)
                 {
-                    Vector3 observerPosition = observer.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(observerPosition);
-                    int iCellsInARow = 1 /*Centre cell*/ + (int)mNumExtraNeighbourCells * 2 /*Neighbouring cell rows*/ + (Mathf.CeilToInt((observer.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
-                    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                                                                                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
-
-                    for (int x = -iNeighboursPerDirection; x <= iNeighboursPerDirection; ++x)
+                    for (int z = -iNeighboursPerDirection; z <= iNeighboursPerDirection; ++z)
                     {
-                        for (int y = -iNeighboursPerDirection; y <= iNeighboursPerDirection; ++y)
+                        // Check if this cell is loaded.
+                        SCellPos neighbouringRelativeCell = new SCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
+                        if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mBoundingRadius + cellDiameter * mNumExtraNeighbourCells))
                         {
-                            for (int z = -iNeighboursPerDirection; z <= iNeighboursPerDirection; ++z)
+                            SCellPos neighbouringAbsoluteCell = neighbouringRelativeCell + mCentreCell;
+                            CCellContent temp;
+                            if (mCells.TryGetValue(neighbouringAbsoluteCell, out temp))   // If this cell has already been loaded...
                             {
-                                // Check if this cell is loaded.
-                                SCellPos neighbouringRelativeCell = new SCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
-                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, observerPosition, observer.mBoundingRadius + cellDiameter * mNumExtraNeighbourCells))
+                                temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity to an observer.
+                                if (temp.mState == ECellState.Unloading) // If this cell is waiting to be unloaded...
                                 {
-                                    SCellPos neighbouringAbsoluteCell = neighbouringRelativeCell + mCentreCell;
-                                    CCellContent temp;
-                                    if (mCells.TryGetValue(neighbouringAbsoluteCell, out temp))   // If this cell has already been loaded...
-                                    {
-                                        temp.mAlternator = mbValidCellValue;    // Update alternator to indicate the cell is within proximity to an observer.
-                                        if (temp.mState == ECellState.Unloading) // If this cell is waiting to be unloaded...
-                                        {
-                                            mCellsToUnload.Remove(neighbouringAbsoluteCell);    // Stop it from unloading, as it is now back in proximity to observers.
-                                            temp.mState = ECellState.Loaded;    // Reset cell state to 'loaded', as only loaded cells are queued for unloading.
-                                        }
-                                    }
-                                    else    // This cell has not been loaded...
-                                    {
-                                        mCellsToLoad.Add(neighbouringAbsoluteCell); // Queue cell to load.
-                                        mCells.Add(neighbouringAbsoluteCell, new CCellContent(mbValidCellValue, ECellState.Loading));    // Add cell to dictionary of cells as loading.
-                                    }
+                                    mCellsToUnload.Remove(neighbouringAbsoluteCell);    // Stop it from unloading, as it is now back in proximity to observers.
+                                    temp.mState = ECellState.Loaded;    // Reset cell state to 'loaded', as only loaded cells are queued for unloading.
                                 }
+                            }
+                            else    // This cell has not been loaded...
+                            {
+                                mCellsToLoad.Add(neighbouringAbsoluteCell); // Queue cell to load.
+                                mCells.Add(neighbouringAbsoluteCell, new CCellContent(mbValidCellValue, ECellState.Loading));    // Add cell to dictionary of cells as loading.
                             }
                         }
                     }
-                }
-                Profiler.EndSample();
-
-                // Queue for unloading: cells too far away from observers.
-                Profiler.BeginSample("Check for cells to queue for unloading");
-                bool restart;
-                do
-                {
-                    restart = false;
-                    foreach (System.Collections.Generic.KeyValuePair<SCellPos, CCellContent> absoluteCell in mCells) // For every loaded cell...
-                    {
-                        if (absoluteCell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
-                        {
-                            // This cell is not within proximity of any observers.
-                            switch (absoluteCell.Value.mState)  // Determine how to unload the cell based on its state.
-                            {
-                                case ECellState.Loading:    // This cell, which is not within proximity to any observers, is waiting to load.
-                                    mCellsToLoad.Remove(absoluteCell.Key);    // Deregister this cell for loading, as it is no longer necessary to load.
-                                    mCells.Remove(absoluteCell.Key); // Remove this cell from the dictionary.
-                                    restart = true; // Removing an element from a container while it is being iterated breaks the iterator, so the iteration must restart.
-                                    //Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
-                                    break;
-
-                                case ECellState.Loaded:
-                                    mCellsToUnload.Add(absoluteCell.Key);   // Register this cell for unloading.
-                                    absoluteCell.Value.mState = ECellState.Unloading;   // Mark the cell as waiting to unload.
-                                    break;
-                            }
-
-                            if (restart)    // If a restart is required...
-                                break;  // The break to stop the loop would have occured within the switch, if the switch didn't use the break keyword itself.
-                        }
-                    }
-                } while (restart);
-                Profiler.EndSample();
-            }
-
-            // Unload cells over time.
-            mfTimeUntilNextCellUnload -= Time.deltaTime;
-            if (mfTimeUntilNextCellUnload <= 0.0f)  // Running more than once per frame does nothing extra.
-            {
-                mfTimeUntilNextCellUnload = mfTimeBetweenCellUnloads;   // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
-
-                if (mCellsToUnload.Count > 0)    // If there are cells to unload...
-                {
-                    UnloadAbsoluteCell(mCellsToUnload[0]); // Unload the cell.
-                    mCellsToUnload.RemoveAt(0); // Cell has been removed.
-                }
-            }
-
-            // Queue for unloading: Gubbins that are not within proximity to the cells.
-            mfTimeUntilNextQueueGubbinToUnload -= Time.deltaTime;
-            if (mfTimeUntilNextQueueGubbinToUnload <= 0.0f)  // Running more than once per frame does nothing extra.
-            {
-                mfTimeUntilNextQueueGubbinToUnload = mfTimeBetweenQueueGubbinsToUnload;   // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
-
-                mbValidGubbinValue = !mbValidGubbinValue;
-
-                // Find gubbins that are not within proximity to the cells.
-                Profiler.BeginSample("Find gubbins");
-
-                //foreach (CRegisteredGubbin gubbin in mGubbins)
-                //{
-                //    foreach (System.Collections.Generic.KeyValuePair<SCellPos, CCellContent> pair in mCells)
-                //    {
-                //        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, gubbin.mBoundingRadius))
-                //        {
-                //            gubbin.mAlternator = mbValidGubbinValue;
-                //            break;
-                //        }
-                //    }
-                //}
-
-                foreach (CRegisteredGubbin gubbin in mGubbins)
-                {
-                    Vector3 gubbinPosition = gubbin.mEntity.transform.position;
-                    SCellPos occupiedRelativeCell = RelativePointToRelativeCell(gubbinPosition);
-                    int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
-                    int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
-
-                    // Iterate through all 3 axis, checking the centre cell first.
-                    int x = 0;
-                    int y = 0;
-                    int z = 0;
-                    do
-                    {
-                        do
-                        {
-                            do
-                            {
-                                // Check if this cell is loaded.
-                                SCellPos neighbouringRelativeCell = new SCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
-                                if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, gubbinPosition, gubbin.mBoundingRadius))
-                                {
-                                    if (mCells.ContainsKey(neighbouringRelativeCell + mCentreCell))
-                                    {
-                                        gubbin.mAlternator = mbValidGubbinValue;
-                                        x = y = z = -1;  // Way to break the nested loop.
-                                    }
-                                }
-
-                                ++z; if (z > iNeighboursPerDirection) z = -iNeighboursPerDirection;
-                            } while (z != 0);
-
-                            ++y; if (y > iNeighboursPerDirection) y = -iNeighboursPerDirection;
-                        } while (y != 0);
-
-                        ++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
-                    } while (x != 0);
-                }
-
-                Profiler.EndSample();
-
-                // Queue for unloading: Gubbins that are not within proximity to the cells.
-                Profiler.BeginSample("Queue gubbins for unloading");
-                foreach (CRegisteredGubbin gubbin in mGubbins)
-                {
-                    if (!gubbin.mAwaitingCull && gubbin.mAlternator != mbValidGubbinValue)  // If this gubbin needs to be culled, and is not already marked for culling...
-                    {
-                        gubbin.mAwaitingCull = true;    // Mark for culling.
-                        mGubbinsToUnload.Add(gubbin);   // Queue for culling.
-                    }
-                    else if (gubbin.mAwaitingCull && gubbin.mAlternator == mbValidGubbinValue)  // If this gubbin does not need to be culled, but is marked for culling...
-                    {
-                        gubbin.mAwaitingCull = false;   // Unmark for culling.
-                        mGubbinsToUnload.Remove(gubbin);    // Unqueue for culling.
-                    }
-                }
-                Profiler.EndSample();
-            }
-
-            // Unload gubbins over time.
-            mfTimeUntilNextGubbinUnload -= Time.deltaTime;
-            while (mfTimeUntilNextGubbinUnload <= 0.0f) // May unload more than one gubbin per frame.
-            {
-                mfTimeUntilNextGubbinUnload += mfTimeBetweenGubbinUnloads;  // Preserve the remainder so the right number of gubbins are unloaded over time, regardless of lag spikes.
-
-                if (mGubbinsToUnload.Count > 0)  // If there are gubbins to unload...
-                {
-                    UnloadGubbin(mGubbinsToUnload[0]);
-                    mGubbinsToUnload.RemoveAt(0);
-                }
-            }
-
-            // Shift the galaxy over time. Note how this is done after cells and gubbins are unloaded, and before cells and gubbins are loaded - this is to minimise the performance impact.
-            mfTimeUntilNextShiftTest -= Time.deltaTime;
-            if (mfTimeUntilNextShiftTest <= 0.0f)  // Running more than once per frame does nothing extra.
-            {
-                mfTimeUntilNextShiftTest = mfTimeBetweenShiftTests;   // Drop the remainder as it is not required to run multiple times to make up for lag spikes.
-
-                // Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
-                SCellPos relativeCentrePos = RelativePointToRelativeCell(CalculateAverageObserverPosition());
-                if (relativeCentrePos.x != 0)
-                    mCentreCellX.Set(mCentreCell.x + relativeCentrePos.x);
-                if (relativeCentrePos.y != 0)
-                    mCentreCellY.Set(mCentreCell.y + relativeCentrePos.y);
-                if (relativeCentrePos.z != 0)
-                    mCentreCellZ.Set(mCentreCell.z + relativeCentrePos.z);
-            }
-
-            // Load queued cells over time.
-            mfTimeUntilNextCellLoad -= Time.deltaTime;
-            while (mfTimeUntilNextCellLoad <= 0.0f) // May load more than one queued cell per frame.
-            {
-                mfTimeUntilNextCellLoad += mfTimeBetweenCellLoads;  // Preserve the remainder so the right number of cells are loaded over time, regardless of lag spikes.
-
-                // Time to load a cell.
-                if (mCellsToLoad.Count > 0)  // If there are cells to load...
-                {
-                    LoadAbsoluteCell(mCellsToLoad[0]);  // Load the cell.
-                    mCellsToLoad.RemoveAt(0);
-                }
-            }
-
-            // Load gubbins over time.
-            mfTimeUntilNextGubbinLoad -= Time.deltaTime;
-            while (mfTimeUntilNextGubbinLoad <= 0)  // May load more than one queued gubbin per frame.
-            {
-                mfTimeUntilNextGubbinLoad += mfTimeBetweenGubbinLoads;  // Preserve the remainder so the right number of gubbins are loaded over time, regardless of lag spikes.
-
-                if (mGubbinsToLoad.Count > 0)    // If there are gubbins to load...
-                {
-                    LoadGubbin(mGubbinsToLoad[0]);
-                    mGubbinsToLoad.RemoveAt(0);
                 }
             }
         }
+
+        Profiler.EndSample();
+    }
+
+    private void UpdateCellUnloadingQueue()
+    {
+        Profiler.BeginSample("UpdateCellUnloadingQueue");
+
+        // Queue for unloading: cells too far away from observers.
+        bool restart;
+        do
+        {
+            restart = false;
+            foreach (System.Collections.Generic.KeyValuePair<SCellPos, CCellContent> absoluteCell in mCells) // For every loaded cell...
+            {
+                if (absoluteCell.Value.mAlternator != mbValidCellValue)  // If the cell was not updated to the current alternator value...
+                {
+                    // This cell is not within proximity of any observers.
+                    switch (absoluteCell.Value.mState)  // Determine how to unload the cell based on its state.
+                    {
+                        case ECellState.Loading:    // This cell, which is not within proximity to any observers, is waiting to load.
+                            mCellsToLoad.Remove(absoluteCell.Key);    // Deregister this cell for loading, as it is no longer necessary to load.
+                            mCells.Remove(absoluteCell.Key); // Remove this cell from the dictionary.
+                            restart = true; // Removing an element from a container while it is being iterated breaks the iterator, so the iteration must restart.
+                            Debug.Log("Galaxy: Hiccup occured in timing of loading/unloading cells. Performance dent is unavoidable as C# lacks required functionality to handle gracefully");
+                            break;
+
+                        case ECellState.Loaded:
+                            mCellsToUnload.Add(absoluteCell.Key);   // Register this cell for unloading.
+                            absoluteCell.Value.mState = ECellState.Unloading;   // Mark the cell as waiting to unload.
+                            break;
+                    }
+
+                    if (restart)    // If a restart is required...
+                        break;  // The break to stop the loop would have occured within the switch, if the switch didn't use the break keyword itself.
+                }
+            }
+        } while (restart);
+
+        Profiler.EndSample();
+    }
+
+    private void UnloadQueuedCell()
+    {
+        Profiler.BeginSample("UnloadQueuedCell");
+
+        if (mCellsToUnload.Count > 0)    // If there are cells to unload...
+        {
+            UnloadAbsoluteCell(mCellsToUnload[0]); // Unload the cell.
+            mCellsToUnload.RemoveAt(0); // Cell has been removed.
+        }
+
+        Profiler.EndSample();
+    }
+
+    private void UpdateGubbinUnloadingQueue()
+    {
+        Profiler.BeginSample("UpdateGubbinUnloadingQueue");
+
+        mbValidGubbinValue = !mbValidGubbinValue;
+
+        MarkGubbinsToPreserve();
+        QueueGubbinsForUnloading();
+
+        Profiler.EndSample();
+    }
+
+    private void MarkGubbinsToPreserve()
+    {
+        Profiler.BeginSample("MarkGubbinsToPreserve");
+
+        // Find gubbins that are not within proximity to the cells.
+
+        //foreach (CRegisteredGubbin gubbin in mGubbins)
+        //{
+        //    foreach (System.Collections.Generic.KeyValuePair<SCellPos, CCellContent> pair in mCells)
+        //    {
+        //        if (RelativeCellWithinProximityOfPoint(pair.Key - mCentreCell, gubbin.mEntity.transform.position, gubbin.mBoundingRadius))
+        //        {
+        //            gubbin.mAlternator = mbValidGubbinValue;
+        //            break;
+        //        }
+        //    }
+        //}
+
+        foreach (CRegisteredGubbin gubbin in mGubbins)
+        {
+            Vector3 gubbinPosition = gubbin.mEntity.transform.position;
+            SCellPos occupiedRelativeCell = RelativePointToRelativeCell(gubbinPosition);
+            int iCellsInARow = 1 + (Mathf.CeilToInt((gubbin.mBoundingRadius / cellRadius) - 1) * 2);    // Centre point plus neighbours per axis.   E.g. 1,3,5,7,9...
+            int iNeighboursPerDirection = (iCellsInARow - 1) / 2;                                       // Neighbours per direction.                E.g. 0,2,4,6,8...
+
+            // Iterate through all 3 axis, checking the centre cell first.
+            int x = 0;
+            int y = 0;
+            int z = 0;
+            do
+            {
+                do
+                {
+                    do
+                    {
+                        // Check if this cell is loaded.
+                        SCellPos neighbouringRelativeCell = new SCellPos(occupiedRelativeCell.x + x, occupiedRelativeCell.y + y, occupiedRelativeCell.z + z);
+                        if (RelativeCellWithinProximityOfPoint(neighbouringRelativeCell, gubbinPosition, gubbin.mBoundingRadius))
+                        {
+                            if (mCells.ContainsKey(neighbouringRelativeCell + mCentreCell))
+                            {
+                                gubbin.mAlternator = mbValidGubbinValue;
+                                x = y = z = -1;  // Way to break the nested loop.
+                            }
+                        }
+
+                        ++z; if (z > iNeighboursPerDirection) z = -iNeighboursPerDirection;
+                    } while (z != 0);
+
+                    ++y; if (y > iNeighboursPerDirection) y = -iNeighboursPerDirection;
+                } while (y != 0);
+
+                ++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
+            } while (x != 0);
+        }
+
+        Profiler.EndSample();
+    }
+
+    private void QueueGubbinsForUnloading()
+    {
+        Profiler.BeginSample("QueueGubbinsForUnloading");
+
+        // Queue for unloading: Gubbins that are not within proximity to the cells.
+        foreach (CRegisteredGubbin gubbin in mGubbins)
+        {
+            if (!gubbin.mAwaitingCull && gubbin.mAlternator != mbValidGubbinValue)  // If this gubbin needs to be culled, and is not already marked for culling...
+            {
+                gubbin.mAwaitingCull = true;    // Mark for culling.
+                mGubbinsToUnload.Add(gubbin);   // Queue for culling.
+            }
+            else if (gubbin.mAwaitingCull && gubbin.mAlternator == mbValidGubbinValue)  // If this gubbin does not need to be culled, but is marked for culling...
+            {
+                gubbin.mAwaitingCull = false;   // Unmark for culling.
+                mGubbinsToUnload.Remove(gubbin);    // Unqueue for culling.
+            }
+        }
+
+        Profiler.EndSample();
+    }
+
+    private void UnloadQueuedGubbin()
+    {
+        Profiler.BeginSample("UnloadQueuedGubbin");
+
+        if (mGubbinsToUnload.Count > 0)  // If there are gubbins to unload...
+        {
+            UnloadGubbin(mGubbinsToUnload[0]);
+            mGubbinsToUnload.RemoveAt(0);
+        }
+
+        Profiler.EndSample();
+    }
+
+    private void ShiftGalaxy()
+    {
+        Profiler.BeginSample("ShiftGalaxy");
+
+        // Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
+        SCellPos relativeCentrePos = RelativePointToRelativeCell(CalculateAverageObserverPosition());
+        if (relativeCentrePos.x != 0)
+            mCentreCellX.Set(mCentreCell.x + relativeCentrePos.x);
+        if (relativeCentrePos.y != 0)
+            mCentreCellY.Set(mCentreCell.y + relativeCentrePos.y);
+        if (relativeCentrePos.z != 0)
+            mCentreCellZ.Set(mCentreCell.z + relativeCentrePos.z);
+
+        Profiler.EndSample();
+    }
+
+    private void LoadQueuedCell()
+    {
+        Profiler.BeginSample("LoadQueuedCell");
+
+        if (mCellsToLoad.Count > 0)  // If there are cells to load...
+        {
+            LoadAbsoluteCell(mCellsToLoad[0]);  // Load the cell.
+            mCellsToLoad.RemoveAt(0);
+        }
+
+        Profiler.EndSample();
+    }
+
+    private void LoadQueuedGubbin()
+    {
+        Profiler.BeginSample("LoadQueuedGubbin");
+
+        if (mGubbinsToLoad.Count > 0)    // If there are gubbins to load...
+        {
+            for (uint uiTry = 0; uiTry < 3; ++uiTry)   // Try a couple times to place the gubbin.
+            {
+                if (LoadGubbin(mGubbinsToLoad[0]))
+                    break;
+                else
+                    mGubbinsToLoad[0].mPosition = new Vector3(Random.Range(-cellRadius, +cellRadius), Random.Range(-cellRadius, +cellRadius), Random.Range(-cellRadius, +cellRadius));
+            }
+            mGubbinsToLoad.RemoveAt(0);
+        }
+
+        Profiler.EndSample();
     }
 
     private void ShiftEntities(Vector3 translation)
@@ -543,8 +607,14 @@ public class CGalaxy : CNetworkMonoBehaviour
         ShiftEntities(new Vector3(0.0f, 0.0f, (mCentreCell.z - mCentreCellZ.Get()) * cellDiameter));
         mCentreCell.z = mCentreCellZ.Get();
     }
-    public void SyncGalaxySize(INetworkVar sender) { mfGalaxySize = mGalaxySize.Get(); }
-    public void SyncNumCellSubsets(INetworkVar sender) { muiNumCellSubsets = mNumCellSubsets.Get(); }
+    public void SyncGalaxySize(INetworkVar sender)
+    {
+        mfGalaxySize = mGalaxySize.Get();
+    }
+    public void SyncNumCellSubsets(INetworkVar sender)
+    {
+        muiNumCellSubsets = mNumCellSubsets.Get();
+    }
 
     public void RegisterObserver(GameObject observer, float boundingRadius)
     {
@@ -635,7 +705,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         gubbinToDeregister.registeredWithGalaxy = false;
     }
 
-    public void LoadGubbin(SGubbinMeta gubbin)
+    public bool LoadGubbin(SGubbinMeta gubbin)
     {
         Profiler.BeginSample("LoadGubbin");
 
@@ -647,7 +717,16 @@ public class CGalaxy : CNetworkMonoBehaviour
         if (gubbinObject == null)
         {
             Profiler.EndSample();   // LoadGubbin.
-            return;
+            return false;
+        }
+
+        Vector3 gubbinPosition = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition;
+        
+        // Check if the new gubbin has room to spawn.
+        if (Physics.CheckSphere(gubbinPosition, GetBoundingRadius(gubbinObject) * gubbin.mScale))
+        {
+            CNetwork.Factory.DestoryObject(gubbinObject);
+            return false;
         }
 
         gubbinObject.AddComponent<GalaxyGubbin>();
@@ -659,10 +738,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 
         // Parent object.
         gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.
-        //networkView.SyncParent();   // Sync the parent through the network view - the networked entity script does not handle this. - Does not have to be called anymore
 
         // Position.
-        gubbinObject.transform.position = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition; // Set position.
+        gubbinObject.transform.position = gubbinPosition; // Set position.
         if (!networkedEntity || !networkedEntity.Position)   // If the object does not have a networked entity script, or if the networked entity script does not update position...
             networkView.SyncTransformPosition();    // Sync the position through the network view.
 
@@ -686,11 +764,11 @@ public class CGalaxy : CNetworkMonoBehaviour
         }
 
         // Linear velocity.
-        if (rigidBody != null && gubbin.mLinearVelocity != Vector3.zero)
+        if (rigidBody != null && gubbin.mLinearVelocity != null)
             rigidBody.velocity = gubbin.mLinearVelocity;
 
         // Angular velocity.
-        if (rigidBody != null && gubbin.mAngularVelocity != Vector3.zero)
+        if (rigidBody != null && gubbin.mAngularVelocity != null)
             rigidBody.angularVelocity = gubbin.mAngularVelocity;
 
         // Sync everything the networked entity script handles.
@@ -709,6 +787,8 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
 
         Profiler.EndSample();   // LoadGubbin.
+
+        return true;
     }
 
     void UnloadGubbin(CRegisteredGubbin gubbin)
@@ -724,9 +804,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell)
+    public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell, float sampleScale)
     {
-        return new Vector3((absoluteCell.x * cellDiameter / cellRadius), (absoluteCell.y * cellDiameter / cellRadius), (absoluteCell.z * cellDiameter / cellRadius));
+        return new Vector3((sampleScale * absoluteCell.x * cellDiameter / cellRadius), (sampleScale * absoluteCell.y * cellDiameter / cellRadius), (sampleScale * absoluteCell.z * cellDiameter / cellRadius));
     }
 
     public float SampleNoise(float x, float y, float z, ENoiseLayer noiseLayer)
@@ -734,9 +814,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(x, y, z);
     }
 
-    public float SampleNoise(SCellPos absoluteCell, ENoiseLayer noiseLayer)
+    public float SampleNoise(SCellPos absoluteCell, float sampleScale, ENoiseLayer noiseLayer)
     {
-        Vector3 samplePoint = AbsoluteCellNoiseSamplePoint(absoluteCell);
+        Vector3 samplePoint = AbsoluteCellNoiseSamplePoint(absoluteCell, sampleScale);
         return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(samplePoint.x, samplePoint.y, samplePoint.z);
     }
 
@@ -751,7 +831,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
     {
-        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+        Profiler.BeginSample("AbsoluteCellToAbsolutePoint");
+        Vector3 result = new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+        Profiler.EndSample();
+
+        return result;
     }
 
     public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
@@ -763,6 +847,21 @@ public class CGalaxy : CNetworkMonoBehaviour
         relativePoint.z += cellRadius;
         relativePoint /= cellDiameter;
         SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
+
+        Profiler.EndSample();
+
+        return result;
+    }
+
+    public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
+    {
+        Profiler.BeginSample("AbsolutePointToAbsoluteCell");
+
+        absolutePoint.x += cellRadius;
+        absolutePoint.y += cellRadius;
+        absolutePoint.z += cellRadius;
+        absolutePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(absolutePoint.x), Mathf.FloorToInt(absolutePoint.y), Mathf.FloorToInt(absolutePoint.z));
 
         Profiler.EndSample();
 
@@ -784,6 +883,24 @@ public class CGalaxy : CNetworkMonoBehaviour
         return result;
     }
 
+    public SCellPos AbsolutePointToRelativeCell(Vector3 absolutePoint)
+    {
+        Profiler.BeginSample("AbsolutePointToRelativeCell");
+
+        absolutePoint.x += cellRadius;
+        absolutePoint.y += cellRadius;
+        absolutePoint.z += cellRadius;
+        absolutePoint /= cellDiameter;
+        SCellPos result = new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
+
+        Profiler.EndSample();
+
+        return result;
+    }
+
+    public Vector3 RelativePointToAbsolutePoint(Vector3 relativePoint) { return relativePoint + AbsoluteCellToAbsolutePoint(mCentreCell); }
+    public Vector3 AbsolutePointToRelativePoint(Vector3 absolutePoint) { return absolutePoint - AbsoluteCellToAbsolutePoint(mCentreCell); }
+
     public bool RelativeCellWithinProximityOfPoint(SCellPos relativeCell, Vector3 point, float pointRadius)
     {
         Profiler.BeginSample("RelativeCellWithinProximityOfPoint");
@@ -797,7 +914,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         return result;
     }
 
-    // Set the aesthetic of the galaxy based on the observer's position.
     void UpdateGalaxyAesthetic(SCellPos absoluteCell)
     {
         Profiler.BeginSample("UpdateGalaxyAesthetic");
@@ -847,36 +963,57 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public uint CalculateSparseAsteroidCount(SCellPos absoluteCell)
+    public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
+    public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * SampleNoise_AsteroidCluster(absoluteCell)); }
+    public float DebrisDensity(SCellPos absoluteCell) { return SampleNoise_DebrisDensity(absoluteCell); }
+    public float FogDensity(SCellPos absoluteCell) { return SampleNoise_FogDensity(absoluteCell); }
+    public float ResourceAmount(SCellPos absoluteCell) { return 800 * SampleNoise_ResourceAmount(absoluteCell); }
+
+    public float SampleNoise_SparseAsteroid(SCellPos absoluteCell)
     {
-        return (uint)Mathf.RoundToInt(10/*maxAsteroids*/ * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.SparseAsteroidCount].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z)));
+        float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.SparseAsteroidCount);   // Sample range is 1% of the noise.
+        float start = 0.4f, end = 0.8f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
+    }
+    
+    public float SampleNoise_AsteroidCluster(SCellPos absoluteCell)
+    {
+        float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.AsteroidClusterCount);   // Sample range is 10% of the noise.
+        float start = 0.8f, end = 0.9f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
 
-    public uint CalculateAsteroidClusterCount(SCellPos absoluteCell)
+    public float SampleNoise_DebrisDensity(SCellPos absoluteCell)
     {
-        return (uint)Mathf.RoundToInt(1/*maxClusters*/ * (0.5f + 0.5f * mNoises[(uint)ENoiseLayer.AsteroidClusterCount].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z)));
+        float sample = SampleNoise(absoluteCell, 0.25f, ENoiseLayer.DebrisDensity);   // Sample range is 25% of the noise.
+        float start = 0.0f, end = 1.0f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
 
-    public float CalculateDebrisDensity(SCellPos absoluteCell)
+    public float SampleNoise_FogDensity(SCellPos absoluteCell)
     {
-        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.DebrisDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
+        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.FogDensity);   // Sample range is 1% of the noise.
+        float start = 0.1f, end = 0.9f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
 
-    public float CalculateFogDensity(SCellPos absoluteCell)
+    public float SampleNoise_ResourceAmount(SCellPos absoluteCell)
     {
-        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.FogDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
-    }
-
-    public float CalculateAsteroidResourceAmount(SCellPos absoluteCell)
-    {
-        return 0.5f + 0.5f * mNoises[(uint)ENoiseLayer.FogDensity].Generate(absoluteCell.x, absoluteCell.y, absoluteCell.z);
+        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.AsteroidResourceAmount);   // Sample range is 1% of the noise.
+        float start = 0.75f, end = 0.9f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
 
     private void LoadSparseAsteroids(SCellPos absoluteCell)
     {
         float fCellRadius = cellRadius;
 
-        uint uiNumAsteroids = CalculateSparseAsteroidCount(absoluteCell);
+        uint uiNumAsteroids = SparseAsteroidCount(absoluteCell);
         for (uint ui = 0; ui < uiNumAsteroids; ++ui)
         {
             Profiler.BeginSample("Create asteroid meta and queue for creation");
@@ -901,22 +1038,28 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         float fCellRadius = cellRadius;
 
-        uint uiNumAsteroidClusters = CalculateAsteroidClusterCount(absoluteCell);
-        for (uint ui = 0; ui < uiNumAsteroidClusters; ++ui)
+        uint uiNumAsteroidClusters = AsteroidClusterCount(absoluteCell);
+        for (uint uiCluster = 0; uiCluster < uiNumAsteroidClusters; ++uiCluster)
         {
-            Profiler.BeginSample("Create asteroid meta and queue for creation");
+            Profiler.BeginSample("Create asteroid clusters");
 
-            mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
-                                                absoluteCell,   // Parent cell.
-                                                Random.Range(10.0f, 150.0f),    // Scale.
-                                                new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
-                                                Random.rotationUniform, // Rotation.
-                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                0.5f,   // Mass to health scalar. Zero if there is no health script.
-                                                true,   // Has NetworkedEntity script.
-                                                true    // Has a rigid body.
-                                                ));
+            uint uiNumAsteroidsInCluster = (uint)Random.Range(6, 21);
+            for (uint uiAsteroid = 0; uiAsteroid < uiNumAsteroidsInCluster; ++uiAsteroid)
+            {
+                Vector3 clusterCentre = new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius));
+
+                mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
+                                                    absoluteCell,   // Parent cell.
+                                                    Random.Range(10.0f, 150.0f),    // Scale.
+                                                    clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
+                                                    Random.rotationUniform, // Rotation.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                    Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+                                                    0.5f,   // Mass to health scalar. Zero if there is no health script.
+                                                    true,   // Has NetworkedEntity script.
+                                                    true    // Has a rigid body.
+                                                    ));
+            }
 
             Profiler.EndSample();
         }
@@ -1001,30 +1144,33 @@ public class CGalaxy : CNetworkMonoBehaviour
                 GL.Vertex3(x + fCellRadius, y + fCellRadius, z - fCellRadius);
                 GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
                 GL.End();
-            }
 
+                float noiseValue = SampleNoise_SparseAsteroid(pair.Key);
+                Gizmos.color = new Color(1.0f, 1.0f, 1.0f, noiseValue);
+                Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
+            }
         }
 
         Profiler.EndSample();
     }
 
-    public static float GetBoundingRadius(GameObject _gameObject)
+    public static float GetBoundingRadius(GameObject gameObject)
     {
         float result = 1.0f;
 
         // Depending on the type of model; it may use a collider, mesh renderer, animator, or something else.
-        Collider collider = _gameObject.GetComponent<Collider>();
+        Collider collider = gameObject.GetComponent<Collider>();
         if (collider)
             result = collider.bounds.extents.magnitude;
         else
         {
-            MeshRenderer meshRenderer = _gameObject.GetComponent<MeshRenderer>();
+            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
             if (meshRenderer)
                 result = meshRenderer.bounds.extents.magnitude;
             else
             {
                 bool gotSomethingFromAnimator = false;
-                Animator anim = _gameObject.GetComponent<Animator>();
+                Animator anim = gameObject.GetComponent<Animator>();
                 if (anim)
                 {
                     gotSomethingFromAnimator = anim.renderer || anim.collider || anim.rigidbody;
@@ -1034,7 +1180,7 @@ public class CGalaxy : CNetworkMonoBehaviour
                 }
 
                 if (!gotSomethingFromAnimator)
-                    Debug.LogWarning("Galaxy→GetBoundingRadius(): No RigidBody, Collider, MeshRenderer, or Animator on " + _gameObject.name + ". Bounding radius set to 1");
+                    Debug.LogWarning("Galaxy→GetBoundingRadius(): No RigidBody, Collider, MeshRenderer, or Animator on " + gameObject.name + ". Bounding radius set to 1");
             }
         }
 

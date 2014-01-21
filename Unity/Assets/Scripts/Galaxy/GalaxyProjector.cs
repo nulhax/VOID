@@ -77,15 +77,11 @@ public class GalaxyProjector : CNetworkMonoBehaviour
                     for (int z = 0; z < samplesPerAxis; ++z)
                     {
                         Vector3 unitPos = new Vector3(x - centreSample.x, y - centreSample.y, z - centreSample.z) / (0.5f * samplesPerAxis);    // -1 to +1 on each axis.
-                        Vector3 centreOfProjectionSamplePos = galaxy.AbsoluteCellNoiseSamplePoint(centreCellOfProjection);
-                        float asteroidDensity = galaxy.SampleNoise(centreOfProjectionSamplePos.x + unitPos.x /** zoom*/, centreOfProjectionSamplePos.y + unitPos.y /** zoom*/, centreOfProjectionSamplePos.z + unitPos.z /** zoom*/, CGalaxy.ENoiseLayer.SparseAsteroidCount);
-                        float asteroidDensityAlpha = asteroidDensity * asteroidDensity * asteroidDensity * asteroidDensity;
-                        asteroidDensityAlpha = (1.0f - unitPos.sqrMagnitude) * asteroidDensityAlpha;
-                        //if (asteroidDensityAlpha < 0.0f)
-                        //    asteroidDensityAlpha = 0.0f;
+                        CGalaxy.SCellPos sampleCell = galaxy.AbsolutePointToAbsoluteCell(unitPos * galaxy.galaxyRadius);
+                        float sparseAsteroidScalar = galaxy.SampleNoise_SparseAsteroid(sampleCell);
 
-                        if (asteroidDensityAlpha >= 0.0625f)
-                            emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, asteroidDensityAlpha));
+                        if (sparseAsteroidScalar > 0.0f)
+                            emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, sparseAsteroidScalar));
                     }
 
             mUpToDate = true;
@@ -93,5 +89,14 @@ public class GalaxyProjector : CNetworkMonoBehaviour
         }
 
         Profiler.EndSample();
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Vector3 point = gameObject.transform.position + (CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position) / CGalaxy.instance.galaxyRadius) * radius;
+        Gizmos.DrawLine(point + Vector3.left, point + Vector3.right);
+        Gizmos.DrawLine(point + Vector3.up, point + Vector3.down);
+        Gizmos.DrawLine(point + Vector3.forward, point + Vector3.back);
     }
 }
