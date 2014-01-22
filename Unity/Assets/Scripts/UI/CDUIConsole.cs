@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -85,7 +85,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		dui.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
 
 		// Set the view id of this console to the monitor
-		dui.GetComponent<CDUI>().ConsoleViewId = GetComponent<CNetworkView>().ViewId;
+		dui.GetComponent<CDUIRoot>().ConsoleViewId = GetComponent<CNetworkView>().ViewId;
 
 		// Save the network view of the DUI
 		DUIViewId = dui.GetComponent<CNetworkView>().ViewId;
@@ -98,6 +98,6 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
 	{	
 		// Update the camera viewport positions
-		DUI.GetComponent<CDUI>().UpdateCameraViewportPositions(_RayHit.textureCoord);
+		DUI.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(_RayHit.textureCoord);
 	}
 }

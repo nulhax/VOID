@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 [RequireComponent(typeof(CNetworkView))]
-public class CDUI : CNetworkMonoBehaviour
+public class CDUIRoot : CNetworkMonoBehaviour
 {
 	// Member Types
 
@@ -80,6 +80,19 @@ public class CDUI : CNetworkMonoBehaviour
 
 			// Attach the camera to the consoles screen
 			AttatchRenderTexture(Console.GetComponent<CDUIConsole>().ConsoleScreen.renderer.material);
+		}
+	}
+
+	public void Awake()
+	{
+		if(m_Debug)
+		{
+			GetComponent<CNetworkView>().enabled = false;
+
+			foreach(CNetworkView nv in GetComponentsInChildren<CNetworkView>())
+			{
+				nv.enabled = false;
+			}
 		}
 	}
 

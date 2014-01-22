@@ -47,7 +47,7 @@ public class CMinerals : CNetworkMonoBehaviour
 	{
 		for (int i = 0; i < 32; ++ i)
 		{
-			Physics.IgnoreLayerCollision(i, LayerMask.NameToLayer("Mineral"), true);
+			//Physics.IgnoreLayerCollision(i, LayerMask.NameToLayer("Mineral"), true);
 		}
 	}
 

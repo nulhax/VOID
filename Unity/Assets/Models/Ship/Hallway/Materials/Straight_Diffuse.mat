@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Straight_Diffuse
-  m_Shader: {fileID: 4800000, guid: b7787ad515bc2414ea18fde89c35b973, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9ebbdd42ce1297f47aee751c140b4375, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:

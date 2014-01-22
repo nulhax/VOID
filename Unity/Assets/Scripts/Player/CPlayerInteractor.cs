@@ -74,8 +74,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		// Check interaction for objects when nothing is clicked
-		CheckInteraction(EInteractionType.Hover);
+		if(CNetwork.IsConnectedToServer)
+		{
+			// Check interaction for objects when nothing is clicked
+			CheckInteraction(EInteractionType.Hover);
+		}
 	}
 
 	

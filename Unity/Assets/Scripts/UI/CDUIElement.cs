@@ -55,8 +55,9 @@ public class CDUIElement : CNetworkMonoBehaviour
 	public bool m_SyncOnDragStart = false;
 	public bool m_SyncOnDragEnd = false;
 	public bool m_SyncOnScroll = false;
-
+	
 	static public bool s_IsSyncingNetworkCallbacks = false;
+
 	static private CNetworkStream s_ElementNotificationStream = new CNetworkStream();
 
 	// Member Properties
@@ -71,7 +72,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 
 	}
 	
-	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
 	{
 
 	}
@@ -261,13 +262,19 @@ public class CDUIElement : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	protected void InvokeOnClick(int _Click) 
 	{
+		int temp = UICamera.currentTouchID;
+		UICamera.currentTouchID = _Click;
 		InvokeWithinComponents(EElementNotificationType.OnClick, null);
+		UICamera.currentTouchID = temp;
 	}
 	
 	[ANetworkRpc]
 	protected void InvokeOnDoubleClick(int _Click) 
 	{
+		int temp = UICamera.currentTouchID;
+		UICamera.currentTouchID = _Click;
 		InvokeWithinComponents(EElementNotificationType.OnDoubleClick, null);
+		UICamera.currentTouchID = temp;
 	}
 	
 	[ANetworkRpc]

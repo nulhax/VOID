@@ -51,17 +51,17 @@ public class CGameRegistrator : MonoBehaviour
 		
 		// Facilities
 		FacilityBridge, 
-		FacilityFactory,
-		FacilityScanner,
-		FacilityReplicator,
-		FacilityEngine,
-		FacilityGravityGenerator, 
-		FacilityShieldGenerator, 
-		FacilityLifeSupport,
         HallwayStraight,
         HallwayCorner,
         HallwayTSection,
         HallwayXSection,
+
+		// Facility Miniature
+		MiniFacilityBridge, 
+		MiniHallwayStraight,
+		MiniHallwayCorner,
+		MiniHallwayTSection,
+		MiniHallwayXSection,
 		
 		// Accessories
         Alarm,
@@ -160,18 +160,18 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.GalaxyShip,                  "Ship/GalaxyShip");
 		
 		// Facilities
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,              "Facilities/Bridge/Bridge");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityFactory,             "Facilities/Factory/Factory");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityScanner,             "Facilities/Scanner/Scanner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityReplicator,          "Facilities/Replicator/Replicator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityEngine,              "Facilities/Engine/Engine");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityGravityGenerator,    "Facilities/Gravity Generator/GravityGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityShieldGenerator,     "Facilities/Shield Generator/ShieldGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityLifeSupport,         "Facilities/Life Support/LifeSupport");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayStraight,             "Facilities/Hallways/HallwayStraight");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayCorner,               "Facilities/Hallways/HallwayCorner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayTSection,             "Facilities/Hallways/HallwayTSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayXSection,             "Facilities/Hallways/HallwayXSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,               "Facilities/Bridge/Bridge");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayStraight,              "Facilities/Hallways/HallwayStraight");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayCorner,                "Facilities/Hallways/HallwayCorner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayTSection,              "Facilities/Hallways/HallwayTSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayXSection,              "Facilities/Hallways/HallwayXSection");
+
+		// Facilities Mini
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayStraight,          "Facilities/Hallways/HallwayStraightMini");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayCorner,            "Facilities/Hallways/HallwayCornerMini");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayTSection,          "Facilities/Hallways/HallwayTSectionMini");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayXSection,          "Facilities/Hallways/HallwayXSectionMini");
 
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/DUI/CurvedMonitor_wide");
@@ -209,8 +209,8 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire");
 
 		// User Interface
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/DUI Test 2");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/DUI Test");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/FacilityExpansion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/ControlsTest");
 	}
 
 
@@ -239,6 +239,12 @@ public class CGameRegistrator : MonoBehaviour
         CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayCorner, CGameRegistrator.ENetworkPrefab.HallwayCorner);
         CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayTSection, CGameRegistrator.ENetworkPrefab.HallwayTSection);
         CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayXSection, CGameRegistrator.ENetworkPrefab.HallwayXSection);
+
+		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.Bridge, CGameRegistrator.ENetworkPrefab.MiniFacilityBridge);
+		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayStraight, CGameRegistrator.ENetworkPrefab.MiniHallwayStraight);
+		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayCorner, CGameRegistrator.ENetworkPrefab.MiniHallwayCorner);
+		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayTSection, CGameRegistrator.ENetworkPrefab.MiniHallwayTSection);
+		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayXSection, CGameRegistrator.ENetworkPrefab.MiniHallwayXSection);
     }
 
 

@@ -1335,7 +1335,7 @@ GameObject:
   - 114: {fileID: 11400418}
   - 114: {fileID: 11400416}
   m_Layer: 0
-  m_Name: DUI Test 2
+  m_Name: ControlsTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8867,7 +8867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100138}
   m_DUICamera3D: {fileID: 0}
-  m_Debug: 1
+  m_Debug: 0
 --- !u!114 &11400418
 MonoBehaviour:
   m_ObjectHideFlags: 1
