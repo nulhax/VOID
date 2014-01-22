@@ -148,7 +148,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
 				{
-					CGamePlayers.s_cInstance.InvokeRpcAll ("RegisterPlayerName", entry.Key, entry.Value);
+									CGamePlayers.s_cInstance.InvokeRpcAll ("RegisterPlayerName", entry.Key, entry.Value);
 				}
 						
 				CGamePlayers.s_cInstance.InvokeRpcAll("RegisterPlayerName", _cNetworkPlayer.PlayerId, sPlayerName);
@@ -305,7 +305,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			m_mPlayersActor.Clear();
 		}
 
-		//m_bSerializeName = true;
+		m_bSerializeName = true;
 	}
 
 	[ANetworkRpc]
