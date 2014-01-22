@@ -37,11 +37,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 
 // Member Properties
-	public Dictionary<ulong, string> PlayerList
+	public string LocalPlayerName
 	{
 		get
 		{
-			return(m_mPlayerName);
+			return(m_mPlayerName[CNetwork.PlayerId]);
 		}
 	}
 
@@ -59,7 +59,6 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			return(playerActor); 
 		}
 	}
-
 
 	public static CNetworkViewId SelfActorViewId
 	{
