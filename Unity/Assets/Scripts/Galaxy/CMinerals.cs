@@ -43,15 +43,6 @@ public class CMinerals : CNetworkMonoBehaviour
 // Member Methods
 
 
-	static CMinerals()
-	{
-		for (int i = 0; i < 32; ++ i)
-		{
-			Physics.IgnoreLayerCollision(i, LayerMask.NameToLayer("Mineral"), true);
-		}
-	}
-
-
 	public override void InstanceNetworkVars()
 	{
 		m_fQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);

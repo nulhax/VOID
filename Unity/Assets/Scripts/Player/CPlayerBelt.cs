@@ -332,6 +332,18 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
+	void OnDestroy()
+	{
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnInteraction;
+		gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction -= OnNoInteraction;
+		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
+		
+		CUserInput.EventReloadTool -= OnReloadToolKey;
+		CUserInput.EventDropTool -= OnDropToolKey;
+		CUserInput.EventChangeToolSlot -= OnChangeSlotKey;
+	}
+
+
     void Update()
     {
         // Empty

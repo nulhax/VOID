@@ -69,7 +69,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
 		if(_cSyncedNetworkVar == m_NetworkedTarget)
 		{
-			EventTargetChange(m_NetworkedTarget.Get());
+			if (EventTargetChange != null) EventTargetChange(m_NetworkedTarget.Get());
 		}
 	}
 	

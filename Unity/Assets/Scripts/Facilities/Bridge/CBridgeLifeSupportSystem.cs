@@ -30,7 +30,7 @@ public class CBridgeLifeSupportSystem: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_AtmosphereGenerationRate = 15.0f;
+	public float m_AtmosphereGenerationRate = 60.0f;
 	public float m_AtmosphereCapacitySupport = 2000.0f;
 
 	public GameObject m_AttachedFuseBox = null;

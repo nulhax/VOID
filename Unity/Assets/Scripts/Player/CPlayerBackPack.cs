@@ -224,6 +224,10 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
                 DropModule();
             }
         }
+
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnPickupModuleRequest;
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnCellInsertRequest;
+		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
     }
 
 

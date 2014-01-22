@@ -256,9 +256,10 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnDisconnect()
 	{
-		CUserInput.UnregisterAllEvents();
-        //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
-        //    m_Galaxy = null;
+		if(!CNetwork.IsServer)
+		{
+			CUserInput.UnregisterAllEvents();
+		}
 	}
 
 

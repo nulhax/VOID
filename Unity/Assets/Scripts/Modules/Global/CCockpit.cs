@@ -96,24 +96,25 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		if (_cSynedVar == m_cMountedPlayerId)
 		{
-			if (m_cMountedPlayerId.Get() != 0)
+			if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
 			{
-				// Lock player movement locally
-				if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
-				{
-					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
-					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
+				CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
+				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
 
-					// Move player head into rotation
-					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
-				}
+				// Move player head into rotation
+				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
 			}
 
 			// Unlock player movement locally
 			if (m_cMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
-				CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
-				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().UndisableInput(this);
+				// Ensure self actor exists
+				// - Players can leave the game while in the cockpits and their actors wont exist at this stage
+				if (CGamePlayers.SelfActor != null)
+				{
+					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().UndisableInput(this);
+				}
 			}
 		}
 	}
@@ -209,8 +210,11 @@ public class CCockpit : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerDisconnect(CNetworkPlayer _cNetworkPlayer)
 	{
+
 		if (MountedPlayerId == _cNetworkPlayer.PlayerId)
 		{
+			//Debug.LogError("Player left cockpit" + gameObject.name);
+
 			HandleLeaveCockpit(_cNetworkPlayer.PlayerId);
 		}
 	}
@@ -248,22 +252,22 @@ public class CCockpit : CNetworkMonoBehaviour
 	[AServerOnly]
 	void HandleLeaveCockpit(ulong _ulPlayerId)
 	{
-		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
-
 		// Allow player to leave cockpit
-		if (cPlayerActor != null &&
-		    MountedPlayerId == _ulPlayerId)
+		if (MountedPlayerId == _ulPlayerId)
 		{
-			CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
-
 			m_cMountedPlayerId.Set(0);
-
-			// Teleport player back to entered position
-			cPlayerActor.transform.position = m_vEnterPosition;
-			m_vEnterPosition = Vector3.zero;
 
 			// Notify observers
 			if (EventPlayerLeave != null) EventPlayerLeave(m_cMountedPlayerId.GetPrevious());
+
+			// Teleport player back to entered position
+			GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
+
+			if (cPlayerActor != null)
+			{
+				cPlayerActor.transform.position = m_vEnterPosition;
+				m_vEnterPosition = Vector3.zero;
+			}
 
 			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
 		}
