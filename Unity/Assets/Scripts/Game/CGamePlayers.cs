@@ -149,7 +149,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 				//Send all dictionary entries to new player
 				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
 				{
-					CGamePlayers.s_cInstance.InvokeRpc(_cNetworkPlayer.PlayerId, "RegisterPlayerName", entry.Key, entry.Value);
+					//Make sure you don't send RPC to yourself. Foreach loops will not let you modify the collections object (dictionary) you are operating on.
+					if(_cNetworkPlayer.PlayerId != CNetwork.PlayerId)
+					{
+						CGamePlayers.s_cInstance.InvokeRpc(_cNetworkPlayer.PlayerId, "RegisterPlayerName", entry.Key, entry.Value);
+					}
 				}
 						
 				//Send new player name to all other players
@@ -300,6 +304,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	void OnServerShutdown()
 	{
 		m_mPlayersActor.Clear();
+		m_mPlayerName.Clear();
 	}
 
 
@@ -308,6 +313,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if (!CNetwork.IsServer)
 		{
 			m_mPlayersActor.Clear();
+			m_mPlayersActor.Remove(CNetwork.PlayerId);
 		}
 
 		m_bSerializeName = true;
