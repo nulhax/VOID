@@ -89,7 +89,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400010}
-  - 114: {fileID: 11400014}
   - 114: {fileID: 11400016}
   - 114: {fileID: 11400018}
   m_Layer: 10
@@ -111,6 +110,7 @@ GameObject:
   - 114: {fileID: 11400024}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400020}
+  - 114: {fileID: 11400014}
   m_Layer: 10
   m_Name: ModelParent
   m_TagString: Untagged
@@ -1620,13 +1620,13 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100010}
+  m_GameObject: {fileID: 100012}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf6484591c9cb0e409f5c53c6978a95d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationsPerSecond: {x: 0, y: .00999999978, z: 0}
+  rotationsPerSecond: {x: 0, y: .100000001, z: 0}
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -11,7 +11,7 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 54: {fileID: 5400000}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: LaserTurretProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ GameObject:
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
   - 64: {fileID: 6400000}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: Beam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
