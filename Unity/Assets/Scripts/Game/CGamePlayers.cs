@@ -146,11 +146,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			{
 				string sPlayerName = _cStream.ReadString();
 
+				//Send all dictionary entries to new player
 				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
 				{
-									CGamePlayers.s_cInstance.InvokeRpcAll ("RegisterPlayerName", entry.Key, entry.Value);
+					CGamePlayers.s_cInstance.InvokeRpc(_cNetworkPlayer.PlayerId, "RegisterPlayerName", entry.Key, entry.Value);
 				}
 						
+				//Send new player name to all other players
 				CGamePlayers.s_cInstance.InvokeRpcAll("RegisterPlayerName", _cNetworkPlayer.PlayerId, sPlayerName);
 				
 				break;
@@ -352,8 +354,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
                       "Waiting for spawner to be available...", cStyle);
         }
 
-		if (CGamePlayers.SelfActor != null)
-		{
+		if (CGamePlayers.SelfActor != null)		{
 
 			if(Input.GetKey(KeyCode.Tab))
 			{
