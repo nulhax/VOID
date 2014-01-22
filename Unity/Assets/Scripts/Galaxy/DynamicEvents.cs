@@ -11,7 +11,22 @@ public class DynamicEvent_RogueAsteroid
     public static void Behaviour()
     {
         CGalaxy.SCellPos parentAbsoluteCell = CGalaxy.instance.RelativePointToAbsoluteCell(CGameShips.GalaxyShip.transform.position);
-        Vector3 pos = (CGameShips.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellToRelativePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
-        CGalaxy.instance.LoadGubbin(new CGalaxy.SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1), parentAbsoluteCell, Random.Range(10.0f, 30.0f), pos, Random.rotationUniform, (CGameShips.GalaxyShip.transform.position - pos).normalized * 100.0f, Random.onUnitSphere * 50.0f, 0.125f, true, true));
+        uint uiTriesToPlaceRogueAsteroid = 5;
+        bool created;
+        do
+        {
+            Vector3 asteroidPosition = (CGameShips.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellToRelativePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
+            created = CGalaxy.instance.LoadGubbin(new CGalaxy.SGubbinMeta(
+                (CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),   // PrefabID
+                parentAbsoluteCell, // Parent cell.
+                Random.Range(10.0f, 30.0f), // Scale.
+                asteroidPosition,   // Position relative to parent.
+                Random.rotationUniform, // Rotation.
+                (CGameShips.GalaxyShip.transform.position - asteroidPosition).normalized * 100.0f,  // Linear velocity.
+                Random.onUnitSphere * 50.0f,    // Angular velocity.
+                0.125f, // Mass-to-health ratio.
+                true,   // Has networked entity script.
+                true)); // Has rigid body.
+        } while (created != true && --uiTriesToPlaceRogueAsteroid > 0);
     }
 }

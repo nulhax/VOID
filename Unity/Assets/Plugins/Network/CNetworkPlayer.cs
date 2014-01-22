@@ -136,7 +136,6 @@ public class CNetworkPlayer : MonoBehaviour
 	bool m_bHost = false;
 	bool m_bDownloadingInitialGameState = true;
 
-
     RakNet.SystemAddress m_cSystemAddress = null;
     RakNet.RakNetGUID m_cGuid = null;
 	CNetworkStream m_cNetworkViewStream = new CNetworkStream();

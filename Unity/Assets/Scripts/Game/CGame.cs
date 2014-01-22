@@ -34,10 +34,16 @@ public class CGame : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-
+	public delegate void NotifyNameChange(string _sNewPlayerName);
+	
+	public event NotifyNameChange EventNameChange; 
 
 // Member Properties
-	
+	public string PlayerName
+	{
+		get { return(m_sPlayerName); }
+		set { m_sPlayerName = value; }
+	}
 	
 	public static CGame Instance
 	{
@@ -74,7 +80,7 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, 8);
+		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, "DefaultName", 8);
 
 		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
@@ -89,27 +95,29 @@ public class CGame : CNetworkMonoBehaviour
 
     public void OnGUI()
     {
-        // Host server
+		float fScreenCenterX = Screen.width / 2;
+		float fScreenCenterY = Screen.height / 2;
+
+		// Host server
 		if (!CNetwork.Connection.IsConnected && 
             !CNetwork.Server.IsActive)
         {
-			float fScreenCenterX = Screen.width / 2;
-			float fScreenCenterY = Screen.height / 2;
-
 			GUI.Label(new Rect(fScreenCenterX - 226, fScreenCenterY - 180, 100, 30), "Server Title");
 			m_sServerTitle = GUI.TextField(new Rect(fScreenCenterX - 230, fScreenCenterY - 150, 200, 30), m_sServerTitle, 32);
 			m_fNumSlots = GUI.HorizontalSlider(new Rect(fScreenCenterX - 230, fScreenCenterY - 50, 200, 30), m_fNumSlots, 1.0f, 32.0f);
 			GUI.Label(new Rect(fScreenCenterX - 158, fScreenCenterY - 80, 100, 30), "Slots: " + ((uint)m_fNumSlots).ToString());
 
+
+
 			if (GUI.Button(new Rect(fScreenCenterX + 60, fScreenCenterY - 80, 160, 50), "Start Server") &&
 				m_sServerTitle.Length > 1 &&
 				m_fNumSlots > 0)
 			{
-				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, (uint)m_fNumSlots);
+				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
 			}
         }
 
-        // Shutdown server
+		// Shutdown server
         if (CNetwork.IsServer &&
             GUI.Button(new Rect(140, 20, 130, 50), "Shutdown Server"))
         {
@@ -137,6 +145,21 @@ public class CGame : CNetworkMonoBehaviour
 		float fViewHeight = 150;
 		float fPositionX = Screen.width / 2 - fViewWidth / 2;
 		float fPositionY = Screen.height / 2 + 50;
+		float fScreenCenterX = Screen.width / 2;
+		float fScreenCenterY = Screen.height / 2;
+
+		// Player Naming
+
+		GUI.Label(new Rect(fScreenCenterX + 226, fScreenCenterY - 180, 100, 30), "Player Name");
+		
+		string sPlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+		PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+		
+		if(PlayerName != sPlayerName)
+		{
+			PlayerName = sPlayerName;
+			EventNameChange(PlayerName);
+		}
 
 		// Tab
 		m_iActiveTab = GUI.Toolbar(new Rect(fPositionX, fPositionY - 30, 250, 30), m_iActiveTab, m_saTabTitles);
@@ -272,6 +295,7 @@ public class CGame : CNetworkMonoBehaviour
 
 
 	string m_sServerTitle = System.Environment.UserDomainName + ": " + System.Environment.UserName;
+	string m_sPlayerName = "Enter name";
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
 
 

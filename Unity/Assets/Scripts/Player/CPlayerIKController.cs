@@ -67,9 +67,11 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if(_cSyncedNetworkVar == m_NetworkedTarget)
+		if(CGamePlayers.SelfActor != gameObject)
 		{
+
 			if (EventTargetChange != null) EventTargetChange(m_NetworkedTarget.Get());
+
 		}
 	}
 	
@@ -109,7 +111,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			switch (eNetworkAction)
 			{
 			case ENetworkAction.UpdateTarget:
-				{						
+				{
 					cPlayerIKController.m_RightHandTarget.x = _cStream.ReadFloat();
 					cPlayerIKController.m_RightHandTarget.y = _cStream.ReadFloat();
 					cPlayerIKController.m_RightHandTarget.z = _cStream.ReadFloat();	

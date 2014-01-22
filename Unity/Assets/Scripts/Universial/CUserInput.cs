@@ -32,6 +32,8 @@ public class CUserInput : MonoBehaviour
 		PrimaryUp,
 		SecondaryDown,
 		SecondaryUp,
+        ReturnKeyDown,
+        ReturnKeyUp,
 		Use,
 		ReloadTool,
         DropTool,
@@ -66,6 +68,7 @@ public class CUserInput : MonoBehaviour
 
 	public static event NotifyKeyChange EventPrimary;
 	public static event NotifyKeyChange EventSecondary;
+    public static event NotifyKeyChange EventReturnKey;
 	public static event NotifyKeyChange EventUse;
 	public static event NotifyKeyChange EventReloadTool;
 	public static event NotifyKeyChange EventDropTool;
@@ -104,6 +107,7 @@ public class CUserInput : MonoBehaviour
 	{
 		EventPrimary = null;
 		EventSecondary = null;
+        EventReturnKey = null;
 		EventUse = null;
 		EventMoveForward = null;
 		EventMoveBackward = null;
@@ -126,6 +130,8 @@ public class CUserInput : MonoBehaviour
 			case EInput.PrimaryUp: eKeyCode = s_ePrimaryKey; break;
 			case EInput.SecondaryDown:
 			case EInput.SecondaryUp: eKeyCode = s_eSecondaryKey; break;
+            case EInput.ReturnKeyDown:
+            case EInput.ReturnKeyUp: eKeyCode = s_eReturnKey; break;
 			case EInput.Use: eKeyCode = s_eUseKey; break;
 			case EInput.ReloadTool: eKeyCode = s_eReloadToolKey; break;
             case EInput.DropTool: eKeyCode = s_eDropTool; break;
@@ -224,6 +230,20 @@ public class CUserInput : MonoBehaviour
 			if (EventSecondary != null) EventSecondary(false);
 		}
 	}
+
+
+    [AClientOnly]
+    void UpdateReturn()
+    {
+        if (Input.GetKeyDown(s_eReturnKey))
+        {
+            if (EventReturnKey != null) EventReturnKey(true);
+        }
+        else if (Input.GetKeyUp(s_eReturnKey))
+        {
+            if (EventReturnKey != null) EventUse(false);
+        }
+    }
 
 
 	[AClientOnly]
@@ -475,6 +495,10 @@ public class CUserInput : MonoBehaviour
 	// Cockpits
 	static KeyCode s_eStrafeLeft		= KeyCode.Q;
 	static KeyCode s_eStrafeRight		= KeyCode.E;
+
+
+    // Misc
+    static KeyCode s_eReturnKey         = KeyCode.Return;
 
 
 	static CUserInput s_cInstance 		= null;
