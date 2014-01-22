@@ -160,9 +160,9 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 					if (cPlayerActor != CGamePlayers.SelfActor)
 					{
-						cPlayerActor.transform.eulerAngles = new Vector3(cPlayerActor.transform.eulerAngles.x, 
+						cPlayerActor.transform.eulerAngles = new Vector3(0.0f, 
 						                                                 _cStream.ReadFloat(),
-						                                                 cPlayerActor.transform.eulerAngles.z);
+					                                                 0.0f);
 					}
 					else
 					{
@@ -301,9 +301,9 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
         {
             if (gameObject != CGamePlayers.SelfActor)
             {
-                transform.eulerAngles = new Vector3(transform.eulerAngles.x,
+                transform.eulerAngles = new Vector3(0.0f,
                                                     m_fRotationY.Get(),
-                                                    transform.eulerAngles.z);
+				                                    0.0f);
             }
         }
 	}

@@ -32,12 +32,11 @@ public class CDUIRoot : CNetworkMonoBehaviour
     // Member Fields
 	public GameObject m_DUICamera2D = null;
 	public GameObject m_DUICamera3D = null;
-	public bool m_Debug = false;
+	public Vector2 m_RenderTexSize = Vector2.zero;
 
     private RenderTexture m_RenderTex = null; 
 
 	private CNetworkVar<CNetworkViewId> m_ConsoleViewId = null;
-
 
 	// Member Properties
 	public CNetworkViewId ConsoleViewId 
@@ -83,45 +82,26 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Awake()
-	{
-		if(m_Debug)
-		{
-			GetComponent<CNetworkView>().enabled = false;
-
-			foreach(CNetworkView nv in GetComponentsInChildren<CNetworkView>())
-			{
-				nv.enabled = false;
-			}
-		}
-	}
-
 	public void Update()
 	{
 		RenderTexture temp = RenderTexture.active;
 
 		if(m_DUICamera3D != null)
 		{
-			if(m_DUICamera3D.GetComponent<UICamera>().enabled || m_Debug)
-				m_DUICamera3D.GetComponent<UICamera>().enabled = m_Debug ? true : false;
+			if(m_DUICamera3D.GetComponent<UICamera>().enabled)
+				m_DUICamera3D.GetComponent<UICamera>().enabled = false;
 
 			RenderTexture.active = m_DUICamera3D.camera.targetTexture;
 			m_DUICamera3D.camera.Render();
-
-			if(m_Debug) 
-				m_DUICamera3D.GetComponent<UICamera>().m_ViewPortPos = Input.mousePosition;
 		}
 
 		if(m_DUICamera2D != null)
 		{
-			if(m_DUICamera2D.GetComponent<UICamera>().enabled || m_Debug) 
-				m_DUICamera2D.GetComponent<UICamera>().enabled = m_Debug ? true : false;
+			if(m_DUICamera2D.GetComponent<UICamera>().enabled) 
+				m_DUICamera2D.GetComponent<UICamera>().enabled = false;
 
 			RenderTexture.active = m_DUICamera2D.camera.targetTexture;
 			m_DUICamera2D.camera.Render();
-
-			if(m_Debug) 
-				m_DUICamera2D.GetComponent<UICamera>().m_ViewPortPos = Input.mousePosition;
 		}
 
 		RenderTexture.active = temp;
@@ -154,8 +134,8 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	
 	private void SetupRenderTexture()
 	{	
-		int width = (int)m_DUICamera2D.camera.pixelWidth;
-		int height = (int)m_DUICamera2D.camera.pixelHeight;
+		int width = (int)m_RenderTexSize.x;
+		int height = (int)m_RenderTexSize.y;
 		
 		// Create a new render texture
 		m_RenderTex = new RenderTexture(width, height, 16);

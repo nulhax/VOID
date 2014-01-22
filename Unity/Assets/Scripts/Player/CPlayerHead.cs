@@ -88,12 +88,21 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			TransferPlayerPerspectiveToShipSpace();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CActorBoardable>().EventBoard += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToShipSpace);
-			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
+			gameObject.GetComponent<CActorBoardable>().EventBoard += TransferPlayerPerspectiveToShipSpace;
+			gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
 
 			// Subscribe to mouse movement input
-			CUserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
+			CUserInput.EventMouseMoveY += OnMouseMoveY;
 		}
+	}
+
+
+	void OnDestroy()
+	{
+		// Unregister
+		gameObject.GetComponent<CActorBoardable>().EventBoard -= TransferPlayerPerspectiveToShipSpace;
+		gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
+		CUserInput.EventMouseMoveY -= OnMouseMoveY;
 	}
 
 

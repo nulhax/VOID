@@ -75,6 +75,8 @@ public class CGameRegistrator : MonoBehaviour
         PlayerSpawner,
         LaserTurret,
         LaserTurretProjectile,
+		MiningTurret,
+		MiningCockpit,
 		
 		// Components
 		PanelFuseBox,
@@ -182,8 +184,10 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,                "Modules/Pilot Cockpit/Cockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,               "Modules/Player Spawner/PlayerSpawner");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,               "Modules/Turret Cockpit/TurretCockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,                 "Modules/Turret/Turret");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,       "Modules/Turret/TurretLaserProjectile");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,                 "Modules/Laser Turret/LaserTurret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,       "Modules/Laser Turret/LaserTurretProjectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret, 			    "Modules/Mining Turret/MiningTurret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit, 			    "Modules/Mining Cockpit/MiningCockpit");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -224,6 +228,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound           , CPlayerAirMotor.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerIKController.SerializeIKTarget		, CPlayerIKController.UnserializeIKTarget);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CGamePlayers.SerializeData					, CGamePlayers.UnserializeData);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CLaserTurretBehaviour.SerializeOutbound     , CLaserTurretBehaviour.UnserializeInbound);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
@@ -259,8 +265,10 @@ public class CGameRegistrator : MonoBehaviour
     {
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit, ENetworkPrefab.PilotCockpit);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner, ENetworkPrefab.PlayerSpawner);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit, ENetworkPrefab.TurretCockpit);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Turret, ENetworkPrefab.LaserTurret);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserCockpit, ENetworkPrefab.TurretCockpit);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret, ENetworkPrefab.LaserTurret);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);
     }
 
 

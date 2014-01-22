@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -63,7 +63,7 @@ public class CDUISliderChild : CNetworkMonoBehaviour
 	{
 		if(!CDUIElement.s_IsSyncingNetworkCallbacks)
 		{
-			SliderParent.GetComponent<CDUISlider>().SlidingSelf = _IsPressed;
+			//SliderParent.GetComponent<CDUISlider>().IsModifyingValueLocally = _IsPressed;
 		}
 	}
 }

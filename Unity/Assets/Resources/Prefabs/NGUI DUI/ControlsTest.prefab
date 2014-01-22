@@ -8867,7 +8867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100138}
   m_DUICamera3D: {fileID: 0}
-  m_Debug: 0
+  m_RenderTexSize: {x: 0, y: 0}
 --- !u!114 &11400418
 MonoBehaviour:
   m_ObjectHideFlags: 1
