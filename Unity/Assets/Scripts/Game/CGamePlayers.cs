@@ -289,6 +289,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			// Sync unregister player actor view id with everyone
 			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
 
+			//Remove player from dictionary of player names
+			InvokeRpcAll("UnregisterPlayerName", _cPlayer.PlayerId);
+
 			Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
 		}
 	}
@@ -310,8 +313,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		m_bSerializeName = true;
 	}
 
-	[ANetworkRpc]
 	// Create RPC Call to take in playerID (ulong) and string (player username)
+	[ANetworkRpc]
 	void RegisterPlayerName(ulong _ulPlayerID, string _sPlayerUserName)
 	{
 		if(m_mPlayerName.ContainsKey(_ulPlayerID))
@@ -323,6 +326,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			m_mPlayerName.Add(_ulPlayerID, _sPlayerUserName);
 			Debug.LogError("Added player: " + _sPlayerUserName);
+		}
+	}
+	[ANetworkRpc]
+	void UnregisterPlayerName(ulong _ulPlayerID)
+	{
+		if(m_mPlayerName.ContainsKey(_ulPlayerID))
+		{
+			m_mPlayerName.Remove(_ulPlayerID);
 		}
 	}
 
@@ -354,11 +365,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
                       "Waiting for spawner to be available...", cStyle);
         }
 
-		if (CGamePlayers.SelfActor != null)		{
-
+		if (CGamePlayers.SelfActor != null)		
+		{
 			if(Input.GetKey(KeyCode.Tab))
 			{
-				GUI.TextArea(new Rect(100, 100, 400, 400), "Player List ");
+				GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
 
 				int iStartY = 115;
 

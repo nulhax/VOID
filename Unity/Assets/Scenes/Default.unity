@@ -5158,11 +5158,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e586cb774fed2449c9ed11c94c3d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_acVoiceInput: {fileID: 0}
-  m_fRecordingTimer: 0
-  m_bRecording: 0
-  m_bEncoding: 0
-  m_bReturnToSender: 1
 --- !u!114 &1432749554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5271,11 +5266,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31e586cb774fed2449c9ed11c94c3d45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_acVoiceInput: {fileID: 0}
-  m_fRecordingTimer: 0
-  m_bRecording: 0
-  m_bEncoding: 0
-  m_bReturnToSender: 1
 --- !u!1 &1583856511
 GameObject:
   m_ObjectHideFlags: 0
