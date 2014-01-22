@@ -130,7 +130,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			_cStream.Write((byte)ENetworkAction.ActionSendPlayerName);
 			_cStream.WriteString(CGamePlayers.s_cInstance.m_sPlayerName);
-
+								
 			CGamePlayers.m_bSerializeName = false;
 		}
 	}
@@ -146,6 +146,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			{
 				string sPlayerName = _cStream.ReadString();
 
+				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
+				{
+					CGamePlayers.s_cInstance.InvokeRpcAll ("RegisterPlayerName", entry.Key, entry.Value);
+				}
+						
 				CGamePlayers.s_cInstance.InvokeRpcAll("RegisterPlayerName", _cNetworkPlayer.PlayerId, sPlayerName);
 				
 				break;
@@ -264,7 +269,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.ReplicatorCell);
 		
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
-		
+
+		//Send all dictionary entries to all players.
+
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 	
@@ -297,6 +304,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			m_mPlayersActor.Clear();
 		}
+
+		//m_bSerializeName = true;
 	}
 
 	[ANetworkRpc]
