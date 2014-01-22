@@ -40,9 +40,9 @@ public class PhysicalForceDamage : MonoBehaviour {
 									
 				health.ApplyDamage(Mathf.Clamp(fDamage, 5, 45));
 				
-				Debug.Log("Player took damage after being hit by " + collision.gameObject.name);
-				Debug.Log("Force = " + fNetForce.ToString());
-				Debug.Log("Damage = " + fDamage.ToString());
+				//Debug.Log("Player took damage after being hit by " + collision.gameObject.name);
+				//Debug.Log("Force = " + fNetForce.ToString());
+				//Debug.Log("Damage = " + fDamage.ToString());
 			}
 		}
 		

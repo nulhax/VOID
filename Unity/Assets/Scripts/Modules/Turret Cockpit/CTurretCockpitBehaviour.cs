@@ -128,7 +128,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 		// Cleanup
 		m_cActiveTurretViewId.Set(null);
 
-		Debug.Log("Player left cockpit");
+		//Debug.Log("Player left cockpit");
 	}
 
 
