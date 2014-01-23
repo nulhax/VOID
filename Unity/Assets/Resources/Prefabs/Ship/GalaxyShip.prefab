@@ -16,7 +16,7 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400012}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: GalaxyShip
   m_TagString: GalaxyShip
   m_Icon: {fileID: 0}
@@ -31,7 +31,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400002}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: CompoundCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47,7 +47,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400004}
   - 108: {fileID: 10800000}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: Directional light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -64,7 +64,7 @@ GameObject:
   - 4: {fileID: 400006}
   - 33: {fileID: 3300002}
   - 23: {fileID: 2300002}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: Shield
   m_TagString: Untagged
   m_Icon: {fileID: 0}

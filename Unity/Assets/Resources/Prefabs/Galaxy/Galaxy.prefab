@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400002}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Galaxy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lol: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
