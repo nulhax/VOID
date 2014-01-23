@@ -32,8 +32,7 @@ public class CUserInput : MonoBehaviour
 		PrimaryUp,
 		SecondaryDown,
 		SecondaryUp,
-        ReturnKeyDown,
-        ReturnKeyUp,
+        ReturnKey,
 		Use,
 		ReloadTool,
         DropTool,
@@ -130,8 +129,7 @@ public class CUserInput : MonoBehaviour
 			case EInput.PrimaryUp: eKeyCode = s_ePrimaryKey; break;
 			case EInput.SecondaryDown:
 			case EInput.SecondaryUp: eKeyCode = s_eSecondaryKey; break;
-            case EInput.ReturnKeyDown:
-            case EInput.ReturnKeyUp: eKeyCode = s_eReturnKey; break;
+            case EInput.ReturnKey: eKeyCode = s_eReturnKey; break;
 			case EInput.Use: eKeyCode = s_eUseKey; break;
 			case EInput.ReloadTool: eKeyCode = s_eReloadToolKey; break;
             case EInput.DropTool: eKeyCode = s_eDropTool; break;
@@ -178,6 +176,7 @@ public class CUserInput : MonoBehaviour
         UpdateMouseMove();
         UpdatePrimary();
         UpdateSecondary();
+        UpdateReturn();
         UpdateUse();
         UpdateMovement();
         UpdateMovementSpecial();
@@ -241,7 +240,7 @@ public class CUserInput : MonoBehaviour
         }
         else if (Input.GetKeyUp(s_eReturnKey))
         {
-            if (EventReturnKey != null) EventUse(false);
+            if (EventReturnKey != null) EventReturnKey(false);
         }
     }
 

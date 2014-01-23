@@ -32,9 +32,11 @@ public class CModuleInterface : MonoBehaviour
 		INVALID,
 
         PlayerSpawner,
-        TurretCockpit,
+        LaserCockpit,
         PilotCockpit,
-        Turret,
+        LaserTurret,
+		MiningTurret,
+		MiningCockpit,
         LifeSupport1,
         Power1,
 

@@ -62,15 +62,6 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
     }
 
 
-	void Start()
-	{
-		if (gameObject == CGamePlayers.SelfActor)
-		{
-			gameObject.GetComponent<CPlayerLocator>().EventEnterShip += new CPlayerLocator.NotifyEnterShip(OnEventEnterShip);
-		}
-	}
-
-
 	[AClientOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
@@ -118,9 +109,18 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	}
 
 
+	void Start()
+	{
+		if (gameObject == CGamePlayers.SelfActor)
+		{
+			gameObject.GetComponent<CPlayerLocator>().EventEnterShip += OnEventEnterShip;
+		}
+	}
+
+
 	void OnDestroy()
 	{
-		// Empty
+		gameObject.GetComponent<CPlayerLocator>().EventEnterShip -= OnEventEnterShip;
 	}
 
 
@@ -149,11 +149,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
             if (cSelfLocator.ContainingFacility == null ||
                 cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
             {
-
                 UpdateMovement();
 
                 m_vRotation.Set(transform.eulerAngles);
-
             }
         }
 	}

@@ -13,6 +13,8 @@ TagManager:
   - Asteroid
   - 
   - 
+  - Drag and Drop Root
+  - 
   Builtin Layer 0: Default
   Builtin Layer 1: TransparentFX
   Builtin Layer 2: Ignore Raycast
@@ -22,12 +24,12 @@ TagManager:
   Builtin Layer 6: 
   Builtin Layer 7: 
   User Layer 8: InteractableObject
-  User Layer 9: DUI
-  User Layer 10: Galaxy
-  User Layer 11: AudioConduit
+  User Layer 9: UI 2D
+  User Layer 10: UI 3D
+  User Layer 11: Galaxy
   User Layer 12: Projectile
   User Layer 13: Player
-  User Layer 14: Mineral
+  User Layer 14: AudioConduit
   User Layer 15: 
   User Layer 16: 
   User Layer 17: 
