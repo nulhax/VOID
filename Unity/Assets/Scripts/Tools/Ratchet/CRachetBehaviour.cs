@@ -76,7 +76,6 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 		{
 			if (m_bActive.Get())
 			{
-				
 				m_fActiveTimer += Time.deltaTime * 3;
 
 				transform.localPosition = Vector3.Lerp(s_vDeactivePosition, s_vActivePosition, m_fActiveTimer);

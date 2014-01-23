@@ -50,6 +50,9 @@ public class CDUIPanelFader : MonoBehaviour
 	// Member Methods
 	public void Update()
 	{
+		if(!m_FadingIn && !m_FadingOut)
+			return;
+
 		if(m_FadingIn)
 		{
 			m_FadeTimer += Time.deltaTime;

@@ -96,9 +96,9 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		if (CGamePlayers.SelfActor != null)
 		{
 			// Find the origin, direction, distance of the players interaction cursor
-			CPlayerHead cPlayerHeadMotor = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
-			Vector3 vOrigin = cPlayerHeadMotor.ActorHead.transform.position;
-			Vector3 vDirection = cPlayerHeadMotor.ActorHead.transform.forward;
+			GameObject headCamera = CGame.CompositeCameraSystem.PlayersHeadCamera;
+			Vector3 vOrigin = headCamera.transform.position;
+			Vector3 vDirection = headCamera.transform.forward;
 			float fDistance = 5.0f;
 			RaycastHit cRayHit = new RaycastHit();
 			GameObject hitActorInteractable = null;

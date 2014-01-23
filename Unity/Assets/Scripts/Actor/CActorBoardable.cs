@@ -135,7 +135,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
 
 		// Remove the galaxy shiftable component
-		Destroy(gameObject.GetComponent<GalaxyShiftable>());
+		if(gameObject.GetComponent<GalaxyShiftable>() != null)
+			Destroy(gameObject.GetComponent<GalaxyShiftable>());
 
 		// Parent the actor to the ship
 		transform.parent = CGameShips.Ship.transform;

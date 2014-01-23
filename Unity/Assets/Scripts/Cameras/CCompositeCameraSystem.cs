@@ -35,9 +35,19 @@ public class CCompositeCameraSystem : MonoBehaviour
 	private Camera m_GalaxyCamera = null;
 
 	private bool m_IsObserverOutside = false;
-	
-// Member Properties
 
+
+// Member Properties
+	public GameObject PlayersHeadCamera
+	{
+		get
+		{
+			if(!m_IsObserverOutside)
+				return(m_ShipCamera.gameObject);
+			else
+				return(m_GalaxyCamera.gameObject);
+		}
+	}
 	
 // Member Methods
 	public void LateUpdate()
@@ -58,38 +68,36 @@ public class CCompositeCameraSystem : MonoBehaviour
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	}
 
-	public void SetShipViewPerspective(Transform _ShipPerspective)
+	public void SetPlayersViewPerspectiveToShip(Transform _PlayerHead)
 	{
 		m_IsObserverOutside = false;
 		
 		// Set the perspective of the ship camera
-		m_ShipCamera.transform.parent = _ShipPerspective;
+		m_ShipCamera.transform.parent = _PlayerHead;
 		m_ShipCamera.transform.localPosition = Vector3.zero;
 		m_ShipCamera.transform.localRotation = Quaternion.identity;
 		
 		// Unparent the galaxy camera
 		m_GalaxyCamera.transform.parent = null;
 		
-		// Destroy the galaxy observer/shiftable components
+		// Destroy the galaxy observer components
         Destroy(m_GalaxyCamera.gameObject.GetComponent<GalaxyObserver>());
-        Destroy(m_GalaxyCamera.gameObject.GetComponent<GalaxyShiftable>());
 	}
 	
-	public void SetGalaxyViewPerspective(Transform _GalaxyPerspective)
+	public void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
 	{
 		m_IsObserverOutside = true;
 		
 		// Set the perspective of the galaxy camera
-		m_GalaxyCamera.transform.parent = _GalaxyPerspective;
+		m_GalaxyCamera.transform.parent = _PlayerHead;
 		m_GalaxyCamera.transform.localPosition = Vector3.zero;
 		m_GalaxyCamera.transform.localRotation = Quaternion.identity;
 		
 		// Unparent the ship camera
 		m_ShipCamera.transform.parent = null;
 
-		// Add the galaxy observer/shiftable components
+		// Add the galaxy observer components
         m_GalaxyCamera.gameObject.AddComponent<GalaxyObserver>();
-        m_GalaxyCamera.gameObject.AddComponent<GalaxyShiftable>();
 	}
 
 	public void SetDefaultViewPerspective()
@@ -97,7 +105,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 		// Ensure player actor exists
 		if (CGamePlayers.SelfActor != null)
 		{
-			SetShipViewPerspective(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
+			SetPlayersViewPerspectiveToShip(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
 		}
 	}
 	

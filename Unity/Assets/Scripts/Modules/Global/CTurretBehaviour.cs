@@ -216,7 +216,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			if (ControllerPlayerId == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to turret camera position
-				CGame.CompositeCameraSystem.SetShipViewPerspective(m_cCameraObject.transform);
+				CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
 			}
 			else if (m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{

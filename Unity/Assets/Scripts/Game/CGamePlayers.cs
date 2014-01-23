@@ -267,7 +267,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
         CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
@@ -280,7 +280,12 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.PowerCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.BioCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.ReplicatorCell);
-		
+
+
+		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(15.0f, -8.0f, -10.0f));
+
+
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
 
 		//Send all dictionary entries to all players.

@@ -42,17 +42,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{
 		get { return (m_cActorHead); }
 	}
-	
-	public GameObject PlayerShipCamera
-	{
-		get { return (m_cShipCamera); }
-		set { m_cShipCamera = value; }
-	}
-	
-	public bool CamerasSwapped
-	{
-		get { return(PlayerShipCamera.transform.parent != ActorHead.transform); }
-	}
 
 	public bool InputDisabled
 	{
@@ -153,7 +142,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGame.CompositeCameraSystem.SetShipViewPerspective(m_cActorHead.transform);
+		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -161,7 +150,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGame.CompositeCameraSystem.SetGalaxyViewPerspective(m_cActorHead.transform);
+		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
@@ -194,7 +183,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 	public GameObject m_cActorHead = null;
-	GameObject m_cShipCamera = null;
 	Vector3 m_vRotation = Vector3.zero;
 	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
 	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);

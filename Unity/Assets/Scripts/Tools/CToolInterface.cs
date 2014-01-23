@@ -48,13 +48,13 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void NotifyPrimaryActivate(GameObject _cGameObject);
+	public delegate void NotifyPrimaryActivate(GameObject _TargetInteractableObject);
 	public event NotifyPrimaryActivate EventPrimaryActivate;
 
 	public delegate void NotifyPrimaryDeactivate();
 	public event NotifyPrimaryDeactivate EventPrimaryDeactivate;
 
-	public delegate void NotifySecondaryActivate(GameObject _cGameObject);
+	public delegate void NotifySecondaryActivate(GameObject _TargetInteractableObject);
 	public event NotifySecondaryActivate EventSecondaryActivate;
 
 	public delegate void NotifySecondaryDeactivate();
@@ -69,7 +69,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	public delegate void NotifyDropped();
 	public event NotifyDropped EventDropped;
 
-	public delegate void NotifyUse(GameObject _cGameObject);
+	public delegate void NotifyUse(GameObject _TargetInteractableObject);
 	public event NotifyUse EventUse;
 	
 	
@@ -219,7 +219,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		// Check not already active
 		if (_bActive &&
-			!m_bPrimaryActive)
+			!m_bSecondaryActive)
 		{
 			// Set active
 			m_bSecondaryActive = true;
@@ -233,7 +233,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 		// Check currently active
 		else if (!_bActive &&
-				 m_bPrimaryActive)
+		         m_bSecondaryActive)
 		{
 			// Set deactive
 			m_bSecondaryActive = false;
