@@ -144,6 +144,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 					{
 						Debug.LogError(string.Format("Target tool does not have the CToolInterface component attached! ObjectName({0})", _cInteractableObject.name));
 					}
+                    else if (cToolInterface.IsHeld)
+                    {
+                        break;
+                    }
 					else
 					{
 						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);

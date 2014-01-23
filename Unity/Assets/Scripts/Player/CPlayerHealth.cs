@@ -104,7 +104,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		{
 			if(cue.m_strCueName == "LaughTrack")
 			{
-				m_LaughTrack = 	cue;
+				//m_LaughTrack = 	cue;
 			}
 		}
 	}
@@ -188,6 +188,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 if (m_fHitPoints.Get() <= 0.0f)
                 {
                     m_bAlive.Set(false);
+                }
+                else if (m_fHitPoints.Get() > 0.0f)
+                {
+                    m_bAlive.Set(true);
                 }
             }
         }

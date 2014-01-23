@@ -36,7 +36,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	}
 
 // Member Delegates & Events
-	
+
 	
 // Member Fields
 	public GameObject m_FacilityControlConsole = null;

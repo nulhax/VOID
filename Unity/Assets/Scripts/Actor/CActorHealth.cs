@@ -9,26 +9,32 @@ public class CActorHealth : CNetworkMonoBehaviour
 
     public bool destroyOnZeroHealth = false;
     public bool takeDamageOnImpact = false;
+    public bool syncNetworkVar = true;
 
     [SerializeField] private float initialHealth = 1.0f;
     [HideInInspector] public float health_previous;
+    private float health_current;
     protected CNetworkVar<float> health_internal;
-    public float health { get { return health_internal.Get(); } set { health_internal.Set(value); } }
+    public float health { get { return health_current; } set { if (syncNetworkVar)health_internal.Set(value); else { health_current = value; OnSync(null); } } }
 
     public override void InstanceNetworkVars()
     {
-        health_internal = new CNetworkVar<float>(OnNetworkVarSync, initialHealth);
+        if(syncNetworkVar)
+            health_internal = new CNetworkVar<float>(OnSync, initialHealth);
 
         // Set before Start()
-        health_previous = health;
+        health_previous = health_current = initialHealth;
     }
 
-    void OnNetworkVarSync(INetworkVar sender)
+    void OnSync(INetworkVar sender)
     {
-        if (EventOnSetCallback != null)
-            EventOnSetCallback(gameObject, health_previous, health);
+        if(syncNetworkVar)
+            health_current = health_internal.Get();
 
-        health_previous = health;
+        if (EventOnSetCallback != null)
+            EventOnSetCallback(gameObject, health_previous, health_current);
+
+        health_previous = health_current;
     }
 
     void OnCollisionEnter(Collision collision)
