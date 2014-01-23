@@ -40,13 +40,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		INVALID = -1,
 		
 		Bridge,
-		Engine,
-		Factory,
-		GravityGenerator,
-		LifeSupportDome,
-		Replicator,
-		Scanner,
-		//ShieldGenerator,
 		HallwayStraight,
 		HallwayCorner,
 		HallwayTSection,
@@ -159,18 +152,34 @@ public class CFacilityInterface : CNetworkMonoBehaviour
         s_mRegisteredPrefabs.Add(_eFacilityType, _ePrefab);
     }
 
+	public static void RegistMiniaturePrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
+	{
+		s_mRegisteredMiniaturePrefabs.Add(_eFacilityType, _ePrefab);
+	}
 
     public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityType)
     {
         if (!s_mRegisteredPrefabs.ContainsKey(_eFacilityType))
         {
-            Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eFacilityType));
+            Debug.LogError(string.Format("Facility type ({0}) has not been registered a prefab", _eFacilityType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
 
         return (s_mRegisteredPrefabs[_eFacilityType]);
     }
+
+	public static CGameRegistrator.ENetworkPrefab GetMiniaturePrefabType(EType _eFacilityType)
+	{
+		if (!s_mRegisteredMiniaturePrefabs.ContainsKey(_eFacilityType))
+		{
+			Debug.LogError(string.Format("Facility type miniature ({0}) has not been registered a prefab", _eFacilityType));
+			
+			return (CGameRegistrator.ENetworkPrefab.INVALID);
+		}
+		
+		return (s_mRegisteredMiniaturePrefabs[_eFacilityType]);
+	}
 
 
 	void Start()
@@ -227,6 +236,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
     static Dictionary<EType, List<GameObject>> s_mModuleObjects = new Dictionary<EType, List<GameObject>>();
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 };
