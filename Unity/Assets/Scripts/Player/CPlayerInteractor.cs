@@ -124,9 +124,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				}
 
 
-				hitActorInteractable = hitObject;			
-
-				CGamePlayers.SelfActor.GetComponent<CPlayerIKController>().RightHandIKTarget = cRayHit.point;	
+				hitActorInteractable = hitObject;					
 			}
 
 			// If this is a valid interactable actor

@@ -56,8 +56,10 @@ public class CGameChat : CNetworkMonoBehaviour
     void Start()
     {
         // Sign up for events
-        CUserInput.EventReturnKey += new CUserInput.NotifyKeyChange(ReturnKeyChanged);
-        CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
+        CUserInput.EventReturnKey += ReturnKeyChanged;
+
+		Debug.Log ("Signed up for reutrn key down");
+        //CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
 
         // Deprecated function
         // NOTE: Causes input to be shared across the entire
@@ -81,12 +83,34 @@ public class CGameChat : CNetworkMonoBehaviour
     [AClientOnly]
     void ReturnKeyChanged(bool _b)
     {
-        Debug.Log("ReturnKeyChanged(" + _b + ");");
-        if (_b)
-        {
-            m_bProcessChat = true;
-            Debug.Log("m_bProcessChat = true;");
-        }
+		//This will only be able to trigger every 0.5 seconds.
+		if (Time.time > m_fTimeOfEnterKeyPress + 0.5f) 
+		{
+			Debug.Log ("ReturnKeyChanged(" + _b + ");");
+
+			//Only change things on key down
+			if (_b) 
+			{
+				//Toggle operation on each key press down.
+				//If chat was enabled, it will be disabled and movement will be re-enabled.
+				if(m_bProcessChat)
+				{					
+					m_bProcessChat = false;
+					//Debug.Log("Disabled input - similar to 'undisabled'");
+					//CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor> ().UndisableInput (this); 
+					          
+				}
+				//If chat was disabled, it will be enabled and movement will be disabled.
+				else
+				{ 
+					m_bProcessChat = true;
+					//Debug.Log("Disabled Input");
+					//CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor> ().DisableInput (this);  
+				}	
+			}
+
+			m_fTimeOfEnterKeyPress = Time.time;
+		}
     }
 
 
@@ -226,6 +250,7 @@ public class CGameChat : CNetworkMonoBehaviour
 
     bool m_bSendMessage                  = false;
     bool m_bProcessChat                  = false;
+	float m_fTimeOfEnterKeyPress			 = 0.0f;
     static string m_sPlayerChatInput     = "";
     static string m_sPlayerChatOuput     = "";
     const string m_sChatInputControlName = "ChatInputTextField";
