@@ -55,7 +55,9 @@ public class CGameChat : CNetworkMonoBehaviour
 
     void Start()
     {
+        // Sign up for events
         CUserInput.EventReturnKey += new CUserInput.NotifyKeyChange(ReturnKeyChanged);
+        CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
 
         // Deprecated function
         // NOTE: Causes input to be shared across the entire
@@ -79,9 +81,11 @@ public class CGameChat : CNetworkMonoBehaviour
     [AClientOnly]
     void ReturnKeyChanged(bool _b)
     {
+        Debug.Log("ReturnKeyChanged(" + _b + ");");
         if (_b)
         {
             m_bProcessChat = true;
+            Debug.Log("m_bProcessChat = true;");
         }
     }
 
@@ -167,13 +171,21 @@ public class CGameChat : CNetworkMonoBehaviour
         }
     }
 
+
     [ANetworkRpc]
     void ReceivePlayerMessage(string _strPlayerName, string _strMessage)
     {
         // Concatonate all of the strings into a single output
         m_sPlayerChatOuput += "[" + _strPlayerName + "]: " + _strMessage + "\n";
     }
-    
+
+
+    void OnConnectEventSignup()
+    {
+        // Sign up for events
+        CUserInput.EventReturnKey += new CUserInput.NotifyKeyChange(ReturnKeyChanged);
+    }
+
 
     public void OnGUI()
     {
