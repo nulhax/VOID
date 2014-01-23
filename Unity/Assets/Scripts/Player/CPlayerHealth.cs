@@ -98,9 +98,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	void Start() 
     {
         // Death audio
-		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		CAudioCue[] audioCues = gameObject.GetComponents<CAudioCue>();
 
-		foreach(AudioCue cue in audioCues)
+		foreach(CAudioCue cue in audioCues)
 		{
 			if(cue.m_strCueName == "LaughTrack")
 			{
@@ -227,7 +227,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	CNetworkVar<bool> m_bAlive;
 
 
-	AudioCue m_LaughTrack;
+	CAudioCue m_LaughTrack;
 
 
 }
