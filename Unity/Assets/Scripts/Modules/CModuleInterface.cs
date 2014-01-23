@@ -25,22 +25,51 @@ public class CModuleInterface : MonoBehaviour
 {
 
 // Member Types
-
-
+	public enum ECategory
+	{
+		INVALID,
+		
+		Atmosphere,
+		Crew,
+		Defence,
+		Exploration,
+		Gravity,
+		Power,
+		Production,
+		Propulsion,
+		Research,
+		Resources,
+		
+		MAX
+	}
+	
 	public enum EType
 	{
 		INVALID,
 
-        PlayerSpawner,
-        LaserCockpit,
-        PilotCockpit,
-        LaserTurret,
+		AtmosphereGenerator,
+		PlayerSpawner,
+		LaserCockpit,
+		LaserTurret,
+		PilotCockpit,
+		PowerGenerator,
+		PowerCapacitor,
 		MiningTurret,
 		MiningCockpit,
-        LifeSupport1,
-        Power1,
+		AtmosphereConditioner,
 
         MAX
+	}
+
+	public enum ESize
+	{
+		INVALID,
+
+		Small,
+		Medium,
+		Large,
+
+		MAX
 	}
 
 
@@ -52,7 +81,31 @@ public class CModuleInterface : MonoBehaviour
 
 	public EType ModuleType
 	{
-		get { return (m_eModuleType); }
+		get { return (m_ModuleType); }
+	}
+
+
+	public ECategory ModuleCategory
+	{
+		get { return (m_ModuleCategory); }
+	}
+
+
+	public ESize ModuleSize
+	{
+		get { return (m_ModuleSize); }
+	}
+
+
+	public bool IsInternal
+	{
+		get { return(m_Internal); }
+	}
+
+
+	public bool IsBuildable
+	{
+		get { return(m_Buildable); }
 	}
 
 
@@ -87,14 +140,42 @@ public class CModuleInterface : MonoBehaviour
     }
 
 
-	public static List<GameObject> FindModulesByType(EType _eComponentType)
+	public static List<GameObject> GetAllModules()
 	{
-		if (!s_mModuleObjects.ContainsKey(_eComponentType))
+		return (s_mModules);
+	}
+
+
+	public static List<GameObject> FindModulesByType(EType _eModuleType)
+	{
+		if (!s_mModulesByType.ContainsKey(_eModuleType))
 		{
 			return (null);
 		}
 
-		return (s_mModuleObjects[_eComponentType]);
+		return (s_mModulesByType[_eModuleType]);
+	}
+
+
+	public static List<GameObject> FindModulesByCategory(ECategory _eModuleCategory)
+	{
+		if (!s_mModulesByCategory.ContainsKey(_eModuleCategory))
+		{
+			return (null);
+		}
+		
+		return (s_mModulesByCategory[_eModuleCategory]);
+	}
+
+
+	public static List<GameObject> FindModulesBySize(ESize _eModuleSize)
+	{
+		if (!s_mModulesBySize.ContainsKey(_eModuleSize))
+		{
+			return (null);
+		}
+		
+		return (s_mModulesBySize[_eModuleSize]);
 	}
 
 
@@ -119,53 +200,77 @@ public class CModuleInterface : MonoBehaviour
 
 	void Awake()
 	{
-		// Add self to the global list of components
-		if (!s_mModuleObjects.ContainsKey(m_eModuleType))
+		// Add self to the list of modules
+		s_mModules.Add(gameObject);
+
+		// Add self to the global list of module types
+		if (!s_mModulesByType.ContainsKey(m_ModuleType))
 		{
-			s_mModuleObjects.Add(m_eModuleType, new List<GameObject>());
+			s_mModulesByType.Add(m_ModuleType, new List<GameObject>());
 		}
 	
-		s_mModuleObjects[m_eModuleType].Add(gameObject);
+		s_mModulesByType[m_ModuleType].Add(gameObject);
+
+		// Add self to the global list of module categories
+		if (!s_mModulesByCategory.ContainsKey(m_ModuleCategory))
+		{
+			s_mModulesByCategory.Add(m_ModuleCategory, new List<GameObject>());
+		}
+		
+		s_mModulesByCategory[m_ModuleCategory].Add(gameObject);
+
+		// Add self to the global list of module sizes
+		if (!s_mModulesBySize.ContainsKey(m_ModuleSize))
+		{
+			s_mModulesBySize.Add(m_ModuleSize, new List<GameObject>());
+		}
+		
+		s_mModulesBySize[m_ModuleSize].Add(gameObject);
 	}
 
 
 	void Start()
 	{
-		// Ensure a type of defined 
-		if (m_eModuleType == EType.INVALID)
+		// Ensure a type is defined 
+		if (m_ModuleType == EType.INVALID)
 		{
-            Debug.LogError(string.Format("This module has not been given a module type. GameObjectName({0})", gameObject.name));
+			Debug.LogError(string.Format("This module has not been given a module type. GameObjectName({0})", gameObject.name));
+		}
+		
+		// Ensure a category is defined 
+		if (m_ModuleCategory == ECategory.INVALID)
+		{
+			Debug.LogError(string.Format("This module has not been given a module category. GameObjectName({0})", gameObject.name));
+		}
+		
+		// Ensure a size is defined 
+		if (m_ModuleSize == ESize.INVALID)
+		{
+			Debug.LogError(string.Format("This module has not been given a module size. GameObjectName({0})", gameObject.name));
 		}
 
 		// Register self with parent facility
-		Transform cParent = transform.parent;
+		CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(gameObject);
 
-		for (int i = 0; i < 20; ++ i)
+		if(fi != null)
 		{
-            if (cParent != null)
-            {
-                if (cParent.GetComponent<CFacilityInterface>() != null)
-                {
-                    cParent.GetComponent<CFacilityInterface>().RegisterModule(this);
-                    m_cParentFacility = cParent.gameObject;
-                    break;
-                }
-
-                cParent = cParent.parent;
-            }
-
-			if (i == 19)
-			{
-				Debug.LogError("Could not find facility to register to");
-			}
+			fi.RegisterModule(this);
+			m_cParentFacility = fi.gameObject;
+		}
+		else
+		{
+			Debug.LogError("Could not find facility to register to");
 		}
 	}
 
 
 	void OnDestroy()
 	{
-		// Remove self from global list of components
-		s_mModuleObjects[ModuleType].Remove(gameObject);
+		// Remove self from global list of modules
+		s_mModules.Remove(gameObject);
+		s_mModulesByType[ModuleType].Remove(gameObject);
+		s_mModulesByCategory[ModuleCategory].Remove(gameObject);
+		s_mModulesBySize[ModuleSize].Remove(gameObject);
 	}
 
 
@@ -177,8 +282,11 @@ public class CModuleInterface : MonoBehaviour
 
 // Member Fields
 
-
-	public EType m_eModuleType = EType.INVALID;
+	public EType m_ModuleType = EType.INVALID;
+	public ECategory m_ModuleCategory = ECategory.INVALID;
+	public ESize m_ModuleSize = ESize.INVALID;
+	public bool m_Internal = true;
+	public bool m_Buildable = true;
 
 
     GameObject m_cParentFacility = null;
@@ -187,7 +295,11 @@ public class CModuleInterface : MonoBehaviour
     Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
 
 
-    static Dictionary<EType, List<GameObject>> s_mModuleObjects = new Dictionary<EType, List<GameObject>>();
+	static List<GameObject> s_mModules = new List<GameObject>();
+	static Dictionary<EType, List<GameObject>> s_mModulesByType = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory = new Dictionary<ECategory, List<GameObject>>();
+	static Dictionary<ESize, List<GameObject>> s_mModulesBySize = new Dictionary<ESize, List<GameObject>>();
+
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 

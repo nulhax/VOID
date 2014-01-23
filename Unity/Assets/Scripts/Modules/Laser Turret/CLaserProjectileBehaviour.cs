@@ -98,7 +98,8 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 	void CreateHitParticles(Vector3 _HitPos, Quaternion _HitRot)
 	{
 		// Create hit particles
-		GameObject cHitParticles = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Modules/Laser Turret/LaserHitParticles"));
+		string prefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CGameRegistrator.ENetworkPrefab.LaserHitParticles);
+		GameObject cHitParticles = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/" + prefabFile));
 		
 		cHitParticles.transform.position = _HitPos;
 		cHitParticles.transform.rotation = _HitRot;

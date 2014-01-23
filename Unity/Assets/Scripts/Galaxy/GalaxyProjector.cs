@@ -93,10 +93,10 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
     void OnDrawGizmos()
     {
-//        Gizmos.color = Color.red;
-//        Vector3 point = gameObject.transform.position + (CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position) / CGalaxy.instance.galaxyRadius) * radius;
-//        Gizmos.DrawLine(point + Vector3.left, point + Vector3.right);
-//        Gizmos.DrawLine(point + Vector3.up, point + Vector3.down);
-//        Gizmos.DrawLine(point + Vector3.forward, point + Vector3.back);
+        Gizmos.color = Color.red;
+        Vector3 point = gameObject.transform.position + (CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position) / CGalaxy.instance.galaxyRadius) * radius;
+        Gizmos.DrawLine(point + Vector3.left, point + Vector3.right);
+        Gizmos.DrawLine(point + Vector3.up, point + Vector3.down);
+        Gizmos.DrawLine(point + Vector3.forward, point + Vector3.back);
     }
 }

@@ -27,17 +27,6 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-    public enum EType
-    {
-        INVALID,
-
-        Internal,
-        External,
-
-        MAX
-    }
-
-
     public enum ESize
     {
         INVALID,
@@ -55,19 +44,18 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 // Member Properties
 
-
-    [AServerOnly]
-    public EType PortType
-    {
-        get { return (m_eType); }
-    }
-
-
+	
     [AServerOnly]
     public ESize PortSize
     {
-        get { return (m_eSize); }
+        get { return (m_Size); }
     }
+
+
+	public bool IsInternal
+	{
+		get { return(m_Internal); }
+	}
 
 
     public CNetworkViewId AttachedModuleViewId
@@ -100,8 +88,8 @@ public class CModulePortInterface : CNetworkMonoBehaviour
     public GameObject CreateModule(CModuleInterface.EType _eType)
     {
         GameObject cModuleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_eType));
-        cModuleObject.GetComponent<CNetworkView>().SetPosition(m_cPositioner.transform.position);
-        cModuleObject.GetComponent<CNetworkView>().SetRotation(m_cPositioner.transform.rotation.eulerAngles);
+        cModuleObject.GetComponent<CNetworkView>().SetPosition(m_Positioner.transform.position);
+        cModuleObject.GetComponent<CNetworkView>().SetRotation(m_Positioner.transform.rotation.eulerAngles);
         cModuleObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
 
         m_cAttachedModuleViewId.Set(cModuleObject.GetComponent<CNetworkView>().ViewId);
@@ -112,10 +100,10 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        if (m_ePreplacedModuleType != CModuleInterface.EType.INVALID &&
+        if (m_PreplacedModuleType != CModuleInterface.EType.INVALID &&
             CNetwork.IsServer)
         {
-            CreateModule(m_ePreplacedModuleType);
+            CreateModule(m_PreplacedModuleType);
         }
 	}
 
@@ -141,11 +129,11 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 // Member Fields
 
-
-    public EType m_eType = EType.INVALID;
-    public ESize m_eSize = ESize.INVALID;
-    public CModuleInterface.EType m_ePreplacedModuleType = CModuleInterface.EType.INVALID;
-    public GameObject m_cPositioner = null;
+	
+    public ESize m_Size = ESize.INVALID;
+	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
+    public GameObject m_Positioner = null;
+	public bool m_Internal = true;
 
 
     CNetworkVar<CNetworkViewId> m_cAttachedModuleViewId = null;

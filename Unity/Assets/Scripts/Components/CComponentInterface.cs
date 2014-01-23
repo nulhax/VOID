@@ -80,27 +80,17 @@ public class CComponentInterface : MonoBehaviour
             Debug.LogError(string.Format("This component has not been given a component type. GameObjectName({0})", gameObject.name));
         }
 
-        // Register self with parent facility
-        Transform cParent = transform.parent;
-
-        for (int i = 0; i < 20; ++i)
-        {
-            if (cParent != null)
-            {
-                if (cParent.GetComponent<CModuleInterface>() != null)
-                {
-                    cParent.GetComponent<CModuleInterface>().RegisterAttachedComponent(this);
-                    break;
-                }
-
-                cParent = cParent.parent;
-            }
-
-            if (i == 19)
-            {
-                Debug.LogError("Could not find module to register to");
-            }
-        }
+		// Register self with parent module
+		CModuleInterface mi = NGUITools.FindInParents<CModuleInterface>(gameObject);
+		
+		if(mi != null)
+		{
+			mi.RegisterAttachedComponent(this);
+		}
+		else
+		{
+			Debug.LogError("Could not find module to register to");
+		}
 	}
 
 

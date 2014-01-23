@@ -69,14 +69,17 @@ public class CGameRegistrator : MonoBehaviour
 		Door,
         DuiMontior,
 		
-        // Modules
-        PilotCockpit,
-        TurretCockpit,
-        PlayerSpawner,
-        LaserTurret,
-        LaserTurretProjectile,
+		// Modules
+		AtmosphereGenerator,
+		PlayerSpawner,
+		LaserCockpit,
+		LaserTurret,
+		PilotCockpit,
+		PowerGenerator,
+		PowerCapacitor,
 		MiningTurret,
 		MiningCockpit,
+		AtmosphereConditioner,
 		
 		// Components
 		PanelFuseBox,
@@ -104,6 +107,10 @@ public class CGameRegistrator : MonoBehaviour
 		// User Interfaces
 		DUITest,
 		DUITest2,
+
+		// Other
+		LaserTurretProjectile,
+		LaserHitParticles,
 
 		MAX
 	}
@@ -181,13 +188,16 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,                "Modules/Pilot Cockpit/Cockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,               "Modules/Player Spawner/PlayerSpawner");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,               "Modules/Turret Cockpit/TurretCockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,                 "Modules/Laser Turret/LaserTurret");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,       "Modules/Laser Turret/LaserTurretProjectile");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret, 			    "Modules/Mining Turret/MiningTurret");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit, 			    "Modules/Mining Cockpit/MiningCockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereGenerator,			"Modules/Atmosphere/Atmosphere Generator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereConditioner,		"Modules/Atmosphere/Atmosphere Conditioner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,				"Modules/Crew/Player Spawner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserCockpit,				"Modules/Defence/Turret Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,					"Modules/Defence/Laser Turret/Laser Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Exploration/Pilot Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power/Power Capacitor");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Generator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -215,6 +225,10 @@ public class CGameRegistrator : MonoBehaviour
 		// User Interface
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/FacilityExpansion");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/ControlsTest");
+
+		// Other
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Defence/Laser Turret/Laser Hit Particles");
 	}
 
 
@@ -257,18 +271,21 @@ public class CGameRegistrator : MonoBehaviour
     void RegisterAccessories()
     {
         CAccessoryInterface.RegisterPrefab(CAccessoryInterface.EType.Alarm, ENetworkPrefab.Alarm);
-        //CModuleInterface.RegisterPrefab(CAccessoryInterface.EType.DuiMonitor, ENetworkPrefab.);
     }
 
 
     void RegisterModules()
     {
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit, ENetworkPrefab.PilotCockpit);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner, ENetworkPrefab.PlayerSpawner);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserCockpit, ENetworkPrefab.TurretCockpit);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret, ENetworkPrefab.LaserTurret);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereGenerator, ENetworkPrefab.AtmosphereGenerator);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner, ENetworkPrefab.PlayerSpawner);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserCockpit, ENetworkPrefab.LaserCockpit);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret, ENetworkPrefab.LaserTurret);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit, ENetworkPrefab.PilotCockpit);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerGenerator, ENetworkPrefab.PowerGenerator);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerCapacitor, ENetworkPrefab.PowerCapacitor);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);	
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
     }
 
 
