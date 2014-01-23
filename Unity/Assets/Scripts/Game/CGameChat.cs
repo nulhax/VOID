@@ -99,7 +99,6 @@ public class CGameChat : CNetworkMonoBehaviour
                 {
                     // Send message
                     m_bSendMessage = true;
-                    Debug.Log("Send bool: " + m_bSendMessage.ToString());
                 }
 
                 // De-focus chat frame
@@ -119,37 +118,34 @@ public class CGameChat : CNetworkMonoBehaviour
         }
     }
 
+
     public static void SerializeData(CNetworkStream _cStream)
     {
         if (Instance.m_bSendMessage)
         {
-            Debug.Log("Serialize entered");
-
             // Write the first byte to the stream as a network action
             _cStream.Write((byte)ENetworkAction.ActionSendPlayerMessage);
 
             // Write player's name to stream
+            _cStream.WriteString(CGamePlayers.Instance.LocalPlayerName);
 
             // Write player's message to string
             _cStream.WriteString(m_sPlayerChatInput);
-            Debug.Log(m_sPlayerChatInput);
 
             // Clear player input
             m_sPlayerChatInput = "";
 
+            // Stop sending the message
             Instance.m_bSendMessage = false;
-
-            Debug.Log("Send bool: " + Instance.m_bSendMessage.ToString());
         }
     }
+
 
     public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         // While there is unread data in the stream
         while (_cStream.HasUnreadData)
         {
-            Debug.Log("Unserialize entered");
-
             // Save the first byte as the network action
             ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
 
@@ -158,17 +154,15 @@ public class CGameChat : CNetworkMonoBehaviour
             {
                     // New player message was sent
                 case ENetworkAction.ActionSendPlayerMessage:
-                    {
-                        Debug.Log("Reading stream");
+                {
+                    string strName    = _cStream.ReadString();
+                    string strMessage = _cStream.ReadString();
 
-                        string strName    = _cStream.ReadString();
-                        string strMessage = _cStream.ReadString();
+                    // Read out message into output string
+                    Instance.InvokeRpcAll("ReceivePlayerMessage", strName, strMessage);
 
-                        // Read out message into output string
-                        Instance.InvokeRpcAll("ReceivePlayerMessage", strName, strMessage);
-
-                        break;
-                    }
+                    break;
+                }
             }
         }
     }
@@ -176,11 +170,8 @@ public class CGameChat : CNetworkMonoBehaviour
     [ANetworkRpc]
     void ReceivePlayerMessage(string _strPlayerName, string _strMessage)
     {
-        Debug.Log("RPC entered");
-
+        // Concatonate all of the strings into a single output
         m_sPlayerChatOuput += "[" + _strPlayerName + "]: " + _strMessage + "\n";
-
-        Debug.Log(m_sPlayerChatOuput);
     }
     
 
@@ -208,8 +199,6 @@ public class CGameChat : CNetworkMonoBehaviour
             GUI.SetNextControlName(m_sChatInputControlName);
             m_sPlayerChatInput = GUI.TextField(new Rect(fInputOriginX, fInputOriginY, fInputWidth, fInputHeight), m_sPlayerChatInput, 255);
 
-            Debug.Log(m_sPlayerChatInput);
-
             // If return key was pressed
             if (m_bProcessChat)
             {
@@ -223,111 +212,13 @@ public class CGameChat : CNetworkMonoBehaviour
     }
 
 
-    bool m_bSendMessage = false;
-    bool m_bProcessChat       = false;
-    static string m_sPlayerChatInput = "";
-    static string m_sPlayerChatOuput = "";
-    //string[] m_sStringArray = new string[5];
+    bool m_bSendMessage                  = false;
+    bool m_bProcessChat                  = false;
+    static string m_sPlayerChatInput     = "";
+    static string m_sPlayerChatOuput     = "";
     const string m_sChatInputControlName = "ChatInputTextField";
-    static string m_sPlayerName = "[" + System.Environment.UserName + "]: ";
+    static string m_sPlayerName          = "[" + System.Environment.UserName + "]: ";
     static CGameChat m_Instance;
-
-    //Dictionary<ulong, CNetworkViewId> m_mPlayersActor = new Dictionary<ulong, CNetworkViewId>();
-    //List<ulong> m_aUnspawnedPlayers = new List<ulong>();
-
-    //CNetworkVar<string> m_sNetworkedPlayerName = null;
-    //List<string> m_PlayerNamesList = new List<string>();
-
-    //static string m_sPlayerName = System.Environment.UserDomainName + ": " + System.Environment.UserName;
-
-    //static CGamePlayers s_cInstance = null;
-
-    /////////////////////////////////////////////////////////////////
-
-    //void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-    //{
-    //if (_cSyncedNetworkVar == m_sNetworkedPlayerName)
-    //{
-    //    bool bAddToList = true;
-
-    //    foreach (string Name in m_PlayerNamesList)
-    //    {
-    //        if (Name == m_sNetworkedPlayerName.Get())
-    //        {
-    //            bAddToList = false;
-    //        }
-    //    }
-
-    //    if (bAddToList)
-    //    {
-    //        m_PlayerNamesList.Add(m_sNetworkedPlayerName.Get());
-    //        Debug.Log("Added " + m_sNetworkedPlayerName.Get() + " to game");
-    //    }
-    //    else
-    //    {
-    //        Debug.Log("Name " + m_sNetworkedPlayerName.Get() + " Was already taken!");
-    //    }
-    //}
-    //  }
-
-    //    public static void SerializeData(CNetworkStream _cStream)
-    //  {
-    //_cStream.Write((byte)ENetworkAction.ActionSendPlayerName);
-    //_cStream.WriteString(m_sPlayerName);
-    // }
-
-
-    //   public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-    // {
-    //ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
-
-    //switch (eNetworkAction)
-    //{
-    //    case ENetworkAction.ActionSendPlayerName:
-    //        {
-    //            m_sPlayerName = _cStream.ReadString();
-    //            s_cInstance.m_sNetworkedPlayerName.Set(m_sPlayerName);
-
-    //            break;
-    //        }
-    //}
-    //}
-
-
-
-
-
-    //[ANetworkRpc]
-    //void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
-    //{
-    //    m_mPlayersActor.Add(_ulPlayerId, _cPlayerActorId);
-    //}
-
-
-    //[ANetworkRpc]
-    //void UnregisterPlayerActor(ulong _ulPlayerId)
-    //{
-    //    m_mPlayersActor.Remove(_ulPlayerId);
-    //    m_aUnspawnedPlayers.Remove(_ulPlayerId);
-    //}
-
-
-    //void OnGUI()
-    //{
-    //    if (CGamePlayers.SelfActor == null)
-    //    {
-    //        // Draw un-spawned message
-    //        GUIStyle cStyle = new GUIStyle();
-    //        cStyle.fontSize = 40;
-    //        cStyle.normal.textColor = Color.white;
-
-    //        GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
-    //                  "Waiting for spawner to be available...", cStyle);
-    //    }
-    //}
-
-
-    // Member Fields
 
 
 };
