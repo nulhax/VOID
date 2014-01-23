@@ -45,6 +45,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+	public static CGamePlayers Instance
+	{
+		get
+		{
+			return(s_cInstance);
+		}
+	}
+
 	public static GameObject SelfActor
 	{
 		get 
