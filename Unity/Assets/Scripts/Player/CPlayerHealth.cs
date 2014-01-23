@@ -98,13 +98,13 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	void Start() 
     {
         // Death audio
-		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		CAudioCue[] audioCues = gameObject.GetComponents<CAudioCue>();
 
-		foreach(AudioCue cue in audioCues)
+		foreach(CAudioCue cue in audioCues)
 		{
 			if(cue.m_strCueName == "LaughTrack")
 			{
-				m_LaughTrack = 	cue;
+				//m_LaughTrack = 	cue;
 			}
 		}
 	}
@@ -189,6 +189,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 {
                     m_bAlive.Set(false);
                 }
+                else if (m_fHitPoints.Get() > 0.0f)
+                {
+                    m_bAlive.Set(true);
+                }
             }
         }
     }
@@ -227,7 +231,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	CNetworkVar<bool> m_bAlive;
 
 
-	AudioCue m_LaughTrack;
+	CAudioCue m_LaughTrack;
 
 
 }
