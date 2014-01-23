@@ -29,6 +29,8 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 	
 	
 	// Member Fields
+	const float m_kfMaximumPropulsion = 15.0f;
+
 	CNetworkVar<float> m_fPropulsionOutput = null;
 	CNetworkVar<bool> m_PropulsionGeneratorActive = null;
 			
@@ -80,7 +82,10 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 	
 	public void UpdatePropulsion()
 	{
-
+		if (IsPropulsionGeneratorActive) 
+		{
+			m_fPropulsionOutput.Set(m_kfMaximumPropulsion);
+		}
 	}
 	
 	[AServerOnly]

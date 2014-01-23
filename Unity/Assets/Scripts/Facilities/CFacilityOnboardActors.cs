@@ -41,8 +41,8 @@ public class CFacilityOnboardActors : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		ActorEnteredFacility += new FacilityActorEnterExit(CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger);
-		ActorExitedFacility += new FacilityActorEnterExit(CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger);
+		ActorEnteredFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger;
+		ActorExitedFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger;
 	}
 
 	[AServerOnly]

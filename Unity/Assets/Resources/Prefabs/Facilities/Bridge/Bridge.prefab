@@ -1050,7 +1050,6 @@ GameObject:
   - 114: {fileID: 11400146}
   - 114: {fileID: 11400144}
   - 114: {fileID: 11400142}
-  - 114: {fileID: 11400140}
   - 114: {fileID: 11400138}
   - 82: {fileID: 8200004}
   - 114: {fileID: 11400174}
@@ -1970,7 +1969,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100116}
   m_LocalRotation: {x: .1305262, y: 0, z: 0, w: .991444886}
-  m_LocalPosition: {x: 0, y: -9.90326977, z: -.349935532}
+  m_LocalPosition: {x: -11.8099756, y: -9.90326977, z: -27.2159004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400118}
@@ -1983,7 +1982,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100118}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.28118706, y: 7.25328827, z: -5.55647516}
+  m_LocalPosition: {x: 8.61823864e-05, y: 5.36996984, z: 7.8391161}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400124}
@@ -4364,17 +4363,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100114}
---- !u!114 &11400140
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d933f9220373a1d40a323b92b0aef704, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_TestDUI: 0
 --- !u!114 &11400142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4708,7 +4697,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_eType: 1
   m_eSize: 1
-  m_ePreplacedModuleType: 0
+  m_ePreplacedModuleType: 7
   m_cPositioner: {fileID: 100086}
 --- !u!114 &11400196
 MonoBehaviour:

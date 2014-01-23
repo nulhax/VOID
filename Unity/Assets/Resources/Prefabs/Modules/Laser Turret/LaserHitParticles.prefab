@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 198: {fileID: 19800000}
   - 199: {fileID: 19900000}
-  m_Layer: 10
+  m_Layer: 11
   m_Name: LaserHitParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}

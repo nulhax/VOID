@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -88,7 +88,7 @@ public class CTorchLight : CNetworkMonoBehaviour
 		}
 		
 		//Get audio cues
-		AudioCue[] cues = gameObject.GetComponents<AudioCue>();
+		CAudioCue[] cues = gameObject.GetComponents<CAudioCue>();
 	}
 
 

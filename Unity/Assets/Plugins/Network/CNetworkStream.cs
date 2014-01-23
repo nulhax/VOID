@@ -203,7 +203,7 @@ public class CNetworkStream
 	
 	public void Write(float _fValue)
 	{
-		m_cBitStream.Write((float)_fValue);
+		m_cBitStream.Write(_fValue);
 	}
 
 
