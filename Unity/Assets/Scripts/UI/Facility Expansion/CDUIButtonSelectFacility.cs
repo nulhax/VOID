@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -40,6 +40,6 @@ public class CDUIButtonSelectFacility : MonoBehaviour
 	public void OnSelect(bool _IsSelected)
 	{
 		if(CNetwork.IsServer && _IsSelected)
-			m_FacilityStageObject.GetComponent<CDUIStageFacilityObject>().ChangeFacilityType(m_FacilityType);
+			m_FacilityStageObject.GetComponent<CDUIStageFacilityExpansion>().ChangeFacilityType(m_FacilityType);
 	}
 }

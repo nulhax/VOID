@@ -86,8 +86,9 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	public void Start()
 	{
-		// Register when the secondary start
+		// Register the interaction events
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
+		m_ToolInterface.EventPrimaryActivate += OnPrimaryStart;
 		m_ToolInterface.EventSecondaryActivate += OnSecondaryStart;
 
 		// Register mouse movement events
@@ -187,7 +188,18 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	private void OnSecondaryStart(GameObject _cInteractableObject)
+	private void OnPrimaryStart(GameObject _InteractableObject)
+	{
+		// Only conserned with selecting module ports
+		CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
+		if(mpi != null)
+		{
+
+		}
+	}
+
+	[AServerOnly]
+	private void OnSecondaryStart(GameObject _InteractableObject)
 	{
 		m_DUIActive.Set(!m_DUIActive.Get());
 	}

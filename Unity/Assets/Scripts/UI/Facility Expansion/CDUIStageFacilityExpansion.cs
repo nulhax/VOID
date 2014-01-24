@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CDUIStageFacilityObject : CNetworkMonoBehaviour 
+public class CDUIStageFacilityExpansion : CNetworkMonoBehaviour 
 {
 	// Member Types
 	
