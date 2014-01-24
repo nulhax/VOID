@@ -30,145 +30,190 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 
 
 	// Member Fields
-	public Transform m_ActiveUIPosition = null;
-	public Transform m_InactiveUIPosition = null;
+	public Transform m_ActiveUITransform = null;
+	public Transform m_InactiveUITransform = null;
 
 	public GameObject m_DUI = null;
 
 	public float m_UITransitionTime = 0.5f;
+
+	private CToolInterface m_ToolInterface = null;
 	private float m_TransitionTimer = 0.0f;
 
+	private Vector3 m_ToTransionPos = Vector3.zero;
+	private Quaternion m_ToTransionRot = Quaternion.identity;
+	private Vector3 m_ToTransionScale = Vector3.zero;
+
+	private Vector3 m_FromTransionPos = Vector3.zero;
+	private Quaternion m_FromTransionRot = Quaternion.identity;
+	private Vector3 m_FromTransionScale = Vector3.zero;
+
+	private Vector3 m_ActivatedPositionOffset = Vector3.zero;
+	
 	private bool m_Activating = false;
 	private bool m_Deactivating = false;
 
-	private CNetworkVar<bool> m_Active = null;
+	private CNetworkVar<bool> m_DUIActive = null;
 
 
 	// Member Properties
+	public bool IsDUIActive
+	{
+		get { return(m_DUIActive.Get()); }
+	}
 	
-	
-	// Member Functions
-	
-	
+	// Member Methods
 	public override void InstanceNetworkVars()
 	{
-		m_Active = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_DUIActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	
 	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		if (_cSyncedVar == m_Active)
+		if (_cSyncedVar == m_DUIActive)
 		{
-			if (m_Active.Get())
+			if (IsDUIActive)
 			{
-				TransitionIn();
+				ActivateDUI();
 			}
 			else
 			{
-				TransitionOut();
+				DeactivateDUI();
 			}
 		}
 	}
 	
-	
 	public void Start()
 	{
-		CToolInterface ti = gameObject.GetComponent<CToolInterface>();
+		// Register when the secondary start
+		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
+		m_ToolInterface.EventSecondaryActivate += OnSecondaryStart;
 
-		ti.EventSecondaryActivate += OnSecondaryStart;
-		ti.EventSecondaryDeactivate += OnSecondaryEnd;
+		// Register mouse movement events
+		CUserInput.EventMouseMoveX += OnMouseMoveX;
+		CUserInput.EventMouseMoveY += OnMouseMoveY;
 
-		if(CNetwork.IsServer)
-		{
-			m_TransitionTimer = m_UITransitionTime;
-		
-			UpdateUITransform();
-		}
+		// Set the DUI object as inactive
+		m_DUI.transform.position = m_InactiveUITransform.position;
+		m_DUI.transform.rotation = m_InactiveUITransform.rotation;
+		m_DUI.transform.localScale = m_InactiveUITransform.localScale;
+		m_DUI.SetActive(false);
 	}
-	
 
 	public void Update()
 	{
-		if(!m_Activating && !m_Deactivating && gameObject.GetComponent<CToolInterface>().IsHeld)
+		if(!m_ToolInterface)
 			return;
 
-		bool finished = false;
-		if(m_Activating)
+		if(m_Activating || m_Deactivating)
 		{
-			m_TransitionTimer += Time.deltaTime;
+			UpdateTransitioning();
 		}
-		else if(m_Deactivating)
-		{
-			m_TransitionTimer -= Time.deltaTime;
-		}
+
+		UpdateDUITransform();
+	}
+
+	private void UpdateTransitioning()
+	{
+		m_TransitionTimer += Time.deltaTime;
 		
 		if(m_TransitionTimer > m_UITransitionTime)
 		{
 			m_TransitionTimer = m_UITransitionTime;
-			finished = true;
-		}
-		else if(m_TransitionTimer < 0)
-		{
-			m_TransitionTimer = 0.0f;
-			finished = true;
-		}
-		
-		UpdateUITransform();
-		
-		if(finished)
-		{
+
 			if(m_Activating) 
 			{
 				m_Activating = false;
-
-//				if(EventFadeOutFinished != null)
-//					EventFadeOutFinished();
 			}
-			if(m_Deactivating) 
+			if(m_Deactivating)
 			{
+				m_DUI.SetActive(false);
 				m_Deactivating = false;
-
-//				if(EventFadeOutFinished != null)
-//					EventFadeOutFinished();
 			}
 		}
 	}
 	
-	private void TransitionIn()
+	private void ActivateDUI()
 	{
+		m_DUI.SetActive(true);
+
 		m_Activating = true;
 		m_TransitionTimer = 0.0f;
-		
-		UpdateUITransform();
+		m_ActivatedPositionOffset = Vector3.zero;
+
+		Vector3 ActivePosToHead = (m_ActiveUITransform.position - m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.position).normalized;
+
+		m_ToTransionPos = m_ActiveUITransform.localPosition;
+		m_ToTransionRot = Quaternion.Inverse(gameObject.transform.rotation) * Quaternion.LookRotation(ActivePosToHead);
+		m_ToTransionScale = m_ActiveUITransform.localScale;
+
+		m_FromTransionPos = m_DUI.transform.localPosition;
+		m_FromTransionRot = m_DUI.transform.localRotation;
+		m_FromTransionScale = m_DUI.transform.localScale;
 	}
 	
-	private void TransitionOut()
+	private void DeactivateDUI()
 	{
 		m_Deactivating = true;
-		m_TransitionTimer = m_UITransitionTime;
-		
-		UpdateUITransform();
+		m_TransitionTimer = 0.0f;
+
+		m_ToTransionPos = m_InactiveUITransform.localPosition;
+		m_ToTransionRot = m_InactiveUITransform.localRotation;
+		m_ToTransionScale = m_InactiveUITransform.localScale;
+
+		m_FromTransionPos = m_DUI.transform.localPosition;
+		m_FromTransionRot = m_DUI.transform.localRotation;
+		m_FromTransionScale = m_DUI.transform.localScale;
 	}
 	
-	private void UpdateUITransform()
+	private void UpdateDUITransform()
 	{
-		m_DUI.transform.position = Vector3.Lerp(m_ActiveUIPosition.position, m_InactiveUIPosition.position, m_TransitionTimer/m_UITransitionTime);
-		m_DUI.transform.rotation = Quaternion.Slerp(m_ActiveUIPosition.rotation, m_InactiveUIPosition.rotation, m_TransitionTimer/m_UITransitionTime);
-		m_DUI.transform.localScale = Vector3.Lerp(m_ActiveUIPosition.localScale, m_InactiveUIPosition.localScale, m_TransitionTimer/m_UITransitionTime);
+		if(m_Activating || m_Deactivating)
+		{
+			float lerpValue = m_TransitionTimer/m_UITransitionTime;
+
+			m_DUI.transform.localPosition = Vector3.Lerp(m_FromTransionPos, m_ToTransionPos, lerpValue);
+			m_DUI.transform.localRotation = Quaternion.Slerp(m_FromTransionRot, m_ToTransionRot, lerpValue);
+			m_DUI.transform.localScale = Vector3.Lerp(m_FromTransionScale, m_ToTransionScale, lerpValue);
+		}
+		else if(IsDUIActive)
+		{
+			m_DUI.transform.localPosition = m_ToTransionPos + m_ActivatedPositionOffset;
+
+			Vector3 duiToHead = (m_DUI.transform.position - m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.position).normalized;
+			m_DUI.transform.rotation = Quaternion.LookRotation(duiToHead);
+		}
 	}
-	
 
 	[AServerOnly]
-	public void OnSecondaryStart(GameObject _cInteractableObject)
+	private void OnSecondaryStart(GameObject _cInteractableObject)
 	{
-		m_Active.Set(true);
+		m_DUIActive.Set(!m_DUIActive.Get());
 	}
-	
-	
-	[AServerOnly]
-	public void OnSecondaryEnd()
+
+	private void OnMouseMoveX(float _Delta)
 	{
-		m_Active.Set(false);
+		if(IsDUIActive && !m_Deactivating && ! m_Activating)
+		{
+			m_ActivatedPositionOffset.x -= _Delta * 0.01f;
+			m_ActivatedPositionOffset.x = Mathf.Clamp(m_ActivatedPositionOffset.x, -0.8f, 0.8f);
+		}
+	}
+
+	private void OnMouseMoveY(float _Delta)
+	{
+		if(IsDUIActive && !m_Deactivating && ! m_Activating)
+		{
+			m_ActivatedPositionOffset.y += _Delta * 0.01f;
+			m_ActivatedPositionOffset.y = Mathf.Clamp(m_ActivatedPositionOffset.y, -0.5f, 0.5f);
+		}
+	}
+
+	private void OnDestory()
+	{
+		// Unregister mouse movement events
+		CUserInput.EventMouseMoveX -= OnMouseMoveX;
+		CUserInput.EventMouseMoveY -= OnMouseMoveY;
 	}
 };
