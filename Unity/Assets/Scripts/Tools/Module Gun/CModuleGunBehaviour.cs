@@ -78,6 +78,13 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 
 		ti.EventSecondaryActivate += OnSecondaryStart;
 		ti.EventSecondaryDeactivate += OnSecondaryEnd;
+
+		if(CNetwork.IsServer)
+		{
+			m_TransitionTimer = m_UITransitionTime;
+		
+			UpdateUITransform();
+		}
 	}
 	
 
@@ -87,7 +94,6 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			return;
 
 		bool finished = false;
-
 		if(m_Activating)
 		{
 			m_TransitionTimer += Time.deltaTime;
@@ -147,25 +153,12 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void UpdateUITransform()
 	{
-		m_DUI.transform.position = Vector3.Lerp(m_InactiveUIPosition.position, m_ActiveUIPosition.position, m_TransitionTimer);
-		m_DUI.transform.rotation = Quaternion.Slerp(m_InactiveUIPosition.rotation, m_ActiveUIPosition.rotation, m_TransitionTimer);
-		m_DUI.transform.localScale = Vector3.Lerp(m_InactiveUIPosition.localScale, m_ActiveUIPosition.localScale, m_TransitionTimer);
+		m_DUI.transform.position = Vector3.Lerp(m_ActiveUIPosition.position, m_InactiveUIPosition.position, m_TransitionTimer/m_UITransitionTime);
+		m_DUI.transform.rotation = Quaternion.Slerp(m_ActiveUIPosition.rotation, m_InactiveUIPosition.rotation, m_TransitionTimer/m_UITransitionTime);
+		m_DUI.transform.localScale = Vector3.Lerp(m_ActiveUIPosition.localScale, m_InactiveUIPosition.localScale, m_TransitionTimer/m_UITransitionTime);
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	
+
 	[AServerOnly]
 	public void OnSecondaryStart(GameObject _cInteractableObject)
 	{
