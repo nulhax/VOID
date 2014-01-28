@@ -697,7 +697,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100014}
-  m_TestDUI: 0
+  m_DefaultUI: 3
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
