@@ -207,7 +207,7 @@ public class CUserInput : MonoBehaviour
 	void UpdatePrimary()
 	{
 		if (Input.GetKeyDown(s_ePrimaryKey))
-		{
+        {
 			if (EventPrimary != null) EventPrimary(true);
 		}
 		else if (Input.GetKeyUp(s_ePrimaryKey))
