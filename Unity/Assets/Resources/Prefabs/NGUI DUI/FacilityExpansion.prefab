@@ -3994,6 +3994,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100044}
   m_DUICamera3D: {fileID: 100006}
+  m_DUIType: 2
   m_RenderTexSize: {x: 1000, y: 700}
 --- !u!114 &11400194
 MonoBehaviour:

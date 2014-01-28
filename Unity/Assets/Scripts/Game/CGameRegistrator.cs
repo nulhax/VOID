@@ -106,8 +106,9 @@ public class CGameRegistrator : MonoBehaviour
         Fire,
 
 		// User Interfaces
-		DUITest,
-		DUITest2,
+		UITest,
+		UIFacilityExpansion,
+		UIModuleCreation,
 
 		// Other
 		LaserTurretProjectile,
@@ -139,6 +140,7 @@ public class CGameRegistrator : MonoBehaviour
         RegisterAccessories();
         RegisterModules();
         RegisterComponents();
+		RegisterUserInterfaces();
 	}
 
 
@@ -225,8 +227,9 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire");
 
 		// User Interface
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/FacilityExpansion");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/ControlsTest");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"NGUI DUI/ControlsTest");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIFacilityExpansion,			"NGUI DUI/FacilityExpansion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIModuleCreation,			"NGUI DUI/ModuleCreation");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -297,6 +300,14 @@ public class CGameRegistrator : MonoBehaviour
         CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
         CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
     }
+
+
+	void RegisterUserInterfaces()
+	{
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.UITest);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
+	}
 
 
 // Member Fields

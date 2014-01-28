@@ -190,11 +190,14 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void OnPrimaryStart(GameObject _InteractableObject)
 	{
-		// Only conserned with selecting module ports
-		CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
-		if(mpi != null)
+		if(_InteractableObject != null)
 		{
+			// Only conserned with selecting module ports
+			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
+			if(mpi != null)
+			{
 
+			}
 		}
 	}
 

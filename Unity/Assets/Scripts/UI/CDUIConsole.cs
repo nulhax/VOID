@@ -24,7 +24,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 {
 	// Member Fields 
 	public GameObject m_ScreenObject = null;
-	public int m_TestDUI = 0;
+	public CDUIRoot.EType m_DefaultUI = CDUIRoot.EType.INVALID;
 
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	
@@ -80,7 +80,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
     private void CreateDUI()
 	{
 		// Create the DUI game object
-		GameObject dui = CNetwork.Factory.CreateObject(m_TestDUI == 0 ? CGameRegistrator.ENetworkPrefab.DUITest : CGameRegistrator.ENetworkPrefab.DUITest2);
+		GameObject dui = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DefaultUI));
 		dui.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
 		dui.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
 
@@ -91,7 +91,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		DUIViewId = dui.GetComponent<CNetworkView>().ViewId;
 
 		// Increment the offset
-		s_UIOffset += 5.0f;
+		s_UIOffset += 10.0f;
 	}
 
 	[AClientOnly]
