@@ -104,27 +104,28 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			GameObject hitActorInteractable = null;
 			
 			// Check if the player cast a ray on the screen
-			if(CheckInteractableObjectRaycast(vOrigin, vDirection, fDistance, out cRayHit))
+			if(CheckColliderObjectRaycast(vOrigin, vDirection, fDistance, out cRayHit))
 			{
 				// Get the game object which owns this mesh
 				GameObject hitObject = cRayHit.collider.gameObject;
 				
 				// Check the parents until we find the one that has CActorInteractable on it
+				bool found = true;
 				while(hitObject.GetComponent<CActorInteractable>() == null)
 				{
-					if (hitObject.transform.parent != null)
+					if(hitObject.transform.parent != null)
 					{
 						hitObject = hitObject.transform.parent.gameObject;
 					}
 					else
 					{
-						Debug.LogError("PlayerInteractor hit game object without any CActorInteractable attached!");
+						found = false;
 						break;
 					}
 				}
 
-
-				hitActorInteractable = hitObject;					
+				if(found)
+					hitActorInteractable = hitObject;					
 			}
 
 			// If this is a valid interactable actor
@@ -161,11 +162,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	}
 	
 
-	private static bool CheckInteractableObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
+	private static bool CheckColliderObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
     {
 		Ray ray = new Ray(_origin, _direction);
 		
-		if (Physics.Raycast(ray, out _rh, _fDistance, 1 << LayerMask.NameToLayer("InteractableObject")))
+		if (Physics.Raycast(ray, out _rh, _fDistance))
 		{
 			Debug.DrawRay(_origin, _direction * _fDistance, Color.green, 1.0f);
 			return(true);

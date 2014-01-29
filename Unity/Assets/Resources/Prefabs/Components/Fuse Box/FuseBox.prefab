@@ -13,7 +13,7 @@ GameObject:
   - 23: {fileID: 2300000}
   - 199: {fileID: 19900000}
   - 198: {fileID: 19800000}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Back
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ GameObject:
   - 65: {fileID: 6500002}
   - 23: {fileID: 2300002}
   - 65: {fileID: 6500004}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Plate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400010}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: FuseBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400006}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: FrontPlate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,6 +300,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
+  syncNetworkVar: 1
   initialHealth: 500
   health_previous: 0
 --- !u!114 &11400014
@@ -313,6 +314,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialState: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1
