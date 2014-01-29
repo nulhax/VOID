@@ -186,11 +186,9 @@ public class CGameChat : CNetworkMonoBehaviour
                     string strName    = _cStream.ReadString();
                     string strMessage = _cStream.ReadString();
 
-                    Debug.Log("1");
                     // Find all players within 'hearing' range of the source player
                     foreach (CNetworkPlayer Player in CheckPlayerDistances(_cNetworkPlayer))
                     {
-                        Debug.Log("2");
                         // Invoke RPC call to send the message to each player
                         Instance.InvokeRpc(Player.PlayerId, "ReceivePlayerMessage", strName, strMessage);
                     }
@@ -220,28 +218,32 @@ public class CGameChat : CNetworkMonoBehaviour
     [AServerOnly]
     static List<CNetworkPlayer> CheckPlayerDistances(CNetworkPlayer _SourcePlayer)
     {
-        Debug.Log("3");
         // Temporary return list of players within range of the source
         List<CNetworkPlayer> ReturnPlayerList = new List<CNetworkPlayer>();
 
-        // Dictionary of all connected players
+        // Dictionary of all connected network players
         // NOTE: This dictionary includes the source player
         Dictionary<ulong, CNetworkPlayer> PlayerList = CNetwork.Server.FindNetworkPlayers();
+
+        // List of all player actors
+        List<GameObject> ActorList = CGamePlayers.PlayerActors;
+
+  //      GameObject playerActor = CGamePlayers.FindPlayerActor(PlayerList.Keys);
 
         // Loop to iterate through all players including the source
         foreach (KeyValuePair<ulong, CNetworkPlayer> Player in PlayerList)
         {
-            Debug.Log("4");
             // If the current player is not the source player
             if (Player.Key != _SourcePlayer.PlayerId)
             {
-                Debug.Log("5");
+                // Save the actor game objects for the source and current players
+                GameObject PlayerActor = CGamePlayers.FindPlayerActor(Player.Key);
+                GameObject SourceActor = CGamePlayers.FindPlayerActor(_SourcePlayer.PlayerId);
+
                 // Add the source's position vector to the current player's vector
-                // If the magnitude of the resulting vector is greater than 10.0f
-                if ((Player.Value.transform.position + _SourcePlayer.transform.position).magnitude >= 10.0f)
+                // If the magnitude of the resulting vector is greater than 100.0f
+                if ((PlayerActor.transform.position + SourceActor.transform.position).magnitude < 100.0f)
                 {
-                    Debug.Log("6");
-                    Debug.Log((Player.Value.transform.position + _SourcePlayer.transform.position).magnitude.ToString());
                     // Add the player to the return list
                     ReturnPlayerList.Add(Player.Value);
                 }
@@ -251,7 +253,6 @@ public class CGameChat : CNetworkMonoBehaviour
         // If the return list is empty
         if (ReturnPlayerList.Count == 0)
         {
-            Debug.Log("7");
             // Invoke an RPC call on the source player
             Instance.InvokeRpc(_SourcePlayer.PlayerId, "ReceivePlayerMessage", "Server", "There are no players nearby who can hear your message.");
         }
