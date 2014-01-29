@@ -48,7 +48,7 @@ public class CExitTrigger : MonoBehaviour
 				if(!CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
 				{
 					// Set the disembarking state
-					dynamicActor.BoardingState = CActorBoardable.EBoardingState.Offboard;
+					dynamicActor.DisembarkActor();
 				}
 			}
 		}

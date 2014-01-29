@@ -106,8 +106,9 @@ public class CGameRegistrator : MonoBehaviour
         Fire,
 
 		// User Interfaces
-		DUITest,
-		DUITest2,
+		UITest,
+		UIFacilityExpansion,
+		UIModuleCreation,
 
 		// Other
 		LaserTurretProjectile,
@@ -139,6 +140,7 @@ public class CGameRegistrator : MonoBehaviour
         RegisterAccessories();
         RegisterModules();
         RegisterComponents();
+		RegisterUserInterfaces();
 	}
 
 
@@ -184,7 +186,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayXSection,          "Facilities/Hallways/HallwayXSectionMini");
 
         // Accessories
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/DUI/CurvedMonitor_wide");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/Monitors/CurvedMonitor_wide");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Door,                        "Accessories/Doors/Door");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
@@ -195,8 +197,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserCockpit,				"Modules/Defence/Turret Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,					"Modules/Defence/Laser Turret/Laser Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Exploration/Pilot Cockpit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power/Power Capacitor");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Generator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power/Power Generator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Capacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
 
@@ -225,8 +227,9 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire");
 
 		// User Interface
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,                     "NGUI DUI/FacilityExpansion");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest2,                    "NGUI DUI/ControlsTest");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"DUI/DUIControlsTest");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIFacilityExpansion,			"DUI/DUIFacilityExpansion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIModuleCreation,			"DUI/DUIModuleCreation");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -297,6 +300,14 @@ public class CGameRegistrator : MonoBehaviour
         CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
         CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
     }
+
+
+	void RegisterUserInterfaces()
+	{
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.UITest);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
+	}
 
 
 // Member Fields

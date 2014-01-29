@@ -996,6 +996,9 @@ public class UICamera : MonoBehaviour
 
 		for (int i = 0; i < 3; ++i)
 		{
+			if(i == 1)
+				continue;
+
 			if (Input.GetMouseButtonDown(i))
 			{
 				currentScheme = ControlScheme.Mouse;
