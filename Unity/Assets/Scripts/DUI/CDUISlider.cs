@@ -30,7 +30,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	public enum ESliderNotificationType : byte
 	{
 		INVALID,
-
+		
 		OnValueChange,
 	}
 	
@@ -41,18 +41,18 @@ public class CDUISlider : CNetworkMonoBehaviour
 	private CNetworkVar<float> m_Value = null;
 	private bool m_IsModifyingValueLocally = false;
 	private bool m_IgnoreLocalValueChange = false;
-
+	
 	private float m_TimeSinceModification = 0.0f;
-	private float m_WaitTillLocalUpdateTime = 0.2f;
-
+	private float m_WaitTillLocalUpdateTime = 0.5f;
+	
 	private float m_TimeSinceIgnoreValueChange = 0.0f;
-	private float m_WaitTillValueHandle = 0.2f;
-
+	private float m_WaitTillValueHandle = 0.5f;
+	
 	static private CNetworkStream s_SliderNotificationStream = new CNetworkStream();
-
-
+	
+	
 	// Member Properties
-
+	
 	
 	// Member Methods
 	public override void InstanceNetworkVars()
@@ -69,7 +69,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 				UpdateLocalSliderValue(m_Value.Get());
 		}
 	}
-
+	
 	[AClientOnly]
 	static public void SerializeSliderEvents(CNetworkStream _cStream)
 	{
@@ -95,39 +95,30 @@ public class CDUISlider : CNetworkMonoBehaviour
 				float value = _cStream.ReadFloat();
 				duiSlider.SetValue(value);
 				break;
-
+				
 			default:break;
 			}
 		}
 	}
-
-	public void Awake()
-	{
-		// Set the parent of the children to this gameobject
-		foreach(CDUISliderChild sc in GetComponentsInChildren<CDUISliderChild>())
-		{
-			sc.SliderParent = gameObject;
-		}
-	}
-
+	
 	public void Update()
 	{
 		if(m_IsModifyingValueLocally)
 			m_TimeSinceModification += Time.deltaTime;
-
+		
 		if(m_TimeSinceModification > m_WaitTillLocalUpdateTime)
 		{
 			m_IsModifyingValueLocally = false;
 		}
-
+		
 		if(m_IgnoreLocalValueChange)
 			m_TimeSinceIgnoreValueChange += Time.deltaTime;
-
+		
 		if(m_TimeSinceIgnoreValueChange > m_WaitTillValueHandle)
 		{
 			m_IgnoreLocalValueChange = false;
 		}
-
+		
 		// Only update after a period of not changing the value and if
 		// local value differs from the synced value
 		float localValue = gameObject.GetComponent<UISlider>().value;
@@ -137,39 +128,39 @@ public class CDUISlider : CNetworkMonoBehaviour
 			UpdateLocalSliderValue(syncValue);
 		}
 	}
-
+	
 	public void HandleValueChange() 
 	{
 		if(m_IgnoreLocalValueChange)
 			return;
-
+		
 		if(!s_SliderNotificationStream.HasUnreadData)
 		{
 			// Serialise the event to the server
 			s_SliderNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
 			s_SliderNotificationStream.Write((byte)ESliderNotificationType.OnValueChange);
 			s_SliderNotificationStream.Write(UIProgressBar.current.value);
-
+			
 			m_IsModifyingValueLocally = true;
 			m_TimeSinceModification = 0.0f;
 		}
 	}
-
+	
 	[AServerOnly]
 	private void SetValue(float _Value)
 	{
 		m_Value.Set(_Value);
 	}
-
+	
 	private void UpdateLocalSliderValue(float _Value)
 	{
 		UISlider slider = gameObject.GetComponent<UISlider>();
-
+		
 		m_IgnoreLocalValueChange = true;
 		m_TimeSinceIgnoreValueChange = 0.0f;
-
+		
 		if(slider != null)
 			slider.value = _Value;
 	}
-
+	
 }

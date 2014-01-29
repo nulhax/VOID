@@ -283,7 +283,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 
 		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
-		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(10.0f, -8.0f, -14.0f));
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);

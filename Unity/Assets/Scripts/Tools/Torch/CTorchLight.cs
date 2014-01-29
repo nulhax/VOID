@@ -79,8 +79,8 @@ public class CTorchLight : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(ToggleActivate);
-		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += new CToolInterface.NotifySecondaryActivate(ToggleColour);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += ToggleActivate;
+		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += ToggleColour;
 
 		if (CNetwork.IsServer)
 		{

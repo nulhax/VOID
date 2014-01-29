@@ -105,16 +105,10 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_DUI.transform.position = m_InactiveUITransform.position;
 		m_DUI.transform.rotation = m_InactiveUITransform.rotation;
 		m_DUI.transform.localScale = m_InactiveUITransform.localScale;
-
-		// Set the DUI object as inactive
-		m_DUI.SetActive(false);
 	}
 
 	public void Update()
 	{
-		if(!m_ToolInterface)
-			return;
-
 		if(m_Activating || m_Deactivating)
 		{
 			UpdateTransitioning();
@@ -137,7 +131,6 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			}
 			if(m_Deactivating)
 			{
-				m_DUI.SetActive(false);
 				m_Deactivating = false;
 			}
 		}
@@ -145,8 +138,6 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void ActivateDUI()
 	{
-		m_DUI.SetActive(true);
-
 		m_Activating = true;
 		m_TransitionTimer = 0.0f;
 		m_ActivatedPositionOffset = Vector3.zero;
@@ -204,10 +195,12 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
 			if(mpi != null)
 			{
-				if(m_DUIModuleCreationRoot.SelectedModuleSize == mpi.PortSize && !mpi.IsModuleAttached)
-				{
-					mpi.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
-				}
+				m_DUIActive.Set(true);
+
+//				if(m_DUIModuleCreationRoot.SelectedModuleSize == mpi.PortSize && !mpi.IsModuleAttached)
+//				{
+//					mpi.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+//				}
 			}
 		}
 	}
@@ -215,7 +208,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void OnSecondaryStart(GameObject _InteractableObject)
 	{
-		m_DUIActive.Set(!m_DUIActive.Get());
+		m_DUIActive.Set(false);
 	}
 
 	[AClientOnly]

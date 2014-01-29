@@ -1335,7 +1335,7 @@ GameObject:
   - 114: {fileID: 11400418}
   - 114: {fileID: 11400416}
   m_Layer: 0
-  m_Name: ControlsTest
+  m_Name: DUIControlsTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8891,6 +8891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400422
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8933,6 +8934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8975,6 +8977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9017,6 +9020,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9059,6 +9063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9101,6 +9106,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SliderParent: {fileID: 0}
 --- !u!114 &11400452
 MonoBehaviour:
   m_ObjectHideFlags: 1

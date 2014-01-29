@@ -97,17 +97,16 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		{
 			// Find the origin, direction, distance of the players interaction cursor
 			GameObject headCamera = CGame.CompositeCameraSystem.PlayersHeadCamera;
-			Vector3 vOrigin = headCamera.transform.position;
-			Vector3 vDirection = headCamera.transform.forward;
-			float fDistance = 5.0f;
-			RaycastHit cRayHit = new RaycastHit();
+			Ray ray = new Ray(headCamera.transform.position, headCamera.transform.forward);
+			RaycastHit hit = new RaycastHit();
+			float distance = 5.0f;
 			GameObject hitActorInteractable = null;
 			
 			// Check if the player cast a ray on the screen
-			if(CheckColliderObjectRaycast(vOrigin, vDirection, fDistance, out cRayHit))
+			if(Physics.Raycast(ray, out hit, distance))
 			{
 				// Get the game object which owns this mesh
-				GameObject hitObject = cRayHit.collider.gameObject;
+				GameObject hitObject = hit.collider.gameObject;
 				
 				// Check the parents until we find the one that has CActorInteractable on it
 				bool found = true;
@@ -129,7 +128,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
 
 			// If this is a valid interactable actor
-			if (hitActorInteractable != null)
+			if(hitActorInteractable != null)
 			{
 				// Get the network view id of the intractable object
 				CNetworkView networkView = hitActorInteractable.GetComponent<CNetworkView>();
@@ -137,7 +136,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				if(networkView != null)
 				{
 					// Fire the interactable event for the actor that was interacted with
-					hitActorInteractable.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, cRayHit);
+					hitActorInteractable.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, hit);
 				}
 				else
 				{
@@ -147,35 +146,23 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				if (EventInteraction != null)
 				{
 					// Fire the interaction event for the player interactor
-					EventInteraction(_eIneractionType, hitActorInteractable, cRayHit);
+					EventInteraction(_eIneractionType, hitActorInteractable, hit);
 				}
+
+				Debug.DrawRay(ray.origin, ray.direction * distance, Color.green, 1.0f);
 			}
 			else
 			{
 				if (EventNoInteraction != null)
 				{
 					// Fire the no interaction event for the player interactor
-					EventNoInteraction(_eIneractionType, cRayHit);
+					EventNoInteraction(_eIneractionType, hit);
 				}
+
+				Debug.DrawRay(ray.origin, ray.direction * distance, Color.red, 1.0f);
 			}
 		}
 	}
-	
-
-	private static bool CheckColliderObjectRaycast(Vector3 _origin, Vector3 _direction, float _fDistance, out RaycastHit _rh)
-    {
-		Ray ray = new Ray(_origin, _direction);
-		
-		if (Physics.Raycast(ray, out _rh, _fDistance))
-		{
-			Debug.DrawRay(_origin, _direction * _fDistance, Color.green, 1.0f);
-			return(true);
-		}
-		
-		Debug.DrawRay(_origin, _direction * _fDistance, Color.red, 1.0f);
-		
-		return(false); 
-    }
 
 
 	[AClientOnly]
