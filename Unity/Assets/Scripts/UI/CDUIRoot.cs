@@ -110,33 +110,33 @@ public class CDUIRoot : CNetworkMonoBehaviour
 				m_DUICamera2D.GetComponent<UICamera>().enabled = false;
 		}
 
-//		Camera firstCamera = null;
-//		Camera secondCamera = null;
-//
-//		if(m_DUICamera3D != null && m_DUICamera2D != null)
-//		{
-//			firstCamera = m_DUICamera3D.camera.depth > m_DUICamera2D.camera.depth ? m_DUICamera2D.camera : m_DUICamera3D.camera;
-//			secondCamera = firstCamera == m_DUICamera3D.camera ? m_DUICamera2D.camera : m_DUICamera3D.camera;
-//		}
-//		else if(m_DUICamera2D != null)
-//		{
-//			firstCamera = m_DUICamera2D.camera;
-//		}
-//		else if(m_DUICamera3D != null)
-//		{
-//			firstCamera = m_DUICamera3D.camera;
-//		}
-//
-//		RenderTexture temp = RenderTexture.active;
-//		RenderTexture.active = m_RenderTex;
-//
-//		if(firstCamera != null)
-//			firstCamera.Render();
-//
-//		if(secondCamera != null)
-//			secondCamera.Render();
-//
-//		RenderTexture.active = temp;
+		Camera firstCamera = null;
+		Camera secondCamera = null;
+
+		if(m_DUICamera3D != null && m_DUICamera2D != null)
+		{
+			firstCamera = m_DUICamera3D.camera.depth > m_DUICamera2D.camera.depth ? m_DUICamera2D.camera : m_DUICamera3D.camera;
+			secondCamera = firstCamera == m_DUICamera3D.camera ? m_DUICamera2D.camera : m_DUICamera3D.camera;
+		}
+		else if(m_DUICamera2D != null)
+		{
+			firstCamera = m_DUICamera2D.camera;
+		}
+		else if(m_DUICamera3D != null)
+		{
+			firstCamera = m_DUICamera3D.camera;
+		}
+
+		RenderTexture temp = RenderTexture.active;
+		RenderTexture.active = m_RenderTex;
+
+		if(firstCamera != null)
+			firstCamera.Render();
+
+		if(secondCamera != null)
+			secondCamera.Render();
+
+		RenderTexture.active = temp;
 	}
 
 	public void UpdateCameraViewportPositions(Vector2 _screenTexCoord)
@@ -197,13 +197,13 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		if(m_DUICamera2D != null)
 		{
 			m_DUICamera2D.camera.targetTexture = m_RenderTex;
-			//m_DUICamera2D.camera.enabled = false;
+			m_DUICamera2D.camera.enabled = false;
 		}
 
 		if(m_DUICamera3D != null)
 		{
 			m_DUICamera3D.camera.targetTexture = m_RenderTex;
-			//m_DUICamera3D.camera.enabled = false;
+			m_DUICamera3D.camera.enabled = false;
 		}
 	}
 	

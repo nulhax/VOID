@@ -38,6 +38,8 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	public float m_UITransitionTime = 0.5f;
 
 	private CToolInterface m_ToolInterface = null;
+	private CDUIModuleCreationRoot m_DUIModuleCreationRoot = null;
+
 	private float m_TransitionTimer = 0.0f;
 
 	private Vector3 m_ToTransionPos = Vector3.zero;
@@ -95,10 +97,16 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		CUserInput.EventMouseMoveX += OnMouseMoveX;
 		CUserInput.EventMouseMoveY += OnMouseMoveY;
 
-		// Set the DUI object as inactive
+		// Register DUI events
+		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIModuleCreationRoot>();
+		m_DUIModuleCreationRoot.EventSelectNodeButtonPressed += OnDUISelectNodeButtonPressed;
+
+		// Configure DUI
 		m_DUI.transform.position = m_InactiveUITransform.position;
 		m_DUI.transform.rotation = m_InactiveUITransform.rotation;
 		m_DUI.transform.localScale = m_InactiveUITransform.localScale;
+
+		// Set the DUI object as inactive
 		m_DUI.SetActive(false);
 	}
 
@@ -190,13 +198,16 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void OnPrimaryStart(GameObject _InteractableObject)
 	{
-		if(_InteractableObject != null)
+		if(_InteractableObject != null && !IsDUIActive)
 		{
 			// Only conserned with selecting module ports
 			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
 			if(mpi != null)
 			{
-
+				if(m_DUIModuleCreationRoot.SelectedModuleSize == mpi.PortSize && !mpi.IsModuleAttached)
+				{
+					mpi.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+				}
 			}
 		}
 	}
@@ -207,6 +218,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_DUIActive.Set(!m_DUIActive.Get());
 	}
 
+	[AClientOnly]
 	private void OnMouseMoveX(float _Delta)
 	{
 		if(IsDUIActive && !m_Deactivating && ! m_Activating)
@@ -216,6 +228,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		}
 	}
 
+	[AClientOnly]
 	private void OnMouseMoveY(float _Delta)
 	{
 		if(IsDUIActive && !m_Deactivating && ! m_Activating)
@@ -223,6 +236,11 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			m_ActivatedPositionOffset.y += _Delta * 0.01f;
 			m_ActivatedPositionOffset.y = Mathf.Clamp(m_ActivatedPositionOffset.y, -0.5f, 0.5f);
 		}
+	}
+
+	private void OnDUISelectNodeButtonPressed()
+	{
+		m_DUIActive.Set(false);
 	}
 
 	private void OnDestory()

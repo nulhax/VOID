@@ -374,7 +374,7 @@ TextMesh:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Text: Power Capacitor
+  m_Text: Power Generator
   m_OffsetZ: 0
   m_CharacterSize: .100000001
   m_LineSpacing: 1
@@ -499,6 +499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
+  syncNetworkVar: 1
   initialHealth: 500
   health_previous: 0
 --- !u!114 &11400018
@@ -512,6 +513,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialState: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1

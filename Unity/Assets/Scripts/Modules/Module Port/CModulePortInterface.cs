@@ -27,18 +27,6 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-    public enum ESize
-    {
-        INVALID,
-
-        Small,
-        Medium,
-        Large,
-
-        MAX
-    }
-
-
 // Member Delegates & Events
 
 
@@ -46,7 +34,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 	
     [AServerOnly]
-    public ESize PortSize
+    public CModuleInterface.ESize PortSize
     {
         get { return (m_Size); }
     }
@@ -70,9 +58,9 @@ public class CModulePortInterface : CNetworkMonoBehaviour
     }
 
 
-    public bool IsEmpty
+    public bool IsModuleAttached
     {
-        get { return (AttachedModuleViewId == null); }
+        get { return (AttachedModuleViewId != null); }
     }
 
 
@@ -130,7 +118,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 // Member Fields
 
 	
-    public ESize m_Size = ESize.INVALID;
+	public CModuleInterface.ESize m_Size = CModuleInterface.ESize.INVALID;
 	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
     public GameObject m_Positioner = null;
 	public bool m_Internal = true;

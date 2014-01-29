@@ -173,6 +173,9 @@ public class CUserInput : MonoBehaviour
 
     void Update()
     {
+		if(!m_InFocus)
+			return;
+
         UpdateMouseMove();
         UpdatePrimary();
         UpdateSecondary();
@@ -446,9 +449,14 @@ public class CUserInput : MonoBehaviour
         }
     }
 
+	private void OnApplicationFocus(bool _Focus)
+	{
+		m_InFocus = _Focus;
+	}
 
 // Member Fields
 
+	bool m_InFocus = true;
 
     // Tools
     static KeyCode s_eToolSlot1         = KeyCode.Alpha1;

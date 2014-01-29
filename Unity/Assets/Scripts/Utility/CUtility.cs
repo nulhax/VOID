@@ -60,6 +60,49 @@ public class CUtility
 			SetLayerRecursively(_Obj.transform.GetChild(i).gameObject, _Layer);
 		}
 	}
+
+	static public string LoremIpsum(int minWords, int maxWords,
+	                         int minSentences, int maxSentences,
+	                         int numParagraphs) {
+		
+		var words = new[]{"lorem", "ipsum", "dolor", "sit", "amet", "consectetuer",
+			"adipiscing", "elit", "sed", "diam", "nonummy", "nibh", "euismod",
+			"tincidunt", "ut", "laoreet", "dolore", "magna", "aliquam", "erat"};
+
+		var rand = new System.Random();
+		int numSentences = rand.Next(maxSentences - minSentences)
+			+ minSentences + 1;
+		int numWords = rand.Next(maxWords - minWords) + minWords + 1;
+		
+		string result = string.Empty;
+		
+		for(int p = 0; p < numParagraphs; p++) 
+		{
+			for(int s = 0; s < numSentences; s++) 
+			{
+				for(int w = 0; w < numWords; w++) 
+				{
+					string word = words[rand.Next(words.Length)];
+					if (w > 0) 
+					{ 
+						result += " "; 
+					}
+					else if(w == 0)
+					{
+						char[] copy = word.ToCharArray();
+						copy[0] = char.ToUpper(copy[0]);
+						word = new string(copy);
+					}
+
+					result += word;
+
+				}
+				result += ". ";
+			}
+		}
+		
+		return result;
+	}
 }
 
 /*
