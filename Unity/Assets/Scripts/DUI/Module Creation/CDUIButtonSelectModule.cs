@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -42,7 +42,7 @@ public class CDUIButtonSelectModule : MonoBehaviour
 		if(CNetwork.IsServer && _IsSelected)
 		{
 			// Inform the stage to change model
-			m_ModuleCreationRoot.ChangeModuleType(m_ModuleType);
+			m_ModuleCreationRoot.SetSelectedModuleType(m_ModuleType);
 		}
 	}
 }

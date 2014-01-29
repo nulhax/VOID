@@ -3990,7 +3990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 4
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100052}
   m_Internal: 0
 --- !u!114 &11400082
@@ -4778,7 +4778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 4
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100056}
   m_Internal: 0
 --- !u!114 &11400210

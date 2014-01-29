@@ -43,7 +43,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	private bool m_IgnoreLocalValueChange = false;
 	
 	private float m_TimeSinceModification = 0.0f;
-	private float m_WaitTillLocalUpdateTime = 0.5f;
+	private float m_WaitTillLocalUpdateTime = 1.0f;
 	
 	private float m_TimeSinceIgnoreValueChange = 0.0f;
 	private float m_WaitTillValueHandle = 0.5f;

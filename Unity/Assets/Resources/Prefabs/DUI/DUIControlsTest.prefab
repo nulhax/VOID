@@ -135,7 +135,6 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400436}
   - 114: {fileID: 11400434}
-  - 114: {fileID: 11400432}
   m_Layer: 9
   m_Name: Thumb
   m_TagString: Untagged
@@ -198,7 +197,6 @@ GameObject:
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400454}
   - 114: {fileID: 11400452}
-  - 114: {fileID: 11400450}
   m_Layer: 9
   m_Name: Foreground
   m_TagString: Untagged
@@ -487,7 +485,6 @@ GameObject:
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400430}
   - 114: {fileID: 11400428}
-  - 114: {fileID: 11400426}
   m_Layer: 9
   m_Name: Foreground
   m_TagString: Untagged
@@ -675,7 +672,6 @@ GameObject:
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400424}
   - 114: {fileID: 11400422}
-  - 114: {fileID: 11400420}
   m_Layer: 9
   m_Name: Foreground
   m_TagString: Untagged
@@ -965,7 +961,6 @@ GameObject:
   - 114: {fileID: 11400034}
   - 114: {fileID: 11400442}
   - 114: {fileID: 11400440}
-  - 114: {fileID: 11400438}
   m_Layer: 9
   m_Name: Foreground
   m_TagString: Untagged
@@ -2306,8 +2301,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 20, y: 66.0000153, z: 0}
-  m_Center: {x: 0, y: -47.2639999, z: 0}
+  m_Size: {x: 20, y: 63.6000137, z: 0}
+  m_Center: {x: 0, y: -47.7703972, z: 0}
 --- !u!65 &6500010
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2402,8 +2397,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 66.0000153, y: 20, z: 0}
-  m_Center: {x: 62.7199936, y: 0, z: 0}
+  m_Size: {x: 63.6000137, y: 20, z: 0}
+  m_Center: {x: 63.3919945, y: 0, z: 0}
 --- !u!65 &6500026
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2450,8 +2445,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 20, y: 66.0000153, z: 0}
-  m_Center: {x: 0, y: -66.0800018, z: 0}
+  m_Size: {x: 20, y: 63.6000099, z: 0}
+  m_Center: {x: 0, y: -66.788002, z: 0}
 --- !u!65 &6500034
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2510,8 +2505,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 66.0000153, y: 20, z: 0}
-  m_Center: {x: 67.8719788, y: 0, z: 0}
+  m_Size: {x: 63.6000099, y: 20, z: 0}
+  m_Center: {x: 68.5991821, y: 0, z: 0}
 --- !u!65 &6500044
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -4184,13 +4179,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: .454901963}
   mPivot: 4
-  mWidth: 94
-  mHeight: 14
+  mWidth: 66
+  mHeight: 10
   mDepth: -1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 6.71428585
+  aspectRatio: 6.5999999
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 800fce3d977b52d4cadf1a0790a413f0, type: 2}
@@ -4905,13 +4900,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 7
-  mWidth: 38
-  mHeight: 20
+  mWidth: 26
+  mHeight: 14
   mDepth: 5
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.89999998
+  aspectRatio: 1.85714281
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
@@ -6349,13 +6344,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 3
-  mWidth: 38
-  mHeight: 20
+  mWidth: 26
+  mHeight: 14
   mDepth: 4
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.89999998
+  aspectRatio: 1.85714281
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
@@ -6614,13 +6609,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 3
-  mWidth: 38
-  mHeight: 20
+  mWidth: 26
+  mHeight: 14
   mDepth: 5
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.89999998
+  aspectRatio: 1.85714281
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
@@ -6970,13 +6965,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 7
-  mWidth: 38
-  mHeight: 20
+  mWidth: 26
+  mHeight: 14
   mDepth: 5
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.89999998
+  aspectRatio: 1.85714281
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
@@ -7452,13 +7447,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 7
-  mWidth: 38
-  mHeight: 20
+  mWidth: 26
+  mHeight: 14
   mDepth: 4
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.89999998
+  aspectRatio: 1.85714281
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
@@ -8880,18 +8875,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400420
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400422
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8923,18 +8906,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400426
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100050}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8966,18 +8937,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400432
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9009,18 +8968,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400438
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -9095,18 +9042,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400450
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400452
 MonoBehaviour:
   m_ObjectHideFlags: 1
