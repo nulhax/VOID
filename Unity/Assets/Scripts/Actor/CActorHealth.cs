@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
@@ -10,6 +22,7 @@ public class CActorHealth : CNetworkMonoBehaviour
     public bool destroyOnZeroHealth = false;
     public bool takeDamageOnImpact = false;
     public bool syncNetworkVar = true;
+	public bool scaleHealthByMass = false;
 
     [SerializeField] private float initialHealth = 1.0f;
     [HideInInspector] public float health_previous;
@@ -23,7 +36,7 @@ public class CActorHealth : CNetworkMonoBehaviour
             health_internal = new CNetworkVar<float>(OnSync, initialHealth);
 
         // Set before Start()
-        health_previous = health_current = initialHealth;
+		health_previous = health_current = scaleHealthByMass ? initialHealth * GetComponent<Rigidbody>().mass : initialHealth;
     }
 
     void OnSync(INetworkVar sender)

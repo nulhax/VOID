@@ -48,6 +48,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Ships
 		Ship,
 		GalaxyShip,
+		EnemyShip,
 		
 		// Facilities
 		FacilityBridge, 
@@ -168,8 +169,9 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Crystal,                     "Minerals/Crystal");
 
 		// Ships
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Ship,                        "Ship/Ship");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.GalaxyShip,                  "Ship/GalaxyShip");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Ship, "Ship/Ship");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.GalaxyShip, "Ship/GalaxyShip");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.EnemyShip, "Enemy Ship/Enemy Ship");
 		
 		// Facilities
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,               "Facilities/Bridge/Bridge");

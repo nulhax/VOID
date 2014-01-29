@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
@@ -78,7 +90,7 @@ public class GalaxyProjector : CNetworkMonoBehaviour
                     {
                         Vector3 unitPos = new Vector3(x - centreSample.x, y - centreSample.y, z - centreSample.z) / (0.5f * samplesPerAxis);    // -1 to +1 on each axis.
                         CGalaxy.SCellPos sampleCell = galaxy.AbsolutePointToAbsoluteCell(unitPos * galaxy.galaxyRadius);
-                        float noiseScalar = galaxy.SampleNoise_FogDensity(sampleCell);
+                        float noiseScalar = galaxy.SampleNoise_EnemyShipDensity(sampleCell);
 
                         if (noiseScalar > 0.0f)
                             emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, noiseScalar));
