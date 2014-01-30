@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -44,9 +44,11 @@ public class CTestAtmosphereConditioner: MonoBehaviour
 		m_AtmosphereConditioner = gameObject.GetComponent<CAtmosphereConditioningBehaviour>();
 
 		// Register for when the fusebox breaks/fixes
-		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		fbc.EventBroken += HandleFuseBoxBreaking;
-		fbc.EventFixed += HandleFuseBoxFixing;
+
+		//TODO: Replace with actual component
+		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
+		//fbc.EventBroken += HandleFuseBoxBreaking;
+		//fbc.EventFixed += HandleFuseBoxFixing;
 	}
 	
 	public void Update()

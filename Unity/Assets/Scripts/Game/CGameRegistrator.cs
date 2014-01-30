@@ -83,7 +83,7 @@ public class CGameRegistrator : MonoBehaviour
 		
 		// Components
 		PanelFuseBox,
-        CellSlot,
+        //CellSlot,
 
         // Parts
         BlackMatterCell,
@@ -202,7 +202,8 @@ public class CGameRegistrator : MonoBehaviour
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
+		// TODO: Might need to change this to use the new component system
+        //CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
 
         // Parts
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
@@ -294,8 +295,8 @@ public class CGameRegistrator : MonoBehaviour
 
     void RegisterComponents()
     {
-        CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
-        CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
+        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.CircuitBox, ENetworkPrefab.CellSlot);
+        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
     }
 
 

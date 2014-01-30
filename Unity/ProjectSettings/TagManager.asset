@@ -11,7 +11,7 @@ TagManager:
   - PlayerGalaxyCamera
   - ShipEntryPoint
   - Asteroid
-  - 
+  - ComponentTransform
   - 
   - Drag and Drop Root
   - 
