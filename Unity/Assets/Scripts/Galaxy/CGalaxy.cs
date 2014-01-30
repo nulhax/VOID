@@ -1026,8 +1026,9 @@ public class CGalaxy : CNetworkMonoBehaviour
     public float SampleNoise_EnemyShipDensity(SCellPos absoluteCell)
     {
         float sample = SampleNoise(absoluteCell, 0.001f, ENoiseLayer.EnemyShipCount);
-        //float start = 0.85f, end = 0.95f;
-		float start = 0.0f, end = 0.001f;
+        ////float start = 0.85f, end = 0.95f;
+		//float start = 0.0f, end = 0.001f;
+		float start = 1.1f, end = 1.2f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }

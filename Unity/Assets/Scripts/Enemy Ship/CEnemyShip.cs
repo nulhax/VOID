@@ -20,7 +20,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		none,
 		attackingPrey,	// Includes moving and turning to face the prey.
-		idle,	// Parked. Looks around occasionally.
+		idling,	// Parked. Looks around occasionally.
 		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
 		scanningForPrey,	// Later feature - after going to the disturbance, the enemy ship scans the entire area, meaning the player ship has to hide behind asteroids to avoid being detected.
 		travelling,	// Happens on spawn or after idling for a while.
@@ -59,7 +59,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		// Process.
 		new CStateTransition(EState.attackingPrey,				EEvent.any,									Proc_AttackPrey),
-		new CStateTransition(EState.idle,						EEvent.any,									Proc_Idle),
+		new CStateTransition(EState.idling,						EEvent.any,									Proc_Idle),
 		new CStateTransition(EState.movingToDisturbance,		EEvent.any,									Proc_MoveToDisturbance),
 		new CStateTransition(EState.scanningForPrey,			EEvent.any,									Proc_ScanForPrey),
 		new CStateTransition(EState.travelling,					EEvent.any,									Proc_Travel),
@@ -92,6 +92,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	bool state_LookingAtTarget = false;
 	bool state_MoveToTarget = false;
 	bool state_MovedToTarget = false;
+	float state_Timeout = 0.0f;
 	public float viewConeRadiusInDegrees = 20.0f;
 	public float detectionRadius = 200.0f;
 	public float desiredDistanceToTarget = 100.0f;
@@ -157,7 +158,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
 		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/if (Random.Range(0, 2) == 0) enemyShip.m_State = EState.idle; else enemyShip.m_Event = EEvent.transition_Travel;	// 50/50 chance to idle or travel.
+		/*Set state				*/if (Random.Range(0, 2) == 0) enemyShip.m_State = EState.idling; else enemyShip.m_Event = EEvent.transition_Travel;	// 50/50 chance to idle or travel.
 
 		return true;	// Init functions always return true.
 	}
