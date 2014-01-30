@@ -19,7 +19,7 @@ GameObject:
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400012}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: ToolWiringKit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -91,7 +91,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkViewId: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,7 +102,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af9ecabd7ad6dd64e9bf1a24fcb8af5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseClientSidePhysics: 0
+  m_SyncPosition: 1
+  m_SyncRotation: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

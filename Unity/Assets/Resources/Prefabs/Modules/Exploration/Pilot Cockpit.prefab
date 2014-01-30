@@ -11,7 +11,7 @@ GameObject:
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
   - 64: {fileID: 6400000}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Cockpit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -32,7 +32,7 @@ GameObject:
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400010}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Pilot Cockpit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64bddf5367edeb843a606b8562809f85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cSeat: {fileID: 0}
+  m_cSeat: {fileID: 100000}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

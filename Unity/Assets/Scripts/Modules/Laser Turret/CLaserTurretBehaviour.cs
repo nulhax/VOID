@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CLaserTurretBehaviour))]
+[RequireComponent(typeof(CTurretBehaviour))]
 public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 {
 
@@ -135,15 +135,15 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	{
 		if (m_fServerFireTimer > m_fServerFireInterval)
 		{
-			Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLasterNdoes[m_iLaserNodeIndex].transform.position);
-			Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLasterNdoes[m_iLaserNodeIndex].transform.rotation);
-
+			Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLasterNodes[m_iLaserNodeIndex].transform.position);
+			Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLasterNodes[m_iLaserNodeIndex].transform.rotation);
+			
 			GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
 			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
 			cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
 			
 			++ m_iLaserNodeIndex;
-			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNdoes.Length) ? 0 : m_iLaserNodeIndex;
+			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNodes.Length) ? 0 : m_iLaserNodeIndex;
 			
 			m_fServerFireTimer = 0.0f;
 		}
@@ -183,7 +183,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-	public GameObject[] m_aLasterNdoes = null;
+	public GameObject[] m_aLasterNodes = null;
 
 
 	float m_fClientFireTimer	= 0.0f;

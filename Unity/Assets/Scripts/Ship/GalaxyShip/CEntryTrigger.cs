@@ -44,7 +44,7 @@ public class CEntryTrigger : MonoBehaviour
 			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
 			if(dynamicActor != null)
 			{			
-				dynamicActor.BoardingState = CActorBoardable.EBoardingState.Onboard;
+				dynamicActor.BoardActor();
 			}
 		}
 	}

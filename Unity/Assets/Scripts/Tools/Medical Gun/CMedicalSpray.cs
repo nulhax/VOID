@@ -65,8 +65,8 @@ public class CMedicalSpray : CNetworkMonoBehaviour
 
     public void Start()
     {
-        gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
-        gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
+        gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
+        gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
     }
 
 
@@ -105,7 +105,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    public void OnUseEnd()
+	public void OnUseEnd(GameObject _cInteractableObject)
     {
         m_bActive.Set(false);
     }
