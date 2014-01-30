@@ -51,8 +51,8 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	{
 		m_cNossle = transform.FindChild("Nossle").gameObject;
 
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
+		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
 	}
 
 
@@ -99,7 +99,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	void OnUseEnd()
+	void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bShoot = false;
 	}

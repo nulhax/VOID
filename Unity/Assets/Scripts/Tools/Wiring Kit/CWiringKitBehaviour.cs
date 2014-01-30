@@ -37,7 +37,7 @@ public class CWiringKitBehaviour : MonoBehaviour
 
 	public void Start()
 	{
-		GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnRepair);
+		GetComponent<CToolInterface>().EventPrimaryActivate += OnRepair;
 	}
 
 

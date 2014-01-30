@@ -57,13 +57,11 @@ public class CGameChat : CNetworkMonoBehaviour
     {
         // Sign up for events
         CUserInput.EventReturnKey += ReturnKeyChanged;
-
-		Debug.Log ("Signed up for reutrn key down");
-        //CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
+        CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
 
         // Deprecated function
         // NOTE: Causes input to be shared across the entire
-        // application even if a GUI component is focussed
+        // application even if an OnGui component is focussed
         Input.eatKeyPressOnTextFieldFocus = false;
     }
 
@@ -74,37 +72,35 @@ public class CGameChat : CNetworkMonoBehaviour
     void Update() {}
 
 
-    public override void InstanceNetworkVars()
-    {
-        //m_sNetworkedPlayerName = new CNetworkVar<string>(OnNetworkVarSync, "");
-    }
+    public override void InstanceNetworkVars() { }
 
 
     [AClientOnly]
     void ReturnKeyChanged(bool _b)
     {
-		//This will only be able to trigger every 0.5 seconds.
+		// This will only be able to trigger every 0.5 seconds
 		if (Time.time > m_fTimeOfEnterKeyPress + 0.5f) 
 		{
-			Debug.Log ("ReturnKeyChanged(" + _b + ");");
-
-			//Only change things on key down
+			// If keydown
 			if (_b) 
 			{
-				//Toggle operation on each key press down.
-				//If chat was enabled, it will be disabled and movement will be re-enabled.
+				// Toggle operation on each key press down
+				// If chat was enabled, it will be disabled and movement will be re-enabled
 				if(m_bProcessChat)
-				{					
+				{
 					m_bProcessChat = false;
-					//Debug.Log("Disabled input - similar to 'undisabled'");
+
+                    // TODO: Enable actor movement
 					//CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor> ().UndisableInput (this); 
 					          
 				}
-				//If chat was disabled, it will be enabled and movement will be disabled.
+
+				// If chat was disabled, it will be enabled and movement will be disabled
 				else
-				{ 
+				{
 					m_bProcessChat = true;
-					//Debug.Log("Disabled Input");
+
+                    // TODO: Disable actor movement
 					//CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor> ().DisableInput (this);  
 				}	
 			}
@@ -183,11 +179,16 @@ public class CGameChat : CNetworkMonoBehaviour
                     // New player message was sent
                 case ENetworkAction.ActionSendPlayerMessage:
                 {
+                    // Read out messages into output strings
                     string strName    = _cStream.ReadString();
                     string strMessage = _cStream.ReadString();
 
-                    // Read out message into output string
-                    Instance.InvokeRpcAll("ReceivePlayerMessage", strName, strMessage);
+                    // Find all players within 'hearing' range of the source player
+                    foreach (CNetworkPlayer Player in CheckPlayerDistances(_cNetworkPlayer))
+                    {
+                        // Invoke RPC call to send the message to each player
+                        Instance.InvokeRpc(Player.PlayerId, "ReceivePlayerMessage", strName, strMessage);
+                    }
 
                     break;
                 }
@@ -208,6 +209,53 @@ public class CGameChat : CNetworkMonoBehaviour
     {
         // Sign up for events
         CUserInput.EventReturnKey += new CUserInput.NotifyKeyChange(ReturnKeyChanged);
+    }
+
+
+    [AServerOnly]
+    static List<CNetworkPlayer> CheckPlayerDistances(CNetworkPlayer _SourcePlayer)
+    {
+        // Temporary return list of players within range of the source
+        List<CNetworkPlayer> ReturnPlayerList = new List<CNetworkPlayer>();
+
+        // Dictionary of all connected network players
+        // NOTE: This dictionary includes the source player
+        Dictionary<ulong, CNetworkPlayer> PlayerList = CNetwork.Server.FindNetworkPlayers();
+
+        // List of all player actors
+        List<GameObject> ActorList = CGamePlayers.PlayerActors;
+
+  //      GameObject playerActor = CGamePlayers.FindPlayerActor(PlayerList.Keys);
+
+        // Loop to iterate through all players including the source
+        foreach (KeyValuePair<ulong, CNetworkPlayer> Player in PlayerList)
+        {
+            // If the current player is not the source player
+            if (Player.Key != _SourcePlayer.PlayerId)
+            {
+                // Save the actor game objects for the source and current players
+                GameObject PlayerActor = CGamePlayers.FindPlayerActor(Player.Key);
+                GameObject SourceActor = CGamePlayers.FindPlayerActor(_SourcePlayer.PlayerId);
+
+                // Add the source's position vector to the current player's vector
+                // If the magnitude of the resulting vector is greater than 100.0f
+                if ((PlayerActor.transform.position + SourceActor.transform.position).magnitude < 100.0f)
+                {
+                    // Add the player to the return list
+                    ReturnPlayerList.Add(Player.Value);
+                }
+            }
+        }
+
+        // If the return list is empty
+        if (ReturnPlayerList.Count == 0)
+        {
+            // Invoke an RPC call on the source player
+            Instance.InvokeRpc(_SourcePlayer.PlayerId, "ReceivePlayerMessage", "Server", "There are no players nearby who can hear your message.");
+        }
+
+        // Return list of players within range of the source
+        return (ReturnPlayerList);
     }
 
 
@@ -250,7 +298,8 @@ public class CGameChat : CNetworkMonoBehaviour
 
     bool m_bSendMessage                  = false;
     bool m_bProcessChat                  = false;
-	float m_fTimeOfEnterKeyPress			 = 0.0f;
+    static bool m_bNoPlayersInRange      = false;
+	float m_fTimeOfEnterKeyPress		 = 0.0f;
     static string m_sPlayerChatInput     = "";
     static string m_sPlayerChatOuput     = "";
     const string m_sChatInputControlName = "ChatInputTextField";
