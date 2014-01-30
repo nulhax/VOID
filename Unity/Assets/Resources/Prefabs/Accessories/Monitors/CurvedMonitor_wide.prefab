@@ -132,7 +132,6 @@ GameObject:
   - 114: {fileID: 11400004}
   - 82: {fileID: 8200000}
   - 114: {fileID: 11400002}
-  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: CurvedMonitor_wide
   m_TagString: Untagged
@@ -474,20 +473,6 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  initialState: 0
-  stateTransitions: []
-  state_previous: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -499,11 +484,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
-  syncNetworkVar: 1
-  initialHealth: 1000
+  takeDamageOnImpact: 1
+  syncNetworkState: 1
+  health_initial: 500
   health_previous: 0
+  state_initial: 1
+  stateTransitions:
+  - 0
+  state_previous: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
