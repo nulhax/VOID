@@ -1,19 +1,22 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
 public class CShipDamageOnCollision : MonoBehaviour
 {
     public float impulseToRadius = 1.0f;
-	void Start ()
-    {
-	    
-	}
-	
-	void Update ()
-    {
-	    
-	}
 
     void OnCollisionEnter(Collision collision)
     {
@@ -32,24 +35,24 @@ public class CShipDamageOnCollision : MonoBehaviour
             float radius = impulse * impulseToRadius;
             //Debug.LogWarning("Impulse: " + impulse.ToString() + "\nRadius: " + radius.ToString() + " units\nForce: " + force.ToString() + " newtons");
 
-            // Find all components within radius and apply damage.
+            // Find all damagable actors within radius and apply damage.
             foreach (ContactPoint contact in collision.contacts)
             {
                 Vector3 contactPointOnShip = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
 
-                CActorBreakable[] breakableActors = CGameShips.Ship.GetComponentsInChildren<CActorBreakable>();
-                foreach (CActorBreakable breakableActor in breakableActors)
+                CActorHealth[] damagableActors = CGameShips.Ship.GetComponentsInChildren<CActorHealth>();
+				foreach (CActorHealth damagableActor in damagableActors)
                 {
-                    float actorDistanceToImpact = (breakableActor.gameObject.transform.position - contactPointOnShip).magnitude;
+					if (damagableActor.takeDamageOnImpact)
+					{
+						float actorDistanceToImpact = (damagableActor.gameObject.transform.position - contactPointOnShip).magnitude;
 
-                    if (actorDistanceToImpact < radius)
-                    {
-                        float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
-                        breakableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
-                        //Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and took " + damage.ToString() + " damage");
-                    }
-                    //else
-                        //Debug.LogWarning(breakableActor.gameObject.ToString() + " is " + actorDistanceToImpact.ToString() + " units away from impact and avoided damage");
+						if (actorDistanceToImpact < radius)
+						{
+							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
+							damagableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
+						}
+					}
                 }
             }
         }
