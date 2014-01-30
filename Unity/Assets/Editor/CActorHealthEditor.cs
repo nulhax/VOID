@@ -24,17 +24,19 @@ public class CActorHealthEditor : Editor
 		{
 			int initialState = EditorGUILayout.IntField("Initial Value", myTarget.state_initial); myTarget.state_initial = (byte)(initialState < 0 ? 0 : initialState > 255 ? 255 : initialState);
 			myTarget.syncNetworkState = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkState);
-			int numStateTransitions = EditorGUILayout.IntField("Transition Count", myTarget.stateTransitions != null ? myTarget.stateTransitions.Length : 0);
-			if (numStateTransitions != myTarget.stateTransitions.Length)
+
+			int currentStateTransitionLength = myTarget.stateTransitions != null ? myTarget.stateTransitions.Length : 0;
+			int newStateTransitionLength = EditorGUILayout.IntField("Transition Count", currentStateTransitionLength);
+			if (newStateTransitionLength != currentStateTransitionLength)
 			{
-				float[] newStateArray = new float[numStateTransitions];
-				for (int i = 0; i < numStateTransitions; ++i)
-					newStateArray[i] = (i < myTarget.stateTransitions.Length) ? myTarget.stateTransitions[i] : i != 0 ? newStateArray[i - 1] : 0;
+				float[] newStateArray = new float[newStateTransitionLength];
+				for (int i = 0; i < newStateTransitionLength; ++i)
+					newStateArray[i] = (i < currentStateTransitionLength) ? myTarget.stateTransitions[i] : i != 0 ? newStateArray[i - 1] : 0;
 
 				myTarget.stateTransitions = newStateArray;
 			}
 
-			for (int i = 0; i < myTarget.stateTransitions.Length; ++i)
+			for (int i = 0; i < currentStateTransitionLength; ++i)
 				myTarget.stateTransitions[i] = EditorGUILayout.FloatField("State " + (i + 1).ToString() + " if health >=", myTarget.stateTransitions[i]);
 		}
 	}
