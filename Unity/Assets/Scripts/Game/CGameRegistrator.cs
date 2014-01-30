@@ -81,6 +81,9 @@ public class CGameRegistrator : MonoBehaviour
 		MiningTurret,
 		MiningCockpit,
 		AtmosphereConditioner,
+        OxygenRefiller,
+        Dispenser,
+
 		
 		// Components
 		PanelFuseBox,
@@ -203,6 +206,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Capacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Production/Dispenser/Dispenser");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -256,6 +260,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
 	}
 
 
@@ -294,6 +299,7 @@ public class CGameRegistrator : MonoBehaviour
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);	
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser, ENetworkPrefab.Dispenser);
     }
 
 
