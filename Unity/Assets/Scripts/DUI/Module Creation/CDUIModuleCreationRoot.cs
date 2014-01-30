@@ -109,6 +109,15 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 			SetSelectedModuleType(m_StartingModuleType);
 	}
 
+	public void Update()
+	{
+		// Update the color based on nanite availability
+		if(CGameShips.Ship.GetComponent<CShipNaniteSystem>().IsEnoughNanites(m_SelectedModuleCost))
+			m_ModuleCostLabel.color = Color.white;
+		else
+			m_ModuleCostLabel.color = Color.red;
+	}
+
 	public void ButtonBuildModulePressed()
 	{
 		if(CNetwork.IsServer)

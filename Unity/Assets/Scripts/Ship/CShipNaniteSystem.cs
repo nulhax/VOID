@@ -31,10 +31,10 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	private List<GameObject> m_NaniteGenerators = new List<GameObject>();
 	private List<GameObject> m_NaniteSilos = new List<GameObject>();	
 
-	CNetworkVar<float> m_fShipNanitePool;
+	CNetworkVar<int> m_fShipNanitePool = null;
 
 	// Member Properties
-	public float ShipNanites
+	public int ShipNanites
 	{
 		get{return(m_fShipNanitePool.Get());}
 		set{m_fShipNanitePool.Set(value);}
@@ -45,7 +45,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	// Use this for initialization
 	public override void InstanceNetworkVars()
 	{
-		m_fShipNanitePool = new CNetworkVar<float> (OnNetworkVarSync, 0.0f);
+		m_fShipNanitePool = new CNetworkVar<int> (OnNetworkVarSync, 0);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)
@@ -92,7 +92,11 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 			m_NaniteSilos.Remove(_NaniteSilo);
 		}
 	}
-	
+
+	public bool IsEnoughNanites(int _iNanites)
+	{
+		return(ShipNanites >= _iNanites);
+	}
 	
 	[AServerOnly]
 	public void AddNanites(int _iNanites)
@@ -115,7 +119,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 			}
 		}
 
-		float totalNanites = 0.0f;
+		int totalNanites = 0;
 		foreach(GameObject silo in m_NaniteSilos)
 		{
 			CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour>();
@@ -138,7 +142,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 		if (_iNanites < ShipNanites) 
 		{
-			//Take nanites from non-full silos first
+			// Take nanites from non-full silos first
 			foreach (GameObject silo in m_NaniteSilos) 
 			{
 				CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour> ();
