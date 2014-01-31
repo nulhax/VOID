@@ -53,7 +53,11 @@ public class CComponentInterface : CNetworkMonoBehaviour
 
 	public event NotifyComponentStateChange EventComponentBreak;
 	public event NotifyComponentStateChange EventComponentFix;
-	
+
+	public delegate void NotifyHealthChange(float _fHealth);
+
+	public event NotifyHealthChange EventHealthChange;
+
 	public bool IsFunctional
 	{
 		get { return m_bIsFunctional.Get (); }
@@ -96,7 +100,10 @@ public class CComponentInterface : CNetworkMonoBehaviour
 				}
 			}
 		}
+
 	}
+
+
 
     public static void RegisterPrefab(EType _eComponentType, CGameRegistrator.ENetworkPrefab _ePrefab)
     {

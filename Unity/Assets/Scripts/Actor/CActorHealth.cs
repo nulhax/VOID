@@ -15,7 +15,21 @@ public class CActorHealth : CNetworkMonoBehaviour
     [HideInInspector] public float health_previous;
     private float health_current;
     protected CNetworkVar<float> health_internal;
-    public float health { get { return health_current; } set { if (syncNetworkVar)health_internal.Set(value); else { health_current = value; OnSync(null); } } }
+    public float health 
+	{ 
+		get { return health_current; } 
+		set { 
+				if (syncNetworkVar)
+				{
+					health_internal.Set(value); 
+				}
+				else 
+				{ 
+					health_current = value; 
+					OnSync(null); 
+				} 
+			} 
+	}
 
     public override void InstanceNetworkVars()
     {
