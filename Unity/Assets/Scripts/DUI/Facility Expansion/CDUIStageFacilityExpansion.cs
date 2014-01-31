@@ -44,9 +44,9 @@ public class CDUIStageFacilityExpansion : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_CurrentFacilityType = new CNetworkVar<CFacilityInterface.EType>(OnNetworkVarSync, CFacilityInterface.EType.INVALID);
+		m_CurrentFacilityType = _cRegistrar.CreateNetworkVar<CFacilityInterface.EType>(OnNetworkVarSync, CFacilityInterface.EType.INVALID);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)

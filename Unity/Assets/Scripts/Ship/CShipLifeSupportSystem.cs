@@ -46,9 +46,9 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ShipAtmosphericQuality = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_ShipAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)

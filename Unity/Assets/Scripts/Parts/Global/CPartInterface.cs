@@ -69,9 +69,9 @@ public class CPartInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cOwnerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cOwnerActorViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 

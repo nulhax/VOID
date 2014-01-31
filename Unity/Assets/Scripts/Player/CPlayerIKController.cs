@@ -100,9 +100,9 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		}
 	}
 	
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_NetworkedTarget = new CNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+        m_NetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)

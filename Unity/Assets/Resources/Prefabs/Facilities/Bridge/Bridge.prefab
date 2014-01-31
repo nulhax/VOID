@@ -6071,7 +6071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 0
+  m_PreplacedModuleType: 9
   m_Positioner: {fileID: 100004}
   m_Internal: 1
 --- !u!114 &11400006

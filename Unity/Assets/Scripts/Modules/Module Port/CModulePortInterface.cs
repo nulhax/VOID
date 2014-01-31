@@ -79,9 +79,9 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cAttachedModuleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_cAttachedModuleViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 
 

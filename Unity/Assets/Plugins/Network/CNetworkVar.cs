@@ -67,8 +67,21 @@ public class CNetworkVar<TYPE> : INetworkVar
         }
         else
         {
-			if ((_NewValue == null && m_Value != null) ||
-			    !(_NewValue).Equals(m_Value))
+            bool bSetValue = false;
+
+            if (_NewValue == null)
+            {
+                if (m_Value != null)
+                {
+                    bSetValue = true;
+                }
+            }
+            else if (!(_NewValue).Equals(m_Value))
+            {
+                bSetValue = true;
+            }
+             
+			if (bSetValue)
 			{
 				m_PreviousValue = m_Value;
 				m_Value = _NewValue;
