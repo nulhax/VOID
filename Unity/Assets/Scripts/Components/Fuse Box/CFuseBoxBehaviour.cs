@@ -56,10 +56,10 @@ public class CFuseBoxBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bOpened = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_bWiresBroken = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bOpened = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bWiresBroken = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	

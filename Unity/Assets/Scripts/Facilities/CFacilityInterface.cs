@@ -96,10 +96,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_FacilityId = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_FacilityType = new CNetworkVar<EType>(OnNetworkVarSync, EType.INVALID);
+		m_FacilityId = _cRegistrar.CreateNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_FacilityType = _cRegistrar.CreateNetworkVar<EType>(OnNetworkVarSync, EType.INVALID);
 	}
 
 

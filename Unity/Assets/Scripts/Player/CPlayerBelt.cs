@@ -84,17 +84,17 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_uiMaxNumTools];
 
 		for (uint i = 0; i < k_uiMaxNumTools; ++i)
 		{
-			m_acToolsViewId[i] = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+			m_acToolsViewId[i] = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
-		m_bToolCapacity = new CNetworkVar<byte>(OnNetworkVarSync, 2);
-		m_bActiveToolId = new CNetworkVar<byte>(OnNetworkVarSync);
+		m_bToolCapacity = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 2);
+		m_bActiveToolId = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
     }
 
 

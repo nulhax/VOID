@@ -42,10 +42,10 @@ public class CActorHealth : CNetworkMonoBehaviour
 	protected CNetworkVar<byte> state_internal = null;
 	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		health_internal = new CNetworkVar<float>(OnSyncHealth, health_initial);
-		state_internal = new CNetworkVar<byte>(OnSyncState, state_initial);
+		health_internal = _cRegistrar.CreateNetworkVar<float>(OnSyncHealth, health_initial);
+		state_internal = _cRegistrar.CreateNetworkVar<byte>(OnSyncState, state_initial);
 		// Set before Start()
 		health_previous = health_current = health_initial;
 		state_previous = state_current = state_initial;

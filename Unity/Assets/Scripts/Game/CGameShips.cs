@@ -59,9 +59,9 @@ public class CGameShips : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		// Empty
+        _cRegistrar.RegisterRpc(this, "SetShipNetworkViewId");
 	}
 
 

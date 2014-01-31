@@ -56,9 +56,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_vRotation = new CNetworkVar<Vector3>(OnNetworkVarSync, new Vector3());
+        m_vRotation= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, new Vector3());
     }
 
 

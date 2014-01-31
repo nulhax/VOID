@@ -2116,7 +2116,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 5.33333349
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: 'Module Port Size:'
   mFontSize: 20
@@ -3866,7 +3866,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 1.66666663
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: 'Cost:'
   mFontSize: 20
@@ -4262,7 +4262,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 6.26666689
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: 'Module Size:'
   mFontSize: 20
@@ -4370,7 +4370,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 5.33333349
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: 'Selected Module:'
   mFontSize: 20
@@ -4490,7 +4490,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 5.94736862
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: Temp
   mFontSize: 20
@@ -4550,7 +4550,7 @@ MonoBehaviour:
   keepAspectRatio: 0
   aspectRatio: 5.33333349
   keepCrispWhenShrunk: 1
-  mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
+  mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 0}
   mText: 'Module Category:'
   mFontSize: 20

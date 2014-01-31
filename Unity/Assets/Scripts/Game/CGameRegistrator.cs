@@ -40,7 +40,7 @@ public class CGameRegistrator : MonoBehaviour
         // Galaxy
         Galaxy,
         Asteroid_FIRST,
-        Asteroid_LAST = Asteroid_FIRST + 3,
+        Asteroid_LAST = Asteroid_FIRST/* + 3*/,
 
         // Minerals
         Crystal,
@@ -263,6 +263,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
         CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
+		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
 	}
 
 

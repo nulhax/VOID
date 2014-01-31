@@ -82,11 +82,11 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 // Member Methods
 	
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_AtmosphereQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fAtmosphereRefillRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fAtmosphereConsumptionRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_AtmosphereQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereRefillRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fAtmosphereConsumptionRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
 	public void OnNetworkVarSync(INetworkVar _VarInstance)

@@ -86,9 +86,9 @@ public class CCockpit : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cMountedPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
+		m_cMountedPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
 
 

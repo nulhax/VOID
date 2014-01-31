@@ -40,28 +40,40 @@ public class CMinerals : CNetworkMonoBehaviour
 	}
 
 
+    public bool IsDepleted
+    {
+        get { return (m_bDepleted); }
+    }
+
+
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fQuantity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 300.0f);
 	}
 
 
 	public float DecrementQuanity(float _fQuantity)
 	{
-		if (_fQuantity <= m_fQuantity.Get())
-		{
-			m_fQuantity.Set(m_fQuantity.Get() - _fQuantity);
-		}
-		else
-		{
-			_fQuantity = m_fQuantity.Get();
-			m_fQuantity.Set(0.0f);
-		}
-		
-		return (_fQuantity);
+        if (!IsDepleted)
+        {
+            if (_fQuantity <= m_fQuantity.Get())
+            {
+                m_fQuantity.Set(m_fQuantity.Get() - _fQuantity);
+            }
+            else
+            {
+                _fQuantity = m_fQuantity.Get();
+                m_fQuantity.Set(0.0f);
+                m_bDepleted = true;
+
+                CNetwork.Factory.DestoryObject(gameObject);
+            }
+        }
+
+        return (m_fQuantity.Get());
 	}
 
 
@@ -93,6 +105,9 @@ public class CMinerals : CNetworkMonoBehaviour
 
 
 	CNetworkVar<float> m_fQuantity = null;
+
+
+    bool m_bDepleted = false;
 
 
 };

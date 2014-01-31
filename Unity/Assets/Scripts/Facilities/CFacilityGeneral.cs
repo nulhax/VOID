@@ -71,12 +71,12 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	}
 
 // Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_ServerCreateExpansionStage = new CNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
-		m_ServerLocalExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_ServerOtherExpansionPortIdSelected = new CNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_ServerFacilitySelected = new CNetworkVar<int>(OnNetworkVarSync, (int)CFacilityInterface.EType.INVALID);
+		m_ServerCreateExpansionStage= _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
+		m_ServerLocalExpansionPortIdSelected = _cRegistrar.CreateNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_ServerOtherExpansionPortIdSelected = _cRegistrar.CreateNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_ServerFacilitySelected= _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, (int)CFacilityInterface.EType.INVALID);
 	}
 	
 	

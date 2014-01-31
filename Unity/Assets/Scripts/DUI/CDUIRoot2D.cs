@@ -47,9 +47,9 @@ public class CDUIRoot2D : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ActivePanelId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_ActivePanelId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)

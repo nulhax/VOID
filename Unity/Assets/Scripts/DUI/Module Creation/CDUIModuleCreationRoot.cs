@@ -85,10 +85,10 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_CurrentModuleType = new CNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
-		m_CurrentPortSelected = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_CurrentModuleType = _cRegistrar.CreateNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
+		m_CurrentPortSelected = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
