@@ -89,9 +89,9 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 		m_ActorsInsideGravityTrigger.Remove(_Actor);
 	}
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cGravityEnabled = new CNetworkVar<bool>(OnNetworkVarSync, true);
+        m_cGravityEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
     }
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)

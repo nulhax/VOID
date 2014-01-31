@@ -35,9 +35,11 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bAmmo = new CNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
+		m_bAmmo = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
+
+        _cRegistrar.RegisterRpc(this, "ExecuteShootEffect");
 	}
 
 

@@ -1,55 +1,94 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 [RequireComponent(typeof(CNetworkView))]
 public class CActorHealth : CNetworkMonoBehaviour
 {
-    public delegate void OnSetCallback(GameObject gameObject, float prevHealth, float currHealth);
-    public event OnSetCallback EventOnSetCallback;
+	public delegate void OnSetHealth(GameObject gameObject, float prevHealth, float currHealth);
+	public event OnSetHealth EventOnSetHealth;
 
-    public bool destroyOnZeroHealth = false;
-    public bool takeDamageOnImpact = false;
-    public bool syncNetworkVar = true;
+	public delegate void OnSetState(GameObject gameObject, byte prevState, byte currState);
+	public event OnSetState EventOnSetState;
 
-    [SerializeField] private float initialHealth = 1.0f;
-    [HideInInspector] public float health_previous;
-    private float health_current;
-    protected CNetworkVar<float> health_internal;
-    public float health 
-	{ 
-		get { return health_current; } 
-		set { 
-				if (syncNetworkVar)
-				{
-					health_internal.Set(value); 
-				}
-				else 
-				{ 
-					health_current = value; 
-					OnSync(null); 
-				} 
-			} 
+	[SerializeField] public bool syncNetworkHealth = true;
+	[SerializeField] public bool destroyOnZeroHealth = false;
+	[SerializeField] public bool takeDamageOnImpact = false;
+
+	[SerializeField] public bool syncNetworkState = true;
+
+	[SerializeField] public float health_initial = 1.0f;
+	public float health_previous;
+	private float health_current;
+	protected CNetworkVar<float> health_internal = null;
+	public float health { get { return health_current; } set { if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
+
+	[SerializeField] public byte state_initial = 0;
+	[SerializeField] public float[] stateTransitions;
+	public byte state_previous;
+	private byte state_current;
+	protected CNetworkVar<byte> state_internal = null;
+	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
+
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	{
+		health_internal = _cRegistrar.CreateNetworkVar<float>(OnSyncHealth, health_initial);
+		state_internal = _cRegistrar.CreateNetworkVar<byte>(OnSyncState, state_initial);
+		// Set before Start()
+		health_previous = health_current = health_initial;
+		state_previous = state_current = state_initial;
 	}
 
-    public override void InstanceNetworkVars()
-    {
-        if(syncNetworkVar)
-            health_internal = new CNetworkVar<float>(OnSync, initialHealth);
+	void OnSyncHealth(INetworkVar sender)
+	{
+		if (syncNetworkHealth)
+			health_current = health_internal.Get();
 
-        // Set before Start()
-        health_previous = health_current = initialHealth;
-    }
+		if (stateTransitions != null)
+		{
+			byte currentState = (byte)stateTransitions.Length;
 
-    void OnSync(INetworkVar sender)
-    {
-        if(syncNetworkVar)
-            health_current = health_internal.Get();
+			for (int i = 0; i < stateTransitions.Length; ++i)
+			{
+				if (health_current < stateTransitions[i])
+				{
+					currentState = (byte)i;
+					break;
+				}
+			}
 
-        if (EventOnSetCallback != null)
-            EventOnSetCallback(gameObject, health_previous, health_current);
+			if (currentState != state)
+				state = currentState;
+		}
 
-        health_previous = health_current;
-    }
+		if (EventOnSetHealth != null)
+			EventOnSetHealth(gameObject, health_previous, health_current);
+
+		health_previous = health_current;
+	}
+
+	void OnSyncState(INetworkVar sender)
+	{
+		if (syncNetworkState)
+			state_current = state_internal.Get();
+
+		if (EventOnSetState != null)
+			EventOnSetState(gameObject, state_previous, state_current);
+
+		state_previous = state_current;
+	}
 
     void OnCollisionEnter(Collision collision)
     {

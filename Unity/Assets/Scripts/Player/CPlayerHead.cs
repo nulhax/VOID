@@ -52,9 +52,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_fHeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fHeadEulerX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 	
 	

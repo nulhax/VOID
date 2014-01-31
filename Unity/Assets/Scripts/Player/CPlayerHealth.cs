@@ -67,11 +67,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fHitPoints = new CNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-		m_bAlive = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_fOxygenUseRate = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
+		m_fHitPoints = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
+		m_bAlive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
 

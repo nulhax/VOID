@@ -90,9 +90,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_ulOwnerPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
+        m_ulOwnerPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
 
 

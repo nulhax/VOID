@@ -1,3 +1,15 @@
+//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -86,9 +98,9 @@ public class CGalaxy : CNetworkMonoBehaviour
         SparseAsteroidCount,
         AsteroidClusterCount,
         DebrisDensity,
-
         FogDensity,
         AsteroidResourceAmount,
+        EnemyShipCount,
         MAX
     }
 
@@ -116,7 +128,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     protected CNetworkVar<int> mCentreCellZ;
     public SCellPos centreCell { get { return mCentreCell; } }
 
-    private List<Transform> mShiftableTransforms = new List<Transform>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
+    private List<GalaxyShiftable> mShiftableEntities = new List<GalaxyShiftable>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
     private List<CRegisteredObserver> mObservers = new List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
     private List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
     private List<SGubbinMeta> mGubbinsToLoad;
@@ -146,7 +158,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     public const float mfTimeBetweenUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues;
     private float mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues / 2;
 
-    public const float mfTimeBetweenGubbinLoads = 0.01f;
+    public const float mfTimeBetweenGubbinLoads = 0.1f;
     private float mfTimeUntilNextGubbinLoad = 0.0f;
 
     public const float mfTimeBetweenGubbinUnloads = mfTimeBetweenGubbinLoads;
@@ -247,18 +259,18 @@ public class CGalaxy : CNetworkMonoBehaviour
         sGalaxy = null;
     }
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
         Profiler.BeginSample("InstanceNetworkVars");
 
         for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            mNoiseSeeds[ui] = new CNetworkVar<int>(SyncNoiseSeed);
+            mNoiseSeeds[ui]= _cRegistrar.CreateNetworkVar<int>(SyncNoiseSeed);
 
-        mCentreCellX = new CNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
-        mCentreCellY = new CNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
-        mCentreCellZ = new CNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
-        mGalaxySize = new CNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
-        mNumCellSubsets = new CNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
+        mCentreCellX= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
+        mCentreCellY= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
+        mCentreCellZ= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
+        mGalaxySize = _cRegistrar.CreateNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
+        mNumCellSubsets = _cRegistrar.CreateNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
 
         Profiler.EndSample();
     }
@@ -566,8 +578,8 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Profiler.BeginSample("ShiftEntities");
 
-        foreach (Transform transform in mShiftableTransforms)
-            transform.position += translation;
+		foreach (GalaxyShiftable shiftableEntity in mShiftableEntities)
+			shiftableEntity.Shift(translation);
 
         Profiler.EndSample();
     }
@@ -639,17 +651,17 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
     }
 
-    public void RegisterShiftableEntity(Transform shiftableTransform)
+    public void RegisterShiftableEntity(GalaxyShiftable shiftableEntity)
     {
         Profiler.BeginSample("RegisterShiftableEntity");
-        mShiftableTransforms.Add(shiftableTransform);
+        mShiftableEntities.Add(shiftableEntity);
         Profiler.EndSample();
     }
 
-    public void DeregisterShiftableEntity(Transform shiftableTransform)
+    public void DeregisterShiftableEntity(GalaxyShiftable shiftableEntity)
     {
         Profiler.BeginSample("DeregisterShiftableEntity");
-        mShiftableTransforms.Remove(shiftableTransform);
+        mShiftableEntities.Remove(shiftableEntity);
         Profiler.EndSample();
     }
 
@@ -670,6 +682,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         //else    // This cell is not on file, so it has not been visited...
         {
             // Generate the content in the cell.
+            LoadEnemyShips(absoluteCell);
             LoadAsteroidClusters(absoluteCell);
             LoadSparseAsteroids(absoluteCell);
             LoadDebris(absoluteCell);
@@ -745,7 +758,7 @@ public class CGalaxy : CNetworkMonoBehaviour
             networkView.SyncTransformPosition();    // Sync the position through the network view.
 
         // Rotation.
-        gubbinObject.transform.rotation = gubbin.mRotation; // Set rotation
+        gubbinObject.transform.rotation = gubbin.mRotation; // Set rotation.
         if (!networkedEntity || !networkedEntity.Angle)  // If the object does not have a networked entity script, or if the networked entity script does not update rotation...
             networkView.SyncTransformRotation();// Sync the rotation through the network view.
 
@@ -776,11 +789,11 @@ public class CGalaxy : CNetworkMonoBehaviour
             networkedEntity.UpdateNetworkVars();
 
         // Health.
-        if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
-        {
-            CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
-            health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
-        }
+        //if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
+        //{
+        //    CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
+        //    health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
+        //}
 
         Profiler.BeginSample("Push gubbin to list of gubbins");
         mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
@@ -968,10 +981,11 @@ public class CGalaxy : CNetworkMonoBehaviour
     public float DebrisDensity(SCellPos absoluteCell) { return SampleNoise_DebrisDensity(absoluteCell); }
     public float FogDensity(SCellPos absoluteCell) { return SampleNoise_FogDensity(absoluteCell); }
     public float ResourceAmount(SCellPos absoluteCell) { return 800 * SampleNoise_ResourceAmount(absoluteCell); }
+    public uint EnemyShipCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxEnemyShips*/ * SampleNoise_EnemyShipDensity(absoluteCell)); }
 
     public float SampleNoise_SparseAsteroid(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);   // Sample range is 1% of the noise.
+        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);
         float start = 0.5f, end = 0.9f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
@@ -979,7 +993,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     
     public float SampleNoise_AsteroidCluster(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.AsteroidClusterCount);   // Sample range is 10% of the noise.
+        float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.AsteroidClusterCount);
         float start = 0.8f, end = 0.9f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
@@ -987,7 +1001,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public float SampleNoise_DebrisDensity(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.25f, ENoiseLayer.DebrisDensity);   // Sample range is 25% of the noise.
+        float sample = SampleNoise(absoluteCell, 0.25f, ENoiseLayer.DebrisDensity);
         float start = 0.0f, end = 1.0f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
@@ -995,7 +1009,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public float SampleNoise_FogDensity(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.FogDensity);   // Sample range is 1% of the noise.
+        float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.FogDensity);
         float start = 0.4f, end = 0.8f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
@@ -1003,8 +1017,18 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     public float SampleNoise_ResourceAmount(SCellPos absoluteCell)
     {
-        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.AsteroidResourceAmount);   // Sample range is 1% of the noise.
+        float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.AsteroidResourceAmount);
         float start = 0.75f, end = 0.9f;
+        sample = (sample - start) / (end - start);
+        return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
+    }
+
+    public float SampleNoise_EnemyShipDensity(SCellPos absoluteCell)
+    {
+        float sample = SampleNoise(absoluteCell, 0.001f, ENoiseLayer.EnemyShipCount);
+        ////float start = 0.85f, end = 0.95f;
+		//float start = 0.0f, end = 0.001f;
+		float start = 1.1f, end = 1.2f;
         sample = (sample - start) / (end - start);
         return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
     }
@@ -1020,14 +1044,14 @@ public class CGalaxy : CNetworkMonoBehaviour
 
             mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                 absoluteCell,   // Parent cell.
-                                                Random.Range(10.0f, 150.0f),    // Scale.
+                                                /*Random.Range(10.0f, 150.0f)*/1.0f,    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                 Random.rotationUniform, // Rotation.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                0.5f,   // Mass to health scalar. Zero if there is no health script.
+                                                -1.0f,   // Mass to health scalar. Zero if there is no health script.
                                                 true,   // Has NetworkedEntity script.
-                                                true    // Has a rigid body.
+                                                false    // Has a rigid body.
                                                 ));
 
             Profiler.EndSample();
@@ -1050,7 +1074,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
                 mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                     absoluteCell,   // Parent cell.
-                                                    Random.Range(10.0f, 150.0f),    // Scale.
+                                                    1.0f/*Random.Range(10.0f, 150.0f)*/,    // Scale.
                                                     clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
                                                     Random.rotationUniform, // Rotation.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
@@ -1068,6 +1092,27 @@ public class CGalaxy : CNetworkMonoBehaviour
     private void LoadDebris(SCellPos absoluteCell)
     {
 
+    }
+
+    private void LoadEnemyShips(SCellPos absoluteCell)
+    {
+		float fCellRadius = cellRadius;
+        uint uiNumEnemyShips = EnemyShipCount(absoluteCell);
+
+        for (uint ui = 0; ui < uiNumEnemyShips; ++ui)
+        {
+            mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,    // Enemy ship prefab.
+                                                absoluteCell,   // Parent cell.
+                                                1.0f,    // Scale.
+                                                new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
+                                                Random.rotationUniform, // Rotation.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
+                                                Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+                                                0.0f,   // Mass to health scalar. Zero if there is no health script.
+                                                true,   // Has NetworkedEntity script.
+                                                true    // Has a rigid body.
+                                                ));
+        }
     }
 
     void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/

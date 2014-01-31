@@ -1,4 +1,16 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CLASSNAME.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
+
+using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
@@ -29,13 +41,13 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
     private bool mUpToDate = false;
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        radius_internal = new CNetworkVar<float>(SyncNetworkVar, initialRadius);
-        zoom_internal = new CNetworkVar<float>(SyncNetworkVar, initialZoom);
-        centreCellOfProjectionX = new CNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
-        centreCellOfProjectionY = new CNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
-        centreCellOfProjectionZ = new CNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
+        radius_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialRadius);
+        zoom_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialZoom);
+        centreCellOfProjectionX= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
+        centreCellOfProjectionY= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
+        centreCellOfProjectionZ= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
     }
 
     void SyncNetworkVar(INetworkVar sender)

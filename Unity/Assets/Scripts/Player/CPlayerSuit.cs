@@ -52,10 +52,10 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fOxygen = new CNetworkVar<float>(OnNetworkVarSync, k_fOxygenCapacity);
-        m_bVisorDown = new CNetworkVar<bool>(OnNetworkVarSync, false);
+        m_fOxygen = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fOxygenCapacity);
+        m_bVisorDown = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 

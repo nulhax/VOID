@@ -100,9 +100,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_sNetworkedPlayerName = new CNetworkVar<string>(OnNetworkVarSync, "");
+		m_sNetworkedPlayerName = _cRegistrar.CreateNetworkVar<string>(OnNetworkVarSync, "");
+
+        _cRegistrar.RegisterRpc(this, "RegisterPlayerName");
+        _cRegistrar.RegisterRpc(this, "UnregisterPlayerName");
+        _cRegistrar.RegisterRpc(this, "RegisterPlayerActor");
+        _cRegistrar.RegisterRpc(this, "UnregisterPlayerActor");
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)

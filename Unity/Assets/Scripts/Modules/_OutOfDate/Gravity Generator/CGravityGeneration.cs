@@ -29,10 +29,10 @@ public class CGravityGeneration : CNetworkMonoBehaviour
 	float CurrentGravityOutput { get { return (m_fCurrentGravityOutput.Get()); } set { CurrentGravityOutput = value; } }
 	
 	// Member Functions
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fTriggerRadius        = new CNetworkVar<float>(OnNetworkVarSync);
-		m_fCurrentGravityOutput = new CNetworkVar<float>(OnNetworkVarSync);
+		m_fTriggerRadius        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
+		m_fCurrentGravityOutput = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _cVarInstance)

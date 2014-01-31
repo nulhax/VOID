@@ -51,10 +51,10 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 
 // Member Functions
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PowerGenerationRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PowerGenerationActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_PowerGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerGenerationActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)

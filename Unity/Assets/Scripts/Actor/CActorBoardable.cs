@@ -52,9 +52,9 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	}
 
 // Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BoardingState = new CNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
+		m_BoardingState= _cRegistrar.CreateNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
