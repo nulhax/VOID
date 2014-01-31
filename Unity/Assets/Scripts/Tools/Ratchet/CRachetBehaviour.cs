@@ -35,9 +35,9 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 

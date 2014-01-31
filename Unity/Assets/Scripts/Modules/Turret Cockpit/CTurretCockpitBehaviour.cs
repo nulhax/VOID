@@ -50,9 +50,9 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 	
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cActiveTurretViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 
 
@@ -122,11 +122,14 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerLeaveCockpit(ulong _ulPlayerId)
 	{
-		// Release turret control
-		ActiveTurretObject.GetComponent<CTurretBehaviour>().ReleaseControl();
+        if (ActiveTurretObject != null)
+        {
+            // Release turret control
+            ActiveTurretObject.GetComponent<CTurretBehaviour>().ReleaseControl();
 
-		// Cleanup
-		m_cActiveTurretViewId.Set(null);
+            // Cleanup
+            m_cActiveTurretViewId.Set(null);
+        }
 
 		//Debug.Log("Player left cockpit");
 	}

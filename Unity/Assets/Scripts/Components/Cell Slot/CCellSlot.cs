@@ -37,12 +37,12 @@ public class CCellSlot : CNetworkMonoBehaviour
 	
 	
 // Member Functions
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bIsFunctionalityAllowed = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_bIsCellBroken = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_bIsCellMatchingSlot = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_cCurrentCell = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_bIsFunctionalityAllowed = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bIsCellBroken = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bIsCellMatchingSlot = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_cCurrentCell = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 // Member Methods

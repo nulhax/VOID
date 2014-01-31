@@ -104,14 +104,14 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fRotationY = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fGravity = new CNetworkVar<float>(OnNetworkVarSync, -9.81f);
-		m_fMovementSpeed = new CNetworkVar<float>(OnNetworkVarSync, 6.5f);
-		m_fSprintSpeed = new CNetworkVar<float>(OnNetworkVarSync, 8.0f);
-		m_fJumpSpeed = new CNetworkVar<float>(OnNetworkVarSync, 2.0f);
-		m_bStates = new CNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_fRotationY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGravity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, -9.81f);
+		m_fMovementSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 6.5f);
+		m_fSprintSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 8.0f);
+		m_fJumpSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 2.0f);
+		m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
 
 

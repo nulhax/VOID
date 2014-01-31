@@ -158,7 +158,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     public const float mfTimeBetweenUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues;
     private float mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues / 2;
 
-    public const float mfTimeBetweenGubbinLoads = 0.01f;
+    public const float mfTimeBetweenGubbinLoads = 0.1f;
     private float mfTimeUntilNextGubbinLoad = 0.0f;
 
     public const float mfTimeBetweenGubbinUnloads = mfTimeBetweenGubbinLoads;
@@ -259,18 +259,18 @@ public class CGalaxy : CNetworkMonoBehaviour
         sGalaxy = null;
     }
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
         Profiler.BeginSample("InstanceNetworkVars");
 
         for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-            mNoiseSeeds[ui] = new CNetworkVar<int>(SyncNoiseSeed);
+            mNoiseSeeds[ui]= _cRegistrar.CreateNetworkVar<int>(SyncNoiseSeed);
 
-        mCentreCellX = new CNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
-        mCentreCellY = new CNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
-        mCentreCellZ = new CNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
-        mGalaxySize = new CNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
-        mNumCellSubsets = new CNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
+        mCentreCellX= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
+        mCentreCellY= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
+        mCentreCellZ= _cRegistrar.CreateNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
+        mGalaxySize = _cRegistrar.CreateNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
+        mNumCellSubsets = _cRegistrar.CreateNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
 
         Profiler.EndSample();
     }
@@ -789,11 +789,11 @@ public class CGalaxy : CNetworkMonoBehaviour
             networkedEntity.UpdateNetworkVars();
 
         // Health.
-        if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
-        {
-            CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
-            health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
-        }
+        //if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
+        //{
+        //    CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
+        //    health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
+        //}
 
         Profiler.BeginSample("Push gubbin to list of gubbins");
         mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
@@ -1044,14 +1044,14 @@ public class CGalaxy : CNetworkMonoBehaviour
 
             mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                 absoluteCell,   // Parent cell.
-                                                Random.Range(10.0f, 150.0f),    // Scale.
+                                                /*Random.Range(10.0f, 150.0f)*/1.0f,    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                 Random.rotationUniform, // Rotation.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                0.5f,   // Mass to health scalar. Zero if there is no health script.
+                                                -1.0f,   // Mass to health scalar. Zero if there is no health script.
                                                 true,   // Has NetworkedEntity script.
-                                                true    // Has a rigid body.
+                                                false    // Has a rigid body.
                                                 ));
 
             Profiler.EndSample();
@@ -1074,7 +1074,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
                 mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                     absoluteCell,   // Parent cell.
-                                                    Random.Range(10.0f, 150.0f),    // Scale.
+                                                    1.0f/*Random.Range(10.0f, 150.0f)*/,    // Scale.
                                                     clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
                                                     Random.rotationUniform, // Rotation.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.

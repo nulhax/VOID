@@ -39,7 +39,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
     }
 

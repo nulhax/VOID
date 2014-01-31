@@ -65,9 +65,9 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_DUIActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_DUIActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	

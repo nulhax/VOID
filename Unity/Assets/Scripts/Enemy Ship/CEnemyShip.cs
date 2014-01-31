@@ -106,7 +106,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
     //CPidController mPidVelocityPitch = new CPidController(2000, 1, 1); // Correction for pitch velocity to target.
     //CPidController mPidVelocityRoll = new CPidController(2000, 1, 1); // Correction for roll velocity to target.
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

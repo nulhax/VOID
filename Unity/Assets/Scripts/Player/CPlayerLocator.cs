@@ -74,9 +74,9 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cFacilityViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cFacilityViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
