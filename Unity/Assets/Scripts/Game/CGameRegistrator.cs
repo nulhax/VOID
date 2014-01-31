@@ -114,6 +114,7 @@ public class CGameRegistrator : MonoBehaviour
 		UITest,
 		UIFacilityExpansion,
 		UIModuleCreation,
+		UIPowerGenerator,
 
 		// Other
 		LaserTurretProjectile,
@@ -238,6 +239,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"DUI/DUIControlsTest");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIFacilityExpansion,			"DUI/DUIFacilityExpansion");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIModuleCreation,			"DUI/DUIModuleCreation");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerGenerator,			"DUI/Modules/DUIPowerGenerator");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -319,6 +321,7 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.UITest);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator, ENetworkPrefab.UIPowerGenerator);
 	}
 
 

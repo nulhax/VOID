@@ -30,10 +30,12 @@ public class CTestPowerGenerator: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_PowerGenerationRate = 15.0f;
-	
+	public float m_MaxPowerGenerationRate = 15.0f;
+
 	private float m_PrevPowerGenerationRate = 0.0f;
+
 	private CPowerGenerationBehaviour m_PowerGenerator = null;
+	private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
 
 	// Member Properties
 	
@@ -42,22 +44,26 @@ public class CTestPowerGenerator: MonoBehaviour
 	public void Start()
 	{
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
+		m_DUIPowerGeneration = gameObject.GetComponentInChildren<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
 
 		// Register for when the fusebox breaks/fixes
 		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
 		fbc.EventBroken += HandleFuseBoxBreaking;
 		fbc.EventFixed += HandleFuseBoxFixing;
+
+		// Register power generator value change
+		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
 	}
 	
 	public void Update()
 	{
 		if(CNetwork.IsServer)
 		{
-			if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
+			if(m_PrevPowerGenerationRate != m_MaxPowerGenerationRate)
 			{
-				m_PowerGenerator.PowerGenerationRate = m_PowerGenerationRate;
+				m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
 			
-				m_PrevPowerGenerationRate = m_PowerGenerationRate;
+				m_PrevPowerGenerationRate = m_MaxPowerGenerationRate;
 			}
 		}
 	}
@@ -76,5 +82,11 @@ public class CTestPowerGenerator: MonoBehaviour
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
 		}
+	}
+
+	private void HandleGenerationRateChange(GameObject _PowerGen)
+	{
+		// Update the UI generation rate
+		m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_MaxPowerGenerationRate);
 	}
 }

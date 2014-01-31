@@ -31,6 +31,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		ControlsTest,
 		FacilityExpansion,
 		ModuleCreation,
+		PowerGenerator,
 
 		MAX
 	}
@@ -94,7 +95,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Update2()
+	public void Update()
 	{
 		if(m_DUICamera3D != null)
 		{
