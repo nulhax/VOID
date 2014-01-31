@@ -32,6 +32,7 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
         MAX
     }
 
+
     // Member Delegates & Events
 
 
@@ -54,43 +55,56 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
 
     void Start()
     {
+        // Debug: Sign up for 'use' event
         gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUse);
+
+        // Set invalid tool
+        m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
+
+        m_fHealth = 50.0f;
     }
 
 
+    // Debug use only
     void OnUse(RaycastHit _RayCast, CNetworkViewId _cNetworkViewId)
     {
-        m_bSpawnTool = true;
+        // Default
+        m_skTool = CGameRegistrator.ENetworkPrefab.ToolRachet;
     }
 
 
     public static void SerializeData(CNetworkStream _cStream)
     {
-        if (m_bSpawnTool)
+        // If there's a tool to be spawned
+        if (m_skTool != CGameRegistrator.ENetworkPrefab.INVALID)
         {
             // Write the first byte to the stream as a network action
             _cStream.Write((byte)ENetworkAction.ActionSpawnTool);
 
             // Write the tool to spawn to the stream
-            _cStream.Write((byte)m_skDefaultTool);
+            _cStream.Write((byte)m_skTool);
 
-            // Reset boolean
-            m_bSpawnTool = false;
+            // Reset tool
+            m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
         }
     }
 
 
     public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
+        // While there is unread data in the stream
         while (_cStream.HasUnreadData)
         {
             // Save the first byte as the network action
             ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
 
+            // Switch on the network action
             switch (eNetworkAction)
             {
+                // Spawn tool action
                 case ENetworkAction.ActionSpawnTool:
                 {
+                    // Spawn a new tool
                     SpawnTool((CGameRegistrator.ENetworkPrefab)_cStream.ReadByte());
                     
                     break;
@@ -101,11 +115,16 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    static void SpawnTool(CGameRegistrator.ENetworkPrefab _Tool)
+    public static void InvokeSpawnTool(CGameRegistrator.ENetworkPrefab _Tool)
     {
-        // MARTIN: Uncomment the below line
-        //m_bSpawnTool = true;
+        // Set the tool to be spawned
+        m_skTool = _Tool;
+    }
 
+
+    [AServerOnly]
+    private static void SpawnTool(CGameRegistrator.ENetworkPrefab _Tool)
+    {
         // Local variables
         Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -128,23 +147,25 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
 
         // Set the tool's parent
         NewTool.GetComponent<CNetworkView>().SetParent(Instance.gameObject.GetComponent<CNetworkView>().ViewId);
-
-        
     }
 
 
     void OnDestroy() { }
 
 
-    void Update() { }
+    void Update()
+    {
+        // Interpolate health
+        transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
+    }
 
 
     public override void InstanceNetworkVars() { }
 
 
-    static bool m_bSpawnTool = false;
+    static float m_fHealth = new float();
     static CDispenserBehaviour m_Instance;
-    static CGameRegistrator.ENetworkPrefab m_skDefaultTool = CGameRegistrator.ENetworkPrefab.ToolRachet;
+    static CGameRegistrator.ENetworkPrefab m_skTool = new CGameRegistrator.ENetworkPrefab();
 
 
 };
