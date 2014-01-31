@@ -105,7 +105,7 @@ public class CToolInterface : CNetworkMonoBehaviour
                 GameObject cOwnerPlayerActor = OwnerPlayerActor;
 
                 gameObject.transform.parent = cOwnerPlayerActor.transform;
-                gameObject.transform.localPosition = new Vector3(0.5f, 0.36f, 0.5f);
+                gameObject.transform.localPosition = new Vector3(0.3f, 1.0f, 0.5f);
                 gameObject.transform.localRotation = Quaternion.identity;
 
                 // Turn off dynamic physics

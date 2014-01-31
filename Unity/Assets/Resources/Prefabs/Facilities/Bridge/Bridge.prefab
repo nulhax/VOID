@@ -4116,9 +4116,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: 0
-  stateTransitions: []
-  state_previous: 0
 --- !u!114 &11400102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4130,11 +4127,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
-  syncNetworkVar: 1
-  initialHealth: 1000
+  syncNetworkState: 1
+  health_initial: 1
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4194,9 +4195,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: 0
-  stateTransitions: []
-  state_previous: 0
 --- !u!114 &11400114
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4208,11 +4206,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
-  syncNetworkVar: 1
-  initialHealth: 1000
+  syncNetworkState: 1
+  health_initial: 1
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4272,9 +4274,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: 0
-  stateTransitions: []
-  state_previous: 0
 --- !u!114 &11400126
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4286,11 +4285,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
-  syncNetworkVar: 1
-  initialHealth: 1000
+  syncNetworkState: 1
+  health_initial: 1
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4839,7 +4842,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 0
+  m_PreplacedModuleType: 13
   m_Positioner: {fileID: 100134}
   m_Internal: 1
 --- !u!114 &11400220

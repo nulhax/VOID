@@ -26,6 +26,13 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
 		UpdateTarget,
 	}
+
+	public enum EToolState
+	{
+		NoTool,
+		SingleHandTool,
+		TwoHandTool,
+	}
 	
 	//Member Delegates & Events
 	public delegate void NotifyTargetChange(Vector3 _bNewTarget);
@@ -51,16 +58,35 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	float m_fLerpTimer = 0.0f;
 	
 	CNetworkVar<Vector3> m_NetworkedTarget;
+
+	EToolState m_eToolState;
+	Transform m_equippedTool;
 	
 	//Member Methods
 	
 	// Use this for initialization
 	void Start () 
 	{		
+		m_eToolState = EToolState.NoTool;
+
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		EventTargetChange += UpdateTarget;
 		
 		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += OnPlayerInteraction;
+		gameObject.GetComponent<CPlayerBelt>().EventEquipTool += EquipTool;
+	}
+
+	[AServerOnly]
+	void EquipTool(GameObject _Tool)
+	{
+		//Get transform from the tool
+		m_equippedTool = _Tool.transform.FindChild ("IKTarget");
+
+		//Set transform as new permanent IK target
+		m_fRightHandIKWeight = 1.0f;
+
+		//Set tool state
+		m_eToolState = EToolState.SingleHandTool;
 	}
 	
 	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
@@ -164,14 +190,26 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
 				break;
 			}
-		}
-		
+		}		
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{	
-		LerpToTarget();		
+		switch (m_eToolState) 
+		{
+			case EToolState.NoTool:
+			{
+				LerpToTarget ();		
+				break;
+			}
+			case EToolState.SingleHandTool:
+			{
+				//Update Target
+				m_RightHandTarget = m_equippedTool.position;
+				break;
+			}
+		}
 	}
 	
 	void LerpToTarget()
