@@ -104,13 +104,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         MAX
     }
 
-    enum ESkybox : uint
-    {
-        Composite,
-        Solid,
-        MAX
-    }
-
     ///////////////////////////////////////////////////////////////////////////
     // Variables:
 
@@ -119,8 +112,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     private PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
     protected CNetworkVar<int>[] mNoiseSeeds = new CNetworkVar<int>[(uint)ENoiseLayer.MAX];
-
-    private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
     private SCellPos mCentreCell = new SCellPos(0, 0, 0);    // All cells are offset by this cell.
     protected CNetworkVar<int> mCentreCellX;
@@ -192,42 +183,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     void Start()
     {
-        // Fog and skybox are controlled by the galaxy.
-        RenderSettings.fog = false;
-        RenderSettings.skybox = null;
-
-        // Load skyboxes.
-        string[] skyboxFaces = new string[6];
-        skyboxFaces[0] = "Left";
-        skyboxFaces[1] = "Right";
-        skyboxFaces[2] = "Down";
-        skyboxFaces[3] = "Up";
-        skyboxFaces[4] = "Front";
-        skyboxFaces[5] = "Back";
-
-        Profiler.BeginSample("Initialise cubemap from 6 textures");
-        for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        {
-            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
-            {
-                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
-                if (!mSkyboxes[uiSkybox])
-                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
-                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
-                Resources.UnloadAsset(skyboxFace);
-            }
-
-            mSkyboxes[uiSkybox].Apply(false, true);
-        }
-        Profiler.EndSample();
-
-        //Profiler.BeginSample("Load cubemaps");
-        //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
-        //Profiler.EndSample();
-
-        UpdateGalaxyAesthetic(mCentreCell);
-
         // Statistical data sometimes helps spot errors.
         Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
 
@@ -925,55 +880,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.EndSample();
 
         return result;
-    }
-
-    void UpdateGalaxyAesthetic(SCellPos absoluteCell)
-    {
-        Profiler.BeginSample("UpdateGalaxyAesthetic");
-
-        // Skybox.
-        Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
-
-        if (RenderSettings.skybox == null)
-            RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));
-        RenderSettings.skybox.SetVector("_Tint", Color.grey);
-
-        Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
-        Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
-        Shader.SetGlobalFloat("void_FogDensity", 0.01f);
-
-        // Calculate perspective warp.
-        Camera camera = Camera.current;
-        if (camera)
-        {
-            float CAMERA_NEAR = camera.nearClipPlane;
-            float CAMERA_FAR = camera.farClipPlane;
-            float CAMERA_FOV = camera.fieldOfView;
-            float CAMERA_ASPECT_RATIO = camera.aspect;
-
-            float fovWHalf = CAMERA_FOV * 0.5f;
-
-            Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
-            Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
-
-            Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
-            float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;
-
-            topLeft.Normalize();
-            topLeft *= CAMERA_SCALE;
-
-            Vector3 topRight = (camera.transform.forward * CAMERA_NEAR + toRight + toTop).normalized * CAMERA_SCALE;
-            Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
-            Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
-
-            Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
-            Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
-            Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
-            Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
-            Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
-        }
-
-        Profiler.EndSample();
     }
 
     public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
