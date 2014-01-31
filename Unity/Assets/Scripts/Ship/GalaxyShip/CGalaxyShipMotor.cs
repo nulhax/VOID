@@ -171,12 +171,12 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	}
 
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_Position = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_EulerAngles = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_Velocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_AngularVelocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Position= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_EulerAngles= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Velocity= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_AngularVelocity= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _rSender)

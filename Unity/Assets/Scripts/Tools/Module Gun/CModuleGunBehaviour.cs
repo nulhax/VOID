@@ -50,7 +50,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	private Quaternion m_FromTransionRot = Quaternion.identity;
 	private Vector3 m_FromTransionScale = Vector3.zero;
 
-	private Vector3 m_ActivatedPositionOffset = Vector3.zero;
+	private Vector3 m_ActivatedPosition = Vector3.zero;
 	
 	private bool m_Activating = false;
 	private bool m_Deactivating = false;
@@ -65,9 +65,9 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_DUIActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_DUIActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	
@@ -93,13 +93,9 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_ToolInterface.EventPrimaryActivate += OnPrimaryStart;
 		m_ToolInterface.EventSecondaryActivate += OnSecondaryStart;
 
-		// Register mouse movement events
-		CUserInput.EventMouseMoveX += OnMouseMoveX;
-		CUserInput.EventMouseMoveY += OnMouseMoveY;
-
 		// Register DUI events
 		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIModuleCreationRoot>();
-		m_DUIModuleCreationRoot.EventSelectNodeButtonPressed += OnDUISelectNodeButtonPressed;
+		m_DUIModuleCreationRoot.EventBuildModuleButtonPressed += OnDUIBuildButtonPressed;
 
 		// Configure DUI
 		m_DUI.transform.position = m_InactiveUITransform.position;
@@ -128,6 +124,8 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			if(m_Activating) 
 			{
 				m_Activating = false;
+
+				m_ActivatedPosition = m_DUI.transform.position;
 			}
 			if(m_Deactivating)
 			{
@@ -138,9 +136,16 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void ActivateDUI()
 	{
+		// Register mouse movement events
+		CUserInput.EventMoveForwardHold += OnPlayerMovement;
+		CUserInput.EventMoveBackwardHold += OnPlayerMovement;
+		CUserInput.EventMoveLeftHold += OnPlayerMovement;
+		CUserInput.EventMoveRightHold += OnPlayerMovement;
+		CUserInput.EventMoveJumpHold += OnPlayerMovement;
+
 		m_Activating = true;
 		m_TransitionTimer = 0.0f;
-		m_ActivatedPositionOffset = Vector3.zero;
+		m_ActivatedPosition = Vector3.zero;
 
 		Vector3 ActivePosToHead = (m_ActiveUITransform.position - m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.position).normalized;
 
@@ -155,6 +160,13 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void DeactivateDUI()
 	{
+		// Unegister mouse movement events
+		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
+		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
+		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
+		CUserInput.EventMoveRightHold -= OnPlayerMovement;
+		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
+
 		m_Deactivating = true;
 		m_TransitionTimer = 0.0f;
 
@@ -179,7 +191,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		}
 		else if(IsDUIActive)
 		{
-			m_DUI.transform.localPosition = m_ToTransionPos + m_ActivatedPositionOffset;
+			m_DUI.transform.position = m_ActivatedPosition;
 
 			Vector3 duiToHead = (m_DUI.transform.position - m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform.position).normalized;
 			m_DUI.transform.rotation = Quaternion.LookRotation(duiToHead);
@@ -195,14 +207,19 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
 			if(mpi != null)
 			{
+				// Make the UI active
 				m_DUIActive.Set(true);
 
-//				if(m_DUIModuleCreationRoot.SelectedModuleSize == mpi.PortSize && !mpi.IsModuleAttached)
-//				{
-//					mpi.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
-//				}
+				// Change the port selected on the UI
+				m_DUIModuleCreationRoot.SetSelectedPort(_InteractableObject.GetComponent<CNetworkView>().ViewId);
 			}
 		}
+	}
+
+	[AClientOnly]
+	private void OnPlayerMovement()
+	{
+		m_DUIActive.Set(false);
 	}
 
 	[AServerOnly]
@@ -211,35 +228,25 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_DUIActive.Set(false);
 	}
 
-	[AClientOnly]
-	private void OnMouseMoveX(float _Delta)
+	[AServerOnly]
+	private void OnDUIBuildButtonPressed()
 	{
-		if(IsDUIActive && !m_Deactivating && ! m_Activating)
-		{
-			m_ActivatedPositionOffset.x -= _Delta * 0.01f;
-			m_ActivatedPositionOffset.x = Mathf.Clamp(m_ActivatedPositionOffset.x, -0.8f, 0.8f);
-		}
-	}
+		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
 
-	[AClientOnly]
-	private void OnMouseMoveY(float _Delta)
-	{
-		if(IsDUIActive && !m_Deactivating && ! m_Activating)
-		{
-			m_ActivatedPositionOffset.y += _Delta * 0.01f;
-			m_ActivatedPositionOffset.y = Mathf.Clamp(m_ActivatedPositionOffset.y, -0.5f, 0.5f);
-		}
-	}
+		// Debug: Create the module instantly
+		currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
 
-	private void OnDUISelectNodeButtonPressed()
-	{
+		// Deactivate the UI
 		m_DUIActive.Set(false);
 	}
 
 	private void OnDestory()
 	{
-		// Unregister mouse movement events
-		CUserInput.EventMouseMoveX -= OnMouseMoveX;
-		CUserInput.EventMouseMoveY -= OnMouseMoveY;
+		// Unegister mouse movement events
+		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
+		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
+		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
+		CUserInput.EventMoveRightHold -= OnPlayerMovement;
+		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
 	}
 };

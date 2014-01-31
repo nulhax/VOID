@@ -72,9 +72,9 @@ public class CGameChat : CNetworkMonoBehaviour
     void Update() {}
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        //m_sNetworkedPlayerName = new CNetworkVar<string>(OnNetworkVarSync, "");
+        //m_sNetworkedPlayerName = _cRegistrar.CreateNetworkVar<string>(OnNetworkVarSync, "");
     }
 
 

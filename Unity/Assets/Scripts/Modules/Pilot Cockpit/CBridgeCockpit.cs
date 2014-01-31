@@ -63,9 +63,9 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 
     // Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_AttachedPlayerActorViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_AttachedPlayerActorViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 	
 	public void OnNetworkVarSync(INetworkVar _NetworkVar)

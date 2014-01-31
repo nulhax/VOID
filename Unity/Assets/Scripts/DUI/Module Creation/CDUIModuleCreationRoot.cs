@@ -27,7 +27,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	
 	// Member Delegates & Events
 	public delegate void NotifyDUIEvent();
-	public event NotifyDUIEvent EventSelectNodeButtonPressed;
+	public event NotifyDUIEvent EventBuildModuleButtonPressed;
 
 	
 	// Member Fields
@@ -40,6 +40,10 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	public UISprite m_MediumModuleSprite = null;
 	public UISprite m_LargeModuleSprite = null;
 
+	public UISprite m_SmallPortSprite = null;
+	public UISprite m_MediumPortSprite = null;
+	public UISprite m_LargePortSprite = null;
+
 	public CModuleInterface.EType m_StartingModuleType = CModuleInterface.EType.INVALID;
 	public GameObject m_ParentModuleObject = null;
 
@@ -48,15 +52,13 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	private CModuleInterface.ESize m_SelectedModuleSize = CModuleInterface.ESize.INVALID;
 	private int m_SelectedModuleCost = 0;
 
+	private CModuleInterface.ESize m_SelectedPortSize = CModuleInterface.ESize.INVALID;
+
 	private CNetworkVar<CModuleInterface.EType> m_CurrentModuleType = null;
+	private CNetworkVar<CNetworkViewId> m_CurrentPortSelected = null;
 	
 	
 	// Member Properties
-	public CModuleInterface.EType CurrentModuleType
-	{
-		get { return(m_CurrentModuleType.Get()); }
-	}
-
 	public CModuleInterface.EType SelectedModuleType
 	{
 		get {return(m_SelectedModuleType); }
@@ -76,11 +78,17 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	{
 		get {return(m_SelectedModuleCost); }
 	}
+
+	public GameObject CurrentPortSelected
+	{
+		get {return(CNetwork.Factory.FindObject(m_CurrentPortSelected.Get())); }
+	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_CurrentModuleType = new CNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
+		m_CurrentModuleType = _cRegistrar.CreateNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
+		m_CurrentPortSelected = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
@@ -89,30 +97,43 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		{
 			UpdateModulePresentation();
 		}
+		else if(_SyncedNetworkVar == m_CurrentPortSelected)
+		{
+			UpdatePortPresentation();
+		}
 	}
 	
 	public void Start()
 	{
 		if(CNetwork.IsServer)
-			ChangeModuleType(m_StartingModuleType);
+			SetSelectedModuleType(m_StartingModuleType);
 	}
 
-	public void SelectNodeButtonPressed()
+	public void ButtonBuildModulePressed()
 	{
-		if(EventSelectNodeButtonPressed != null)
-			EventSelectNodeButtonPressed();
+		if(CNetwork.IsServer)
+		{
+			if(EventBuildModuleButtonPressed != null)
+				EventBuildModuleButtonPressed();
+		}
 	}
 	
 	[AServerOnly]
-	public void ChangeModuleType(CModuleInterface.EType _ModuleType)
+	public void SetSelectedModuleType(CModuleInterface.EType _ModuleType)
 	{
 		m_CurrentModuleType.Set(_ModuleType);
+	}
+
+	[AServerOnly]
+	public void SetSelectedPort(CNetworkViewId _PortViewId)
+	{
+		m_CurrentPortSelected.Set(_PortViewId);
 	}
 
 	private void UpdateModulePresentation()
 	{
 		// Create a temp module
-		string modulePrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CModuleInterface.GetPrefabType(CurrentModuleType));
+		string modulePrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CModuleInterface.GetPrefabType(m_CurrentModuleType.Get()));
 		GameObject moduleObject = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/" + modulePrefabFile));
 		
 		// Destroy the old module
@@ -154,6 +175,15 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		moduleObject.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
 	}
 
+	private void UpdatePortPresentation()
+	{
+		// Get the port that was selected
+		GameObject port = CNetwork.Factory.FindObject(m_CurrentPortSelected.Get());
+
+		// Update the port info in the DUI
+		UpdatePortInfo(port.GetComponent<CModulePortInterface>());
+	}
+
 	private void UpdateModuleInfo(CModuleInterface _tempModuleInterface)
 	{
 		// DEBUG: Make a random sentance to describe it
@@ -171,7 +201,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		m_ModuleCategoryLabel.text = m_SelectedModuleCategory.ToString();
 		
 		// Set the size
-		UpdateSize(m_SelectedModuleSize);
+		UpdateSizeInfo(m_SelectedModuleSize, m_SmallModuleSprite, m_MediumModuleSprite, m_LargeModuleSprite);
 		
 		// Set the desc
 		m_ModuleDescLabel.text = desc;
@@ -179,28 +209,36 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		// Set the cost
 		m_ModuleCostLabel.text = m_SelectedModuleCost.ToString() + "N";
 	}
+
+	private void UpdatePortInfo(CModulePortInterface _ModulePortInterface)
+	{
+		m_SelectedPortSize = _ModulePortInterface.PortSize;
+
+		// Set the size
+		UpdateSizeInfo(m_SelectedPortSize, m_SmallPortSprite, m_MediumPortSprite, m_LargePortSprite);
+	}
 	
-	private void UpdateSize(CModuleInterface.ESize _ModuleSize)
+	private void UpdateSizeInfo(CModuleInterface.ESize _ModuleSize, UISprite _Small, UISprite _Medium, UISprite _Large)
 	{
 		// Reset all colors to default
-		m_SmallModuleSprite.color = Color.green;
-		m_MediumModuleSprite.color = Color.yellow;
-		m_LargeModuleSprite.color = Color.red;
+		_Small.color = Color.green;
+		_Medium.color = Color.yellow;
+		_Large.color = Color.red;
 		
 		if(_ModuleSize == CModuleInterface.ESize.Small)
 		{
-			m_MediumModuleSprite.color = Color.gray;
-			m_LargeModuleSprite.color = Color.gray;
+			_Medium.color = Color.gray;
+			_Large.color = Color.gray;
 		}
 		else if(_ModuleSize == CModuleInterface.ESize.Medium)
 		{
-			m_SmallModuleSprite.color = Color.gray;
-			m_LargeModuleSprite.color = Color.gray;
+			_Small.color = Color.gray;
+			_Large.color = Color.gray;
 		}
 		else if(_ModuleSize == CModuleInterface.ESize.Large)
 		{
-			m_SmallModuleSprite.color = Color.gray;
-			m_MediumModuleSprite.color = Color.gray;
+			_Small.color = Color.gray;
+			_Medium.color = Color.gray;
 		}
 	}
 }

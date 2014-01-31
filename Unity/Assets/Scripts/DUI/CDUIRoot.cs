@@ -76,9 +76,9 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 
     // Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ConsoleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_ConsoleViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
@@ -94,7 +94,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Update()
+	public void Update2()
 	{
 		if(m_DUICamera3D != null)
 		{

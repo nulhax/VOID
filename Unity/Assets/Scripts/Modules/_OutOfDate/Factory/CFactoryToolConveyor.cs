@@ -25,7 +25,7 @@ public class CFactoryToolConveyor : CNetworkMonoBehaviour
 	// Member Properties
 	
 	// Member Functions
-	public override void InstanceNetworkVars(){}
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar){}
 	
 	public void Start(){}
 	public void OnDestroy(){}

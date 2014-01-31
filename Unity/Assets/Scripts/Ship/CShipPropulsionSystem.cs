@@ -37,7 +37,7 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 		
 
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

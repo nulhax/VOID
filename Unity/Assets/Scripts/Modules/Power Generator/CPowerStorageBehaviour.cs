@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -60,11 +60,11 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 	
 	// Member Functions
 	
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BatteryCharge = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_BatteryCapacity = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_BatteryChargeAvailable = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_BatteryCharge = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_BatteryCapacity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_BatteryChargeAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
