@@ -57,6 +57,11 @@ public class CModuleInterface : MonoBehaviour
 		MiningTurret,
 		MiningCockpit,
 		AtmosphereConditioner,
+        Dispenser,
+        EngineSmall,
+        ShieldCapacitorSmall,
+        OxygenRefiller,
+
 
         MAX
 	}

@@ -13,7 +13,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 
     [SerializeField] private float initialHealth = 1.0f;
     [HideInInspector] public float health_previous;
-    private float health_current;
+    public float health_current;
     protected CNetworkVar<float> health_internal;
     public float health { get { return health_current; } set { if (syncNetworkVar)health_internal.Set(value); else { health_current = value; OnSync(null); } } }
 
@@ -35,6 +35,8 @@ public class CActorHealth : CNetworkMonoBehaviour
             EventOnSetCallback(gameObject, health_previous, health_current);
 
         health_previous = health_current;
+
+        //Debug.Log(health_current.ToString());
     }
 
     void OnCollisionEnter(Collision collision)

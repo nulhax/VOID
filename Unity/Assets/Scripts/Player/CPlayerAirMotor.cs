@@ -173,6 +173,15 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		transform.Rotate(new Vector3(0.0f, CUserInput.MouseMovementX, 0.0f));
 		transform.Rotate(new Vector3(CUserInput.MouseMovementY, 0.0f, 0.0f));
 
+        if (CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight))
+        {
+            Debug.Log("Roll Right");
+        }
+        else if (CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft))
+        {
+            Debug.Log("Roll Left");
+        }
+
 
         s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
         s_cSerializeStream.Write((ushort)m_usMovementStates);

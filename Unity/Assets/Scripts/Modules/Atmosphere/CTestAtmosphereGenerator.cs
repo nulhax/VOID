@@ -32,6 +32,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 	// Member Fields
 	public float m_AtmosphereGenerationRate = 60.0f;
 
+    public float m_AtmosphereGenerationDamaged = 10.0f;
+
 	private float m_PrevAtmosphereGenerationRate = 0.0f;
 	private CAtmosphereGeneratorBehaviour m_AtmosphereGenerator = null;
 

@@ -29,6 +29,8 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400020}
+  - 114: {fileID: 11400024}
+  - 114: {fileID: 11400026}
   m_Layer: 0
   m_Name: Atmosphere Generator
   m_TagString: Untagged
@@ -445,6 +447,7 @@ MonoBehaviour:
   syncNetworkVar: 1
   initialHealth: 500
   health_previous: 0
+  health_current: 0
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -528,6 +531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AtmosphereGenerationRate: 60
+  m_AtmosphereGenerationDamaged: 10
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -539,6 +543,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc52d1f6e9f60498d8475f5e1ba2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyOnZeroHealth: 1
+  takeDamageOnImpact: 1
+  syncNetworkVar: 1
+  initialHealth: 100
+  health_previous: 0
+  health_current: 0
+--- !u!114 &11400026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialState: 0
+  stateTransitions:
+  - 0
+  - 100
+  state_previous: 0
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1

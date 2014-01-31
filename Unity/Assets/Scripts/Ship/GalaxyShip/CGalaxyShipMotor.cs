@@ -275,7 +275,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         if (pilotingState.MovingForward &&
             !pilotingState.MovingBackward)
         {
-            movementForce.z += 500.0f;
+            movementForce.z += 500.0f; //500
         }
         else if (pilotingState.MovingBackward &&
             	 !pilotingState.MovingForward)
@@ -287,24 +287,24 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         if (pilotingState.RollLeft &&
         	!pilotingState.RollRight)
         {
-            movementForce.x -= 100.0f;
+            movementForce.x -= 100.0f; //200
         }
         else if (pilotingState.RollRight &&
         		 !pilotingState.RollLeft)
         {
-            movementForce.x += 100.0f;
+            movementForce.x += 100.0f; //200
         }	
 		
 		// Yaw Rotation
         if (pilotingState.MovingLeft &&
         	!pilotingState.MovingRight)
         {
-            angularForce.y -= 1.0f;
+            angularForce.y -= 1.0f; //1
         }
         else if (pilotingState.MovingRight &&
         		 !pilotingState.MovingLeft)
         {
-            angularForce.y += 1.0f;
+            angularForce.y += 1.0f; //1
         }
 		
 		// Roll rotation
