@@ -16,7 +16,18 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class CShipDamageOnCollision : MonoBehaviour
 {
+	struct SDebugVisual
+	{
+		public Vector3 pointOfImpact;
+		public float radius;
+		public float expireTime;
+
+		public SDebugVisual(Vector3 _PointOfImpact, float _Radius, float _ExpireTime) { pointOfImpact = _PointOfImpact; radius = _Radius; expireTime = _ExpireTime; }
+	}
+
     public float impulseToRadius = 1.0f;
+
+	System.Collections.Generic.List<SDebugVisual> m_DebugVisuals = new System.Collections.Generic.List<SDebugVisual>();
 
     void OnCollisionEnter(Collision collision)
     {
@@ -39,13 +50,14 @@ public class CShipDamageOnCollision : MonoBehaviour
             foreach (ContactPoint contact in collision.contacts)
             {
                 Vector3 contactPointOnShip = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
+				m_DebugVisuals.Add(new SDebugVisual(contactPointOnShip, radius, Time.time + 1.0f));
 
                 CActorHealth[] damagableActors = CGameShips.Ship.GetComponentsInChildren<CActorHealth>();
 				foreach (CActorHealth damagableActor in damagableActors)
                 {
 					if (damagableActor.takeDamageOnImpact)
 					{
-						Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
+						//Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
 						float actorDistanceToImpact = (damagableActor.gameObject.transform.position - contactPointOnShip).magnitude;
 
 						if (actorDistanceToImpact < radius)
@@ -59,4 +71,20 @@ public class CShipDamageOnCollision : MonoBehaviour
             }
         }
     }
+
+	void OnDrawGizmos()
+	{
+		Gizmos.color = Color.magenta;
+		for (int i = 0; i < m_DebugVisuals.Count; i++)
+		{
+			if (m_DebugVisuals[i].expireTime >= Time.time)
+			{
+				m_DebugVisuals.RemoveAt(i);
+				--i;
+				continue;
+			}
+			else
+				Gizmos.DrawSphere(m_DebugVisuals[i].pointOfImpact, m_DebugVisuals[i].radius);
+		}
+	}
 }
