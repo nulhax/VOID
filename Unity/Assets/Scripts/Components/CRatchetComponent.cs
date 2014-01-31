@@ -77,7 +77,7 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 		// This will call onbreak or onfix when the even is triggered.
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix += OnFix;
-		gameObject.GetComponent<CActorHealth>().EventOnSetCallback += ComponentHealth;
+		//gameObject.GetComponent<CActorHealth>().EventOnSetCallback += ComponentHealth;
 
 	}
 	
@@ -100,7 +100,7 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 
 	}
 
-	public override void InstanceNetworkVars ()
+	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

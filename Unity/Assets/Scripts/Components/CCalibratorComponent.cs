@@ -76,7 +76,7 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 		
 	}
 	
-	public override void InstanceNetworkVars ()
+	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
 		
 	}
