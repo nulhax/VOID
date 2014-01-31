@@ -127,10 +127,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 1
   takeDamageOnImpact: 1
-  initialHealth: 1
+  syncNetworkState: 0
+  health_initial: 1
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
