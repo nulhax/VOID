@@ -59,6 +59,7 @@ public class CModuleInterface : MonoBehaviour
 		AtmosphereConditioner,
         OxygenRefiller,
         Dispenser,
+        NaniteCapsule,
 
         MAX
 	}

@@ -83,6 +83,7 @@ public class CGameRegistrator : MonoBehaviour
 		AtmosphereConditioner,
         OxygenRefiller,
         Dispenser,
+        NaniteCapsule,
 
 		
 		// Components
@@ -207,6 +208,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Production/Dispenser/Dispenser");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Resources/Nanite Capsule/Nanite Capsule");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -300,6 +302,7 @@ public class CGameRegistrator : MonoBehaviour
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);	
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser, ENetworkPrefab.Dispenser);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule, ENetworkPrefab.NaniteCapsule);
     }
 
 
