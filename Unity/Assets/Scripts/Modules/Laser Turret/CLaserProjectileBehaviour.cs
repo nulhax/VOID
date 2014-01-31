@@ -42,9 +42,9 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-
+        _cRegistrar.RegisterRpc(this, "CreateHitParticles");
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -54,6 +54,8 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 
 	public void Start()
 	{
+		m_vInitialPosition = transform.position;
+
 		// Precalculate velocity
 		Vector3 velocity = transform.forward * m_InitialProjectileSpeed;
 
@@ -91,6 +93,8 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 		{
 			m_bDestroyed = true;
 
+			//InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
+
 			InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
 		}
 	}
@@ -114,6 +118,7 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 
 
 	public float m_InitialProjectileSpeed = 500.0f;
+	Vector3 m_vInitialPosition;
 
 
 	float m_fLifeTimer = 5.0f;

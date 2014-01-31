@@ -23,6 +23,71 @@ using System;
 /* Implementation */
 
 
+public class CNetworkViewRegistrar
+{
+    public CNetworkViewRegistrar(Dictionary<byte, INetworkVar> _mNetworkVars, CNetworkVar<object>.OnSetCallback _nSetCallback,  Dictionary<byte, CNetworkView.TRpcMethod> _mRpcMethods)
+    {
+        m_mNetworkVars = _mNetworkVars;
+        m_nSetCallback = _nSetCallback;
+        m_mRpcMethods = _mRpcMethods;
+    }
+
+    public CNetworkVar<TYPE> CreateNetworkVar<TYPE>(CNetworkVar<TYPE>.OnSyncCallback _nSyncCallback, TYPE _DefaultValue)
+    {
+        CNetworkVar<TYPE> cNewNetworkVar = new CNetworkVar<TYPE>(_nSyncCallback, _DefaultValue);
+
+        RegisterNetworkVar(cNewNetworkVar);
+
+        return (cNewNetworkVar);
+    }
+
+    public CNetworkVar<TYPE> CreateNetworkVar<TYPE>(CNetworkVar<TYPE>.OnSyncCallback _nSyncCallback)
+    {
+        CNetworkVar<TYPE> cNewNetworkVar = new CNetworkVar<TYPE>(_nSyncCallback);
+
+        RegisterNetworkVar(cNewNetworkVar);
+
+        return (cNewNetworkVar);
+    }
+
+
+    public void RegisterRpc(CNetworkMonoBehaviour _cComponent, string _sMethodName)
+    {
+        // Generate network rpc id, 1-byte.MAX
+        byte bId = (byte)(m_mRpcMethods.Count + 1);
+
+        // Create rpc method info
+        CNetworkView.TRpcMethod tRpcMethodInfo = new CNetworkView.TRpcMethod();
+        tRpcMethodInfo.cUnityComponent = _cComponent;
+        tRpcMethodInfo.cMethodInfo = _cComponent.GetType().GetMethod(_sMethodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        // Store the rpc info towards the id
+        m_mRpcMethods.Add(bId, tRpcMethodInfo);
+
+        //Debug.LogError("Regisered method: " + _sMethodName + " : " + bId);
+
+        //Logger.Write("Added network rpc ({0}) to list. Method name ({1})", bId, cMethodInfo.Name);
+    }
+
+
+    void RegisterNetworkVar(INetworkVar _cNetworkVar)
+    {
+        // Generate network var id, 1-byte.MAX
+        byte bId = (byte)(m_mNetworkVars.Count + 1);
+
+        // Store network var instance towards ids
+        m_mNetworkVars.Add(bId, _cNetworkVar);
+
+        // Set the network view owner of the network var
+        _cNetworkVar.SetNetworkViewOwner(bId, m_nSetCallback);
+    }
+
+    Dictionary<byte, INetworkVar> m_mNetworkVars;
+    CNetworkVar<object>.OnSetCallback m_nSetCallback;
+    Dictionary<byte, CNetworkView.TRpcMethod> m_mRpcMethods;
+}
+
+
 public class CNetworkView : CNetworkMonoBehaviour
 {
 
@@ -63,9 +128,14 @@ public class CNetworkView : CNetworkMonoBehaviour
     // public:
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cParentViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cParentViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        
+        _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
+        _cRegistrar.RegisterRpc(this, "RemoteSetRotation");
+        _cRegistrar.RegisterRpc(this, "RemoteSetScale");
+        _cRegistrar.RegisterRpc(this, "RemoteSetRigidBodyMass");
 	}
 
 
@@ -654,8 +724,14 @@ public class CNetworkView : CNetworkMonoBehaviour
     {
         // Extract components from game object
         CNetworkMonoBehaviour[] aComponents = gameObject.GetComponents<CNetworkMonoBehaviour>();
+        CNetworkViewRegistrar cRegistrar = new CNetworkViewRegistrar(m_mNetworkVars, OnNetworkVarChange, m_mNetworkRpcs);
 
+        foreach (CNetworkMonoBehaviour cNetworkMonoBehaviour in aComponents)
+        {
+            cNetworkMonoBehaviour.InstanceNetworkVars(cRegistrar);
+        }
 
+        /*
         foreach (CNetworkMonoBehaviour cComponent in aComponents)
         {
             // Initialise the network vars within network component
@@ -683,7 +759,6 @@ public class CNetworkView : CNetworkMonoBehaviour
 				{
 					INetworkVar[] acItems = cFieldInfo.GetValue(cComponent) as INetworkVar[];
 
-					
 		            foreach (INetworkVar cItem in acItems)
 		            {
 						ReigserNetworkVar(cItem);
@@ -691,24 +766,24 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
             }
         }
+       */
     }
-	
-	
-	void ReigserNetworkVar(INetworkVar _cNetworkVar)
-	{
-		// Generate network var id, 1-byte.MAX
-		byte bId = (byte)(m_mNetworkVars.Count + 1);
-
-		// Store network var instance towards ids
-		m_mNetworkVars.Add(bId, _cNetworkVar);
-
-		// Set the network view owner of the network var
-		_cNetworkVar.SetNetworkViewOwner(bId, OnNetworkVarChange);
-	}
 
 
 	void InitialiseNetworkRpcs()
     {
+        /*
+        CNetworkMonoBehaviour[] aComponents = gameObject.GetComponents<CNetworkMonoBehaviour>();
+        CNetworkViewRegistrar cRegistrar = new CNetworkViewRegistrar(m_mNetworkVars, OnNetworkVarChange);
+
+        foreach (CNetworkMonoBehaviour cNetworkMonoBehaviour in aComponents)
+        {
+            cNetworkMonoBehaviour.InstanceNetworkVars(cRegistrar);
+        }
+         * */
+
+
+        /*
         // Extract components from game object
         CNetworkMonoBehaviour[] aComponents = gameObject.GetComponents<CNetworkMonoBehaviour>();
 
@@ -738,13 +813,14 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 			}
 		}
+         * */
 	}
 
 
 	byte FindNetworkRpcIndexUsingMethodInfo(MethodInfo _tMethodInfo)
 	{
 		byte bNetworkRpcId = 0;
-
+        
         // Iterate thorugh all the network rpcs in this network view
         foreach (KeyValuePair<byte, TRpcMethod> tEntry in m_mNetworkRpcs)
 		{

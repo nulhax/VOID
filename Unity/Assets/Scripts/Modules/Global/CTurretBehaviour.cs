@@ -87,10 +87,10 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_tRotation = new CNetworkVar<Vector2>(OnNetworkVarSync, Vector2.zero);
-		m_ulControllerPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
+		m_tRotation = _cRegistrar.CreateNetworkVar<Vector2>(OnNetworkVarSync, Vector2.zero);
+		m_ulControllerPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
 
 

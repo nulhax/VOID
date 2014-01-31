@@ -49,10 +49,10 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 	}
 
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_AtmosphereGenerationActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
-		m_AtmosphereGenerationRate = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_AtmosphereGenerationActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_AtmosphereGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 	private void OnNetworkVarSync(INetworkVar _VarInstance)

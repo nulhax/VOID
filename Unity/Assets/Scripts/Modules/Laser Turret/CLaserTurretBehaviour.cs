@@ -42,7 +42,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
 	}
@@ -58,7 +58,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-	{
+	{;
 		while (_cStream.HasUnreadData)
 		{
 			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();

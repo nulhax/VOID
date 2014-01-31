@@ -161,7 +161,7 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     }
 
 
-    public override void InstanceNetworkVars() { }
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar) { }
 
 
     static float m_fHealth = new float();

@@ -48,9 +48,10 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        // Empty
+        _cRegistrar.RegisterRpc(this, "CreateLocalObject");
+        _cRegistrar.RegisterRpc(this, "DestroyLocalObject");
     }
 
 

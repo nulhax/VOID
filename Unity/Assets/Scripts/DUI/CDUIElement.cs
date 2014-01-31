@@ -67,9 +67,17 @@ public class CDUIElement : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-
+        _cRegistrar.RegisterRpc(this, "InvokeOnClick");
+        _cRegistrar.RegisterRpc(this, "InvokeOnDoubleClick");
+        _cRegistrar.RegisterRpc(this, "InvokeOnPress");
+        _cRegistrar.RegisterRpc(this, "InvokeOnSelect");
+        _cRegistrar.RegisterRpc(this, "InvokeOnHover");
+        _cRegistrar.RegisterRpc(this, "InvokeOnDrag");
+        _cRegistrar.RegisterRpc(this, "InvokeOnDragStart");
+        _cRegistrar.RegisterRpc(this, "InvokeOnDragEnd");
+        _cRegistrar.RegisterRpc(this, "InvokeOnScroll");
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
