@@ -93,18 +93,18 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			return;
 		
 		CBridgeCockpit cockpit = pilotingCockpit.GetComponent<CBridgeCockpit>();
-		if(cockpit.m_AttachedPlayerActor != null && CGamePlayers.SelfActor != cockpit.m_AttachedPlayerActor)
-			return;
-			
-		switch(cockpit.m_CurrentPlayerInteractionEvent)
+		if(CGamePlayers.SelfActor == cockpit.m_AttachedPlayerActor)
 		{
-		case EInteractionEvent.PlayerPiloting:
-			_cStream.Write((byte)EInteractionEvent.PlayerPiloting);
-			_cStream.Write(cockpit.CockpitPilotState.CurrentState);
-			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.x);
-			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.y);
-			cockpit.CockpitPilotState.ResetStates();
-			break;
+			switch(cockpit.m_CurrentPlayerInteractionEvent)
+			{
+			case EInteractionEvent.PlayerPiloting:
+				_cStream.Write((byte)EInteractionEvent.PlayerPiloting);
+				_cStream.Write(cockpit.CockpitPilotState.CurrentState);
+				_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.x);
+				_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.y);
+				cockpit.CockpitPilotState.ResetStates();
+				break;
+			}
 		}
     }
 
@@ -124,24 +124,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		}
     }
 
-	
-    void OnPlayerEnter(ulong _ulPlayerId)
-    {
-        if(m_AttachedPlayerActor == null && CNetwork.IsServer)
-		{
-			m_AttachedPlayerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
-		}
-    }
-
-	
-    void OnPlayerLeave(ulong _ulPlayerId)
-    {
-		if(m_AttachedPlayerActor != null && CNetwork.IsServer)
-		{
-            m_AttachedPlayerActorViewId.Set(null);
-		}
-    }
-	
 	public void Start()
 	{
         gameObject.GetComponent<CCockpit>().EventPlayerEnter += new CCockpit.HandlePlayerEnter(OnPlayerEnter);
@@ -168,9 +150,28 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			{
 				if(!CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Alive)
 				{
-					m_AttachedPlayerActorViewId.Set(null);
+					OnPlayerLeave(CGamePlayers.FindPlayerActorsPlayerId(m_AttachedPlayerActorViewId.Get()));
 				}
 			}
+		}
+	}
+
+	[AServerOnly]
+	void OnPlayerEnter(ulong _ulPlayerId)
+	{
+		if(m_AttachedPlayerActor == null)
+		{
+			m_AttachedPlayerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+		}
+	}
+	
+	[AServerOnly]
+	void OnPlayerLeave(ulong _ulPlayerId)
+	{
+		if(m_AttachedPlayerActor != null)
+		{
+			m_AttachedPlayerActorViewId.Set(null);
+			CockpitPilotState.ResetStates();
 		}
 	}
 	
