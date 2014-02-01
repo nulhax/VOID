@@ -142,7 +142,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -150,7 +150,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();

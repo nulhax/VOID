@@ -97,7 +97,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
 
 		// Add the galaxy shiftable component
-		gameObject.AddComponent<GalaxyShiftable>();
+		if(gameObject.GetComponent<GalaxyShiftable>() == null)
+			gameObject.AddComponent<GalaxyShiftable>();
 
 		// Unparent Actor
 		transform.parent = null;
@@ -120,7 +121,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	public void DisembarkActor()
 	{
 		// Check if this actor isnt a child of another boardable actor
-		if(NGUITools.FindInParents<CActorBoardable>(gameObject) == null)
+		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
 		{
 			// Transfer the actor to galaxy ship space
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
@@ -138,7 +139,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	public void BoardActor()
 	{
 		// Check if this actor isnt a child of another boardable actor
-		if(NGUITools.FindInParents<CActorBoardable>(gameObject) == null)
+		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
 		{
 			// Get the inverse of the relative velocity of the actor boarding
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;

@@ -216,12 +216,12 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			if (ControllerPlayerId == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to turret camera position
-				CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
+				CGameCameras.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
 			}
 			else if (m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to player head position
-				CGame.CompositeCameraSystem.SetDefaultViewPerspective();
+				CGameCameras.SetDefaultViewPerspective();
 			}
 
 			if (EventControllerChange != null) EventControllerChange(m_ulControllerPlayerId.GetPrevious(), m_ulControllerPlayerId.Get());

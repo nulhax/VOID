@@ -41,8 +41,8 @@ public class CActorNetworkSyncronized : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_Position= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_EulerAngles= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Position = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_EulerAngles = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _rSender)

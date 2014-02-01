@@ -94,7 +94,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Update2()
+	public void Update()
 	{
 		if(m_DUICamera3D != null)
 		{

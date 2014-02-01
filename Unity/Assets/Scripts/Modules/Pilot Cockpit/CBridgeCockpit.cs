@@ -103,7 +103,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			_cStream.Write(cockpit.CockpitPilotState.CurrentState);
 			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.x);
 			_cStream.Write(cockpit.CockpitPilotState.CurrentRotationState.y);
-			_cStream.Write(cockpit.CockpitPilotState.TimeStamp);
 			cockpit.CockpitPilotState.ResetStates();
 			break;
 		}
@@ -120,8 +119,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			uint motorState = _cStream.ReadUInt();
 			float rotationX = _cStream.ReadFloat();
 			float rotationY = _cStream.ReadFloat();
-			float timeStamp = _cStream.ReadFloat();
-			bridgeCockpit.CockpitPilotState.SetCurrentState(motorState, new Vector2(rotationX, rotationY), timeStamp);
+			bridgeCockpit.CockpitPilotState.SetCurrentState(motorState, new Vector2(rotationX, rotationY));
 			break;
 		}
     }
