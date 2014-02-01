@@ -186,17 +186,14 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Update()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		if (cSelfLocator.ContainingFacility != null &&
-		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
+		if(!airMotor.IsActive)
 		{
 			// Process grounded check on server and client
 			UpdateGrounded();
 			
 			// Process input only for client owned actors
-			if (CGamePlayers.SelfActor != null &&
-			    CGamePlayers.SelfActor == gameObject)
+			if (CGamePlayers.SelfActor == gameObject)
 			{
 				UpdateRotation();
 				UpdateInput();				
@@ -208,10 +205,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-		    CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		    if (cSelfLocator.ContainingFacility != null &&
-		        cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+			CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
+			if (!airMotor.IsActive)
 		    {
                 ProcessMovement();
 
@@ -268,8 +263,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
 
 		// Jump 
-		if ((m_uiMovementStates & (uint)EState.Jump) > 0 &&
-		    IsGrounded)
+		if ((m_uiMovementStates & (uint)EState.Jump) > 0 && IsGrounded)
 		{
 			vMovementVelocity.y = JumpSpeed;
 		}

@@ -126,15 +126,17 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		// Check if this actor isnt a child of another boardable actor
 		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
 		{
+			// Set the boarding state
+			m_BoardingState.Set(EBoardingState.Offboard);
+
 			// Transfer the actor to galaxy ship space
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
 			
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
-			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 
-			// Set the boarding state
-			m_BoardingState.Set(EBoardingState.Offboard);
+			// Set the compensation velocity of the actor
+			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
 		}
 	}
 
@@ -144,17 +146,17 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		// Check if this actor isnt a child of another boardable actor
 		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
 		{
+			// Set the boarding state
+			m_BoardingState.Set(EBoardingState.Onboard);
+
 			// Get the inverse of the relative velocity of the actor boarding
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
-			
+
 			// Transfer the actor to ship space
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 			
-			// Apply the compensation velocity to the actor
+			// Set the compensation velocity of the actor
 			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
-
-			// Set the boarding state
-			m_BoardingState.Set(EBoardingState.Onboard);
 		}
 	}
 }

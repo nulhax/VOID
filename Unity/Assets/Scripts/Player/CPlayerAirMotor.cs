@@ -55,7 +55,10 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
-
+	public bool IsActive
+	{
+		get { return(m_IsActive.Get()); }
+	}
 
 // Member Methods
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -111,9 +114,6 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					GetComponent<CPlayerHead>().DisableInput(this);
 					GetComponent<CPlayerGroundMotor>().DisableInput(this);
 				}
-
-				// Start syncing the rotations
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
 			}
 			else
 			{
@@ -123,12 +123,6 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					GetComponent<CPlayerHead>().ReenableInput(this);
 					GetComponent<CPlayerGroundMotor>().ReenableInput(this);
 				}
-				
-				if(CNetwork.IsServer)
-					GetComponent<CActorNetworkSyncronized>().SyncTransform();
-				
-				// Stop syncing the rotations
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
 			}
 		}
 	}
@@ -169,10 +163,29 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				{
 					m_RealignTimer = m_RealignTime;
 					m_RealignWithShip = false;
-					m_IsActive.Set(false);
 				}
 
-				transform.rotation = Quaternion.Lerp(m_RealignFromRotation, m_RealignToRotation, m_RealignTimer/m_RealignTime);
+				// Set the lerped rotation
+				rigidbody.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignTimer/m_RealignTime);
+
+				if(!m_RealignWithShip)
+				{
+					// Player is now in gravity zone, set inactive
+					m_IsActive.Set(false);
+
+					// Stop syncing the rotations
+					GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+					GetComponent<CActorNetworkSyncronized>().SyncTransform();
+
+					// Constrain the rotation axis again
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
+					
+					// Reset drag values
+					rigidbody.drag = 0.1f;
+					rigidbody.angularDrag = 0.1f;
+				}
 			}
 		}
 	}
@@ -182,7 +195,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-			if(m_IsActive.Get())
+			if(m_IsActive.Get() && !m_RealignWithShip)
 			{
 				UpdateMovement();
             }
@@ -249,47 +262,37 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerEnterGravityZone()
 	{
-		if(!m_IsActive.Get())
-			return;
-
 		// Start realigning to the ship
 		m_RealignWithShip = true;
+
+		// Set the values to use for realigment
 		m_RealignFromRotation = transform.rotation;
 		m_RealignToRotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
 		m_RealignTimer = 0.0f;
 		m_RealignTime = Mathf.Clamp(Quaternion.Angle(m_RealignFromRotation, m_RealignToRotation) / 180.0f, 0.5f, 2.0f);
-
-		// Constrain the rotation axis again
-		rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
-		rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
-		rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
-
-		// Reset drag values
-		rigidbody.drag = 0.1f;
-		rigidbody.angularDrag = 0.1f;
 	}
 
 
 	[AServerOnly]
 	void OnPlayerLeaveGravityZone()
 	{
-		if(m_IsActive.Get())
-			return;
-
 		// Player is now in no-gravity zone, set active
 		m_IsActive.Set(true);
+
+		// Stop any realignment
+		m_RealignWithShip = false;
 
 		// Release the rotation axis constraints
 		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationX; 
 		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY; 
 		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationZ; 
-
+		
 		// Set drag values high
 		rigidbody.drag = 0.5f;
 		rigidbody.angularDrag = 1.0f;
 
-		// Stop any realignment
-		m_RealignWithShip = false;
+		// Start syncing the rotations
+		GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
 	}
 
 
