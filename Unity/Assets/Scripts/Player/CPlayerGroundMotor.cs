@@ -114,23 +114,16 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
 
-
+	[AClientOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
-
-		gameObject.rigidbody.isKinematic = true;
 	}
 
-
-	public void UndisableInput(object _cFreezeRequester)
+	[AClientOnly]
+	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
-
-		if (!InputDisabled)
-		{
-			gameObject.rigidbody.isKinematic = false;
-		}
 	}
 
 
@@ -238,7 +231,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		if (!InputDisabled)
 		{
-			transform.Rotate(0.0f, CUserInput.MouseMovementX, 0.0f);
+			transform.Rotate(0.0f, CUserInput.MouseMovementDeltaX, 0.0f);
 		}
 	}
 

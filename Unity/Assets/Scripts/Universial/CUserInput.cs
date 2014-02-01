@@ -116,8 +116,8 @@ public class CUserInput : MonoBehaviour
 	public static float SensitivityY { get; set; }
 
 
-	public static float MouseMovementX { get; set; }
-	public static float MouseMovementY { get; set; }
+	public static float MouseMovementDeltaX { get; set; }
+	public static float MouseMovementDeltaY { get; set; }
 
 
 // Member Methods
@@ -209,17 +209,17 @@ public class CUserInput : MonoBehaviour
 	[AClientOnly]
 	void UpdateMouseMove()
 	{
-		MouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
-		MouseMovementY = Input.GetAxis("Mouse Y") * SensitivityY * -1.0f;
+		MouseMovementDeltaX = Input.GetAxis("Mouse X") * SensitivityX;
+		MouseMovementDeltaY = Input.GetAxis("Mouse Y") * SensitivityY * -1.0f;
 
 		//if (MouseMovementX != 0.0f)
 		{
-			if (EventMouseMoveX != null) EventMouseMoveX(MouseMovementX);
+			if (EventMouseMoveX != null) EventMouseMoveX(MouseMovementDeltaX);
 		}
 
 		//if (MouseMovementY != 0.0f)
 		{
-			if (EventMouseMoveY != null) EventMouseMoveY(MouseMovementY);
+			if (EventMouseMoveY != null) EventMouseMoveY(MouseMovementDeltaY);
 		}
 	}
 

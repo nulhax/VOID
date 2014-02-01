@@ -51,19 +51,7 @@ public class CActorGravity : CNetworkMonoBehaviour
 
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)
 	{
-		if(m_UnderGravityInfluence == _SyncedVar)
-		{
-			if(m_UnderGravityInfluence.Get())
-			{
-				if(EventEnteredGravityZone != null)
-					EventEnteredGravityZone();
-			}
-			else
-			{
-				if(EventExitedGravityZone != null)
-					EventExitedGravityZone();
-			}
-		}
+
 	}
 
 	public void Update()
@@ -101,7 +89,12 @@ public class CActorGravity : CNetworkMonoBehaviour
 	public void ActorEnteredGravityTrigger(GameObject _Facility)
 	{
 		if(m_FacilitiesInfluencingGravity.Count == 0)
+		{
 			m_UnderGravityInfluence.Set(true);
+
+			if(EventEnteredGravityZone != null)
+				EventEnteredGravityZone();
+		}
 
 		if(!m_FacilitiesInfluencingGravity.Contains(_Facility))
 			m_FacilitiesInfluencingGravity.Add(_Facility);
@@ -114,6 +107,11 @@ public class CActorGravity : CNetworkMonoBehaviour
 			m_FacilitiesInfluencingGravity.Remove(_Facility);
 
 		if(m_FacilitiesInfluencingGravity.Count == 0)
+		{
 			m_UnderGravityInfluence.Set(false);
+
+			if(EventExitedGravityZone != null)
+				EventExitedGravityZone();
+		}
 	}
 }

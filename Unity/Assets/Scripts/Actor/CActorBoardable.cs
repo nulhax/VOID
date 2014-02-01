@@ -75,15 +75,18 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Start()
-	{	
+	public void Awake()
+	{
 		// Save the original layer
 		m_OriginalLayer = gameObject.layer;
 
 		// Register the boarding/disembarking handlers
 		EventBoard += SetOriginalLayer;
 		EventDisembark += SetGalaxyLayer;
+	}
 
+	public void Start()
+	{	
 		// Set the boarding state if it is still invalid
 		if(CNetwork.IsServer && BoardingState == EBoardingState.INVALID)
 		{
@@ -100,8 +103,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		if(gameObject.GetComponent<GalaxyShiftable>() == null)
 			gameObject.AddComponent<GalaxyShiftable>();
 
-		// Unparent Actor
-		transform.parent = null;
+		// Set as parent of nothing
+		//transform.parent = null;
 	}
 	
 	private void SetOriginalLayer()
@@ -113,8 +116,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		if(gameObject.GetComponent<GalaxyShiftable>() != null)
 			Destroy(gameObject.GetComponent<GalaxyShiftable>());
 
-		// Parent the actor to the ship
-		transform.parent = CGameShips.Ship.transform;
+		// Set as parent of the ship
+		//transform.parent = CGameShips.Ship.transform;
 	}
 
 	[AServerOnly]

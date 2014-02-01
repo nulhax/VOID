@@ -332,6 +332,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	void OnServerShutdown()
 	{
 		m_mPlayersActors.Clear();
+		m_mPlayerActorsPlayers.Clear();
 		m_mPlayerName.Clear();
 	}
 
@@ -341,6 +342,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if (!CNetwork.IsServer)
 		{
 			m_mPlayersActors.Clear();
+			m_mPlayerActorsPlayers.Clear();
 			m_mPlayersActors.Remove(CNetwork.PlayerId);
 		}
 
