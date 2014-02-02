@@ -356,12 +356,12 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(m_mPlayerName.ContainsKey(_ulPlayerID))
 		{
 			m_mPlayerName[_ulPlayerID] = _sPlayerUserName;
-			Debug.LogError("Changed Player Name: " + _sPlayerUserName);
+			//Debug.LogError("Changed Player Name: " + _sPlayerUserName);
 		}
 		else
 		{
 			m_mPlayerName.Add(_ulPlayerID, _sPlayerUserName);
-			Debug.LogError("Added player: " + _sPlayerUserName);
+			//Debug.LogError("Added player: " + _sPlayerUserName);
 		}
 	}
 	[ANetworkRpc]
