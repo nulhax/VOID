@@ -174,8 +174,8 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					m_IsActive.Set(false);
 
 					// Stop syncing the rotations
-					GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
 					GetComponent<CActorNetworkSyncronized>().SyncTransform();
+					GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
 
 					// Constrain the rotation axis again
 					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;

@@ -131,12 +131,16 @@ public class CActorBoardable : CNetworkMonoBehaviour
 
 			// Transfer the actor to galaxy ship space
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
-			
+
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 
+			// Add the current velocity of the actor transformed to simulation space
+			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
+			transferedVelocity += currentVelocity;
+
 			// Set the compensation velocity of the actor
-			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
+			rigidbody.velocity = transferedVelocity;
 		}
 	}
 
@@ -152,11 +156,15 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			// Get the inverse of the relative velocity of the actor boarding
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
 
+			// Add the current velocity of the actor transformed to simulation space
+			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
+			transferedVelocity += currentVelocity;
+
 			// Transfer the actor to ship space
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 			
 			// Set the compensation velocity of the actor
-			rigidbody.AddForce(transferedVelocity, ForceMode.VelocityChange);
+			rigidbody.velocity = transferedVelocity;
 		}
 	}
 }
