@@ -554,7 +554,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
+  takeDamageOnImpact: 1
   syncNetworkState: 1
   health_initial: 1000
   health_previous: 0

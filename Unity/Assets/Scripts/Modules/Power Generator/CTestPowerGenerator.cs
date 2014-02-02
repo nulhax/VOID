@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -44,9 +44,10 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
 
 		// Register for when the fusebox breaks/fixes
-		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		fbc.EventBroken += HandleFuseBoxBreaking;
-		fbc.EventFixed += HandleFuseBoxFixing;
+		//TODO: Replace with actual component
+		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
+		//fbc.EventBroken += HandleFuseBoxBreaking;
+		//fbc.EventFixed += HandleFuseBoxFixing;
 	}
 	
 	public void Update()

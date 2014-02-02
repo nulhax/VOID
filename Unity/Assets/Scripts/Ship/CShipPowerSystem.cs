@@ -202,7 +202,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		string generatorOutput = "GeneratorInfo\n";
 		foreach(GameObject generator in m_PowerGenerators)
 		{
-			CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(generator);
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(generator);
 			CPowerGenerationBehaviour pgb = generator.GetComponent<CPowerGenerationBehaviour>();
 			
 			generatorOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsGenerationActive: [{3}] GenRate: [{4}]\n", 
@@ -216,7 +216,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		string storageOutput = "StorageInfo\n";
 		foreach(GameObject storage in m_PowerStorageModules)
 		{
-			CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(storage);
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(storage);
 			CPowerStorageBehaviour psb = storage.GetComponent<CPowerStorageBehaviour>();
 			
 			storageOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsChargeAvailable: [{3}] Capacity: [{4}] Charge: [{5}]\n", 

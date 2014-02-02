@@ -114,23 +114,16 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
 
-
+	[AClientOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
-
-		gameObject.rigidbody.isKinematic = true;
 	}
 
-
-	public void UndisableInput(object _cFreezeRequester)
+	[AClientOnly]
+	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
-
-		if (!InputDisabled)
-		{
-			gameObject.rigidbody.isKinematic = false;
-		}
 	}
 
 
@@ -193,17 +186,14 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Update()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		if (cSelfLocator.ContainingFacility != null &&
-		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+		CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
+		if(!airMotor.IsActive)
 		{
 			// Process grounded check on server and client
 			UpdateGrounded();
 			
 			// Process input only for client owned actors
-			if (CGamePlayers.SelfActor != null &&
-			    CGamePlayers.SelfActor == gameObject)
+			if (CGamePlayers.SelfActor == gameObject)
 			{
 				UpdateRotation();
 				UpdateInput();				
@@ -215,10 +205,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-		    CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		    if (cSelfLocator.ContainingFacility != null &&
-		        cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+			CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
+			if (!airMotor.IsActive)
 		    {
                 ProcessMovement();
 
@@ -238,7 +226,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		if (!InputDisabled)
 		{
-			transform.Rotate(0.0f, CUserInput.MouseMovementX, 0.0f);
+			transform.Rotate(0.0f, CUserInput.MouseMovementDeltaX, 0.0f);
 		}
 	}
 
@@ -275,8 +263,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
 
 		// Jump 
-		if ((m_uiMovementStates & (uint)EState.Jump) > 0 &&
-		    IsGrounded)
+		if ((m_uiMovementStates & (uint)EState.Jump) > 0 && IsGrounded)
 		{
 			vMovementVelocity.y = JumpSpeed;
 		}

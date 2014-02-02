@@ -13,8 +13,11 @@ public class CActorNetworkSyncronized : CNetworkMonoBehaviour
 	// Member Fields
 	private CNetworkVar<Vector3> m_Position = null;
 	private CNetworkVar<Vector3> m_EulerAngles = null;
-	
+
+	[AServerOnly]
 	public bool m_SyncPosition = true;
+
+	[AServerOnly]
 	public bool m_SyncRotation = true;
 
 
@@ -41,8 +44,8 @@ public class CActorNetworkSyncronized : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_Position= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_EulerAngles= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Position = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_EulerAngles = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -50,22 +53,25 @@ public class CActorNetworkSyncronized : CNetworkMonoBehaviour
 		if(!CNetwork.IsServer)
 		{
 			// Position
-			if (_rSender == m_Position && m_SyncPosition)
+			if (_rSender == m_Position)
 			{
 				transform.position = m_Position.Get();
 			}
 			
 			// Rotation
-			else if (_rSender == m_EulerAngles && m_SyncRotation)
+			else if (_rSender == m_EulerAngles)
 			{	
 				transform.eulerAngles = m_EulerAngles.Get();
 			}
 		}
 	}
 
-	private void SyncTransform()
+	public void SyncTransform()
 	{
-		m_Position.Set(transform.position);
-		m_EulerAngles.Set(transform.eulerAngles);
+		if(m_SyncPosition)
+			m_Position.Set(transform.position);
+
+		if(m_SyncRotation)
+			m_EulerAngles.Set(transform.eulerAngles);
 	}
 }
