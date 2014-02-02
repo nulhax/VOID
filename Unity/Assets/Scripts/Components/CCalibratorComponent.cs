@@ -22,7 +22,6 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CComponentInterface))]
 public class CCalibratorComponent : CNetworkMonoBehaviour
 {
-	
 	// Member Types
 	
 	
@@ -35,16 +34,29 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 		get { return(m_RepairPositions);}
 	}
 	
-	// Member Methods
 	
+	// Member Methods
+	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
 	void OnBreak()
 	{
 		// TODO: swap between fixed to broken
+		
 	}
 	
+	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered
 	void OnFix()
 	{
 		//TODO swap between broken to fixed
+		
+	}
+	
+	void ComponentHealth(GameObject gameObject, float prevHealth, float currHealth)
+	{
+		m_CurrentHealth = currHealth;
+		m_PreviousHealth = prevHealth;
+		
+		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / 100.0f);
+		
 	}
 	
 	void Start()
@@ -56,21 +68,24 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 				m_RepairPositions.Add(child);
 		}
 		
-		// Register to event
+		// Register events created in the inherited class CComponentInterface
+		// This will call onbreak or onfix when the even is triggered.
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix += OnFix;
+		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += ComponentHealth;
 	}
-	
 	
 	void OnDestroy()
 	{
+		
 	}
 	
 	
 	void Update()
 	{
+		
 	}
-
+	
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
 		
@@ -82,6 +97,10 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 	}
 	
 	// Member Fields
-	private List<Transform> m_RepairPositions = new List<Transform>();
 	
+	private List<Transform> m_RepairPositions = new List<Transform>();
+	private float m_CurrentHealth = 0.0f;
+	private float m_PreviousHealth = 0.0f;
+	
+	private bool m_IsLerping = false;
 };
