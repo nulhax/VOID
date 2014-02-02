@@ -298,6 +298,7 @@ public class CGameChat : CNetworkMonoBehaviour
     }
 
 
+    // Members
     bool m_bSendMessage                  = false;
     bool m_bProcessChat                  = false;
     static bool m_bNoPlayersInRange      = false;
@@ -307,6 +308,4 @@ public class CGameChat : CNetworkMonoBehaviour
     const string m_sChatInputControlName = "ChatInputTextField";
     static string m_sPlayerName          = "[" + System.Environment.UserName + "]: ";
     static CGameChat m_Instance;
-
-
 };
