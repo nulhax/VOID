@@ -135,8 +135,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 
-			// Add the current velocity of the actor transformed to simulation space
-			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
+			// Add the current velocity of the actor transformed to galaxy space
+			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
 			transferedVelocity += currentVelocity;
 
 			// Set the compensation velocity of the actor

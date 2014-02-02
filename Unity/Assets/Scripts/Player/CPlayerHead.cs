@@ -115,6 +115,13 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
+	[AClientOnly]
+	public void ResetHeadRotations()
+	{
+		m_vRotation = Vector3.zero;
+	}
+
+
 	public static void SerializePlayerState(CNetworkStream _cStream)
 	{
 		if (CGamePlayers.SelfActor != null)

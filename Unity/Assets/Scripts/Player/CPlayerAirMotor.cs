@@ -113,6 +113,16 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					// Placeholder: Disable movement input
 					GetComponent<CPlayerHead>().DisableInput(this);
 					GetComponent<CPlayerGroundMotor>().DisableInput(this);
+
+					// Start realigning the head
+					m_RealignHeadWithBody = true;
+
+					// Set the values to use for realigment
+					Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+					m_RealignFromRotation = actorHead.localRotation;
+					m_RealignToRotation = Quaternion.identity;
+					m_RealignHeadTimer = 0.0f;
+					m_RealignHeadTime = 0.5f;
 				}
 			}
 			else
@@ -122,6 +132,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					// Placeholder: Enable movement input
 					GetComponent<CPlayerHead>().ReenableInput(this);
 					GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+
+					// Stop any head realignment with body
+					m_RealignHeadWithBody = false;
 				}
 			}
 		}
@@ -154,38 +167,67 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 			}
 		}
 
+		// Update the interpolations
 		if(CNetwork.IsServer)
+			UpdateServerInterpolation();
+
+		UpdateClientInterpolations();
+	}
+
+	[AServerOnly]
+	private void UpdateServerInterpolation()
+	{
+		if(m_RealignBodyWithShip)
 		{
-			if(m_RealignWithShip)
+			m_RealignBodyTimer += Time.deltaTime;
+			if(m_RealignBodyTimer > m_RealignBodyTime)
 			{
-				m_RealignTimer += Time.deltaTime;
-				if(m_RealignTimer > m_RealignTime)
-				{
-					m_RealignTimer = m_RealignTime;
-					m_RealignWithShip = false;
-				}
+				m_RealignBodyTimer = m_RealignBodyTime;
+				m_RealignBodyWithShip = false;
+			}
 
-				// Set the lerped rotation
-				rigidbody.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignTimer/m_RealignTime);
+			// Set the lerped rotation
+			rigidbody.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
+				
+			if(!m_RealignBodyWithShip)
+			{
+				// Player is now in gravity zone, set inactive
+				m_IsActive.Set(false);
+				
+				// Stop syncing the rotations
+				GetComponent<CActorNetworkSyncronized>().SyncTransform();
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+				
+				// Constrain the rotation axis again
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
+				
+				// Reset drag values
+				rigidbody.drag = 0.1f;
+				rigidbody.angularDrag = 0.1f;
+			}
+		}
+	}
+	
+	private void UpdateClientInterpolations()
+	{
+		if(m_RealignHeadWithBody)
+		{
+			m_RealignHeadTimer += Time.deltaTime;
+			if(m_RealignHeadTimer > m_RealignHeadTime)
+			{
+				m_RealignHeadTimer = m_RealignHeadTime;
+				m_RealignHeadWithBody = false;
+			}
+			
+			// Set the lerped rotation
+			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+			actorHead.localRotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
 
-				if(!m_RealignWithShip)
-				{
-					// Player is now in gravity zone, set inactive
-					m_IsActive.Set(false);
-
-					// Stop syncing the rotations
-					GetComponent<CActorNetworkSyncronized>().SyncTransform();
-					GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
-
-					// Constrain the rotation axis again
-					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
-					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
-					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
-					
-					// Reset drag values
-					rigidbody.drag = 0.1f;
-					rigidbody.angularDrag = 0.1f;
-				}
+			if(!m_RealignHeadWithBody)
+			{
+				GetComponent<CPlayerHead>().ResetHeadRotations();
 			}
 		}
 	}
@@ -195,7 +237,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-			if(m_IsActive.Get() && !m_RealignWithShip)
+			if(m_IsActive.Get() && !m_RealignBodyWithShip)
 			{
 				UpdateMovement();
             }
@@ -262,14 +304,14 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerEnterGravityZone()
 	{
-		// Start realigning to the ship
-		m_RealignWithShip = true;
+		// Start realigning body to the ship
+		m_RealignBodyWithShip = true;
 
 		// Set the values to use for realigment
 		m_RealignFromRotation = transform.rotation;
 		m_RealignToRotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
-		m_RealignTimer = 0.0f;
-		m_RealignTime = Mathf.Clamp(Quaternion.Angle(m_RealignFromRotation, m_RealignToRotation) / 180.0f, 0.5f, 2.0f);
+		m_RealignBodyTimer = 0.0f;
+		m_RealignBodyTime = Mathf.Clamp(Quaternion.Angle(m_RealignFromRotation, m_RealignToRotation) / 180.0f, 0.5f, 2.0f);
 	}
 
 
@@ -279,8 +321,8 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		// Player is now in no-gravity zone, set active
 		m_IsActive.Set(true);
 
-		// Stop any realignment
-		m_RealignWithShip = false;
+		// Stop any realignment with ship
+		m_RealignBodyWithShip = false;
 
 		// Release the rotation axis constraints
 		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationX; 
@@ -312,9 +354,12 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	private uint m_usMovementStates = 0;
 
 
-	private bool m_RealignWithShip = false;
-	private float m_RealignTimer = 0.0f;
-	private float m_RealignTime = 0.5f;
+	private bool m_RealignBodyWithShip = false;
+	private bool m_RealignHeadWithBody = false;
+	private float m_RealignBodyTimer = 0.0f;
+	private float m_RealignBodyTime = 0.5f;
+	private float m_RealignHeadTimer = 0.0f;
+	private float m_RealignHeadTime = 0.5f;
 	private Quaternion m_RealignFromRotation = Quaternion.identity;
 	private Quaternion m_RealignToRotation = Quaternion.identity;
 
