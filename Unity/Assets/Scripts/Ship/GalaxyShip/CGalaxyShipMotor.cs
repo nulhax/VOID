@@ -35,7 +35,6 @@ public class CShipPilotState
 	// Member Fields
 	uint m_CurrentMovementState = 0;
 	Vector2 m_CurrentRotationState = Vector2.zero;
-	float m_LastUpdateTimeStamp = 0.0f;
 		
 	// Member Properties
 	public uint CurrentState 
@@ -48,18 +47,9 @@ public class CShipPilotState
 		get { return(m_CurrentRotationState); }
 	}
 	
-	public float TimeStamp 
-	{ 
-		get { return(m_LastUpdateTimeStamp); }
-	}
-	
 	public Vector2 Rotation
 	{
-		set 
-		{ 
-			m_CurrentRotationState = value; 
-			m_LastUpdateTimeStamp = Time.time; 
-		}
+		set { m_CurrentRotationState = value; }
 		get { return(m_CurrentRotationState); }
 	}
 	
@@ -110,24 +100,20 @@ public class CShipPilotState
 		{
 			m_CurrentMovementState &= ~(uint)_State;
 		}
-		
-		m_LastUpdateTimeStamp = Time.time;
 	}
 	
 	private bool GetState(EShipMovementState _State)
 	{
 		return((m_CurrentMovementState & (uint)_State) != 0);
 	}
-	
-	public void SetCurrentState(uint _NewState, Vector2 _NewRotation, float _TimeStamp)
+
+	[ANetworkRpc]
+	public void SetCurrentState(uint _NewState, Vector2 _NewRotation)
 		{
 			if(CNetwork.IsServer)
 			{
-				if(m_LastUpdateTimeStamp < _TimeStamp)
-				{
-					m_CurrentMovementState = _NewState;
-					m_CurrentRotationState = _NewRotation;
-				}
+				m_CurrentMovementState = _NewState;
+				m_CurrentRotationState = _NewRotation;
 			}
 			else
 			{
@@ -149,15 +135,14 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private GameObject m_PilotingCockpit = null;
-	
+	private CShipPilotState m_CurrentPilotState = null;
+
 	private Vector3 m_Acceleration = Vector3.zero;
 	private Vector3 m_PreviousVelocity = Vector3.zero;
-		
-	private CNetworkVar<Vector3> m_Position = null;
-	private CNetworkVar<Vector3> m_EulerAngles = null;
+
 	private CNetworkVar<Vector3> m_Velocity = null;
 	private CNetworkVar<Vector3> m_AngularVelocity = null;
-	
+
 	// Member Properies
 	public GameObject PilotingCockpit
 	{
@@ -171,29 +156,15 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	}
 
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_Position = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_EulerAngles = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_Velocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
-		m_AngularVelocity = new CNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_Velocity = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_AngularVelocity = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _rSender)
 	{
-		if(!CNetwork.IsServer)
-		{
-			// Position
-			if (_rSender == m_Position)
-			{
-				transform.position = m_Position.Get();
-			}
-			// Rotation
-			else if (_rSender == m_EulerAngles)
-			{	
-				transform.eulerAngles = m_EulerAngles.Get();
-			}
-		}
+
 	}
 
 	public void Start()
@@ -204,11 +175,14 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		}
 	}
 
-	public void Update()
+	public void LateUpdate()
 	{
 		if(CNetwork.IsServer)
 		{
-			SyncTransform();
+			if(PilotingCockpit != null)
+			{
+				m_CurrentPilotState = PilotingCockpit.GetComponent<CBridgeCockpit>().CockpitPilotState;
+			}
 		}
 	}
 	
@@ -216,7 +190,8 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			ProcessMovementsAndRotations();
+			if(m_CurrentPilotState != null)
+				ProcessMovementsAndRotations();
 		}
 	}
 
@@ -242,15 +217,6 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 		return(velocity);
 	}
-
-	[AServerOnly]
-	private void SyncTransform()
-	{
-		m_Position.Set(transform.position);
-		m_EulerAngles.Set(transform.eulerAngles);
-		m_Velocity.Set(rigidbody.velocity);
-		m_AngularVelocity.Set(rigidbody.angularVelocity);
-	}
 	
 	private void ProcessMovementsAndRotations()
     {
@@ -261,62 +227,52 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		m_Acceleration = (rigidbody.velocity - m_PreviousVelocity) / Time.fixedDeltaTime;
 		m_PreviousVelocity = rigidbody.velocity;
 		
-		// Get the piloting state from the cockpit
-		if(PilotingCockpit == null)
-			return;
-		
-		CShipPilotState pilotingState = PilotingCockpit.GetComponent<CBridgeCockpit>().CockpitPilotState;
-		
-		// Exit early to avoid computations
-		if(pilotingState.CurrentState == 0 && pilotingState.CurrentRotationState == Vector2.zero)
-			return;
-		
 		// Moving 
-        if (pilotingState.MovingForward &&
-            !pilotingState.MovingBackward)
+		if (m_CurrentPilotState.MovingForward &&
+		    !m_CurrentPilotState.MovingBackward)
         {
-            movementForce.z += 500.0f;
+            movementForce.z += 300.0f;
         }
-        else if (pilotingState.MovingBackward &&
-            	 !pilotingState.MovingForward)
+		else if (m_CurrentPilotState.MovingBackward &&
+		         !m_CurrentPilotState.MovingForward)
         {
             movementForce.z -= 100.0f;
         }
 		
 		// Strafing
-        if (pilotingState.RollLeft &&
-        	!pilotingState.RollRight)
+		if (m_CurrentPilotState.RollLeft &&
+		    !m_CurrentPilotState.RollRight)
         {
             movementForce.x -= 100.0f;
         }
-        else if (pilotingState.RollRight &&
-        		 !pilotingState.RollLeft)
+		else if (m_CurrentPilotState.RollRight &&
+		         !m_CurrentPilotState.RollLeft)
         {
             movementForce.x += 100.0f;
         }	
 		
 		// Yaw Rotation
-        if (pilotingState.MovingLeft &&
-        	!pilotingState.MovingRight)
+		if (m_CurrentPilotState.MovingLeft &&
+		    !m_CurrentPilotState.MovingRight)
         {
             angularForce.y -= 1.0f;
         }
-        else if (pilotingState.MovingRight &&
-        		 !pilotingState.MovingLeft)
+		else if (m_CurrentPilotState.MovingRight &&
+		         !m_CurrentPilotState.MovingLeft)
         {
             angularForce.y += 1.0f;
         }
 		
 		// Roll rotation
-		if(pilotingState.CurrentRotationState.x != 0.0f)
+		if(m_CurrentPilotState.CurrentRotationState.x != 0.0f)
 		{
-			angularForce.z -= pilotingState.CurrentRotationState.x;
+			angularForce.z -= m_CurrentPilotState.CurrentRotationState.x;
 		}
 		
 		// Pitch rotation
-		if(pilotingState.CurrentRotationState.y != 0.0f)
+		if(m_CurrentPilotState.CurrentRotationState.y != 0.0f)
 		{
-			angularForce.x += pilotingState.CurrentRotationState.y;
+			angularForce.x += m_CurrentPilotState.CurrentRotationState.y;
 		}
 		
 		// Apply the movement forces
@@ -324,11 +280,6 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 		
 		// Apply the torque force
 		rigidbody.AddRelativeTorque(angularForce, ForceMode.Acceleration);
-	}
-
-	public void OnGUI()
-	{
-
 	}
 }
 

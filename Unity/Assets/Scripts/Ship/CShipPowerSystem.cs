@@ -31,6 +31,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private List<GameObject> m_PowerGenerators = new List<GameObject>();
+	private List<GameObject> m_PowerStorageModules = new List<GameObject>();
 
 	private float m_ShipBatteryChargePool = 0.0f; 
 
@@ -39,7 +40,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}
@@ -53,35 +54,90 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			UpdateShipPowerPool();
+			UpdateShipPowerStorage();
 			UpdateFacilityPowerConsumption();
 		}
 	}
 	
-	public void RegisterPowerGeneratorSystem(GameObject _PowerGeneratorSystem)
+	public void RegisterPowerGenerator(GameObject _PowerGenerator)
 	{
-		if(!m_PowerGenerators.Contains(_PowerGeneratorSystem))
+		if(!m_PowerGenerators.Contains(_PowerGenerator))
 		{
-			m_PowerGenerators.Add(_PowerGeneratorSystem);
+			m_PowerGenerators.Add(_PowerGenerator);
 		}
 	}
 
-	public void UnregisterPowerGeneratorSystem(GameObject _PowerGeneratorSystem)
+	public void UnregisterPowerGenerator(GameObject _PowerGenerator)
 	{
-		if(m_PowerGenerators.Contains(_PowerGeneratorSystem))
+		if(m_PowerGenerators.Contains(_PowerGenerator))
 		{
-			m_PowerGenerators.Remove(_PowerGeneratorSystem);
+			m_PowerGenerators.Remove(_PowerGenerator);
 		}
 	}
+
+	public void RegisterPowerStorage(GameObject _PowerStorage)
+	{
+		if(!m_PowerStorageModules.Contains(_PowerStorage))
+		{
+			m_PowerStorageModules.Add(_PowerStorage);
+		}
+	}
+	
+	public void UnregisterPowerStorage(GameObject _PowerStorage)
+	{
+		if(m_PowerStorageModules.Contains(_PowerStorage))
+		{
+			m_PowerStorageModules.Remove(_PowerStorage);
+		}
+	}
+
 
 	[AServerOnly]
-	public void UpdateShipPowerPool()
+	public void UpdateShipPowerStorage()
 	{
-		// Get the combined power battery charge from each power generator
-		float totalBatteryCharge = m_PowerGenerators.Sum((pg) => {
-			CPowerGeneratorSystem pgs = pg.GetComponent<CPowerGeneratorSystem>();
-			return(pgs.IsBatteryChargeAvailable ? pgs.BatteryCharge : 0.0f);
+		// Calculate the combined generation of all the generators
+		float combinedGeneration = m_PowerGenerators.Sum((pg) => {
+			CPowerGenerationBehaviour pgb = pg.GetComponent<CPowerGenerationBehaviour>();
+			return(pgb.IsPowerGenerationActive ? pgb.PowerGenerationRate * Time.deltaTime : 0.0f);
 		});
+
+		// Select the available storage units
+		var availableStorageUnits = 
+			from psm in m_PowerStorageModules
+			where psm.GetComponent<CPowerStorageBehaviour>().IsBatteryChargeAvailable
+			select psm;
+		
+		// Calculate the even distribution of power to all storage modules
+		float evenDistribution = combinedGeneration / availableStorageUnits.ToList().Count;
+
+		// Find the storage modules that are near capacity and fill them up
+		foreach(GameObject ps in availableStorageUnits)
+		{
+			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
+
+			float newCharge = psb.BatteryCharge + evenDistribution;
+			if(newCharge > psb.BatteryCapacity)
+			{
+				// Top-up the charge and re-evaluate the even distribution
+				float chargeAddition = psb.BatteryCapacity - psb.BatteryCharge;
+				psb.BatteryCharge = psb.BatteryCapacity;
+				evenDistribution -= chargeAddition;
+			}
+		}
+
+		// Apply the even amount to the rest of storage units
+		float totalBatteryCharge = 0.0f;
+		foreach(GameObject ps in availableStorageUnits)
+		{
+			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
+
+			if(psb.BatteryCharge != psb.BatteryCapacity)
+			{
+				psb.BatteryCharge += evenDistribution;
+			}
+
+			totalBatteryCharge += psb.BatteryCharge;
+		}
 		
 		// Set the battery charge pool
 		m_ShipBatteryChargePool = totalBatteryCharge;
@@ -111,25 +167,25 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		else
 		{
 			// Calculate the combined ratio of battery charge vs. capacity of each power generator
-			float combinedBatteryChargeRatio = m_PowerGenerators.Sum((pg) => {
-				CPowerGeneratorSystem pgs = pg.GetComponent<CPowerGeneratorSystem>();
-				return(pgs.IsBatteryChargeAvailable ? pgs.BatteryCharge / pgs.BatteryCapacity : 0.0f);
+			float combinedBatteryChargeRatio = m_PowerStorageModules.Sum((psm) => {
+				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
+				return(psb.IsBatteryChargeAvailable ? psb.BatteryCharge / psb.BatteryCapacity : 0.0f);
 			});
 
 			// Siphon an average weighing of battery from each power generator
-			foreach(GameObject pg in m_PowerGenerators)
+			foreach(GameObject psm in m_PowerStorageModules)
 			{
-				CPowerGeneratorSystem pgs = pg.GetComponent<CPowerGeneratorSystem>();
+				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
 
 				// Only count if battery charge is available
-				if(pgs.IsBatteryChargeAvailable)
+				if(psb.IsBatteryChargeAvailable)
 				{
 					// Calculate the weighing based on the charge of the battery ratio to maximum capacity
-					float siphonAmount = pgs.BatteryCharge / pgs.BatteryCapacity / combinedBatteryChargeRatio * combinedConsumption;
+					float siphonAmount = psb.BatteryCharge / psb.BatteryCapacity / combinedBatteryChargeRatio * combinedConsumption;
 
 					// Siphon the ammount out of the battery
 					if(!Single.IsNaN(siphonAmount))
-						pgs.BatteryCharge -= siphonAmount;
+						psb.BatteryCharge -= siphonAmount;
 				}
 			}
 		}
@@ -143,25 +199,33 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 
 
-		string powerGeneratorOutput = "PowerGeneratorInfo\n";
-		foreach(GameObject pg in m_PowerGenerators)
+		string generatorOutput = "GeneratorInfo\n";
+		foreach(GameObject generator in m_PowerGenerators)
 		{
-			CFacilityInterface fi = null;
-			if(pg.GetComponent<CBridgePowerSystem>() == null)
-				fi = pg.GetComponent<CFacilityInterface>();
-			else
-				fi = pg.transform.parent.GetComponent<CFacilityInterface>();
-
-			CPowerGeneratorSystem pgs = pg.GetComponent<CPowerGeneratorSystem>();
-
-			powerGeneratorOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tIsGenActive: [{2}] GenRate: [{3}] \n\t\tIsBatteryChargAvail: [{4}] BatteryCap: [{5}] BatteryCharge: [{6}]\n", 
-			                                      fi.FacilityId, 
-			                                      fi.FacilityType,
-			                                      pgs.IsPowerGenerationActive,
-			                                      Math.Round(pgs.PowerGenerationRate, 2),
-			                                      pgs.IsBatteryChargeAvailable,
-			                                      Math.Round(pgs.BatteryCapacity, 2),
-			                                      Math.Round(pgs.BatteryCharge, 2));	                                  
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(generator);
+			CPowerGenerationBehaviour pgb = generator.GetComponent<CPowerGenerationBehaviour>();
+			
+			generatorOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsGenerationActive: [{3}] GenRate: [{4}]\n", 
+			                                 generator.name,
+			                                 fi.FacilityId, 
+			                                 fi.FacilityType,
+			                                 pgb.IsPowerGenerationActive,
+			                                 Math.Round(pgb.PowerGenerationRate, 2));                                  
+		}
+		
+		string storageOutput = "StorageInfo\n";
+		foreach(GameObject storage in m_PowerStorageModules)
+		{
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(storage);
+			CPowerStorageBehaviour psb = storage.GetComponent<CPowerStorageBehaviour>();
+			
+			storageOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsChargeAvailable: [{3}] Capacity: [{4}] Charge: [{5}]\n", 
+		                                   storage.name,
+		                                   fi.FacilityId, 
+		                                   fi.FacilityType,
+		                                   psb.IsBatteryChargeAvailable,
+		                                   Math.Round(psb.BatteryCapacity, 2),
+		                                   Math.Round(psb.BatteryCharge, 2));	                                  
 		}
 		
 		string facilitiesOutput = "FacilityPowerInfo\n";
@@ -181,6 +245,6 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		float boxWidth = 500;
 		float boxHeight = 600;
 		GUI.Label(new Rect(Screen.width / 2 - boxWidth, 0.0f, boxWidth, boxHeight),
-		          "Power Status'\n" + shipPowerOutput + powerGeneratorOutput + facilitiesOutput);
+		          "Power Status'\n" + shipPowerOutput + generatorOutput + storageOutput + facilitiesOutput);
 	}
 }

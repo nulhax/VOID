@@ -46,33 +46,20 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
+	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
+	public delegate void NotifyToolInteraction();
 
-
-	public delegate void NotifyPrimaryActivate(GameObject _cGameObject);
-	public event NotifyPrimaryActivate EventPrimaryActivate;
-
-	public delegate void NotifyPrimaryDeactivate();
-	public event NotifyPrimaryDeactivate EventPrimaryDeactivate;
-
-	public delegate void NotifySecondaryActivate(GameObject _cGameObject);
-	public event NotifySecondaryActivate EventSecondaryActivate;
-
-	public delegate void NotifySecondaryDeactivate();
-	public event NotifySecondaryDeactivate EventSecondaryDeactivate;
-
-	public delegate void NotifyReload();
-	public event NotifyReload EventReload;
-
-	public delegate void NotifyPickedUp();
-	public event NotifyPickedUp EventPickedUp;
-
-	public delegate void NotifyDropped();
-	public event NotifyDropped EventDropped;
-
-	public delegate void NotifyUse(GameObject _cGameObject);
-	public event NotifyUse EventUse;
+	public event NotifyObjectInteraction EventPrimaryActivate;
+	public event NotifyObjectInteraction EventPrimaryDeactivate;
+	public event NotifyObjectInteraction EventSecondaryActivate;
+	public event NotifyObjectInteraction EventSecondaryDeactivate;
+	public event NotifyObjectInteraction EventUse;
 	
-	
+	public event NotifyToolInteraction EventReload;
+	public event NotifyToolInteraction EventPickedUp;
+	public event NotifyToolInteraction EventDropped;
+
+
 // Member Properties
 
 
@@ -103,9 +90,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_ulOwnerPlayerId = new CNetworkVar<ulong>(OnNetworkVarSync, 0);
+        m_ulOwnerPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
 
 
@@ -208,7 +195,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 			// Notify observers
 			if (EventPrimaryDeactivate != null)
 			{
-				EventPrimaryDeactivate();
+				EventPrimaryDeactivate(_cInteractableObject);
 			}
 		}
 	}
@@ -219,7 +206,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		// Check not already active
 		if (_bActive &&
-			!m_bPrimaryActive)
+			!m_bSecondaryActive)
 		{
 			// Set active
 			m_bSecondaryActive = true;
@@ -233,7 +220,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 		// Check currently active
 		else if (!_bActive &&
-				 m_bPrimaryActive)
+		         m_bSecondaryActive)
 		{
 			// Set deactive
 			m_bSecondaryActive = false;
@@ -241,7 +228,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 			// Notify observers
 			if (EventSecondaryDeactivate != null)
 			{
-				EventSecondaryDeactivate();
+				EventSecondaryDeactivate(_cInteractableObject);
 			}
 		}
 	}

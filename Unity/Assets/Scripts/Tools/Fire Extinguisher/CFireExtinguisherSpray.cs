@@ -35,9 +35,9 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 
@@ -65,8 +65,8 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
+		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
 	}
 
 
@@ -105,7 +105,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void OnUseEnd()
+	public void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(false);
 	}

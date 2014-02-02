@@ -77,9 +77,9 @@ public class CNetwork : MonoBehaviour
 	}
 
 
-	public static bool IsConnectedToServer()
+	public static bool IsConnectedToServer
 	{
-		return (CNetwork.Connection.IsConnected);
+		get { return(CNetwork.Connection.IsConnected); }
 	}
 
 

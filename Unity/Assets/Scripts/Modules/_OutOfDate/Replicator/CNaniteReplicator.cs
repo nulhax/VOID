@@ -41,11 +41,11 @@ public class CNaniteReplicator : CNetworkMonoBehaviour
 	
 // Member Functions
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fObjectSize = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fTotalNanites = new CNetworkVar<float>(OnNetworkVarSync, 1000.0f);
-		m_bIsParticleEmtEnabled = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_fObjectSize = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fTotalNanites = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 1000.0f);
+		m_bIsParticleEmtEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	// Use this for initialization

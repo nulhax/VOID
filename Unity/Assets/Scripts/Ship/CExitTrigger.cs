@@ -39,7 +39,7 @@ public class CExitTrigger : MonoBehaviour
 	[AServerOnly]
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(_Other.rigidbody != null && _Other.rigidbody.detectCollisions != false && CNetwork.IsServer)
+		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
 			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
 			if(dynamicActor != null)
@@ -48,7 +48,7 @@ public class CExitTrigger : MonoBehaviour
 				if(!CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
 				{
 					// Set the disembarking state
-					dynamicActor.BoardingState = CActorBoardable.EBoardingState.Offboard;
+					dynamicActor.DisembarkActor();
 				}
 			}
 		}

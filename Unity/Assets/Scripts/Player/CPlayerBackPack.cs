@@ -69,9 +69,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cCarryingModuleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+		m_cCarryingModuleViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 	}
 
 
@@ -224,6 +224,10 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
                 DropModule();
             }
         }
+
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnPickupModuleRequest;
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnCellInsertRequest;
+		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
     }
 
 

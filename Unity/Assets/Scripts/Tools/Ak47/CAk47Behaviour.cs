@@ -35,9 +35,11 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bAmmo = new CNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
+		m_bAmmo = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
+
+        _cRegistrar.RegisterRpc(this, "ExecuteShootEffect");
 	}
 
 
@@ -51,8 +53,8 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	{
 		m_cNossle = transform.FindChild("Nossle").gameObject;
 
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
+		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
 	}
 
 
@@ -99,7 +101,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	void OnUseEnd()
+	void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bShoot = false;
 	}

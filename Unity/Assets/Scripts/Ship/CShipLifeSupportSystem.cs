@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -30,7 +30,8 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 	
 	// Member Fields
-	private List<GameObject> m_LifeSupportSystems = new List<GameObject>();
+	private List<GameObject> m_AtmosphereGenerators = new List<GameObject>();
+	private List<GameObject> m_AtmosphereConditioners = new List<GameObject>();
 
 	private CNetworkVar<float> m_ShipAtmosphericQuality = null;
 
@@ -45,9 +46,9 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ShipAtmosphericQuality = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_ShipAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)
@@ -64,19 +65,35 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	public void RegisterLifeSupportSystem(GameObject _LifeSupportSystem)
+	public void RegisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
 	{
-		if(!m_LifeSupportSystems.Contains(_LifeSupportSystem))
+		if(!m_AtmosphereGenerators.Contains(_AtmosphereGenerator))
 		{
-			m_LifeSupportSystems.Add(_LifeSupportSystem);
+			m_AtmosphereGenerators.Add(_AtmosphereGenerator);
+		}
+	}
+	
+	public void UnregisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
+	{
+		if(m_AtmosphereGenerators.Contains(_AtmosphereGenerator))
+		{
+			m_AtmosphereGenerators.Remove(_AtmosphereGenerator);
 		}
 	}
 
-	public void UnregisterLifeSupportSystem(GameObject _LifeSupportSystem)
+	public void RegisterAtmosphereConditioner(GameObject _AtmosphereConditioner)
 	{
-		if(m_LifeSupportSystems.Contains(_LifeSupportSystem))
+		if(!m_AtmosphereConditioners.Contains(_AtmosphereConditioner))
 		{
-			m_LifeSupportSystems.Remove(_LifeSupportSystem);
+			m_AtmosphereConditioners.Add(_AtmosphereConditioner);
+		}
+	}
+
+	public void UnregisterAtmosphereConditioner(GameObject _AtmosphereConditioner)
+	{
+		if(m_AtmosphereConditioners.Contains(_AtmosphereConditioner))
+		{
+			m_AtmosphereConditioners.Remove(_AtmosphereConditioner);
 		}
 	}
 
@@ -101,13 +118,13 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		{
 			// Get the combined output of all atmosphere distributors
 			float combinedOutput = 0.0f;
-			foreach(GameObject ls in m_LifeSupportSystems)
+			foreach(GameObject ag in m_AtmosphereGenerators)
 			{
-				CLifeSupportSystem lss = ls.GetComponent<CLifeSupportSystem>();
+				CAtmosphereGeneratorBehaviour agb = ag.GetComponent<CAtmosphereGeneratorBehaviour>();
 
-				if(lss.IsAtmosphereGenerationActive)
+				if(agb.IsAtmosphereGenerationActive)
 				{
-					combinedOutput += lss.AtmosphereGenerationRate;
+					combinedOutput += agb.AtmosphereGenerationRate;
 				}
 			}
 			
@@ -134,9 +151,14 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 		// Calculate the combined quality capacity of all the life support system
 		float combinedCapacitySupport = 0.0f;
-		foreach(GameObject facility in m_LifeSupportSystems)
+		foreach(GameObject conditioner in m_AtmosphereConditioners)
 		{
-			combinedCapacitySupport += facility.GetComponent<CLifeSupportSystem>().AtmosphereCapacitySupport;
+			CAtmosphereConditioningBehaviour acb = conditioner.GetComponent<CAtmosphereConditioningBehaviour>();
+			
+			if(acb.IsAtmosphereConditioningActive)
+			{
+				combinedCapacitySupport += acb.AtmosphereCapacitySupport;
+			}
 		}
 
 		// Apply the global quality value for all facilities
@@ -155,23 +177,32 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		shipLifeSupportOutput += string.Format("\tQuality: [{0}%]\n", 
 		                                       Math.Round(ShipAtmosphericQuality * 100.0f, 1)); 
 
-		string lifeSupportOutput = "LifeSupportInfo\n";
-		foreach(GameObject ls in m_LifeSupportSystems)
+		string generatorOutput = "GeneratorInfo\n";
+		foreach(GameObject generator in m_AtmosphereGenerators)
 		{
-			CFacilityInterface fi = null;
-			if(ls.GetComponent<CBridgeLifeSupportSystem>() == null)
-				fi = ls.GetComponent<CFacilityInterface>();
-			else
-				fi = ls.transform.parent.GetComponent<CFacilityInterface>();
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(generator);
+			CAtmosphereGeneratorBehaviour agb = generator.GetComponent<CAtmosphereGeneratorBehaviour>();
 
-			CLifeSupportSystem lss = ls.GetComponent<CLifeSupportSystem>();
+			generatorOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsGenerationActive: [{3}] GenRate: [{4}]\n", 
+			                                 generator.name,  
+			                                 fi.FacilityId, 
+			                                 fi.FacilityType,
+			                                 agb.IsAtmosphereGenerationActive,
+			                                 Math.Round(agb.AtmosphereGenerationRate, 2));                                  
+		}
 
-			lifeSupportOutput += string.Format("\tFacility [{0}] Type [{1}] \n\t\tIsGenActive: [{2}] GenRate: [{3}] SupportCap: [{4}]\n", 
+		string conditionerOutput = "ConditionerInfo\n";
+		foreach(GameObject conditioner in m_AtmosphereConditioners)
+		{
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(conditioner);
+			CAtmosphereConditioningBehaviour acb = conditioner.GetComponent<CAtmosphereConditioningBehaviour>();
+			
+			conditionerOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsConditioningActive: [{3}] SupportCap: [{4}]\n", 
+			                                   conditioner.name,
 			                                   fi.FacilityId, 
 			                                   fi.FacilityType,
-			                                   lss.IsAtmosphereGenerationActive,
-			                                   Math.Round(lss.AtmosphereGenerationRate, 2),
-			                                   Math.Round(lss.AtmosphereCapacitySupport, 2));	                                  
+			                                   acb.IsAtmosphereConditioningActive,
+			                                   Math.Round(acb.AtmosphereCapacitySupport, 2));	                                  
 		}
 
 		string facilitiesOutput = "FacilityAtmosphereInfo\n";
@@ -193,6 +224,6 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		float boxWidth = 500;
 		float boxHeight = 600;
 		GUI.Label(new Rect(Screen.width / 2, 0.0f, boxWidth, boxHeight),
-			          "Atmosphere Status'\n" + shipLifeSupportOutput + lifeSupportOutput + facilitiesOutput);
+		          "Atmosphere Status'\n" + shipLifeSupportOutput + generatorOutput + conditionerOutput + facilitiesOutput);
 	}
 }

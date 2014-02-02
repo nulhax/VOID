@@ -32,8 +32,7 @@ public class CUserInput : MonoBehaviour
 		PrimaryUp,
 		SecondaryDown,
 		SecondaryUp,
-        ReturnKeyDown,
-        ReturnKeyUp,
+        ReturnKey,
 		Use,
 		ReloadTool,
         DropTool,
@@ -85,6 +84,27 @@ public class CUserInput : MonoBehaviour
 	public static event NotifyKeyChange EventFlyRollRight;
 
 
+	public delegate void NotifyKeyHold();
+	
+	public static event NotifyKeyHold EventPrimaryHold;
+	public static event NotifyKeyHold EventSecondaryHold;
+	public static event NotifyKeyHold EventReturnKeyHold;
+	public static event NotifyKeyHold EventUseHold;
+	public static event NotifyKeyHold EventReloadToolHold;
+	public static event NotifyKeyHold EventDropToolHold;
+	public static event NotifyKeyHold EventMoveForwardHold;
+	public static event NotifyKeyHold EventMoveBackwardHold;
+	public static event NotifyKeyHold EventMoveLeftHold;
+	public static event NotifyKeyHold EventMoveRightHold;
+	public static event NotifyKeyHold EventMoveJumpHold;
+	public static event NotifyKeyHold EventMoveSprintHold;
+	public static event NotifyKeyHold EventCrouchHold;
+	public static event NotifyKeyHold EventFlyUpHold;
+	public static event NotifyKeyHold EventFlyDownHold;
+	public static event NotifyKeyHold EventFlyRollLeftHold;
+	public static event NotifyKeyHold EventFlyRollRightHold;
+
+
     public delegate void NotifyChangeToolSlot(byte _bSlot, bool _bDown);
 	public static event NotifyChangeToolSlot EventChangeToolSlot;
 
@@ -96,8 +116,8 @@ public class CUserInput : MonoBehaviour
 	public static float SensitivityY { get; set; }
 
 
-	public static float MouseMovementX { get; set; }
-	public static float MouseMovementY { get; set; }
+	public static float MouseMovementDeltaX { get; set; }
+	public static float MouseMovementDeltaY { get; set; }
 
 
 // Member Methods
@@ -130,8 +150,7 @@ public class CUserInput : MonoBehaviour
 			case EInput.PrimaryUp: eKeyCode = s_ePrimaryKey; break;
 			case EInput.SecondaryDown:
 			case EInput.SecondaryUp: eKeyCode = s_eSecondaryKey; break;
-            case EInput.ReturnKeyDown:
-            case EInput.ReturnKeyUp: eKeyCode = s_eReturnKey; break;
+            case EInput.ReturnKey: eKeyCode = s_eReturnKey; break;
 			case EInput.Use: eKeyCode = s_eUseKey; break;
 			case EInput.ReloadTool: eKeyCode = s_eReloadToolKey; break;
             case EInput.DropTool: eKeyCode = s_eDropTool; break;
@@ -178,6 +197,7 @@ public class CUserInput : MonoBehaviour
         UpdateMouseMove();
         UpdatePrimary();
         UpdateSecondary();
+        UpdateReturn();
         UpdateUse();
         UpdateMovement();
         UpdateMovementSpecial();
@@ -189,17 +209,17 @@ public class CUserInput : MonoBehaviour
 	[AClientOnly]
 	void UpdateMouseMove()
 	{
-		MouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
-		MouseMovementY = Input.GetAxis("Mouse Y") * SensitivityY * -1.0f;
+		MouseMovementDeltaX = Input.GetAxis("Mouse X") * SensitivityX;
+		MouseMovementDeltaY = Input.GetAxis("Mouse Y") * SensitivityY * -1.0f;
 
 		//if (MouseMovementX != 0.0f)
 		{
-			if (EventMouseMoveX != null) EventMouseMoveX(MouseMovementX);
+			if (EventMouseMoveX != null) EventMouseMoveX(MouseMovementDeltaX);
 		}
 
 		//if (MouseMovementY != 0.0f)
 		{
-			if (EventMouseMoveY != null) EventMouseMoveY(MouseMovementY);
+			if (EventMouseMoveY != null) EventMouseMoveY(MouseMovementDeltaY);
 		}
 	}
 
@@ -208,12 +228,16 @@ public class CUserInput : MonoBehaviour
 	void UpdatePrimary()
 	{
 		if (Input.GetKeyDown(s_ePrimaryKey))
-		{
+        {
 			if (EventPrimary != null) EventPrimary(true);
 		}
 		else if (Input.GetKeyUp(s_ePrimaryKey))
 		{
 			if (EventPrimary != null) EventPrimary(false);
+		}
+		if(Input.GetKey(s_ePrimaryKey))
+		{
+			if (EventPrimaryHold != null) EventPrimaryHold();
 		}
 	}
 
@@ -229,6 +253,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventSecondary != null) EventSecondary(false);
 		}
+		if(Input.GetKey(s_eSecondaryKey))
+		{
+			if (EventSecondaryHold != null) EventSecondaryHold();
+		}
 	}
 
 
@@ -241,8 +269,12 @@ public class CUserInput : MonoBehaviour
         }
         else if (Input.GetKeyUp(s_eReturnKey))
         {
-            if (EventReturnKey != null) EventUse(false);
+            if (EventReturnKey != null) EventReturnKey(false);
         }
+		if(Input.GetKey(s_eReturnKey))
+		{
+			if (EventReturnKeyHold != null) EventReturnKeyHold();
+		}
     }
 
 
@@ -256,6 +288,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(s_eUseKey))
 		{
 			if (EventUse != null) EventUse(false);
+		}
+		if(Input.GetKey(s_eUseKey))
+		{
+			if (EventUseHold != null) EventUseHold();
 		}
 	}
 
@@ -272,6 +308,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventMoveForward != null) EventMoveForward(false);
 		}
+		if(Input.GetKey(s_eMoveForwardKey))
+		{
+			if (EventMoveForwardHold != null) EventMoveForwardHold();
+		}
 
 		// Backwards
 		if (Input.GetKeyDown(s_eMoveBackwardsKey))
@@ -281,6 +321,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(s_eMoveBackwardsKey))
 		{
 			if (EventMoveBackward != null) EventMoveBackward(false);
+		}
+		if(Input.GetKey(s_eMoveBackwardsKey))
+		{
+			if (EventMoveBackwardHold != null) EventMoveBackwardHold();
 		}
 
 		// Left
@@ -292,6 +336,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventMoveLeft != null) EventMoveLeft(false);
 		}
+		if(Input.GetKey(s_eMoveLeftKey))
+		{
+			if (EventMoveLeftHold != null) EventMoveLeftHold();
+		}
 
 		// Right
 		if (Input.GetKeyDown(s_eMoveRightKey))
@@ -301,6 +349,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(s_eMoveRightKey))
 		{
 			if (EventMoveRight != null) EventMoveRight(false);
+		}
+		if(Input.GetKey(s_eMoveRightKey))
+		{
+			if (EventMoveRightHold != null) EventMoveRightHold();
 		}
 	}
 
@@ -317,6 +369,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventMoveJump != null) EventMoveJump(false);
 		}
+		if(Input.GetKey(s_eJumpKey))
+		{
+			if (EventMoveJumpHold != null) EventMoveJumpHold();
+		}
 
 		// Sprint
 		if (Input.GetKeyDown(s_eSprintKey))
@@ -327,6 +383,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventMoveSprint != null) EventMoveSprint(false);
 		}
+		if(Input.GetKey(s_eSprintKey))
+		{
+			if (EventMoveSprintHold != null) EventMoveSprintHold();
+		}
 
 		// Crouch
 		if (Input.GetKeyDown(m_eCrouchKey))
@@ -336,6 +396,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(m_eCrouchKey))
 		{
 			if (EventCrouch != null) EventCrouch(false);
+		}
+		if(Input.GetKey(m_eCrouchKey))
+		{
+			if (EventCrouchHold != null) EventCrouchHold();
 		}
 	}
 	
@@ -351,6 +415,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventFlyUp != null) EventFlyUp(false);
 		}
+		if(Input.GetKey(m_eFlyUp))
+		{
+			if (EventFlyUpHold != null) EventFlyUpHold();
+		}
 
 		// Fly down
 		if (Input.GetKeyDown(m_eFlyDown))
@@ -360,6 +428,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(m_eFlyDown))
 		{
 			if (EventFlyDown != null) EventFlyDown(false);
+		}
+		if(Input.GetKey(m_eFlyDown))
+		{
+			if (EventFlyDownHold != null) EventFlyDownHold();
 		}
 
 		// Fly roll left
@@ -371,6 +443,10 @@ public class CUserInput : MonoBehaviour
 		{
 			if (EventFlyRollLeft != null) EventFlyRollLeft(false);
 		}
+		if(Input.GetKey(m_eFlyRollLeft))
+		{
+			if (EventFlyRollLeftHold != null) EventFlyRollLeftHold();
+		}
 		
 		// Fly roll right
 		if (Input.GetKeyDown(m_eFlyRollRight))
@@ -380,6 +456,10 @@ public class CUserInput : MonoBehaviour
 		else if (Input.GetKeyUp(m_eFlyRollRight))
 		{
 			if (EventFlyRollRight != null) EventFlyRollRight(false);
+		}
+		if(Input.GetKey(m_eFlyRollRight))
+		{
+			if (EventFlyRollRightHold != null) EventFlyRollRightHold();
 		}
 	}
 
@@ -395,6 +475,10 @@ public class CUserInput : MonoBehaviour
         {
             if (EventDropTool != null) EventDropTool(false);
         }
+		if(Input.GetKey(s_eDropTool))
+		{
+			if (EventDropToolHold != null) EventDropToolHold();
+		}
 
         // Reload
         if (Input.GetKeyDown(s_eReloadTool))
@@ -405,6 +489,10 @@ public class CUserInput : MonoBehaviour
         {
             if (EventReloadTool != null) EventReloadTool(false);
         }
+		if(Input.GetKey(s_eReloadTool))
+		{
+			if (EventReloadToolHold != null) EventReloadToolHold();
+		}
 
         // Slot 1
         if (Input.GetKeyDown(s_eToolSlot1))
@@ -447,9 +535,7 @@ public class CUserInput : MonoBehaviour
         }
     }
 
-
 // Member Fields
-
 
     // Tools
     static KeyCode s_eToolSlot1         = KeyCode.Alpha1;

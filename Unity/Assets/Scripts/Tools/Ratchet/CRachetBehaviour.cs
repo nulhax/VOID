@@ -35,9 +35,9 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bActive = new CNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 
@@ -59,8 +59,8 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate   += new CToolInterface.NotifyPrimaryActivate(OnUseStart);
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += new CToolInterface.NotifyPrimaryDeactivate(OnUseEnd);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
+		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
 	}
 
 
@@ -76,7 +76,6 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 		{
 			if (m_bActive.Get())
 			{
-				
 				m_fActiveTimer += Time.deltaTime * 3;
 
 				transform.localPosition = Vector3.Lerp(s_vDeactivePosition, s_vActivePosition, m_fActiveTimer);
@@ -112,7 +111,7 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void OnUseEnd()
+	public void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(false);
 	}

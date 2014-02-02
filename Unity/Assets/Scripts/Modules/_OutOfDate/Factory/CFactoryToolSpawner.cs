@@ -32,10 +32,10 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
     ushort CurrentToolID  { get { return (m_sCurrentToolID.Get()); } }
 
     // Member Functions
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_fRecharge      = new CNetworkVar<float>(OnNetworkVarSync);
-        m_sCurrentToolID = new CNetworkVar<ushort>(OnNetworkVarSync);
+        m_fRecharge      = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
+        m_sCurrentToolID = _cRegistrar.CreateNetworkVar<ushort>(OnNetworkVarSync);
     }
 	
 	public void Start()
@@ -51,19 +51,19 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
 //		but.PressDown += SpawnTool;	
 	}
 	
-	[AServerOnly]
-    void SpawnTool(CDUIButton _sender)
-    {
-        // Create a new prefab and tool
-        CGameRegistrator.ENetworkPrefab ToolPrefab = CGameRegistrator.ENetworkPrefab.ToolRachet;
-        GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
-		
-		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-		
-		newTool.GetComponent<CNetworkView>().SetPosition(transform.position);
-		newTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
-		newTool.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-    }
+//	[AServerOnly]
+//    void SpawnTool(CDUIButton _sender)
+//    {
+//        // Create a new prefab and tool
+//        CGameRegistrator.ENetworkPrefab ToolPrefab = CGameRegistrator.ENetworkPrefab.ToolRachet;
+//        GameObject newTool = CNetwork.Factory.CreateObject(ToolPrefab);		
+//		
+//		Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+//		
+//		newTool.GetComponent<CNetworkView>().SetPosition(transform.position);
+//		newTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
+//		newTool.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
+//    }
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {

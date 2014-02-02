@@ -44,18 +44,10 @@ public class CActorInteractable : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		// Empty
 	}
-
-
-	void Start()
-	{
-		if(gameObject.layer != LayerMask.NameToLayer("InteractableObject"))
-			Debug.LogWarning("Interactable object not set to the interactableobject layer! Make sure its set on the prefab!" + " " + gameObject.name);
-	}
-	
 
 	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
 	{

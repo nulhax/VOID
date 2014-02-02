@@ -42,17 +42,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{
 		get { return (m_cActorHead); }
 	}
-	
-	public GameObject PlayerShipCamera
-	{
-		get { return (m_cShipCamera); }
-		set { m_cShipCamera = value; }
-	}
-	
-	public bool CamerasSwapped
-	{
-		get { return(PlayerShipCamera.transform.parent != ActorHead.transform); }
-	}
 
 	public bool InputDisabled
 	{
@@ -63,9 +52,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_fHeadEulerX = new CNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fHeadEulerX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 	
 	
@@ -88,12 +77,21 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			TransferPlayerPerspectiveToShipSpace();
 			
 			// Register event handler for entering/exiting ship
-			gameObject.GetComponent<CActorBoardable>().EventBoard += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToShipSpace);
-			gameObject.GetComponent<CActorBoardable>().EventDisembark += new CActorBoardable.BoardingHandler(TransferPlayerPerspectiveToGalaxySpace);
+			gameObject.GetComponent<CActorBoardable>().EventBoard += TransferPlayerPerspectiveToShipSpace;
+			gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
 
 			// Subscribe to mouse movement input
-			CUserInput.EventMouseMoveY += new CUserInput.NotifyMouseInput(OnMouseMoveY);
+			CUserInput.EventMouseMoveY += OnMouseMoveY;
 		}
+	}
+
+
+	void OnDestroy()
+	{
+		// Unregister
+		gameObject.GetComponent<CActorBoardable>().EventBoard -= TransferPlayerPerspectiveToShipSpace;
+		gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
+		CUserInput.EventMouseMoveY -= OnMouseMoveY;
 	}
 
 
@@ -103,17 +101,24 @@ public class CPlayerHead : CNetworkMonoBehaviour
     }
 
 
-	[AServerOnly]
+	[AClientOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 	}
 
 
-	[AServerOnly]
-	public void UndisableInput(object _cFreezeRequester)
+	[AClientOnly]
+	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
+	}
+
+
+	[AClientOnly]
+	public void ResetHeadRotations()
+	{
+		m_vRotation = Vector3.zero;
 	}
 
 
@@ -144,7 +149,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGame.CompositeCameraSystem.SetShipViewPerspective(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -152,7 +157,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGame.CompositeCameraSystem.SetGalaxyViewPerspective(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
@@ -185,7 +190,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 	public GameObject m_cActorHead = null;
-	GameObject m_cShipCamera = null;
 	Vector3 m_vRotation = Vector3.zero;
 	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
 	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);

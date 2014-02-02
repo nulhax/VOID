@@ -228,7 +228,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 			senderAudioSource.volume = 1.0f;
 			
 			//AudioSystem.GetInstance.Play(newClip, senderNetworkView.gameObject.transform.position, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
-			AudioSystem.Play(senderAudioSource, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);								
+			CAudioSystem.Play(senderAudioSource, 1.0f, 1.0f, false, 0.0f, CAudioSystem.SoundType.SOUND_EFFECTS, true);								
 		}
 		
 		if(s_framesToDecode.Count > 0)

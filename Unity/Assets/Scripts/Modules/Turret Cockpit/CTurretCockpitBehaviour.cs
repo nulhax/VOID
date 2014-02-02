@@ -50,9 +50,9 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 	
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cActiveTurretViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 
 
@@ -81,7 +81,24 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerEnterCockpit(ulong _ulPlayerId)
 	{
-    	List<GameObject> acTurrets = GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityInterface>().FindModulesByType(CModuleInterface.EType.Turret);
+		CModuleInterface cSelfModuleInterface = GetComponent<CModuleInterface>();
+
+		List<GameObject> acTurrets = null;
+
+		switch (cSelfModuleInterface.ModuleType)
+		{
+		case CModuleInterface.EType.LaserCockpit:
+			acTurrets = cSelfModuleInterface.ParentFacility.GetComponent<CFacilityInterface>().FindModulesByType(CModuleInterface.EType.LaserTurret);
+			break;
+
+		case CModuleInterface.EType.MiningCockpit:
+			acTurrets = cSelfModuleInterface.ParentFacility.GetComponent<CFacilityInterface>().FindModulesByType(CModuleInterface.EType.MiningTurret);
+			break;
+
+		default:
+			Debug.LogError("Unknown module cockpit type");
+			break;
+		}
 
     	if (acTurrets != null &&
         	acTurrets.Count > 0)
@@ -105,15 +122,20 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	void OnPlayerLeaveCockpit(ulong _ulPlayerId)
 	{
-		// Release turret control
-		ActiveTurretObject.GetComponent<CTurretBehaviour>().ReleaseControl();
+        if (ActiveTurretObject != null)
+        {
+            // Release turret control
+            ActiveTurretObject.GetComponent<CTurretBehaviour>().ReleaseControl();
 
-		// Cleanup
-		m_cActiveTurretViewId.Set(null);
+            // Cleanup
+            m_cActiveTurretViewId.Set(null);
+        }
+
+		//Debug.Log("Player left cockpit");
 	}
 
 
-	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
+	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
 		if (_cSyncedVar == m_cActiveTurretViewId)
 		{

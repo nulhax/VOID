@@ -37,11 +37,19 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 
 // Member Properties
-	public Dictionary<ulong, string> PlayerList
+	public string LocalPlayerName
 	{
 		get
 		{
-			return(m_mPlayerName);
+			return(m_mPlayerName[CNetwork.PlayerId]);
+		}
+	}
+
+	public static CGamePlayers Instance
+	{
+		get
+		{
+			return(s_cInstance);
 		}
 	}
 
@@ -60,17 +68,16 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
-
 	public static CNetworkViewId SelfActorViewId
 	{
 		get 
 		{ 
-			if (!s_cInstance.m_mPlayersActor.ContainsKey(CNetwork.PlayerId))
+			if (!s_cInstance.m_mPlayersActors.ContainsKey(CNetwork.PlayerId))
 			{
 				return (null);
 			}
 			
-			return (s_cInstance.m_mPlayersActor[CNetwork.PlayerId]);
+			return (s_cInstance.m_mPlayersActors[CNetwork.PlayerId]);
 		}
 	}
 	
@@ -80,7 +87,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{ 
 			List<GameObject> actors = new List<GameObject>();
 			
-			foreach(CNetworkViewId playerID in s_cInstance.m_mPlayersActor.Values)
+			foreach(CNetworkViewId playerID in s_cInstance.m_mPlayersActors.Values)
 			{
 				actors.Add(CNetwork.Factory.FindObject(playerID));
 			}
@@ -93,9 +100,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_sNetworkedPlayerName = new CNetworkVar<string>(OnNetworkVarSync, "");
+		m_sNetworkedPlayerName = _cRegistrar.CreateNetworkVar<string>(OnNetworkVarSync, "");
+
+        _cRegistrar.RegisterRpc(this, "RegisterPlayerName");
+        _cRegistrar.RegisterRpc(this, "UnregisterPlayerName");
+        _cRegistrar.RegisterRpc(this, "RegisterPlayerActor");
+        _cRegistrar.RegisterRpc(this, "UnregisterPlayerActor");
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
@@ -130,7 +142,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			_cStream.Write((byte)ENetworkAction.ActionSendPlayerName);
 			_cStream.WriteString(CGamePlayers.s_cInstance.m_sPlayerName);
-
+								
 			CGamePlayers.m_bSerializeName = false;
 		}
 	}
@@ -146,6 +158,17 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			{
 				string sPlayerName = _cStream.ReadString();
 
+				//Send all dictionary entries to new player
+				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
+				{
+					//Make sure you don't send RPC to yourself. Foreach loops will not let you modify the collections object (dictionary) you are operating on.
+					if(_cNetworkPlayer.PlayerId != CNetwork.PlayerId)
+					{
+						CGamePlayers.s_cInstance.InvokeRpc(_cNetworkPlayer.PlayerId, "RegisterPlayerName", entry.Key, entry.Value);
+					}
+				}
+						
+				//Send new player name to all other players
 				CGamePlayers.s_cInstance.InvokeRpcAll("RegisterPlayerName", _cNetworkPlayer.PlayerId, sPlayerName);
 				
 				break;
@@ -156,24 +179,35 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	public static GameObject FindPlayerActor(ulong _ulPlayerId)
 	{
-		if (!s_cInstance.m_mPlayersActor.ContainsKey(_ulPlayerId))
+		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
 		{
 			return (null);
 		}
 		
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActor[_ulPlayerId]));
+		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
-	
-	
+
 	public static CNetworkViewId FindPlayerActorViewId(ulong _ulPlayerId)
 	{
-		if (!s_cInstance.m_mPlayersActor.ContainsKey(_ulPlayerId))
+		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
 		{
 			return (null);
 		}
-
-		return (s_cInstance.m_mPlayersActor[_ulPlayerId]);
+		
+		return (s_cInstance.m_mPlayersActors[_ulPlayerId]);
 	}
+
+
+	public static ulong FindPlayerActorsPlayerId(CNetworkViewId _PlayerActorViewId)
+	{
+		if (!s_cInstance.m_mPlayerActorsPlayers.ContainsKey(_PlayerActorViewId))
+		{
+			return(ulong.MinValue);
+		}
+		
+		return (s_cInstance.m_mPlayerActorsPlayers[_PlayerActorViewId]);
+	}
+
 
 	public void Awake()
 	{
@@ -242,14 +276,14 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if (!_cPlayer.IsHost)
 		{
 			// Sync current players actor view ids with new player
-			foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActor)
+			foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActors)
 			{
 				InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
 			}
 		}
 		
 		// Placeholder Test stuff
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
         CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
@@ -262,9 +296,16 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.PowerCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.BioCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.ReplicatorCell);
-		
+
+
+		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
+
+
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
-		
+
+		//Send all dictionary entries to all players.
+
 		Logger.Write("Created new player actor for player id ({0})", _cPlayer.PlayerId);
 	}
 	
@@ -280,6 +321,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			// Sync unregister player actor view id with everyone
 			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
 
+			//Remove player from dictionary of player names
+			InvokeRpcAll("UnregisterPlayerName", _cPlayer.PlayerId);
+
 			Logger.Write("Removed Player Actor for Player Id ({0})", _cPlayer.PlayerId);
 		}
 	}
@@ -287,7 +331,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	void OnServerShutdown()
 	{
-		m_mPlayersActor.Clear();
+		m_mPlayersActors.Clear();
+		m_mPlayerActorsPlayers.Clear();
+		m_mPlayerName.Clear();
 	}
 
 
@@ -295,12 +341,16 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	{
 		if (!CNetwork.IsServer)
 		{
-			m_mPlayersActor.Clear();
+			m_mPlayersActors.Clear();
+			m_mPlayerActorsPlayers.Clear();
+			m_mPlayersActors.Remove(CNetwork.PlayerId);
 		}
+
+		m_bSerializeName = true;
 	}
 
-	[ANetworkRpc]
 	// Create RPC Call to take in playerID (ulong) and string (player username)
+	[ANetworkRpc]
 	void RegisterPlayerName(ulong _ulPlayerID, string _sPlayerUserName)
 	{
 		if(m_mPlayerName.ContainsKey(_ulPlayerID))
@@ -314,18 +364,29 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			//Debug.LogError("Added player: " + _sPlayerUserName);
 		}
 	}
+	[ANetworkRpc]
+	void UnregisterPlayerName(ulong _ulPlayerID)
+	{
+		if(m_mPlayerName.ContainsKey(_ulPlayerID))
+		{
+			m_mPlayerName.Remove(_ulPlayerID);
+		}
+	}
 
 	[ANetworkRpc]
 	void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
 	{
-		m_mPlayersActor.Add(_ulPlayerId, _cPlayerActorId);
+		m_mPlayersActors.Add(_ulPlayerId, _cPlayerActorId);
+		m_mPlayerActorsPlayers.Add(_cPlayerActorId, _ulPlayerId);
 	}
 	
 	
 	[ANetworkRpc]
 	void UnregisterPlayerActor(ulong _ulPlayerId)
 	{
-		m_mPlayersActor.Remove(_ulPlayerId);
+		m_mPlayerActorsPlayers.Remove(m_mPlayersActors[_ulPlayerId]);
+		m_mPlayersActors.Remove(_ulPlayerId);
+
 		m_aUnspawnedPlayers.Remove(_ulPlayerId);
 	}
 
@@ -343,12 +404,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
                       "Waiting for spawner to be available...", cStyle);
         }
 
-		if (CGamePlayers.SelfActor != null)
+		if (CGamePlayers.SelfActor != null)		
 		{
-
 			if(Input.GetKey(KeyCode.Tab))
 			{
-				GUI.TextArea(new Rect(100, 100, 400, 400), "Player List ");
+				GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
 
 				int iStartY = 115;
 
@@ -373,7 +433,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Fields
 
 
-	Dictionary<ulong, CNetworkViewId> m_mPlayersActor = new Dictionary<ulong, CNetworkViewId>();
+	Dictionary<ulong, CNetworkViewId> m_mPlayersActors = new Dictionary<ulong, CNetworkViewId>();
+	Dictionary<CNetworkViewId, ulong> m_mPlayerActorsPlayers = new Dictionary<CNetworkViewId, ulong>();
 	Dictionary<ulong, string> m_mPlayerName = new Dictionary<ulong, string>();
 
 	List<ulong> m_aUnspawnedPlayers = new List<ulong>();

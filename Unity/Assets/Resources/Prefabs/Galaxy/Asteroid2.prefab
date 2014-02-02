@@ -10,14 +10,14 @@ GameObject:
   - 4: {fileID: 400000}
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
-  - 54: {fileID: 5400000}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400004}
-  - 135: {fileID: 13500000}
-  - 114: {fileID: 11400006}
   - 114: {fileID: 11400008}
-  m_Layer: 10
+  - 54: {fileID: 5400000}
+  - 114: {fileID: 11400006}
+  - 135: {fileID: 13500000}
+  m_Layer: 11
   m_Name: Asteroid2
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
@@ -102,8 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: 1
   Angle: 1
-  PositionalVelocity: 1
-  AngularVelocity: 1
+  PositionalVelocity: 0
+  AngularVelocity: 0
   UpdatesPerSecond: .25999999
 --- !u!114 &11400004
 MonoBehaviour:
@@ -127,10 +127,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 1
   takeDamageOnImpact: 1
-  initialHealth: 1
+  syncNetworkState: 0
+  health_initial: 1000
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -152,8 +157,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.80592203
-  m_Center: {x: -.928514004, y: .331826478, z: 1.43406558}
+  m_Radius: 180.592194
+  m_Center: {x: -92.8514023, y: 33.1826477, z: 143.406555}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

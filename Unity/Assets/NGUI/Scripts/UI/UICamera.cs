@@ -293,16 +293,8 @@ public class UICamera : MonoBehaviour
 	{
 		get
 		{
-			if(current != null && current.IsDUICamera)
-			{
-				return (currentCamera != null && currentTouch != null) ?
-					UICamera.DiegeticPointToRay(current.CurrentVeiwPortPos, current.DiegeticViewDimensions) : new Ray();
-			}
-			else
-			{
-				return (currentCamera != null && currentTouch != null) ?
-					currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
-			}
+			return (currentCamera != null && currentTouch != null) ?
+				currentCamera.ScreenPointToRay(currentTouch.pos) : new Ray();
 		}
 	}
 
@@ -361,40 +353,12 @@ public class UICamera : MonoBehaviour
 	Camera mCam = null;
 	float mTooltipTime = 0f;
 	float mNextRaycast = 0f;
+
+	// <CUSTOM>
 	
-	/// <CUSTOM_CODE> 
+	public Vector3 m_ViewPortPos = Vector3.zero;
 
-	bool m_IsDUICamera = false;
-	Vector3 m_DiegeticPos = Vector3.zero;
-	Vector2 m_DiegeticViewDimensions = Vector2.zero;
-
-	public bool IsDUICamera 
-	{ 
-		get { return (m_IsDUICamera); } 
-		set { m_IsDUICamera = value; } 
-	}
-
-	public Vector3 CurrentVeiwPortPos 
-	{ 
-		get { return (m_DiegeticPos); } 
-		set { m_DiegeticPos = value; } 
-	}
-
-	public Vector3 DiegeticViewDimensions 
-	{ 
-		get { return (m_DiegeticViewDimensions); } 
-		set { m_DiegeticViewDimensions = value; } 
-	}
-
-	static public Ray DiegeticPointToRay(Vector3 _DiegeticPos, Vector3 _DiegeticViewDimensions)
-	{
-		float dx = _DiegeticPos.x / _DiegeticViewDimensions.x;
-		float dy = _DiegeticPos.y / _DiegeticViewDimensions.y;
-
-		return(currentCamera.ViewportPointToRay(new Vector3(dx, dy)));
-	}
-
-	/// </CUSTOM_CODE>
+	// </CUSTOM>
 
 	/// <summary>
 	/// Helper function that determines if this script should be handling the events.
@@ -458,7 +422,7 @@ public class UICamera : MonoBehaviour
 					currentCamera = uicam.mCam;
 					UICamera.currentScheme = scheme;
 					Notify(mCurrentSelection, "OnSelect", false);
-					current = null;
+					//current = null;
 				}
 			}
 
@@ -492,7 +456,7 @@ public class UICamera : MonoBehaviour
 			currentCamera = mCam;
 			UICamera.currentScheme = mNextScheme;
 			Notify(mCurrentSelection, "OnSelect", true);
-			current = null;
+			//current = null;
 		}
 	}
 
@@ -621,17 +585,7 @@ public class UICamera : MonoBehaviour
 			if (pos.x < 0f || pos.x > 1f || pos.y < 0f || pos.y > 1f) continue;
 
 			// Cast a ray into the screen
-			Ray ray = new Ray();
-			if(cam.IsDUICamera)
-			{
-				ray = UICamera.DiegeticPointToRay(cam.CurrentVeiwPortPos, cam.DiegeticViewDimensions);
-			}
-			else
-			{
-				ray = currentCamera.ScreenPointToRay(inPos);
-			}
-
-			Debug.DrawRay(ray.origin, ray.direction, Color.yellow, 1.0f);
+			Ray ray = currentCamera.ScreenPointToRay(inPos);
 
 			// Raycast into the screen
 			int mask = currentCamera.cullingMask & (int)cam.eventReceiverMask;
@@ -893,8 +847,8 @@ public class UICamera : MonoBehaviour
 		}
 
 		// Save the starting mouse position
-		mMouse[0].pos.x = Input.mousePosition.x;
-		mMouse[0].pos.y = Input.mousePosition.y;
+		mMouse[0].pos.x = m_ViewPortPos.x;
+		mMouse[0].pos.y = m_ViewPortPos.y;
 
 		for (int i = 1; i < 3; ++i)
 		{
@@ -939,10 +893,11 @@ public class UICamera : MonoBehaviour
 	/// Check the input and send out appropriate events.
 	/// </summary>
 
-	void Update ()
+	public void Update ()
 	{
 		// Only the first UI layer should be processing events
-		if (!Application.isPlaying || !handlesEvents) return;
+		if (!Application.isPlaying || !handlesEvents) 
+			return;
 
 		current = this;
 
@@ -1013,7 +968,7 @@ public class UICamera : MonoBehaviour
 				ShowTooltip(true);
 			}
 		}
-		current = null;
+		//current = null;
 	}
 
 	/// <summary>
@@ -1023,7 +978,7 @@ public class UICamera : MonoBehaviour
 	public void ProcessMouse ()
 	{
 		// Update the position and delta
-		lastTouchPosition = Input.mousePosition;
+		lastTouchPosition = m_ViewPortPos;
 		mMouse[0].delta = lastTouchPosition - mMouse[0].pos;
 		mMouse[0].pos = lastTouchPosition;
 		bool posChanged = mMouse[0].delta.sqrMagnitude > 0.001f;
@@ -1041,6 +996,9 @@ public class UICamera : MonoBehaviour
 
 		for (int i = 0; i < 3; ++i)
 		{
+			if(i == 1)
+				continue;
+
 			if (Input.GetMouseButtonDown(i))
 			{
 				currentScheme = ControlScheme.Mouse;
@@ -1058,7 +1016,7 @@ public class UICamera : MonoBehaviour
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
 		{
 			mNextRaycast = RealTime.time + 0.02f;
-			if (!Raycast(Input.mousePosition, out lastHit)) hoveredObject = fallThrough;
+			if (!Raycast(m_ViewPortPos, out lastHit)) hoveredObject = fallThrough;
 			if (hoveredObject == null) hoveredObject = genericEventHandler;
 			for (int i = 0; i < 3; ++i) mMouse[i].current = hoveredObject;
 		}
@@ -1114,7 +1072,7 @@ public class UICamera : MonoBehaviour
 			ProcessTouch(pressed, unpressed);
 			currentKey = KeyCode.None;
 		}
-		currentTouch = null;
+		//currentTouch = null;
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
@@ -1173,7 +1131,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			currentTouch = null;
+			//currentTouch = null;
 
 			// Don't consider other touches
 			if (!allowMultiTouch) break;
@@ -1205,7 +1163,7 @@ public class UICamera : MonoBehaviour
 			currentTouch = mMouse[0];
 			currentTouch.touchBegan = pressed;
 
-			Vector2 pos = Input.mousePosition;
+			Vector2 pos = m_ViewPortPos;
 			currentTouch.delta = pressed ? Vector2.zero : pos - currentTouch.pos;
 			currentTouch.pos = pos;
 
@@ -1226,7 +1184,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			currentTouch = null;
+			//currentTouch = null;
 		}
 	}
 
@@ -1336,8 +1294,8 @@ public class UICamera : MonoBehaviour
 			Notify(mCurrentSelection, "OnKey", KeyCode.Escape);
 		}
 
-		currentTouch = null;
-		currentKey = KeyCode.None;
+		//currentTouch = null;
+		//currentKey = KeyCode.None;
 	}
 
 	/// <summary>

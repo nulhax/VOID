@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -35,10 +35,10 @@ public class CTorchLight : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bTorchLit = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_bTorchColour = new CNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_bTorchLit = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bTorchColour = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
     }
 
 
@@ -79,8 +79,8 @@ public class CTorchLight : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += new CToolInterface.NotifyPrimaryActivate(ToggleActivate);
-		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += new CToolInterface.NotifySecondaryActivate(ToggleColour);
+		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += ToggleActivate;
+		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += ToggleColour;
 
 		if (CNetwork.IsServer)
 		{
@@ -88,7 +88,7 @@ public class CTorchLight : CNetworkMonoBehaviour
 		}
 		
 		//Get audio cues
-		AudioCue[] cues = gameObject.GetComponents<AudioCue>();
+		CAudioCue[] cues = gameObject.GetComponents<CAudioCue>();
 	}
 
 

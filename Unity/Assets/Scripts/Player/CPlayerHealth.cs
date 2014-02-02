@@ -67,11 +67,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fHitPoints = new CNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-		m_bAlive = new CNetworkVar<bool>(OnNetworkVarSync, true);
-		m_fOxygenUseRate = new CNetworkVar<float>(OnNetworkVarSync, 5.0f);
+		m_fHitPoints = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
+		m_bAlive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
 
@@ -98,13 +98,13 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	void Start() 
     {
         // Death audio
-		AudioCue[] audioCues = gameObject.GetComponents<AudioCue>();
+		CAudioCue[] audioCues = gameObject.GetComponents<CAudioCue>();
 
-		foreach(AudioCue cue in audioCues)
+		foreach(CAudioCue cue in audioCues)
 		{
 			if(cue.m_strCueName == "LaughTrack")
 			{
-				m_LaughTrack = 	cue;
+				//m_LaughTrack = 	cue;
 			}
 		}
 	}
@@ -167,8 +167,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // Player is alive
             if (m_bAlive.Get())
             {
-                transform.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
-                transform.GetComponent<CPlayerHead>().UndisableInput(this);
+                transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+                transform.GetComponent<CPlayerHead>().ReenableInput(this);
             }
 
             // Player is dead
@@ -188,6 +188,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 if (m_fHitPoints.Get() <= 0.0f)
                 {
                     m_bAlive.Set(false);
+                }
+                else if (m_fHitPoints.Get() > 0.0f)
+                {
+                    m_bAlive.Set(true);
                 }
             }
         }
@@ -227,7 +231,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	CNetworkVar<bool> m_bAlive;
 
 
-	AudioCue m_LaughTrack;
+	CAudioCue m_LaughTrack;
 
 
 }

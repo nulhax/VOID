@@ -28,8 +28,6 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Fields
 	public GameObject m_CompoundCollider = null;
 	
-	private List<GameObject> m_ActorsJustExitedShip = new List<GameObject>();
-	
 	
 	// Member Properies
 	
@@ -37,7 +35,7 @@ public class CGalaxyShipCollider : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		
+
 	}
 	
 	public void AttachNewCollider(string _ColliderPrefab, Vector3 _RelativePos, Quaternion _RelativeRot)

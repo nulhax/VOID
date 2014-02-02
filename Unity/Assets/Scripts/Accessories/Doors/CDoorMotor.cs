@@ -65,9 +65,9 @@ public class CDoorMotor : CNetworkMonoBehaviour
 
 // Member Methods
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_DoorState = new CNetworkVar<EDoorState>(OnNetworkVarSync, EDoorState.INVALID);
+		m_DoorState = _cRegistrar.CreateNetworkVar<EDoorState>(OnNetworkVarSync, EDoorState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)

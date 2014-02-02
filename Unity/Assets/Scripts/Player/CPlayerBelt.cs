@@ -84,17 +84,17 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_uiMaxNumTools];
 
 		for (uint i = 0; i < k_uiMaxNumTools; ++i)
 		{
-			m_acToolsViewId[i] = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+			m_acToolsViewId[i] = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
-		m_bToolCapacity = new CNetworkVar<byte>(OnNetworkVarSync, 2);
-		m_bActiveToolId = new CNetworkVar<byte>(OnNetworkVarSync);
+		m_bToolCapacity = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 2);
+		m_bActiveToolId = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
     }
 
 
@@ -144,6 +144,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 					{
 						Debug.LogError(string.Format("Target tool does not have the CToolInterface component attached! ObjectName({0})", _cInteractableObject.name));
 					}
+                    else if (cToolInterface.IsHeld)
+                    {
+                        break;
+                    }
 					else
 					{
 						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);
@@ -330,6 +334,18 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         CUserInput.EventDropTool += new CUserInput.NotifyKeyChange(OnDropToolKey);
         CUserInput.EventChangeToolSlot += new CUserInput.NotifyChangeToolSlot(OnChangeSlotKey);
     }
+
+
+	void OnDestroy()
+	{
+		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnInteraction;
+		gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction -= OnNoInteraction;
+		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
+		
+		CUserInput.EventReloadTool -= OnReloadToolKey;
+		CUserInput.EventDropTool -= OnDropToolKey;
+		CUserInput.EventChangeToolSlot -= OnChangeSlotKey;
+	}
 
 
     void Update()

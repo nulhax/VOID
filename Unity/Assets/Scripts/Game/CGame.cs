@@ -50,16 +50,10 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (s_cInstance); }
 	}
 
-
-	public static CCompositeCameraSystem CompositeCameraSystem
-	{
-		get { return (Instance.GetComponent<CCompositeCameraSystem>()); }
-	}
-
 // Member Functions
 
 
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
 	}
@@ -271,17 +265,16 @@ public class CGame : CNetworkMonoBehaviour
 
     void OnConnect()
     {
-        // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
-        //if (!CNetwork.IsServer)    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
-        //    m_Galaxy = CNetwork.Factory.CreateObject(ENetworkRegisteredPrefab.Galaxy).GetComponent<CGalaxy>();
+
     }
 
 
 	void OnDisconnect()
 	{
-		CUserInput.UnregisterAllEvents();
-        //if(!CNetwork.IsServer)  // If the host disconnects from the server, the galaxy should persist.
-        //    m_Galaxy = null;
+		if(!CNetwork.IsServer)
+		{
+			CUserInput.UnregisterAllEvents();
+		}
 	}
 
 

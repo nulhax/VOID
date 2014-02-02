@@ -29,7 +29,7 @@ public class CScannerBehaviour : CNetworkMonoBehaviour
 	
 	
 // Member Functions
-	public override void InstanceNetworkVars()
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		
 	}

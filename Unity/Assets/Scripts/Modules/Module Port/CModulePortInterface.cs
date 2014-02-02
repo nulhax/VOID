@@ -27,47 +27,35 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 // Member Types
 
 
-    public enum EType
-    {
-        INVALID,
-
-        Internal,
-        External,
-
-        MAX
-    }
-
-
-    public enum ESize
-    {
-        INVALID,
-
-        Small,
-        Medium,
-        Large,
-
-        MAX
-    }
-
-
 // Member Delegates & Events
+
+
+// Member Fields
+	
+	
+	public CModuleInterface.ESize m_Size = CModuleInterface.ESize.INVALID;
+	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
+	public GameObject m_Positioner = null;
+	public bool m_Internal = true;
+	
+	
+	CNetworkVar<CNetworkViewId> m_cAttachedModuleViewId = null;
 
 
 // Member Properties
 
-
+	
     [AServerOnly]
-    public EType PortType
+    public CModuleInterface.ESize PortSize
     {
-        get { return (m_eType); }
+        get { return (m_Size); }
     }
 
 
-    [AServerOnly]
-    public ESize PortSize
-    {
-        get { return (m_eSize); }
-    }
+	public bool IsInternal
+	{
+		get { return(m_Internal); }
+	}
 
 
     public CNetworkViewId AttachedModuleViewId
@@ -78,44 +66,47 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
     public GameObject AttachedModuleObject
     {
-        get { return (m_cAttachedModuleViewId.Get().GameObject); }
+		get { return (m_cAttachedModuleViewId.Get().GameObject); }
     }
 
 
-    public bool IsEmpty
+    public bool IsModuleAttached
     {
-        get { return (AttachedModuleViewId == null); }
+        get { return (AttachedModuleViewId != null); }
     }
 
 
 // Member Methods
 
 
-    public override void InstanceNetworkVars()
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cAttachedModuleViewId = new CNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_cAttachedModuleViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
     }
 
 
     public GameObject CreateModule(CModuleInterface.EType _eType)
     {
-        GameObject cModuleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_eType));
-        cModuleObject.GetComponent<CNetworkView>().SetPosition(m_cPositioner.transform.position);
-        cModuleObject.GetComponent<CNetworkView>().SetRotation(m_cPositioner.transform.rotation.eulerAngles);
-        cModuleObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
+		GameObject cModuleObject = null;
+		if(!IsModuleAttached)
+		{
+	        cModuleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_eType));
+	        cModuleObject.GetComponent<CNetworkView>().SetPosition(m_Positioner.transform.position);
+	        cModuleObject.GetComponent<CNetworkView>().SetRotation(m_Positioner.transform.rotation.eulerAngles);
+	        cModuleObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
 
-        m_cAttachedModuleViewId.Set(cModuleObject.GetComponent<CNetworkView>().ViewId);
-
+	        m_cAttachedModuleViewId.Set(cModuleObject.GetComponent<CNetworkView>().ViewId);
+		}
         return (cModuleObject);
     }
 
 
 	void Start()
 	{
-        if (m_ePreplacedModuleType != CModuleInterface.EType.INVALID &&
+        if (m_PreplacedModuleType != CModuleInterface.EType.INVALID &&
             CNetwork.IsServer)
         {
-            CreateModule(m_ePreplacedModuleType);
+            CreateModule(m_PreplacedModuleType);
         }
 	}
 
@@ -137,18 +128,6 @@ public class CModulePortInterface : CNetworkMonoBehaviour
             // Empty
         }
     }
-
-
-// Member Fields
-
-
-    public EType m_eType = EType.INVALID;
-    public ESize m_eSize = ESize.INVALID;
-    public CModuleInterface.EType m_ePreplacedModuleType = CModuleInterface.EType.INVALID;
-    public GameObject m_cPositioner = null;
-
-
-    CNetworkVar<CNetworkViewId> m_cAttachedModuleViewId = null;
 
 
 };
