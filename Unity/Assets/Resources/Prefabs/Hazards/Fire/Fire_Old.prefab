@@ -8,14 +8,15 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
-  - 114: {fileID: 11400000}
+  - 114: {fileID: 11400004}
   - 198: {fileID: 19800000}
   - 199: {fileID: 19900000}
+  - 65: {fileID: 6500000}
   - 114: {fileID: 11400002}
-  - 114: {fileID: 11400004}
   - 82: {fileID: 8200000}
+  - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: Fire
+  m_Name: Fire_Old
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,11 +28,23 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
+  m_LocalPosition: {x: 0, y: -1.79999995, z: -9.34257507}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!65 &6500000
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 2}
+  m_Center: {x: 0, y: 0, z: .500000119}
 --- !u!82 &8200000
 AudioSource:
   m_ObjectHideFlags: 1
@@ -51,7 +64,7 @@ AudioSource:
   MinDistance: 1
   MaxDistance: 15
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -98,7 +111,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 49a38cab0797f7a4ab54145acc583de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400002
@@ -109,22 +122,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 86e54c8f1eec32240a19ca71e37111e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncNetworkHealth: 0
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 10
-  health_min: 0
-  health_initial: 10
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 2.5
-  - 7.5
-  state_previous: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -133,7 +133,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!198 &19800000
@@ -222,7 +222,7 @@ ParticleSystem:
       maxGradient:
         key0:
           serializedVersion: 2
-          rgba: 4278215935
+          rgba: 4278223869
         key1:
           serializedVersion: 2
           rgba: 4294967295
@@ -244,7 +244,7 @@ ParticleSystem:
         key7:
           serializedVersion: 2
           rgba: 0
-        ctime0: 46646
+        ctime0: 52043
         ctime1: 65535
         ctime2: 0
         ctime3: 0
@@ -265,10 +265,10 @@ ParticleSystem:
       minGradient:
         key0:
           serializedVersion: 2
-          rgba: 4291122478
+          rgba: 4294953842
         key1:
           serializedVersion: 2
-          rgba: 4280953490
+          rgba: 4279637678
         key2:
           serializedVersion: 2
           rgba: 0
@@ -310,7 +310,7 @@ ParticleSystem:
         rgba: 4294967295
       maxColor:
         serializedVersion: 2
-        rgba: 4278218751
+        rgba: 4279474132
       minMaxState: 3
     startSize:
       scalar: 3
@@ -384,7 +384,7 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 2
     enabled: 1
-    type: 4
+    type: 5
     radius: 1
     angle: 25
     length: 5
@@ -398,7 +398,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 10
+      scalar: 100
       maxCurve:
         serializedVersion: 2
         m_Curve:

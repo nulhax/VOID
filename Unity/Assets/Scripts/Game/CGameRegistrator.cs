@@ -233,7 +233,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
 
         // Hazards
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
 
 		// User Interface
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"DUI/DUIControlsTest");

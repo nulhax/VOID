@@ -1,111 +1,51 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
 //
-//  File Name   :   CActorHealth.cs
+//  File Name   :   CFireHazard.cs
 //  Description :   --------------------------
 //
-//  Author  	:  Scott Emery
-//  Mail    	:  scott.ipod@gmail.com
+//  Author  	:  Jade Abbott
+//  Mail    	:  20chimps@gmail.com
 //
 
-
-// Namespaces
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
-/* Implementation */
-
-
-public class CFireHazard : MonoBehaviour {
-    // Member Types
-
-
-    // Member Delegates & Events
-    
-
-    // Member Properties
-
-
-    // Member Functions
-
-
-	public float Health
+[RequireComponent(typeof(CActorHealth))]
+[RequireComponent(typeof(Collider))]
+public class CFireHazard : MonoBehaviour
+{
+	void Start ()
 	{
-		set
-		{ 
-			m_fHealth = value;
-			if (!m_bDead &&
-				m_fHealth < 0)
-			{
-				CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
-				m_bDead = true;
-			}
+		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
+	}
+
+	void OnDestroy()
+	{
+		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
+	}
+
+	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
+	{
+		switch (currState)
+		{
+			case 0:	// Begin fire.
+				gameObject.GetComponent<Collider>().enabled = true;
+				break;
+
+			case 2:	// End fire.
+				gameObject.GetComponent<Collider>().enabled = false;
+
+				break;
 		}
-		get { return (m_fHealth); }
 	}
 
-
-    public float Damage
-    {
-        get { return m_fDamage; }
-        set { m_fDamage = value; }
-    }
-
-	// Use this for initialization
-	public void Start () 
-    {
-	   
+	void OnTriggerStay(Collider collider)
+	{
+		CActorHealth otherHealth = collider.GetComponent<CActorHealth>();
+		if (otherHealth != null)
+			otherHealth.health -= Time.fixedDeltaTime;
 	}
-    
-    public void OnDestroy()
-    {
-
-    }
-
-	// Update is called once per frame
-	void Update () 
-    {
-        
-	}
-
-    // Get IsTrigger and get the collider of the player to check 
-    // Send fire damage to player Hp 
-    void OnTriggerStay(Collider _Entity)
-    {
-       // Debug.Log("ontriggerstay function entered.");
-        if (CNetwork.IsServer)
-        {
-            //Debug.Log("Server detected in fire hazard");
-             // is player actor, does the object return character motor
-            if (_Entity.gameObject.name == "Player Actor(Clone)")
-            {
-                Debug.Log("Rigid body triggered. ---------------------------");
-                //Get actor health
-                float hp = _Entity.gameObject.GetComponent<CPlayerHealth>().HitPoints;
-				
-				if(hp <= 0.0f)
-				{
-					// Do nothing
-				}
-                else
-				{
-					// Set the damage fire will do to the character
-               		 Damage = 40.0f * Time.deltaTime;
-
-               		 //apply damage
-               		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage);
-				}
-            }
-        }
-    }
-	
-	//Members
-	private float m_fDamage;
-	float m_fHealth = 100;
-	bool m_bDead = false;
-
-
 }
