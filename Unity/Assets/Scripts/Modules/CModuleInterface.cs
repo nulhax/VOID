@@ -254,7 +254,7 @@ public class CModuleInterface : MonoBehaviour
 		}
 
 		// Register self with parent facility
-		CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(gameObject);
+		CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(gameObject);
 
 		if(fi != null)
 		{

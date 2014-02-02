@@ -112,8 +112,8 @@ public class CCockpit : CNetworkMonoBehaviour
 				// - Players can leave the game while in the cockpits and their actors wont exist at this stage
 				if (CGamePlayers.SelfActor != null)
 				{
-					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
-					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().UndisableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ReenableInput(this);
 				}
 			}
 		}

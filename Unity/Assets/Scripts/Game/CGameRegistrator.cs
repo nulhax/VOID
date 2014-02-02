@@ -40,7 +40,7 @@ public class CGameRegistrator : MonoBehaviour
         // Galaxy
         Galaxy,
         Asteroid_FIRST,
-        Asteroid_LAST = Asteroid_FIRST/* + 3*/,
+        Asteroid_LAST = Asteroid_FIRST + 3,
 
         // Minerals
         Crystal,
@@ -88,7 +88,7 @@ public class CGameRegistrator : MonoBehaviour
 		
 		// Components
 		PanelFuseBox,
-        CellSlot,
+        //CellSlot,
 
         // Parts
         BlackMatterCell,
@@ -207,13 +207,13 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Capacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.OxygenRefiller,              "Modules/Atmosphere/OxygenRefiller");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Production/Dispenser/Dispenser");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Resources/Nanite Capsule/Nanite Capsule");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
+		// TODO: Might need to change this to use the new component system
+        //CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
 
         // Parts
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
@@ -263,7 +263,6 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
-        CNetworkConnection.RegisterThrottledSerializationTarget(COxygenRefillerBehaviour.SerializeOutbound, COxygenRefillerBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
 	}
@@ -304,7 +303,6 @@ public class CGameRegistrator : MonoBehaviour
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);	
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.OxygenRefiller, ENetworkPrefab.OxygenRefiller);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser, ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule, ENetworkPrefab.NaniteCapsule);
     }
@@ -312,8 +310,8 @@ public class CGameRegistrator : MonoBehaviour
 
     void RegisterComponents()
     {
-        CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
-        CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
+        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.CircuitBox, ENetworkPrefab.CellSlot);
+        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
     }
 
 

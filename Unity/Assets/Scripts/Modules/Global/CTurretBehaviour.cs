@@ -182,8 +182,8 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
 		
 		// Update rotations
-		vRotation.x += CUserInput.MouseMovementY * m_fRotationSpeed;
-		vRotation.y += CUserInput.MouseMovementX * m_fRotationSpeed;
+		vRotation.x += CUserInput.MouseMovementDeltaY * m_fRotationSpeed;
+		vRotation.y += CUserInput.MouseMovementDeltaX * m_fRotationSpeed;
 		
 		// Clamp rotation
 		vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
@@ -216,12 +216,12 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			if (ControllerPlayerId == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to turret camera position
-				CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
+				CGameCameras.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
 			}
 			else if (m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to player head position
-				CGame.CompositeCameraSystem.SetDefaultViewPerspective();
+				CGameCameras.SetDefaultViewPerspective();
 			}
 
 			if (EventControllerChange != null) EventControllerChange(m_ulControllerPlayerId.GetPrevious(), m_ulControllerPlayerId.Get());

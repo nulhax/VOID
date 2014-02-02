@@ -44,9 +44,10 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_PowerStorage = gameObject.GetComponent<CPowerStorageBehaviour>();
 
 		// Register for when the fusebox breaks/fixes
-		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		fbc.EventBroken += HandleFuseBoxBreaking;
-		fbc.EventFixed += HandleFuseBoxFixing;
+		// TODO: Replace with actual component stuff
+		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
+		//fbc.EventBroken += HandleFuseBoxBreaking;
+		//fbc.EventFixed += HandleFuseBoxFixing;
 		
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)

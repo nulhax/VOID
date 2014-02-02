@@ -6,8 +6,8 @@
 //  File Name   :   CComponentInterface.cs
 //  Description :   --------------------------
 //
-//  Author  	:  
-//  Mail    	:  @hotmail.com
+//  Author  	:  Scott Emery & 
+//  Mail    	:  scott.ipod@gmail.com
 //
 
 
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CComponentInterface : MonoBehaviour
+public class CComponentInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -30,16 +30,41 @@ public class CComponentInterface : MonoBehaviour
     {
         INVALID,
 
-        CellSlot,
-        FuseBox,
-        CircuitBox,
+		// Old Systems
+        //CellSlot,
+        //FuseBox,
+        //CircuitBox,
+
+		// Components
+		LiquidComp,
+		CalibratorComp,
+		WiringComp,
+		RatchetComp,
 
         MAX
     }
 
 
 // Member Delegates & Events
+	// create the delegates
 
+
+	public delegate void NotifyComponentStateChange();
+
+	public event NotifyComponentStateChange EventComponentBreak;
+	public event NotifyComponentStateChange EventComponentFix;
+
+	public delegate void NotifyHealthChange(float _fHealth);
+
+	public event NotifyHealthChange EventHealthChange;
+
+	public bool IsFunctional
+	{
+		get { return m_bIsFunctional.Get (); }
+
+		[AServerOnly]
+		set { m_bIsFunctional.Set (value); 	}
+	}
 
 // Member Properties
 
@@ -51,6 +76,33 @@ public class CComponentInterface : MonoBehaviour
 
 
 // Member Methods
+	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
+	{
+		m_bIsFunctional = new CNetworkVar<bool>(OnNetworkVarSync, true);
+	}
+
+	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+	{
+		if(CNetwork.IsServer)
+		{
+			if(m_bIsFunctional.Get ())
+			{
+				if(EventComponentFix != null)
+				{
+					EventComponentFix();
+				}	
+			}
+			else
+			{
+				if(EventComponentBreak != null)
+				{
+					EventComponentBreak();
+				}
+			}
+		}
+
+	}
+
 
 
     public static void RegisterPrefab(EType _eComponentType, CGameRegistrator.ENetworkPrefab _ePrefab)
@@ -81,7 +133,7 @@ public class CComponentInterface : MonoBehaviour
         }
 
 		// Register self with parent module
-		CModuleInterface mi = NGUITools.FindInParents<CModuleInterface>(gameObject);
+		CModuleInterface mi = CUtility.FindInParents<CModuleInterface>(gameObject);
 		
 		if(mi != null)
 		{
@@ -112,5 +164,5 @@ public class CComponentInterface : MonoBehaviour
 
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-
+	CNetworkVar<bool>m_bIsFunctional;
 };

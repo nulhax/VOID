@@ -422,7 +422,6 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400448}
   - 114: {fileID: 11400446}
-  - 114: {fileID: 11400444}
   m_Layer: 9
   m_Name: Thumb
   m_TagString: Untagged
@@ -2180,7 +2179,7 @@ Transform:
   m_GameObject: {fileID: 100140}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .00202634255, y: .00202634255, z: .00202634255}
+  m_LocalScale: {x: .00280898879, y: .00280898879, z: .00280898879}
   m_Children:
   - {fileID: 400138}
   - {fileID: 400136}
@@ -3827,13 +3826,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 1906
-  mHeight: 987
+  mWidth: 1266
+  mHeight: 712
   mDepth: -3
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.9311043
+  aspectRatio: 1.77808988
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -3875,13 +3874,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .343283594, g: .343283594, b: .343283594, a: .360784322}
   mPivot: 4
-  mWidth: 1906
-  mHeight: 987
+  mWidth: 1266
+  mHeight: 712
   mDepth: -2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.9311043
+  aspectRatio: 1.77808988
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Stripes 2
   mType: 2
@@ -8999,18 +8998,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400444
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100044}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d15ec23ee310384787fe6916f0c44ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SliderParent: {fileID: 0}
 --- !u!114 &11400446
 MonoBehaviour:
   m_ObjectHideFlags: 1

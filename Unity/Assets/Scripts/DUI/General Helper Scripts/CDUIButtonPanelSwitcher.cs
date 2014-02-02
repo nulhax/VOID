@@ -41,7 +41,7 @@ public class CDUIButtonPanelSwitcher : MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Find the Root2D script
-			CDUIRoot2D r2d = NGUITools.FindInParents<CDUIRoot2D>(gameObject);
+			CDUIRoot2D r2d = CUtility.FindInParents<CDUIRoot2D>(gameObject);
 
 			// Inform it to switch to this panel
 			if(r2d != null)

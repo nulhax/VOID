@@ -33,7 +33,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	}
 
 
-	public enum EState : ushort
+	public enum EInputState : uint
 	{
 		FlyForward	= 1 << 0,
 		FlyBackward	= 1 << 1,
@@ -43,7 +43,11 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		StrafeRight	= 1 << 5,
 		RollLeft	= 1 << 6,
 		RollRight	= 1 << 7,
-		Turbo		= 1 << 8,
+		YawLeft		= 1 << 8,
+		YawRight	= 1 << 9,
+		PitchUp		= 1 << 10,
+		PitchDown	= 1 << 11,
+		Turbo		= 1 << 12,
 	}
 
 
@@ -51,14 +55,15 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
-
+	public bool IsActive
+	{
+		get { return(m_IsActive.Get()); }
+	}
 
 // Member Methods
-
-
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_vRotation= _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, new Vector3());
+		m_IsActive = _cRegistrar.CreateNetworkVar(OnNetworkVarSync, false);
     }
 
 
@@ -86,18 +91,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				switch (eNetworkAction)
 				{
 				case ENetworkAction.UpdateStates:
-					cAirMotor.m_usMovementStates = (ushort)_cStream.ReadUShort();
-
-					if (cPlayerActor != CGamePlayers.SelfActor)
-					{
-						cAirMotor.transform.eulerAngles = new Vector3(_cStream.ReadFloat(),
-						                                              _cStream.ReadFloat(),
-						                                              _cStream.ReadFloat());
-					}
-					else
-					{
-						_cStream.ReadFloat();_cStream.ReadFloat();_cStream.ReadFloat();
-					}
+					cAirMotor.m_usMovementStates = _cStream.ReadUInt();
 					break;
 
 				default:
@@ -108,33 +102,132 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		}
 	}
 
+	void OnNetworkVarSync(INetworkVar _SyncedVar)
+	{
+		if(_SyncedVar == m_IsActive)
+		{
+			if(m_IsActive.Get())
+			{
+				if(CGamePlayers.SelfActor == gameObject)
+				{
+					// Placeholder: Disable movement input
+					GetComponent<CPlayerHead>().DisableInput(this);
+					GetComponent<CPlayerGroundMotor>().DisableInput(this);
+
+					// Start realigning the head
+					m_RealignHeadWithBody = true;
+
+					// Set the values to use for realigment
+					Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+					m_RealignFromRotation = actorHead.localRotation;
+					m_RealignToRotation = Quaternion.identity;
+					m_RealignHeadTimer = 0.0f;
+					m_RealignHeadTime = 0.5f;
+				}
+			}
+			else
+			{
+				if(CGamePlayers.SelfActor == gameObject)
+				{
+					// Placeholder: Enable movement input
+					GetComponent<CPlayerHead>().ReenableInput(this);
+					GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+
+					// Stop any head realignment with body
+					m_RealignHeadWithBody = false;
+				}
+			}
+		}
+	}
+
 
 	void Start()
 	{
-		if (gameObject == CGamePlayers.SelfActor)
-		{
-			gameObject.GetComponent<CPlayerLocator>().EventEnterShip += OnEventEnterShip;
-		}
+		// Register the entering/exiting gravity zones
+		gameObject.GetComponent<CActorGravity>().EventEnteredGravityZone += OnPlayerEnterGravityZone;
+		gameObject.GetComponent<CActorGravity>().EventExitedGravityZone += OnPlayerLeaveGravityZone;
 	}
 
 
 	void OnDestroy()
 	{
-		gameObject.GetComponent<CPlayerLocator>().EventEnterShip -= OnEventEnterShip;
+		// Unregister the entering/exiting gravity zones
+		gameObject.GetComponent<CActorGravity>().EventEnteredGravityZone -= OnPlayerEnterGravityZone;
+		gameObject.GetComponent<CActorGravity>().EventExitedGravityZone -= OnPlayerLeaveGravityZone;
 	}
 
 
 	void Update()
 	{
-		CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-		
-		if (cSelfLocator.ContainingFacility == null ||
-		    cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
+		if(m_IsActive.Get())
 		{
-			if (CGamePlayers.SelfActor != null &&
-			    CGamePlayers.SelfActor == gameObject)
+			if(CGamePlayers.SelfActor == gameObject)
 			{
 				UpdateInput();
+			}
+		}
+
+		// Update the interpolations
+		if(CNetwork.IsServer)
+			UpdateServerInterpolation();
+
+		UpdateClientInterpolations();
+	}
+
+	[AServerOnly]
+	private void UpdateServerInterpolation()
+	{
+		if(m_RealignBodyWithShip)
+		{
+			m_RealignBodyTimer += Time.deltaTime;
+			if(m_RealignBodyTimer > m_RealignBodyTime)
+			{
+				m_RealignBodyTimer = m_RealignBodyTime;
+				m_RealignBodyWithShip = false;
+			}
+
+			// Set the lerped rotation
+			rigidbody.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
+				
+			if(!m_RealignBodyWithShip)
+			{
+				// Player is now in gravity zone, set inactive
+				m_IsActive.Set(false);
+				
+				// Stop syncing the rotations
+				GetComponent<CActorNetworkSyncronized>().SyncTransform();
+				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+				
+				// Constrain the rotation axis again
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
+				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
+				
+				// Reset drag values
+				rigidbody.drag = 0.1f;
+				rigidbody.angularDrag = 0.1f;
+			}
+		}
+	}
+	
+	private void UpdateClientInterpolations()
+	{
+		if(m_RealignHeadWithBody)
+		{
+			m_RealignHeadTimer += Time.deltaTime;
+			if(m_RealignHeadTimer > m_RealignHeadTime)
+			{
+				m_RealignHeadTimer = m_RealignHeadTime;
+				m_RealignHeadWithBody = false;
+			}
+			
+			// Set the lerped rotation
+			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+			actorHead.localRotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
+
+			if(!m_RealignHeadWithBody)
+			{
+				GetComponent<CPlayerHead>().ResetHeadRotations();
 			}
 		}
 	}
@@ -144,14 +237,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-            CPlayerLocator cSelfLocator = gameObject.GetComponent<CPlayerLocator>();
-
-            if (cSelfLocator.ContainingFacility == null ||
-                cSelfLocator.ContainingFacility.GetComponent<CFacilityGravity>().IsGravityEnabled == false)
-            {
-                UpdateMovement();
-
-                m_vRotation.Set(transform.eulerAngles);
+			if(m_IsActive.Get() && !m_RealignBodyWithShip)
+			{
+				UpdateMovement();
             }
         }
 	}
@@ -160,103 +248,123 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	void UpdateInput()
 	{
 		m_usMovementStates  = 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveForward)	? (ushort)EState.FlyForward		: (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (ushort)EState.FlyBackward	: (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (ushort)EState.StrafeLeft	: (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (ushort)EState.StrafeRight	: (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyUp)			? (ushort)EState.FlyUp			: (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyDown)        ? (ushort)EState.Down        : (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft)    ? (ushort)EState.RollLeft    : (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight)   ? (ushort)EState.RollRight   : (ushort)0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)  		? (ushort)EState.Turbo     	: (ushort)0;
-
-		transform.Rotate(new Vector3(0.0f, CUserInput.MouseMovementX, 0.0f));
-		transform.Rotate(new Vector3(CUserInput.MouseMovementY, 0.0f, 0.0f));
-
-        if (CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight))
-        {
-            Debug.Log("Roll Right");
-        }
-        else if (CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft))
-        {
-            Debug.Log("Roll Left");
-        }
-
-
-        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
-        s_cSerializeStream.Write((ushort)m_usMovementStates);
-        s_cSerializeStream.Write(transform.eulerAngles.x);
-        s_cSerializeStream.Write(transform.eulerAngles.y);
-        s_cSerializeStream.Write(transform.eulerAngles.z);
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveForward)		? (uint)EInputState.FlyForward	: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (uint)EInputState.FlyBackward	: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (uint)EInputState.StrafeLeft	: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EInputState.StrafeRight	: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyUp)			? (uint)EInputState.FlyUp		: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyDown)        	? (uint)EInputState.Down        : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight)    ? (uint)EInputState.RollLeft    : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft)   	? (uint)EInputState.RollRight   : 0;
+		m_usMovementStates |= CUserInput.MouseMovementDeltaX < 0.0f    					? (uint)EInputState.YawLeft    	: 0;
+		m_usMovementStates |= CUserInput.MouseMovementDeltaX > 0.0f    					? (uint)EInputState.YawRight   	: 0;
+		m_usMovementStates |= CUserInput.MouseMovementDeltaY < 0.0f    					? (uint)EInputState.PitchUp    	: 0;
+		m_usMovementStates |= CUserInput.MouseMovementDeltaY > 0.0f    					? (uint)EInputState.PitchDown   : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)  		? (uint)EInputState.Turbo     	: 0;
+	
+		s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
+		s_cSerializeStream.Write((uint)m_usMovementStates);
 	}
 
 
 	void UpdateMovement()
 	{
-		// Direction movement
-		Vector3 vMovementVelocity = new Vector3();
-		vMovementVelocity += ((m_usMovementStates & (uint)EState.FlyForward)  	 > 0) ? transform.forward : Vector3.zero;
-		vMovementVelocity -= ((m_usMovementStates & (uint)EState.FlyBackward) 	 > 0) ? transform.forward : Vector3.zero;
-		vMovementVelocity -= ((m_usMovementStates & (uint)EState.StrafeLeft)  > 0) ? transform.right   : Vector3.zero;
-		vMovementVelocity += ((m_usMovementStates & (uint)EState.StrafeRight) > 0) ? transform.right   : Vector3.zero;
-		vMovementVelocity += ((m_usMovementStates & (uint)EState.FlyUp) 		 > 0) ? transform.up   	  : Vector3.zero;
-		vMovementVelocity -= ((m_usMovementStates & (uint)EState.Down) 		 > 0) ? transform.up   	  : Vector3.zero;
+		// Movement
+		Vector3 deltaMovementAcceleration = new Vector3();
+		deltaMovementAcceleration.z += ((m_usMovementStates & (uint)EInputState.FlyForward)  	> 0) ? 1.0f : 0.0f;
+		deltaMovementAcceleration.z -= ((m_usMovementStates & (uint)EInputState.FlyBackward) 	> 0) ? 1.0f : 0.0f;
+		deltaMovementAcceleration.x -= ((m_usMovementStates & (uint)EInputState.StrafeLeft)  	> 0) ? 1.0f : 0.0f;
+		deltaMovementAcceleration.x += ((m_usMovementStates & (uint)EInputState.StrafeRight) 	> 0) ? 1.0f : 0.0f;
+		deltaMovementAcceleration.y += ((m_usMovementStates & (uint)EInputState.FlyUp) 		 	> 0) ? 1.0f : 0.0f;
+		deltaMovementAcceleration.y -= ((m_usMovementStates & (uint)EInputState.Down) 		 	> 0) ? 1.0f : 0.0f;
 
-		// Apply direction movement speed
-		vMovementVelocity  = vMovementVelocity.normalized;
-		vMovementVelocity *= ((m_usMovementStates & (uint)EState.Turbo) > 0) ? m_fTurboSpeed : m_fMovementSpeed;
+		// Apply movement acceleration
+		deltaMovementAcceleration  = deltaMovementAcceleration.normalized;
+		deltaMovementAcceleration *= ((m_usMovementStates & (uint)EInputState.Turbo) > 0) ? m_fTurboAcceleration : m_fMovementAcceleration;
 
+		// Rotation
+		Vector3 deltaRotationAcceleration = new Vector3();
+		deltaRotationAcceleration.x -= ((m_usMovementStates & (uint)EInputState.PitchUp)  	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.x += ((m_usMovementStates & (uint)EInputState.PitchDown) 	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.y -= ((m_usMovementStates & (uint)EInputState.YawLeft)  	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.y += ((m_usMovementStates & (uint)EInputState.YawRight) 	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.z -= ((m_usMovementStates & (uint)EInputState.RollLeft)  	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.z += ((m_usMovementStates & (uint)EInputState.RollRight) 	> 0) ? 1.0f : 0.0f;
 
-		Vector3 vRorationVelocity = new Vector3();
-		vRorationVelocity.z -= ((m_usMovementStates & (uint)EState.RollLeft)  > 0) ? m_fRotateSpeed : 0;
-		vRorationVelocity.z += ((m_usMovementStates & (uint)EState.RollRight) > 0) ? m_fRotateSpeed : 0;
+		// Apply rotation acceleration
+		deltaRotationAcceleration.x *= m_fRotationAccelerationX;
+		deltaRotationAcceleration.y *= m_fRotationAccelerationY;
+		deltaRotationAcceleration.z *= m_fRotationAccelerationZ;
 
-		
-		// Apply movement velocity
-		if (!rigidbody.isKinematic)
-		{
-			//Debug.LogError(vMovementVelocity);
-			rigidbody.velocity = vMovementVelocity;
-			rigidbody.transform.Rotate(vRorationVelocity * Time.deltaTime);
-		}
+		rigidbody.AddRelativeForce(deltaMovementAcceleration, ForceMode.Acceleration);
+		rigidbody.AddRelativeTorque(deltaRotationAcceleration, ForceMode.Acceleration);
 	}
 
 
-	void OnEventEnterShip()
+	[AServerOnly]
+	void OnPlayerEnterGravityZone()
 	{
-        gameObject.transform.eulerAngles = new Vector3(0.0f, gameObject.transform.eulerAngles.y, 0.0f);
+		// Start realigning body to the ship
+		m_RealignBodyWithShip = true;
+
+		// Set the values to use for realigment
+		m_RealignFromRotation = transform.rotation;
+		m_RealignToRotation = Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f);
+		m_RealignBodyTimer = 0.0f;
+		m_RealignBodyTime = Mathf.Clamp(Quaternion.Angle(m_RealignFromRotation, m_RealignToRotation) / 180.0f, 0.5f, 2.0f);
 	}
 
 
-    void OnNetworkVarSync(INetworkVar _cSyncedVar)
-    {
-        if (_cSyncedVar == m_vRotation)
-        {
-            if (gameObject != CGamePlayers.SelfActor)
-            {
-                transform.eulerAngles = m_vRotation.Get();
-            }
-        }
-    }
+	[AServerOnly]
+	void OnPlayerLeaveGravityZone()
+	{
+		// Player is now in no-gravity zone, set active
+		m_IsActive.Set(true);
+
+		// Stop any realignment with ship
+		m_RealignBodyWithShip = false;
+
+		// Release the rotation axis constraints
+		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationX; 
+		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationY; 
+		rigidbody.constraints &= ~RigidbodyConstraints.FreezeRotationZ; 
+		
+		// Set drag values high
+		rigidbody.drag = 0.5f;
+		rigidbody.angularDrag = 1.0f;
+
+		// Start syncing the rotations
+		GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
+	}
 
 
 // Member Fields
+	
+
+	private CNetworkVar<bool> m_IsActive = null;
+
+	
+	private float m_fTurboAcceleration = 50.0f;
+	private float m_fMovementAcceleration = 10.0f;
+
+	private float m_fRotationAccelerationX = 1.0f;
+	private float m_fRotationAccelerationY = 2.0f;
+	private float m_fRotationAccelerationZ = 1.0f;
+	
+	private uint m_usMovementStates = 0;
 
 
-    CNetworkVar<Vector3> m_vRotation = null;
+	private bool m_RealignBodyWithShip = false;
+	private bool m_RealignHeadWithBody = false;
+	private float m_RealignBodyTimer = 0.0f;
+	private float m_RealignBodyTime = 0.5f;
+	private float m_RealignHeadTimer = 0.0f;
+	private float m_RealignHeadTime = 0.5f;
+	private Quaternion m_RealignFromRotation = Quaternion.identity;
+	private Quaternion m_RealignToRotation = Quaternion.identity;
 
 
-	float m_fMovementSpeed = 20.5f;
-	float m_fTurboSpeed = 50.0f;
-	float m_fRotateSpeed = 50.0f;
-
-
-	float m_fMouseMovementX = 0;
-	float m_fMouseMovementY = 0;
-	ushort m_usMovementStates = 0;
-
-
-    static CNetworkStream s_cSerializeStream = new CNetworkStream();
+	private static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

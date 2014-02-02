@@ -94,14 +94,16 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     [AClientOnly]
     private void OnPlayerUse(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
     {
-        // Write in enter cockpit action
+        // TODO: if broken do not call this section
         s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
         s_cSerializeStream.Write((byte)ENetworkAction.RefillOxygen);
+        // section not to be called end.
     }
 
     [AServerOnly]
     private void HandlePlayerOxygenRefill(ulong _ulPlayerId)
     {
+        //being broken may be done here, seeing as it is the server.
         GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
 
         cPlayerActor.GetComponent<CPlayerSuit>().AddOxygen(20.0f);

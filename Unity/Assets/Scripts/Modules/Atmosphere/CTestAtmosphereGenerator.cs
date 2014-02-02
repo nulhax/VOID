@@ -46,9 +46,9 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		m_AtmosphereGenerator = gameObject.GetComponent<CAtmosphereGeneratorBehaviour>();
 
 		// Register for when the fusebox breaks/fixes
-		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		fbc.EventBroken += HandleFuseBoxBreaking;
-		fbc.EventFixed += HandleFuseBoxFixing;
+		//CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.RatchetComp)[0].GetComponent<CComponentInterface>();
+		//ci.EventComponentBreak += HandleFuseBoxBreaking;
+		//ci.EventComponentFix += HandleFuseBoxFixing;
 	}
 
 	public void Update()
@@ -64,7 +64,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		}
 	}
 
-	private void HandleFuseBoxBreaking(GameObject _FuseBox)
+	private void HandleFuseBoxBreaking()
 	{
 		if(CNetwork.IsServer)
 		{
@@ -72,7 +72,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		}
 	}
 	
-	private void HandleFuseBoxFixing(GameObject _FuseBox)
+	private void HandleFuseBoxFixing()
 	{
 		if(CNetwork.IsServer)
 		{
