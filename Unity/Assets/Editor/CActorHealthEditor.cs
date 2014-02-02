@@ -38,6 +38,8 @@ public class CActorHealthEditor : Editor
 			//EditorGUILayout.FloatField(health_initial, new UnityEngine.GUIContent("Initial Health"));
 
 			myTarget.health_initial = EditorGUILayout.FloatField("Initial Value", myTarget.health_initial);
+			myTarget.health_max = EditorGUILayout.FloatField("Max Value", myTarget.health_max);
+			myTarget.health_min = EditorGUILayout.FloatField("Min Value", myTarget.health_min);
 			EditorGUILayout.LabelField("Current value\t\t\t  " + myTarget.health);
 			myTarget.syncNetworkHealth = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkHealth);
 			myTarget.destroyOnZeroHealth = EditorGUILayout.Toggle("Destroy On Zero", myTarget.destroyOnZeroHealth);
