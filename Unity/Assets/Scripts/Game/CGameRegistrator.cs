@@ -146,6 +146,7 @@ public class CGameRegistrator : MonoBehaviour
         RegisterModules();
         RegisterComponents();
 		RegisterUserInterfaces();
+        RegisterKeyBindings();
 	}
 
 
@@ -321,6 +322,52 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
 	}
+
+
+    void RegisterKeyBindings()
+    {
+        CUserInput.SetKeyBinding(CUserInput.EInput.Primary, KeyCode.Mouse0);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Secondary, KeyCode.Mouse1);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.Use, KeyCode.F);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Forward, KeyCode.W);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Backwards, KeyCode.S);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_StrafeLeft, KeyCode.A);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_StrafeRight, KeyCode.D);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Jump, KeyCode.Space);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Crouch, KeyCode.LeftControl);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_Up, KeyCode.Space);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_Down, KeyCode.LeftControl);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_RollLeft, KeyCode.E);
+        CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_RollRight, KeyCode.Q);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_Turbo, KeyCode.LeftShift);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Forward, KeyCode.W);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Backward, KeyCode.S);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Up, KeyCode.Space);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Down, KeyCode.LeftControl);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_StrafeLeft, KeyCode.A);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_StrafeRight, KeyCode.D);
+        //CUserInput.SetKeyBinding(CUserInput.axyShip_YawLeft]                = KeyCode.Mouse0);   // Mouse X
+        //CUserInput.SetKeyBinding(CUserInput.axyShip_YawRight]               = KeyCode.);         // Mouse X
+        //CUserInput.SetKeyBinding(CUserInput.axyShip_PitchUp]                = KeyCode);          // Mouse Y
+        //CUserInput.SetKeyBinding(CUserInput.axyShip_PitchDown]              = KeyCode);          // Mouse Y
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_RollLeft, KeyCode.Q);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_RollRight, KeyCode.E);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Turbo, KeyCode.LeftShift);// Shift
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot1, KeyCode.Alpha1);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot2, KeyCode.Alpha2);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot3, KeyCode.Alpha3);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot4, KeyCode.Alpha4);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Reload, KeyCode.R);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
+
+        CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
+    }
 
 
 // Member Fields

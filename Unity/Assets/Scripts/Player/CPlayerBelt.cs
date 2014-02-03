@@ -330,9 +330,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction += new CPlayerInteractor.HandleNoInteraction(OnNoInteraction);
         gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
 
-        CUserInput.EventReloadTool += new CUserInput.NotifyKeyChange(OnReloadToolKey);
-        CUserInput.EventDropTool += new CUserInput.NotifyKeyChange(OnDropToolKey);
-        CUserInput.EventChangeToolSlot += new CUserInput.NotifyChangeToolSlot(OnChangeSlotKey);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_Reload, OnReloadToolKey);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_Drop, OnDropToolKey);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_SelectSlot1, OnSelectToolSlot);
     }
 
 
@@ -341,10 +341,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnInteraction;
 		gameObject.GetComponent<CPlayerInteractor>().EventNoInteraction -= OnNoInteraction;
 		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
-		
-		CUserInput.EventReloadTool -= OnReloadToolKey;
-		CUserInput.EventDropTool -= OnDropToolKey;
-		CUserInput.EventChangeToolSlot -= OnChangeSlotKey;
+
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Reload, OnReloadToolKey);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Drop, OnDropToolKey);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_SelectSlot1, OnSelectToolSlot);
 	}
 
 
@@ -468,7 +468,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnDropToolKey(bool _bDown)
+    void OnDropToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
     {
         if (_bDown)
         {
@@ -477,7 +477,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnReloadToolKey(bool _bDown)
+    void OnReloadToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
     {
         if (_bDown)
         {
@@ -486,12 +486,35 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnChangeSlotKey(byte _bSlot, bool _bDown)
+    void OnSelectToolSlot(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
     {
-        if (_bDown)
+        if (_ulPlayerId == 0 &&
+            _bDown)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.ChangeTool);
-            s_cSerializeStream.Write((byte)(_bSlot - 1));
+
+            switch (_eInput)
+            {
+                case CUserInput.EInput.Tool_SelectSlot1:
+                    s_cSerializeStream.Write((byte)1);
+                    break;
+
+                case CUserInput.EInput.Tool_SelectSlot2:
+                    s_cSerializeStream.Write((byte)2);
+                    break;
+
+                case CUserInput.EInput.Tool_SelectSlot3:
+                    s_cSerializeStream.Write((byte)3);
+                    break;
+
+                case CUserInput.EInput.Tool_SelectSlot4:
+                    s_cSerializeStream.Write((byte)4);
+                    break;
+
+                default:
+                    Debug.LogError("Unknown input");
+                    break;
+            }  
         }
     }
 

@@ -270,21 +270,21 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		if (_ulNewPlayerId == CNetwork.PlayerId)
 		{
 			// Subscribe to input events
-			CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnLaserCommand);
-			CUserInput.EventSecondary += new CUserInput.NotifyKeyChange(OnExtracterBeamCommand);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnLaserCommand);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnExtracterBeamCommand);
 		}
 		
 		if (_ulPreviousPlayerId == CNetwork.PlayerId)
 		{
 			// Unsubscriber to input events
-			CUserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnLaserCommand);
-			CUserInput.EventSecondary -= new CUserInput.NotifyKeyChange(OnExtracterBeamCommand);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnLaserCommand);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnExtracterBeamCommand);
 		}
 	}
 
 
 	[AClientOnly]
-	void OnLaserCommand(bool _bDown)
+    void OnLaserCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		s_cSerializeStream.Write(ThisNetworkView.ViewId);
 
@@ -300,7 +300,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-	void OnExtracterBeamCommand(bool _bDown)
+    void OnExtracterBeamCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		s_cSerializeStream.Write(ThisNetworkView.ViewId);
 

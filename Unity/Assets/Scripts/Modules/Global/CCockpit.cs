@@ -127,7 +127,7 @@ public class CCockpit : CNetworkMonoBehaviour
 		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 
 
-		CUserInput.EventUse += new CUserInput.NotifyKeyChange(OnInputUse);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnInputUse);
 	}
 
 
@@ -183,7 +183,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-	void OnInputUse(bool _bDown)
+    void OnInputUse(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		if (_bDown &&
 		    MountedPlayerId == CNetwork.PlayerId)

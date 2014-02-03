@@ -248,19 +248,19 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	void UpdateInput()
 	{
 		m_usMovementStates  = 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveForward)		? (uint)EInputState.FlyForward	: 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (uint)EInputState.FlyBackward	: 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (uint)EInputState.StrafeLeft	: 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EInputState.StrafeRight	: 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyUp)			? (uint)EInputState.FlyUp		: 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyDown)        	? (uint)EInputState.Down        : 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollRight)    ? (uint)EInputState.RollLeft    : 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.FlyRollLeft)   	? (uint)EInputState.RollRight   : 0;
-		m_usMovementStates |= CUserInput.MouseMovementDeltaX < 0.0f    					? (uint)EInputState.YawLeft    	: 0;
-		m_usMovementStates |= CUserInput.MouseMovementDeltaX > 0.0f    					? (uint)EInputState.YawRight   	: 0;
-		m_usMovementStates |= CUserInput.MouseMovementDeltaY < 0.0f    					? (uint)EInputState.PitchUp    	: 0;
-		m_usMovementStates |= CUserInput.MouseMovementDeltaY > 0.0f    					? (uint)EInputState.PitchDown   : 0;
-		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)  		? (uint)EInputState.Turbo     	: 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Forward)		? (uint)EInputState.FlyForward	: 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Backwards)    ? (uint)EInputState.FlyBackward : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeLeft)	? (uint)EInputState.StrafeLeft	: 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeRight)  ? (uint)EInputState.StrafeRight : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_Up)			    ? (uint)EInputState.FlyUp		: 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_Down)            ? (uint)EInputState.Down : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_RollLeft)        ? (uint)EInputState.RollLeft    : 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_RollRight)       ? (uint)EInputState.RollRight : 0;
+		m_usMovementStates |= CUserInput.MouseMovementX < 0.0f    					            ? (uint)EInputState.YawLeft    	: 0;
+        m_usMovementStates |= CUserInput.MouseMovementX > 0.0f                                  ? (uint)EInputState.YawRight    : 0;
+        m_usMovementStates |= CUserInput.MouseMovementY < 0.0f                                  ? (uint)EInputState.PitchUp     : 0;
+        m_usMovementStates |= CUserInput.MouseMovementY > 0.0f                                  ? (uint)EInputState.PitchDown   : 0;
+		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Move_Turbo)  		    ? (uint)EInputState.Turbo     	: 0;
 	
 		s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
 		s_cSerializeStream.Write((uint)m_usMovementStates);
