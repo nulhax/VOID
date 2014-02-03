@@ -22,7 +22,7 @@ using System;
 
 /* Implementation */
 
-[RequireComponent(typeof(UISlider))]
+[RequireComponent(typeof(UIProgressBar))]
 [RequireComponent(typeof(CDUIElement))]
 public class CDUISlider : CNetworkMonoBehaviour 
 {
@@ -121,7 +121,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 		
 		// Only update after a period of not changing the value and if
 		// local value differs from the synced value
-		float localValue = gameObject.GetComponent<UISlider>().value;
+		float localValue = gameObject.GetComponent<UIProgressBar>().value;
 		float syncValue = m_Value.Get();
 		if(!m_IsModifyingValueLocally && localValue != syncValue)
 		{

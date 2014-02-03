@@ -226,7 +226,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		if (!InputDisabled)
 		{
-			transform.Rotate(0.0f, CUserInput.MouseMovementDeltaX, 0.0f);
+			transform.Rotate(0.0f, CUserInput.MouseMovementX, 0.0f);
 		}
 	}
 
@@ -234,13 +234,13 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	void UpdateInput()
 	{
 		m_uiMovementStates  = 0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveForward)	? (uint)EState.MoveForward	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveBackwards)	? (uint)EState.MoveBackward	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveLeft)		? (uint)EState.MoveLeft		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveRight)		? (uint)EState.MoveRight	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Jump)			? (uint)EState.Jump			: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Sprint)			? (uint)EState.Sprint		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Crouch)         ? (uint)EState.Crouch       : (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Forward)	? (uint)EState.MoveForward	: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Backwards)	? (uint)EState.MoveBackward	: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeLeft)		? (uint)EState.MoveLeft		: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeRight)		? (uint)EState.MoveRight	: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Jump)			? (uint)EState.Jump			: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Move_Turbo)			? (uint)EState.Sprint		: (uint)0;
+		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Crouch)         ? (uint)EState.Crouch       : (uint)0;
 
 
         s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);

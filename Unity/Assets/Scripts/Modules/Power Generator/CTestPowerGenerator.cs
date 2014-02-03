@@ -30,10 +30,11 @@ public class CTestPowerGenerator: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_PowerGenerationRate = 15.0f;
-	
-	private float m_PrevPowerGenerationRate = 0.0f;
+	public float m_MaxPowerGenerationRate = 15.0f;
+	public GameObject m_DUIConsole = null;
+
 	private CPowerGenerationBehaviour m_PowerGenerator = null;
+	private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
 
 	// Member Properties
 	
@@ -43,27 +44,31 @@ public class CTestPowerGenerator: MonoBehaviour
 	{
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
 
-		// Register for when the fusebox breaks/fixes
-		//TODO: Replace with actual component
-		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		//fbc.EventBroken += HandleFuseBoxBreaking;
-		//fbc.EventFixed += HandleFuseBoxFixing;
-	}
-	
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			if(m_PrevPowerGenerationRate != m_PowerGenerationRate)
-			{
-				m_PowerGenerator.PowerGenerationRate = m_PowerGenerationRate;
-			
-				m_PrevPowerGenerationRate = m_PowerGenerationRate;
-			}
-		}
+		// Register for when the calibrator breaks/fixes
+		CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CalibratorComp)[0].GetComponent<CComponentInterface>();
+		ci.EventHealthChange += HandleCalibrationHealthChange;
+
+		// Register for when the circuitry breaks/fixes
+		ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CircuitryComp)[0].GetComponent<CComponentInterface>();
+		ci.EventComponentBreak += HandleCircuitryBreaking;
+		ci.EventComponentFix += HandleCircuitryFixing;
+
+		// Register for when the generation rate changes
+		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
+
+		// Get the DUI of the power generator
+		m_DUIPowerGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
+
+		// Set the generation rate
+		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
 	}
 
-	private void HandleFuseBoxBreaking(GameObject _FuseBox)
+	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
+	{
+		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+	}
+
+	private void HandleCircuitryBreaking(CComponentInterface _Component)
 	{
 		if(CNetwork.IsServer)
 		{
@@ -71,11 +76,20 @@ public class CTestPowerGenerator: MonoBehaviour
 		}
 	}
 
-	private void HandleFuseBoxFixing(GameObject _FuseBox)
+	private void HandleCircuitryFixing(CComponentInterface _Component)
 	{
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
+		}
+	}
+
+	private void HandleGenerationRateChange(GameObject _PowerGen)
+	{
+		// Update the UI generation rate
+		if(m_DUIPowerGeneration != null)
+		{
+			m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_MaxPowerGenerationRate);
 		}
 	}
 }

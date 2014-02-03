@@ -93,7 +93,7 @@ public class GalaxyProjector : CNetworkMonoBehaviour
                         float noiseScalar = galaxy.SampleNoise_FogDensity(sampleCell);
 
                         if (noiseScalar > 0.0f)
-                            emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, noiseScalar));
+							emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, noiseScalar * Mathf.Clamp01(1.0f - unitPos.magnitude * unitPos.magnitude * unitPos.magnitude)));
                     }
 
             mUpToDate = true;

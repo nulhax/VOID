@@ -156,19 +156,19 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 		if (_ulNewPlayerId == CNetwork.PlayerId)
 		{
 			// Subscribe to input events
-			CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnFireLasersCommand);
 		}
 
 		if (_ulPreviousPlayerId == CNetwork.PlayerId)
 		{
 			// Unsubscriber to input events
-			CUserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnFireLasersCommand);
 		}
 	}
 
 
 	[AClientOnly]
-	void OnFireLasersCommand(bool _bDown)
+    void OnFireLasersCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		m_bFireLasers = _bDown;
 	}

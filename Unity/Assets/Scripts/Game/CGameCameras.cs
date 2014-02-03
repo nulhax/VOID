@@ -33,6 +33,7 @@ public class CCompositeCameraSystem : MonoBehaviour
 // Member Fields
 	private Camera m_ShipCamera = null;
 	private Camera m_GalaxyCamera = null;
+	private Camera m_DeepGalaxyCamera = null;
 
 	private bool m_IsObserverOutside = false;
 
@@ -115,6 +116,9 @@ public class CCompositeCameraSystem : MonoBehaviour
 			// Transfer the ship camera based off the galaxy camera
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
 		}
+
+		// Update the rotation
+		m_DeepGalaxyCamera.transform.rotation = m_GalaxyCamera.transform.rotation;
 	}
 
 	private void OnConnect()
@@ -124,6 +128,9 @@ public class CCompositeCameraSystem : MonoBehaviour
 		
 		// Instantiate the ship camera
 		m_ShipCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera"))).camera;
+
+		// Instantiate the deep galaxy camera
+		m_DeepGalaxyCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/DeepGalaxyCamera"))).camera;
 	}
 
 	private void OnDisconnect()
@@ -136,6 +143,11 @@ public class CCompositeCameraSystem : MonoBehaviour
 		if(m_ShipCamera != null)
 		{
 			Destroy(m_ShipCamera.gameObject);
+		}
+
+		if(m_DeepGalaxyCamera != null)
+		{
+			Destroy(m_DeepGalaxyCamera.gameObject);
 		}
 	}
 };
