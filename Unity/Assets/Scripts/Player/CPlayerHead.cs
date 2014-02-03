@@ -81,7 +81,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
 
 			// Subscribe to mouse movement input
-			CUserInput.EventMouseMoveY += OnMouseMoveY;
+            CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		// Unregister
 		gameObject.GetComponent<CActorBoardable>().EventBoard -= TransferPlayerPerspectiveToShipSpace;
 		gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
-		CUserInput.EventMouseMoveY -= OnMouseMoveY;
+        CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 	}
 
 
@@ -164,9 +164,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	private void OnMouseMoveY(float _fAmount)
+	private void OnMouseMoveY(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fAmount)
 	{
-		if (!InputDisabled)
+		if (_ulPlayerId == 0 &&
+            !InputDisabled)
 		{
 			// Retrieve new rotations
 			m_vRotation.x += _fAmount;

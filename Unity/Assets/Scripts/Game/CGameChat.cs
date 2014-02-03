@@ -56,7 +56,6 @@ public class CGameChat : CNetworkMonoBehaviour
     void Start()
     {
         // Sign up for events
-        CUserInput.EventReturnKey += ReturnKeyChanged;
         CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnectEventSignup);
 
         // Deprecated function
@@ -66,7 +65,10 @@ public class CGameChat : CNetworkMonoBehaviour
     }
 
 
-    void OnDestroy() {}
+    void OnDestroy()
+    {
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.ReturnKey, ReturnKeyChanged);
+    }
 
 
     void Update() {}
@@ -79,7 +81,7 @@ public class CGameChat : CNetworkMonoBehaviour
 
 
     [AClientOnly]
-    void ReturnKeyChanged(bool _b)
+    void ReturnKeyChanged(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _b)
     {
 		// This will only be able to trigger every 0.5 seconds
 		if (Time.time > m_fTimeOfEnterKeyPress + 0.5f) 
@@ -213,7 +215,7 @@ public class CGameChat : CNetworkMonoBehaviour
     void OnConnectEventSignup()
     {
         // Sign up for events
-        CUserInput.EventReturnKey += new CUserInput.NotifyKeyChange(ReturnKeyChanged);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.ReturnKey, ReturnKeyChanged);
     }
 
 

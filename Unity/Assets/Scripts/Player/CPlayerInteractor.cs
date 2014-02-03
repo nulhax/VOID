@@ -65,18 +65,18 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	{
 		if (gameObject == CGamePlayers.SelfActor)
 		{
-			CUserInput.EventPrimary += OnInputPrimaryChange;
-			CUserInput.EventSecondary += OnInputSecondaryChange;
-			CUserInput.EventUse += OnInputUseChange;
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnInputPrimaryChange);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnInputSecondaryChange);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnInputUseChange);
 		}
 	}
 
 
 	void OnDestroy()
 	{
-		CUserInput.EventPrimary -= OnInputPrimaryChange;
-		CUserInput.EventSecondary -= OnInputSecondaryChange;
-		CUserInput.EventUse -= OnInputUseChange;
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnInputPrimaryChange);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnInputSecondaryChange);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Use, OnInputUseChange);
 	}
 
 
@@ -166,23 +166,30 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-	void OnInputPrimaryChange(bool _bDown)
+    void OnInputPrimaryChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
-		CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
+        if (_ulPlayerId == 0)
+        {
+            CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
+        }
 	}
 
 
 	[AClientOnly]
-	void OnInputSecondaryChange(bool _bDown)
+    void OnInputSecondaryChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
-		CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
+        if (_ulPlayerId == 0)
+        {
+            CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
+        }
 	}
 
 
 	[AClientOnly]
-	void OnInputUseChange(bool _bDown)
+    void OnInputUseChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
-		if (_bDown)
+        if (_ulPlayerId == 0 &&
+            _bDown)
 		{
             //Debug.LogError("Hit twice" + gameObject.name);
 			CheckInteraction(EInteractionType.Use);

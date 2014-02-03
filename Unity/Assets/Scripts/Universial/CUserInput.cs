@@ -20,93 +20,91 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CUserInput : MonoBehaviour
+public class CUserInput : CNetworkMonoBehaviour
 {
 
 // Member Types
 
 
+    public enum EAxis
+    {
+        INVALID = -1,
+
+        MouseX,
+        MouseY,
+        LeftAnalogueX,
+        LeftAnalogueY,
+        RightAnalogueX,
+        RightAnalogueY,
+
+        MAX
+    }
+
+
 	public enum EInput
 	{
-		PrimaryDown,
-		PrimaryUp,
-		SecondaryDown,
-		SecondaryUp,
-        ReturnKey,
-		Use,
-		ReloadTool,
-        DropTool,
-		MoveForward,
-		MoveBackwards,
-		MoveLeft,
-		MoveRight,
-		FlyUp,
-		FlyDown,
-		FlyRollLeft,
-		FlyRollRight,
-		Jump,
-		Sprint,
-		Crouch,
-        ToolSlot1,
-        ToolSlot2,
-        ToolSlot3,
-        ToolSlot4,
+        INVALID = -1,
+
+		Primary,                  // Move Right                                      
+		Secondary,                // Move Left
+                                 
+		Use,                      // F
+                                 
+		MoveGround_Forward,       // W
+		MoveGround_Backwards,     // S
+		MoveGround_StrafeLeft,    // A
+		MoveGround_StrafeRight,   // D
+        MoveGround_Jump,          // Space
+        MoveGround_Crouch,        // Control
+                                 
+		MoveFly_Up,               // Space
+		MoveFly_Down,             // Control
+		MoveFly_RollLeft,         // E
+		MoveFly_RollRight,        // Q
+                                
+		Move_Turbo,               // Shift
+                                
+        GalaxyShip_Forward,       // W
+        GalaxyShip_Backward,      // S
+        GalaxyShip_Up,            // Space
+        GalaxyShip_Down,          // Control
+        GalaxyShip_StrafeLeft,    // D
+        GalaxyShip_StrafeRight,   // A
+        GalaxyShip_YawLeft,       // Mouse X
+        GalaxyShip_YawRight,      // Mouse X
+        GalaxyShip_PitchUp,       // Mouse Y
+        GalaxyShip_PitchDown,     // Mouse Y
+        GalaxyShip_RollLeft,      // Q
+        GalaxyShip_RollRight,     // E
+        GalaxyShip_Turbo,         // Shift
+                                
+        Tool_SelectSlot1,         // 1
+        Tool_SelectSlot2,         // 2
+        Tool_SelectSlot3,         // 3
+        Tool_SelectSlot4,         // 4
+		Tool_Reload,              // R
+        Tool_Drop,                // G
+                                
+        ReturnKey,                // Enter
+
+        MAX
 	}
+
+
+    public struct TPlayerStates
+    {
+        public ulong ulPreviousInput;
+        public ulong ulInput;
+        public float fMouseX;
+        public float fMouseY;
+    }
 
 
 // Member Delegates & Events
 
 
-	public delegate void NotifyMouseInput(float _fAmount);
-
-	public static event NotifyMouseInput EventMouseMoveX;
-	public static event NotifyMouseInput EventMouseMoveY;
-
-
-	public delegate void NotifyKeyChange(bool _bDown);
-
-	public static event NotifyKeyChange EventPrimary;
-	public static event NotifyKeyChange EventSecondary;
-    public static event NotifyKeyChange EventReturnKey;
-	public static event NotifyKeyChange EventUse;
-	public static event NotifyKeyChange EventReloadTool;
-	public static event NotifyKeyChange EventDropTool;
-	public static event NotifyKeyChange EventMoveForward;
-	public static event NotifyKeyChange EventMoveBackward;
-	public static event NotifyKeyChange EventMoveLeft;
-	public static event NotifyKeyChange EventMoveRight;
-	public static event NotifyKeyChange EventMoveJump;
-	public static event NotifyKeyChange EventMoveSprint;
-	public static event NotifyKeyChange EventCrouch;
-	public static event NotifyKeyChange EventFlyUp;
-	public static event NotifyKeyChange EventFlyDown;
-	public static event NotifyKeyChange EventFlyRollLeft;
-	public static event NotifyKeyChange EventFlyRollRight;
-
-
-	public delegate void NotifyKeyHold();
-	
-	public static event NotifyKeyHold EventPrimaryHold;
-	public static event NotifyKeyHold EventSecondaryHold;
-	public static event NotifyKeyHold EventReturnKeyHold;
-	public static event NotifyKeyHold EventUseHold;
-	public static event NotifyKeyHold EventReloadToolHold;
-	public static event NotifyKeyHold EventDropToolHold;
-	public static event NotifyKeyHold EventMoveForwardHold;
-	public static event NotifyKeyHold EventMoveBackwardHold;
-	public static event NotifyKeyHold EventMoveLeftHold;
-	public static event NotifyKeyHold EventMoveRightHold;
-	public static event NotifyKeyHold EventMoveJumpHold;
-	public static event NotifyKeyHold EventMoveSprintHold;
-	public static event NotifyKeyHold EventCrouchHold;
-	public static event NotifyKeyHold EventFlyUpHold;
-	public static event NotifyKeyHold EventFlyDownHold;
-	public static event NotifyKeyHold EventFlyRollLeftHold;
-	public static event NotifyKeyHold EventFlyRollRightHold;
-
-
-    public delegate void NotifyChangeToolSlot(byte _bSlot, bool _bDown);
-	public static event NotifyChangeToolSlot EventChangeToolSlot;
+    public delegate void NotifyAxisChange(EAxis _eAxis, ulong _ulPlayerId, float _fValue);
+    public delegate void NotifyInputChange(EInput _eInput, ulong _ulPlayerId, bool _bDown);
 
 
 // Member Properties
@@ -116,478 +114,306 @@ public class CUserInput : MonoBehaviour
 	public static float SensitivityY { get; set; }
 
 
-	public static float MouseMovementDeltaX { get; set; }
-	public static float MouseMovementDeltaY { get; set; }
+    public static float MouseMovementX { get { return (s_cInstance.m_fMouseMovementX); } }
+    public static float MouseMovementY { get { return (s_cInstance.m_fMouseMovementY); } }
 
 
 // Member Methods
+
+
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        // Empty
+    }
+
+
+    public static void SetKeyBinding(EInput _eInput, KeyCode _eKeyCode)
+    {
+        s_cInstance.m_aKeyBindings[(int)_eInput] = _eKeyCode;   
+    }
+
+
+    public static void SubscribeInputChange(EInput _eInput, NotifyInputChange _nCallback)
+    {
+        if (!s_cInstance.m_mInputCallbacks.ContainsKey(_eInput))
+        {
+            s_cInstance.m_mInputCallbacks.Add(_eInput, new List<NotifyInputChange>());
+        }
+
+        s_cInstance.m_mInputCallbacks[_eInput].Add(_nCallback);
+    }
+
+
+    public static void UnsubscribeInputChange(EInput _eInput, NotifyInputChange _nCallback)
+    {
+        if (s_cInstance.m_mInputCallbacks.ContainsKey(_eInput))
+        {
+            s_cInstance.m_mInputCallbacks[_eInput].Remove(_nCallback);
+        }
+    }
+
+
+    public static void SubscribeAxisChange(EAxis _eAxis, NotifyAxisChange _nCallback)
+    {
+        if (!s_cInstance.m_mAxisCallbacks.ContainsKey(_eAxis))
+        {
+            s_cInstance.m_mAxisCallbacks.Add(_eAxis, new List<NotifyAxisChange>());
+        }
+
+        s_cInstance.m_mAxisCallbacks[_eAxis].Add(_nCallback);
+    }
+
+
+    public static void UnsubscribeAxisChange(EAxis _eAxis, NotifyAxisChange _nCallback)
+    {
+        if (s_cInstance.m_mAxisCallbacks.ContainsKey(_eAxis))
+        {
+            s_cInstance.m_mAxisCallbacks[_eAxis].Remove(_nCallback);
+        }
+    }
 	
 	
-	public static void UnregisterAllEvents()
+	public static void UnsubscribeAll()
 	{
-		EventPrimary = null;
-		EventSecondary = null;
-        EventReturnKey = null;
-		EventUse = null;
-		EventMoveForward = null;
-		EventMoveBackward = null;
-		EventMoveLeft = null;
-		EventMoveRight = null;
-		EventMoveJump = null;
-		EventMoveSprint = null;
-		EventMouseMoveX = null;
-		EventMouseMoveY = null;
+        for (int i = 0; i < (int)EInput.MAX; ++i)
+        {
+            if (s_cInstance.m_mInputCallbacks.ContainsKey((EInput)i))
+            {
+                s_cInstance.m_mInputCallbacks[(EInput)i].Clear();
+            }
+        }
+
+        for (int i = 0; i < (int)EAxis.MAX; ++i)
+        {
+            if (s_cInstance.m_mAxisCallbacks.ContainsKey((EAxis)i))
+            {
+                s_cInstance.m_mAxisCallbacks[(EAxis)i].Clear();
+            }
+        }
 	}
+
+
+    public static float GetMouseMovementX()
+    {
+        return (s_cInstance.m_fMouseMovementX);
+    }
+
+
+    public static float GetMouseMovementY()
+    {
+        return (s_cInstance.m_fMouseMovementY);
+    }
 
 
 	public static bool IsInputDown(EInput _eInput)
 	{
-		KeyCode eKeyCode = KeyCode.A;
-
-		switch (_eInput)
-		{
-			case EInput.PrimaryDown:
-			case EInput.PrimaryUp: eKeyCode = s_ePrimaryKey; break;
-			case EInput.SecondaryDown:
-			case EInput.SecondaryUp: eKeyCode = s_eSecondaryKey; break;
-            case EInput.ReturnKey: eKeyCode = s_eReturnKey; break;
-			case EInput.Use: eKeyCode = s_eUseKey; break;
-			case EInput.ReloadTool: eKeyCode = s_eReloadToolKey; break;
-            case EInput.DropTool: eKeyCode = s_eDropTool; break;
-			case EInput.MoveForward: eKeyCode = s_eMoveForwardKey; break;
-			case EInput.MoveBackwards: eKeyCode = s_eMoveBackwardsKey; break;
-			case EInput.MoveLeft: eKeyCode = s_eMoveLeftKey; break;
-			case EInput.MoveRight: eKeyCode = s_eMoveRightKey; break;
-			case EInput.Jump: eKeyCode = s_eJumpKey; break;
-			case EInput.Sprint: eKeyCode = s_eSprintKey; break;
-			case EInput.Crouch: eKeyCode = m_eCrouchKey; break;
-			case EInput.FlyUp: eKeyCode = m_eFlyUp; break;
-			case EInput.FlyDown: eKeyCode = m_eFlyDown; break;
-			case EInput.FlyRollLeft: eKeyCode = m_eFlyRollLeft; break;
-			case EInput.FlyRollRight: eKeyCode = m_eFlyRollRight; break;
-            case EInput.ToolSlot1: eKeyCode = s_eToolSlot1; break;
-            case EInput.ToolSlot2: eKeyCode = s_eToolSlot2; break;
-            case EInput.ToolSlot3: eKeyCode = s_eToolSlot3; break;
-            case EInput.ToolSlot4: eKeyCode = s_eToolSlot4; break;
-
-			default: Debug.LogError(string.Format("Unknown input type ({0})", _eInput)); break;
-		}
-
-		return (Input.GetKey(eKeyCode));
+		return (Input.GetKey(s_cInstance.m_aKeyBindings[(int)_eInput]));
 	}
+
+
+    public static bool IsInputDown(ulong _ulPlayerId, EInput _eInput)
+    {
+        return ((s_cInstance.m_mPlayerStates[_ulPlayerId].ulInput & (ulong)1 << (int)_eInput) > 0);
+    }
+
+
+    public void SerializeOutbound(CNetworkStream _cStream)
+    {
+        if (!m_InFocus)
+            return ;
+
+
+        _cStream.Write(s_cInstance.m_ulInputStates);
+        _cStream.Write(s_cInstance.m_fMouseMovementX * SensitivityX);
+        _cStream.Write(s_cInstance.m_fMouseMovementY * SensitivityY * -1.0f);
+    }
+
+
+    public void SerializeInbound(CNetworkPlayer _cPlayer, CNetworkStream _cStream)
+    {
+        TPlayerStates tPlayerStates = s_cInstance.m_mPlayerStates[_cPlayer.PlayerId];
+
+        tPlayerStates.ulPreviousInput = tPlayerStates.ulInput;
+        tPlayerStates.ulInput = _cStream.ReadULong();
+        tPlayerStates.fMouseX = _cStream.ReadFloat();
+        tPlayerStates.fMouseY = _cStream.ReadFloat();
+    }
 
 
     void Awake()
     {
 		s_cInstance = this;
 
-        SensitivityX = 6.0f;
-        SensitivityY = 6.0f;
+        SensitivityX = 4.0f;
+        SensitivityY = 4.0f;
     }
 
 
     void Start()
     {
-        // Empty
+        CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnEventPlayerDisconnect);
+        CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnEventPlayerConnect);
+        CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnEventShutdown);
     }
 
 
     void Update()
     {
-        UpdateMouseMove();
-        UpdatePrimary();
-        UpdateSecondary();
-        UpdateReturn();
-        UpdateUse();
-        UpdateMovement();
-        UpdateMovementSpecial();
-		UpdateAirMovement();
-        UpdateTools();
+        UpdateStates();
+        ProcessEvents();
+
+        if (CNetwork.IsServer)
+        {
+            ProcessClientEvents();
+        }
     }
 
 
-	[AClientOnly]
-	void UpdateMouseMove()
-	{
-		MouseMovementDeltaX = Input.GetAxis("Mouse X") * SensitivityX;
-		MouseMovementDeltaY = Input.GetAxis("Mouse Y") * SensitivityY * -1.0f;
-
-		//if (MouseMovementX != 0.0f)
-		{
-			if (EventMouseMoveX != null) EventMouseMoveX(MouseMovementDeltaX);
-		}
-
-		//if (MouseMovementY != 0.0f)
-		{
-			if (EventMouseMoveY != null) EventMouseMoveY(MouseMovementDeltaY);
-		}
-	}
-
-
-	[AClientOnly]
-	void UpdatePrimary()
-	{
-		if (Input.GetKeyDown(s_ePrimaryKey))
-        {
-			if (EventPrimary != null) EventPrimary(true);
-		}
-		else if (Input.GetKeyUp(s_ePrimaryKey))
-		{
-			if (EventPrimary != null) EventPrimary(false);
-		}
-		if(Input.GetKey(s_ePrimaryKey))
-		{
-			if (EventPrimaryHold != null) EventPrimaryHold();
-		}
-	}
-
-
-	[AClientOnly]
-	void UpdateSecondary()
-	{
-		if (Input.GetKeyDown(s_eSecondaryKey))
-		{
-			if (EventSecondary != null) EventSecondary(true);
-		}
-		else if (Input.GetKeyUp(s_eSecondaryKey))
-		{
-			if (EventSecondary != null) EventSecondary(false);
-		}
-		if(Input.GetKey(s_eSecondaryKey))
-		{
-			if (EventSecondaryHold != null) EventSecondaryHold();
-		}
-	}
-
-
-    [AClientOnly]
-    void UpdateReturn()
+    void UpdateStates()
     {
-        if (Input.GetKeyDown(s_eReturnKey))
+        m_ulPreviousInputStates = m_ulInputStates;
+        m_ulInputStates = 0;
+
+        for (int i = 0; i < (int)EInput.MAX; ++i)
         {
-            if (EventReturnKey != null) EventReturnKey(true);
+            if (Input.GetKey(s_cInstance.m_aKeyBindings[i]))
+            {
+                m_ulInputStates |= (ulong)1 << i;
+            }
         }
-        else if (Input.GetKeyUp(s_eReturnKey))
-        {
-            if (EventReturnKey != null) EventReturnKey(false);
-        }
-		if(Input.GetKey(s_eReturnKey))
-		{
-			if (EventReturnKeyHold != null) EventReturnKeyHold();
-		}
     }
 
 
-	[AClientOnly]
-	void UpdateUse()
-	{
-		if (Input.GetKeyDown(s_eUseKey))
-		{
-			if (EventUse != null) EventUse(true);
-		}
-		else if (Input.GetKeyUp(s_eUseKey))
-		{
-			if (EventUse != null) EventUse(false);
-		}
-		if(Input.GetKey(s_eUseKey))
-		{
-			if (EventUseHold != null) EventUseHold();
-		}
-	}
-
-
-	[AClientOnly]
-	void UpdateMovement()
-	{
-		// Forward
-		if (Input.GetKeyDown(s_eMoveForwardKey))
-		{
-			if (EventMoveForward != null) EventMoveForward(true);
-		}
-		else if (Input.GetKeyUp(s_eMoveForwardKey))
-		{
-			if (EventMoveForward != null) EventMoveForward(false);
-		}
-		if(Input.GetKey(s_eMoveForwardKey))
-		{
-			if (EventMoveForwardHold != null) EventMoveForwardHold();
-		}
-
-		// Backwards
-		if (Input.GetKeyDown(s_eMoveBackwardsKey))
-		{
-			if (EventMoveBackward != null) EventMoveBackward(true);
-		}
-		else if (Input.GetKeyUp(s_eMoveBackwardsKey))
-		{
-			if (EventMoveBackward != null) EventMoveBackward(false);
-		}
-		if(Input.GetKey(s_eMoveBackwardsKey))
-		{
-			if (EventMoveBackwardHold != null) EventMoveBackwardHold();
-		}
-
-		// Left
-		if (Input.GetKeyDown(s_eMoveLeftKey))
-		{
-			if (EventMoveLeft != null) EventMoveLeft(true);
-		}
-		else if (Input.GetKeyUp(s_eMoveLeftKey))
-		{
-			if (EventMoveLeft != null) EventMoveLeft(false);
-		}
-		if(Input.GetKey(s_eMoveLeftKey))
-		{
-			if (EventMoveLeftHold != null) EventMoveLeftHold();
-		}
-
-		// Right
-		if (Input.GetKeyDown(s_eMoveRightKey))
-		{
-			if (EventMoveRight != null) EventMoveRight(true);
-		}
-		else if (Input.GetKeyUp(s_eMoveRightKey))
-		{
-			if (EventMoveRight != null) EventMoveRight(false);
-		}
-		if(Input.GetKey(s_eMoveRightKey))
-		{
-			if (EventMoveRightHold != null) EventMoveRightHold();
-		}
-	}
-
-
-	[AClientOnly]
-	void UpdateMovementSpecial()
-	{
-		// Jump
-		if (Input.GetKeyDown(s_eJumpKey))
-		{
-			if (EventMoveJump != null) EventMoveJump(true);
-		}
-		else if (Input.GetKeyUp(s_eJumpKey))
-		{
-			if (EventMoveJump != null) EventMoveJump(false);
-		}
-		if(Input.GetKey(s_eJumpKey))
-		{
-			if (EventMoveJumpHold != null) EventMoveJumpHold();
-		}
-
-		// Sprint
-		if (Input.GetKeyDown(s_eSprintKey))
-		{
-			if (EventMoveSprint != null) EventMoveSprint(true);
-		}
-		else if (Input.GetKeyUp(s_eSprintKey))
-		{
-			if (EventMoveSprint != null) EventMoveSprint(false);
-		}
-		if(Input.GetKey(s_eSprintKey))
-		{
-			if (EventMoveSprintHold != null) EventMoveSprintHold();
-		}
-
-		// Crouch
-		if (Input.GetKeyDown(m_eCrouchKey))
-		{
-			if (EventCrouch != null) EventCrouch(true);
-		}
-		else if (Input.GetKeyUp(m_eCrouchKey))
-		{
-			if (EventCrouch != null) EventCrouch(false);
-		}
-		if(Input.GetKey(m_eCrouchKey))
-		{
-			if (EventCrouchHold != null) EventCrouchHold();
-		}
-	}
-	
-	[AClientOnly]
-	void UpdateAirMovement()
-	{
-		// Fly up
-		if (Input.GetKeyDown(m_eFlyUp))
-		{
-			if (EventFlyUp != null) EventFlyUp(true);
-		}
-		else if (Input.GetKeyUp(m_eFlyUp))
-		{
-			if (EventFlyUp != null) EventFlyUp(false);
-		}
-		if(Input.GetKey(m_eFlyUp))
-		{
-			if (EventFlyUpHold != null) EventFlyUpHold();
-		}
-
-		// Fly down
-		if (Input.GetKeyDown(m_eFlyDown))
-		{
-			if (EventFlyDown != null) EventFlyDown(true);
-		}
-		else if (Input.GetKeyUp(m_eFlyDown))
-		{
-			if (EventFlyDown != null) EventFlyDown(false);
-		}
-		if(Input.GetKey(m_eFlyDown))
-		{
-			if (EventFlyDownHold != null) EventFlyDownHold();
-		}
-
-		// Fly roll left
-		if (Input.GetKeyDown(m_eFlyRollLeft))
-		{
-			if (EventFlyRollLeft != null) EventFlyRollLeft(true);
-		}
-		else if (Input.GetKeyUp(m_eFlyRollLeft))
-		{
-			if (EventFlyRollLeft != null) EventFlyRollLeft(false);
-		}
-		if(Input.GetKey(m_eFlyRollLeft))
-		{
-			if (EventFlyRollLeftHold != null) EventFlyRollLeftHold();
-		}
-		
-		// Fly roll right
-		if (Input.GetKeyDown(m_eFlyRollRight))
-		{
-			if (EventFlyRollRight != null) EventFlyRollRight(true);
-		}
-		else if (Input.GetKeyUp(m_eFlyRollRight))
-		{
-			if (EventFlyRollRight != null) EventFlyRollRight(false);
-		}
-		if(Input.GetKey(m_eFlyRollRight))
-		{
-			if (EventFlyRollRightHold != null) EventFlyRollRightHold();
-		}
-	}
-
-
-    void UpdateTools()
+    void ProcessEvents()
     {
-        // Drop
-        if (Input.GetKeyDown(s_eDropTool))
+        for (int i = 0; i < (int)EInput.MAX; ++i)
         {
-            if (EventDropTool != null) EventDropTool(true);
-        }
-        else if (Input.GetKeyUp(s_eDropTool))
-        {
-            if (EventDropTool != null) EventDropTool(false);
-        }
-		if(Input.GetKey(s_eDropTool))
-		{
-			if (EventDropToolHold != null) EventDropToolHold();
-		}
-
-        // Reload
-        if (Input.GetKeyDown(s_eReloadTool))
-        {
-            if (EventReloadTool != null) EventReloadTool(true);
-        }
-        else if (Input.GetKeyUp(s_eReloadTool))
-        {
-            if (EventReloadTool != null) EventReloadTool(false);
-        }
-		if(Input.GetKey(s_eReloadTool))
-		{
-			if (EventReloadToolHold != null) EventReloadToolHold();
-		}
-
-        // Slot 1
-        if (Input.GetKeyDown(s_eToolSlot1))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(1, true);
-        }
-        else if (Input.GetKeyUp(s_eToolSlot1))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(1, false);
+            if ((m_ulPreviousInputStates & (ulong)1 << i) == 0 &&
+                (m_ulInputStates & (ulong)1 << i) > 0)
+            {
+                InvokeInputEvent((EInput)i, 0, true);
+            }
+            else if ((m_ulPreviousInputStates & (ulong)1 << i) > 0 &&
+                        (m_ulInputStates & (ulong)1 << i) == 0)
+            {
+                InvokeInputEvent((EInput)i, 0, false);
+            }
         }
 
-        // Slot 2
-        if (Input.GetKeyDown(s_eToolSlot2))
+        m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
+        m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
+
+        InvokeAxisEvent(EAxis.MouseX, 0, m_fMouseMovementX);
+        InvokeAxisEvent(EAxis.MouseY, 0, m_fMouseMovementY);
+    }
+
+
+    [AServerOnly]
+    void ProcessClientEvents()
+    {
+        // Send out input events to subscribers on server
+        foreach (KeyValuePair<ulong, TPlayerStates> tEntry in m_mPlayerStates)
         {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(2, true);
-        }
-        else if (Input.GetKeyUp(s_eToolSlot2))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(2, false);
+            TPlayerStates cPlayerStates = tEntry.Value;
+
+            for (int i = 0; i < (int)EInput.MAX; ++i)
+            {
+                if ((cPlayerStates.ulPreviousInput & (ulong)1 << i) == 0 &&
+                    (cPlayerStates.ulInput         & (ulong)1 << i) >  0)
+                {
+                    InvokeInputEvent((EInput)i, tEntry.Key, true);
+                }
+                else if ((cPlayerStates.ulPreviousInput & (ulong)1 << i) >  0 &&
+                         (cPlayerStates.ulInput         & (ulong)1 << i) == 0)
+                {
+                    InvokeInputEvent((EInput)i, tEntry.Key, false);
+                }
+            }
         }
 
-        // Slot 3
-        if (Input.GetKeyDown(s_eToolSlot3))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(3, true);
-        }
-        else if (Input.GetKeyUp(s_eToolSlot3))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(3, false);
-        }
+    }
 
-        // Slot 4
-        if (Input.GetKeyDown(s_eToolSlot4))
+
+    void InvokeInputEvent(EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    {
+        if (m_mInputCallbacks.ContainsKey(_eInput))
         {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(4, true);
-        }
-        else if (Input.GetKeyUp(s_eToolSlot4))
-        {
-            if (EventChangeToolSlot != null) EventChangeToolSlot(4, false);
+            List<NotifyInputChange> aSubscribers = m_mInputCallbacks[_eInput];
+
+            foreach (NotifyInputChange cSubscriber in aSubscribers)
+            {
+                cSubscriber(_eInput, _ulPlayerId, _bDown);
+            }
         }
     }
+
+
+    void InvokeAxisEvent(EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+    {
+        if (m_mAxisCallbacks.ContainsKey(_eAxis))
+        {
+            List<NotifyAxisChange> aSubscribers = m_mAxisCallbacks[_eAxis];
+
+            foreach (NotifyAxisChange cSubscriber in aSubscribers)
+            {
+                cSubscriber(_eAxis, _ulPlayerId, _fValue);
+            }
+        }
+    }
+
+
+    void OnEventPlayerDisconnect(CNetworkPlayer _cPlayer)
+    {
+        m_mPlayerStates.Remove(_cPlayer.PlayerId);
+    }
+
+
+    void OnEventPlayerConnect(CNetworkPlayer _cPlayer)
+    {
+        m_mPlayerStates.Add(_cPlayer.PlayerId, new TPlayerStates());
+    }
+
+
+    void OnEventShutdown()
+    {
+        m_mPlayerStates.Clear();
+    }
+
+
+	void OnApplicationFocus(bool _Focus)
+	{
+		m_InFocus = _Focus;
+	}
+
 
 // Member Fields
 
-    // Tools
-    static KeyCode s_eToolSlot1         = KeyCode.Alpha1;
-    static KeyCode s_eToolSlot2         = KeyCode.Alpha2;
-    static KeyCode s_eToolSlot3         = KeyCode.Alpha3;
-    static KeyCode s_eToolSlot4         = KeyCode.Alpha4;
-    static KeyCode s_eDropTool          = KeyCode.G;
-    static KeyCode s_eReloadTool        = KeyCode.R;
+
+    Dictionary<EInput, List<NotifyInputChange>> m_mInputCallbacks = new Dictionary<EInput, List<NotifyInputChange>>();
+    Dictionary<EAxis, List<NotifyAxisChange>> m_mAxisCallbacks = new Dictionary<EAxis, List<NotifyAxisChange>>();
 
 
-	// Actions
-	static KeyCode s_ePrimaryKey		= KeyCode.Mouse0;
-	static KeyCode s_eSecondaryKey		= KeyCode.Mouse1;
-	static KeyCode s_eUseKey			= KeyCode.E;
-	static KeyCode s_eAction2Key		= KeyCode.F;
+    KeyCode[] m_aKeyBindings = new KeyCode[(uint)EInput.MAX];
 
 
-	// Movement
-	static KeyCode s_eMoveForwardKey	= KeyCode.W;
-	static KeyCode s_eMoveBackwardsKey	= KeyCode.S;
-	static KeyCode s_eMoveLeftKey		= KeyCode.A;
-	static KeyCode s_eMoveRightKey		= KeyCode.D;
+    ulong m_ulPreviousInputStates = 0;
+    ulong m_ulInputStates = 0;
 
 
-	// Air Movement
-	static KeyCode m_eFlyUp				= KeyCode.Space;
-	static KeyCode m_eFlyDown			= KeyCode.LeftControl;
-	static KeyCode m_eFlyRollLeft		= KeyCode.Z;
-	static KeyCode m_eFlyRollRight		= KeyCode.X;
+    float m_fMouseMovementX = 0.0f;
+    float m_fMouseMovementY = 0.0f;
 
 
-	// Movement Special
-	static KeyCode s_eJumpKey			= KeyCode.Space;
-	static KeyCode s_eSprintKey			= KeyCode.LeftShift;
-	static KeyCode m_eCrouchKey			= KeyCode.LeftControl;
+	bool m_InFocus = true;
 
 
-	// Tools
-	static KeyCode s_eReloadToolKey		= KeyCode.R;
-	static KeyCode s_eDropToolKey		= KeyCode.G;
+	static CUserInput s_cInstance = null;
 
 
-	// Cockpits
-	static KeyCode s_eStrafeLeft		= KeyCode.Q;
-	static KeyCode s_eStrafeRight		= KeyCode.E;
+// Server Member Fields
 
 
-    // Misc
-    static KeyCode s_eReturnKey         = KeyCode.Return;
-
-
-	static CUserInput s_cInstance 		= null;
+    Dictionary<ulong, TPlayerStates> m_mPlayerStates = new Dictionary<ulong, TPlayerStates>();
 
 
 };

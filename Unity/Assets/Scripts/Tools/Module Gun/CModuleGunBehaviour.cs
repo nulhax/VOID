@@ -137,11 +137,13 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	private void ActivateDUI()
 	{
 		// Register mouse movement events
+        /*
 		CUserInput.EventMoveForwardHold += OnPlayerMovement;
 		CUserInput.EventMoveBackwardHold += OnPlayerMovement;
 		CUserInput.EventMoveLeftHold += OnPlayerMovement;
 		CUserInput.EventMoveRightHold += OnPlayerMovement;
-		CUserInput.EventMoveJumpHold += OnPlayerMovement;
+		CUserInput.EventMoveJumpHold += OnPlayerMovement;\
+         */
 
 		m_Activating = true;
 		m_TransitionTimer = 0.0f;
@@ -161,11 +163,13 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	private void DeactivateDUI()
 	{
 		// Unegister mouse movement events
+        /*
 		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
 		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
 		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
 		CUserInput.EventMoveRightHold -= OnPlayerMovement;
 		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
+        */
 
 		m_Deactivating = true;
 		m_TransitionTimer = 0.0f;
@@ -243,10 +247,12 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	private void OnDestory()
 	{
 		// Unegister mouse movement events
+        /*
 		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
 		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
 		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
 		CUserInput.EventMoveRightHold -= OnPlayerMovement;
 		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
+        */
 	}
 };
