@@ -44,7 +44,7 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-			
+		
 	}
 
 

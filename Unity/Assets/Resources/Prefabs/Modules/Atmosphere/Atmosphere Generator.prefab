@@ -170,7 +170,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 10, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400004}
@@ -423,7 +423,7 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
   syncNetworkState: 1
-  health_initial: 1
+  health_initial: 10
   health_previous: 0
   state_initial: 0
   stateTransitions: []
@@ -474,6 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AtmosphereGenerationRate: 60
+  m_AtmosphereGenerationRateDamaged: 10
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -498,7 +499,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
+  takeDamageOnImpact: 0
   syncNetworkState: 1
   health_initial: 1000
   health_previous: 0

@@ -34,6 +34,11 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 		get { return(m_RepairPositions);}
 	}
 
+    public float CurrentHealth
+    {
+        get { return (m_CurrentHealth); }
+    }
+
 	
 	// Member Methods
 	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered

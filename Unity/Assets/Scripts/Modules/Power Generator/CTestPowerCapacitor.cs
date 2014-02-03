@@ -69,6 +69,18 @@ public class CTestPowerCapacitor: MonoBehaviour
 				
 				m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
 			}
+
+
+            if (transform.FindChild("WiringComponent").GetComponent<CLiquidComponent>().CurrentHealth <= 0)
+            {
+                Debug.Log("Power Capacitor Broke");
+                //HandleFuseBoxBreaking();
+            }
+            else if (transform.FindChild("WiringComponent").GetComponent<CLiquidComponent>().CurrentHealth > 0)
+            {
+                Debug.Log("Power Capacitor Fixed");
+                //HandleFuseBoxFixing();
+            }
 		}
 	}
 	
