@@ -99,7 +99,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 
         // Fire spreads
-        EventFireSpread();
+     //   EventFireSpread();
     }
 
     void OnDestroy()
