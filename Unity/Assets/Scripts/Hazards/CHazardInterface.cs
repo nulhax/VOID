@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
+[RequireComponent(typeof(CNetworkView))]
 public class CHazardInterface : MonoBehaviour
 {
 
@@ -37,7 +37,6 @@ public class CHazardInterface : MonoBehaviour
 
 	public void Awake()
 	{
-		gameObject.AddComponent<CNetworkView>();
 	}
 
 

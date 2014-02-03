@@ -38,6 +38,8 @@ public class CActorHealthEditor : Editor
 			//EditorGUILayout.FloatField(health_initial, new UnityEngine.GUIContent("Initial Health"));
 
 			myTarget.health_initial = EditorGUILayout.FloatField("Initial Value", myTarget.health_initial);
+			myTarget.health_max = EditorGUILayout.FloatField("Max Value", myTarget.health_max);
+			myTarget.health_min = EditorGUILayout.FloatField("Min Value", myTarget.health_min);
 			EditorGUILayout.LabelField("Current value\t\t\t  " + myTarget.health);
 			myTarget.syncNetworkHealth = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkHealth);
 			myTarget.destroyOnZeroHealth = EditorGUILayout.Toggle("Destroy On Zero", myTarget.destroyOnZeroHealth);
@@ -64,6 +66,12 @@ public class CActorHealthEditor : Editor
 
 			for (int i = 0; i < newStateTransitionLength; ++i)
 				myTarget.stateTransitions[i] = EditorGUILayout.FloatField("State " + (i + 1).ToString() + " if health >=", myTarget.stateTransitions[i]);
+		}
+
+		if(myTarget.syncNetworkState || myTarget.syncNetworkHealth)
+		{
+			float result = EditorGUILayout.FloatField("Syncs Per Second", 1.0f / myTarget.timeBetweenNetworkSyncs);
+			myTarget.timeBetweenNetworkSyncs = result <= 0.0f ? float.PositiveInfinity : 1.0f / result;
 		}
 
 		//serializedObject.ApplyModifiedProperties();

@@ -44,7 +44,7 @@ public class CShipDamageOnCollision : MonoBehaviour
                 Debug.LogError("Put a Rigidbody on " + collision.transform.gameObject.name + " else there is no force in impacts.");
 
             float radius = impulse * impulseToRadius;
-            //Debug.LogWarning("Impulse: " + impulse.ToString() + "\nRadius: " + radius.ToString() + " units\nForce: " + force.ToString() + " newtons");
+            Debug.LogWarning("Impulse: " + impulse.ToString() + "\nRadius: " + radius.ToString() + " units\nForce: " + force.ToString() + " newtons");
 
             // Find all damagable actors within radius and apply damage.
             foreach (ContactPoint contact in collision.contacts)
@@ -59,6 +59,7 @@ public class CShipDamageOnCollision : MonoBehaviour
 					{
 						//Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
 						float actorDistanceToImpact = (damagableActor.gameObject.transform.position - contactPointOnShip).magnitude;
+						Debug.Log(damagableActor.gameObject.ToString() + " was " + actorDistanceToImpact.ToString() + " units from impact");
 
 						if (actorDistanceToImpact < radius)
 						{

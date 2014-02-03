@@ -28,11 +28,13 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public bool takeDamageOnImpact = false;
 	[SerializeField] public bool syncNetworkState = true;
 
+	[SerializeField] public float health_max = float.PositiveInfinity;
+	[SerializeField] public float health_min = 0.0f;
 	[SerializeField] public float health_initial = 1.0f;
 	[HideInInspector] public float health_previous;
 	private float health_current;
 	protected CNetworkVar<float> health_internal = null;
-	public float health { get { return health_current; } set { if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
+	public float health { get { return health_current; } set { value = value > health_max ? health_max : value < health_min ? health_min : value; if (value == health) return; if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
 
 	[SerializeField] public byte state_initial = 0;
 	[SerializeField] public float[] stateTransitions;
@@ -41,6 +43,9 @@ public class CActorHealth : CNetworkMonoBehaviour
 	protected CNetworkVar<byte> state_internal = null;
 	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
 
+	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
+	private float timeUntilNextNetworkSync = 0.0f;
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		health_internal = _cRegistrar.CreateNetworkVar<float>(OnSyncHealth, health_initial);
@@ -48,6 +53,24 @@ public class CActorHealth : CNetworkMonoBehaviour
 		// Set before Start()
 		health_previous = health_current = health_initial;
 		state_previous = state_current = state_initial;
+	}
+
+	void Update()
+	{
+		if (CNetwork.IsServer)
+		{
+			timeUntilNextNetworkSync -= Time.deltaTime;
+			if (timeUntilNextNetworkSync <= 0.0f && (syncNetworkHealth || syncNetworkState))
+			{
+				if (syncNetworkHealth && health_current != health_internal.Get())
+					health_internal.Set(health_current);
+
+				if (syncNetworkState && state_current != state_internal.Get())
+					state_internal.Set(state_current);
+
+				timeUntilNextNetworkSync = timeBetweenNetworkSyncs;
+			}
+		}
 	}
 
 	void OnSyncHealth(INetworkVar sender)
@@ -76,6 +99,12 @@ public class CActorHealth : CNetworkMonoBehaviour
 			EventOnSetHealth(gameObject, health_previous, health_current);
 
 		health_previous = health_current;
+
+		if (health <= 0.0f && destroyOnZeroHealth)
+		{
+			CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+			destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
+		}
 	}
 
 	void OnSyncState(INetworkVar sender)
@@ -102,12 +131,6 @@ public class CActorHealth : CNetworkMonoBehaviour
             //Debug.Log("CActorHealth: " + gameObject.name + " (" + GetComponent<CNetworkView>().ViewId.ToString() + ") collided with " + collision.transform.gameObject.name + " (" + collision.transform.GetComponent<CNetworkView>().ViewId.ToString() + ") taking " + healthLost.ToString() + " damage to its health of " + health.ToString());
 
             health -= impulse;
-
-            if (health <= 0.0f && destroyOnZeroHealth)
-            {
-                CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
-                destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
-            }
         }
     }
 }
