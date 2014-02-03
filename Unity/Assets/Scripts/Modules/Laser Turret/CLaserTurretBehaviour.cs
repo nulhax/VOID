@@ -168,7 +168,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-    void OnFireLasersCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnFireLasersCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
 		m_bFireLasers = _bDown;
 	}

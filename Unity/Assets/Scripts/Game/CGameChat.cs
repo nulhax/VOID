@@ -81,7 +81,7 @@ public class CGameChat : CNetworkMonoBehaviour
 
 
     [AClientOnly]
-    void ReturnKeyChanged(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _b)
+    void ReturnKeyChanged(CUserInput.EInput _eInput, bool _b)
     {
 		// This will only be able to trigger every 0.5 seconds
 		if (Time.time > m_fTimeOfEnterKeyPress + 0.5f) 

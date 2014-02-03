@@ -267,6 +267,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
         CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
 	}
 
 

@@ -474,7 +474,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnDropToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnDropToolKey(CUserInput.EInput _eInput, bool _bDown)
     {
         if (_bDown)
         {
@@ -483,7 +483,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnReloadToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnReloadToolKey(CUserInput.EInput _eInput, bool _bDown)
     {
         if (_bDown)
         {
@@ -492,10 +492,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnSelectToolSlot(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnSelectToolSlot(CUserInput.EInput _eInput, bool _bDown)
     {
-        if (_ulPlayerId == 0 &&
-            _bDown)
+        if (_bDown)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.ChangeTool);
 

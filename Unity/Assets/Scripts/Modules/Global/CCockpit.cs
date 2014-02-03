@@ -183,7 +183,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-    void OnInputUse(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnInputUse(CUserInput.EInput _eInput, bool _bDown)
 	{
 		if (_bDown &&
 		    MountedPlayerId == CNetwork.PlayerId)
