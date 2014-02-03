@@ -47,8 +47,7 @@
 
 			fixed4 frag (v2f i) : COLOR
 			{
-				fixed3 newVector = normalize(i.texcoord + fixed3(1.5f, 0.0f, 0.0f));
-				fixed4 tex = texCUBE(void_Skybox1, newVector);
+				fixed4 tex = texCUBE(void_Skybox1, i.texcoord);
 				fixed4 col;
 				col.rgb = tex.rgb + _Tint.rgb - unity_ColorSpaceGrey;
 				col.a = tex.a * _Tint.a;

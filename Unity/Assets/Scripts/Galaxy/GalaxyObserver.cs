@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(GalaxyShiftable))]
 public class GalaxyObserver : MonoBehaviour
 {
     void Start()

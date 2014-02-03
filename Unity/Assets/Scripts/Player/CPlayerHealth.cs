@@ -167,8 +167,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // Player is alive
             if (m_bAlive.Get())
             {
-                transform.GetComponent<CPlayerGroundMotor>().UndisableInput(this);
-                transform.GetComponent<CPlayerHead>().UndisableInput(this);
+                transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+                transform.GetComponent<CPlayerHead>().ReenableInput(this);
             }
 
             // Player is dead

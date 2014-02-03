@@ -87,9 +87,9 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 				if (Physics.Raycast(ray, out _rh, 2.0f))
 				{
-					if (_rh.collider.gameObject.GetComponent<CFireHazard>() != null)
+					if (_rh.collider.gameObject.GetComponent<CFireHazard_Old>() != null)
 					{
-						_rh.collider.gameObject.GetComponent<CFireHazard>().Health -= 80.0f * Time.deltaTime;
+						_rh.collider.gameObject.GetComponent<CFireHazard_Old>().Health -= 80.0f * Time.deltaTime;
 					}
 				}
 			}

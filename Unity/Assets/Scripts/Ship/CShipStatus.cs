@@ -52,13 +52,14 @@ public class CShipStatus : CNetworkMonoBehaviour
 	void OnGUI()
 	{
 		float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;
-		Vector3 absShipPos = CGalaxy.instance.AbsoluteCellToAbsolutePoint(CGalaxy.instance.centreCell) + CGameShips.GalaxyShip.transform.position;
+		Vector3 absShipPos = CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position);
+		CGalaxy.SCellPos shipCellPos = CGalaxy.instance.RelativePointToAbsoluteCell(CGameShips.GalaxyShip.transform.position);
 
 		string shipOutput = "";
-		shipOutput += string.Format("\tShipSpeed: [{0}] CurrentCell [{1},{2},{3}] ShipAbsPos [{4}] ", 
-		                            Math.Round(shipSpeed, 2),
-		                            CGalaxy.instance.centreCell.x, CGalaxy.instance.centreCell.y, CGalaxy.instance.centreCell.z,
-		                            absShipPos.ToString()); 
+		shipOutput += string.Format("\tShipSpeed: [{0}] CurrentCell [{1},{2},{3}] ShipAbsPos [{4}] ",
+									shipSpeed.ToString("F2"),
+									shipCellPos.x, shipCellPos.y, shipCellPos.z,
+		                            absShipPos.ToString("F2")); 
 
 		float boxWidth = 700;
 		float boxHeight = 40;

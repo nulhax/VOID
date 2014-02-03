@@ -80,9 +80,6 @@ public class CCompositeCameraSystem : MonoBehaviour
 		
 		// Unparent the galaxy camera
 		m_GalaxyCamera.transform.parent = null;
-		
-		// Destroy the galaxy observer components
-        Destroy(m_GalaxyCamera.gameObject.GetComponent<GalaxyObserver>());
 	}
 	
 	public void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
@@ -96,9 +93,6 @@ public class CCompositeCameraSystem : MonoBehaviour
 		
 		// Unparent the ship camera
 		m_ShipCamera.transform.parent = null;
-
-		// Add the galaxy observer components
-        m_GalaxyCamera.gameObject.AddComponent<GalaxyObserver>();
 	}
 
 	public void SetDefaultViewPerspective()

@@ -103,6 +103,46 @@ public class CUtility
 		
 		return result;
 	}
+
+	/// <summary>
+	/// Finds the specified component on the game object or one of its parents.
+	/// </summary>
+	
+	static public T FindInParents<T> (GameObject go) where T : Component
+	{
+		if (go == null) return null;
+		object comp = null;
+
+		Transform t = go.transform.parent;
+		
+		while (t != null && comp == null)
+		{
+			comp = t.gameObject.GetComponent<T>();
+			t = t.parent;
+		}
+
+		return (T)comp;
+	}
+	
+	/// <summary>
+	/// Finds the specified component on the game object or one of its parents.
+	/// </summary>
+	
+	static public T FindInParents<T> (Transform trans) where T : Component
+	{
+		if (trans == null) return null;
+		object comp = null;
+
+		Transform t = trans.transform.parent;
+		
+		while (t != null && comp == null)
+		{
+			comp = t.gameObject.GetComponent<T>();
+			t = t.parent;
+		}
+
+		return (T)comp;
+	}
 }
 
 /*

@@ -44,9 +44,9 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		m_AtmosphereGenerator = gameObject.GetComponent<CAtmosphereGeneratorBehaviour>();
 
 		// Register for when the fusebox breaks/fixes
-//		CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.RatchetComp)[0].GetComponent<CComponentInterface>();
-//		ci.EventComponentBreak += HandleFuseBoxBreaking;
-//		ci.EventComponentFix += HandleFuseBoxFixing;
+		//CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.RatchetComp)[0].GetComponent<CComponentInterface>();
+		//ci.EventComponentBreak += HandleFuseBoxBreaking;
+		//ci.EventComponentFix += HandleFuseBoxFixing;
 	}
 
 	public void Update()

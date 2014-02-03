@@ -50,12 +50,6 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (s_cInstance); }
 	}
 
-
-	public static CCompositeCameraSystem CompositeCameraSystem
-	{
-		get { return (Instance.GetComponent<CCompositeCameraSystem>()); }
-	}
-
 // Member Functions
 
 

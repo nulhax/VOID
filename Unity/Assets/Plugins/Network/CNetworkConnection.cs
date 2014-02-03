@@ -218,13 +218,27 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
+	public void Update()
+	{
+		// Process inbound packets
+		if (this.IsActive)
+		{
+			ProcessInboundPackets();
+			ProcessInboundRate();
+		}
+
+		if (Input.GetKeyDown(KeyCode.F3))
+		{
+			m_bShowStats = !m_bShowStats;
+		}
+	}
+
+
 	public void LateUpdate()
     {
-        // Process packets
+        // Process outbound packets
         if (this.IsActive)
         {
-            ProcessInboundPackets();
-
 			if (this.IsConnected)
             {
 				ProcessOutboundPackets();
@@ -232,12 +246,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 				UpdateTicksAndTimes();
 			}
 
-			ProcessInboundOutboundRates();
-        }
-
-        if (Input.GetKeyDown(KeyCode.F3))
-        {
-            m_bShowStats = !m_bShowStats;
+			ProcessOutboundRate();
         }
     }
 
@@ -529,12 +538,10 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-	protected void ProcessInboundOutboundRates()
+	protected void ProcessInboundRate()
 	{
 		// Timer increment
 		m_tInboundRateData.fTimer += Time.deltaTime;
-		m_tOutboundRateData.fTimer += Time.deltaTime;
-
 
 		if (m_tInboundRateData.fTimer > 1.0f)
 		{
@@ -545,13 +552,19 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			m_tInboundRateData.uiBytes = 0;
 			m_tInboundRateData.fTimer = 0.0f;
 		}
+	}
 
 
+	protected void ProcessOutboundRate()
+	{
+		// Timer increment
+		m_tOutboundRateData.fTimer += Time.deltaTime;
+		
 		if (m_tOutboundRateData.fTimer > 1.0f)
 		{
 			m_tOutboundRateData.uiLastTotalEntries = m_tOutboundRateData.uiNumEntries;
 			m_tOutboundRateData.uiLastTotalBytes = m_tOutboundRateData.uiBytes;
-
+			
 			m_tOutboundRateData.uiNumEntries = 0;
 			m_tOutboundRateData.uiBytes = 0;
 			m_tOutboundRateData.fTimer = 0.0f;
