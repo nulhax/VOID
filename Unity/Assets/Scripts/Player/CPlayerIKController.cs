@@ -100,6 +100,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	[AServerOnly]
 	void EquipTool(GameObject _Tool)
 	{
+        if(_Tool != null)
 		m_equippedTool = _Tool.transform;	
 	}
 	
@@ -109,7 +110,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		{		
 			case CPlayerInteractor.EInteractionType.Hover:
 			{
-				if(!m_bDisableRightHandWeighting && _cInteractableObject != m_equippedTool.gameObject)
+                if(!m_bDisableRightHandWeighting && m_equippedTool != null && _cInteractableObject != m_equippedTool.gameObject)
 				{
 					m_fRightHandWeightTarget = 0.3f;
 					RightHandIKTarget = _cRayHit.point;					
