@@ -45,8 +45,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	// Use this for initialization
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-      
-		m_fShipNanitePool = new CNetworkVar<int> (OnNetworkVarSync, 0);
+        m_fShipNanitePool = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)
