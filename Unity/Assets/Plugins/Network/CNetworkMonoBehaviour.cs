@@ -26,6 +26,14 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 // Member Types
 
 
+
+// Member Properties
+	public CNetworkViewId ViewId
+	{
+		get { return(ThisNetworkView.ViewId); }
+	}
+
+
 // Member Functions
 
     // public:

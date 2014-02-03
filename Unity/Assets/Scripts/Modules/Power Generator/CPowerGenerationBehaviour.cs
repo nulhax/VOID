@@ -28,7 +28,9 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
+	public delegate void NotifyStateChange(GameObject _Self);
 
+	public event NotifyStateChange EventGenerationRateChanged;
 
 // Member Fields
 	private CNetworkVar<float> m_PowerGenerationRate = null;
@@ -59,7 +61,11 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-
+		if(m_PowerGenerationRate == _VarInstance)
+		{
+			if(EventGenerationRateChanged != null)
+				EventGenerationRateChanged(gameObject);
+		}
 	}
 
 	public void Start()

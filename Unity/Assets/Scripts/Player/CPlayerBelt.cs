@@ -333,6 +333,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_Reload, OnReloadToolKey);
         CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_Drop, OnDropToolKey);
         CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_SelectSlot1, OnSelectToolSlot);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_SelectSlot2, OnSelectToolSlot);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_SelectSlot3, OnSelectToolSlot);
+        CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_SelectSlot4, OnSelectToolSlot);
     }
 
 
@@ -345,6 +348,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Reload, OnReloadToolKey);
         CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Drop, OnDropToolKey);
         CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_SelectSlot1, OnSelectToolSlot);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_SelectSlot2, OnSelectToolSlot);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_SelectSlot3, OnSelectToolSlot);
+        CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_SelectSlot4, OnSelectToolSlot);
 	}
 
 
@@ -496,19 +502,19 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             switch (_eInput)
             {
                 case CUserInput.EInput.Tool_SelectSlot1:
-                    s_cSerializeStream.Write((byte)1);
+                    s_cSerializeStream.Write((byte)0);
                     break;
 
                 case CUserInput.EInput.Tool_SelectSlot2:
-                    s_cSerializeStream.Write((byte)2);
+                    s_cSerializeStream.Write((byte)1);
                     break;
 
                 case CUserInput.EInput.Tool_SelectSlot3:
-                    s_cSerializeStream.Write((byte)3);
+                    s_cSerializeStream.Write((byte)2);
                     break;
 
                 case CUserInput.EInput.Tool_SelectSlot4:
-                    s_cSerializeStream.Write((byte)4);
+                    s_cSerializeStream.Write((byte)3);
                     break;
 
                 default:

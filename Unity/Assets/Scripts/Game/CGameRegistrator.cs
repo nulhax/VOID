@@ -88,7 +88,7 @@ public class CGameRegistrator : MonoBehaviour
 		
 		// Components
 		PanelFuseBox,
-        //CellSlot,
+        CellSlot,
 
         // Parts
         BlackMatterCell,
@@ -114,6 +114,7 @@ public class CGameRegistrator : MonoBehaviour
 		UITest,
 		UIFacilityExpansion,
 		UIModuleCreation,
+		UIPowerGenerator,
 
 		// Other
 		LaserTurretProjectile,
@@ -213,8 +214,7 @@ public class CGameRegistrator : MonoBehaviour
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
-		// TODO: Might need to change this to use the new component system
-        //CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
 
         // Parts
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
@@ -240,6 +240,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"DUI/DUIControlsTest");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIFacilityExpansion,			"DUI/DUIFacilityExpansion");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIModuleCreation,			"DUI/DUIModuleCreation");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerGenerator,			"DUI/Modules/DUIPowerGenerator");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -311,7 +312,7 @@ public class CGameRegistrator : MonoBehaviour
 
     void RegisterComponents()
     {
-        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.CircuitBox, ENetworkPrefab.CellSlot);
+        //CComponentInterface.RegisterPrefab(CComponentInterface.EType.CellSlot, ENetworkPrefab.CellSlot);
         //CComponentInterface.RegisterPrefab(CComponentInterface.EType.FuseBox, ENetworkPrefab.PanelFuseBox);
     }
 
@@ -321,6 +322,7 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.UITest);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator, ENetworkPrefab.UIPowerGenerator);
 	}
 
 

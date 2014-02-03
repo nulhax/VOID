@@ -286,32 +286,38 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
-		s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        if (_ulPlayerId == 0)
+        {
+            s_cSerializeStream.Write(ThisNetworkView.ViewId);
 
-		if (_bDown)
-		{
-			s_cSerializeStream.Write((byte)ENetworkAction.StartFractureLaser);
-		}
-		else
-		{
-			s_cSerializeStream.Write((byte)ENetworkAction.StopFractureLaser);
-		}
+            if (_bDown)
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.StartFractureLaser);
+            }
+            else
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.StopFractureLaser);
+            }
+        }
 	}
 
 
 	[AClientOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
-		s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        if (_ulPlayerId == 0)
+        {
+            s_cSerializeStream.Write(ThisNetworkView.ViewId);
 
-		if (_bDown)
-		{
-			s_cSerializeStream.Write((byte)ENetworkAction.StartExtractorBeam);
-		}
-		else
-		{
-			s_cSerializeStream.Write((byte)ENetworkAction.StopExtractorBeam);
-		}
+            if (_bDown)
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.StartExtractorBeam);
+            }
+            else
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.StopExtractorBeam);
+            }
+        }
 	}
 
 

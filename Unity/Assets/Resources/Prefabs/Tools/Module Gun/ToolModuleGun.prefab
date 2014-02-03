@@ -526,7 +526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100014}
-  m_DefaultUI: 3
+  m_DUI: 3
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -538,11 +538,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
-  syncNetworkVar: 1
-  initialHealth: 1000
+  syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
+  health_initial: 1
   health_previous: 0
+  state_initial: 0
+  stateTransitions: []
+  state_previous: 0
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -554,9 +560,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialState: 0
-  stateTransitions: []
-  state_previous: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
