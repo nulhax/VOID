@@ -56,6 +56,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		{
 			UpdateShipPowerStorage();
 			UpdateFacilityPowerConsumption();
+      //      UpdateModulePowerConsumption();
 		}
 	}
 	
@@ -142,12 +143,14 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		// Set the battery charge pool
 		m_ShipBatteryChargePool = totalBatteryCharge;
 	}
-	
+
+    float combinedConsumption;
+
 	[AServerOnly]
 	private void UpdateFacilityPowerConsumption()
 	{
 		// Calculate the combined consumption of all facilities
-		float combinedConsumption = gameObject.GetComponent<CShipFacilities>().GetAllFacilities().Sum((f) => {
+		combinedConsumption = gameObject.GetComponent<CShipFacilities>().GetAllFacilities().Sum((f) => {
 			CFacilityPower fp = f.GetComponent<CFacilityPower>();
 			return(fp.IsPowerActive ? fp.PowerConsumption * Time.deltaTime : 0.0f);
 		});
@@ -190,6 +193,28 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
+
+    //float fModulePowerConsumption;
+
+    //[AServerOnly]
+    //void UpdateModulePowerConsumption()
+    //{
+    //    fModulePowerConsumption = (float)CModuleInterface.GetAllModules().Sum((m) =>
+    //    {
+    //        CModulePower mp = m.GetComponent<CModulePower>();
+    //        return (mp.IsPowerActive ? mp.PowerConsumption * Time.deltaTime : 0.0);
+    //    });
+
+    //    float TOTAL = combinedConsumption + fModulePowerConsumption;
+
+    //    Debug.Log("TOTAL: " + TOTAL.ToString());
+    //}
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////////////////////
 	
 	public void OnGUI()
 	{

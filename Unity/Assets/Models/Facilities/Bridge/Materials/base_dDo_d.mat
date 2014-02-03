@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: base_dDo_d
-  m_Shader: {fileID: 2, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: d9d6021d120578345a373dbe9a10f119, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -27,7 +27,36 @@ Material:
           m_Texture: {fileID: 2800000, guid: 3aaa8e6a6e684384489b9db2812f33e3, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats: {}
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: 2552c3f7af418384192147dfe2b6dd22, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _SpecMap
+        second:
+          m_Texture: {fileID: 2800000, guid: a837a079713a0d34a87dbe5e28f1e2e9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: 3aaa8e6a6e684384489b9db2812f33e3, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 1
     m_Colors:
       data:
         first:

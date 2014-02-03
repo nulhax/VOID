@@ -68,6 +68,12 @@ public class CActorHealthEditor : Editor
 				myTarget.stateTransitions[i] = EditorGUILayout.FloatField("State " + (i + 1).ToString() + " if health >=", myTarget.stateTransitions[i]);
 		}
 
+		if(myTarget.syncNetworkState || myTarget.syncNetworkHealth)
+		{
+			float result = EditorGUILayout.FloatField("Syncs Per Second", 1.0f / myTarget.timeBetweenNetworkSyncs);
+			myTarget.timeBetweenNetworkSyncs = result <= 0.0f ? float.PositiveInfinity : 1.0f / result;
+		}
+
 		//serializedObject.ApplyModifiedProperties();
 	}
 }

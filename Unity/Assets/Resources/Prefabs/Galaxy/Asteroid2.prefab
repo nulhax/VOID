@@ -102,9 +102,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: 1
   Angle: 1
-  PositionalVelocity: 0
-  AngularVelocity: 0
-  UpdatesPerSecond: .25999999
+  PositionalVelocity: 1
+  AngularVelocity: 1
+  UpdatesPerSecond: .25
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -131,11 +131,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 1
   takeDamageOnImpact: 1
   syncNetworkState: 0
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 0
   stateTransitions: []
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

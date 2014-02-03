@@ -43,6 +43,9 @@ public class CActorHealth : CNetworkMonoBehaviour
 	protected CNetworkVar<byte> state_internal = null;
 	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
 
+	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
+	private float timeUntilNextNetworkSync = 0.0f;
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		health_internal = _cRegistrar.CreateNetworkVar<float>(OnSyncHealth, health_initial);
@@ -50,6 +53,29 @@ public class CActorHealth : CNetworkMonoBehaviour
 		// Set before Start()
 		health_previous = health_current = health_initial;
 		state_previous = state_current = state_initial;
+	}
+
+	void Start()
+	{
+
+	}
+
+	void Update()
+	{
+		if (CNetwork.IsServer)
+		{
+			timeUntilNextNetworkSync -= Time.deltaTime;
+			if (timeUntilNextNetworkSync <= 0.0f && (syncNetworkHealth || syncNetworkState))
+			{
+				if (syncNetworkHealth && health_current != health_internal.Get())
+					health_internal.Set(health_current);
+
+				if (syncNetworkState && state_current != state_internal.Get())
+					state_internal.Set(state_current);
+
+				timeUntilNextNetworkSync = timeBetweenNetworkSyncs;
+			}
+		}
 	}
 
 	void OnSyncHealth(INetworkVar sender)
