@@ -64,7 +64,7 @@ public class CBulletBehaviour : MonoBehaviour
 			}
 
 
-			GameObject.Destroy(gameObject);
+			//GameObject.Destroy(gameObject);
 		}
 	}
 

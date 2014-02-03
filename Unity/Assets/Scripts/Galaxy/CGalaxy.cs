@@ -65,6 +65,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         public Quaternion mRotation;
         public Vector3 mLinearVelocity;
         public Vector3 mAngularVelocity;
+
         public bool mHasNetworkedEntityScript;
         public bool mHasRigidBody;
 
@@ -104,6 +105,7 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         Composite,
         Solid,
+		Stars,
         MAX
     }
 
@@ -907,7 +909,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Profiler.BeginSample("UpdateGalaxyAesthetic");
 
         // Skybox.
-        Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Composite]);
+		Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Stars]);
 
         if (RenderSettings.skybox == null)
             RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));

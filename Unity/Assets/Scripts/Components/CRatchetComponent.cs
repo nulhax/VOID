@@ -62,6 +62,7 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 
 		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / 100.0f);
 
+        Debug.Log("Ratchet Component Health change");
 	}
 
 	void Start()

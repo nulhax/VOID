@@ -66,13 +66,14 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 			}
 
 
-            if (transform.FindChild("RatchetComponent").GetComponent<CRatchetComponent>().CurrentHealth <= 0)
+            if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health <= 0)
             {
                 Debug.Log("Atmosphere Generator Broke");
+                Debug.Log(transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health);
                 HandleFuseBoxBreaking();
             }
 
-            else if (transform.FindChild("RatchetComponent").GetComponent<CRatchetComponent>().CurrentHealth > 0)
+            else if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health >= 1)
             {
                 Debug.Log("Atmosphere Generator Fixed");
                 HandleFuseBoxFixing();

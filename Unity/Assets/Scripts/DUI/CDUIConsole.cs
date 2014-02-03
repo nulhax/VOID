@@ -22,26 +22,29 @@ using System.Collections;
 [RequireComponent(typeof(CActorInteractable))]
 public class CDUIConsole : CNetworkMonoBehaviour 
 {
+	// Member Delegates & Events
+	public delegate void NotifyDUIEvent();
+
+	public event NotifyDUIEvent EventDUICreated = null;
+
 	// Member Fields 
 	public GameObject m_ScreenObject = null;
-	public CDUIRoot.EType m_DefaultUI = CDUIRoot.EType.INVALID;
+	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	
-	static private float s_UIOffset = 0.0f;
-	
     // Member Properties
-	public CNetworkViewId DUIViewId 
+	public CNetworkViewId DUIViewId
 	{ 
 		get { return(m_DUIViewId.Get()); } 
-		
+
 		[AServerOnly]
 		set { m_DUIViewId.Set(value); }
 	}
 
 	public GameObject DUI 
 	{ 
-		get { return(CNetwork.Factory.FindObject(m_DUIViewId.Get())); } 
+		get { return(m_DUIViewId.Get().GameObject); } 
 	}
 
 	public GameObject ConsoleScreen
@@ -50,16 +53,20 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _Registrar)
 	{
-		m_DUIViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_DUIViewId = _Registrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
-	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
+	public void OnNetworkVarSync(INetworkVar _SyncedVar)
 	{
-
+		if(_SyncedVar == m_DUIViewId)
+		{
+			if(EventDUICreated != null)
+				EventDUICreated();
+		}
 	}
-
+	
 	public void Awake()
 	{
 		// Register the interactable object events
@@ -71,27 +78,19 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			CreateDUI();
+			if(m_DUI != CDUIRoot.EType.INVALID)
+			{
+				// Instantiate the DUI object
+				GameObject DUIObj = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DUI));
+
+				// Set the view id of this console to the monitor
+				DUIObj.GetComponent<CDUIRoot>().ConsoleViewId = ViewId;
+			}
+			else
+			{
+				Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
+			}
 		}
-	}
-
-
-	[AServerOnly]
-    private void CreateDUI()
-	{
-		// Create the DUI game object
-		GameObject dui = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DefaultUI));
-		dui.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
-		dui.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
-
-		// Set the view id of this console to the monitor
-		dui.GetComponent<CDUIRoot>().ConsoleViewId = GetComponent<CNetworkView>().ViewId;
-
-		// Save the network view of the DUI
-		DUIViewId = dui.GetComponent<CNetworkView>().ViewId;
-
-		// Increment the offset
-		s_UIOffset += 10.0f;
 	}
 
 	[AClientOnly]
