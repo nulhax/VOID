@@ -64,11 +64,11 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 	
 	public void Start()
 	{
-		//CGameShips.Ship.GetComponent<CShipPowerSystem>().RegisterPowerGeneratorSystem(gameObject);
+		CGameShips.Ship.GetComponent<CShipPropulsionSystem>().RegisterPropulsionGeneratorSystem(gameObject);
 		
 		if(CNetwork.IsServer)
 		{
-			ActivatePowerGeneration();
+			ActivatePropulsionGeneration();
 		}
 	}
 	
@@ -89,13 +89,13 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	public void ActivatePowerGeneration()
+	public void ActivatePropulsionGeneration()
 	{
 		m_PropulsionGeneratorActive.Set(true);
 	}
 	
 	[AServerOnly]
-	public void DeactivatePowerGeneration()
+	public void DeactivatePropulsionGeneration()
 	{
 		m_PropulsionGeneratorActive.Set(false);
 	}

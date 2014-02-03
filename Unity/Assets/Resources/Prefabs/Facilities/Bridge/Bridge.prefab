@@ -2546,7 +2546,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100082}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -7, z: -13}
+  m_LocalPosition: {x: 0, y: -8.5, z: -13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400122}
@@ -6647,7 +6647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a20c1e29c4ed3ed4aad67efe9469fc68, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialRadius: 3.5
+  initialRadius: 4
   initialZoom: 1
   samplesPerAxis: 20
   particleScale: 2.5
@@ -6667,12 +6667,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6688,12 +6691,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6768,12 +6774,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6848,12 +6857,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6866,7 +6878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100070}
-  m_DefaultUI: 1
+  m_DUI: 1
 --- !u!114 &11400130
 MonoBehaviour:
   m_ObjectHideFlags: 1

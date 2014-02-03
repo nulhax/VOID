@@ -23,6 +23,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	public delegate void OnSetState(GameObject gameObject, byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	[SerializeField] public bool callEventsOnStart = false;
 	[SerializeField] public bool syncNetworkHealth = true;
 	[SerializeField] public bool destroyOnZeroHealth = false;
 	[SerializeField] public bool takeDamageOnImpact = false;
@@ -57,7 +58,14 @@ public class CActorHealth : CNetworkMonoBehaviour
 
 	void Start()
 	{
+		if (callEventsOnStart)
+		{
+			if (EventOnSetHealth != null)
+				EventOnSetHealth(gameObject, health_previous, health_current);
 
+			if (EventOnSetState != null)
+				EventOnSetState(gameObject, state_previous, state_current);
+		}
 	}
 
 	void Update()
@@ -100,7 +108,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 				state = currentState;
 		}
 
-		if (EventOnSetHealth != null)
+		if (EventOnSetHealth != null && health_current != health_previous)
 			EventOnSetHealth(gameObject, health_previous, health_current);
 
 		health_previous = health_current;

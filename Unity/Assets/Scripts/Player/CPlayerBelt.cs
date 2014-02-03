@@ -44,7 +44,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-	
+	public delegate void EquipTool(GameObject _equippedTool);
+	public event EquipTool EventEquipTool;
 	
 // Member Properties
 
@@ -262,7 +263,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
             switch (eAction)
             {
-                case ENetworkAction.ActivateToolPrimary:
+                case ENetworkAction.ActivateToolPrimary:					
                 case ENetworkAction.DeactivateToolPrimary:
                 case ENetworkAction.ActivateToolSecondary:
                 case ENetworkAction.DeactivateToolSeconary:
@@ -301,6 +302,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
                 case ENetworkAction.PickupTool:
                     cPlayerBelt.PickupTool(_cNetworkPlayer.PlayerId, cInteractableObject);
+					cPlayerBelt.EventEquipTool(cInteractableObject);
                     break;
 
                 case ENetworkAction.UseTool:
@@ -310,6 +312,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 case ENetworkAction.ChangeTool:
                     byte bSlotId = _cStream.ReadByte();
                     cPlayerBelt.ChangeTool(bSlotId);
+					cPlayerBelt.EventEquipTool(cInteractableObject);
                     break;
 
                 case ENetworkAction.ReloadActiveTool:
