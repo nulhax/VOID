@@ -44,7 +44,13 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
 		set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; }
 		get { return (m_RightHandTarget); }
-	}	
+	}
+
+    public Vector3 LeftHandIKTarget
+    {
+        set { m_LeftHandTarget = value; m_fLeftHandLerpTimer = 0; }
+        get { return (m_LeftHandTarget); }
+    }   
 	
 	//Member variables
 	Animator m_ThirdPersonAnim;
@@ -55,7 +61,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	Vector3					m_RightHandTarget;
 	bool 					m_bDisableRightHandWeighting = false;
 	float 					m_fRightHandLerpTime = 0.1f;
-	float 					m_fRightHandLerpTimer = 0.0f;	
+	float 					m_fRightHandLerpTimer = 0.0f;
+	float 					m_fRightHandHoldDistance = 0.75f;
 	CNetworkVar<Vector3> 	m_RightHandNetworkedTarget;
 
 	//Left hand
@@ -84,11 +91,16 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		gameObject.GetComponent<CPlayerBelt>().EventEquipTool += EquipTool;
 	}
 
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	{
+		m_RightHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_LeftHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+	}
+
 	[AServerOnly]
 	void EquipTool(GameObject _Tool)
 	{
-		m_equippedTool = _Tool.transform;
-		gameObject.GetComponent<CThirdPersonAnimController> ().IsHoldingTool = true;
+		m_equippedTool = _Tool.transform;	
 	}
 	
 	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
@@ -127,11 +139,6 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		}
 	}
 	
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
-	{
-        m_RightHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-	}
-	
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
 		if(CGamePlayers.SelfActor != gameObject)
@@ -142,7 +149,26 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	
 	void UpdateTarget(Vector3 _newTarget)
 	{
-		RightHandIKTarget = _newTarget;
+		//Figure out which hand is available for IK, based on tool state
+		switch (m_eToolState) 
+		{
+			case EToolState.NoTool:
+			{
+				RightHandIKTarget = _newTarget;
+				break;
+			}
+			case EToolState.SingleHandTool:
+			{
+				LeftHandIKTarget = _newTarget;
+				break;
+			}
+			case EToolState.TwoHandTool:
+			{
+				LeftHandIKTarget = _newTarget;
+				//Aditionally lower weapon in right hand
+				break;
+			}
+		}
 	}
 	
 	public static void SerializeIKTarget(CNetworkStream _cStream)
