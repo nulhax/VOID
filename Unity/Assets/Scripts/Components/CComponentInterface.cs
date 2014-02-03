@@ -38,7 +38,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		// Components
 		LiquidComp,
 		CalibratorComp,
-		WiringComp,
+		CircuitryComp,
 		RatchetComp,
 
         MAX
@@ -49,12 +49,12 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	// create the delegates
 
 
-	public delegate void NotifyComponentStateChange();
+	public delegate void NotifyComponentStateChange(CComponentInterface _Sender);
 
 	public event NotifyComponentStateChange EventComponentBreak;
 	public event NotifyComponentStateChange EventComponentFix;
 
-	public delegate void NotifyHealthChange(float _fHealth);
+	public delegate void NotifyHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth);
 
 	public event NotifyHealthChange EventHealthChange;
 
@@ -89,14 +89,14 @@ public class CComponentInterface : CNetworkMonoBehaviour
 			{
 				if(EventComponentFix != null)
 				{
-					EventComponentFix();
+					EventComponentFix(this);
 				}	
 			}
 			else
 			{
 				if(EventComponentBreak != null)
 				{
-					EventComponentBreak();
+					EventComponentBreak(this);
 				}
 			}
 		}
@@ -132,6 +132,9 @@ public class CComponentInterface : CNetworkMonoBehaviour
             Debug.LogError(string.Format("This component has not been given a component type. GameObjectName({0})", gameObject.name));
         }
 
+		// Register health change from the CActorHealth
+		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
+
 		// Register self with parent module
 		CModuleInterface mi = CUtility.FindInParents<CModuleInterface>(gameObject);
 		
@@ -146,8 +149,10 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	}
 
 
-	void OnDestroy()
+	private void OnHealthChange(GameObject _Sender, float _PreviousHealth, float _CurrentHealth)
 	{
+		if(EventHealthChange != null)
+			EventHealthChange(this, GetComponent<CActorHealth>());
 	}
 
 

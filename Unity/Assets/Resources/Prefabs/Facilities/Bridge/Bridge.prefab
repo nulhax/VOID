@@ -6667,12 +6667,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6688,12 +6691,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400104
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6768,12 +6774,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400116
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6848,12 +6857,15 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400128
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6866,7 +6878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100070}
-  m_DefaultUI: 1
+  m_DUI: 1
 --- !u!114 &11400130
 MonoBehaviour:
   m_ObjectHideFlags: 1
