@@ -57,16 +57,19 @@ public class CActorHealth : CNetworkMonoBehaviour
 
 	void Update()
 	{
-		timeUntilNextNetworkSync -= Time.deltaTime;
-		if (timeUntilNextNetworkSync <= 0.0f && (syncNetworkHealth || syncNetworkState))
+		if (CNetwork.IsServer)
 		{
-			if (syncNetworkHealth && health_current != health_internal.Get())
-				health_internal.Set(health_current);
+			timeUntilNextNetworkSync -= Time.deltaTime;
+			if (timeUntilNextNetworkSync <= 0.0f && (syncNetworkHealth || syncNetworkState))
+			{
+				if (syncNetworkHealth && health_current != health_internal.Get())
+					health_internal.Set(health_current);
 
-			if (syncNetworkState && state_current != state_internal.Get())
-				state_internal.Set(state_current);
+				if (syncNetworkState && state_current != state_internal.Get())
+					state_internal.Set(state_current);
 
-			timeUntilNextNetworkSync = timeBetweenNetworkSyncs;
+				timeUntilNextNetworkSync = timeBetweenNetworkSyncs;
+			}
 		}
 	}
 
