@@ -78,7 +78,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bIsFunctional = new CNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bIsFunctional = _cRegistrar.CreateNetworkVar(OnNetworkVarSync, true);
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
@@ -100,7 +100,6 @@ public class CComponentInterface : CNetworkMonoBehaviour
 				}
 			}
 		}
-
 	}
 
 
@@ -124,6 +123,13 @@ public class CComponentInterface : CNetworkMonoBehaviour
     }
 
 
+	void Awake()
+	{
+		// Register health change from the CActorHealth
+		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
+	}
+
+
 	void Start()
 	{
         // Ensure a type of defined 
@@ -131,9 +137,6 @@ public class CComponentInterface : CNetworkMonoBehaviour
         {
             Debug.LogError(string.Format("This component has not been given a component type. GameObjectName({0})", gameObject.name));
         }
-
-		// Register health change from the CActorHealth
-		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
 
 		// Register self with parent module
 		CModuleInterface mi = CUtility.FindInParents<CModuleInterface>(gameObject);
@@ -153,6 +156,11 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	{
 		if(EventHealthChange != null)
 			EventHealthChange(this, GetComponent<CActorHealth>());
+
+		if(CNetwork.IsServer && _CurrentHealth == 0.0f)
+		{
+			IsFunctional = false;
+		}
 	}
 
 

@@ -50,7 +50,13 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 		get { return (m_BatteryCapacity.Get()); }
 		
 		[AServerOnly]
-		set { m_BatteryCapacity.Set(value); }
+		set 
+		{ 
+			m_BatteryCapacity.Set(value); 
+
+			if(value > BatteryCharge)
+				BatteryCharge = value;
+		}
 	}
 	
 	public bool IsBatteryChargeAvailable
