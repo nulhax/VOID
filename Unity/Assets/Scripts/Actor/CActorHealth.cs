@@ -55,6 +55,11 @@ public class CActorHealth : CNetworkMonoBehaviour
 		state_previous = state_current = state_initial;
 	}
 
+	void Start()
+	{
+
+	}
+
 	void Update()
 	{
 		if (CNetwork.IsServer)

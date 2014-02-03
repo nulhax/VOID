@@ -205,52 +205,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
-    public void Awake()
-    {
-        StartupPeer();
-    }
-
-
-    public void OnDestory()
-    {
-        Disconnect();
-        ShutdownPeer();
-    }
-
-
-	public void Update()
-	{
-		// Process inbound packets
-		if (this.IsActive)
-		{
-			ProcessInboundPackets();
-			ProcessInboundRate();
-		}
-
-		if (Input.GetKeyDown(KeyCode.F3))
-		{
-			m_bShowStats = !m_bShowStats;
-		}
-	}
-
-
-	public void LateUpdate()
-    {
-        // Process outbound packets
-        if (this.IsActive)
-        {
-			if (this.IsConnected)
-            {
-				ProcessOutboundPackets();
-
-				UpdateTicksAndTimes();
-			}
-
-			ProcessOutboundRate();
-        }
-    }
-
-
     public bool ConnectToServer(string _sServerIp, ushort _usServerPort, string _sServerPassword)
     {
         bool bConnectionStarted = false;
@@ -282,29 +236,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
         return (bConnectionStarted);
     }
-
-
-	public void OnGUI()
-	{
-		if (IsConnected &&
-            m_bShowStats)
-		{
-			RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(m_cServerSystemAddress);
-
-			string sStatistics = "";
-            sStatistics += string.Format("Connection Statistics\n");
-			sStatistics += string.Format("Server ({0})\n", m_cServerSystemAddress.ToString());
-			sStatistics += string.Format("Ping ({0}) Average ({0})\n", m_cRnPeer.GetLastPing(m_cServerSystemAddress), m_cRnPeer.GetAveragePing(m_cServerSystemAddress));
-			sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", cStatistics.messageInSendBuffer[0], cStatistics.bytesInSendBuffer[0]);
-			sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", cStatistics.messagesInResendBuffer, cStatistics.bytesInResendBuffer);
-			sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
-			sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
-			sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
-
-
-			GUI.Label(new Rect(Screen.width - 250, 0.0f, 250, 200), sStatistics);
-		}
-	}
 
 
     public void Disconnect()
@@ -399,7 +330,55 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
-	protected void UpdateTicksAndTimes()
+
+
+    void Awake()
+    {
+        StartupPeer();
+    }
+
+
+    void OnDestory()
+    {
+        Disconnect();
+        ShutdownPeer();
+    }
+
+
+    void Update()
+    {
+        // Process packets
+        if (this.IsActive)
+        {
+            ProcessInboundPackets();
+
+            if (this.IsConnected)
+            {
+                UpdateTicksAndTimes();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            m_bShowStats = !m_bShowStats;
+        }
+    }
+
+
+    void LateUpdate()
+    {
+        // Process packets
+        if (this.IsActive)
+        {
+            if (this.IsConnected)
+            {
+                ProcessOutboundPackets();
+            }
+        }
+    }
+
+
+	void UpdateTicksAndTimes()
 	{
 		m_fTickTimer += Time.deltaTime;
 		m_fTickTimer -= Mathf.Floor(m_fTickTimer);
@@ -410,7 +389,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
-    protected void ProcessInboundPackets()
+    void ProcessInboundPackets()
     {
         RakNet.Packet cRnPacket = null;
 
@@ -498,7 +477,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-    protected void ProcessOutboundPackets()
+    void ProcessOutboundPackets()
     {
 		if (!m_bDownloadingInitialGameState)
 		{
@@ -538,10 +517,12 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-	protected void ProcessInboundRate()
+	void ProcessInboundOutboundRates()
 	{
 		// Timer increment
 		m_tInboundRateData.fTimer += Time.deltaTime;
+		m_tOutboundRateData.fTimer += Time.deltaTime;
+
 
 		if (m_tInboundRateData.fTimer > 1.0f)
 		{
@@ -552,19 +533,13 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			m_tInboundRateData.uiBytes = 0;
 			m_tInboundRateData.fTimer = 0.0f;
 		}
-	}
 
 
-	protected void ProcessOutboundRate()
-	{
-		// Timer increment
-		m_tOutboundRateData.fTimer += Time.deltaTime;
-		
 		if (m_tOutboundRateData.fTimer > 1.0f)
 		{
 			m_tOutboundRateData.uiLastTotalEntries = m_tOutboundRateData.uiNumEntries;
 			m_tOutboundRateData.uiLastTotalBytes = m_tOutboundRateData.uiBytes;
-			
+
 			m_tOutboundRateData.uiNumEntries = 0;
 			m_tOutboundRateData.uiBytes = 0;
 			m_tOutboundRateData.fTimer = 0.0f;
@@ -572,7 +547,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	}
 
 
-    protected void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
+    void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
     {
 		m_fConnectionElapsedTime = 0.0f;
 		m_fTick = 0;
@@ -592,7 +567,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-    protected void HandleNetworkViewPacket(byte[] _baData)
+    void HandleNetworkViewPacket(byte[] _baData)
     {
 		if (IsConnected)
 		{
@@ -615,7 +590,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-    protected void HandleDisconnect(EDisconnectType _eDisconnectType)
+    void HandleDisconnect(EDisconnectType _eDisconnectType)
     {
         // Notify event observers
         if (EventDisconnect != null)
@@ -627,7 +602,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 	
 	
-	protected void HandleMicrophoneAudio(byte[] _bAudioData)
+	void HandleMicrophoneAudio(byte[] _bAudioData)
 	{
 		if (EventRecievedMicrophoneAudio != null)
 		{
@@ -635,70 +610,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			cAudioDataStream.IgnoreBytes(1);
 			
 			EventRecievedMicrophoneAudio(cAudioDataStream);
-		}
-	}
-
-
-	protected static void CompileSerializeTargetsOutboundData()
-	{
-		// Create packet stream
-		CNetworkStream cSerializedDataStream = new CNetworkStream();
-
-
-		foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mSerializeTargets)
-		{
-			tEntry.Value.nSerializeMethod(cSerializedDataStream);
-
-
-			if (cSerializedDataStream.Size > 0)
-			{
-				// Write the control identifier
-				s_cUntrottledSerializationStream.Write(tEntry.Key);
-
-				// Write the serializing target type
-				s_cUntrottledSerializationStream.Write((byte)ESerializeTargetType.Unthrottled);
-
-				// Write the size of the data
-				s_cUntrottledSerializationStream.Write((byte)cSerializedDataStream.Size);
-
-				// Write the data
-				s_cUntrottledSerializationStream.Write(cSerializedDataStream);
-
-				// Clear target stream
-				cSerializedDataStream.Clear();
-			}
-		}
-	}
-
-
-	protected static void CompileThrottledSerializeTargetsOutboundData(CNetworkStream _cOutboundStream)
-	{
-		// Create packet stream
-		CNetworkStream cSerializedDataStream = new CNetworkStream();
-
-
-		foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mThrottledSerializeTargets)
-		{
-			tEntry.Value.nSerializeMethod(cSerializedDataStream);
-
-
-			if (cSerializedDataStream.Size > 0)
-			{
-				// Write the control identifier
-				_cOutboundStream.Write(tEntry.Key);
-
-				// Write the serializing target type
-				_cOutboundStream.Write((byte)ESerializeTargetType.Throttled);
-
-				// Write the size of the data
-				_cOutboundStream.Write((byte)cSerializedDataStream.Size);
-
-				// Write the data
-				_cOutboundStream.Write(cSerializedDataStream);
-
-				// Clear target stream
-				cSerializedDataStream.Clear();
-			}
 		}
 	}
 
@@ -748,6 +659,93 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			EventInitialGameStateDownloaded();
 		}
 	}
+
+
+    void OnGUI()
+    {
+        if (IsConnected &&
+            m_bShowStats)
+        {
+            RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(m_cServerSystemAddress);
+
+            string sStatistics = "";
+            sStatistics += string.Format("Connection Statistics\n");
+            sStatistics += string.Format("Server ({0})\n", m_cServerSystemAddress.ToString());
+            sStatistics += string.Format("Ping ({0}) Average ({0})\n", m_cRnPeer.GetLastPing(m_cServerSystemAddress), m_cRnPeer.GetAveragePing(m_cServerSystemAddress));
+            sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", cStatistics.messageInSendBuffer[0], cStatistics.bytesInSendBuffer[0]);
+            sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", cStatistics.messagesInResendBuffer, cStatistics.bytesInResendBuffer);
+            sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
+            sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
+            sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
+
+
+            GUI.Label(new Rect(Screen.width - 250, 0.0f, 250, 200), sStatistics);
+        }
+    }
+
+
+    static void CompileSerializeTargetsOutboundData()
+    {
+        // Create packet stream
+        CNetworkStream cSerializedDataStream = new CNetworkStream();
+
+
+        foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mSerializeTargets)
+        {
+            tEntry.Value.nSerializeMethod(cSerializedDataStream);
+
+
+            if (cSerializedDataStream.Size > 0)
+            {
+                // Write the control identifier
+                s_cUntrottledSerializationStream.Write(tEntry.Key);
+
+                // Write the serializing target type
+                s_cUntrottledSerializationStream.Write((byte)ESerializeTargetType.Unthrottled);
+
+                // Write the size of the data
+                s_cUntrottledSerializationStream.Write((byte)cSerializedDataStream.Size);
+
+                // Write the data
+                s_cUntrottledSerializationStream.Write(cSerializedDataStream);
+
+                // Clear target stream
+                cSerializedDataStream.Clear();
+            }
+        }
+    }
+
+
+    static void CompileThrottledSerializeTargetsOutboundData(CNetworkStream _cOutboundStream)
+    {
+        // Create packet stream
+        CNetworkStream cSerializedDataStream = new CNetworkStream();
+
+
+        foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mThrottledSerializeTargets)
+        {
+            tEntry.Value.nSerializeMethod(cSerializedDataStream);
+
+
+            if (cSerializedDataStream.Size > 0)
+            {
+                // Write the control identifier
+                _cOutboundStream.Write(tEntry.Key);
+
+                // Write the serializing target type
+                _cOutboundStream.Write((byte)ESerializeTargetType.Throttled);
+
+                // Write the size of the data
+                _cOutboundStream.Write((byte)cSerializedDataStream.Size);
+
+                // Write the data
+                _cOutboundStream.Write(cSerializedDataStream);
+
+                // Clear target stream
+                cSerializedDataStream.Clear();
+            }
+        }
+    }
 
 
 // Member Fields

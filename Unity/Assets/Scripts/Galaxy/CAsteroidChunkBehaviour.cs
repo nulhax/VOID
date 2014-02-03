@@ -59,14 +59,17 @@ public class CAsteroidChunkBehaviour : CNetworkMonoBehaviour
 	{
 		m_iHighlightRefCount += (_bHighlighted) ? 1 : -1;
 
-		if (m_iHighlightRefCount > 0)
-		{
-			m_bHighlighted.Set(true);
-		}
-		else
-		{
-			m_bHighlighted.Set(false);
-		}
+        if (CNetwork.IsServer)
+        {
+            if (m_iHighlightRefCount > 0)
+            {
+                m_bHighlighted.Set(true);
+            }
+            else
+            {
+                m_bHighlighted.Set(false);
+            }
+        }
 	}
 
 

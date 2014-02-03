@@ -16,8 +16,8 @@ GameObject:
   - 114: {fileID: 11400006}
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400008}
-  - 135: {fileID: 13500000}
-  m_Layer: 11
+  - 64: {fileID: 6400000}
+  m_Layer: 10
   m_Name: Asteroid0
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -78,6 +78,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!64 &6400000
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: 0aee836645b89374583afeb4ca36b969, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -102,9 +115,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Position: 1
   Angle: 1
-  PositionalVelocity: 0
-  AngularVelocity: 0
-  UpdatesPerSecond: 0
+  PositionalVelocity: 1
+  AngularVelocity: 1
+  UpdatesPerSecond: .25
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -150,18 +163,6 @@ MonoBehaviour:
   stateTransitions: []
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
---- !u!135 &13500000
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 74.7915955
-  m_Center: {x: -3.43099976, y: .279697418, z: 3.49610138}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
