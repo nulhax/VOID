@@ -34,7 +34,8 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	CNetworkVar<int> m_iStoredNanites = null;
 	CNetworkVar<int> m_iNaniteCapacity = null;
 	CNetworkVar<bool> m_bNanitesAvailable = null;
-	
+
+	const int m_kiMaxNanites = 250;
 	
 	// Member Properties
 	public int StoredNanites
@@ -71,7 +72,7 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_iStoredNanites= _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
-		m_iNaniteCapacity= _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 5000);
+		m_iNaniteCapacity= _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, m_kiMaxNanites);
 		m_bNanitesAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
