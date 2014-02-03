@@ -33,11 +33,14 @@ public class CFireHazard : MonoBehaviour
 		{
 			case 0:	// Begin fire.
 				gameObject.GetComponent<Collider>().enabled = true;
+				gameObject.GetComponent<ParticleSystem>().Play();
 				break;
 
 			case 2:	// End fire.
 				gameObject.GetComponent<Collider>().enabled = false;
-
+				ParticleSystem particleSystem = gameObject.GetComponent<ParticleSystem>();
+				particleSystem.Stop();
+				particleSystem.Clear();
 				break;
 		}
 	}
