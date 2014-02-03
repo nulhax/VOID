@@ -28,7 +28,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-
+	public delegate void NotifyRotationChange(Vector3 _bNewTarget);
+	public event NotifyRotationChange EventRotationChange;
 
 // Member Properties
 
@@ -177,6 +178,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 			// Apply the pitch to the camera
 			m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
+
+			EventRotationChange(transform.forward);
 		}
 	}
 
