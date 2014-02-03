@@ -101,6 +101,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	[AServerOnly]
 	public void AddNanites(int _iNanites)
 	{
+		/*
 		int iNumSilos = m_NaniteSilos.Count;
 
 		int evenDistribution = _iNanites / iNumSilos;
@@ -133,11 +134,15 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 		}
 
 		ShipNanites = totalNanites;
+		*/
+
+		ShipNanites += _iNanites;
 	}
 		
 	[AServerOnly]
 	private void DeductNanites(int _iNanites)
 	{
+		/*
 		int iOriginalDebt = _iNanites;
 
 		if (_iNanites < ShipNanites) 
@@ -195,5 +200,17 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 		{
 			Debug.LogError("Insufficient nanites - always check available nanites before deducting");
 		}
+		*/
+
+		ShipNanites -= _iNanites;
+	}
+
+	public void OnGUI()
+	{
+		float boxWidth = 100;
+		float boxHeight = 100;
+
+		string nanites = ShipNanites.ToString();
+		GUI.Label(new Rect(Screen.width / 2 + boxWidth * 5, Screen.height / 2 + boxHeight, boxWidth, boxHeight), "Ship Nanites: " +  nanites);
 	}
 }

@@ -61,25 +61,22 @@ public class CGalaxy : CNetworkMonoBehaviour
     {
         public CGameRegistrator.ENetworkPrefab mPrefabID;
         public SCellPos mParentAbsoluteCell;
-        public float mScale;
         public Vector3 mPosition;
         public Quaternion mRotation;
         public Vector3 mLinearVelocity;
         public Vector3 mAngularVelocity;
-        public float mMassToHealthScalar;
+
         public bool mHasNetworkedEntityScript;
         public bool mHasRigidBody;
 
-        public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, float scale, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, float massToHealthScalar, bool hasNetworkedEntityScript, bool hasRigidBody)
+        public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
         {
             mPrefabID = prefabID;
             mParentAbsoluteCell = parentAbsoluteCell;
-            mScale = scale;
             mPosition = position;
             mRotation = rotation;
             mLinearVelocity = linearVelocity;
             mAngularVelocity = angularVelocity;
-            mMassToHealthScalar = massToHealthScalar;
             mHasNetworkedEntityScript = hasNetworkedEntityScript;
             mHasRigidBody = hasRigidBody;
         }
@@ -737,7 +734,7 @@ public class CGalaxy : CNetworkMonoBehaviour
         Vector3 gubbinPosition = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition;
         
         // Check if the new gubbin has room to spawn.
-        if (Physics.CheckSphere(gubbinPosition, GetBoundingRadius(gubbinObject) * gubbin.mScale))
+        if (Physics.CheckSphere(gubbinPosition, GetBoundingRadius(gubbinObject)))
         {
             CNetwork.Factory.DestoryObject(gubbinObject);
             return false;
@@ -763,20 +760,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         if (!networkedEntity || !networkedEntity.Angle)  // If the object does not have a networked entity script, or if the networked entity script does not update rotation...
             networkView.SyncTransformRotation();// Sync the rotation through the network view.
 
-        // Scale.
-        if (gubbin.mScale != 1.0f)   // Avoid applying scale if possible, as it may invoke expensive computations behind the scenes.
-        {
-            gubbinObject.transform.localScale *= gubbin.mScale; // Set scale.
-            networkView.SyncTransformScale();   // Sync the scale through the network view - the network entity script does not sync this.
-
-            // Mass.
-            if (rigidBody != null)  // If the object has a rigid body...
-            {
-                rigidBody.mass *= gubbin.mScale * gubbin.mScale;    // Update the mass of the object based on its new scale.
-                networkView.SyncRigidBodyMass();    // Sync the mass through the network view - the network entity script does not sync this.
-            }
-        }
-
         // Linear velocity.
         if (rigidBody != null && gubbin.mLinearVelocity != null)
             rigidBody.velocity = gubbin.mLinearVelocity;
@@ -788,13 +771,6 @@ public class CGalaxy : CNetworkMonoBehaviour
         // Sync everything the networked entity script handles.
         if (networkedEntity)
             networkedEntity.UpdateNetworkVars();
-
-        // Health.
-        //if (gubbin.mMassToHealthScalar > 0.0f && rigidBody != null)
-        //{
-        //    CActorHealth health = gubbinObject.GetComponent<CActorHealth>();
-        //    health.health = rigidBody.mass * gubbin.mMassToHealthScalar;
-        //}
 
         Profiler.BeginSample("Push gubbin to list of gubbins");
         mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
@@ -1045,12 +1021,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 
             mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                 absoluteCell,   // Parent cell.
-                                                /*Random.Range(10.0f, 150.0f)*/1.0f,    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                 Random.rotationUniform, // Rotation.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                -1.0f,   // Mass to health scalar. Zero if there is no health script.
                                                 true,   // Has NetworkedEntity script.
                                                 false    // Has a rigid body.
                                                 ));
@@ -1075,12 +1049,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 
                 mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
                                                     absoluteCell,   // Parent cell.
-                                                    1.0f/*Random.Range(10.0f, 150.0f)*/,    // Scale.
                                                     clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
                                                     Random.rotationUniform, // Rotation.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                     Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                    0.5f,   // Mass to health scalar. Zero if there is no health script.
                                                     true,   // Has NetworkedEntity script.
                                                     true    // Has a rigid body.
                                                     ));
@@ -1104,12 +1076,10 @@ public class CGalaxy : CNetworkMonoBehaviour
         {
             mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,    // Enemy ship prefab.
                                                 absoluteCell,   // Parent cell.
-                                                1.0f,    // Scale.
                                                 new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
                                                 Random.rotationUniform, // Rotation.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
                                                 Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
-                                                0.0f,   // Mass to health scalar. Zero if there is no health script.
                                                 true,   // Has NetworkedEntity script.
                                                 true    // Has a rigid body.
                                                 ));
@@ -1210,9 +1180,9 @@ public class CGalaxy : CNetworkMonoBehaviour
             result = collider.bounds.extents.magnitude;
         else
         {
-            MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-            if (meshRenderer)
-                result = meshRenderer.bounds.extents.magnitude;
+            Renderer renderer = gameObject.GetComponent<Renderer>();
+            if (renderer)
+                result = renderer.bounds.extents.magnitude;
             else
             {
                 bool gotSomethingFromAnimator = false;
@@ -1225,8 +1195,10 @@ public class CGalaxy : CNetworkMonoBehaviour
                     else if (anim.rigidbody) result = anim.rigidbody.collider.bounds.extents.magnitude;
                 }
 
-                if (!gotSomethingFromAnimator)
-                    Debug.LogWarning("Galaxy→GetBoundingRadius(): No RigidBody, Collider, MeshRenderer, or Animator on " + gameObject.name + ". Bounding radius set to 1");
+				if (!gotSomethingFromAnimator)
+				{
+
+				}
             }
         }
 

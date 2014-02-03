@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -31,8 +31,7 @@ public class CTestPowerGenerator: MonoBehaviour
 	
 	// Member Fields
 	public float m_MaxPowerGenerationRate = 15.0f;
-
-	private float m_PrevPowerGenerationRate = 0.0f;
+	public GameObject m_DUIConsole = null;
 
 	private CPowerGenerationBehaviour m_PowerGenerator = null;
 	private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
@@ -44,28 +43,20 @@ public class CTestPowerGenerator: MonoBehaviour
 	public void Start()
 	{
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
-		m_DUIPowerGeneration = gameObject.GetComponentInChildren<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
 
 		// Register for when the fusebox breaks/fixes
-		CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		fbc.EventBroken += HandleFuseBoxBreaking;
-		fbc.EventFixed += HandleFuseBoxFixing;
+		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
+		//fbc.EventBroken += HandleFuseBoxBreaking;
+		//fbc.EventFixed += HandleFuseBoxFixing;
 
-		// Register power generator value change
+		// Register for when the generation rate changes
 		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
-	}
-	
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			if(m_PrevPowerGenerationRate != m_MaxPowerGenerationRate)
-			{
-				m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
-			
-				m_PrevPowerGenerationRate = m_MaxPowerGenerationRate;
-			}
-		}
+
+		// Get the DUI of the power generator
+		m_DUIPowerGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
+
+		// Set the generation rate
+		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
 	}
 
 	private void HandleFuseBoxBreaking(GameObject _FuseBox)
@@ -87,6 +78,9 @@ public class CTestPowerGenerator: MonoBehaviour
 	private void HandleGenerationRateChange(GameObject _PowerGen)
 	{
 		// Update the UI generation rate
-		m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_MaxPowerGenerationRate);
+		if(m_DUIPowerGeneration != null)
+		{
+			m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_MaxPowerGenerationRate);
+		}
 	}
 }

@@ -273,7 +273,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
   m_LocalRotation: {x: .093097873, y: -.69491291, z: .0914870203, w: .707148492}
-  m_LocalPosition: {x: 1.06689024, y: 1.66600192, z: .0182557907}
+  m_LocalPosition: {x: 1.06689024, y: 1.13253558, z: .0182557907}
   m_LocalScale: {x: .400000006, y: .5, z: .100000001}
   m_Children:
   - {fileID: 400014}
@@ -703,6 +703,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxPowerGenerationRate: 15
+  m_DUIConsole: {fileID: 100016}
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -716,7 +717,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
+  takeDamageOnImpact: 1
   syncNetworkState: 1
   health_initial: 1000
   health_previous: 0

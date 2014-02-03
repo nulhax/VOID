@@ -71,6 +71,8 @@ public class CMinerals : CNetworkMonoBehaviour
 
                 CNetwork.Factory.DestoryObject(gameObject);
             }
+
+            CGameShips.Ship.GetComponent<CShipNaniteSystem>().AddNanites((int)_fQuantity);
         }
 
         return (m_fQuantity.Get());

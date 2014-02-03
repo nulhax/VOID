@@ -46,10 +46,10 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	public Vector2 m_RenderTexSize = Vector2.zero;
 
     private RenderTexture m_RenderTex = null; 
-
 	private CNetworkVar<CNetworkViewId> m_ConsoleViewId = null;
 
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+	static float s_UIOffset = 0.0f;
+	static Dictionary<CDUIRoot.EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<CDUIRoot.EType, CGameRegistrator.ENetworkPrefab>();
 
 	// Member Properties
 	public CNetworkViewId ConsoleViewId 
@@ -62,7 +62,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 	public GameObject Console 
 	{ 
-		get { return(CNetwork.Factory.FindObject(m_ConsoleViewId.Get())); } 
+		get { return(m_ConsoleViewId.Get().GameObject); } 
 	}
 
 	public GameObject DUICamera2D 
@@ -92,6 +92,22 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 			// Attach the camera to the consoles screen
 			AttatchRenderTexture(Console.GetComponent<CDUIConsole>().ConsoleScreen.renderer.material);
+
+			// Set the view ID of the dui monitor for the console
+			Console.GetComponent<CDUIConsole>().DUIViewId = ViewId;
+		}
+	}
+
+	public void Start()
+	{
+		if(CNetwork.IsServer)
+		{
+			// Offset its position
+			gameObject.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
+			gameObject.GetComponent<CNetworkView>().SetRotation(Quaternion.identity.eulerAngles);
+
+			// Increment the offset
+			s_UIOffset += 10.0f;
 		}
 	}
 
@@ -158,23 +174,6 @@ public class CDUIRoot : CNetworkMonoBehaviour
 			m_DUICamera3D.GetComponent<UICamera>().enabled = true;
 		}
 	}
-
-	public static void RegisterPrefab(EType _DUIType, CGameRegistrator.ENetworkPrefab _Prefab)
-	{
-		s_RegisteredPrefabs.Add(_DUIType, _Prefab);
-	}
-
-	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _DUIType)
-	{
-		if (!s_RegisteredPrefabs.ContainsKey(_DUIType))
-		{
-			Debug.LogError(string.Format("DUI type ({0}) has not been registered a prefab", _DUIType));
-			
-			return (CGameRegistrator.ENetworkPrefab.INVALID);
-		}
-		
-		return (s_RegisteredPrefabs[_DUIType]);
-	}
 	
 	private void AttatchRenderTexture(Material _ScreenMaterial)
 	{
@@ -217,5 +216,22 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		Vector3 rayOrigin = transform.position + offset + transform.forward * -1.0f;
 		
 		return(rayOrigin);
+	}
+
+	public static void RegisterPrefab(EType _DUIType, CGameRegistrator.ENetworkPrefab _NetworkPrefab)
+	{
+		s_RegisteredPrefabs.Add(_DUIType, _NetworkPrefab);
+	}
+
+	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _DUIType)
+	{
+		if (!s_RegisteredPrefabs.ContainsKey(_DUIType))
+		{
+			Debug.LogError(string.Format("DUI type ({0}) has not been registered a prefab", _DUIType));
+			
+			return (CGameRegistrator.ENetworkPrefab.INVALID);
+		}
+		
+		return (s_RegisteredPrefabs[_DUIType]);
 	}
 }
