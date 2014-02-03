@@ -13,8 +13,8 @@
 using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
 [RequireComponent(typeof(CNetworkView))]
+[System.Serializable]
 public class CActorHealth : CNetworkMonoBehaviour
 {
 	public delegate void OnSetHealth(GameObject gameObject, float prevHealth, float currHealth);
@@ -26,18 +26,17 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public bool syncNetworkHealth = true;
 	[SerializeField] public bool destroyOnZeroHealth = false;
 	[SerializeField] public bool takeDamageOnImpact = false;
-
 	[SerializeField] public bool syncNetworkState = true;
 
 	[SerializeField] public float health_initial = 1.0f;
-	public float health_previous;
+	[HideInInspector] public float health_previous;
 	private float health_current;
 	protected CNetworkVar<float> health_internal = null;
 	public float health { get { return health_current; } set { if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
 
 	[SerializeField] public byte state_initial = 0;
 	[SerializeField] public float[] stateTransitions;
-	public byte state_previous;
+	[HideInInspector] public byte state_previous;
 	private byte state_current;
 	protected CNetworkVar<byte> state_internal = null;
 	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
@@ -84,7 +83,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		if (syncNetworkState)
 			state_current = state_internal.Get();
 
-		if (EventOnSetState != null)
+		if (EventOnSetState != null && state_current != state_previous)
 			EventOnSetState(gameObject, state_previous, state_current);
 
 		state_previous = state_current;

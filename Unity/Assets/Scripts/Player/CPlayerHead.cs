@@ -101,17 +101,24 @@ public class CPlayerHead : CNetworkMonoBehaviour
     }
 
 
-	[AServerOnly]
+	[AClientOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 	}
 
 
-	[AServerOnly]
-	public void UndisableInput(object _cFreezeRequester)
+	[AClientOnly]
+	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
+	}
+
+
+	[AClientOnly]
+	public void ResetHeadRotations()
+	{
+		m_vRotation = Vector3.zero;
 	}
 
 
@@ -142,7 +149,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -150,7 +157,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGame.CompositeCameraSystem.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();

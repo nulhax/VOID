@@ -25,6 +25,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 	// Member Delegates & Events
 	
 	// Member Properties
+	public bool IsHoldingTool
+	{
+		set{ m_bHoldTool = value;}
+		get{ return(m_bHoldTool);}
+	}
 	
 	// Member Fields
 	
@@ -48,6 +53,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	byte m_MovementState;
 	
 	bool m_bUsedSlide = false;
+	bool m_bHoldTool = false;
 	
 	//Timers
 	float m_fTimeLastGrounded = 0.0f;
@@ -101,6 +107,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 		m_ThirdPersonAnim.SetBool("Jump", bJump);
 		m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
 		m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
+		m_ThirdPersonAnim.SetBool("RightHandHold", IsHoldingTool);
 		
 		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 		

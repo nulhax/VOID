@@ -713,7 +713,6 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400104}
   - 114: {fileID: 11400102}
-  - 114: {fileID: 11400100}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -759,6 +758,7 @@ GameObject:
   - 114: {fileID: 11400138}
   - 82: {fileID: 8200006}
   - 114: {fileID: 11400136}
+  - 114: {fileID: 11400100}
   m_Layer: 0
   m_Name: Alarm
   m_TagString: Untagged
@@ -2055,8 +2055,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100136}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -10.7310181, z: -4.83237839}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
+  m_LocalPosition: {x: 0, y: -7.71847153, z: -39.3160362}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400134}
@@ -3807,7 +3807,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 2
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100032}
   m_Internal: 1
 --- !u!114 &11400052
@@ -4110,12 +4110,22 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100084}
+  m_GameObject: {fileID: 100088}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5d120a5a14b48f4294ec20dc008e49e, type: 3}
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncNetworkHealth: 1
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 1
+  syncNetworkState: 1
+  health_initial: 1000
+  health_previous: 0
+  state_initial: 1
+  stateTransitions:
+  - 0
+  state_previous: 0
 --- !u!114 &11400102
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4129,12 +4139,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
+  takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_initial: 1
+  health_initial: 1000
   health_previous: 0
-  state_initial: 0
-  stateTransitions: []
+  state_initial: 1
+  stateTransitions:
+  - 0
   state_previous: 0
 --- !u!114 &11400104
 MonoBehaviour:
@@ -4208,12 +4219,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
+  takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_initial: 1
+  health_initial: 1000
   health_previous: 0
-  state_initial: 0
-  stateTransitions: []
+  state_initial: 1
+  stateTransitions:
+  - 0
   state_previous: 0
 --- !u!114 &11400116
 MonoBehaviour:
@@ -4287,12 +4299,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
-  takeDamageOnImpact: 0
+  takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_initial: 1
+  health_initial: 1000
   health_previous: 0
-  state_initial: 0
-  stateTransitions: []
+  state_initial: 1
+  stateTransitions:
+  - 0
   state_previous: 0
 --- !u!114 &11400128
 MonoBehaviour:
@@ -4744,7 +4757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 2
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100036}
   m_Internal: 1
 --- !u!114 &11400204
@@ -4842,7 +4855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 13
+  m_PreplacedModuleType: 2
   m_Positioner: {fileID: 100134}
   m_Internal: 1
 --- !u!114 &11400220

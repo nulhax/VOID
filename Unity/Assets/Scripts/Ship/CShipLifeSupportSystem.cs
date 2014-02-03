@@ -180,7 +180,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		string generatorOutput = "GeneratorInfo\n";
 		foreach(GameObject generator in m_AtmosphereGenerators)
 		{
-			CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(generator);
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(generator);
 			CAtmosphereGeneratorBehaviour agb = generator.GetComponent<CAtmosphereGeneratorBehaviour>();
 
 			generatorOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsGenerationActive: [{3}] GenRate: [{4}]\n", 
@@ -194,7 +194,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		string conditionerOutput = "ConditionerInfo\n";
 		foreach(GameObject conditioner in m_AtmosphereConditioners)
 		{
-			CFacilityInterface fi = NGUITools.FindInParents<CFacilityInterface>(conditioner);
+			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(conditioner);
 			CAtmosphereConditioningBehaviour acb = conditioner.GetComponent<CAtmosphereConditioningBehaviour>();
 			
 			conditionerOutput += string.Format("\t[{0}] Within Facility [{1}] Type [{2}] \n\t\tIsConditioningActive: [{3}] SupportCap: [{4}]\n", 

@@ -133,7 +133,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
         }
 
 		// Register self with parent module
-		CModuleInterface mi = NGUITools.FindInParents<CModuleInterface>(gameObject);
+		CModuleInterface mi = CUtility.FindInParents<CModuleInterface>(gameObject);
 		
 		if(mi != null)
 		{
