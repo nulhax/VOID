@@ -6663,6 +6663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
@@ -6687,6 +6688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
@@ -6770,6 +6772,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
@@ -6853,6 +6856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
@@ -7414,7 +7418,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 0
+  m_PreplacedModuleType: 14
   m_Positioner: {fileID: 100134}
   m_Internal: 1
 --- !u!114 &11400220

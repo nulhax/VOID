@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CRoomPower.cs
+//  File Name   :   CFacilityPower.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
