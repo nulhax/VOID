@@ -17,7 +17,6 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
-
 	public bool burning = false;
 
 	void Awake()
@@ -35,17 +34,30 @@ public class CFireHazard : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Begin fire.
-				//gameObject.GetComponent<Collider>().enabled = true;
-				gameObject.GetComponent<ParticleSystem>().Play();
-				gameObject.GetComponent<CFireHazard>().burning = true;
+				{
+					//gameObject.GetComponent<Collider>().enabled = true;
+					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
+					foreach (ParticleSystem particleSystem in particleSystems)
+					{
+						particleSystem.Play();
+					}
+
+					gameObject.GetComponent<CFireHazard>().burning = true;
+				}
 				break;
 
 			case 2:	// End fire.
-				//gameObject.GetComponent<Collider>().enabled = false;
-				ParticleSystem particleSystem = gameObject.GetComponent<ParticleSystem>();
-				particleSystem.Stop();
-				particleSystem.Clear();
-				gameObject.GetComponent<CFireHazard>().burning = false;
+				{
+					//gameObject.GetComponent<Collider>().enabled = false;
+					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
+					foreach (ParticleSystem particleSystem in particleSystems)
+					{
+						particleSystem.Stop();
+						particleSystem.Clear();
+					}
+
+					gameObject.GetComponent<CFireHazard>().burning = false;
+				}
 				break;
 		}
 	}

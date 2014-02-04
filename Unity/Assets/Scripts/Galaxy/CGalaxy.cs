@@ -190,6 +190,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
     void Start()
     {
+		//GameObject.Instantiate(Resources.Load("Prefabs/Hazards/Fire/Fire", typeof(GameObject)) as GameObject, new Vector3(-10, -10, -15), Quaternion.Euler(new Vector3(-90, 0, 0)));
+
         // Fog and skybox are controlled by the galaxy.
         RenderSettings.fog = false;
         RenderSettings.skybox = null;
