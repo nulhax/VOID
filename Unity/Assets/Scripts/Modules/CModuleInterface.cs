@@ -60,6 +60,7 @@ public class CModuleInterface : MonoBehaviour
         OxygenRefiller,
         Dispenser,
         NaniteCapsule,
+        Engine,
 
         MAX
 	}

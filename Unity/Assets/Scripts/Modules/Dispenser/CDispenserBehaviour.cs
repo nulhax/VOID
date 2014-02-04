@@ -61,6 +61,7 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
         // Set invalid tool
         m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
 
+        // Debug: Health set
         m_fHealth = 50.0f;
     }
 

@@ -17,6 +17,7 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
+
 	public bool burning = false;
 
 	void Awake()
