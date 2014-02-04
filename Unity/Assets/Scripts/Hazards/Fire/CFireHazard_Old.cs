@@ -93,7 +93,7 @@ public class CFireHazard_Old : MonoBehaviour {
                 else
 				{
 					// Set the damage fire will do to the character
-               		 Damage = 40.0f * Time.deltaTime;
+               		 Damage = 40.0f * Time.fixedDeltaTime;
 
                		 //apply damage
                		 _Entity.gameObject.GetComponent<CPlayerHealth>().ApplyDamage(Damage);
