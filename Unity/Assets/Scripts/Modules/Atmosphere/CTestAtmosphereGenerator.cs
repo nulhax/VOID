@@ -59,9 +59,12 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		
 		// Get the DUI of the power generator
 		m_DUIAtmosphereGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
-		
-		// Set the generation rate
-		m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate;
+
+		if(CNetwork.IsServer)
+		{
+			// Set the generation rate
+			m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate;
+		}
 	}
 
 	private void HandleFluidHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)

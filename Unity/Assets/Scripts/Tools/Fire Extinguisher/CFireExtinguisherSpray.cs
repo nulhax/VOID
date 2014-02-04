@@ -23,16 +23,16 @@ using System.Collections.Generic;
 public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
+	// Member Delegates & Events
 
 
-// Member Properties
+	// Member Properties
 
 
-// Member Functions
+	// Member Functions
 
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -87,10 +87,13 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 				if (Physics.Raycast(ray, out _rh, 2.0f))
 				{
-					if (_rh.collider.gameObject.GetComponent<CFireHazard_Old>() != null)
-					{
-						_rh.collider.gameObject.GetComponent<CFireHazard_Old>().Health -= 80.0f * Time.deltaTime;
-					}
+					CFireHazard_Old oldFireType = _rh.collider.gameObject.GetComponent<CFireHazard_Old>();
+					if (oldFireType != null)
+						oldFireType.Health -= 80.0f * Time.deltaTime;
+
+					CFireHazard fire = _rh.collider.gameObject.GetComponent<CFireHazard>();
+					if (fire != null)
+						fire.GetComponent<CActorHealth>().health += 5 * Time.deltaTime;
 				}
 			}
 		}
@@ -111,7 +114,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-// Member Fields
+	// Member Fields
 
 
 	CNetworkVar<bool> m_bActive = null;

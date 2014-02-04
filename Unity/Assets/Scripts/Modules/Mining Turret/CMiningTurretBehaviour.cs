@@ -122,8 +122,8 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	{
 		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 
-		m_cFractureLaserObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Mining Turret/MiningLaser")) as GameObject;
-		m_cExtractorBeamObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Mining Turret/MiningLaser")) as GameObject;
+		m_cFractureLaserObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
+		m_cExtractorBeamObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
 		m_cFractureLaserObject.GetComponentInChildren<Renderer>().enabled = false;
 		m_cExtractorBeamObject.GetComponentInChildren<Renderer>().enabled = false;
         m_cFractureLaserObject.GetComponentInChildren<Renderer>().material.color = Color.red;

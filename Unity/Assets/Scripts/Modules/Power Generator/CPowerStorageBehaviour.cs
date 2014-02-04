@@ -58,7 +58,7 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 		{ 
 			m_BatteryCapacity.Set(value); 
 
-			if(value > BatteryCharge)
+			if(value < BatteryCharge)
 				BatteryCharge = value;
 		}
 	}

@@ -60,13 +60,19 @@ public class CTestPowerGenerator: MonoBehaviour
 		// Get the DUI of the power generator
 		m_DUIPowerGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
 
-		// Set the generation rate
-		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
+		if(CNetwork.IsServer)
+		{
+			// Set the generation rate
+			m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
+		}
 	}
 
 	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
 	{
-		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+		if(CNetwork.IsServer)
+		{
+			m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+		}
 	}
 
 	private void HandleCircuitryBreaking(CComponentInterface _Component)

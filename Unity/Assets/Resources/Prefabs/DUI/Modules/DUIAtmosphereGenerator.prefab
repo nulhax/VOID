@@ -663,13 +663,13 @@ MonoBehaviour:
     absolute: -63
   mColor: {r: 1, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 381
+  mWidth: 355
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 23.8125
+  aspectRatio: 22.1875
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -762,13 +762,13 @@ MonoBehaviour:
     absolute: -47
   mColor: {r: 1, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 381
+  mWidth: 355
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 23.8125
+  aspectRatio: 22.1875
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -822,13 +822,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 581
+  mWidth: 555
   mHeight: 46
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 12.630435
+  aspectRatio: 12.065217
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
   mFont: {fileID: 0}
@@ -1098,17 +1098,17 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 581
+  mWidth: 555
   mHeight: 100
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 5.80999994
+  aspectRatio: 5.55000019
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 7a48ea22e80d1ac4b97fdd87f9009546, type: 2}
-  mText: Power Generator
+  mText: Atmosphere Generator
   mFontSize: 28
   mFontStyle: 0
   mEncoding: 1
@@ -1343,13 +1343,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 581
+  mWidth: 555
   mHeight: 400
   mDepth: -3
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.45249999
+  aspectRatio: 1.38750005
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -1391,13 +1391,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .343283594, g: .343283594, b: .343283594, a: .360784322}
   mPivot: 4
-  mWidth: 581
+  mWidth: 555
   mHeight: 400
   mDepth: -2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.45249999
+  aspectRatio: 1.38750005
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Stripes 2
   mType: 2
@@ -1513,7 +1513,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100032}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dcacb04ccf425e4a894099fdd3ee550, type: 3}
+  m_Script: {fileID: 11500000, guid: ce32e11994ad974499d64f553b95c379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_GenerationBar: {fileID: 11400032}

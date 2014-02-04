@@ -77,17 +77,16 @@ public class CTestPowerCapacitor: MonoBehaviour
 
 	private void HandleCapacitorStateChange(CPowerStorageBehaviour _Capacitor)
 	{
+		Debug.Log(_Capacitor.BatteryCharge.ToString() + " / " + _Capacitor.BatteryCapacity.ToString());
+
 		m_DUIPowerCapacitor.UpdateCapacitorVariables(_Capacitor.BatteryCharge, _Capacitor.BatteryCapacity);
 	}
 	
 	private void HandleCircuitryBreaking(CComponentInterface _Component)
 	{
+		int index = m_Circuitry1 == _Component ? 0 : 1;
 		if(CNetwork.IsServer)
 		{
-			// Update the UI
-			int index = m_Circuitry1 == _Component ? 0 : 1;
-			m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
-
 			// Get the number of working circuitry components
 			int numWorkingCircuitryComps = 0;
 			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
@@ -102,16 +101,16 @@ public class CTestPowerCapacitor: MonoBehaviour
 				m_PowerStorage.DeactivateBatteryChargeAvailability();
 			}
 		}
+
+		// Update the UI
+		m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
 	}
 	
 	private void HandleCircuitryFixing(CComponentInterface _Component)
 	{
+		int index = m_Circuitry1 == _Component ? 0 : 1;
 		if(CNetwork.IsServer)
 		{
-			// Update the UI
-			int index = m_Circuitry1 == _Component ? 0 : 1;
-			m_DUIPowerCapacitor.SetCircuitryStateChange(index, true);
-
 			// Get the number of working circuitry components
 			int numWorkingCircuitryComps = 0;
 			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
@@ -123,5 +122,8 @@ public class CTestPowerCapacitor: MonoBehaviour
 			// Activate the charge availablity
 			m_PowerStorage.ActivateBatteryChargeAvailability();
 		}
+
+		// Update the UI
+		m_DUIPowerCapacitor.SetCircuitryStateChange(index, true);
 	}
 }

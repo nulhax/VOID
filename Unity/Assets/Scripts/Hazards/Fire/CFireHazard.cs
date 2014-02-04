@@ -17,7 +17,10 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
-	void Start ()
+
+	public bool burning = false;
+
+	void Awake()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
 	}
@@ -32,23 +35,35 @@ public class CFireHazard : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Begin fire.
-				gameObject.GetComponent<Collider>().enabled = true;
+				//gameObject.GetComponent<Collider>().enabled = true;
 				gameObject.GetComponent<ParticleSystem>().Play();
+				gameObject.GetComponent<CFireHazard>().burning = true;
 				break;
 
 			case 2:	// End fire.
-				gameObject.GetComponent<Collider>().enabled = false;
+				//gameObject.GetComponent<Collider>().enabled = false;
 				ParticleSystem particleSystem = gameObject.GetComponent<ParticleSystem>();
 				particleSystem.Stop();
 				particleSystem.Clear();
+				gameObject.GetComponent<CFireHazard>().burning = false;
 				break;
 		}
 	}
 
 	void OnTriggerStay(Collider collider)
 	{
-		CActorHealth otherHealth = collider.GetComponent<CActorHealth>();
-		if (otherHealth != null)
-			otherHealth.health -= Time.fixedDeltaTime;
+		if (burning)
+		{
+			// Ignite players and other fires.
+			CFireHazard otherFire = collider.GetComponent<CFireHazard>();
+			if (otherFire != null)
+				otherFire.GetComponent<CActorHealth>().health -= Time.fixedDeltaTime;
+			else
+			{
+				CPlayerHealth otherPlayerhealth = collider.GetComponent<CPlayerHealth>();
+				if (otherPlayerhealth != null)
+					otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
+			}
+		}
 	}
 }

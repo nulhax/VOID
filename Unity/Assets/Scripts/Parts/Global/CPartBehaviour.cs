@@ -108,7 +108,7 @@ public class CPartBehaviour : CNetworkMonoBehaviour
 			else
 			{
 				// Module is broken
-				Debug.Log ("Module Has Broken");
+				Debug.Log ("Part Has Broken");
 				MeshRenderer[] MeshRendererArray = gameObject.GetComponentsInChildren<MeshRenderer>();
 				
 				foreach(MeshRenderer eachthingy in MeshRendererArray)

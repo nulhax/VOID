@@ -60,10 +60,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 
 	public bool IsFunctional
 	{
-		get { return m_bIsFunctional.Get (); }
-
-		[AServerOnly]
-		set { m_bIsFunctional.Set (value); 	}
+		get { return m_bIsFunctional.Get(); }
 	}
 
 // Member Properties
@@ -83,9 +80,9 @@ public class CComponentInterface : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if(CNetwork.IsServer)
+		if(_cSyncedNetworkVar == m_bIsFunctional)
 		{
-			if(m_bIsFunctional.Get ())
+			if(IsFunctional)
 			{
 				if(EventComponentFix != null)
 				{
@@ -159,7 +156,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 
 		if(CNetwork.IsServer && _CurrentHealth == 0.0f)
 		{
-			IsFunctional = false;
+			m_bIsFunctional.Set(false);
 		}
 	}
 
@@ -177,5 +174,5 @@ public class CComponentInterface : CNetworkMonoBehaviour
 
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-	CNetworkVar<bool>m_bIsFunctional;
+	CNetworkVar<bool> m_bIsFunctional;
 };
