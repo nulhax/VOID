@@ -33,8 +33,10 @@ public class CTestPowerCapacitor: MonoBehaviour
 	// Member Fields
 	public float m_MaxPowerBatteryCapacity = 1000.0f;
 	public GameObject m_DUIConsole = null;
-	public List<CComponentInterface> m_CircuitryComponents = new List<CComponentInterface>();
-	
+
+	public CComponentInterface m_Circuitry1 = null;
+	public CComponentInterface m_Circuitry2 = null;
+
 	private CPowerStorageBehaviour m_PowerStorage = null;
 	private CDUIPowerCapacitorRoot m_DUIPowerCapacitor = null;
 
@@ -52,10 +54,10 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
 
 		// Register for when the circuitry breaks/fixes
-		m_CircuitryComponents[0].EventComponentBreak += HandleCircuitryBreaking;
-		m_CircuitryComponents[0].EventComponentFix += HandleCircuitryFixing;
-		m_CircuitryComponents[1].EventComponentBreak += HandleCircuitryBreaking;
-		m_CircuitryComponents[1].EventComponentFix += HandleCircuitryFixing;
+		m_Circuitry1.EventComponentBreak += HandleCircuitryBreaking;
+		m_Circuitry1.EventComponentFix += HandleCircuitryFixing;
+		m_Circuitry2.EventComponentBreak += HandleCircuitryBreaking;
+		m_Circuitry2.EventComponentFix += HandleCircuitryFixing;
 
 		// Register for when the circuitry takes damage
 		m_PowerStorage.EventBatteryCapacityChanged += HandleCapacitorStateChange;
@@ -83,13 +85,12 @@ public class CTestPowerCapacitor: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Update the UI
-			int index = m_CircuitryComponents.FindIndex((item) => item == _Component);
-			m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
+			int index = m_Circuitry1 == _Component ? 0 : 1;
 
 			// Get the number of working circuitry components
-			int numWorkingCircuitryComps = m_CircuitryComponents.Sum((ci) => {
-				return(ci.IsFunctional ? 1 : 0);
-			});
+			int numWorkingCircuitryComps = 0;
+			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
+			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
 
 			// Set the new battery capacity
 			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);
@@ -107,13 +108,12 @@ public class CTestPowerCapacitor: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Update the UI
-			int index = m_CircuitryComponents.FindIndex((item) => item == _Component);
-			m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
-
+			int index = m_Circuitry1 == _Component ? 0 : 1;
+			
 			// Get the number of working circuitry components
-			int numWorkingCircuitryComps = m_CircuitryComponents.Sum((ci) => {
-				return(ci.IsFunctional ? 1 : 0);
-			});
+			int numWorkingCircuitryComps = 0;
+			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
+			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
 
 			// Set the new battery capacity
 			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);

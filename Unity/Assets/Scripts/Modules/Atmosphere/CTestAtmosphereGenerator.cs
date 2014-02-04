@@ -31,6 +31,10 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 	
 	// Member Fields
 	public float m_AtmosphereGenerationRate = 60.0f;
+	public GameObject m_DUIConsole = null;
+	
+	public CComponentInterface m_CircuitryComponent = null;
+	public CComponentInterface m_LiquidComponent = null;
 
 	private float m_PrevAtmosphereGenerationRate = 0.0f;
 	private CAtmosphereGeneratorBehaviour m_AtmosphereGenerator = null;

@@ -99,7 +99,7 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 		{
 			m_Charge.color = Color.yellow;
 			m_CapacitorStatus.color = Color.yellow;
-			m_CapacitorStatus.text = "Status: Charge UnOptimal";
+			m_CapacitorStatus.text = "Status: Charge NonOptimal";
 
 			m_WarningReport.UpdateVisibility(true);
 			m_WarningReport.color = Color.yellow;

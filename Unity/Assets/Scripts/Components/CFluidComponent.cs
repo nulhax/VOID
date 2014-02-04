@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 [RequireComponent(typeof(CComponentInterface))]
-public class CLiquidComponent : CNetworkMonoBehaviour
+public class CFluidComponent : CNetworkMonoBehaviour
 {
 	// Member Types
 	

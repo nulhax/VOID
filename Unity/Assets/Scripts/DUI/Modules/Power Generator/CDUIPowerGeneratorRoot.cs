@@ -69,7 +69,7 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 		else if(value <= 0.5f && value > 0.0f)
 		{
 			m_WarningReport.UpdateVisibility(true);
-			m_WarningReport.color = Color.yellow;
+			m_WarningReport.color = Color.red;
 			m_WarningReport.text = "Warning: Calibration maintenace required!";
 			m_WarningReport.GetComponent<TweenScale>().enabled = true;
 		}
@@ -125,7 +125,7 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 			if(m_CalibrationValue < 0.95f)
 			{
 				m_GenerationActive.color = Color.yellow;
-				m_GenerationActive.text = "Status: Generation UnOptimal";
+				m_GenerationActive.text = "Status: Generation NonOptimal";
 
 			}
 			else if(m_CalibrationValue == 0.0f)

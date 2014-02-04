@@ -36,7 +36,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
         //CircuitBox,
 
 		// Components
-		LiquidComp,
+		FluidComp,
 		CalibratorComp,
 		CircuitryComp,
 		RatchetComp,

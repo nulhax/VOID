@@ -579,7 +579,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100006}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c2400fbe8caed49ba3226f80ad7672, type: 3}
+  m_Script: {fileID: 11500000, guid: 0014d04a0bfd413468f981b12e8ac2b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400012
@@ -616,16 +616,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -637,16 +641,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
+  health_max: Infinity
+  health_min: 0
   health_initial: 1000
   health_previous: 0
   state_initial: 1
   stateTransitions:
   - 0
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -678,7 +686,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c2400fbe8caed49ba3226f80ad7672, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f34ab3cc5ad27e48b3285becb1d6159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &100100000

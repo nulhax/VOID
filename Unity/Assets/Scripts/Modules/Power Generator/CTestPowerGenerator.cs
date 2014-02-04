@@ -33,6 +33,9 @@ public class CTestPowerGenerator: MonoBehaviour
 	public float m_MaxPowerGenerationRate = 15.0f;
 	public GameObject m_DUIConsole = null;
 
+	public CComponentInterface m_CircuitryComponent = null;
+	public CComponentInterface m_CalibrationComponent = null;
+
 	private CPowerGenerationBehaviour m_PowerGenerator = null;
 	private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
 
@@ -45,13 +48,11 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
 
 		// Register for when the calibrator breaks/fixes
-		CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CalibratorComp)[0].GetComponent<CComponentInterface>();
-		ci.EventHealthChange += HandleCalibrationHealthChange;
+		m_CalibrationComponent.EventHealthChange += HandleCalibrationHealthChange;
 		
 		// Register for when the circuitry breaks/fixes
-		ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CircuitryComp)[0].GetComponent<CComponentInterface>();
-		ci.EventComponentBreak += HandleCircuitryBreaking;
-		ci.EventComponentFix += HandleCircuitryFixing;
+		m_CircuitryComponent.EventComponentBreak += HandleCircuitryBreaking;
+		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
 		
 		// Register for when the generation rate changes
 		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;

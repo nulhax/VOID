@@ -143,7 +143,7 @@ GameObject:
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400002}
   m_Layer: 0
-  m_Name: WiringComponent
+  m_Name: CircuitryComponent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -529,7 +529,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100016}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c2400fbe8caed49ba3226f80ad7672, type: 3}
+  m_Script: {fileID: 11500000, guid: 0014d04a0bfd413468f981b12e8ac2b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400004
@@ -579,7 +579,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7da5cebb428f14eb336b0f1f6f6147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eComponentType: 4
+  m_eComponentType: 3
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76c2400fbe8caed49ba3226f80ad7672, type: 3}
+  m_Script: {fileID: 11500000, guid: 1f34ab3cc5ad27e48b3285becb1d6159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400012
