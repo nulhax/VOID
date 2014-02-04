@@ -58,11 +58,11 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	//Right hand
 	float 					m_fRightHandIKWeight;
 	public float 			m_fRightHandWeightTarget;
-	Vector3					m_RightHandTarget;
+    Vector3					m_RightHandTarget;
 	bool 					m_bDisableRightHandWeighting = false;
 	float 					m_fRightHandLerpTime = 0.1f;
-	float 					m_fRightHandLerpTimer = 0.0f;
-	float 					m_fRightHandHoldDistance = 0.75f;
+	float 					m_fRightHandLerpTimer = 0.0f;	
+    Transform               m_RightShoulder;
 	CNetworkVar<Vector3> 	m_RightHandNetworkedTarget;
 
 	//Left hand
@@ -88,8 +88,18 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		EventTargetChange += UpdateTarget;
 		
 		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += OnPlayerInteraction;
-		gameObject.GetComponent<CPlayerBelt>().EventEquipTool += EquipTool;
-	}
+		gameObject.GetComponent<CPlayerBelt>().EventEquipTool += EquipTool;     
+      
+        //Find players right shoulder
+        Transform[]children = gameObject.GetComponentsInChildren<Transform>();
+        foreach(Transform child in children)
+        {
+            if(child.name == "RightShoulder")
+            {
+                m_RightShoulder = child;
+            }
+        }     
+	} 
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -101,45 +111,15 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	void EquipTool(GameObject _Tool)
 	{
         if(_Tool != null)
-		m_equippedTool = _Tool.transform;	
+		m_equippedTool = _Tool.transform;
+        gameObject.GetComponent<CThirdPersonAnimController>().IsHoldingTool = true;
 	}
 	
 	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
-		switch (_eType) 
-		{		
-			case CPlayerInteractor.EInteractionType.Hover:
-			{
-                if(!m_bDisableRightHandWeighting && m_equippedTool != null && _cInteractableObject != m_equippedTool.gameObject)
-				{
-					m_fRightHandWeightTarget = 0.3f;
-					RightHandIKTarget = _cRayHit.point;					
-				}				
-				else
-				{
-					RightHandIKTarget = _cRayHit.point;					
-				}
-
-				break;
-			}
-				
-			case CPlayerInteractor.EInteractionType.PrimaryStart:
-			{
-				m_bDisableRightHandWeighting = true;
-				m_fRightHandWeightTarget = 1;
-				RightHandIKTarget = _cRayHit.point;
-				break;
-			}
-
-			case CPlayerInteractor.EInteractionType.PrimaryEnd:
-			{
-				m_bDisableRightHandWeighting = false;
-								
-				break;
-			}
-		}
+       
 	}
-	
+    	
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
 		if(CGamePlayers.SelfActor != gameObject)
@@ -149,27 +129,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	}
 	
 	void UpdateTarget(Vector3 _newTarget)
-	{
-		//Figure out which hand is available for IK, based on tool state
-		switch (m_eToolState) 
-		{
-			case EToolState.NoTool:
-			{
-				RightHandIKTarget = _newTarget;
-				break;
-			}
-			case EToolState.SingleHandTool:
-			{
-				LeftHandIKTarget = _newTarget;
-				break;
-			}
-			case EToolState.TwoHandTool:
-			{
-				LeftHandIKTarget = _newTarget;
-				//Aditionally lower weapon in right hand
-				break;
-			}
-		}
+	{ 
+        RightHandIKTarget = _newTarget;				
 	}
 	
 	public static void SerializeIKTarget(CNetworkStream _cStream)
@@ -178,10 +139,9 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		
 		if (cSelfActor != null)
 		{
-			// Retrieve my actor motor
 			CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
 			
-			// Write movement and rotation states
+			// Write rotation states
 			_cStream.Write((byte)ENetworkAction.UpdateTarget);
 			_cStream.Write((float)cSelfIKController.m_RightHandTarget.x);
 			_cStream.Write((float)cSelfIKController.m_RightHandTarget.y);
@@ -194,8 +154,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
 		
 		if (cPlayerActor != null)
-		{
-			// Retrieve player actor motor
+		{			
 			CPlayerIKController cPlayerIKController = cPlayerActor.GetComponent<CPlayerIKController>();
 			
 			ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
@@ -221,21 +180,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	
 	// Update is called once per frame
 	void Update ()
-	{	
-		switch (m_eToolState) 
-		{
-			case EToolState.NoTool:
-			{
-				LerpToTarget ();		
-				break;
-			}
-			case EToolState.SingleHandTool:
-			{
-				//Update Target
-				m_RightHandTarget = m_equippedTool.position;
-				break;
-			}
-		}
+	{		
+      
 	}
 	
 	void LerpToTarget()
@@ -264,8 +210,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			//set the position and the rotation of the right hand where the external object is
 			if(m_RightHandTarget != null)
 			{
-				m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
-				m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
+                m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
+                m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
 				
 				Quaternion handRotation = Quaternion.LookRotation(m_RightHandTarget - transform.position);
 				handRotation *= Quaternion.Euler(0,0,0);
@@ -274,5 +220,5 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.RightHand, handRotation);
 			}			
 		}
-	}
+	}  
 }
