@@ -75,8 +75,8 @@ public class CUserInput : CNetworkMonoBehaviour
         GalaxyShip_Down,          // Control
         GalaxyShip_StrafeLeft,    // D
         GalaxyShip_StrafeRight,   // A
-        GalaxyShip_RollLeft,      // Q
-        GalaxyShip_RollRight,     // E
+        GalaxyShip_YawLeft,      // Q
+        GalaxyShip_YawRight,     // E
         GalaxyShip_Turbo,         // Shift
                                 
         Tool_SelectSlot1,         // 1
@@ -269,8 +269,11 @@ public class CUserInput : CNetworkMonoBehaviour
 
         
         _cStream.Write(s_cInstance.m_ulInputStates);
-        _cStream.Write(s_cInstance.m_fMouseMovementX * SensitivityX);
-        _cStream.Write(s_cInstance.m_fMouseMovementY * SensitivityY * -1.0f);
+        _cStream.Write(s_cInstance.m_fSerializeMouseMovementX);
+        _cStream.Write(s_cInstance.m_fSerializeMouseMovementY);
+
+        s_cInstance.m_fSerializeMouseMovementX = 0.0f;
+        s_cInstance.m_fSerializeMouseMovementY = 0.0f;
     }
 
 
@@ -282,7 +285,9 @@ public class CUserInput : CNetworkMonoBehaviour
         tPlayerStates.ulInput = _cStream.ReadULong();
         tPlayerStates.fMouseX = _cStream.ReadFloat();
         tPlayerStates.fMouseY = _cStream.ReadFloat();
-
+        
+        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseX, _cPlayer.PlayerId, tPlayerStates.fMouseX);
+        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseY, _cPlayer.PlayerId, tPlayerStates.fMouseY);
         s_cInstance.ProcessClientEvents(_cPlayer.PlayerId, tPlayerStates);
     }
 
@@ -349,9 +354,11 @@ public class CUserInput : CNetworkMonoBehaviour
 
         m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
         m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
+        m_fSerializeMouseMovementX += m_fMouseMovementX;
+        m_fSerializeMouseMovementY += m_fMouseMovementY;
 
-        InvokeAxisEvent(EAxis.MouseX, 0, m_fMouseMovementX);
-        InvokeAxisEvent(EAxis.MouseY, 0, m_fMouseMovementY);
+        InvokeAxisEvent(EAxis.MouseX, m_fMouseMovementX);
+        InvokeAxisEvent(EAxis.MouseY, m_fMouseMovementY);
     }
 
 
@@ -389,7 +396,7 @@ public class CUserInput : CNetworkMonoBehaviour
     }
 
 
-    void InvokeAxisEvent(EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+    void InvokeAxisEvent(EAxis _eAxis, float _fValue)
     {
         if (m_mAxisCallbacks.ContainsKey(_eAxis))
         {
@@ -412,6 +419,20 @@ public class CUserInput : CNetworkMonoBehaviour
             foreach (NotifyClientInputChange cSubscriber in aSubscribers)
             {
                 cSubscriber(_eInput, _ulPlayerId, _bDown);
+            }
+        }
+    }
+
+
+    void InvokeClientClientAxisEvent(EAxis _eClientAxis, ulong _ulPlayerId, float _fValue)
+    {
+        if (m_mClientAxisCallbacks.ContainsKey(_eClientAxis))
+        {
+            List<NotifyClientAxisChange> aSubscribers = m_mClientAxisCallbacks[_eClientAxis];
+
+            foreach (NotifyClientAxisChange cSubscriber in aSubscribers)
+            {
+                cSubscriber(_eClientAxis, _ulPlayerId, _fValue);
             }
         }
     }
@@ -457,6 +478,8 @@ public class CUserInput : CNetworkMonoBehaviour
 
     float m_fMouseMovementX = 0.0f;
     float m_fMouseMovementY = 0.0f;
+    float m_fSerializeMouseMovementX = 0.0f;
+    float m_fSerializeMouseMovementY = 0.0f;
 
 
 	bool m_InFocus = true;

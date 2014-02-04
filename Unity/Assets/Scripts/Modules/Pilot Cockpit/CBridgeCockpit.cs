@@ -83,6 +83,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_StrafeRight, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Up, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Down, OnEventInputControlShip);
+        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_YawLeft, OnEventInputControlShip);
+        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_YawRight, OnEventInputControlShip);
 	}               
 
 
@@ -108,44 +110,109 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     }
 
 
+    [AServerOnly]
     void OnEventAxisControlShip(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
     {
+        if (_ulPlayerId != 0 &&
+            _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
+        {
+            CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
 
+            Debug.LogError(_eAxis + " : " + _fValue);
+
+            switch (_eAxis)
+            {
+                case CUserInput.EAxis.MouseX:
+                    if (_fValue == 0.0f)
+                    {
+                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
+                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
+                    }
+                    else
+                    {
+                        if (_fValue > 0.0f)
+                        {
+                            // / Screen.width
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 30.0f, 0.0f, 1.0f));
+
+                        }
+                        else
+                        {
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 30.0f * -1.0f, 0.0f, 1.0f));
+                        }
+                    }
+                    break;
+
+                case CUserInput.EAxis.MouseY:
+                    if (_fValue == 0.0f)
+                    {
+                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
+                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
+                    }
+                    else
+                    {
+                        if (_fValue > 0.0f)
+                        {
+                            // / Screen.width
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, Mathf.Clamp(_fValue / 80.0f, 0.0f, 1.0f));
+
+                        }
+                        else
+                        {
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, Mathf.Clamp(_fValue / 80.0f * -1.0f, 0.0f, 1.0f));
+                        }
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("Unknown input");
+                    break;
+            }
+        }
     }
 
 
+    [AServerOnly]
     void OnEventInputControlShip(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
     {
         if (_ulPlayerId != 0 &&
             _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
         {
             CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
-            bool bEnable = (_bDown ? true : false);
+            float fPower = _bDown ? 1.0f : 0.0f;
 
             switch (_eInput)
             {
                 case CUserInput.EInput.GalaxyShip_Forward:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Forward, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Forward, fPower);
                     break;
 
                 case CUserInput.EInput.GalaxyShip_Backward:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Backward, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Backward, fPower);
                     break;
 
                 case CUserInput.EInput.GalaxyShip_StrafeLeft:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.StrafeLeft, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.StrafeLeft, fPower);
                     break;
 
                 case CUserInput.EInput.GalaxyShip_StrafeRight:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.StrafeRight, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.StrafeRight, fPower);
                     break;
 
                 case CUserInput.EInput.GalaxyShip_Up:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Up, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Up, fPower);
                     break;
 
                 case CUserInput.EInput.GalaxyShip_Down:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Down, bEnable);
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Down, fPower);
+                    break;
+
+                case CUserInput.EInput.GalaxyShip_YawLeft:
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawLeft, fPower);
+                    break;
+
+                case CUserInput.EInput.GalaxyShip_YawRight:
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawRight, fPower);
                     break;
 
                 default:
