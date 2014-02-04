@@ -123,7 +123,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Sign up for event
-		gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUseInteraction);
+		gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUseInteraction);
 		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 
 
