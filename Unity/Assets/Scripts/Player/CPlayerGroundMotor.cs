@@ -251,28 +251,31 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	void ProcessMovement()
 	{
-		// Direction movement
-		Vector3 vMovementVelocity = new Vector3();
-		vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
-		vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
-		vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveLeft)     > 0) ? transform.right   : Vector3.zero;
-		vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveRight)    > 0) ? transform.right   : Vector3.zero;
-
-		// Apply direction movement speed
-		vMovementVelocity  = vMovementVelocity.normalized;
-		vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
-
-		// Jump 
-		if ((m_uiMovementStates & (uint)EState.Jump) > 0 && IsGrounded)
-		{
-			vMovementVelocity.y = JumpSpeed;
-		}
-
-		// Apply movement velocity
-        if (!rigidbody.isKinematic)
+        if (!InputDisabled)
         {
-            rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
-            rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+            // Direction movement
+            Vector3 vMovementVelocity = new Vector3();
+            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveForward) > 0) ? transform.forward : Vector3.zero;
+            vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
+            vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveLeft) > 0) ? transform.right : Vector3.zero;
+            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveRight) > 0) ? transform.right : Vector3.zero;
+
+            // Apply direction movement speed
+            vMovementVelocity = vMovementVelocity.normalized;
+            vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
+
+            // Jump 
+            if ((m_uiMovementStates & (uint)EState.Jump) > 0 && IsGrounded)
+            {
+                vMovementVelocity.y = JumpSpeed;
+            }
+
+            // Apply movement velocity
+            if (!rigidbody.isKinematic)
+            {
+                rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
+                rigidbody.AddForce(vMovementVelocity, ForceMode.VelocityChange);
+            }
         }
 	}
 

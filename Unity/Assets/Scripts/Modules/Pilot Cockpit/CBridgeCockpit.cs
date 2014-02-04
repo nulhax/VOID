@@ -118,8 +118,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         {
             CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
 
-            Debug.LogError(_eAxis + " : " + _fValue);
-
             switch (_eAxis)
             {
                 case CUserInput.EAxis.MouseX:

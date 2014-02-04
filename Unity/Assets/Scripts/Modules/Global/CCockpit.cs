@@ -103,6 +103,10 @@ public class CCockpit : CNetworkMonoBehaviour
 
 				// Move player head into rotation
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
+
+                Vector3 vRotation = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().m_cActorHead.transform.eulerAngles;
+                vRotation.x = 0.0f;
+                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().m_cActorHead.transform.eulerAngles = vRotation;
 			}
 
 			// Unlock player movement locally

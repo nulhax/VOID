@@ -197,17 +197,17 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         }
 
         // Pitch Up
-        if (IsThusterEnabled(EThrusters.PitchUp) &&
-            !IsThusterEnabled(EThrusters.PitchDown))
+        if (IsThusterEnabled(EThrusters.PitchDown) &&
+            !IsThusterEnabled(EThrusters.PitchUp))
         {
-            vAngularVelocity += cGalaxyShipRigidbody.transform.right * fDeltaAcceleration * m_faPowerRatios[(int)EThrusters.PitchUp] * 2.0f;
+            vAngularVelocity += cGalaxyShipRigidbody.transform.right * fDeltaAcceleration * m_faPowerRatios[(int)EThrusters.PitchDown] * 2.0f;
         }
 
         // Pitch Down
-        else if (IsThusterEnabled(EThrusters.PitchDown) &&
-                 !IsThusterEnabled(EThrusters.PitchUp))
+        else if (IsThusterEnabled(EThrusters.PitchUp) &&
+                 !IsThusterEnabled(EThrusters.PitchDown))
         {
-            vAngularVelocity -= cGalaxyShipRigidbody.transform.right * fDeltaAcceleration * m_faPowerRatios[(int)EThrusters.PitchDown] * 2.0f;
+            vAngularVelocity -= cGalaxyShipRigidbody.transform.right * fDeltaAcceleration * m_faPowerRatios[(int)EThrusters.PitchUp] * 2.0f;
         }
 
         cGalaxyShipRigidbody.AddTorque(vAngularVelocity, ForceMode.Acceleration);

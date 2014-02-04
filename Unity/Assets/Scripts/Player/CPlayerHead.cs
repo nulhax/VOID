@@ -130,7 +130,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CPlayerHead cMyActorHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
 
 			// Write my head's x-rotation
-			_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
+            _cStream.Write(cMyActorHead.m_cActorHead.transform.localEulerAngles.x);
 		}
 	}
 
