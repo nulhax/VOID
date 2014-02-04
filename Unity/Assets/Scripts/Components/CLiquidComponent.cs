@@ -41,26 +41,26 @@ public class CLiquidComponent : CNetworkMonoBehaviour
 	
 	// Member Methods
 	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
-	void OnBreak()
+	void OnBreak(CComponentInterface _Sender)
 	{
 		// TODO: swap between fixed to broken
 		
 	}
 	
 	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered
-	void OnFix()
+	void OnFix(CComponentInterface _Sender)
 	{
 		//TODO swap between broken to fixed
 		
 	}
 	
-	void ComponentHealth(GameObject gameObject, float prevHealth, float currHealth)
+	void OnHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth)
 	{
-		m_CurrentHealth = currHealth;
-		m_PreviousHealth = prevHealth;
+		m_CurrentHealth = _SenderHealth.health;
+		m_PreviousHealth = _SenderHealth.health_previous;
+		float maxHealth = _SenderHealth.health_initial;
 		
-		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / 100.0f);
-		
+		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / maxHealth);	
 	}
 	
 	void Start()
@@ -76,7 +76,7 @@ public class CLiquidComponent : CNetworkMonoBehaviour
 		// This will call onbreak or onfix when the even is triggered.
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix += OnFix;
-		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += ComponentHealth;
+		gameObject.GetComponent<CComponentInterface>().EventHealthChange += OnHealthChange;
 	}
 	
 	void OnDestroy()

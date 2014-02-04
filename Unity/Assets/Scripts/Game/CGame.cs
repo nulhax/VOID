@@ -273,7 +273,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		if(!CNetwork.IsServer)
 		{
-			CUserInput.UnregisterAllEvents();
+			CUserInput.UnsubscribeAll();
 		}
 	}
 

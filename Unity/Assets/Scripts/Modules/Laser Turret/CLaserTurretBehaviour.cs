@@ -133,20 +133,23 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	void FireLasers()
 	{
-		if (m_fServerFireTimer > m_fServerFireInterval)
-		{
-			Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLasterNodes[m_iLaserNodeIndex].transform.position);
-			Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLasterNodes[m_iLaserNodeIndex].transform.rotation);
+        if(transform.FindChild("CalibratorComponent").GetComponent<CActorHealth>().health > 0)
+        {
+		    if (m_fServerFireTimer > m_fServerFireInterval)
+		    {
+			    Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLasterNodes[m_iLaserNodeIndex].transform.position);
+			    Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLasterNodes[m_iLaserNodeIndex].transform.rotation);
 			
-			GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
-			cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
-			cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
+			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
+			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
+			    cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
 			
-			++ m_iLaserNodeIndex;
-			m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNodes.Length) ? 0 : m_iLaserNodeIndex;
+			    ++ m_iLaserNodeIndex;
+			    m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNodes.Length) ? 0 : m_iLaserNodeIndex;
 			
-			m_fServerFireTimer = 0.0f;
-		}
+			    m_fServerFireTimer = 0.0f;
+		    }
+        }
 	}
 
 
@@ -156,19 +159,19 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 		if (_ulNewPlayerId == CNetwork.PlayerId)
 		{
 			// Subscribe to input events
-			CUserInput.EventPrimary += new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnFireLasersCommand);
 		}
 
 		if (_ulPreviousPlayerId == CNetwork.PlayerId)
 		{
 			// Unsubscriber to input events
-			CUserInput.EventPrimary -= new CUserInput.NotifyKeyChange(OnFireLasersCommand);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnFireLasersCommand);
 		}
 	}
 
 
 	[AClientOnly]
-	void OnFireLasersCommand(bool _bDown)
+    void OnFireLasersCommand(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		m_bFireLasers = _bDown;
 	}

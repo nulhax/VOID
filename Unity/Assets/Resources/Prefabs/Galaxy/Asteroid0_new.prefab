@@ -3927,7 +3927,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GUIExpandMain: 1
-  SourceObject: {fileID: 100000, guid: 972561acbe31e7147b76d1a430caf37d, type: 2}
+  SourceObject: {fileID: 0}
   GenerateIslands: 1
   GenerateChunkConnectionInfo: 1
   StartStatic: 1

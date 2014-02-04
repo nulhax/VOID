@@ -38,8 +38,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 	private CAtmosphereGeneratorBehaviour m_AtmosphereGenerator = null;
 
 	// Member Properties
-	
-	
+
+
 	// Member Methods
 	public void Start()
 	{
@@ -68,14 +68,14 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 
             if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health <= 0)
             {
-                Debug.Log("Atmosphere Generator Broke");
-                Debug.Log(transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health);
+                //Debug.Log("Atmosphere Generator Broke");
+                //Debug.Log(transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health);
                 HandleFuseBoxBreaking();
             }
 
             else if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health >= 1)
             {
-                Debug.Log("Atmosphere Generator Fixed");
+                //Debug.Log("Atmosphere Generator Fixed");
                 HandleFuseBoxFixing();
             }
 		}

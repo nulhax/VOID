@@ -179,24 +179,27 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
 	void UpdateRotation()
 	{
-		Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
-		
-		// Update rotations
-		vRotation.x += CUserInput.MouseMovementDeltaY * m_fRotationSpeed;
-		vRotation.y += CUserInput.MouseMovementDeltaX * m_fRotationSpeed;
-		
-		// Clamp rotation
-		vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
-		
-		// Apply rotations to objects
-		m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
-		transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
-		
-		// Write update rotation action
-		s_cSerializeStream.Write(ThisNetworkView.ViewId);
-		s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
-		s_cSerializeStream.Write(vRotation.x);
-		s_cSerializeStream.Write(vRotation.y);
+        if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health > 0)
+        {
+            Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+
+            // Update rotations
+            vRotation.x += CUserInput.MouseMovementY;
+            vRotation.y += CUserInput.MouseMovementX;
+
+            // Clamp rotation
+            vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
+
+            // Apply rotations to objects
+            m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+            transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+
+            // Write update rotation action
+            s_cSerializeStream.Write(ThisNetworkView.ViewId);
+            s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
+            s_cSerializeStream.Write(vRotation.x);
+            s_cSerializeStream.Write(vRotation.y);
+        }
 	}
 
 
@@ -206,9 +209,9 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		{
 			if (ControllerPlayerId != CNetwork.PlayerId)
 			{
-				//Debug.Log("Hello");
-				transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
-				m_cBarrel.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrel.transform.eulerAngles.y, m_cBarrel.transform.eulerAngles.z);
+                //Debug.Log("Hello");
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
+                m_cBarrel.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrel.transform.eulerAngles.y, m_cBarrel.transform.eulerAngles.z);
 			}
 		}
 		else if (_cSyncedVar == m_ulControllerPlayerId)

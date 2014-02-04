@@ -59,7 +59,7 @@ public class CShipDamageOnCollision : MonoBehaviour
 					{
 						//Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
 						float actorDistanceToImpact = (damagableActor.gameObject.transform.position - contactPointOnShip).magnitude;
-						Debug.Log(damagableActor.gameObject.ToString() + " was " + actorDistanceToImpact.ToString() + " units from impact");
+						//Debug.Log(damagableActor.gameObject.ToString() + " was " + actorDistanceToImpact.ToString() + " units from impact");
 
 						if (actorDistanceToImpact < radius)
 						{

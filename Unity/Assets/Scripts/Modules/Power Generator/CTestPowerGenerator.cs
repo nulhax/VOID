@@ -44,10 +44,14 @@ public class CTestPowerGenerator: MonoBehaviour
 	{
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
 
-		// Register for when the fusebox breaks/fixes
-		//CFuseBoxBehaviour fbc = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.FuseBox)[0].GetComponent<CFuseBoxBehaviour>();
-		//fbc.EventBroken += HandleFuseBoxBreaking;
-		//fbc.EventFixed += HandleFuseBoxFixing;
+		// Register for when the calibrator breaks/fixes
+		CComponentInterface ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CalibratorComp)[0].GetComponent<CComponentInterface>();
+		ci.EventHealthChange += HandleCalibrationHealthChange;
+
+		// Register for when the circuitry breaks/fixes
+		ci = gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CircuitryComp)[0].GetComponent<CComponentInterface>();
+		ci.EventComponentBreak += HandleCircuitryBreaking;
+		ci.EventComponentFix += HandleCircuitryFixing;
 
 		// Register for when the generation rate changes
 		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
@@ -59,7 +63,12 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
 	}
 
-	private void HandleFuseBoxBreaking(GameObject _FuseBox)
+	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
+	{
+		m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+	}
+
+	private void HandleCircuitryBreaking(CComponentInterface _Component)
 	{
 		if(CNetwork.IsServer)
 		{
@@ -67,7 +76,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		}
 	}
 
-	private void HandleFuseBoxFixing(GameObject _FuseBox)
+	private void HandleCircuitryFixing(CComponentInterface _Component)
 	{
 		if(CNetwork.IsServer)
 		{
