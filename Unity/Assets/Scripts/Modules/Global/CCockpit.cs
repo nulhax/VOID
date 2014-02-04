@@ -103,6 +103,10 @@ public class CCockpit : CNetworkMonoBehaviour
 
 				// Move player head into rotation
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().transform.rotation = m_cSeat.transform.rotation;
+
+                Vector3 vRotation = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().m_cActorHead.transform.eulerAngles;
+                vRotation.x = 0.0f;
+                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().m_cActorHead.transform.eulerAngles = vRotation;
 			}
 
 			// Unlock player movement locally
@@ -123,7 +127,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Sign up for event
-		gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUseInteraction);
+		gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUseInteraction);
 		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
 
 
@@ -183,7 +187,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-    void OnInputUse(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnInputUse(CUserInput.EInput _eInput, bool _bDown)
 	{
 		if (_bDown &&
 		    MountedPlayerId == CNetwork.PlayerId)

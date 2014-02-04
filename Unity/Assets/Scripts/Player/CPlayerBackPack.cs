@@ -119,7 +119,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	[AClientOnly]
 	public void OnPickupModuleRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
-		if (_eType == CPlayerInteractor.EInteractionType.Use &&
+		if (_eType == CPlayerInteractor.EInteractionType.UseStart &&
 			_cInteractableObject.GetComponent<CPartInterface>() != null)
 		{
 			// Action

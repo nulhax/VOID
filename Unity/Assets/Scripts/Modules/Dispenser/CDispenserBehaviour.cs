@@ -56,7 +56,7 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     void Start()
     {
         // Debug: Sign up for 'use' event
-        gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUse);
+        gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUse);
 
         // Set invalid tool
         m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
@@ -157,7 +157,8 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     void Update()
     {
         // Interpolate health
-        transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
+		// Martin: Ill replace this with a UI to show status' :)
+        //transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
     }
 
 

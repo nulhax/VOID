@@ -67,6 +67,8 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 			if(child.tag == "ComponentTransform")
 				m_RepairPositions.Add(child);
 		}
+
+		transform.FindChild("Model").renderer.material.color = Color.green;
 		
 		// Register events created in the inherited class CComponentInterface
 		// This will call onbreak or onfix when the even is triggered.

@@ -132,7 +132,7 @@ public class CGameShips : CNetworkMonoBehaviour
 	void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
 		// Tell connecting player which is the ship's network view id
-		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", new object[]{ m_cShipViewId });
+		InvokeRpc(_cPlayer.PlayerId, "SetShipNetworkViewId", m_cShipViewId);
 	}
 
 

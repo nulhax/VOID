@@ -103,6 +103,10 @@ public class CPlayerSuit : CNetworkMonoBehaviour
                 {
                     fOxygen = 0.0f;
                 }
+                else if (fOxygen > k_fOxygenCapacity)
+                {
+                    fOxygen = k_fOxygenCapacity;
+                }
 
                 m_fOxygen.Set(fOxygen);
 
@@ -190,6 +194,12 @@ public class CPlayerSuit : CNetworkMonoBehaviour
         }
     }
 
+    [AServerOnly]
+    public void AddOxygen(float _OxygenAmount)
+    {
+        m_fOxygen.Set(_OxygenAmount + m_fOxygen.Get());
+    }
+
 
 // Member Fields
 
@@ -204,6 +214,4 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
     Texture2D m_cVisorTexture = null;
-
-
 };

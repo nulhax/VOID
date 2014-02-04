@@ -56,7 +56,7 @@ public class CModuleInterface : MonoBehaviour
 		PowerCapacitor,
 		MiningTurret,
 		MiningCockpit,
-		AtmosphereConditioner,
+		//AtmosphereConditioner,
         OxygenRefiller,
         Dispenser,
         NaniteCapsule,

@@ -374,7 +374,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 			case CPlayerInteractor.EInteractionType.PrimaryEnd: s_cSerializeStream.Write((byte)ENetworkAction.DeactivateToolPrimary); break;
 			case CPlayerInteractor.EInteractionType.SecondaryStart: s_cSerializeStream.Write((byte)ENetworkAction.ActivateToolSecondary); break;
 			case CPlayerInteractor.EInteractionType.SecondaryEnd: s_cSerializeStream.Write((byte)ENetworkAction.DeactivateToolSeconary); break;
-			case CPlayerInteractor.EInteractionType.Use: 
+			case CPlayerInteractor.EInteractionType.UseStart: 
 			{
 				if (_cInteractableObject != null &&
 					_cInteractableObject.GetComponent<CToolInterface>() != null)
@@ -477,7 +477,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnDropToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnDropToolKey(CUserInput.EInput _eInput, bool _bDown)
     {
         if (_bDown)
         {
@@ -486,7 +486,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnReloadToolKey(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnReloadToolKey(CUserInput.EInput _eInput, bool _bDown)
     {
         if (_bDown)
         {
@@ -495,10 +495,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnSelectToolSlot(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnSelectToolSlot(CUserInput.EInput _eInput, bool _bDown)
     {
-        if (_ulPlayerId == 0 &&
-            _bDown)
+        if (_bDown)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.ChangeTool);
 

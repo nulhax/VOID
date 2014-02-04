@@ -285,7 +285,6 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		// Placeholder Test stuff
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
         CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
@@ -301,9 +300,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
 
+		tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));
 		//Place Ratchet
 		GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
-		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, -7.0f, -45.0f));
+		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -11.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);

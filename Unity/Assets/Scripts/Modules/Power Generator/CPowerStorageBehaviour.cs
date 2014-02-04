@@ -28,8 +28,12 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 	
 	
 	// Member Delegates & Events
+	public delegate void NotifyStateChange(CPowerStorageBehaviour _Self);
 	
-	
+	public event NotifyStateChange EventBatteryChargeChanged;
+	public event NotifyStateChange EventBatteryCapacityChanged;
+
+
 	// Member Fields
 	CNetworkVar<float> m_BatteryCharge = null;
 	CNetworkVar<float> m_BatteryCapacity = null;
@@ -54,7 +58,7 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 		{ 
 			m_BatteryCapacity.Set(value); 
 
-			if(value > BatteryCharge)
+			if(value < BatteryCharge)
 				BatteryCharge = value;
 		}
 	}
@@ -75,7 +79,16 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		
+		if(_VarInstance == m_BatteryCapacity)
+		{
+			if(EventBatteryCapacityChanged != null)
+				EventBatteryCapacityChanged(this);
+		}
+		else if(_VarInstance == m_BatteryCharge)
+		{
+			if(EventBatteryChargeChanged != null)
+				EventBatteryChargeChanged(this);
+		}
 	}
 	
 	public void Start()

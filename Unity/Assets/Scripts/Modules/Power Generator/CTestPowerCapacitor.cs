@@ -18,6 +18,7 @@ using System.Collections.Generic;
 
 
 /* Implementation */
+using System.Linq;
 
 
 [RequireComponent(typeof(CPowerStorageBehaviour))]
@@ -30,13 +31,15 @@ public class CTestPowerCapacitor: MonoBehaviour
 	
 	
 	// Member Fields
-	public float m_PowerBatteryCapacity = 1000.0f;
+	public float m_MaxPowerBatteryCapacity = 1000.0f;
+	public GameObject m_DUIConsole = null;
 
-	private float m_PrevPowerBatteryCapacity = 0.0f;
+	public CComponentInterface m_Circuitry1 = null;
+	public CComponentInterface m_Circuitry2 = null;
+
 	private CPowerStorageBehaviour m_PowerStorage = null;
+	private CDUIPowerCapacitorRoot m_DUIPowerCapacitor = null;
 
-	private int m_NumWorkingCircuitryComponents = 0;
-	private int m_NumCircuitryComponents = 0;
 
 	// Member Properties
 	
@@ -45,70 +48,80 @@ public class CTestPowerCapacitor: MonoBehaviour
 	public void Start()
 	{
 		m_PowerStorage = gameObject.GetComponent<CPowerStorageBehaviour>();
-		
-		// Register for when the circuitry breaks/fixes
-		foreach(GameObject comp in gameObject.GetComponent<CModuleInterface>().FindAttachedComponentsByType(CComponentInterface.EType.CircuitryComp))
-		{
-			CComponentInterface ci = comp.GetComponent<CComponentInterface>();
-			ci.EventComponentBreak += HandleCircuitryBreaking;
-			ci.EventComponentFix += HandleCircuitryFixing;
 
-			++m_NumCircuitryComponents;
-			++m_NumWorkingCircuitryComponents;
-		}
-		
+		// Register charge/capacity state chages
+		m_PowerStorage.EventBatteryCapacityChanged += HandleCapacitorStateChange;
+		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
+
+		// Register for when the circuitry breaks/fixes
+		m_Circuitry1.EventComponentBreak += HandleCircuitryBreaking;
+		m_Circuitry1.EventComponentFix += HandleCircuitryFixing;
+		m_Circuitry2.EventComponentBreak += HandleCircuitryBreaking;
+		m_Circuitry2.EventComponentFix += HandleCircuitryFixing;
+
+		// Register for when the circuitry takes damage
+		m_PowerStorage.EventBatteryCapacityChanged += HandleCapacitorStateChange;
+		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
+
+		// Get the DUI of the power generator
+		m_DUIPowerCapacitor = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerCapacitorRoot>();
+		m_DUIPowerCapacitor.InitialCapacity = m_MaxPowerBatteryCapacity;
+
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)
 		{
-			m_PowerStorage.BatteryCapacity = m_PowerBatteryCapacity;
+			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity;
 			m_PowerStorage.BatteryCharge = m_PowerStorage.BatteryCapacity / 2;
-			
-			m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
 		}
 	}
-	
-	public void Update()
+
+	private void HandleCapacitorStateChange(CPowerStorageBehaviour _Capacitor)
 	{
-		if(CNetwork.IsServer)
-		{	
-			if(m_PrevPowerBatteryCapacity != m_PowerBatteryCapacity)
-			{
-				m_PowerStorage.BatteryCapacity = m_PowerBatteryCapacity;
-				
-				m_PrevPowerBatteryCapacity = m_PowerBatteryCapacity;
-			}
-		}
+		m_DUIPowerCapacitor.UpdateCapacitorVariables(_Capacitor.BatteryCharge, _Capacitor.BatteryCapacity);
 	}
 	
 	private void HandleCircuitryBreaking(CComponentInterface _Component)
 	{
+		int index = m_Circuitry1 == _Component ? 0 : 1;
 		if(CNetwork.IsServer)
 		{
-			Debug.Log("Broke");
-			--m_NumWorkingCircuitryComponents;
+			// Get the number of working circuitry components
+			int numWorkingCircuitryComps = 0;
+			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
+			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
 
-			// Change the battery capacity
-			m_PowerStorage.BatteryCapacity = m_PowerBatteryCapacity * ((float)m_NumWorkingCircuitryComponents / (float)m_NumCircuitryComponents);
+			// Set the new battery capacity
+			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);
 
 			// Deactive the charge availablity
-			if(m_NumWorkingCircuitryComponents == 0)
+			if(numWorkingCircuitryComps == 0)
 			{
 				m_PowerStorage.DeactivateBatteryChargeAvailability();
 			}
 		}
+
+		// Update the UI
+		m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
 	}
 	
 	private void HandleCircuitryFixing(CComponentInterface _Component)
 	{
+		int index = m_Circuitry1 == _Component ? 0 : 1;
 		if(CNetwork.IsServer)
 		{
-			++m_NumWorkingCircuitryComponents;
+			// Get the number of working circuitry components
+			int numWorkingCircuitryComps = 0;
+			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
+			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
 
-			// Change the battery capacity
-			m_PowerStorage.BatteryCapacity = m_PowerBatteryCapacity * ((float)m_NumWorkingCircuitryComponents / (float)m_NumCircuitryComponents);
+			// Set the new battery capacity
+			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);
 
 			// Activate the charge availablity
 			m_PowerStorage.ActivateBatteryChargeAvailability();
 		}
+
+		// Update the UI
+		m_DUIPowerCapacitor.SetCircuitryStateChange(index, true);
 	}
 }

@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 [RequireComponent(typeof(CComponentInterface))]
-public class CLiquidComponent : CNetworkMonoBehaviour
+public class CFluidComponent : CNetworkMonoBehaviour
 {
 	// Member Types
 	
@@ -33,7 +33,11 @@ public class CLiquidComponent : CNetworkMonoBehaviour
 	{
 		get { return(m_RepairPositions);}
 	}
-	
+
+    public float CurrentHealth
+    {
+        get { return (m_CurrentHealth); }
+    }
 	
 	// Member Methods
 	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
@@ -67,7 +71,9 @@ public class CLiquidComponent : CNetworkMonoBehaviour
 			if(child.tag == "ComponentTransform")
 				m_RepairPositions.Add(child);
 		}
-		
+
+		transform.FindChild("Model").renderer.material.color = Color.green;
+
 		// Register events created in the inherited class CComponentInterface
 		// This will call onbreak or onfix when the even is triggered.
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;

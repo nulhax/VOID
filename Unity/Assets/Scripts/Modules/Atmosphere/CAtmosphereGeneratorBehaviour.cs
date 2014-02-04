@@ -24,7 +24,10 @@ using System.Collections.Generic;
 public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour 
 {
 	// Member Types
+	public delegate void NotifyStateChange(CAtmosphereGeneratorBehaviour _Self);
 	
+	public event NotifyStateChange EventGenerationRateChanged;
+
 	
 	// Member Delegates & Events
 	
@@ -57,7 +60,11 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 
 	private void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-
+		if(_VarInstance == m_AtmosphereGenerationRate)
+		{
+			if(EventGenerationRateChanged != null)
+				EventGenerationRateChanged(this);
+		}
 	}
 
 	public void Start()

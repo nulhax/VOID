@@ -51,7 +51,13 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 		get { return (m_iNaniteCapacity.Get()); }
 		
 		[AServerOnly]
-		set { m_iNaniteCapacity.Set(value); }
+		set
+		{ 
+			m_iNaniteCapacity.Set(value); 
+
+			if(value < StoredNanites)
+				StoredNanites = value;
+		}
 	}
 	
 	public int AvailableNaniteCapacity

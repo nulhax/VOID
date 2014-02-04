@@ -33,6 +33,11 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Properties
 
 
+    private CNetworkVar<bool> m_CalibratorComponentActive = null;
+    private CNetworkVar<bool> m_LiquidComponentActive = null;
+    private CNetworkVar<bool> m_RatchetComponentActive = null;
+
+
 	public GameObject ActiveTurretObject
 	{
 		get 
@@ -53,8 +58,11 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		m_cActiveTurretViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
-    }
 
+        //m_CalibratorComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
+        //m_LiquidComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
+        //m_RatchetComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
+    }
 
 	void Start()
 	{
