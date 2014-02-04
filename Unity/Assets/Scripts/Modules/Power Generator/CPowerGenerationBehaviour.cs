@@ -28,7 +28,7 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-	public delegate void NotifyStateChange(GameObject _Self);
+	public delegate void NotifyStateChange(CPowerGenerationBehaviour _Self);
 
 	public event NotifyStateChange EventGenerationRateChanged;
 
@@ -64,7 +64,7 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 		if(m_PowerGenerationRate == _VarInstance)
 		{
 			if(EventGenerationRateChanged != null)
-				EventGenerationRateChanged(gameObject);
+				EventGenerationRateChanged(this);
 		}
 	}
 

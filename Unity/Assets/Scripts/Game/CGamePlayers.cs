@@ -286,7 +286,6 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
         CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
 		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
@@ -300,6 +299,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
+
+		tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
