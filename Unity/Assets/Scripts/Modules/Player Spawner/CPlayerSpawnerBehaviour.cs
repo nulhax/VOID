@@ -49,11 +49,28 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
+        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
+        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
+        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
+        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
+
 		// Find owner facility
 		//		Signup to power evetns, requires power to operate
 		// 		Signup to temperature changes, will over heat
 		//		Signup to hull breaches, wont spawn during hull breach
 	}
+
+
+    void OnComponentDamaged(CComponentInterface _Component)
+    {
+        m_bBlocked.Set(true);
+    }
+
+
+    void OnComponentRepaired(CComponentInterface _Component)
+    {
+        m_bBlocked.Set(false);
+    }
 
 
 	void OnDestroy()
@@ -127,6 +144,8 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 	List<GameObject> m_cContainedPlayers = new List<GameObject>();
 
 
+    CComponentInterface m_ComponentCircuitry = new CComponentInterface();
+    CComponentInterface m_ComponentLiquid    = new CComponentInterface();
 	CNetworkVar<bool> m_bBlocked = null;
 
 

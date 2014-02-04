@@ -33,7 +33,8 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		PrimaryEnd,
 		SecondaryStart,
 		SecondaryEnd,
-		Use,
+		UseStart,
+        UseEnd,
 		
 		MAX
 	}
@@ -185,7 +186,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         if (_bDown)
 		{
             //Debug.LogError("Hit twice" + gameObject.name);
-			CheckInteraction(EInteractionType.Use);
+			CheckInteraction(EInteractionType.UseStart);
 		}
 	}
 

@@ -56,11 +56,12 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     void Start()
     {
         // Debug: Sign up for 'use' event
-        gameObject.GetComponent<CActorInteractable>().EventUse += new CActorInteractable.NotifyInteraction(OnUse);
+        gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUse);
 
         // Set invalid tool
         m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
 
+        // Debug: Health set
         m_fHealth = 50.0f;
     }
 

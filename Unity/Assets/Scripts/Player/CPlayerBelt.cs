@@ -374,7 +374,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 			case CPlayerInteractor.EInteractionType.PrimaryEnd: s_cSerializeStream.Write((byte)ENetworkAction.DeactivateToolPrimary); break;
 			case CPlayerInteractor.EInteractionType.SecondaryStart: s_cSerializeStream.Write((byte)ENetworkAction.ActivateToolSecondary); break;
 			case CPlayerInteractor.EInteractionType.SecondaryEnd: s_cSerializeStream.Write((byte)ENetworkAction.DeactivateToolSeconary); break;
-			case CPlayerInteractor.EInteractionType.Use: 
+			case CPlayerInteractor.EInteractionType.UseStart: 
 			{
 				if (_cInteractableObject != null &&
 					_cInteractableObject.GetComponent<CToolInterface>() != null)
