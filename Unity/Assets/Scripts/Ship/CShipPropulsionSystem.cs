@@ -81,8 +81,7 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 
 	[AServerOnly]
 	public void UpdateShipPropulsionPool()
-	{
-		// Get the combined power battery charge from each power generator
+	{		
 		float fTotalPropulsion = m_PropulsionGenerators.Sum((pg) => {	CPropulsionGeneratorSystem pgs = pg.GetComponent<CPropulsionGeneratorSystem>();
 																		return(pgs.IsPropulsionGeneratorActive ? pgs.PropulsionForce : 0.0f); });
 		

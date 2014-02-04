@@ -72,21 +72,7 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if (gameObject.GetComponent<CToolInterface>().IsHeld)
-		{
-			if (m_bActive.Get())
-			{
-				m_fActiveTimer += Time.deltaTime * 3;
 
-				transform.localPosition = Vector3.Lerp(s_vDeactivePosition, s_vActivePosition, m_fActiveTimer);
-			}
-			else
-			{
-				m_fDeactiveTimer += Time.deltaTime * 3;
-
-				transform.localPosition = Vector3.Lerp(s_vActivePosition, s_vDeactivePosition, m_fDeactiveTimer);
-			}
-		}
 	}
 
 
@@ -143,10 +129,4 @@ public class CRachetBehaviour : CNetworkMonoBehaviour
 
 	float m_fActiveTimer = 0.0f;
 	float m_fDeactiveTimer = 0.0f;
-
-
-	static Vector3 s_vDeactivePosition = new Vector3(0.5f, 0.36f, 0.5f);
-	static Vector3 s_vActivePosition = new Vector3(0.0f, 0.36f, 0.85f);
-
-
 };

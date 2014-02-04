@@ -62,7 +62,6 @@ public class CModuleInterface : MonoBehaviour
         NaniteCapsule,
         Engine,
 
-
         MAX
 	}
 

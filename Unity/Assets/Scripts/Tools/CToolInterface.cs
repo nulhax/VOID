@@ -103,11 +103,23 @@ public class CToolInterface : CNetworkMonoBehaviour
 			if (IsHeld)
             {
                 GameObject cOwnerPlayerActor = OwnerPlayerActor;
+              
+                Transform[]children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
+                foreach(Transform child in children)
+                {
+                    if(child.name == "RightHandIndex1")
+                    {
+                        gameObject.transform.parent = child;
+                    }
+                }     
 
-                gameObject.transform.parent = cOwnerPlayerActor.transform;
-                gameObject.transform.localPosition = new Vector3(0.5f, 0.36f, 0.5f);
-                gameObject.transform.localRotation = Quaternion.identity;
+                if(gameObject.transform.parent.gameObject == null)
+                {
+                    Debug.LogError("Could not find right hand transform of player model!");
+                }
 
+				gameObject.transform.localPosition = new Vector3(0,0,0);
+              
                 // Turn off dynamic physics
 				if(CNetwork.IsServer)
 				{
@@ -162,8 +174,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 	public void Update()
 	{
 		if (IsHeld)
-        {
-            gameObject.transform.localRotation = Quaternion.Euler(OwnerPlayerActor.GetComponent<CPlayerHead>().HeadEulerX, gameObject.transform.localRotation.eulerAngles.y, gameObject.transform.localRotation.eulerAngles.z);
+        { 
+            Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform;
+            gameObject.transform.rotation = ActorHead.rotation;
         }
 	}
 
