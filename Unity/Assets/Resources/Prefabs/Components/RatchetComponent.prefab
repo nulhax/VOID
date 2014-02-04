@@ -274,10 +274,10 @@ MonoBehaviour:
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
-  syncNetworkState: 0
+  syncNetworkState: 1
   health_max: Infinity
   health_min: 0
-  health_initial: 250
+  health_initial: 100
   health_previous: 0
   state_initial: 0
   stateTransitions: []

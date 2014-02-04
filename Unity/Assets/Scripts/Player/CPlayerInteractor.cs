@@ -167,30 +167,23 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-    void OnInputPrimaryChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnInputPrimaryChange(CUserInput.EInput _eInput, bool _bDown)
 	{
-        if (_ulPlayerId == 0)
-        {
-            CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
-        }
+        CheckInteraction((_bDown) ? EInteractionType.PrimaryStart : EInteractionType.PrimaryEnd);
 	}
 
 
 	[AClientOnly]
-    void OnInputSecondaryChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnInputSecondaryChange(CUserInput.EInput _eInput, bool _bDown)
 	{
-        if (_ulPlayerId == 0)
-        {
-            CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
-        }
+        CheckInteraction((_bDown) ? EInteractionType.SecondaryStart : EInteractionType.SecondaryEnd);
 	}
 
 
 	[AClientOnly]
-    void OnInputUseChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void OnInputUseChange(CUserInput.EInput _eInput, bool _bDown)
 	{
-        if (_ulPlayerId == 0 &&
-            _bDown)
+        if (_bDown)
 		{
             //Debug.LogError("Hit twice" + gameObject.name);
 			CheckInteraction(EInteractionType.UseStart);

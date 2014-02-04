@@ -130,7 +130,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CPlayerHead cMyActorHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
 
 			// Write my head's x-rotation
-			_cStream.Write(cMyActorHead.transform.localEulerAngles.x);
+            _cStream.Write(cMyActorHead.m_cActorHead.transform.localEulerAngles.x);
 		}
 	}
 
@@ -164,10 +164,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	private void OnMouseMoveY(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fAmount)
+	private void OnMouseMoveY(CUserInput.EAxis _eAxis, float _fAmount)
 	{
-		if (_ulPlayerId == 0 &&
-            !InputDisabled)
+		if (!InputDisabled)
 		{
 			// Retrieve new rotations
 			m_vRotation.x += _fAmount;

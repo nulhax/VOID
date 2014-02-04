@@ -37,6 +37,11 @@ public class CUserInput : CNetworkMonoBehaviour
         RightAnalogueX,
         RightAnalogueY,
 
+       // GalaxyShip_YawLeft,       // Mouse X
+        //GalaxyShip_YawRight,      // Mouse X
+        //GalaxyShip_PitchUp,       // Mouse Y
+       // GalaxyShip_PitchDown,     // Mouse Y
+
         MAX
     }
 
@@ -70,12 +75,8 @@ public class CUserInput : CNetworkMonoBehaviour
         GalaxyShip_Down,          // Control
         GalaxyShip_StrafeLeft,    // D
         GalaxyShip_StrafeRight,   // A
-        GalaxyShip_YawLeft,       // Mouse X
-        GalaxyShip_YawRight,      // Mouse X
-        GalaxyShip_PitchUp,       // Mouse Y
-        GalaxyShip_PitchDown,     // Mouse Y
-        GalaxyShip_RollLeft,      // Q
-        GalaxyShip_RollRight,     // E
+        GalaxyShip_YawLeft,      // Q
+        GalaxyShip_YawRight,     // E
         GalaxyShip_Turbo,         // Shift
                                 
         Tool_SelectSlot1,         // 1
@@ -91,7 +92,7 @@ public class CUserInput : CNetworkMonoBehaviour
 	}
 
 
-    public struct TPlayerStates
+    public class TPlayerStates
     {
         public ulong ulPreviousInput;
         public ulong ulInput;
@@ -103,8 +104,12 @@ public class CUserInput : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public delegate void NotifyAxisChange(EAxis _eAxis, ulong _ulPlayerId, float _fValue);
-    public delegate void NotifyInputChange(EInput _eInput, ulong _ulPlayerId, bool _bDown);
+    public delegate void NotifyAxisChange(EAxis _eAxis, float _fValue);
+    public delegate void NotifyInputChange(EInput _eInput, bool _bDown);
+
+
+    public delegate void NotifyClientAxisChange(EAxis _eAxis, ulong _ulPlayerId, float _fValue);
+    public delegate void NotifyClientInputChange(EInput _eInput, ulong _ulPlayerId, bool _bDown);
 
 
 // Member Properties
@@ -171,6 +176,46 @@ public class CUserInput : CNetworkMonoBehaviour
             s_cInstance.m_mAxisCallbacks[_eAxis].Remove(_nCallback);
         }
     }
+
+
+    public static void SubscribeClientInputChange(EInput _eInput, NotifyClientInputChange _nCallback)
+    {
+        if (!s_cInstance.m_mClientInputCallbacks.ContainsKey(_eInput))
+        {
+            s_cInstance.m_mClientInputCallbacks.Add(_eInput, new List<NotifyClientInputChange>());
+        }
+
+        s_cInstance.m_mClientInputCallbacks[_eInput].Add(_nCallback);
+    }
+
+
+    public static void UnsubscribeClientInputChange(EInput _eInput, NotifyClientInputChange _nCallback)
+    {
+        if (s_cInstance.m_mClientInputCallbacks.ContainsKey(_eInput))
+        {
+            s_cInstance.m_mClientInputCallbacks[_eInput].Remove(_nCallback);
+        }
+    }
+
+
+    public static void SubscribeClientAxisChange(EAxis _eClientAxis, NotifyClientAxisChange _nCallback)
+    {
+        if (!s_cInstance.m_mClientAxisCallbacks.ContainsKey(_eClientAxis))
+        {
+            s_cInstance.m_mClientAxisCallbacks.Add(_eClientAxis, new List<NotifyClientAxisChange>());
+        }
+
+        s_cInstance.m_mClientAxisCallbacks[_eClientAxis].Add(_nCallback);
+    }
+
+
+    public static void UnsubscribeClientAxisChange(EAxis _eClientAxis, NotifyClientAxisChange _nCallback)
+    {
+        if (s_cInstance.m_mClientAxisCallbacks.ContainsKey(_eClientAxis))
+        {
+            s_cInstance.m_mClientAxisCallbacks[_eClientAxis].Remove(_nCallback);
+        }
+    }
 	
 	
 	public static void UnsubscribeAll()
@@ -217,19 +262,22 @@ public class CUserInput : CNetworkMonoBehaviour
     }
 
 
-    public void SerializeOutbound(CNetworkStream _cStream)
+    public static void SerializeOutbound(CNetworkStream _cStream)
     {
-        if (!m_InFocus)
+        if (!s_cInstance.m_InFocus)
             return ;
 
-
+        
         _cStream.Write(s_cInstance.m_ulInputStates);
-        _cStream.Write(s_cInstance.m_fMouseMovementX * SensitivityX);
-        _cStream.Write(s_cInstance.m_fMouseMovementY * SensitivityY * -1.0f);
+        _cStream.Write(s_cInstance.m_fSerializeMouseMovementX);
+        _cStream.Write(s_cInstance.m_fSerializeMouseMovementY);
+
+        s_cInstance.m_fSerializeMouseMovementX = 0.0f;
+        s_cInstance.m_fSerializeMouseMovementY = 0.0f;
     }
 
 
-    public void SerializeInbound(CNetworkPlayer _cPlayer, CNetworkStream _cStream)
+    public static void UnserializeInbound(CNetworkPlayer _cPlayer, CNetworkStream _cStream)
     {
         TPlayerStates tPlayerStates = s_cInstance.m_mPlayerStates[_cPlayer.PlayerId];
 
@@ -237,6 +285,10 @@ public class CUserInput : CNetworkMonoBehaviour
         tPlayerStates.ulInput = _cStream.ReadULong();
         tPlayerStates.fMouseX = _cStream.ReadFloat();
         tPlayerStates.fMouseY = _cStream.ReadFloat();
+        
+        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseX, _cPlayer.PlayerId, tPlayerStates.fMouseX);
+        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseY, _cPlayer.PlayerId, tPlayerStates.fMouseY);
+        s_cInstance.ProcessClientEvents(_cPlayer.PlayerId, tPlayerStates);
     }
 
 
@@ -251,8 +303,8 @@ public class CUserInput : CNetworkMonoBehaviour
 
     void Start()
     {
-        CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnEventPlayerDisconnect);
-        CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnEventPlayerConnect);
+        CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnEventPlayerConnect);
+        CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnEventPlayerDisconnect);
         CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnEventShutdown);
     }
 
@@ -264,7 +316,7 @@ public class CUserInput : CNetworkMonoBehaviour
 
         if (CNetwork.IsServer)
         {
-            ProcessClientEvents();
+            //ProcessClientEvents();
         }
     }
 
@@ -291,50 +343,46 @@ public class CUserInput : CNetworkMonoBehaviour
             if ((m_ulPreviousInputStates & (ulong)1 << i) == 0 &&
                 (m_ulInputStates & (ulong)1 << i) > 0)
             {
-                InvokeInputEvent((EInput)i, 0, true);
+                InvokeInputEvent((EInput)i, true);
             }
             else if ((m_ulPreviousInputStates & (ulong)1 << i) > 0 &&
                         (m_ulInputStates & (ulong)1 << i) == 0)
             {
-                InvokeInputEvent((EInput)i, 0, false);
+                InvokeInputEvent((EInput)i, false);
             }
         }
 
         m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
         m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
+        m_fSerializeMouseMovementX += m_fMouseMovementX;
+        m_fSerializeMouseMovementY += m_fMouseMovementY;
 
-        InvokeAxisEvent(EAxis.MouseX, 0, m_fMouseMovementX);
-        InvokeAxisEvent(EAxis.MouseY, 0, m_fMouseMovementY);
+        InvokeAxisEvent(EAxis.MouseX, m_fMouseMovementX);
+        InvokeAxisEvent(EAxis.MouseY, m_fMouseMovementY);
     }
 
 
     [AServerOnly]
-    void ProcessClientEvents()
+    void ProcessClientEvents(ulong _ulPlayerId, TPlayerStates _tPlayers)
     {
         // Send out input events to subscribers on server
-        foreach (KeyValuePair<ulong, TPlayerStates> tEntry in m_mPlayerStates)
+        for (int i = 0; i < (int)EInput.MAX; ++i)
         {
-            TPlayerStates cPlayerStates = tEntry.Value;
-
-            for (int i = 0; i < (int)EInput.MAX; ++i)
+            if ((_tPlayers.ulPreviousInput & (ulong)1 << i) == 0 &&
+                (_tPlayers.ulInput         & (ulong)1 << i) > 0)
             {
-                if ((cPlayerStates.ulPreviousInput & (ulong)1 << i) == 0 &&
-                    (cPlayerStates.ulInput         & (ulong)1 << i) >  0)
-                {
-                    InvokeInputEvent((EInput)i, tEntry.Key, true);
-                }
-                else if ((cPlayerStates.ulPreviousInput & (ulong)1 << i) >  0 &&
-                         (cPlayerStates.ulInput         & (ulong)1 << i) == 0)
-                {
-                    InvokeInputEvent((EInput)i, tEntry.Key, false);
-                }
+                InvokeClientInputEvent((EInput)i, _ulPlayerId, true);
+            }
+            else if ((_tPlayers.ulPreviousInput & (ulong)1 << i) > 0 &&
+                     (_tPlayers.ulInput         & (ulong)1 << i) == 0)
+            {
+                InvokeClientInputEvent((EInput)i, _ulPlayerId, false);
             }
         }
-
     }
 
 
-    void InvokeInputEvent(EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    void InvokeInputEvent(EInput _eInput, bool _bDown)
     {
         if (m_mInputCallbacks.ContainsKey(_eInput))
         {
@@ -342,13 +390,13 @@ public class CUserInput : CNetworkMonoBehaviour
 
             foreach (NotifyInputChange cSubscriber in aSubscribers)
             {
-                cSubscriber(_eInput, _ulPlayerId, _bDown);
+                cSubscriber(_eInput, _bDown);
             }
         }
     }
 
 
-    void InvokeAxisEvent(EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+    void InvokeAxisEvent(EAxis _eAxis, float _fValue)
     {
         if (m_mAxisCallbacks.ContainsKey(_eAxis))
         {
@@ -356,7 +404,35 @@ public class CUserInput : CNetworkMonoBehaviour
 
             foreach (NotifyAxisChange cSubscriber in aSubscribers)
             {
-                cSubscriber(_eAxis, _ulPlayerId, _fValue);
+                cSubscriber(_eAxis, _fValue);
+            }
+        }
+    }
+
+
+    void InvokeClientInputEvent(EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    {
+        if (m_mClientInputCallbacks.ContainsKey(_eInput))
+        {
+            List<NotifyClientInputChange> aSubscribers = m_mClientInputCallbacks[_eInput];
+
+            foreach (NotifyClientInputChange cSubscriber in aSubscribers)
+            {
+                cSubscriber(_eInput, _ulPlayerId, _bDown);
+            }
+        }
+    }
+
+
+    void InvokeClientClientAxisEvent(EAxis _eClientAxis, ulong _ulPlayerId, float _fValue)
+    {
+        if (m_mClientAxisCallbacks.ContainsKey(_eClientAxis))
+        {
+            List<NotifyClientAxisChange> aSubscribers = m_mClientAxisCallbacks[_eClientAxis];
+
+            foreach (NotifyClientAxisChange cSubscriber in aSubscribers)
+            {
+                cSubscriber(_eClientAxis, _ulPlayerId, _fValue);
             }
         }
     }
@@ -402,6 +478,8 @@ public class CUserInput : CNetworkMonoBehaviour
 
     float m_fMouseMovementX = 0.0f;
     float m_fMouseMovementY = 0.0f;
+    float m_fSerializeMouseMovementX = 0.0f;
+    float m_fSerializeMouseMovementY = 0.0f;
 
 
 	bool m_InFocus = true;
@@ -412,6 +490,10 @@ public class CUserInput : CNetworkMonoBehaviour
 
 // Server Member Fields
 
+
+    Dictionary<EInput, List<NotifyClientInputChange>> m_mClientInputCallbacks = new Dictionary<EInput, List<NotifyClientInputChange>>();
+    Dictionary<EAxis, List<NotifyClientAxisChange>> m_mClientAxisCallbacks = new Dictionary<EAxis, List<NotifyClientAxisChange>>();
+   
 
     Dictionary<ulong, TPlayerStates> m_mPlayerStates = new Dictionary<ulong, TPlayerStates>();
 

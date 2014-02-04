@@ -157,7 +157,8 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     void Update()
     {
         // Interpolate health
-        transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
+		// Martin: Ill replace this with a UI to show status' :)
+        //transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
     }
 
 

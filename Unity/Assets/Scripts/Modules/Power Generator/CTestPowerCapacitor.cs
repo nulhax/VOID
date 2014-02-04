@@ -77,8 +77,6 @@ public class CTestPowerCapacitor: MonoBehaviour
 
 	private void HandleCapacitorStateChange(CPowerStorageBehaviour _Capacitor)
 	{
-		Debug.Log(_Capacitor.BatteryCharge.ToString() + " / " + _Capacitor.BatteryCapacity.ToString());
-
 		m_DUIPowerCapacitor.UpdateCapacitorVariables(_Capacitor.BatteryCharge, _Capacitor.BatteryCapacity);
 	}
 	

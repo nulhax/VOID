@@ -273,6 +273,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
         CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
 	}
 
 
@@ -310,7 +311,7 @@ public class CGameRegistrator : MonoBehaviour
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerCapacitor, ENetworkPrefab.PowerCapacitor);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret, ENetworkPrefab.MiningTurret);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit, ENetworkPrefab.MiningCockpit);	
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
+		//CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser, ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule, ENetworkPrefab.NaniteCapsule);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine, ENetworkPrefab.Engine);
@@ -366,8 +367,8 @@ public class CGameRegistrator : MonoBehaviour
         //CUserInput.SetKeyBinding(CUserInput.axyShip_YawRight]               = KeyCode.);         // Mouse X
         //CUserInput.SetKeyBinding(CUserInput.axyShip_PitchUp]                = KeyCode);          // Mouse Y
         //CUserInput.SetKeyBinding(CUserInput.axyShip_PitchDown]              = KeyCode);          // Mouse Y
-        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_RollLeft, KeyCode.Q);
-        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_RollRight, KeyCode.E);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_YawLeft, KeyCode.Q);
+        CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_YawRight, KeyCode.E);
         CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Turbo, KeyCode.LeftShift);// Shift
 
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot1, KeyCode.Alpha1);
