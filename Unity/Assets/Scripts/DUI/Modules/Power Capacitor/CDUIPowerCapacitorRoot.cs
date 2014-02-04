@@ -26,8 +26,6 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 	
 	
 	// Member Delegates & Events
-	public delegate void NotifyDUIEvent();
-	public event NotifyDUIEvent EventBuildModuleButtonPressed;
 	
 	
 	// Member Fields

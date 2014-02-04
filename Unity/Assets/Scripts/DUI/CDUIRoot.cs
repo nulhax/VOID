@@ -33,6 +33,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		ModuleCreation,
 		PowerGenerator,
 		PowerCapacitor,
+		AtmosphereGenerator,
 
 		MAX
 	}

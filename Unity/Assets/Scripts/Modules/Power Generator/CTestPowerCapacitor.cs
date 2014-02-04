@@ -86,6 +86,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 		{
 			// Update the UI
 			int index = m_Circuitry1 == _Component ? 0 : 1;
+			m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
 
 			// Get the number of working circuitry components
 			int numWorkingCircuitryComps = 0;
@@ -109,7 +110,8 @@ public class CTestPowerCapacitor: MonoBehaviour
 		{
 			// Update the UI
 			int index = m_Circuitry1 == _Component ? 0 : 1;
-			
+			m_DUIPowerCapacitor.SetCircuitryStateChange(index, true);
+
 			// Get the number of working circuitry components
 			int numWorkingCircuitryComps = 0;
 			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
