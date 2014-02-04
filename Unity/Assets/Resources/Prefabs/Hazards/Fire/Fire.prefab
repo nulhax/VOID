@@ -225,8 +225,8 @@ MonoBehaviour:
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 2.5
-  - 7.5
+  - 1
+  - 9
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400004
@@ -251,7 +251,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &19800000
 ParticleSystem:
@@ -265,7 +265,7 @@ ParticleSystem:
   randomSeed: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   moveWithTransform: 1
   InitialModule:
     enabled: 1
@@ -497,12 +497,12 @@ ParticleSystem:
       minMaxState: 1
     gravityModifier: 0
     inheritVelocity: 0
-    maxNumParticles: 10
+    maxNumParticles: 15
   ShapeModule:
     serializedVersion: 2
     enabled: 1
     type: 4
-    radius: 2
+    radius: 3
     angle: 25
     length: 5
     boxX: 1
@@ -515,7 +515,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 10
+      scalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1312,7 +1312,7 @@ ParticleSystem:
   randomSeed: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   moveWithTransform: 1
   InitialModule:
     enabled: 1
@@ -1544,12 +1544,12 @@ ParticleSystem:
       minMaxState: 1
     gravityModifier: 0
     inheritVelocity: 0
-    maxNumParticles: 10
+    maxNumParticles: 15
   ShapeModule:
     serializedVersion: 2
     enabled: 1
     type: 4
-    radius: 2
+    radius: 3
     angle: 25
     length: 5
     boxX: 1
@@ -1562,7 +1562,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 10
+      scalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2359,7 +2359,7 @@ ParticleSystem:
   randomSeed: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   moveWithTransform: 1
   InitialModule:
     enabled: 1
@@ -2591,12 +2591,12 @@ ParticleSystem:
       minMaxState: 1
     gravityModifier: 0
     inheritVelocity: 0
-    maxNumParticles: 10
+    maxNumParticles: 15
   ShapeModule:
     serializedVersion: 2
     enabled: 1
     type: 4
-    radius: 2
+    radius: 3
     angle: 25
     length: 5
     boxX: 1
@@ -2609,7 +2609,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 10
+      scalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
