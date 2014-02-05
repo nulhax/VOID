@@ -27,10 +27,10 @@ public class CFacilityOnboardActors : MonoBehaviour
 	
 	
 	// Member Delegates & Events
-	public delegate void FacilityActorEnterExit(GameObject _Sender, GameObject _Actor);
+	public delegate void FacilityActorEnterExit(GameObject _Facility, GameObject _Actor);
 	
-	public event FacilityActorEnterExit ActorEnteredFacility;
-	public event FacilityActorEnterExit ActorExitedFacility;
+	public event FacilityActorEnterExit EventActorEnteredFacility;
+	public event FacilityActorEnterExit EventActorExitedFacility;
 	
 	// Member Fields
 	private List<GameObject> m_ActorsOnboard = new List<GameObject>();
@@ -41,59 +41,45 @@ public class CFacilityOnboardActors : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		ActorEnteredFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger;
-		ActorExitedFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger;
+		// Register the ship to new actor entering/exiting events
+		EventActorEnteredFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger;
+		EventActorExitedFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger;
 	}
 
 	[AServerOnly]
-	public void ActorEnteredFacilityTrigger(GameObject _Actor)
+	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
 	{
 		if(!m_ActorsOnboard.Contains(_Actor))
 		{
-            // Check this is a player actor
-            if(_Actor.GetComponent<CPlayerLocator>() != null)
-            {
-                // Notify player actor has entered this facility
-                _Actor.GetComponent<CPlayerLocator>().SetContainingFacility(gameObject);
-            }
-
 			m_ActorsOnboard.Add(_Actor);
-			
-			OnActorEnter(_Actor);
+
+			// Call ActorEnteredFacility for the locator
+			if(_Actor.GetComponent<CActorLocator>() != null)
+				_Actor.GetComponent<CActorLocator>().ActorEnteredFacility(gameObject);
+
+			// Fire the actor entered facility event
+			if(EventActorEnteredFacility != null)
+			{
+				EventActorEnteredFacility(gameObject, _Actor);
+			}
 		}
 	}
 
 	[AServerOnly]
-	public void ActorExitedFacilityTrigger(GameObject _Actor)
+	public void OnActorExitedFacilityTrigger(GameObject _Actor)
 	{
 		if(m_ActorsOnboard.Contains(_Actor))
 		{
-			// Check this is a player actor
-			if(_Actor.GetComponent<CPlayerLocator>() != null)
-			{
-				// Notify player actor has entered this facility
-				_Actor.GetComponent<CPlayerLocator>().SetContainingFacility(null);
-			}
-
 			m_ActorsOnboard.Remove(_Actor);
-			
-			OnActorExit(_Actor);
-		}
-	}
-	
-	private void OnActorEnter(GameObject _Actor)
-	{
-		if(ActorEnteredFacility != null)
-		{
-			ActorEnteredFacility(gameObject, _Actor);
-		}
-	}
-	
-	private void OnActorExit(GameObject _Actor)
-	{
-		if(ActorExitedFacility != null)
-		{
-			ActorExitedFacility(gameObject, _Actor);
+
+			// Call ActorExitedFacility for the locator
+			if(_Actor.GetComponent<CActorLocator>() != null)
+				_Actor.GetComponent<CActorLocator>().ActorExitedFacility(gameObject);
+
+			if(EventActorExitedFacility != null)
+			{
+				EventActorExitedFacility(gameObject, _Actor);
+			}
 		}
 	}
 }

@@ -17,6 +17,7 @@ using System.Collections;
 
 
 /* Implementation */
+using System.Linq;
 
 
 public class CPlayerInteractor : CNetworkMonoBehaviour
@@ -99,33 +100,33 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			// Find the origin, direction, distance of the players interaction cursor
 			Camera headCamera = CGameCameras.PlayersHeadCamera;
 			Ray ray = new Ray(headCamera.transform.position, headCamera.transform.forward);
-			RaycastHit hit = new RaycastHit();
 			float distance = 5.0f;
 			GameObject hitActorInteractable = null;
-			
-			// Check if the player cast a ray on the screen
-			if(Physics.Raycast(ray, out hit, distance))
+			RaycastHit actualHit = new RaycastHit();
+
+			// Do the raycast against all objects in path
+			RaycastHit[] hits = Physics.RaycastAll(ray, distance).OrderBy(h => h.distance).ToArray();
+
+			// Check each one for an interactable objectg
+			foreach(RaycastHit hit in hits)
 			{
 				// Get the game object which owns this mesh
 				GameObject hitObject = hit.collider.gameObject;
-				
-				// Check the parents until we find the one that has CActorInteractable on it
-				bool found = true;
-				while(hitObject.GetComponent<CActorInteractable>() == null)
-				{
-					if(hitObject.transform.parent != null)
-					{
-						hitObject = hitObject.transform.parent.gameObject;
-					}
-					else
-					{
-						found = false;
-						break;
-					}
-				}
 
-				if(found)
-					hitActorInteractable = hitObject;					
+				// Check the object itself for the interactable script
+				CActorInteractable hitInteractable = hitObject.GetComponent<CActorInteractable>();
+
+				// Check the parents until we find the one that has CActorInteractable on it
+				if(hitInteractable == null)
+					hitInteractable = CUtility.FindInParents<CActorInteractable>(hitObject);
+
+				// If found an interactable break out
+				if(hitInteractable != null)
+				{
+					actualHit = hit;
+					hitActorInteractable = hitInteractable.gameObject;	
+					break;
+				}
 			}
 
 			// If this is a valid interactable actor
@@ -137,7 +138,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				if(networkView != null)
 				{
 					// Fire the interactable event for the actor that was interacted with
-					hitActorInteractable.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, hit);
+					hitActorInteractable.GetComponent<CActorInteractable>().OnInteractionEvent(_eIneractionType, gameObject, actualHit);
 				}
 				else
 				{
@@ -147,7 +148,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				if (EventInteraction != null)
 				{
 					// Fire the interaction event for the player interactor
-					EventInteraction(_eIneractionType, hitActorInteractable, hit);
+					EventInteraction(_eIneractionType, hitActorInteractable, actualHit);
 				}
 
 				Debug.DrawRay(ray.origin, ray.direction * distance, Color.green, 1.0f);
@@ -157,7 +158,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				if (EventNoInteraction != null)
 				{
 					// Fire the no interaction event for the player interactor
-					EventNoInteraction(_eIneractionType, hit);
+					EventNoInteraction(_eIneractionType, actualHit);
 				}
 
 				Debug.DrawRay(ray.origin, ray.direction * distance, Color.red, 1.0f);

@@ -107,20 +107,25 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			CalculateConsumptionRate();
+			// Remove consumers that are now null
+			m_AtmosphericConsumers.RemoveAll(item => item == null);
+
+			UpdateConsumptionRate();
 			UpdateAtmosphereQuantity();
 		}
 	}
 
-	public void AddAtmosphericConsumer(GameObject _Consumer)
+	[AServerOnly]
+	public void RegisterAtmosphericConsumer(GameObject _Consumer)
 	{
 		if(!m_AtmosphericConsumers.Contains(_Consumer))
 		{
 			m_AtmosphericConsumers.Add(_Consumer);
 		}
 	}
-	
-	public void RemoveAtmosphericConsumer(GameObject _Consumer)
+
+	[AServerOnly]
+	public void UnregisterAtmosphericConsumer(GameObject _Consumer)
 	{
 		if(m_AtmosphericConsumers.Contains(_Consumer))
 		{
@@ -128,29 +133,24 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		}
 	}
 
-	private void CalculateConsumptionRate()
+	[AServerOnly]
+	private void UpdateConsumptionRate()
 	{
 		// Calulate the combined consumption rate within the facility
 		float consumptionRate = 0.0f;
-		bool bHasNullGameObject = false;
 		foreach(GameObject consumer in m_AtmosphericConsumers)
 		{
-			if (consumer != null)
-			{
-				consumptionRate += consumer.GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate;
-			}
-			else
-			{
-				bHasNullGameObject = true;
-			}
-		}
+			CActorAtmosphericConsumer aac = consumer.GetComponent<CActorAtmosphericConsumer>();
 
-		m_AtmosphericConsumers.RemoveAll(cEntry => cEntry == null);
+			if(aac.IsConsumingAtmosphere)
+				consumptionRate += aac.AtmosphericConsumptionRate;
+		}
 
 		// Set the consumption rate
 		AtmosphereConsumeRate = consumptionRate;
 	}
 
+	[AServerOnly]
 	private void UpdateAtmosphereQuantity()
     {
 		float consumptionAmount = 0.0f;
@@ -159,9 +159,6 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		// If the atmosphere is being consumed, calculate the consumption rate
 		if(m_AtmosphericConsumers.Count != 0)
 		{
-			// Remove obsolete consumers
-			m_AtmosphericConsumers.RemoveAll((item) => item == null);
-
 			// Calculate the consumption amount
 			consumptionAmount = -AtmosphereConsumeRate * Time.deltaTime;
 		}
@@ -173,10 +170,10 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
         }
 
 		// Combine the refill and consumption amounts to get the final rate
-		float finalRate = consumptionAmount + refillAmount;
+		float finalAmount = consumptionAmount + refillAmount;
 
 		// Calculate the new quantity
-		float newQuantity = AtmosphereQuantity + finalRate;
+		float newQuantity = AtmosphereQuantity + finalAmount;
 
 		// Clamp atmosphere
 		if(newQuantity > AtmosphereVolume)
@@ -186,6 +183,15 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		else if(newQuantity < 0.0f)
 		{
 			newQuantity = 0.0f;
+
+			// There was inssuficent atmosphere, let the consumers know
+			foreach(GameObject consumer in m_AtmosphericConsumers)
+			{
+				CActorAtmosphericConsumer aac = consumer.GetComponent<CActorAtmosphericConsumer>();
+				
+				if(aac.IsConsumingAtmosphere)
+					aac.InsufficientAtmosphere();
+			}
 		}
 		
 		// Increase atmosphere amount
