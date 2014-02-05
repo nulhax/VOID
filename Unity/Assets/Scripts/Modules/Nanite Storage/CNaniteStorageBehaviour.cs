@@ -95,6 +95,8 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 		{
 			ActivateNaniteAvailability();
 		}
+
+        GetComponent<CActorInteractable>().EventHover += OnHover;
 	}
 	
 	[AServerOnly]
@@ -114,4 +116,44 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	{
 		StoredNanites = StoredNanites - _iNanites;
 	}
+
+    // TEMPORARY //
+    //
+    // Hover text logic that needs revision. OnGUI + Copy/Paste code = Terribad
+    //
+    // TEMPORARY //
+    bool bShowName = false;
+    bool bOnGUIHit = false;
+    void OnHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
+    {
+        bShowName = true;
+    }
+
+
+    public void OnGUI()
+    {
+        float fScreenCenterX = Screen.width / 2;
+        float fScreenCenterY = Screen.height / 2;
+        float fWidth = 100.0f;
+        float fHeight = 20.0f;
+        float fOriginX = fScreenCenterX + 25.0f;
+        float fOriginY = fScreenCenterY - 10.0f;
+
+        if (bShowName && !bOnGUIHit)
+        {
+            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Nanite Storage");
+            bOnGUIHit = true;
+        }
+        else if (bShowName && bOnGUIHit)
+        {
+            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Nanite Storage");
+            bShowName = false;
+            bOnGUIHit = false;
+        }
+    }
+    // TEMPORARY //
+    //
+    // 
+    //
+    // TEMPORARY //
 }

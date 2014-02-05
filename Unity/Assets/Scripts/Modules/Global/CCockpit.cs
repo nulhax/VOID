@@ -229,8 +229,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
 
-		if ( cPlayerActor != null &&
-		    !IsMounted)
+		if ( cPlayerActor != null &&!IsMounted)
 		{
 			CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
@@ -239,19 +238,18 @@ public class CCockpit : CNetworkMonoBehaviour
 			// Save position on player when entering
 			m_vEnterPosition = cPlayerActor.transform.position;
 
-			// Teleport player in cockpit
-			cPlayerActor.transform.position = m_cSeat.transform.position;
+			// Parent the player to the cockpit seat
+			cPlayerActor.GetComponent<CNetworkView>().SetParent(m_cSeat.GetComponent<CNetworkView>().ViewId);
 
-			// Rotate player in cockpit
-			cPlayerActor.transform.rotation = m_cSeat.transform.rotation;
+			// Teleport player in cockpit
+			cPlayerActor.transform.localPosition = Vector3.zero;
+			cPlayerActor.transform.localRotation = Quaternion.identity;
 
 			// Set the player kinematic
 			cPlayerActor.rigidbody.isKinematic = true;
 
 			// Notify observers
 			if (EventPlayerEnter != null) EventPlayerEnter(m_cMountedPlayerId.Get());
-
-			//Debug.Log(string.Format("Player ({0}) entered cockpit", _ulPlayerId));
 		}
 	}
 
@@ -272,8 +270,13 @@ public class CCockpit : CNetworkMonoBehaviour
 
 			if (cPlayerActor != null)
 			{
+				// UnParent the player to the cockpit seat
+				cPlayerActor.GetComponent<CNetworkView>().SetParent(null);
+
+				// Move player back to positions when entered
 				cPlayerActor.transform.position = m_vEnterPosition;
 				m_vEnterPosition = Vector3.zero;
+				cPlayerActor.transform.rotation = Quaternion.identity;
 
 				// Turn of kinematic
 				cPlayerActor.rigidbody.isKinematic = false;

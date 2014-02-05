@@ -803,6 +803,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cSpawnPosition: {fileID: 100000}
+  m_ComponentCircuitry: {fileID: 11400012}
+  m_ComponentLiquid: {fileID: 11400020}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
