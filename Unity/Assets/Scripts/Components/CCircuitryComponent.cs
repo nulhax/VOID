@@ -80,7 +80,7 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
 		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
 
-       // GetComponent<CActorInteractable>().EventHover += OnHover;
+     //   GetComponent<CActorInteractable>().EventHover += OnHover;
 	}
 	
 
