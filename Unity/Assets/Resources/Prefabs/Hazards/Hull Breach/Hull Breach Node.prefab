@@ -116,14 +116,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 1000
+  health_max: 500
   health_min: 0
-  health_initial: 1000
+  health_initial: 500
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 500
-  - 1500
+  - 50
+  - 450
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400004
