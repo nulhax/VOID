@@ -80,9 +80,20 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	void Update()
+	void HandleCockpitRotations(Vector2 _Rotations)
 	{
-		// Empty
+		// Get the rotations of the turret
+		Vector2 turretRotations = ActiveTurretObject.GetComponent<CTurretBehaviour>().TurretRotations;
+
+		// Update the rotations of the cockpit
+		Vector3 cockpitLocalEuler = m_CockpitSeat.transform.localEulerAngles;
+		cockpitLocalEuler = new Vector3(turretRotations.x, cockpitLocalEuler.y, cockpitLocalEuler.z);
+		m_CockpitSeat.transform.localEulerAngles = cockpitLocalEuler;
+
+		// Update the rotations of the center
+		Vector3 centerLocalEuler = m_CockpitCenter.transform.localEulerAngles;
+		cockpitLocalEuler = new Vector3(cockpitLocalEuler.x, turretRotations.y, cockpitLocalEuler.z);
+		m_CockpitCenter.transform.localEulerAngles = cockpitLocalEuler;
 	}
 
 
@@ -147,12 +158,23 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_cActiveTurretViewId)
 		{
-			// Empty
+			// Register the handling cockpit rotations
+			ActiveTurretObject.GetComponent<CTurretBehaviour>().EventTurretRotated += HandleCockpitRotations;
+
+			// Unregister previous the handling cockpit rotations
+			if(m_cActiveTurretViewId.GetPrevious() != null)
+			{
+				m_cActiveTurretViewId.GetPrevious().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated -= HandleCockpitRotations;
+			}
 		}
 	}
 
 
 // Member Fields
+
+
+	public GameObject m_CockpitSeat = null;
+	public GameObject m_CockpitCenter = null;
 
 
 	CNetworkVar<CNetworkViewId> m_cActiveTurretViewId = null;

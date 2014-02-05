@@ -44,13 +44,7 @@ public class CInteriorTrigger : MonoBehaviour
 
 		if(_Other.rigidbody != null)
 		{
-			transform.parent.GetComponent<CFacilityOnboardActors>().ActorEnteredFacilityTrigger(_Other.rigidbody.gameObject);
-
-			// Check if the rigid body is a atmospheric consumer
-			if(_Other.rigidbody.gameObject.GetComponent<CActorAtmosphericConsumer>() != null)
-			{
-				transform.parent.GetComponent<CFacilityAtmosphere>().AddAtmosphericConsumer(_Other.rigidbody.gameObject);
-			}
+			transform.parent.GetComponent<CFacilityOnboardActors>().OnActorEnteredFacilityTrigger(_Other.rigidbody.gameObject);
 		}
 	}
 
@@ -62,13 +56,7 @@ public class CInteriorTrigger : MonoBehaviour
 
 		if(_Other.rigidbody != null)
 		{
-			transform.parent.GetComponent<CFacilityOnboardActors>().ActorExitedFacilityTrigger(_Other.rigidbody.gameObject);
-
-			// Check if the rigid body is a atmospheric consumer
-			if(_Other.rigidbody.gameObject.GetComponent<CActorAtmosphericConsumer>() != null)
-			{
-				transform.parent.GetComponent<CFacilityAtmosphere>().RemoveAtmosphericConsumer(_Other.rigidbody.gameObject);
-			}
+			transform.parent.GetComponent<CFacilityOnboardActors>().OnActorExitedFacilityTrigger(_Other.rigidbody.gameObject);
 		}
 	}
 }

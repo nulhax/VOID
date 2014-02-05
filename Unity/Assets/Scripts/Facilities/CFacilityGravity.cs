@@ -51,8 +51,8 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register the actors entering/exiting the trigger zone
-		GetComponent<CFacilityOnboardActors>().ActorEnteredFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorEnteredGravityTrigger);
-		GetComponent<CFacilityOnboardActors>().ActorExitedFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorExitedGravityTrigger);
+		GetComponent<CFacilityOnboardActors>().EventActorEnteredFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorEnteredGravityTrigger);
+		GetComponent<CFacilityOnboardActors>().EventActorExitedFacility += new CFacilityOnboardActors.FacilityActorEnterExit(ActorExitedGravityTrigger);
 	}
 
 	[AServerOnly]

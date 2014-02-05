@@ -36,7 +36,7 @@ public class CShipOnboardActors : MonoBehaviour
 	
 	
 	// Member Methods
-
+	[AServerOnly]
 	public void ActorEnteredFacilityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		if(!m_FacilitiesActorsOnboard.ContainsKey(_Facility))
@@ -49,7 +49,8 @@ public class CShipOnboardActors : MonoBehaviour
 			m_FacilitiesActorsOnboard[_Facility].Add(_Actor);
 		}
 	}
-	
+
+	[AServerOnly]
 	public void ActorExitedFacilityTrigger(GameObject _Facility, GameObject _Actor)
 	{
 		if(m_FacilitiesActorsOnboard[_Facility].Contains(_Actor))
@@ -57,7 +58,8 @@ public class CShipOnboardActors : MonoBehaviour
 			m_FacilitiesActorsOnboard[_Facility].Remove(_Actor);
 		}
 	}
-	
+
+	[AServerOnly]
 	public bool IsActorOnboardShip(GameObject _Actor)
 	{
 		bool actorOnboardShip = false;
@@ -73,5 +75,19 @@ public class CShipOnboardActors : MonoBehaviour
 		}
 		
 		return(actorOnboardShip);
+	}
+
+	[AServerOnly]
+	public GameObject GetContainingFacility(GameObject _Actor)
+	{
+		foreach(KeyValuePair<GameObject, List<GameObject>> facilityActorPairs in m_FacilitiesActorsOnboard)
+		{
+			if(facilityActorPairs.Value.Exists((actor) => actor == _Actor))
+			{
+				return(facilityActorPairs.Key);
+			}
+		}
+
+		return(null);
 	}
 }
