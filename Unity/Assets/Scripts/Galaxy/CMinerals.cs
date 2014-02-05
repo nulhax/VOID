@@ -98,7 +98,7 @@ public class CMinerals : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_fQuantity)
 		{
-			gameObject.renderer.material.SetColor("_Color", new Color(1.0f - Quantity, 1.0f - Quantity, 1.0f));
+			//gameObject.GetComponentInChildren<Renderer>.material.SetColor("_Color", new Color(1.0f - Quantity, 1.0f - Quantity, 1.0f));
 		}
 	}
 

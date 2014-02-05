@@ -46,8 +46,6 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 		if (CNetwork.IsServer)
 		{
 			GenerateMinerals();
-			GenerateMinerals();
-			GenerateMinerals();
 
 			gameObject.GetComponent<CNetworkView>().EventPreDestory += () =>
 			{
@@ -91,19 +89,26 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
         //Random.Range(10);
 
-        RaycastHit cRaycastHit;
-		Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
-		
 
-		if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
-		{
-			GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
-			cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
-			cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-            cCrystal.GetComponent<CNetworkView>().SetRotation(vRayDirection);
+        int iRandom = Random.Range(0, 3);
 
-			m_aDeposits.Add(cCrystal);
-		}
+
+        for (int i = 0; i < iRandom; ++i)
+        {
+            RaycastHit cRaycastHit;
+            Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
+
+
+            if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
+            {
+                GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
+                cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
+                cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
+                cCrystal.GetComponent<CNetworkView>().SetRotation(vRayDirection);
+
+                m_aDeposits.Add(cCrystal);
+            }
+        }
 
 
 
