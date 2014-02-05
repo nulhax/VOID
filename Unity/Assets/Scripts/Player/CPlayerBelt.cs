@@ -44,9 +44,27 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
+
+
 	public delegate void EquipTool(GameObject _equippedTool);
 	public event EquipTool EventEquipTool;
+
+
+    [AClientOnly]
+    public delegate void HandleToolChanged(CNetworkViewId _cViewId);
+    public event HandleToolChanged EventToolChanged;
+
+
+    [AClientOnly]
+    public delegate void HandleToolDropped(CNetworkViewId _cViewId);
+    public event HandleToolDropped EventToolDropped;
+
+
+    [AClientOnly]
+    public delegate void HandleToolPickedup(CNetworkViewId _cViewId);
+    public event HandleToolPickedup EventToolPickedup;
 	
+
 // Member Properties
 
 
@@ -301,8 +319,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                     break;
 
                 case ENetworkAction.PickupTool:
-                    cPlayerBelt.PickupTool(_cNetworkPlayer.PlayerId, cInteractableObject);
-					cPlayerBelt.EventEquipTool(cInteractableObject);
+                    cPlayerBelt.PickupTool(_cNetworkPlayer.PlayerId, cInteractableObject);                   
+                    if(cPlayerBelt.EventEquipTool != null)cPlayerBelt.EventEquipTool(cInteractableObject);                   
                     break;
 
                 case ENetworkAction.UseTool:
@@ -416,14 +434,29 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
         for (uint i = 0; i < k_uiMaxNumTools; ++i)
         {
-            if (m_acToolsViewId[i] == _cVarInstance)
+            if (m_acToolsViewId[i] == _cSyncedVar)
             {
-                CNetworkViewId cNewValue = m_acToolsViewId[i].Get();
+                CNetworkViewId cToolNetworkViewId = m_acToolsViewId[i].Get();
+
+                if (cToolNetworkViewId == null)
+                {
+                    if (EventToolDropped != null) EventToolDropped(m_acToolsViewId[i].GetPrevious());
+                }
+                else
+                {
+                    if (EventToolPickedup != null) EventToolPickedup(cToolNetworkViewId);
+                }
             }
+        }
+
+        // Changing tool
+        if (_cSyncedVar == m_bActiveToolId)
+        {
+            if (EventToolChanged != null) EventToolChanged(m_acToolsViewId[m_bActiveToolId.Get()].Get());
         }
     }
 

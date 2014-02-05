@@ -107,7 +107,7 @@ public class CToolInterface : CNetworkMonoBehaviour
                 Transform[]children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
                 foreach(Transform child in children)
                 {
-                    if(child.name == "RightHandIndex1")
+                    if(child.name == "RightHandIndex2")
                     {
                         gameObject.transform.parent = child;
                     }
@@ -118,7 +118,7 @@ public class CToolInterface : CNetworkMonoBehaviour
                     Debug.LogError("Could not find right hand transform of player model!");
                 }
 
-				gameObject.transform.localPosition = new Vector3(0,0,0);
+                gameObject.transform.localPosition = new Vector3(0.0f,0.0f,0.0f);
               
                 // Turn off dynamic physics
 				if(CNetwork.IsServer)
