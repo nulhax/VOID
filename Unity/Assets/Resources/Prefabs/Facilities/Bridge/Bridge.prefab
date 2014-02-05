@@ -4322,9 +4322,6 @@ GameObject:
   - 4: {fileID: 400482}
   - 33: {fileID: 3300060}
   - 23: {fileID: 2300056}
-  - 114: {fileID: 11400428}
-  - 114: {fileID: 11400426}
-  - 114: {fileID: 11400424}
   - 64: {fileID: 6400010}
   - 54: {fileID: 5400068}
   m_Layer: 0
@@ -4344,9 +4341,6 @@ GameObject:
   - 4: {fileID: 400484}
   - 33: {fileID: 3300062}
   - 23: {fileID: 2300058}
-  - 114: {fileID: 11400434}
-  - 114: {fileID: 11400432}
-  - 114: {fileID: 11400430}
   - 64: {fileID: 6400012}
   - 54: {fileID: 5400070}
   m_Layer: 0
@@ -4366,9 +4360,6 @@ GameObject:
   - 4: {fileID: 400486}
   - 33: {fileID: 3300064}
   - 23: {fileID: 2300060}
-  - 114: {fileID: 11400440}
-  - 114: {fileID: 11400438}
-  - 114: {fileID: 11400436}
   - 64: {fileID: 6400014}
   - 54: {fileID: 5400072}
   m_Layer: 0
@@ -4388,9 +4379,6 @@ GameObject:
   - 4: {fileID: 400488}
   - 33: {fileID: 3300066}
   - 23: {fileID: 2300062}
-  - 114: {fileID: 11400446}
-  - 114: {fileID: 11400444}
-  - 114: {fileID: 11400442}
   - 64: {fileID: 6400016}
   - 54: {fileID: 5400074}
   m_Layer: 0
@@ -4410,9 +4398,6 @@ GameObject:
   - 4: {fileID: 400490}
   - 33: {fileID: 3300068}
   - 23: {fileID: 2300064}
-  - 114: {fileID: 11400452}
-  - 114: {fileID: 11400450}
-  - 114: {fileID: 11400448}
   - 64: {fileID: 6400018}
   - 54: {fileID: 5400076}
   m_Layer: 0
@@ -4432,9 +4417,6 @@ GameObject:
   - 4: {fileID: 400492}
   - 33: {fileID: 3300070}
   - 23: {fileID: 2300066}
-  - 114: {fileID: 11400458}
-  - 114: {fileID: 11400456}
-  - 114: {fileID: 11400454}
   - 64: {fileID: 6400020}
   - 54: {fileID: 5400078}
   m_Layer: 0
@@ -4454,9 +4436,6 @@ GameObject:
   - 4: {fileID: 400494}
   - 33: {fileID: 3300072}
   - 23: {fileID: 2300068}
-  - 114: {fileID: 11400464}
-  - 114: {fileID: 11400462}
-  - 114: {fileID: 11400460}
   - 64: {fileID: 6400022}
   - 54: {fileID: 5400080}
   m_Layer: 0
@@ -4476,9 +4455,6 @@ GameObject:
   - 4: {fileID: 400496}
   - 33: {fileID: 3300074}
   - 23: {fileID: 2300070}
-  - 114: {fileID: 11400470}
-  - 114: {fileID: 11400468}
-  - 114: {fileID: 11400466}
   - 64: {fileID: 6400024}
   - 54: {fileID: 5400082}
   m_Layer: 0
@@ -4498,9 +4474,6 @@ GameObject:
   - 4: {fileID: 400498}
   - 33: {fileID: 3300076}
   - 23: {fileID: 2300072}
-  - 114: {fileID: 11400476}
-  - 114: {fileID: 11400474}
-  - 114: {fileID: 11400472}
   - 64: {fileID: 6400026}
   - 54: {fileID: 5400084}
   m_Layer: 0
@@ -4520,9 +4493,6 @@ GameObject:
   - 4: {fileID: 400500}
   - 33: {fileID: 3300078}
   - 23: {fileID: 2300074}
-  - 114: {fileID: 11400482}
-  - 114: {fileID: 11400480}
-  - 114: {fileID: 11400478}
   - 64: {fileID: 6400028}
   - 54: {fileID: 5400086}
   m_Layer: 0
@@ -4542,9 +4512,6 @@ GameObject:
   - 4: {fileID: 400502}
   - 33: {fileID: 3300080}
   - 23: {fileID: 2300076}
-  - 114: {fileID: 11400488}
-  - 114: {fileID: 11400486}
-  - 114: {fileID: 11400484}
   - 64: {fileID: 6400030}
   - 54: {fileID: 5400088}
   m_Layer: 0
@@ -4564,9 +4531,6 @@ GameObject:
   - 4: {fileID: 400504}
   - 33: {fileID: 3300082}
   - 23: {fileID: 2300078}
-  - 114: {fileID: 11400494}
-  - 114: {fileID: 11400492}
-  - 114: {fileID: 11400490}
   - 64: {fileID: 6400032}
   - 54: {fileID: 5400090}
   m_Layer: 0
@@ -4586,9 +4550,6 @@ GameObject:
   - 4: {fileID: 400506}
   - 33: {fileID: 3300084}
   - 23: {fileID: 2300080}
-  - 114: {fileID: 11400500}
-  - 114: {fileID: 11400498}
-  - 114: {fileID: 11400496}
   - 64: {fileID: 6400034}
   - 54: {fileID: 5400092}
   m_Layer: 0
@@ -4608,9 +4569,6 @@ GameObject:
   - 4: {fileID: 400508}
   - 33: {fileID: 3300086}
   - 23: {fileID: 2300082}
-  - 114: {fileID: 11400506}
-  - 114: {fileID: 11400504}
-  - 114: {fileID: 11400502}
   - 64: {fileID: 6400036}
   - 54: {fileID: 5400094}
   m_Layer: 0
@@ -4630,9 +4588,6 @@ GameObject:
   - 4: {fileID: 400510}
   - 33: {fileID: 3300088}
   - 23: {fileID: 2300084}
-  - 114: {fileID: 11400512}
-  - 114: {fileID: 11400510}
-  - 114: {fileID: 11400508}
   - 64: {fileID: 6400038}
   - 54: {fileID: 5400096}
   m_Layer: 0
@@ -4652,9 +4607,6 @@ GameObject:
   - 4: {fileID: 400512}
   - 33: {fileID: 3300090}
   - 23: {fileID: 2300086}
-  - 114: {fileID: 11400518}
-  - 114: {fileID: 11400516}
-  - 114: {fileID: 11400514}
   - 64: {fileID: 6400040}
   - 54: {fileID: 5400098}
   m_Layer: 0
@@ -4674,9 +4626,6 @@ GameObject:
   - 4: {fileID: 400514}
   - 33: {fileID: 3300092}
   - 23: {fileID: 2300088}
-  - 114: {fileID: 11400524}
-  - 114: {fileID: 11400522}
-  - 114: {fileID: 11400520}
   - 64: {fileID: 6400042}
   - 54: {fileID: 5400100}
   m_Layer: 0
@@ -4696,9 +4645,6 @@ GameObject:
   - 4: {fileID: 400516}
   - 33: {fileID: 3300094}
   - 23: {fileID: 2300090}
-  - 114: {fileID: 11400530}
-  - 114: {fileID: 11400528}
-  - 114: {fileID: 11400526}
   - 64: {fileID: 6400044}
   - 54: {fileID: 5400102}
   m_Layer: 0
@@ -4718,9 +4664,6 @@ GameObject:
   - 4: {fileID: 400518}
   - 33: {fileID: 3300096}
   - 23: {fileID: 2300092}
-  - 114: {fileID: 11400536}
-  - 114: {fileID: 11400534}
-  - 114: {fileID: 11400532}
   - 64: {fileID: 6400046}
   - 54: {fileID: 5400104}
   m_Layer: 0
@@ -4740,9 +4683,6 @@ GameObject:
   - 4: {fileID: 400520}
   - 33: {fileID: 3300098}
   - 23: {fileID: 2300094}
-  - 114: {fileID: 11400542}
-  - 114: {fileID: 11400540}
-  - 114: {fileID: 11400538}
   - 64: {fileID: 6400048}
   - 54: {fileID: 5400106}
   m_Layer: 0
@@ -4762,9 +4702,6 @@ GameObject:
   - 4: {fileID: 400522}
   - 33: {fileID: 3300100}
   - 23: {fileID: 2300096}
-  - 114: {fileID: 11400548}
-  - 114: {fileID: 11400546}
-  - 114: {fileID: 11400544}
   - 64: {fileID: 6400050}
   - 54: {fileID: 5400108}
   m_Layer: 0
@@ -4786,7 +4723,6 @@ GameObject:
   - 23: {fileID: 2300098}
   - 114: {fileID: 11400554}
   - 114: {fileID: 11400552}
-  - 114: {fileID: 11400550}
   - 64: {fileID: 6400052}
   - 54: {fileID: 5400110}
   m_Layer: 0
@@ -14725,7 +14661,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 3
+  m_PreplacedModuleType: 9
   m_Positioner: {fileID: 100028}
   m_Internal: 1
 --- !u!114 &11400046
@@ -14908,7 +14844,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 8
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100048}
   m_Internal: 0
 --- !u!114 &11400076
@@ -17471,1067 +17407,772 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &11400424
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100482}
+  m_GameObject: {fileID: 100400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400426
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100482}
+  m_GameObject: {fileID: 100400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400428
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100482}
+  m_GameObject: {fileID: 100472}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400430
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100484}
+  m_GameObject: {fileID: 100472}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400432
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100484}
+  m_GameObject: {fileID: 100352}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400434
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100484}
+  m_GameObject: {fileID: 100352}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400436
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100486}
+  m_GameObject: {fileID: 100432}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400438
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100486}
+  m_GameObject: {fileID: 100432}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400440
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100486}
+  m_GameObject: {fileID: 100384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400442
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100488}
+  m_GameObject: {fileID: 100384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400444
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100488}
+  m_GameObject: {fileID: 100456}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400446
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100488}
+  m_GameObject: {fileID: 100456}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400448
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100490}
+  m_GameObject: {fileID: 100264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400450
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100490}
+  m_GameObject: {fileID: 100264}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400452
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100490}
+  m_GameObject: {fileID: 100408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400454
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100492}
+  m_GameObject: {fileID: 100408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400456
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100492}
+  m_GameObject: {fileID: 100328}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400458
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100492}
+  m_GameObject: {fileID: 100328}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400460
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100494}
+  m_GameObject: {fileID: 100336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400462
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100494}
+  m_GameObject: {fileID: 100336}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400464
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100494}
+  m_GameObject: {fileID: 100304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400466
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100496}
+  m_GameObject: {fileID: 100304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400468
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100496}
+  m_GameObject: {fileID: 100232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400470
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100496}
+  m_GameObject: {fileID: 100232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400472
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100498}
+  m_GameObject: {fileID: 100240}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400474
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100498}
+  m_GameObject: {fileID: 100240}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400476
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100498}
+  m_GameObject: {fileID: 100464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400478
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100500}
+  m_GameObject: {fileID: 100464}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400480
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100500}
+  m_GameObject: {fileID: 100376}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400482
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100500}
+  m_GameObject: {fileID: 100376}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400484
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100502}
+  m_GameObject: {fileID: 100280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400486
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100502}
+  m_GameObject: {fileID: 100280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400488
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100502}
+  m_GameObject: {fileID: 100312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400490
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100504}
+  m_GameObject: {fileID: 100312}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400492
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100504}
+  m_GameObject: {fileID: 100440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400494
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100504}
+  m_GameObject: {fileID: 100440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400496
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100506}
+  m_GameObject: {fileID: 100448}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400498
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100506}
+  m_GameObject: {fileID: 100448}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400500
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100506}
+  m_GameObject: {fileID: 100320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400502
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100508}
+  m_GameObject: {fileID: 100320}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400504
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100508}
+  m_GameObject: {fileID: 100272}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400506
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100508}
+  m_GameObject: {fileID: 100272}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400508
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100510}
+  m_GameObject: {fileID: 100248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400510
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100510}
+  m_GameObject: {fileID: 100248}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400512
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100510}
+  m_GameObject: {fileID: 100368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400514
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100512}
+  m_GameObject: {fileID: 100368}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400516
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100512}
+  m_GameObject: {fileID: 100288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400518
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100512}
+  m_GameObject: {fileID: 100288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400520
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100514}
+  m_GameObject: {fileID: 100416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400522
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100514}
+  m_GameObject: {fileID: 100416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400524
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100514}
+  m_GameObject: {fileID: 100392}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400526
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100516}
+  m_GameObject: {fileID: 100392}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400528
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100516}
+  m_GameObject: {fileID: 100256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400530
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100516}
+  m_GameObject: {fileID: 100256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400532
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100518}
+  m_GameObject: {fileID: 100424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400534
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100518}
+  m_GameObject: {fileID: 100424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400536
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100518}
+  m_GameObject: {fileID: 100360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400538
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100520}
+  m_GameObject: {fileID: 100360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400540
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100520}
+  m_GameObject: {fileID: 100296}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400542
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100520}
+  m_GameObject: {fileID: 100296}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400544
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100522}
+  m_GameObject: {fileID: 100344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400546
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100522}
+  m_GameObject: {fileID: 100344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 1000
-  health_min: 0
-  health_initial: 1000
-  health_previous: 0
-  state_initial: 2
-  stateTransitions:
-  - 500
-  - 1500
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400548
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100522}
+  m_GameObject: {fileID: 100480}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400550
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100524}
+  m_GameObject: {fileID: 100480}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b2e42f7fc926b47892259607042399, type: 3}
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodMesh: {fileID: 0}
-  breachedMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_AtmosphericConsumptionRate: 15
+  m_ConsumingAtmosphere: 0
 --- !u!114 &11400552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -18569,774 +18210,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400424
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400426
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400428
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400430
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100472}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400432
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400434
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400436
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400438
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100432}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400440
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400442
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100384}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400444
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400446
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400448
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400450
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100264}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400452
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400454
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400456
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400458
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400460
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400462
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400464
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400466
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100304}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400468
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400470
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400472
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400474
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400476
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400478
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400480
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400482
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400484
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400486
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400488
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400490
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400492
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400494
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400496
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400498
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100448}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400500
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100320}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400502
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100320}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400504
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400506
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100272}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400508
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400510
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100248}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400512
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400514
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100368}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400516
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100288}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400518
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100288}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400520
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400522
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400524
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400526
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400528
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400530
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400532
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400534
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400536
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400538
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400540
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400542
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400544
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400546
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100344}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
---- !u!114 &11400548
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400550
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 15
-  m_ConsumingAtmosphere: 0
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

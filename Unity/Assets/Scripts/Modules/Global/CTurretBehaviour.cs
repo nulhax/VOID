@@ -53,7 +53,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	public event NotifyControlState EventTakenControl;
 	public event NotifyControlState EventReleasedControl;
 
-	public delegate void NotifyTurretRotation(Vector2 _Rotations);
+	public delegate void NotifyTurretRotation(Vector2 _Rotations, Vector2 _MinMaxEulerX);
 
 	public event NotifyTurretRotation EventTurretRotated;
 
@@ -86,6 +86,11 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	public Vector2 TurretRotations
 	{
 		get { return (m_tRotation.Get()); }
+	}
+
+	public Vector2 MinMaxRotationX
+	{
+		get { return (new Vector2(m_fMinRotationX, m_fMaxRotationX)); }
 	}
 
 
@@ -228,7 +233,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 			m_cBarrel.transform.localEulerAngles = new Vector3(m_tRotation.Get().x, 0.0f, 0.0f);
 
 			if(EventTurretRotated != null)
-				EventTurretRotated(m_tRotation.Get());
+				EventTurretRotated(m_tRotation.Get(), MinMaxRotationX);
 		}
 		else if (_cSyncedVar == m_ulControllerPlayerId)
 		{

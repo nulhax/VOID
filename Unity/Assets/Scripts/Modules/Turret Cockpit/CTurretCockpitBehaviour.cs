@@ -30,14 +30,16 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+// Member Fields
+	public GameObject m_CockpitSeat = null;
+	public GameObject m_CockpitCenter = null;
+
+	public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
+
+	private CNetworkVar<CNetworkViewId> m_cActiveTurretViewId = null;
+
+
 // Member Properties
-
-
-    private CNetworkVar<bool> m_CalibratorComponentActive = null;
-    private CNetworkVar<bool> m_LiquidComponentActive = null;
-    private CNetworkVar<bool> m_RatchetComponentActive = null;
-
-
 	public GameObject ActiveTurretObject
 	{
 		get 
@@ -53,8 +55,6 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 
 // Member Methods
-	
-
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		m_cActiveTurretViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
@@ -80,19 +80,23 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	void HandleCockpitRotations(Vector2 _Rotations)
+	void HandleCockpitRotations(Vector2 _TurretRotations, Vector2 _TurretMinMaxEulerX)
 	{
 		// Get the rotations of the turret
-		Vector2 turretRotations = ActiveTurretObject.GetComponent<CTurretBehaviour>().TurretRotations;
+		Vector2 cockpitRotations = _TurretRotations;
+
+		// Transform X for use of the turret
+		cockpitRotations.x = Mathf.Lerp(m_MinMaxEulerX.x, m_MinMaxEulerX.y, 
+		                                (_TurretRotations.x - _TurretMinMaxEulerX.x) / (_TurretMinMaxEulerX.y - _TurretMinMaxEulerX.x));
 
 		// Update the rotations of the cockpit
 		Vector3 cockpitLocalEuler = m_CockpitSeat.transform.localEulerAngles;
-		cockpitLocalEuler = new Vector3(turretRotations.x, cockpitLocalEuler.y, cockpitLocalEuler.z);
+		cockpitLocalEuler = new Vector3(cockpitRotations.x, cockpitLocalEuler.y, cockpitLocalEuler.z);
 		m_CockpitSeat.transform.localEulerAngles = cockpitLocalEuler;
 
 		// Update the rotations of the center
 		Vector3 centerLocalEuler = m_CockpitCenter.transform.localEulerAngles;
-		cockpitLocalEuler = new Vector3(cockpitLocalEuler.x, turretRotations.y, cockpitLocalEuler.z);
+		cockpitLocalEuler = new Vector3(centerLocalEuler.x, cockpitRotations.y, centerLocalEuler.z);
 		m_CockpitCenter.transform.localEulerAngles = cockpitLocalEuler;
 	}
 
@@ -159,33 +163,12 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 		if (_cSyncedVar == m_cActiveTurretViewId)
 		{
 			// Register the handling cockpit rotations
-			ActiveTurretObject.GetComponent<CTurretBehaviour>().EventTurretRotated += HandleCockpitRotations;
+			if(m_cActiveTurretViewId.Get() != null)
+				m_cActiveTurretViewId.Get().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated += HandleCockpitRotations;
 
 			// Unregister previous the handling cockpit rotations
 			if(m_cActiveTurretViewId.GetPrevious() != null)
-			{
 				m_cActiveTurretViewId.GetPrevious().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated -= HandleCockpitRotations;
-			}
 		}
 	}
-
-
-// Member Fields
-
-
-	public GameObject m_CockpitSeat = null;
-	public GameObject m_CockpitCenter = null;
-
-
-	CNetworkVar<CNetworkViewId> m_cActiveTurretViewId = null;
-
-	
-	float m_fFireTimer		= 0.0f;
-	float m_fFireInterval	= 0.2f;
-
-
-	bool m_bUpdateRotation = false;
-
-
-
 };

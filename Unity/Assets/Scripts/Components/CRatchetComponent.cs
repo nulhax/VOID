@@ -68,18 +68,20 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 				m_RepairPositions.Add(child);
 		}
 
-		transform.FindChild("Model").renderer.material.color = Color.green;
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
 
 		// Register events created in the inherited class CComponentInterface
 		// This will call onbreak or onfix when the even is triggered.
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
-		gameObject.GetComponent<CComponentInterface>().EventComponentFix += OnFix;
-		gameObject.GetComponent<CComponentInterface>().EventHealthChange += OnHealthChange;
+		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
+		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
 	}
 	
 	void OnDestroy()
 	{
-
+        gameObject.GetComponent<CComponentInterface>().EventComponentBreak -= OnBreak;
+        gameObject.GetComponent<CComponentInterface>().EventComponentFix   -= OnFix;
+        gameObject.GetComponent<CComponentInterface>().EventHealthChange   -= OnHealthChange;
 	}
 	
 	

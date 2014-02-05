@@ -69,7 +69,7 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 				m_RepairPositions.Add(child);
 		}
 
-		transform.FindChild("Model").renderer.material.color = Color.green;
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
 
 		// Register events created in the inherited class CComponentInterface
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;

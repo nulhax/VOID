@@ -68,9 +68,11 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
 	void GenerateMinerals()
 	{
+
 		float fRayLength = 500.0f;
 		Vector3 vRayDirection = Random.onUnitSphere;
 
+        /*
         RaycastHit[] cRaycastHits = Physics.RaycastAll(transform.position, Random.insideUnitSphere, 300);
 
         foreach (RaycastHit cRaycastHit in cRaycastHits)
@@ -84,13 +86,13 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
             break;
         }
+        */
 
-
-        /*
-
+        RaycastHit cRaycastHit;
 		Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
 		
-		if (Physics.Raycast(cRay, out cRaycastHit, fRayLength))
+
+		if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
 		{
 			GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
 			cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
@@ -101,17 +103,16 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
 
 
+        /*
+              RaycastHit{
+                 var length : float = 100.0;
+                 var direction : Vector3 = ;
 
-		
-		 RaycastHit{
-			var length : float = 100.0;
-			var direction : Vector3 = ;
-
-			var hit : RaycastHit;
-			collider.Raycast (ray, hit, length*2);
-			return hit;
-		}
-*/
+                 var hit : RaycastHit;
+                 collider.Raycast (ray, hit, length*2);
+                 return hit;
+             }
+     */
 	}
 
 
