@@ -49,6 +49,21 @@ public class CFacilityHull : CNetworkMonoBehaviour
 
 // Member Methods
 
+	public void AddBreach(GameObject breach)
+	{
+		m_Breaches.Add(breach);
+
+		if (CNetwork.IsServer && m_Breaches.Count == 1)	// If this is the first breach...
+			m_bBreached.Set(true);
+	}
+
+	public void RemoveBreach(GameObject breach)
+	{
+		m_Breaches.Remove(breach);
+
+		if (CNetwork.IsServer && m_Breaches.Count <= 0)
+			m_bBreached.Set(false);
+	}
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
@@ -76,18 +91,8 @@ public class CFacilityHull : CNetworkMonoBehaviour
         // Empty
 
         // Debug
-        if (CNetwork.IsServer &&
-            Input.GetKeyDown(KeyCode.P))
-        {
-            if (IsBreached)
-            {
-                m_bBreached.Set(false);
-            }
-            else
-            {
-                m_bBreached.Set(true);
-            }
-        }
+        if (CNetwork.IsServer && Input.GetKeyDown(KeyCode.P))
+			m_bBreached.Set(!m_bBreached.Get());
 	}
 	
 
@@ -111,6 +116,6 @@ public class CFacilityHull : CNetworkMonoBehaviour
 
 
     CNetworkVar<bool> m_bBreached = null;
-
+	System.Collections.Generic.List<GameObject> m_Breaches = new List<GameObject>();
 
 };
