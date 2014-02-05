@@ -21,6 +21,7 @@ using System;
 /* Implementation */
 
 
+[RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 
@@ -62,6 +63,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	void Start()
 	{
         m_cVisorTexture = Resources.Load("Textures/GUI/CrackedVisor", typeof(Texture2D)) as Texture2D;
+		m_AtmosphereConsumer = GetComponent<CActorAtmosphericConsumer>();
 	}
 
 
@@ -75,21 +77,26 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
         if (CNetwork.IsServer)
         {
-            GameObject cFacilityObject = GetComponent<CPlayerLocator>().ContainingFacility;
+			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().LastEnteredFacility;
 
             // Control visor state
-            if (cFacilityObject == null)
+			if (currentFacility == null)
             {
                 m_bVisorDown.Set(true);
             }
             else
             {
-                if (cFacilityObject.GetComponent<CFacilityAtmosphere>().AtmospherePercentage < 25.0f)
+				if (currentFacility.GetComponent<CFacilityAtmosphere>().AtmospherePercentage < 25.0f)
                 {
+					m_AtmosphereConsumer.SetAtmosphereConsumption(false);
                     m_bVisorDown.Set(true);
                 }
                 else
                 {
+					// Set the origninal consumption rate
+					m_AtmosphereConsumer.AtmosphericConsumptionRate = m_AtmosphereConsumer.InitialAtmosphericConsumptionRate;
+
+					m_AtmosphereConsumer.SetAtmosphereConsumption(true);
                     m_bVisorDown.Set(false);
                 }
             }
@@ -120,7 +127,11 @@ public class CPlayerSuit : CNetworkMonoBehaviour
                 // Refill oxygen
                 if (OxygenSupply != k_fOxygenCapacity)
                 {
-                    m_fOxygen.Set(OxygenSupply + k_fOxygenRefillRate * Time.deltaTime);
+					// Set the updated consumption rate
+					m_AtmosphereConsumer.AtmosphericConsumptionRate = k_fOxygenRefillRate;
+
+					// Add to current oxygen to suit
+					m_fOxygen.Set(OxygenSupply + k_fOxygenRefillRate * Time.deltaTime);
 
                     if (OxygenSupply > k_fOxygenCapacity)
                     {
@@ -138,14 +149,15 @@ public class CPlayerSuit : CNetworkMonoBehaviour
         {
             if (m_bVisorDown.Get())
             {
-                
+               
             }
             else
             {
 
             }
 
-            if (EventVisorChange != null) EventVisorChange(this, m_bVisorDown.Get());
+            if (EventVisorChange != null) 
+				EventVisorChange(this, m_bVisorDown.Get());
         }
     }
 
@@ -204,9 +216,12 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 // Member Fields
 
 
+	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
+
+
     const float k_fOxygenCapacity = 60.0f;
     const float k_fOxygenDepleteRate = 1.0f;
-    const float k_fOxygenRefillRate = 5.0f;
+    const float k_fOxygenRefillRate = 10.0f;
 
 
     CNetworkVar<float> m_fOxygen = null;

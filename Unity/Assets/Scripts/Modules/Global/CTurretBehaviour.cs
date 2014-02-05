@@ -48,19 +48,18 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	[AClientOnly]
-	public delegate void HandleTakenControl();
-	public event HandleTakenControl EventTakenControl;
+	public delegate void NotifyControlState();
 
+	public event NotifyControlState EventTakenControl;
+	public event NotifyControlState EventReleasedControl;
 
-	[AServerOnly]
-	public delegate void HandleReleasedControl();
-	public event HandleTakenControl EventReleasedControl;
+	public delegate void NotifyTurretRotation(Vector2 _Rotations);
 
+	public event NotifyTurretRotation EventTurretRotated;
 
-	[AClientOnly]
-	public delegate void HandleControllerChange(ulong _ulOldPlayerId, ulong _ulNewPlayerId);
-	public event HandleControllerChange EventControllerChange;
+	public delegate void NotifyControllerChange(ulong _ulOldPlayerId, ulong _ulNewPlayerId);
+
+	public event NotifyControllerChange EventControllerChange;
 
 
 // Member Properties
@@ -84,6 +83,12 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
+	public Vector2 TurretRotations
+	{
+		get { return (m_tRotation.Get()); }
+	}
+
+
 // Member Methods
 
 
@@ -101,7 +106,8 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 		m_ulControllerPlayerId.Set(_ulPlayerId);
 
-		if (EventTakenControl != null) EventTakenControl();
+		if (EventTakenControl != null) 
+			EventTakenControl();
 	}
 
 
@@ -112,52 +118,15 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
 		m_ulControllerPlayerId.Set(0);
 
-		if (EventReleasedControl != null) EventReleasedControl();
-	}
-
-
-	[AClientOnly]
-	public static void SerializeOutbound(CNetworkStream _cStream)
-    {
-		_cStream.Write(s_cSerializeStream);
-
-		s_cSerializeStream.Clear();
-    }
-
-
-	[AServerOnly]
-	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-	{
-		while (_cStream.HasUnreadData)
-		{
-			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
-			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
-
-			if (cTurretObject != null)
-			{
-				CTurretBehaviour cTurretBehaviour = cTurretObject.GetComponent<CTurretBehaviour>();
-				ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-
-				switch (eAction)
-				{
-				case ENetworkAction.UpdateRotation:
-					float fRotationX = _cStream.ReadFloat();
-					float fRotationY = _cStream.ReadFloat();
-					cTurretBehaviour.m_tRotation.Set(new Vector2(fRotationX, fRotationY));
-					break;
-
-				default:
-					Debug.LogError(string.Format("Unknown network action ({0})", eAction));
-					break;
-				}
-			}
-		}
+		if (EventReleasedControl != null) 
+			EventReleasedControl();
 	}
 
 
 	void Start()
 	{
-		// Empty
+		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisControlTurret);
+		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisControlTurret);
 	}
 	
 	
@@ -179,27 +148,74 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
 	void UpdateRotation()
 	{
-        if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health > 0)
-        {
-            Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+//        if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health > 0)
+//        {
+//            Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+//
+//            // Update rotations
+//            vRotation.x += CUserInput.MouseMovementY;
+//            vRotation.y += CUserInput.MouseMovementX;
+//
+//            // Clamp rotation
+//            vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
+//
+//            // Apply rotations to objects
+//            m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+//            transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+//
+//            // Write update rotation action
+//            s_cSerializeStream.Write(ThisNetworkView.ViewId);
+//            s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
+//            s_cSerializeStream.Write(vRotation.x);
+//            s_cSerializeStream.Write(vRotation.y);
+//        }
+	}
 
-            // Update rotations
-            vRotation.x += CUserInput.MouseMovementY;
-            vRotation.y += CUserInput.MouseMovementX;
+	[AServerOnly]
+	private void OnEventClientAxisControlTurret(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+	{
+		if(_ulPlayerId == m_ulControllerPlayerId.Get())
+		{
+			switch (_eAxis)
+			{
+			case CUserInput.EAxis.MouseX:
+			{
+				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+				
+				// Update rotation
+				vRotation.y += CUserInput.MouseMovementX;
+				
+				// Apply rotations to turret
+				transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+				m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
 
-            // Clamp rotation
-            vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
+				// Server updates the rotation for other clients
+				m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
+				break;
+			}
+				
+			case CUserInput.EAxis.MouseY:
+			{
+				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+				
+				// Update rotation
+				vRotation.x += CUserInput.MouseMovementY;
+				vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
+				
+				// Apply rotations to turret
+				transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+				m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
 
-            // Apply rotations to objects
-            m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
-            transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
-
-            // Write update rotation action
-            s_cSerializeStream.Write(ThisNetworkView.ViewId);
-            s_cSerializeStream.Write((byte)ENetworkAction.UpdateRotation);
-            s_cSerializeStream.Write(vRotation.x);
-            s_cSerializeStream.Write(vRotation.y);
-        }
+				// Server updates the rotation for other clients
+				m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
+				break;
+			}
+				
+			default:
+				Debug.LogError("Unknown input");
+				break;
+			}
+		}
 	}
 
 
@@ -207,27 +223,28 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_tRotation)
 		{
-			if (ControllerPlayerId != CNetwork.PlayerId)
-			{
-                //Debug.Log("Hello");
-                transform.eulerAngles = new Vector3(transform.eulerAngles.x, m_tRotation.Get().y, transform.eulerAngles.z);
-                m_cBarrel.transform.eulerAngles = new Vector3(m_tRotation.Get().x, m_cBarrel.transform.eulerAngles.y, m_cBarrel.transform.eulerAngles.z);
-			}
+			// Update the rotation of the turret
+			transform.localEulerAngles = new Vector3(0.0f, m_tRotation.Get().y, 0.0f);
+			m_cBarrel.transform.localEulerAngles = new Vector3(m_tRotation.Get().x, 0.0f, 0.0f);
+
+			if(EventTurretRotated != null)
+				EventTurretRotated(m_tRotation.Get());
 		}
 		else if (_cSyncedVar == m_ulControllerPlayerId)
 		{
-			if (ControllerPlayerId == CNetwork.PlayerId)
+			if(ControllerPlayerId == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to turret camera position
 				CGameCameras.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
 			}
-			else if (m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
+			else if(m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
 			{
 				// Debug: Move camera to player head position
 				CGameCameras.SetDefaultViewPerspective();
 			}
 
-			if (EventControllerChange != null) EventControllerChange(m_ulControllerPlayerId.GetPrevious(), m_ulControllerPlayerId.Get());
+			if (EventControllerChange != null)
+				EventControllerChange(m_ulControllerPlayerId.GetPrevious(), m_ulControllerPlayerId.Get());
 		}
 	}
 

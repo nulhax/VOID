@@ -22,11 +22,26 @@ public class CFireHazard : MonoBehaviour
 	void Awake()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
+		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
 	}
 
 	void OnDestroy()
 	{
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
+		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
+	}
+
+	void Update()
+	{
+		if(burning && CNetwork.IsServer)
+		{
+			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
+			CActorHealth ah = GetComponent<CActorHealth>();
+
+			float thresholdPercentage = 0.25f;
+			if(fa.AtmospherePercentage < thresholdPercentage)
+				ah.health += (1.0f / (fa.AtmospherePercentage / thresholdPercentage)) * Time.deltaTime;
+		}
 	}
 
 	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
@@ -43,6 +58,7 @@ public class CFireHazard : MonoBehaviour
 					}
 
 					gameObject.GetComponent<CFireHazard>().burning = true;
+					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
@@ -57,10 +73,17 @@ public class CFireHazard : MonoBehaviour
 					}
 
 					gameObject.GetComponent<CFireHazard>().burning = false;
+					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
 	}
+
+//	void OnInsufficientAtmosphere()
+//	{
+//		CActorHealth ah = GetComponent<CActorHealth>();
+//		ah.health = ah.health_max;
+//	}
 
 	void OnTriggerStay(Collider collider)
 	{
