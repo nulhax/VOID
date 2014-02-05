@@ -69,7 +69,6 @@ public class CFireHazard : MonoBehaviour
 					foreach (ParticleSystem particleSystem in particleSystems)
 					{
 						particleSystem.Stop();
-						particleSystem.Clear();
 					}
 
 					gameObject.GetComponent<CFireHazard>().burning = false;
