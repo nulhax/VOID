@@ -61,22 +61,27 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 	}
 
 
+    void OnDestroy()
+    {
+        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
+        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
+        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
+        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
+    }
+
+
     void OnComponentDamaged(CComponentInterface _Component)
     {
+        Debug.Log("BLOCKED");
         m_bBlocked.Set(true);
     }
 
 
     void OnComponentRepaired(CComponentInterface _Component)
     {
+        Debug.Log("UN-BLOCKED");
         m_bBlocked.Set(false);
     }
-
-
-	void OnDestroy()
-	{
-		// Empty
-	}
 
 
 	void Update()
@@ -144,8 +149,8 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 	List<GameObject> m_cContainedPlayers = new List<GameObject>();
 
 
-    CComponentInterface m_ComponentCircuitry = new CComponentInterface();
-    CComponentInterface m_ComponentLiquid    = new CComponentInterface();
+    public CComponentInterface m_ComponentCircuitry = null;
+    public CComponentInterface m_ComponentLiquid    = null;
 	CNetworkVar<bool> m_bBlocked = null;
 
 

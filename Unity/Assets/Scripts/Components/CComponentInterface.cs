@@ -63,6 +63,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		get { return m_bIsFunctional.Get(); }
 	}
 
+
 // Member Properties
 
 
@@ -77,6 +78,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	{
 		m_bIsFunctional = _cRegistrar.CreateNetworkVar(OnNetworkVarSync, true);
 	}
+
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
@@ -146,13 +148,20 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		{
 			Debug.LogError("Could not find module to register to");
 		}
+
+        if (EventHealthChange != null)
+        {
+            EventHealthChange(this, GetComponent<CActorHealth>());
+        }
 	}
 
 
 	private void OnHealthChange(GameObject _Sender, float _PreviousHealth, float _CurrentHealth)
 	{
-		if(EventHealthChange != null)
-			EventHealthChange(this, GetComponent<CActorHealth>());
+        if (EventHealthChange != null)
+        {
+            EventHealthChange(this, GetComponent<CActorHealth>());
+        }
 
 		if(CNetwork.IsServer && _CurrentHealth == 0.0f)
 		{
@@ -161,9 +170,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	}
 
 
-	void Update()
-	{
-	}
+	void Update() { }
 
 
 // Member Fields
