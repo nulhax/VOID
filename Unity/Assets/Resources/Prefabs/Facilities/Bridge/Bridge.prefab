@@ -13885,14 +13885,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400236
@@ -13934,14 +13934,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400242
@@ -13983,14 +13983,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400248
@@ -14032,14 +14032,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400254
@@ -14081,14 +14081,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400260
@@ -14130,14 +14130,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400266
@@ -14179,14 +14179,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400272
@@ -14228,14 +14228,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400278
@@ -14277,14 +14277,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400284
@@ -14326,14 +14326,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400290
@@ -14375,14 +14375,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400296
@@ -14424,14 +14424,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400302
@@ -14473,14 +14473,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400308
@@ -14522,14 +14522,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400314
@@ -14571,14 +14571,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400320
@@ -14620,14 +14620,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400326
@@ -14669,14 +14669,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400332
@@ -14718,14 +14718,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400338
@@ -14767,14 +14767,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400344
@@ -14816,14 +14816,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400350
@@ -14865,14 +14865,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400356
@@ -14914,14 +14914,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400362
@@ -14963,14 +14963,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400368
@@ -15012,14 +15012,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400374
@@ -15061,14 +15061,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400380
@@ -15110,14 +15110,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400386
@@ -15159,14 +15159,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400392
@@ -15208,14 +15208,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400398
@@ -15257,14 +15257,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400404
@@ -15306,14 +15306,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400410
@@ -15355,14 +15355,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400416
@@ -15404,14 +15404,14 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: 10
+  health_max: 30
   health_min: 0
-  health_initial: 10
+  health_initial: 30
   health_previous: 0
   state_initial: 2
   stateTransitions:
-  - 1
-  - 9
+  - 3
+  - 27
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400422
