@@ -240,10 +240,13 @@ public class CCockpit : CNetworkMonoBehaviour
 			m_vEnterPosition = cPlayerActor.transform.position;
 
 			// Teleport player in cockpit
-			cPlayerActor.transform.position = gameObject.transform.position;
+			cPlayerActor.transform.position = m_cSeat.transform.position;
 
 			// Rotate player in cockpit
-			cPlayerActor.transform.rotation = gameObject.transform.rotation;
+			cPlayerActor.transform.rotation = m_cSeat.transform.rotation;
+
+			// Set the player kinematic
+			cPlayerActor.rigidbody.isKinematic = true;
 
 			// Notify observers
 			if (EventPlayerEnter != null) EventPlayerEnter(m_cMountedPlayerId.Get());
@@ -271,6 +274,9 @@ public class CCockpit : CNetworkMonoBehaviour
 			{
 				cPlayerActor.transform.position = m_vEnterPosition;
 				m_vEnterPosition = Vector3.zero;
+
+				// Turn of kinematic
+				cPlayerActor.rigidbody.isKinematic = false;
 			}
 
 			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));

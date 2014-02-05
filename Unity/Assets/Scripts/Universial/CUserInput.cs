@@ -96,6 +96,8 @@ public class CUserInput : CNetworkMonoBehaviour
     {
         public ulong ulPreviousInput;
         public ulong ulInput;
+        public float fPreviousMouseX;
+        public float fPreviousMouseY;
         public float fMouseX;
         public float fMouseY;
     }
@@ -267,7 +269,6 @@ public class CUserInput : CNetworkMonoBehaviour
         if (!s_cInstance.m_InFocus)
             return ;
 
-        
         _cStream.Write(s_cInstance.m_ulInputStates);
         _cStream.Write(s_cInstance.m_fSerializeMouseMovementX);
         _cStream.Write(s_cInstance.m_fSerializeMouseMovementY);
@@ -283,11 +284,21 @@ public class CUserInput : CNetworkMonoBehaviour
 
         tPlayerStates.ulPreviousInput = tPlayerStates.ulInput;
         tPlayerStates.ulInput = _cStream.ReadULong();
+        tPlayerStates.fPreviousMouseX = tPlayerStates.fMouseX;
+        tPlayerStates.fPreviousMouseY = tPlayerStates.fMouseY;
         tPlayerStates.fMouseX = _cStream.ReadFloat();
         tPlayerStates.fMouseY = _cStream.ReadFloat();
+
+        if (tPlayerStates.fPreviousMouseX != tPlayerStates.fMouseX)
+        {
+            s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseX, _cPlayer.PlayerId, tPlayerStates.fMouseX);
+        }
+
+        if (tPlayerStates.fPreviousMouseY != tPlayerStates.fMouseY)
+        {
+            s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseY, _cPlayer.PlayerId, tPlayerStates.fMouseY);
+        }
         
-        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseX, _cPlayer.PlayerId, tPlayerStates.fMouseX);
-        s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseY, _cPlayer.PlayerId, tPlayerStates.fMouseY);
         s_cInstance.ProcessClientEvents(_cPlayer.PlayerId, tPlayerStates);
     }
 
@@ -352,13 +363,18 @@ public class CUserInput : CNetworkMonoBehaviour
             }
         }
 
+        m_fPreviousMouseMovementX = m_fMouseMovementX;
+        m_fPreviousMouseMovementY = m_fMouseMovementY;
         m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
         m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
         m_fSerializeMouseMovementX += m_fMouseMovementX;
         m_fSerializeMouseMovementY += m_fMouseMovementY;
 
-        InvokeAxisEvent(EAxis.MouseX, m_fMouseMovementX);
-        InvokeAxisEvent(EAxis.MouseY, m_fMouseMovementY);
+        if (m_fMouseMovementX != m_fPreviousMouseMovementX)
+            InvokeAxisEvent(EAxis.MouseX, m_fMouseMovementX);
+
+        if (m_fMouseMovementY != m_fPreviousMouseMovementY)
+            InvokeAxisEvent(EAxis.MouseY, m_fMouseMovementY);
     }
 
 
@@ -478,6 +494,8 @@ public class CUserInput : CNetworkMonoBehaviour
 
     float m_fMouseMovementX = 0.0f;
     float m_fMouseMovementY = 0.0f;
+    float m_fPreviousMouseMovementX = 0.0f;
+    float m_fPreviousMouseMovementY = 0.0f;
     float m_fSerializeMouseMovementX = 0.0f;
     float m_fSerializeMouseMovementY = 0.0f;
 

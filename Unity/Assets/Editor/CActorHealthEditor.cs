@@ -40,7 +40,15 @@ public class CActorHealthEditor : Editor
 			myTarget.health_initial = EditorGUILayout.FloatField("Initial Value", myTarget.health_initial);
 			myTarget.health_max = EditorGUILayout.FloatField("Max Value", myTarget.health_max);
 			myTarget.health_min = EditorGUILayout.FloatField("Min Value", myTarget.health_min);
-			EditorGUILayout.LabelField("Current value\t\t\t  " + myTarget.health);
+			if(EditorApplication.isPlaying)
+			{
+				float current = myTarget.health;
+				float result = EditorGUILayout.FloatField("Current Value", current);
+				if (current != result)
+					myTarget.health = result;
+			}
+			else
+				EditorGUILayout.LabelField("Current value\t\t\t  " + myTarget.health);
 			myTarget.syncNetworkHealth = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkHealth);
 			myTarget.destroyOnZeroHealth = EditorGUILayout.Toggle("Destroy On Zero", myTarget.destroyOnZeroHealth);
 			myTarget.takeDamageOnImpact = EditorGUILayout.Toggle("Impact Damage", myTarget.takeDamageOnImpact);
@@ -50,7 +58,7 @@ public class CActorHealthEditor : Editor
 		if (foldoutState)
 		{
 			int initialState = EditorGUILayout.IntField("Initial Value", myTarget.state_initial); myTarget.state_initial = (byte)(initialState < 0 ? 0 : initialState > 255 ? 255 : initialState);
-			EditorGUILayout.LabelField("Current value\t\t\t  " + myTarget.state);
+			EditorGUILayout.LabelField("Current Value\t\t\t  " + myTarget.state);
 			myTarget.syncNetworkState = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkState);
 
 			int currentStateTransitionLength = myTarget.stateTransitions != null ? myTarget.stateTransitions.Length : 0;

@@ -103,7 +103,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400010}
   m_Layer: 0
-  m_Name: Transform1
+  m_Name: Transform
   m_TagString: ComponentTransform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +156,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400016}
   m_Layer: 0
-  m_Name: Transform1
+  m_Name: Transform
   m_TagString: ComponentTransform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -782,7 +782,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4005a8ed42e8f4b4b92d2d5f0b160e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxAtmosphereGenerationRate: 60
+  m_MaxAtmosphereGenerationRate: 30
   m_DUIConsole: {fileID: 100006}
   m_CircuitryComponent: {fileID: 11400026}
   m_LiquidComponent: {fileID: 11400034}

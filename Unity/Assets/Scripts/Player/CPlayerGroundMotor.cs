@@ -153,9 +153,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 					if (cPlayerActor != CGamePlayers.SelfActor)
 					{
-						cPlayerActor.transform.eulerAngles = new Vector3(0.0f, 
-						                                                 _cStream.ReadFloat(),
-					                                                 0.0f);
+						cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.ReadFloat(),  0.0f);
 					}
 					else
 					{
