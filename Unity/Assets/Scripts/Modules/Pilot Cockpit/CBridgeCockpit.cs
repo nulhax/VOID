@@ -131,12 +131,14 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
                         if (_fValue > 0.0f)
                         {
                             // / Screen.width
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 30.0f, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 15, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
 
                         }
                         else
                         {
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 30.0f * -1.0f, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 15 * -1.0f, 0.0f, 1.0f));
                         }
                     }
                     break;
@@ -152,12 +154,14 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
                         if (_fValue > 0.0f)
                         {
                             // / Screen.width
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, Mathf.Clamp(_fValue / 80.0f, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, Mathf.Clamp(_fValue / 20, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
 
                         }
                         else
                         {
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, Mathf.Clamp(_fValue / 80.0f * -1.0f, 0.0f, 1.0f));
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
+                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, Mathf.Clamp(_fValue / 20 * -1.0f, 0.0f, 1.0f));
                         }
                     }
                     break;
