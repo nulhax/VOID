@@ -42,6 +42,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
+  - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Seat
   m_TagString: Untagged
@@ -542,6 +543,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46d8f6fa92c8a1a43896c7dcba8967c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_CockpitSeat: {fileID: 100010}
+  m_CockpitCenter: {fileID: 100012}
+  m_MinMaxEulerX: {x: 340, y: 370}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -598,6 +602,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83eb556d072d93444815f045a18496c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &100100000
