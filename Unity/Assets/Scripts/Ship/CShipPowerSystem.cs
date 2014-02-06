@@ -144,13 +144,11 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		m_ShipBatteryChargePool = totalBatteryCharge;
 	}
 
-    float combinedConsumption;
-
 	[AServerOnly]
 	private void UpdateFacilityPowerConsumption()
 	{
 		// Calculate the combined consumption of all facilities
-		combinedConsumption = gameObject.GetComponent<CShipFacilities>().GetAllFacilities().Sum((f) => {
+		float combinedConsumption = gameObject.GetComponent<CShipFacilities>().GetAllFacilities().Sum((f) => {
 			CFacilityPower fp = f.GetComponent<CFacilityPower>();
 			return(fp.IsPowerActive ? fp.PowerConsumption * Time.deltaTime : 0.0f);
 		});

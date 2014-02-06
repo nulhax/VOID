@@ -130,21 +130,22 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			if(m_Deactivating)
 			{
 				m_Deactivating = false;
+
+				if(CNetwork.IsServer)
+				{
+					// Unregister movement events
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Forward, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Backwards, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeLeft, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeRight, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump, OnPlayerMovement);
+				}
 			}
 		}
 	}
 	
 	private void ActivateDUI()
 	{
-		// Register mouse movement events
-        /*
-		CUserInput.EventMoveForwardHold += OnPlayerMovement;
-		CUserInput.EventMoveBackwardHold += OnPlayerMovement;
-		CUserInput.EventMoveLeftHold += OnPlayerMovement;
-		CUserInput.EventMoveRightHold += OnPlayerMovement;
-		CUserInput.EventMoveJumpHold += OnPlayerMovement;\
-         */
-
 		m_Activating = true;
 		m_TransitionTimer = 0.0f;
 		m_ActivatedPosition = Vector3.zero;
@@ -162,15 +163,6 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void DeactivateDUI()
 	{
-		// Unegister mouse movement events
-        /*
-		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
-		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
-		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
-		CUserInput.EventMoveRightHold -= OnPlayerMovement;
-		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
-        */
-
 		m_Deactivating = true;
 		m_TransitionTimer = 0.0f;
 
@@ -214,15 +206,23 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 				// Make the UI active
 				m_DUIActive.Set(true);
 
+				// Register movement events
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Forward, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Backwards, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeLeft, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeRight, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump, OnPlayerMovement);
+
 				// Change the port selected on the UI
 				m_DUIModuleCreationRoot.SetSelectedPort(_InteractableObject.GetComponent<CNetworkView>().ViewId);
 			}
 		}
 	}
 
-	[AClientOnly]
-	private void OnPlayerMovement()
+	[AServerOnly]
+	private void OnPlayerMovement(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
+		// Turn off the DUI from any movement
 		m_DUIActive.Set(false);
 	}
 
@@ -242,17 +242,5 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 
 		// Deactivate the UI
 		m_DUIActive.Set(false);
-	}
-
-	private void OnDestory()
-	{
-		// Unegister mouse movement events
-        /*
-		CUserInput.EventMoveForwardHold -= OnPlayerMovement;
-		CUserInput.EventMoveBackwardHold -= OnPlayerMovement;
-		CUserInput.EventMoveLeftHold -= OnPlayerMovement;
-		CUserInput.EventMoveRightHold -= OnPlayerMovement;
-		CUserInput.EventMoveJumpHold -= OnPlayerMovement;
-        */
 	}
 };
