@@ -72,10 +72,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
         m_cCockpitBehaviour = GetComponent<CCockpit>();
 
+        m_cCockpitBehaviour.EventPlayerLeave += OnEventCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);
-
 
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Forward, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Backward, OnEventInputControlShip);
@@ -223,6 +223,19 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
             }
         }
     }
+
+
+    [AServerOnly]
+    void OnEventCockpitUnmount(ulong _ulPlayerId)
+    {
+        CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
+
+        for (CGalaxyShipMotor.EThrusters i = 0; i < CGalaxyShipMotor.EThrusters.MAX; ++i)
+        {
+            cGalaxyShipMotor.SetThrusterEnabled(i, 0.0f);
+        }
+    }
+
 
 
     void OnGUI()
