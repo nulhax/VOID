@@ -76,8 +76,6 @@ public class CFacilityHull : CNetworkMonoBehaviour
         // Turn on alarms
         EventBreached += () =>
         {
-            Debug.LogError("rme gremog rempog;lrere");
-
             gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
             {
                 _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
@@ -115,7 +113,6 @@ public class CFacilityHull : CNetworkMonoBehaviour
     {
         if (_cVarInstance == m_bBreached)
         {
-            Debug.LogError("regregregreg");
             if (m_bBreached.Get())
             {
                 if (EventBreached != null) EventBreached();
