@@ -73,10 +73,25 @@ public class CFacilityHull : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		if(EventBreached != null)
-		{
-			EventBreached();
-		}
+        // Turn on alarms
+        EventBreached += () =>
+        {
+            Debug.LogError("rme gremog rempog;lrere");
+
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
+            });
+        };
+
+        // Turn off alarms
+        EventBreachFixed += () =>
+        {
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
+            });
+        };
 	}
 
 
@@ -91,8 +106,8 @@ public class CFacilityHull : CNetworkMonoBehaviour
         // Empty
 
         // Debug
-        if (CNetwork.IsServer && Input.GetKeyDown(KeyCode.P))
-			m_bBreached.Set(!m_bBreached.Get());
+        //if (CNetwork.IsServer && Input.GetKeyDown(KeyCode.P))
+		//	m_bBreached.Set(!m_bBreached.Get());
 	}
 	
 
@@ -100,6 +115,7 @@ public class CFacilityHull : CNetworkMonoBehaviour
     {
         if (_cVarInstance == m_bBreached)
         {
+            Debug.LogError("regregregreg");
             if (m_bBreached.Get())
             {
                 if (EventBreached != null) EventBreached();

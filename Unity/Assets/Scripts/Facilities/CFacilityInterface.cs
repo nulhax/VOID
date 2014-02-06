@@ -219,7 +219,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-
+        // Empty
     }
 
 
