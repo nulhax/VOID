@@ -107,6 +107,8 @@ public class CGameRegistrator : MonoBehaviour
         ToolMedical,
         ToolCircuitryKit,
 		ToolModuleGun,
+        ToolCalibrator,
+        ToolFluidizer,
 
         // Hazards
         Fire,
@@ -238,6 +240,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCalibrator,              "Tools/Calibrator/ToolCalibrator");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolFluidizer,               "Tools/FluidTool/ToolFluid");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -307,8 +311,8 @@ public class CGameRegistrator : MonoBehaviour
 	{
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet, ENetworkPrefab.ToolRatchet);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit, ENetworkPrefab.ToolCircuitryKit);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator, ENetworkPrefab.ToolRatchet);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer, ENetworkPrefab.ToolRatchet);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator, ENetworkPrefab.ToolCalibrator);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer, ENetworkPrefab.ToolFluidizer);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator, ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert, ENetworkPrefab.ToolModuleGun);

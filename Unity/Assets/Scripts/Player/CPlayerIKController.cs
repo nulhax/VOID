@@ -35,7 +35,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	
 	public Vector3 RightHandIKTarget
 	{
-        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; m_fRightHandIKWeight = 1; Debug.Log("New target: " + m_RightHandTarget.ToString());}			 
+        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; m_fRightHandIKWeight = 1;}			 
 		get { return (m_RightHandTarget); }
 	}
 

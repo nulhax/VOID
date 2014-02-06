@@ -30,7 +30,7 @@ public class CFluidComponent : CNetworkMonoBehaviour
 	
 	
 	// Member Properties
-	public List<Transform> RatchetRepairPosition
+	public List<Transform> ComponentRepairPosition
 	{
 		get { return(m_RepairPositions);}
 	}

@@ -1166,7 +1166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7da5cebb428f14eb336b0f1f6f6147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eComponentType: 4
+  m_eComponentType: 1
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1189,7 +1189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7da5cebb428f14eb336b0f1f6f6147, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eComponentType: 4
+  m_eComponentType: 2
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
