@@ -80,15 +80,34 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 
             case CPlayerInteractor.EInteractionType.PrimaryEnd:
             {
-				if(m_HeldTool != null)
+                if(m_HeldTool != null &&  m_bRepairing)
 				{
 	                switch(m_HeldTool.ToolType)           
 					{
 						case CToolInterface.EType.Ratchet:
 						{
 							m_HeldTool.GetComponent<CRatchetBehaviour>().EndRepairs();
+                            m_bRepairing = false;
 							break;
 						}
+                        case CToolInterface.EType.CircuitryKit:
+                        {
+                            m_HeldTool.GetComponent<CCircuitryKitBehaviour>().EndRepairs();
+                            m_bRepairing = false;
+                            break;
+                        }
+                        case CToolInterface.EType.Calibrator:
+                        {
+                            m_HeldTool.GetComponent<CCalibratorBehaviour>().EndRepairs();
+                            m_bRepairing = false;
+                            break;
+                        }
+                        case CToolInterface.EType.Fluidizer:
+                        {
+                            m_HeldTool.GetComponent<CFluidToolBehaviour>().EndRepairs();
+                            m_bRepairing = false;
+                            break;
+                        }
 					}
 				}
                 break;
@@ -111,10 +130,12 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 					if(m_HeldTool.ToolType == CToolInterface.EType.Ratchet)
 					{
 						m_HeldTool.GetComponent<CRatchetBehaviour>().BeginRepair(_cInteractableObject);
+                        m_bRepairing = true;
 					}
 					else
 					{
 						Debug.Log("Player not holding correct tool for interaction");
+                        m_bRepairing = false;
 					}
 					break;
 				}				
@@ -122,11 +143,13 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				{		
 					if(m_HeldTool.ToolType == CToolInterface.EType.Calibrator)
 					{
-	        							
+                        m_HeldTool.GetComponent<CCalibratorBehaviour>().BeginRepair(_cInteractableObject);
+                        m_bRepairing = true;
 					}
 					else
 					{
 						Debug.Log("Player not holding correct tool for interaction");
+                        m_bRepairing = false;
 					}
 					break;
 				}
@@ -134,11 +157,13 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				{		
 					if(m_HeldTool.ToolType == CToolInterface.EType.CircuitryKit)
 					{
-	        						
+                        m_HeldTool.GetComponent<CCircuitryKitBehaviour>().BeginRepair(_cInteractableObject);	
+                        m_bRepairing = true;
 					}
 					else
 					{
 						Debug.Log("Player not holding correct tool for interaction");
+                        m_bRepairing = false;
 					}
 					break;
 				}
@@ -146,11 +171,13 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				{		
 					if(m_HeldTool.ToolType == CToolInterface.EType.Fluidizer)
 					{
-	        					
+                        m_HeldTool.GetComponent<CFluidToolBehaviour>().BeginRepair(_cInteractableObject);  
+                        m_bRepairing = true;
 					}
 					else
 					{
 						Debug.Log("Player not holding correct tool for interaction");
+                        m_bRepairing = false;
 					}
 					break;
 				}					
@@ -159,4 +186,5 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 	}	
 	
 	CToolInterface			m_HeldTool;	
+    bool                    m_bRepairing = false;
 }

@@ -1,4 +1,4 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CToolInterface))]
-public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
+public class CFluidToolBehaviour : CNetworkMonoBehaviour
 {
     
     // Member Types
@@ -96,11 +96,11 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
             {
                 case ENetworkAction.SetRepairState:
                 {
-                    //Figure out which kits sent it's new state
-                    CCircuitryKitBehaviour CircuitryKit = _cStream.ReadNetworkViewId().GameObject.GetComponent<CCircuitryKitBehaviour>();
+                    //Figure out which ratchet sent it's new state
+                    CFluidToolBehaviour FluidTool = _cStream.ReadNetworkViewId().GameObject.GetComponent<CFluidToolBehaviour>();
                     
-                    CircuitryKit.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
-                    CircuitryKit.m_eRepairState = (ERepairState)_cStream.ReadByte();
+                    FluidTool.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
+                    FluidTool.m_eRepairState = (ERepairState)_cStream.ReadByte();
                     
                     break;
                 }
@@ -154,8 +154,8 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         m_iTotalTargets = 0;        
         
         m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
-
-        List<Transform> repairPositions = m_TargetComponent.GetComponent<CCircuitryComponent>().ComponentRepairPosition;
+        
+        List<Transform> repairPositions = m_TargetComponent.GetComponent<CFluidComponent>().ComponentRepairPosition;
         
         foreach(Transform child in repairPositions)
         {

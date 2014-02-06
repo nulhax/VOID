@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
+
 [RequireComponent(typeof(CToolInterface))]
 public class CRatchetBehaviour : CNetworkMonoBehaviour
 {
@@ -154,14 +155,12 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			
 		m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
        
-        Transform[] children = _damagedComponent.GetComponentsInChildren<Transform>();
-        foreach(Transform child in children)
+        List<Transform> repairPositions = m_TargetComponent.GetComponent<CRatchetComponent>().RatchetRepairPosition;
+
+        foreach(Transform child in repairPositions)
         {
-            if(child.name == "Transform" && m_TargetList.Contains(child.position) == false)
-            {
-                m_TargetList.Add(child.position);
-                m_iTotalTargets++;
-            }
+            m_TargetList.Add(child.position);
+            m_iTotalTargets++;
         }   
 		
 		m_eRepairState = ERepairState.RepairActive;
@@ -192,9 +191,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 
 
 // Member Fields
-	
-	
-	
+		
 	Vector3					m_ToolTarget;
 	List<Vector3>			m_TargetList;	
 	int 					m_iTotalTargets;

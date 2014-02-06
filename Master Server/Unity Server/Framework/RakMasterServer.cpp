@@ -28,7 +28,7 @@
 
 // Static Variables
 const uint CRakMasterServer::s_kuiMaxTitleLength = 32;
-const ushort CRakMasterServer::s_kusPort = 9826;
+const ushort CRakMasterServer::s_kusPort = 7954;
 const float CRakMasterServer::s_kfRegistrationTimeout = 10.0f;
 
 

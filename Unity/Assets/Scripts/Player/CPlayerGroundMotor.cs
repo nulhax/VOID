@@ -118,12 +118,14 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
+        gameObject.GetComponent<CThirdPersonAnimController>().DisableAnimation();
 	}
 
 	[AClientOnly]
 	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
+        gameObject.GetComponent<CThirdPersonAnimController>().EnableAnimation();
 	}
 
 
