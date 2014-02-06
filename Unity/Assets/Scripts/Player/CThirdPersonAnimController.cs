@@ -81,7 +81,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	
 	void NotifyToolChange(CNetworkViewId _cViewId)
 	{
-		if(_cViewId.GameObject != null)
+		if(_cViewId != null)
 		{			
             m_ThirdPersonAnim.SetLayerWeight(1,1);
         } 

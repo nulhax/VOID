@@ -121,11 +121,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			if(CNetwork.IsServer)
 			{
 				m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);				
-			}
-			
-			//Update target for IK here
-			UpdateTarget();
-			
+				//Update target for IK here
+				UpdateTarget();
+			}		
 		}
 	}
 		
@@ -144,9 +142,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 				m_iTargetIndex = 0;
 			}		
 			
-			m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];
-			
+			m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];			
 			m_fTargetSwitchTimer = 0.0f;
+			Debug.Log("switched target.");
 		}
 	}
 	
@@ -188,6 +186,8 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	{
 		m_eRepairState = ERepairState.RepairInactive;
 		m_TargetComponent = null;
+		m_IKController.RightHandIKWeight = 0;
+		m_TargetList.Clear();
 	}
 
 
