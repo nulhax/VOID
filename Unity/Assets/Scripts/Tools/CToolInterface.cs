@@ -59,25 +59,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	public enum ENetworkAction : byte
 	{
 		PickUp,
-	}
-	
-	 public enum EType
-    {
-        INVALID,
-		
-		Weapon,
-		Extinguisher,
-		Flashlight,
-		MedicalTool,
-		ModuleTool,
-		FluidTool,
-		CalibratorTool,
-		CircuitryTool,
-		RatchetTool,
-
-        MAX
-    }
-
+	}	
 
 // Member Delegates & Events
 	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
@@ -101,12 +83,6 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         get { return (m_eToolType); }
     }
-
-	public EType ToolType
-	{
-		get{ return(m_ToolType); }
-	}
-
 
     public GameObject OwnerPlayerActor
     {
@@ -388,9 +364,6 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Fields
 
 	public EType m_eToolType = EType.INVALID;
-	
-	
-	public EType m_ToolType = EType.INVALID;
 
 
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;

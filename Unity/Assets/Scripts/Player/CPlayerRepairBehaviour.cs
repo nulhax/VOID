@@ -80,7 +80,17 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 
             case CPlayerInteractor.EInteractionType.PrimaryEnd:
             {
-                           
+				if(m_HeldTool != null)
+				{
+	                switch(m_HeldTool.ToolType)           
+					{
+						case CToolInterface.EType.Ratchet:
+						{
+							m_HeldTool.GetComponent<CRatchetBehaviour>().EndRepairs();
+							break;
+						}
+					}
+				}
                 break;
             }
         }
@@ -96,9 +106,9 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 			//Make sure player is holding the right tool to repair with
 			switch(compInterface.ComponentType)
 			{
-				case CComponentInterface.EType.RatchetComp:
+				case CComponentInterface.EType.MechanicalComp:
 				{		
-					if(m_HeldTool.ToolType == CToolInterface.EType.RatchetTool)
+					if(m_HeldTool.ToolType == CToolInterface.EType.Ratchet)
 					{
 						m_HeldTool.GetComponent<CRatchetBehaviour>().BeginRepair(_cInteractableObject);
 					}
@@ -110,7 +120,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				}				
 				case CComponentInterface.EType.CalibratorComp:
 				{		
-					if(m_HeldTool.ToolType == CToolInterface.EType.CalibratorTool)
+					if(m_HeldTool.ToolType == CToolInterface.EType.Calibrator)
 					{
 	        							
 					}
@@ -122,7 +132,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				}
 				case CComponentInterface.EType.CircuitryComp:
 				{		
-					if(m_HeldTool.ToolType == CToolInterface.EType.CircuitryTool)
+					if(m_HeldTool.ToolType == CToolInterface.EType.CircuitryKit)
 					{
 	        						
 					}
@@ -134,7 +144,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 				}
 				case CComponentInterface.EType.FluidComp:
 				{		
-					if(m_HeldTool.ToolType == CToolInterface.EType.FluidTool)
+					if(m_HeldTool.ToolType == CToolInterface.EType.Fluidizer)
 					{
 	        					
 					}
