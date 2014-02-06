@@ -768,7 +768,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     ushort m_usPort = 0;
 
 
-    bool m_bShowStats = true;
+    bool m_bShowStats = false;
 	bool m_bDownloadingInitialGameState = true;
 
 

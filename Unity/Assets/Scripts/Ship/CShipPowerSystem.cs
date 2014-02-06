@@ -37,6 +37,12 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 
 	// Member Properties
+
+
+    public float ShipCatteryChargePool
+    {
+        get { return (m_ShipBatteryChargePool); } 
+    }
 	
 	
 	// Member Methods
@@ -216,6 +222,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	public void OnGUI()
 	{
+        return;
 		string shipPowerOutput = "ShipPowerInfo\n";
 		shipPowerOutput += string.Format("\tBatteryChargePool: [{0}]\n", 
 		                                 Math.Round(m_ShipBatteryChargePool, 2)); 
