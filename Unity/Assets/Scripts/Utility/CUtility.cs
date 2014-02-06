@@ -168,6 +168,20 @@ public class CUtility
 			}
 		}
 	}
+
+	static public string SplitCamelCase(string _Original)
+	{
+		for(var i = 1; i < _Original.Length - 1; i++)
+		{
+			if (char.IsLower(_Original[i - 1]) && char.IsUpper(_Original[i]) ||
+			    _Original[i - 1] != ' ' && char.IsUpper(_Original[i]) && char.IsLower(_Original[i + 1]))
+			{
+				_Original = _Original.Insert(i, " ");
+			}
+		}
+
+		return(_Original);
+	}
 }
 
 /*

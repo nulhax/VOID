@@ -30,21 +30,32 @@ public class CInteriorTrigger : MonoBehaviour
 
 		
 	// Member Fields
-	
+	CFacilityOnboardActors m_CachedOnboardActors = null;
+
 	
 	// Member Properties
 	
 	
 	// Member Methods
+	private void Awake()
+	{
+		m_CachedOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
+	}
+
 	[AServerOnly]
 	private void OnTriggerEnter(Collider _Other)
 	{
 		if(!CNetwork.IsServer)
 			return;
 
-		if(_Other.rigidbody != null)
+		Rigidbody rb = _Other.rigidbody;
+
+		if(rb == null)
+			rb = CUtility.FindInParents<Rigidbody>(_Other.gameObject);
+
+		if(rb != null)
 		{
-			transform.parent.GetComponent<CFacilityOnboardActors>().OnActorEnteredFacilityTrigger(_Other.rigidbody.gameObject);
+			m_CachedOnboardActors.OnActorEnteredFacilityTrigger(rb.gameObject);
 		}
 	}
 
@@ -54,9 +65,14 @@ public class CInteriorTrigger : MonoBehaviour
 		if(!CNetwork.IsServer)
 			return;
 
-		if(_Other.rigidbody != null)
+		Rigidbody rb = _Other.rigidbody;
+		
+		if(rb == null)
+			rb = CUtility.FindInParents<Rigidbody>(_Other.gameObject);
+		
+		if(rb != null)
 		{
-			transform.parent.GetComponent<CFacilityOnboardActors>().OnActorExitedFacilityTrigger(_Other.rigidbody.gameObject);
+			m_CachedOnboardActors.OnActorExitedFacilityTrigger(rb.gameObject);
 		}
 	}
 }

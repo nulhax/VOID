@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 [RequireComponent(typeof(CToolInterface))]
-public class CWiringKitBehaviour : MonoBehaviour
+public class CCircuitryKitBehaviour : MonoBehaviour
 {
 
 // Member Types
