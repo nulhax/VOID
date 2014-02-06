@@ -396,7 +396,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public void SyncTransformRotation()
 	{
-		SetRotation(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+		SetEulerAngles(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 	}
 
 
@@ -411,12 +411,11 @@ public class CNetworkView : CNetworkMonoBehaviour
 
     public void SyncRigidBodyMass()
     {
-        // Ensure servers only sync parents
+		// Ensure servers only sync RigidBodyMass
         Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's rigid body mass!!!");
 
 		InvokeRpcAll("RemoteSetRigidBodyMass", rigidbody.mass);
 	}
-
 
 	public void SetParent(CNetworkViewId _cParentViewId)
 	{
@@ -439,13 +438,19 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-	public void SetRotation(Vector3 _vEulerAngles)
+	public void SetRotation(Quaternion _Rotation)
 	{
-		SetRotation(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
+		SetEulerAngles(_Rotation.eulerAngles);
 	}
 
 
-	public void SetRotation(float _fX, float _fY, float _fZ)
+	public void SetEulerAngles(Vector3 _vEulerAngles)
+	{
+		SetEulerAngles(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
+	}
+
+
+	public void SetEulerAngles(float _fX, float _fY, float _fZ)
 	{
 		// Ensure servers only set transforms
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform rotation!!!");

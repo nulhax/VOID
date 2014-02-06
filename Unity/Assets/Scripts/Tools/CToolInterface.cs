@@ -39,11 +39,27 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Types
 
 
+	public enum EType
+	{
+		INVALID,
+
+		Ratchet,
+		CircuitryKit,
+		Calibrator,
+		Fluidizer,
+		ModuleCreator,
+		FireExtinguisher,
+		Norbert,
+		HealingKit,
+		AK47,
+
+		MAX
+	}
+
 	public enum ENetworkAction : byte
 	{
 		PickUp,
-	}
-
+	}	
 
 // Member Delegates & Events
 	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
@@ -61,7 +77,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 // Member Properties
-
+	
+	
+	public EType ToolType
+    {
+        get { return (m_eToolType); }
+    }
 
     public GameObject OwnerPlayerActor
     {
@@ -161,7 +182,10 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Empty
+		 if (m_eToolType == EType.INVALID)
+        {
+            Debug.LogError(string.Format("This tool has not been given a tool type. GameObjectName({0})", gameObject.name));
+        }
 	}
 
 
@@ -211,6 +235,25 @@ public class CToolInterface : CNetworkMonoBehaviour
 				EventPrimaryDeactivate(_cInteractableObject);
 			}
 		}
+	}
+
+
+	public static void RegisterPrefab(EType _ToolType, CGameRegistrator.ENetworkPrefab _ePrefab)
+	{
+		s_mRegisteredPrefabs.Add(_ToolType, _ePrefab);
+	}
+	
+	
+	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _ToolType)
+	{
+		if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
+		{
+			Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
+			
+			return (CGameRegistrator.ENetworkPrefab.INVALID);
+		}
+		
+		return (s_mRegisteredPrefabs[_ToolType]);
 	}
 
 
@@ -320,12 +363,17 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 // Member Fields
 
+	public EType m_eToolType = EType.INVALID;
+
 
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
 
 
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
+
+
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 };

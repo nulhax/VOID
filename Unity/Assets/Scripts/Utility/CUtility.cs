@@ -143,6 +143,31 @@ public class CUtility
 
 		return (T)comp;
 	}
+
+	static public void DestroyAllNonRenderingComponents(GameObject _GameObject)
+	{
+		// Get all the monobehaviours that exsist on the prefab, reverse the order to delete dependant components first
+		List<Component> components = new List<Component>(_GameObject.GetComponents<Component>());
+		components.Reverse();
+		
+		// Get all the monobehaviours of all of the children too
+		List<Component> childrenComponents = new List<Component>(_GameObject.GetComponentsInChildren<Component>());
+		childrenComponents.Reverse();
+		components.AddRange(childrenComponents);
+		
+		// Remove any scripts that arent rendering related
+		foreach(Component comp in components)
+		{
+			System.Type behaviourType = comp.GetType();
+			
+			if(behaviourType != typeof(MeshRenderer) &&
+			   behaviourType != typeof(MeshFilter) &&
+			   behaviourType != typeof(Transform))
+			{
+				GameObject.Destroy(comp);
+			}
+		}
+	}
 }
 
 /*

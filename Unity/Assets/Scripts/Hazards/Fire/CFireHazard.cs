@@ -84,19 +84,23 @@ public class CFireHazard : MonoBehaviour
 //		ah.health = ah.health_max;
 //	}
 
+	[AServerOnly]
 	void OnTriggerStay(Collider collider)
 	{
-		if (burning)
+		if(CNetwork.IsServer)
 		{
-			// Ignite players and other fires.
-			CFireHazard otherFire = collider.GetComponent<CFireHazard>();
-			if (otherFire != null)
-				otherFire.GetComponent<CActorHealth>().health -= Time.fixedDeltaTime;
-			else
+			if (burning)
 			{
-				CPlayerHealth otherPlayerhealth = collider.GetComponent<CPlayerHealth>();
-				if (otherPlayerhealth != null)
-					otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
+				// Ignite players and other fires.
+				CFireHazard otherFire = collider.GetComponent<CFireHazard>();
+				if (otherFire != null)
+					otherFire.GetComponent<CActorHealth>().health -= Time.fixedDeltaTime;
+				else
+				{
+					CPlayerHealth otherPlayerhealth = collider.GetComponent<CPlayerHealth>();
+					if (otherPlayerhealth != null)
+						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
+				}
 			}
 		}
 	}

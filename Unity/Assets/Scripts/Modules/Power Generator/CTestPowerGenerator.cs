@@ -31,7 +31,7 @@ public class CTestPowerGenerator: MonoBehaviour
 	
 	// Member Fields
 	public float m_MaxPowerGenerationRate = 15.0f;
-	public GameObject m_DUIConsole = null;
+	public CDUIConsole m_DUIConsole = null;
 
 	public CComponentInterface m_CircuitryComponent = null;
 	public CComponentInterface m_CalibrationComponent = null;
@@ -58,7 +58,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
 
 		// Get the DUI of the power generator
-		m_DUIPowerGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerGeneratorRoot>();
+		m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
 
 		if(CNetwork.IsServer)
 		{

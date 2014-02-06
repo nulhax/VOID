@@ -254,7 +254,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 						
 						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
+						cPlayerActor.GetComponent<CNetworkView>().SetEulerAngles(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
 						
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
@@ -284,27 +284,26 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		
 		// Placeholder Test stuff
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
-        CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
+        //CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolWiringKit);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.BlackMatterCell);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.FuelCell);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.FuelCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.PlasmaCell);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.PowerCell);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.PowerCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.BioCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.ReplicatorCell);
 
 
 		//Place module gun
-		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
-		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
-
-		tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
-		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));
+		//GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
+		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
+		//tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));
 		//Place Ratchet
-		GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRachet);
-		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -11.0f, -13.0f));
+		//GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
+		//ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -11.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);

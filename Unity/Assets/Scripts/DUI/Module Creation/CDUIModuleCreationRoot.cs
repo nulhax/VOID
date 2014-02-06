@@ -148,29 +148,12 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		// Destroy the old module
 		if(m_ParentModuleObject.transform.childCount != 0)
 			Destroy(m_ParentModuleObject.transform.GetChild(0).gameObject);
-		
+
+		// Update the info
 		UpdateModuleInfo(moduleObject.GetComponent<CModuleInterface>());
-		
-		// Get all the monobehaviours that exsist on the prefab, reverse the order to delete dependant components first
-		List<MonoBehaviour> monoBehaviours = new List<MonoBehaviour>(moduleObject.GetComponents<MonoBehaviour>());
-		monoBehaviours.Reverse();
-		
-		// Get all the monobehaviours of all of the children too
-		List<MonoBehaviour> childrenMonoBehaviours = new List<MonoBehaviour>(moduleObject.GetComponentsInChildren<MonoBehaviour>());
-		childrenMonoBehaviours.Reverse();
-		monoBehaviours.AddRange(childrenMonoBehaviours);
-		
-		// Remove any scripts that arent rendering related
-		foreach(MonoBehaviour mb in monoBehaviours)
-		{
-			System.Type behaviourType = mb.GetType();
-			
-			if(behaviourType != typeof(MeshRenderer) ||
-			   behaviourType != typeof(MeshFilter))
-			{
-				Destroy(mb);
-			}
-		}
+
+		// Destroy all non rendering components
+		CUtility.DestroyAllNonRenderingComponents(moduleObject);
 		
 		// Add it to the child object
 		moduleObject.transform.parent = m_ParentModuleObject.transform;

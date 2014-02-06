@@ -39,7 +39,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		FluidComp,
 		CalibratorComp,
 		CircuitryComp,
-		RatchetComp,
+		MechanicalComp,
 
         MAX
     }

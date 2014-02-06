@@ -31,13 +31,14 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 	
 	// Member Fields
 	public float m_MaxAtmosphereGenerationRate = 60.0f;
-	public GameObject m_DUIConsole = null;
+	public CDUIConsole m_DUIConsole = null;
 	
 	public CComponentInterface m_CircuitryComponent = null;
 	public CComponentInterface m_LiquidComponent = null;
 	
 	private CAtmosphereGeneratorBehaviour m_AtmosphereGenerator = null;
 	private CDUIAtmosphereGeneratorRoot m_DUIAtmosphereGeneration = null;
+
 
 	// Member Properties
 	
@@ -58,7 +59,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		m_AtmosphereGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
 		
 		// Get the DUI of the power generator
-		m_DUIAtmosphereGeneration = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
+		m_DUIAtmosphereGeneration = m_DUIConsole.DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
 
 		if(CNetwork.IsServer)
 		{
@@ -69,7 +70,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 
 	private void HandleFluidHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
 	{
-		m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+		if(CNetwork.IsServer)
+			m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
 	}
 	
 	private void HandleCircuitryBreaking(CComponentInterface _Component)

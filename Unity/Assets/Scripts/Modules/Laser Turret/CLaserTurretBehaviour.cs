@@ -44,7 +44,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		// Empty
+		_cRegistrar.RegisterRpc(this, "StartMuzzleFlash");
 	}
 
 
@@ -58,7 +58,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-	{;
+	{
 		while (_cStream.HasUnreadData)
 		{
 			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
@@ -142,9 +142,11 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			
 			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
 			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
-			    cProjectile.GetComponent<CNetworkView>().SetRotation(projRot.eulerAngles);
+			    cProjectile.GetComponent<CNetworkView>().SetEulerAngles(projRot.eulerAngles);
 			
-			    ++ m_iLaserNodeIndex;
+				InvokeRpcAll("StartMuzzleFlash", m_iLaserNodeIndex);
+
+			    ++m_iLaserNodeIndex;
 			    m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNodes.Length) ? 0 : m_iLaserNodeIndex;
 			
 			    m_fServerFireTimer = 0.0f;
@@ -180,6 +182,37 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
 		// Empty
+	}
+
+	[ANetworkRpc]
+	private void StartMuzzleFlash(int _iLaserIndex)
+	{
+		// Start the corouteen for muzzle flash
+		this.StartCoroutine("MuzzleFlash", _iLaserIndex);
+	}
+
+	private IEnumerator MuzzleFlash(int _iLaserIndex)
+	{
+		float timer = 0.0f;
+		float flashTime = m_fClientFireInterval;
+		float origIntensity = m_aLasterNodes[_iLaserIndex].light.intensity;
+
+		bool light = true;
+		m_aLasterNodes[_iLaserIndex].light.enabled = true;
+		while(light)
+		{
+			timer += Time.deltaTime;
+			if(timer > flashTime)
+			{
+				timer = flashTime;
+				light = false;
+			}
+
+			m_aLasterNodes[_iLaserIndex].light.intensity = origIntensity * (1.0f - (timer/flashTime));
+			yield return null;
+		}
+		m_aLasterNodes[_iLaserIndex].light.intensity = origIntensity;
+		m_aLasterNodes[_iLaserIndex].light.enabled = false;
 	}
 
 

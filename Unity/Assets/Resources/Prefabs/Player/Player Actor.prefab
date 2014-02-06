@@ -616,6 +616,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400016}
   - 114: {fileID: 11400022}
+  - 114: {fileID: 11400026}
   m_Layer: 13
   m_Name: Player Actor
   m_TagString: Untagged
@@ -632,7 +633,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400080}
   m_Layer: 0
-  m_Name: Head
+  m_Name: HeadSwede
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1204,7 +1205,6 @@ AudioSource:
     m_PostInfinity: 2
 --- !u!95 &9500000
 Animator:
-  serializedVersion: 2
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -1215,7 +1215,6 @@ Animator:
   m_CullingMode: 0
   m_ApplyRootMotion: 0
   m_AnimatePhysics: 1
-  m_HasTransformHierarchy: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1367,6 +1366,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9dc444c93a4e575479bc80f26fb1a7f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7646770e944e3964b877ec1036aefb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1455,9 +1465,6 @@ SkinnedMeshRenderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
@@ -1494,7 +1501,6 @@ SkinnedMeshRenderer:
   - {fileID: 400032}
   - {fileID: 400026}
   - {fileID: 400030}
-  m_BlendShapeWeights: []
   m_RootBone: {fileID: 400076}
   m_AABB:
     m_Center: {x: 0, y: -.073145777, z: -.00472455472}

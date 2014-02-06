@@ -27,29 +27,15 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
 		UpdateTarget,
 	}
-
-	public enum EToolState
-	{
-		NoTool,
-		SingleHandTool,
-		TwoHandTool,
-	}
-
-    public enum ERepairState
-    {
-        Inactive,
-        Repairing,
-    }
 	
 	//Member Delegates & Events
-	public delegate void NotifyTargetChange(Vector3 _bNewTarget);
-	public event NotifyTargetChange EventTargetChange;
+	
 	
 	// Member Properties
 	
 	public Vector3 RightHandIKTarget
 	{
-        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0;}
+        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; m_fRightHandIKWeight = 0; m_fRightHandWeightTarget = 1;}
 		get { return (m_RightHandTarget); }
 	}
 
@@ -61,8 +47,6 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	
 	//Member variables
 	Animator m_ThirdPersonAnim;
-    CNetworkVar<int>        m_bHoldState = null;
-    CNetworkVar<int>        m_bRepairState = null;
     CNetworkVar<Vector3>    m_RightHandNetworkedTarget;
     CNetworkVar<Vector3>    m_LeftHandNetworkedTarget;
 
@@ -72,16 +56,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
     Vector3					m_RightHandTarget;
 	float 					m_fRightHandLerpTime = 0.5f;
 	float 					m_fRightHandLerpTimer = 0.0f;	
-    Transform               m_RightShoulder;
-    Vector3                 m_TargetOffset;
-    List<Vector3>           m_RightHandTargetList = new List<Vector3>(); 
-
-    float                   m_fTargetChangeTimer = 0.0f;
-    float                   m_fTargetChangeTime = 1.0f;
-
-    int                     m_iTargetIndex;
-    int                     m_iTotalTargets;
-
+ 
 	//Left hand
 	float 					m_fLeftHandIKWeight;
 	public float 			m_fLeftHandWeightTarget;
@@ -89,96 +64,29 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	float 					m_fLeftHandLerpTime = 0.1f;
 	float 					m_fLeftHandLerpTimer = 0.0f;		
 
-	EToolState 				m_eToolState;
-    ERepairState            m_eRepairState;
-	    	
 	//Member Methods
 	
 	// Use this for initialization
 	void Start () 
-	{		
-		m_eToolState = EToolState.NoTool;
-        m_eRepairState = ERepairState.Inactive;
-
-		m_ThirdPersonAnim = GetComponent<Animator>();
-		EventTargetChange += UpdateTarget;
-		
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += OnPlayerInteraction;
-        gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += EquipTool; 
-        gameObject.GetComponent<CPlayerBelt>().EventToolDropped += DropTool; 
-        gameObject.GetComponent<CPlayerBelt>().EventToolChanged += ChangeTool; 
-      
-        m_eToolState = EToolState.NoTool;
+	{	
+		m_ThirdPersonAnim = GetComponent<Animator>();          
    	} 
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_RightHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-		m_LeftHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-        m_bHoldState = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
-        m_bRepairState = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
+		m_LeftHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);     
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-	{       
-        if(_cSyncedNetworkVar == m_bHoldState)
+	{ 
+		if(_cSyncedNetworkVar == m_RightHandNetworkedTarget)
         {
-            int iToolState = m_bHoldState.Get();
-
-            if((iToolState & (int)EToolState.NoTool) > 0)
-            {
-                m_eToolState = EToolState.NoTool;
-            }
-            if((iToolState & (int)EToolState.SingleHandTool) > 0)
-            {
-                m_eToolState = EToolState.SingleHandTool;
-            }
-            if((iToolState & (int)EToolState.TwoHandTool) > 0)
-            {
-                m_eToolState = EToolState.TwoHandTool;
-            }
-
-              switch(m_eToolState)
-            {
-                case EToolState.NoTool:
-                {                    
-                    gameObject.GetComponent<CThirdPersonAnimController>().IsHoldingTool = false;
-                    break;
-                }
-                case EToolState.SingleHandTool:
-                {                    
-                    gameObject.GetComponent<CThirdPersonAnimController>().IsHoldingTool = true;
-                    break;
-                }
-                case EToolState.TwoHandTool:
-                {                    
-                    gameObject.GetComponent<CThirdPersonAnimController>().IsHoldingTool = true;
-                    break;
-                }
-            }
-        }
-
-        if(_cSyncedNetworkVar == m_bRepairState)
-        {
-            int iRepairState = m_bRepairState.Get();
-            
-            if((iRepairState & (int)ERepairState.Inactive) > 0)
-            {
-                m_eRepairState = ERepairState.Inactive;
-            }
-            if((iRepairState & (int)ERepairState.Repairing) > 0)
-            {
-                m_eRepairState = ERepairState.Repairing;
-            }           
-        }
-
-        if(_cSyncedNetworkVar == m_RightHandNetworkedTarget)
-        {
-            if (EventTargetChange != null) EventTargetChange(m_RightHandNetworkedTarget.Get());         
+            RightHandIKTarget = m_RightHandNetworkedTarget.Get();           
         }
         if(_cSyncedNetworkVar == m_LeftHandNetworkedTarget)
         {
-            if (EventTargetChange != null) EventTargetChange(m_LeftHandNetworkedTarget.Get());         
+            LeftHandIKTarget = m_LeftHandNetworkedTarget.Get();          
         }
 	} 
 	
@@ -194,9 +102,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			_cStream.Write((byte)ENetworkAction.UpdateTarget);
 			_cStream.Write((float)cSelfIKController.m_RightHandTarget.x);
 			_cStream.Write((float)cSelfIKController.m_RightHandTarget.y);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.z);	
-            _cStream.Write((int)cSelfIKController.m_eToolState);
-            _cStream.Write((int)cSelfIKController.m_eRepairState);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.z);	      
 		}
 	}
 	
@@ -218,11 +124,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				cPlayerIKController.m_RightHandTarget.y = _cStream.ReadFloat();
 				cPlayerIKController.m_RightHandTarget.z = _cStream.ReadFloat();	
 				
-				cPlayerIKController.m_RightHandNetworkedTarget.Set(cPlayerIKController.m_RightHandTarget);
-
-                //Send states to clients                 
-                cPlayerIKController.m_bHoldState.Set(_cStream.ReadInt());
-                cPlayerIKController.m_bRepairState.Set(_cStream.ReadInt());
+				cPlayerIKController.m_RightHandNetworkedTarget.Set(cPlayerIKController.m_RightHandTarget);              
 			}
 				break;
 				
@@ -231,114 +133,16 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				break;
 			}
 		}		
-	}
+	}  
 	
 	// Update is called once per frame
 	void Update ()
-	{	      
-        if (m_eRepairState == ERepairState.Repairing && CNetwork.IsServer)
-        {
-            TargetSwitch();
-            LerpToTarget();
-        }       
-	}
-
-    void EquipTool(CNetworkViewId _ToolId)
-    {
-        m_eToolState = EToolState.SingleHandTool;      
-    }
-
-    void DropTool(CNetworkViewId _ToolId)
-    {
-       //m_eToolState = EToolState.NoTool;      
-    }
-
-    void ChangeTool(CNetworkViewId _ToolId)
-    {             
-        if (_ToolId.GameObject != null)
-        {
-            GameObject tool = _ToolId.GameObject;
-            m_eToolState = EToolState.SingleHandTool; 
-        } 
-        else
-        {
-            m_eToolState = EToolState.NoTool; 
-        }
-    }
-
-    public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
-    {
-        switch (_eType)
-        {
-            case CPlayerInteractor.EInteractionType.PrimaryStart:
-            {
-                m_RightHandTarget = _cRayHit.point;
-                m_fRightHandWeightTarget = 1.0f;
-                m_fTargetChangeTimer = 0.0f;
-
-                Transform[] children = _cInteractableObject.GetComponentsInChildren<Transform>();
-                foreach(Transform child in children)
-                {
-                    if(child.name == "Transform" && m_RightHandTargetList.Contains(child.position) == false)
-                    {
-                        m_RightHandTargetList.Add(child.position);
-                        m_iTotalTargets++;
-                    }
-                }
-
-                m_iTargetIndex = 0;
-                m_eRepairState = ERepairState.Repairing;
-
-                break;
-            }
-
-            case CPlayerInteractor.EInteractionType.PrimaryEnd:
-            {
-              // m_RightHandTarget = new Vector3(0,0,0);
-              // m_fRightHandWeightTarget = 0.0f;
-              // m_eRepairState = ERepairState.Inactive;
-                break;
-            }
-        }
-    }
-    
-    void UpdateTarget(Vector3 _newTarget)
-    { 
-        RightHandIKTarget = _newTarget;             
-    }	
-
-    void TargetSwitch()
-    {
-        if (m_RightHandTargetList.Count > 0)
-        {
-            m_fTargetChangeTimer += Time.deltaTime;
-            
-            if(m_fTargetChangeTimer > m_fTargetChangeTime)
-            {
-                //Select next target
-                if(m_iTargetIndex < m_iTotalTargets - 1)
-                {
-                    m_iTargetIndex++;
-                }
-                else
-                {
-                    m_iTargetIndex = 0;
-                }
-
-                //reset timer
-                m_fTargetChangeTimer = 0;
-              
-                //Set new target and lerp vairables
-                RightHandIKTarget = m_RightHandTargetList[m_iTargetIndex];      
-
-                m_fRightHandIKWeight = 1.0f;
-                m_fRightHandWeightTarget = 1.0f;
-                m_fRightHandLerpTimer = 0.0f;
-
-                Debug.Log("Target switched to: " + RightHandIKTarget.ToString());               
-            }
-        }
-    }
+	{ 	
+		//Let clients handle lerping to new target.
+		
+       	LerpToTarget();              
+		
+	}  
 
     void LerpToTarget()
     {
