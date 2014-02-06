@@ -173,6 +173,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 	public void OnGUI()
 	{
+        return;
 		string shipLifeSupportOutput = "ShipLifeSupportInfo\n";
 		shipLifeSupportOutput += string.Format("\tQuality: [{0}%]\n", 
 		                                       Math.Round(ShipAtmosphericQuality * 100.0f, 1)); 

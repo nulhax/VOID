@@ -30,7 +30,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Types
 
 
-	public const ushort kusServerPort = 9836;
+    public const ushort kusServerPort = 1337;
 
 
 // Member Delegates & Events
@@ -129,6 +129,14 @@ public class CGame : CNetworkMonoBehaviour
 		if (!CNetwork.Connection.IsConnected)
         {
 			DrawLobbyGui();
+
+            if (!CNetwork.IsServer)
+            {
+                if (GUI.Button(new Rect(140, 20, 130, 50), "Bryce"))
+                {
+                    CNetwork.Connection.ConnectToServer("121.98.172.91", 1337, "");
+                }
+            }
         }
     }
 
@@ -147,7 +155,7 @@ public class CGame : CNetworkMonoBehaviour
 		GUI.Label(new Rect(fScreenCenterX + 226, fScreenCenterY - 180, 100, 30), "Player Name");
 		
 		string sPlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
-		PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+		//PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
 		
 		if(PlayerName != sPlayerName)
 		{
