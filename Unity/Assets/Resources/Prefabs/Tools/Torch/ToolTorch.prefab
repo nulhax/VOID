@@ -116,9 +116,6 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
 --- !u!23 &2300002
 Renderer:
   m_ObjectHideFlags: 1
@@ -137,9 +134,6 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
 --- !u!33 &3300000
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -307,6 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a50861cb3ea8044fa38e15bc1239585, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: 
   m_strCueName: TorchClick
   m_fPitchMin: .5
   m_fpitchMax: .699999988
@@ -338,6 +333,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3a50861cb3ea8044fa38e15bc1239585, type: 3}
   m_Name: 
+  m_EditorClassIdentifier: 
   m_EditorClassIdentifier: 
   m_strCueName: TorchToggle
   m_fPitchMin: 1
@@ -399,6 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_eToolType: 3
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1

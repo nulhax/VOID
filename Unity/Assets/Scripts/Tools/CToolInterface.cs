@@ -43,6 +43,23 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		PickUp,
 	}
+	
+	 public enum EType
+    {
+        INVALID,
+		
+		Weapon,
+		Extinguisher,
+		Flashlight,
+		MedicalTool,
+		ModuleTool,
+		FluidTool,
+		CalibratorTool,
+		CircuitryTool,
+		RatchetTool,
+
+        MAX
+    }
 
 
 // Member Delegates & Events
@@ -61,7 +78,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 // Member Properties
-
+	
+	
+	public EType ToolType
+    {
+        get { return (m_eToolType); }
+    }
 
     public GameObject OwnerPlayerActor
     {
@@ -161,7 +183,10 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Empty
+		 if (m_eToolType == EType.INVALID)
+        {
+            Debug.LogError(string.Format("This tool has not been given a tool type. GameObjectName({0})", gameObject.name));
+        }
 	}
 
 
@@ -320,7 +345,9 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 // Member Fields
 
-
+	public EType m_eToolType = EType.INVALID;
+	
+	
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
 
 
