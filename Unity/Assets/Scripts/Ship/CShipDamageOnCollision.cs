@@ -65,7 +65,7 @@ public class CShipDamageOnCollision : MonoBehaviour
 						{
 							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
 							damagableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
-							Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
+							//Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
 						}
 					}
                 }
