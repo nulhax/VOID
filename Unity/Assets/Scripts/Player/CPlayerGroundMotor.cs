@@ -174,7 +174,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Start()
 	{
-		m_CachedCapsuleCollider = GetComponent<CapsuleCollider>();;
+		m_CachedCapsuleCollider = GetComponent<CapsuleCollider>();
 
 		if (!CNetwork.IsServer)
 		{

@@ -124,10 +124,12 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 		m_cFractureLaserObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
 		m_cExtractorBeamObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
-		m_cFractureLaserObject.GetComponentInChildren<Renderer>().enabled = false;
-		m_cExtractorBeamObject.GetComponentInChildren<Renderer>().enabled = false;
         m_cFractureLaserObject.GetComponentInChildren<Renderer>().material.color = Color.red;
         m_cExtractorBeamObject.GetComponentInChildren<Renderer>().material.color = Color.blue;
+		m_cFractureLaserObject.GetComponentInChildren<Light>().color = new Color(1.0f, 0.5f, 0.5f, 1.0f);
+		m_cExtractorBeamObject.GetComponentInChildren<Light>().color = new Color(0.5f, 0.5f, 1.0f, 1.0f);
+		m_cFractureLaserObject.SetActive(false);
+		m_cExtractorBeamObject.SetActive(false);
 
 		m_cBarrelObject = GetComponent<CTurretBehaviour>().m_cBarrel;
 	}
@@ -337,12 +339,12 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             if (m_bFractureLaserVisible.Get())
             {
                 // Show laser
-                m_cFractureLaserObject.GetComponentInChildren<Renderer>().enabled = true;
+                m_cFractureLaserObject.SetActive(true);
             }
             else
             {
                 // Hide laser
-                m_cFractureLaserObject.GetComponentInChildren<Renderer>().enabled = false;
+				m_cFractureLaserObject.SetActive(false);
             }
 		}
 		else if (_cSyncedVar == m_bExtractorBeamVisible)
@@ -350,12 +352,12 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             if (m_bExtractorBeamVisible.Get())
             {
                 // Show laser
-                m_cExtractorBeamObject.GetComponentInChildren<Renderer>().enabled = true;
+				m_cExtractorBeamObject.SetActive(true);
             }
             else
             {
                 // Hide laser
-                m_cExtractorBeamObject.GetComponentInChildren<Renderer>().enabled = false;
+				m_cExtractorBeamObject.SetActive(false);
             }
 		}
 	}

@@ -1057,6 +1057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cSeat: {fileID: 100040}
+  m_LookAt: {fileID: 400038}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

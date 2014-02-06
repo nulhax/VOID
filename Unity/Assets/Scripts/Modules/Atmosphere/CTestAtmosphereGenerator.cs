@@ -70,7 +70,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 
 	private void HandleFluidHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
 	{
-		m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+		if(CNetwork.IsServer)
+			m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
 	}
 	
 	private void HandleCircuitryBreaking(CComponentInterface _Component)

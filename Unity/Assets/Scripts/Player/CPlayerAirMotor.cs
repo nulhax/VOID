@@ -113,17 +113,17 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					// Placeholder: Disable movement input
 					GetComponent<CPlayerHead>().DisableInput(this);
 					GetComponent<CPlayerGroundMotor>().DisableInput(this);
-
-					// Start realigning the head
-					m_RealignBodyWithHead = true;
-
-					// Set the values to use for realigment
-					Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-					m_RealignFromRotation = transform.rotation;
-					m_RealignToRotation = actorHead.rotation;
-					m_RealignHeadTimer = 0.0f;
-					m_RealignHeadTime = 0.5f;
 				}
+
+				// Start realigning the head
+				m_RealignBodyWithHead = true;
+				
+				// Set the values to use for realigment
+				Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+				m_RealignFromRotation = transform.rotation;
+				m_RealignToRotation = actorHead.rotation;
+				m_RealignHeadTimer = 0.0f;
+				m_RealignHeadTime = 0.5f;
 			}
 			else
 			{
@@ -132,10 +132,10 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					// Placeholder: Enable movement input
 					GetComponent<CPlayerHead>().ReenableInput(this);
 					GetComponent<CPlayerGroundMotor>().ReenableInput(this);
-
-					// Stop any head realignment with body
-					m_RealignBodyWithHead = false;
 				}
+
+				// Stop any head realignment with body
+				m_RealignBodyWithHead = false;
 			}
 		}
 	}
@@ -168,52 +168,51 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		}
 
 		// Update the interpolations
-		if(CNetwork.IsServer)
-			UpdateServerInterpolation();
-
-		UpdateClientInterpolations();
+		UpdateInterpolations();
 	}
 
 	[AServerOnly]
-	private void UpdateServerInterpolation()
+	private void UpdateInterpolations()
 	{
 		if(m_RealignBodyWithShip)
 		{
-			m_RealignBodyTimer += Time.deltaTime;
-			if(m_RealignBodyTimer > m_RealignBodyTime)
+			if(CNetwork.IsServer)
 			{
-				m_RealignBodyTimer = m_RealignBodyTime;
-				m_RealignBodyWithShip = false;
-			}
+				m_RealignBodyTimer += Time.deltaTime;
+				if(m_RealignBodyTimer > m_RealignBodyTime)
+				{
+					m_RealignBodyTimer = m_RealignBodyTime;
+					m_RealignBodyWithShip = false;
+				}
 
-			// Set the lerped rotation
-			transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
-				
-			if(!m_RealignBodyWithShip)
-			{
-				// Player is now in gravity zone, set inactive
-				m_IsActive.Set(false);
-				
-				// Stop syncing the rotations
-				GetComponent<CActorNetworkSyncronized>().SyncTransform();
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
-				
-				// Constrain the rotation axis again
-				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
-				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
-				rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
-				
-				// Reset drag values
-				rigidbody.drag = 0.1f;
-				rigidbody.angularDrag = 0.1f;
+				// Set the lerped rotation
+				transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
+					
+				if(!m_RealignBodyWithShip)
+				{
+					// Player is now in gravity zone, set inactive
+					m_IsActive.Set(false);
+					
+					// Stop syncing the rotations
+					GetComponent<CActorNetworkSyncronized>().SyncTransform();
+					GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+					
+					// Constrain the rotation axis again
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationX;
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationY;
+					rigidbody.constraints |= RigidbodyConstraints.FreezeRotationZ; 
+					
+					// Reset drag values
+					rigidbody.drag = 0.1f;
+					rigidbody.angularDrag = 0.1f;
+				}
 			}
 		}
-	}
-	
-	private void UpdateClientInterpolations()
-	{
+
 		if(m_RealignBodyWithHead)
 		{
+			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+
 			m_RealignHeadTimer += Time.deltaTime;
 			if(m_RealignHeadTimer > m_RealignHeadTime)
 			{
@@ -221,15 +220,18 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				m_RealignBodyWithHead = false;
 			}
 
-			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+			if(CNetwork.IsServer)
+			{
+				// Set the lerped rotation of the body
+				transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
+			}
 
-			// Set the lerped rotation
-			transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
+			// Set the rotation to the realignment rotation
 			actorHead.rotation = m_RealignToRotation;
 
 			if(!m_RealignBodyWithHead)
 			{
-				GetComponent<CPlayerHead>().ResetHeadRotations();
+				GetComponent<CPlayerHead>().SetHeadRotations(0.0f);
 			}
 		}
 	}
@@ -338,6 +340,8 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		// Start syncing the rotations
 		GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
 	}
+
+
 
 
 // Member Fields

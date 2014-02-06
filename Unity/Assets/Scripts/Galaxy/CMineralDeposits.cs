@@ -104,7 +104,7 @@ public class CMineralDeposits : CNetworkMonoBehaviour
                 GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
                 cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
                 cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-                cCrystal.GetComponent<CNetworkView>().SetRotation(vRayDirection);
+                cCrystal.GetComponent<CNetworkView>().SetEulerAngles(vRayDirection);
 
                 m_aDeposits.Add(cCrystal);
             }
