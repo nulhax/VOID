@@ -419,6 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ToolType: 5
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -538,6 +539,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 0
@@ -549,6 +551,7 @@ MonoBehaviour:
   state_initial: 0
   stateTransitions: []
   state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1

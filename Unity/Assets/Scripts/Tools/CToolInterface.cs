@@ -39,6 +39,23 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Types
 
 
+	public enum EType
+	{
+		INVALID,
+
+		Ratchet,
+		CircuitryKit,
+		Calibrator,
+		Fluidizer,
+		ModuleCreator,
+		FireExtinguisher,
+		Norbert,
+		HealingKit,
+		AK47,
+
+		MAX
+	}
+
 	public enum ENetworkAction : byte
 	{
 		PickUp,
@@ -61,6 +78,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 // Member Properties
+
+
+	public EType ToolType
+	{
+		get{ return(m_ToolType); }
+	}
 
 
     public GameObject OwnerPlayerActor
@@ -214,6 +237,25 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
+	public static void RegisterPrefab(EType _ToolType, CGameRegistrator.ENetworkPrefab _ePrefab)
+	{
+		s_mRegisteredPrefabs.Add(_ToolType, _ePrefab);
+	}
+	
+	
+	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _ToolType)
+	{
+		if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
+		{
+			Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
+			
+			return (CGameRegistrator.ENetworkPrefab.INVALID);
+		}
+		
+		return (s_mRegisteredPrefabs[_ToolType]);
+	}
+
+
 	[AServerOnly]
 	public void SetSecondaryActive(bool _bActive, GameObject _cInteractableObject)
 	{
@@ -321,11 +363,17 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
+	public EType m_ToolType = EType.INVALID;
+
+
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
 
 
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
+
+
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 };

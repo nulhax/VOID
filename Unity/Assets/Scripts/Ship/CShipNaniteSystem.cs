@@ -136,7 +136,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	}
 		
 	[AServerOnly]
-	private void DeductNanites(int _iNanites)
+	public void DeductNanites(int _iNanites)
 	{	
 		int iOriginalDebt = _iNanites;
 

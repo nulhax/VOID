@@ -34,6 +34,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		PowerGenerator,
 		PowerCapacitor,
 		AtmosphereGenerator,
+		Dispenser,
 
 		MAX
 	}
@@ -94,12 +95,6 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 			// Attach the camera to the consoles screen
 			AttatchRenderTexture(Console.GetComponent<CDUIConsole>().ConsoleScreen.renderer.material);
-
-			if(CNetwork.IsServer)
-			{
-				// Set the view ID of the dui monitor for the console
-				Console.GetComponent<CDUIConsole>().DUIViewId = ViewId;
-			}
 		}
 	}
 
