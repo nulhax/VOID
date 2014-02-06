@@ -72,6 +72,9 @@ public class CHullBreachNode : MonoBehaviour
 						gameObject.GetComponent<MeshFilter>().sharedMesh = hullBreachNode.breachedMesh;
 						gameObject.GetComponent<MeshCollider>().sharedMesh = hullBreachNode.breachedMesh;
 
+						// Set breached state.
+						hullBreachNode.breached = true;
+
 						// Inform the facility this breach resides in.
 						Transform parentTransform = gameObject.transform.parent;
 						if (parentTransform != null)
@@ -105,6 +108,9 @@ public class CHullBreachNode : MonoBehaviour
 						gameObject.GetComponent<MeshFilter>().sharedMesh = hullBreachNode.goodMesh;
 						gameObject.GetComponent<MeshCollider>().sharedMesh = hullBreachNode.goodMesh;
 
+						// Set breached state.
+						hullBreachNode.breached = false;
+
 						// Inform the facility this breach resides in.
 						Transform parentTransform = gameObject.transform.parent;
 						if (parentTransform != null)
@@ -121,7 +127,7 @@ public class CHullBreachNode : MonoBehaviour
 
 	static void OnChildSetBreached(GameObject gameObject, bool breached)
 	{
-		CHullBreachNode hullBreachNode = gameObject.GetComponent<CHullBreachNode>();
+		CHullBreachNode hullBreachNode = gameObject.transform.parent.GetComponent<CHullBreachNode>();
 
 		if (breached)	// If the child is now breached...
 		{
@@ -129,7 +135,7 @@ public class CHullBreachNode : MonoBehaviour
 
 			if (hullBreachNode.numChildrenBreached >= hullBreachNode.childBreaches.Count)	// If all children are breached...
 			{
-				CActorHealth hullBreachActorHealth = gameObject.GetComponent<CActorHealth>();
+				CActorHealth hullBreachActorHealth = hullBreachNode.GetComponent<CActorHealth>();
 				hullBreachActorHealth.health = hullBreachActorHealth.health_min;	// Force this parent to breach.
 			}
 		}
