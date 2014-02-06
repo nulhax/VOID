@@ -116,9 +116,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-	public void ResetHeadRotations()
+	public void SetHeadRotations(float _LocalEulerX)
 	{
-		m_vRotation = Vector3.zero;
+		m_LocalXRotation = _LocalEulerX;
 	}
 
 
@@ -130,7 +130,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			CPlayerHead cMyActorHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>();
 
 			// Write my head's x-rotation
-            _cStream.Write(cMyActorHead.m_cActorHead.transform.localEulerAngles.x);
+			_cStream.Write(cMyActorHead.m_LocalXRotation);
 		}
 	}
 
@@ -169,13 +169,13 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		if (!InputDisabled)
 		{
 			// Retrieve new rotations
-			m_vRotation.x += _fAmount;
+			m_LocalXRotation += _fAmount;
 
 			// Clamp rotation
-			m_vRotation.x = Mathf.Clamp(m_vRotation.x, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
+			m_LocalXRotation = Mathf.Clamp(m_LocalXRotation, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
 
 			// Apply the pitch to the camera
-			m_cActorHead.transform.localEulerAngles = new Vector3(m_vRotation.x, 0.0f, 0.0f);
+			m_cActorHead.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
 		}
 	}
 
@@ -190,7 +190,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 	public GameObject m_cActorHead = null;
-	Vector3 m_vRotation = Vector3.zero;
+
+
+	float m_LocalXRotation = 0.0f;
+	
+
 	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
 	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);
 	Vector2 m_vHeadMinRotation = new Vector2(-30, -60);

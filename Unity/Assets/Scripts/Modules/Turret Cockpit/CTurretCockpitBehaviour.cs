@@ -162,9 +162,16 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_cActiveTurretViewId)
 		{
-			// Register the handling cockpit rotations
 			if(m_cActiveTurretViewId.Get() != null)
-				m_cActiveTurretViewId.Get().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated += HandleCockpitRotations;
+			{
+				CTurretBehaviour tb = m_cActiveTurretViewId.Get().GameObject.GetComponent<CTurretBehaviour>();
+
+				// Register the handling cockpit rotations
+				tb.EventTurretRotated += HandleCockpitRotations;
+
+				// Set initial states
+				HandleCockpitRotations(tb.TurretRotations, tb.MinMaxRotationX);
+			}
 
 			// Unregister previous the handling cockpit rotations
 			if(m_cActiveTurretViewId.GetPrevious() != null)

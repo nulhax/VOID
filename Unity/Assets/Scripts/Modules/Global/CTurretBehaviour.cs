@@ -188,7 +188,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
 				
 				// Update rotation
-				vRotation.y += CUserInput.MouseMovementX;
+				vRotation.y += _fValue;
 				
 				// Apply rotations to turret
 				transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
@@ -204,7 +204,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
 				
 				// Update rotation
-				vRotation.x += CUserInput.MouseMovementY;
+				vRotation.x += _fValue;
 				vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
 				
 				// Apply rotations to turret
