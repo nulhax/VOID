@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -20,136 +20,54 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CDispenserBehaviour : CNetworkMonoBehaviour
+public class CDispenserBehaviour : MonoBehaviour
 {
     // Member Types
-    enum ENetworkAction
-    {
-        INVALID = -1,
-
-        ActionSpawnTool,
-
-        MAX
-    }
 
 
     // Member Delegates & Events
 
 
     // Member Properties
-    public static CDispenserBehaviour Instance
-    {
-        get { return (m_Instance); }
-    }
 
 
     // Member Methods
 
-
-    public void Awake()
-    {
-        // Save a static reference to this class
-        m_Instance = this;
-    }
-
-
     void Start()
     {
-        // Debug: Sign up for 'use' event
-        gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUse);
+		// Get the DUI of the dispenser
+		m_DUIDispenser = m_DUIConsole.DUI.GetComponent<CDUIDispenserRoot>();
 
-        // Set invalid tool
-        m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
-
-        // Debug: Health set
-        m_fHealth = 50.0f;
+		// Register the event for building a tool
+		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
 
         GetComponent<CActorInteractable>().EventHover += OnHover;
     }
 
+	[AServerOnly]
+	private void HandleDUIButtonPressed(CDUIDispenserRoot _DUI)
+	{
+		// Check there is enough nanites for the selected tool
+		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
+		//if(sns.IsEnoughNanites(_DUI.SelectedToolCost))
+		{
+			// Spawn the selected tool
+			SpawnTool(_DUI.SelectedToolType);
 
-    // Debug use only
-    void OnUse(RaycastHit _RayCast, CNetworkViewId _cNetworkViewId)
-    {
-        // Default
-        m_skTool = CGameRegistrator.ENetworkPrefab.ToolRachet;
-    }
-
-
-    public static void SerializeData(CNetworkStream _cStream)
-    {
-        // If there's a tool to be spawned
-        if (m_skTool != CGameRegistrator.ENetworkPrefab.INVALID)
-        {
-            // Write the first byte to the stream as a network action
-            _cStream.Write((byte)ENetworkAction.ActionSpawnTool);
-
-            // Write the tool to spawn to the stream
-            _cStream.Write((byte)m_skTool);
-
-            // Reset tool
-            m_skTool = CGameRegistrator.ENetworkPrefab.INVALID;
-        }
-    }
-
-
-    public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
-    {
-        // While there is unread data in the stream
-        while (_cStream.HasUnreadData)
-        {
-            // Save the first byte as the network action
-            ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
-
-            // Switch on the network action
-            switch (eNetworkAction)
-            {
-                // Spawn tool action
-                case ENetworkAction.ActionSpawnTool:
-                {
-                    // Spawn a new tool
-                    SpawnTool((CGameRegistrator.ENetworkPrefab)_cStream.ReadByte());
-                    
-                    break;
-                }
-            }
-        }
-    }
-
-
+			// Negate the nantites from the ship pool
+			//sns.DeductNanites(_DUI.SelectedToolCost);
+		}
+	}
+	
     [AServerOnly]
-    public static void InvokeSpawnTool(CGameRegistrator.ENetworkPrefab _Tool)
+    private void SpawnTool(CToolInterface.EType _ToolType)
     {
-        // Set the tool to be spawned
-        m_skTool = _Tool;
-    }
-
-
-    [AServerOnly]
-    private static void SpawnTool(CGameRegistrator.ENetworkPrefab _Tool)
-    {
-        // Local variables
-        Quaternion TempQuat = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-
         // Create a new object
-        GameObject NewTool = CNetwork.Factory.CreateObject(_Tool);
+		GameObject NewTool = CNetwork.Factory.CreateObject(CToolInterface.GetPrefabType(_ToolType));
 
-        ///// TEMPORARY /////
-        Vector3 V3 = Instance.transform.position;
-        V3.y += 1.5f;
-        V3.z -= 2.0f;
-
-        // Set the tool's position relative to the dispenser
-        NewTool.GetComponent<CNetworkView>().SetPosition(V3);
-        ///// TEMPORARY /////
-
-        // NewTool.GetComponent<CNetworkView>().SetPosition(SOMETHING_GOES_HERE);
-
-        // Set (null) the tool's rotation
-        NewTool.GetComponent<CNetworkView>().SetRotation(TempQuat.eulerAngles);
-
-        // Set the tool's parent
-        NewTool.GetComponent<CNetworkView>().SetParent(Instance.gameObject.GetComponent<CNetworkView>().ViewId);
+        // Set the tool's position
+		NewTool.GetComponent<CNetworkView>().SetPosition(m_ToolSpawnLocation.position);
+		NewTool.GetComponent<CNetworkView>().SetRotation(m_ToolSpawnLocation.eulerAngles);
     }
 
 
@@ -157,7 +75,6 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     {
         GetComponent<CActorInteractable>().EventHover -= OnHover;
     }
-
 
     void Update()
     {
@@ -205,14 +122,14 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     // 
     //
     // TEMPORARY //
+	
 
+	public CDUIConsole m_DUIConsole = null;
+	public Transform m_ToolSpawnLocation = null;
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar) { }
+	public CComponentInterface m_CircuitryComponent = null;
+	public CComponentInterface m_MechanicalComponent = null;
 
-
-    static float m_fHealth = new float();
-    static CDispenserBehaviour m_Instance;
-    static CGameRegistrator.ENetworkPrefab m_skTool = new CGameRegistrator.ENetworkPrefab();
-
-
+	private CDUIDispenserRoot m_DUIDispenser = null;
+	
 };

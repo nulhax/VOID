@@ -101,7 +101,7 @@ public class CGameRegistrator : MonoBehaviour
 
         // Tools
         ToolTorch,
-        ToolRachet,
+        ToolRatchet,
         ToolExtinguisher,
         ToolAk47,
         ToolMedical,
@@ -118,6 +118,7 @@ public class CGameRegistrator : MonoBehaviour
 		UIPowerGenerator,
 		UIPowerCapacitor,
 		UIAtmosphereGenerator,
+		UIDispenser,
 
 		// Other
 		LaserTurretProjectile,
@@ -151,6 +152,7 @@ public class CGameRegistrator : MonoBehaviour
         RegisterComponents();
 		RegisterUserInterfaces();
         RegisterKeyBindings();
+		RegisterTools();
 	}
 
 
@@ -212,7 +214,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power/Power Capacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Resources/Mining Turret/Mining Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Resources/Mining Cockpit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Production/Dispenser/Dispenser");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Production/Dispenser");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Resources/Nanite Capsule/Nanite Capsule");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine/Engine");
 
@@ -232,7 +234,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRachet,                  "Tools/Ratchet/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                  "Tools/Ratchet/ToolRachet");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolWiringKit,               "Tools/Wiring Kit/ToolWiringKit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
@@ -247,6 +249,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerGenerator,			"DUI/Modules/DUIPowerGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerCapacitor,			"DUI/Modules/DUIPowerCapacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIAtmosphereGenerator,		"DUI/Modules/DUIAtmosphereGenerator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIDispenser,					"DUI/Modules/DUIDispenser");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -270,7 +273,6 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CDispenserBehaviour.SerializeData           , CDispenserBehaviour.UnserializeData);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
@@ -298,6 +300,21 @@ public class CGameRegistrator : MonoBehaviour
     {
         CAccessoryInterface.RegisterPrefab(CAccessoryInterface.EType.Alarm, ENetworkPrefab.Alarm);
     }
+
+
+
+	void RegisterTools()
+	{
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet, ENetworkPrefab.ToolRatchet);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit, ENetworkPrefab.ToolWiringKit);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator, ENetworkPrefab.ToolRatchet);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer, ENetworkPrefab.ToolRatchet);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator, ENetworkPrefab.ToolModuleGun);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert, ENetworkPrefab.ToolModuleGun);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.HealingKit, ENetworkPrefab.ToolMedical);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47, ENetworkPrefab.ToolAk47);   
+	}
 
 
     void RegisterModules()
@@ -333,6 +350,7 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator, ENetworkPrefab.UIPowerGenerator);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor, ENetworkPrefab.UIPowerCapacitor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator, ENetworkPrefab.UIAtmosphereGenerator);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser, ENetworkPrefab.UIDispenser);
 	}
 
 

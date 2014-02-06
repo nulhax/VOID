@@ -23,14 +23,13 @@ using System.Collections;
 public class CDUIConsole : CNetworkMonoBehaviour 
 {
 	// Member Delegates & Events
-	public delegate void NotifyDUIEvent();
 
-	public event NotifyDUIEvent EventDUICreated = null;
 
 	// Member Fields 
 	public GameObject m_ScreenObject = null;
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
+	private bool m_Initialised = false;
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	
     // Member Properties
@@ -44,7 +43,13 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 	public GameObject DUI 
 	{ 
-		get { return(m_DUIViewId.Get().GameObject); } 
+		get 
+		{ 
+			if(!m_Initialised && CNetwork.IsServer)
+				Start();
+
+			return(m_DUIViewId.Get().GameObject); 
+		} 
 	}
 
 	public GameObject ConsoleScreen
@@ -60,11 +65,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)
 	{
-		if(_SyncedVar == m_DUIViewId)
-		{
-			if(EventDUICreated != null)
-				EventDUICreated();
-		}
+
 	}
 	
 	public void Awake()
@@ -76,15 +77,19 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		if(CNetwork.IsServer)
+		if(CNetwork.IsServer && !m_Initialised)
 		{
 			if(m_DUI != CDUIRoot.EType.INVALID)
 			{
 				// Instantiate the DUI object
 				GameObject DUIObj = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DUI));
 
-				// Set the view id of this console to the monitor
-				DUIObj.GetComponent<CDUIRoot>().ConsoleViewId = ViewId;
+				// Set the view ids
+				CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
+				dr.ConsoleViewId = ViewId;
+				DUIViewId = dr.ViewId;
+
+				m_Initialised = true;
 			}
 			else
 			{

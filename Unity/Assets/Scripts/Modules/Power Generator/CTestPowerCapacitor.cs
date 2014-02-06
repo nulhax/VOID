@@ -32,7 +32,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 	
 	// Member Fields
 	public float m_MaxPowerBatteryCapacity = 1000.0f;
-	public GameObject m_DUIConsole = null;
+	public CDUIConsole m_DUIConsole = null;
 
 	public CComponentInterface m_Circuitry1 = null;
 	public CComponentInterface m_Circuitry2 = null;
@@ -64,7 +64,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
 
 		// Get the DUI of the power generator
-		m_DUIPowerCapacitor = m_DUIConsole.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIPowerCapacitorRoot>();
+		m_DUIPowerCapacitor = m_DUIConsole.DUI.GetComponent<CDUIPowerCapacitorRoot>();
 		m_DUIPowerCapacitor.InitialCapacity = m_MaxPowerBatteryCapacity;
 
 		// Debug: Set the charge to half its total capacity

@@ -783,7 +783,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxAtmosphereGenerationRate: 30
-  m_DUIConsole: {fileID: 100006}
+  m_DUIConsole: {fileID: 11400010}
   m_CircuitryComponent: {fileID: 11400026}
   m_LiquidComponent: {fileID: 11400034}
 --- !u!114 &11400022

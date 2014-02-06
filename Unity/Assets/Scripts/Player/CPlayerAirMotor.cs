@@ -115,12 +115,12 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					GetComponent<CPlayerGroundMotor>().DisableInput(this);
 
 					// Start realigning the head
-					m_RealignHeadWithBody = true;
+					m_RealignBodyWithHead = true;
 
 					// Set the values to use for realigment
 					Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-					m_RealignFromRotation = actorHead.localRotation;
-					m_RealignToRotation = Quaternion.identity;
+					m_RealignFromRotation = transform.rotation;
+					m_RealignToRotation = actorHead.rotation;
 					m_RealignHeadTimer = 0.0f;
 					m_RealignHeadTime = 0.5f;
 				}
@@ -134,7 +134,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					GetComponent<CPlayerGroundMotor>().ReenableInput(this);
 
 					// Stop any head realignment with body
-					m_RealignHeadWithBody = false;
+					m_RealignBodyWithHead = false;
 				}
 			}
 		}
@@ -187,7 +187,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 			}
 
 			// Set the lerped rotation
-			rigidbody.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
+			transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignBodyTimer/m_RealignBodyTime);
 				
 			if(!m_RealignBodyWithShip)
 			{
@@ -212,20 +212,22 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	
 	private void UpdateClientInterpolations()
 	{
-		if(m_RealignHeadWithBody)
+		if(m_RealignBodyWithHead)
 		{
 			m_RealignHeadTimer += Time.deltaTime;
 			if(m_RealignHeadTimer > m_RealignHeadTime)
 			{
 				m_RealignHeadTimer = m_RealignHeadTime;
-				m_RealignHeadWithBody = false;
+				m_RealignBodyWithHead = false;
 			}
-			
-			// Set the lerped rotation
-			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-			actorHead.localRotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
 
-			if(!m_RealignHeadWithBody)
+			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+
+			// Set the lerped rotation
+			transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
+			actorHead.rotation = m_RealignToRotation;
+
+			if(!m_RealignBodyWithHead)
 			{
 				GetComponent<CPlayerHead>().ResetHeadRotations();
 			}
@@ -355,7 +357,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 
 	private bool m_RealignBodyWithShip = false;
-	private bool m_RealignHeadWithBody = false;
+	private bool m_RealignBodyWithHead = false;
 	private float m_RealignBodyTimer = 0.0f;
 	private float m_RealignBodyTime = 0.5f;
 	private float m_RealignHeadTimer = 0.0f;

@@ -792,7 +792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxPowerBatteryCapacity: 1000
-  m_DUIConsole: {fileID: 100018}
+  m_DUIConsole: {fileID: 11400032}
   m_Circuitry1: {fileID: 11400014}
   m_Circuitry2: {fileID: 11400008}
 --- !u!114 &11400024

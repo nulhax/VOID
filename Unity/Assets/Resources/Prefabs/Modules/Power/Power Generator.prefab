@@ -790,7 +790,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_MaxPowerGenerationRate: 15
-  m_DUIConsole: {fileID: 100020}
+  m_DUIConsole: {fileID: 11400028}
   m_CircuitryComponent: {fileID: 11400010}
   m_CalibrationComponent: {fileID: 11400018}
 --- !u!114 &11400024
