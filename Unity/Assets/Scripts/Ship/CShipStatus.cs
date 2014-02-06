@@ -51,6 +51,7 @@ public class CShipStatus : CNetworkMonoBehaviour
 
 	void OnGUI()
 	{
+        return;
 		float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;
 		Vector3 absShipPos = CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position);
 		CGalaxy.SCellPos shipCellPos = CGalaxy.instance.RelativePointToAbsoluteCell(CGameShips.GalaxyShip.transform.position);

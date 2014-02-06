@@ -198,7 +198,8 @@ public class CNetworkServer : MonoBehaviour
 
     public void OnGUI()
     {
-        if (IsActive)
+        if (m_bShowStats &&
+            IsActive)
         {
             RakNet.SystemAddress[] aRemoteSystems = null;
             ushort sSystemsCount = 100;
@@ -526,6 +527,9 @@ public class CNetworkServer : MonoBehaviour
 
 
     ushort m_usPort = 0;
+
+
+    bool m_bShowStats = false;
 
 
     static Dictionary<ulong, CNetworkPlayer> s_mNetworkPlayers = new Dictionary<ulong, CNetworkPlayer>();

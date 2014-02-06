@@ -138,6 +138,6 @@ public class DungeonMaster : MonoBehaviour
 		style.fontStyle = FontStyle.Bold;
 		float boxWidth = 0.1f;
 		float boxHeight = 0.06f;
-		GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
+		//GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
 	}
 }

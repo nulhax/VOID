@@ -225,6 +225,28 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     }
 
 
+    void OnGUI()
+    {
+        if (m_cCockpitBehaviour.MountedPlayerId == CNetwork.PlayerId)
+        {
+            float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;
+            Vector3 absShipPos = CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position);
+
+            string shipOutput = string.Format("\tShip Speed: [{0}] \nShip Position [{1}] ",
+                                        shipSpeed.ToString("F2"),
+                                        absShipPos.ToString("F2"));
+
+            float boxWidth = 320;
+            float boxHeight = 54;
+
+            GUI.Box(new Rect(Screen.width / 2 - boxWidth / 2,
+                             Screen.height - boxHeight - 200,
+                             boxWidth, boxHeight),
+                      "Ship Speed\n" + shipOutput);
+        }
+    }
+
+
 // Member Fields
 
 

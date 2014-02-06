@@ -30,7 +30,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Types
 
 
-	public const ushort kusServerPort = 9836;
+    public const ushort kusServerPort = 1337;
 
 
 // Member Delegates & Events
