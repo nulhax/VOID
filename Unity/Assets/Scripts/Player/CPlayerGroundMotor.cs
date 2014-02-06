@@ -174,6 +174,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Start()
 	{
+		m_CachedCapsuleCollider = GetComponent<CapsuleCollider>();;
+
 		if (!CNetwork.IsServer)
 		{
 			rigidbody.isKinematic = true;
@@ -216,7 +218,19 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	void UpdateGrounded()
 	{
-		m_bGrounded = Physics.Raycast(transform.position + new Vector3(0.0f, 1.0f, 0.0f), -Vector3.up, 1.1f);
+		Vector3 p1 = transform.position + m_CachedCapsuleCollider.center + (Vector3.up * ((m_CachedCapsuleCollider.height * 0.5f) + 0.5f));
+		Vector3 p2 = p1 - (Vector3.up * m_CachedCapsuleCollider.height);
+		RaycastHit[] hits = Physics.CapsuleCastAll(p1, p2, m_CachedCapsuleCollider.radius * 0.5f, -transform.up, 0.35f);
+
+		m_bGrounded = false;
+		foreach(RaycastHit hit in hits) 
+		{
+			if(!hit.collider.isTrigger && hit.collider != m_CachedCapsuleCollider) 
+			{
+				m_bGrounded = true;
+				break;
+			}
+		}
 	}
 
 
@@ -313,7 +327,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	uint m_uiMovementStates = 0;
 	
-	
+
+	CapsuleCollider m_CachedCapsuleCollider = null;
 	bool m_bGrounded = false;
 
 

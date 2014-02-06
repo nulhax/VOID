@@ -23,7 +23,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .0199999996, y: .0199999996, z: .0199999996}
   m_Children: []
@@ -40,8 +40,14 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: f7d893290cb2cf448a7fca2d99db29a9, type: 2}
   - {fileID: 2100000, guid: ac94c673db7155a49850d21ddbeffc2a, type: 2}
+  - {fileID: 2100000, guid: beffc7e65de32be43a6229cfd4e1fd1e, type: 2}
+  - {fileID: 2100000, guid: b7a91f11ed859cd47b59040ca132e4ac, type: 2}
+  - {fileID: 2100000, guid: 6d2dc50f6dc52174095456718908410c, type: 2}
+  - {fileID: 2100000, guid: 55227cf397b6c1046ac1d8f6c479445b, type: 2}
+  - {fileID: 2100000, guid: 8135ab5edacc70542b7c24a5839af1a5, type: 2}
+  - {fileID: 2100000, guid: 3bfbf07e8db70584d84d7baea3bfdd4b, type: 2}
+  - {fileID: 2100000, guid: 58a5166148d964f43b224bb0be4edad8, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -56,7 +62,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 2ae326a032a50c24791a6087ea7f1115, type: 3}
+  m_Mesh: {fileID: 4300000, guid: a0525216f10f28440976a3dcc358902d, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
