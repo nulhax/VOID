@@ -218,14 +218,16 @@ public class CThirdPersonAnimController : MonoBehaviour
 		}
 	}
 	
-	void DisableAnimation()
+	public void DisableAnimation()
 	{
-		
+        IsInputDisabled = true;
+        m_ThirdPersonAnim.enabled = false;
 	}
 	
-	void EnableAnimation()
+    public void EnableAnimation()
 	{
-		
+        IsInputDisabled = false;
+        m_ThirdPersonAnim.enabled = true;
 	}
 }
 
