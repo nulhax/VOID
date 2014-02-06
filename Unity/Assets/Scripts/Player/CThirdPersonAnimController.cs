@@ -25,10 +25,10 @@ public class CThirdPersonAnimController : MonoBehaviour
 	// Member Delegates & Events
 	
 	// Member Properties
-	public bool IsHoldingTool
+	public bool IsInputDisabled
 	{
-        set{ m_bHoldTool = value;}
-		get{ return(m_bHoldTool);}
+		get { return(m_bInputDisabled); }
+		set { m_bInputDisabled = value; }
 	}
 	
 	// Member Fields
@@ -54,6 +54,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	
 	bool m_bUsedSlide = false;
 	bool m_bHoldTool = false;
+	bool m_bInputDisabled = false;
 	
 	//Timers
 	float m_fTimeLastGrounded = 0.0f;
@@ -67,12 +68,27 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerGroundMotor>();
 		m_PlayerMotor.EventStatesChange += NotifyMovementStateChange;
+		gameObject.GetComponent<CPlayerBelt>().EventToolChanged += NotifyToolChange;
 		
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		//Get collider
 		m_physCollider = GetComponent<CapsuleCollider>();
+		
+		m_ThirdPersonAnim.SetLayerWeight(1,0);
+	}
+	
+	void NotifyToolChange(CNetworkViewId _cViewId)
+	{
+		if(_cViewId.GameObject != null)
+		{			
+            m_ThirdPersonAnim.SetLayerWeight(1,1);
+        } 
+        else
+        {
+            m_ThirdPersonAnim.SetLayerWeight(1,0);
+        }		
 	}
 	
 	void NotifyMovementStateChange(byte _bPreviousStates, byte _bNewSates)
@@ -84,107 +100,103 @@ public class CThirdPersonAnimController : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		bool bWalkForward;
-		bool bWalkBack;
-		bool bSprint;
-		bool bJump;
-		bool bCrouch;
-		bool bStrafeLeft;
-		bool bStrafeRight;
-		
-		
-		bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveForward) > 0) ? true : false;	
-		bWalkBack = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveBackward) > 0) ? true : false;	
-		bJump = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Jump) > 0) ? true : false;	
-		bCrouch = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Crouch) > 0) ? true : false;	
-		bStrafeLeft = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveLeft) > 0) ? true : false;	
-		bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveRight) > 0) ? true : false;
-		bSprint = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Sprint) > 0) ? true : false;	
-		
-		m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
-		m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
-		m_ThirdPersonAnim.SetBool("Sprint", bSprint);
-		m_ThirdPersonAnim.SetBool("Jump", bJump);
-		m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-		m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
-		
-        if(IsHoldingTool)
-        {
-            m_ThirdPersonAnim.SetLayerWeight(1,1);
-        } 
-        else
-        {
-            m_ThirdPersonAnim.SetLayerWeight(1,0);
-        }
-		
-		AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
-		
-		//-------------------------------------------
-		//----------------Jump State-----------------
-		//-------------------------------------------
-		if (currentBaseState.nameHash == m_iJumpState)
-		{
-			if(!m_ThirdPersonAnim.IsInTransition(0))
-			{
-				m_physCollider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");					
-			}			
-		}
-		
-		//-------------------------------------------
-		//----------------Fall State-----------------
-		//-------------------------------------------
-		if (currentBaseState.nameHash == m_iFallState)
-		{					
-			Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
-			RaycastHit hitInfo = new RaycastHit();
+		if(m_bInputDisabled == false)
+		{			
+			bool bWalkForward;
+			bool bWalkBack;
+			bool bSprint;
+			bool bJump;
+			bool bCrouch;
+			bool bStrafeLeft;
+			bool bStrafeRight;
 			
-			if(Physics.Raycast(ray, out hitInfo))
+			
+			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveForward) > 0) ? true : false;	
+			bWalkBack = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveBackward) > 0) ? true : false;	
+			bJump = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Jump) > 0) ? true : false;	
+			bCrouch = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Crouch) > 0) ? true : false;	
+			bStrafeLeft = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveLeft) > 0) ? true : false;	
+			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveRight) > 0) ? true : false;
+			bSprint = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Sprint) > 0) ? true : false;	
+			
+			m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
+			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
+			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
+			m_ThirdPersonAnim.SetBool("Jump", bJump);
+			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
+			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);		
+	       
+			
+			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+			
+			//-------------------------------------------
+			//----------------Jump State-----------------
+			//-------------------------------------------
+			if (currentBaseState.nameHash == m_iJumpState)
 			{
-				//If the player was jumping and is about to hit the ground
-				if(hitInfo.distance < 2.0f)
+				if(!m_ThirdPersonAnim.IsInTransition(0))
 				{
-					//Change their state to the rolling animation
-					m_ThirdPersonAnim.SetBool("Landing", true);
-					m_ThirdPersonAnim.SetFloat("DistanceToGround", hitInfo.distance); 
-					
-				}
+					m_physCollider.height = m_ThirdPersonAnim.GetFloat("ColliderHeight");					
+				}			
+			}
+			
+			//-------------------------------------------
+			//----------------Fall State-----------------
+			//-------------------------------------------
+			if (currentBaseState.nameHash == m_iFallState)
+			{					
+				Ray ray = new Ray(transform.position + Vector3.up, -Vector3.up);
+				RaycastHit hitInfo = new RaycastHit();
+				
+				if(Physics.Raycast(ray, out hitInfo))
+				{
+					//If the player was jumping and is about to hit the ground
+					if(hitInfo.distance < 2.0f)
+					{
+						//Change their state to the rolling animation
+						m_ThirdPersonAnim.SetBool("Landing", true);
+						m_ThirdPersonAnim.SetFloat("DistanceToGround", hitInfo.distance); 
+						
+					}
+					else
+					{
+						m_ThirdPersonAnim.SetBool("Landing", false);
+					}
+				}	
+			}
+			
+			//-------------------------------------------
+			//----------------Slide State----------------
+			//-------------------------------------------
+			
+			if(currentBaseState.nameHash == m_iSlideState)
+			{
+				if(!m_ThirdPersonAnim.IsInTransition(0))
+				{
+					m_bUsedSlide = true;
+	
+					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderHeight");
+	
+					//Set collider to be oriented to the Z axis	
+					if(fOrientation < 1)
+					{
+						m_physCollider.direction = 2;	
+					}
+					else
+					{
+						m_physCollider.direction = 1;
+					}
+				}		
 				else
 				{
-					m_ThirdPersonAnim.SetBool("Landing", false);
-				}
-			}	
-		}
-		
-		//-------------------------------------------
-		//----------------Slide State----------------
-		//-------------------------------------------
-		
-		if(currentBaseState.nameHash == m_iSlideState)
-		{
-			if(!m_ThirdPersonAnim.IsInTransition(0))
-			{
-				m_bUsedSlide = true;
-
-				float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderHeight");
-
-				//Set collider to be oriented to the Z axis	
-				if(fOrientation < 1)
-				{
-					m_physCollider.direction = 2;	
-				}
-				else
-				{
+					//Reset collider
 					m_physCollider.direction = 1;
 				}
-			}		
-			else
-			{
-				//Reset collider
-				m_physCollider.direction = 1;
 			}
+			
+			UpdateFallingState();
+			m_ThirdPersonAnim.StopPlayback();
 		}
-		
-		UpdateFallingState();
 	}
 	
 	void UpdateFallingState()
@@ -204,6 +216,16 @@ public class CThirdPersonAnimController : MonoBehaviour
 		{
 			m_fTimeLastGrounded = Time.time;
 		}
+	}
+	
+	void DisableAnimation()
+	{
+		
+	}
+	
+	void EnableAnimation()
+	{
+		
 	}
 }
 

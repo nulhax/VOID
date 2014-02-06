@@ -94,7 +94,7 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 
 			//InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
 
-			InvokeRpc(0, "CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
+			InvokeRpcAll("CreateHitParticles", _cCollision.contacts[0].point, Quaternion.LookRotation(transform.position - _cCollision.transform.position));
 		}
 	}
 
