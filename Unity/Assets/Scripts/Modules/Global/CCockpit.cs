@@ -104,6 +104,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				// Remember the entering head rotations, set the rotation of the head to that of the seat
 				m_EnterHeadXRot = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().HeadEulerX;
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform.LookAt(m_LookAt.position);
+				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform.localEulerAngles.x);
 			}
 
 			// Unlock player movement locally
