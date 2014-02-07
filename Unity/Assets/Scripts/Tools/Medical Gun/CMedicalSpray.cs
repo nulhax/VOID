@@ -89,7 +89,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
                 {
                     if (_rh.collider.gameObject.GetComponent<CPlayerHealth>() != null)
                     {
-                        _rh.collider.gameObject.GetComponent<CPlayerHealth>().ApplyHeal(5.0f);// Health -= 80.0f * Time.deltaTime;
+                        _rh.collider.gameObject.GetComponent<CPlayerHealth>().ApplyHeal(0.1f);// Health -= 80.0f * Time.deltaTime;
                     }
                 }
             }

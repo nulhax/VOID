@@ -88,7 +88,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     [AServerOnly]
     public void ApplyHeal(float _fAmount)
     {
-        m_fHitPoints.Set(m_fHitPoints.Get() + _fAmount);
+        if((m_fHitPoints.Get() + _fAmount) < k_fMaxHealth)
+        {
+            m_fHitPoints.Set(m_fHitPoints.Get() + _fAmount);
+        }
 
         // Notify observers about heal
         if (EventApplyHeal != null) EventApplyHeal(gameObject, _fAmount);
@@ -223,7 +226,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Fields
 
 
-	const float k_fMaxHealth = 1000.0f;
+	const float k_fMaxHealth = 100.0f;
 
 
 	CNetworkVar<float> m_fHitPoints;
