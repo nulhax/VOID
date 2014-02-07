@@ -68,7 +68,6 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerGroundMotor>();
 		m_PlayerMotor.EventStatesChange += NotifyMovementStateChange;
-		gameObject.GetComponent<CPlayerBelt>().EventToolChanged += NotifyToolChange;
 		
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
@@ -79,17 +78,16 @@ public class CThirdPersonAnimController : MonoBehaviour
 		m_ThirdPersonAnim.SetLayerWeight(1,0);
 	}
 	
-	void NotifyToolChange(CNetworkViewId _cViewId)
+	public void RaiseArm()
 	{
-		if(_cViewId != null)
-		{			
-            m_ThirdPersonAnim.SetLayerWeight(1,1);
-        } 
-        else
-        {
-            m_ThirdPersonAnim.SetLayerWeight(1,0);
-        }		
+        m_ThirdPersonAnim.SetLayerWeight(1,1);       		
 	}
+
+    
+    public void LowerArm()
+    {      
+        m_ThirdPersonAnim.SetLayerWeight(1,0);       
+    }
 	
 	void NotifyMovementStateChange(byte _bPreviousStates, byte _bNewSates)
 	{

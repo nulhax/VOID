@@ -38,6 +38,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 	{
 		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += OnPlayerInteraction;
 		gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
+        gameObject.GetComponent<CPlayerBelt>().EventToolDropped += OnToolDrop;   
 	}
 	
 	// Update is called once per frame
@@ -51,12 +52,21 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 		if(_cViewId.GameObject != null)
 		{
 			m_HeldTool = _cViewId.GameObject.GetComponent<CToolInterface>();
+            gameObject.GetComponent<CThirdPersonAnimController>().RaiseArm();
+            Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
 		}
 		else
 		{
-			m_HeldTool = null;
+            m_HeldTool = null;
+            gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();  
+            Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
 		}
 	}
+    void OnToolDrop(CNetworkViewId _cViewId)
+    {
+        m_HeldTool = null;
+        gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();  
+    }
 	
 	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
     {
