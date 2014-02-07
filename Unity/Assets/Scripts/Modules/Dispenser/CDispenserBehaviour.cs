@@ -40,8 +40,6 @@ public class CDispenserBehaviour : MonoBehaviour
 
 		// Register the event for building a tool
 		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
-
-        GetComponent<CActorInteractable>().EventHover += OnHover;
     }
 
 	[AServerOnly]
@@ -49,13 +47,13 @@ public class CDispenserBehaviour : MonoBehaviour
 	{
 		// Check there is enough nanites for the selected tool
 		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		//if(sns.IsEnoughNanites(_DUI.SelectedToolCost))
+		if(sns.IsEnoughNanites(_DUI.SelectedToolCost))
 		{
+			// Deduct the amount
+			sns.DeductNanites(_DUI.SelectedToolCost);
+
 			// Spawn the selected tool
 			SpawnTool(_DUI.SelectedToolType);
-
-			// Negate the nantites from the ship pool
-			//sns.DeductNanites(_DUI.SelectedToolCost);
 		}
 	}
 	
@@ -71,57 +69,12 @@ public class CDispenserBehaviour : MonoBehaviour
     }
 
 
-    void OnDestroy()
-    {
-        GetComponent<CActorInteractable>().EventHover -= OnHover;
-    }
-
     void Update()
     {
         // Interpolate health
 		// Martin: Ill replace this with a UI to show status' :)
         //transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
     }
-
-    // TEMPORARY //
-    //
-    // Hover text logic that needs revision. OnGUI + Copy/Paste code = Terribad
-    //
-    // TEMPORARY //
-    bool bShowName = false;
-    bool bOnGUIHit = false;
-    void OnHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
-    {
-        bShowName = true;
-    }
-
-
-    public void OnGUI()
-    {
-        float fScreenCenterX = Screen.width / 2;
-        float fScreenCenterY = Screen.height / 2;
-        float fWidth = 150.0f;
-        float fHeight = 20.0f;
-        float fOriginX = fScreenCenterX + 25.0f;
-        float fOriginY = fScreenCenterY - 10.0f;
-
-        if (bShowName && !bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Dispenser Module");
-            bOnGUIHit = true;
-        }
-        else if (bShowName && bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Dispenser Module");
-            bShowName = false;
-            bOnGUIHit = false;
-        }
-    }
-    // TEMPORARY //
-    //
-    // 
-    //
-    // TEMPORARY //
 	
 
 	public CDUIConsole m_DUIConsole = null;

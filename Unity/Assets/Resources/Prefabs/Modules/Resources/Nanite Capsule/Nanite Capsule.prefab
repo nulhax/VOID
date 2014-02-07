@@ -100,6 +100,7 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400028}
   - 114: {fileID: 11400026}
+  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: FluidComponent
   m_TagString: Untagged
@@ -155,6 +156,7 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400032}
   - 114: {fileID: 11400030}
+  - 114: {fileID: 11400034}
   m_Layer: 0
   m_Name: CalibratorComponent
   m_TagString: Untagged
@@ -3437,6 +3439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe1b46593c4212f46be18aa9837f688d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MaximumCapacity: 800
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3652,6 +3655,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
+--- !u!114 &11400034
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

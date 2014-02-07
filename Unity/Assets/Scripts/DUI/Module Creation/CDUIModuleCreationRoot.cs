@@ -185,7 +185,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		m_SelectedModuleType = _tempModuleInterface.ModuleType;
 		m_SelectedModuleCategory = _tempModuleInterface.ModuleCategory; 
 		m_SelectedModuleSize = _tempModuleInterface.ModuleSize;
-		m_SelectedModuleCost = UnityEngine.Random.Range(100, 400) * 1000;
+		m_SelectedModuleCost = m_SelectedModuleSize == CModuleInterface.ESize.Small ? 400 : 800;
 
 		// Set the name
 		string name = CUtility.SplitCamelCase(m_SelectedModuleType.ToString());

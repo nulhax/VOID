@@ -169,11 +169,18 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	{
 		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
 
-		// Debug: Create the module instantly
-		currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
+		if(sns.IsEnoughNanites(m_DUIModuleCreationRoot.SelectedModuleCost))
+		{
+			// Minus the amount
+			sns.DeductNanites(m_DUIModuleCreationRoot.SelectedModuleCost);
 
-		// Deactivate the UI
-		m_DUIActive.Set(false);
+			// Debug: Create the module instantly
+			currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+		
+			// Deactivate the UI
+			m_DUIActive.Set(false);
+		}
 	}
 
 	private IEnumerator InterpolateUIActive(Vector3 _ToPostion, Quaternion _ToRotation, Vector3 _ToScale)
