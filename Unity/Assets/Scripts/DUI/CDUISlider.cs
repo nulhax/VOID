@@ -15,8 +15,6 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
 using System;
 
 
@@ -62,12 +60,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	
 	private void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-		if(_cSyncedNetworkVar == m_Value)
-		{
-			// Other clients should update the value immediately
-			if(!m_IsModifyingValueLocally)
-				UpdateLocalSliderValue(m_Value.Get());
-		}
+
 	}
 	
 	[AClientOnly]
@@ -93,7 +86,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 			{
 			case ESliderNotificationType.OnValueChange:
 				float value = _cStream.ReadFloat();
-				duiSlider.SetValue(value);
+				duiSlider.SetSliderValue(value);
 				break;
 				
 			default:break;
@@ -111,29 +104,21 @@ public class CDUISlider : CNetworkMonoBehaviour
 			m_IsModifyingValueLocally = false;
 		}
 		
-		if(m_IgnoreLocalValueChange)
-			m_TimeSinceIgnoreValueChange += Time.deltaTime;
-		
-		if(m_TimeSinceIgnoreValueChange > m_WaitTillValueHandle)
-		{
-			m_IgnoreLocalValueChange = false;
-		}
-		
 		// Only update after a period of not changing the value and if
 		// local value differs from the synced value
-		float localValue = gameObject.GetComponent<UIProgressBar>().value;
-		float syncValue = m_Value.Get();
-		if(!m_IsModifyingValueLocally && localValue != syncValue)
+		if(!m_IsModifyingValueLocally)
 		{
-			UpdateLocalSliderValue(syncValue);
+			UpdateLocalSliderValue();
 		}
 	}
 	
 	public void HandleValueChange() 
 	{
+		// Don't handle a value change from myself
 		if(m_IgnoreLocalValueChange)
 			return;
-		
+
+		// Only add to the stream when it is empty
 		if(!s_SliderNotificationStream.HasUnreadData)
 		{
 			// Serialise the event to the server
@@ -147,20 +132,24 @@ public class CDUISlider : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	private void SetValue(float _Value)
+	private void SetSliderValue(float _Value)
 	{
 		m_Value.Set(_Value);
 	}
 	
-	private void UpdateLocalSliderValue(float _Value)
+	private void UpdateLocalSliderValue()
 	{
-		UISlider slider = gameObject.GetComponent<UISlider>();
-		
 		m_IgnoreLocalValueChange = true;
-		m_TimeSinceIgnoreValueChange = 0.0f;
-		
-		if(slider != null)
-			slider.value = _Value;
+
+		UIProgressBar pb = gameObject.GetComponent<UIProgressBar>();
+		float localValue = pb.value;
+		float syncValue = m_Value.Get();
+		if(localValue != syncValue)
+		{
+			pb.value = syncValue;
+		}
+
+		m_IgnoreLocalValueChange = false;
 	}
 	
 }

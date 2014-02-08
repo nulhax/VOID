@@ -33,6 +33,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	public Transform m_InactiveUITransform = null;
 	public GameObject m_DUI = null;
 	public float m_UITransitionTime = 0.5f;
+	public bool m_Debug = false;
 
 	private CToolInterface m_ToolInterface = null;
 	private CDUIModuleCreationRoot m_DUIModuleCreationRoot = null;
@@ -170,10 +171,11 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
 
 		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		if(sns.IsEnoughNanites(m_DUIModuleCreationRoot.SelectedModuleCost))
+		if(sns.IsEnoughNanites(m_DUIModuleCreationRoot.SelectedModuleCost) || m_Debug)
 		{
 			// Minus the amount
-			sns.DeductNanites(m_DUIModuleCreationRoot.SelectedModuleCost);
+			if(!m_Debug)
+				sns.DeductNanites(m_DUIModuleCreationRoot.SelectedModuleCost);
 
 			// Debug: Create the module instantly
 			currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);

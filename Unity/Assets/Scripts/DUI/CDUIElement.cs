@@ -331,7 +331,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	{
 		// Get all of the components that are not this component within the element
 		var targets = 
-			from component in GetComponents<MonoBehaviour>()
+			from component in GetComponents<Component>()
 				where component != this
 				select component;
 

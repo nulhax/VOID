@@ -113,15 +113,23 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-	public void LateUpdate()
+	public void Update()
     {
         if (IsActive)
         {
             ProcessInboundPackets();
-            ProcessOutgoingPackets();
 			ProcessMasterServerRegistration();
         }
     }
+
+
+	public void LateUpdate()
+	{
+		if (IsActive)
+		{
+			ProcessOutgoingPackets();
+		}
+	}
 
 
     public bool Startup(ushort _usPort, string _sTitle, string _sPlayerName, uint _uiNumSlots)

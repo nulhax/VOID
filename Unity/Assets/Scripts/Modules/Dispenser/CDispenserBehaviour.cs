@@ -20,6 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
+[RequireComponent(typeof(CModuleInterface))]
 public class CDispenserBehaviour : MonoBehaviour
 {
     // Member Types
@@ -28,12 +29,22 @@ public class CDispenserBehaviour : MonoBehaviour
     // Member Delegates & Events
 
 
+	// Member Fields
+	public CDUIConsole m_DUIConsole = null;
+	public Transform m_ToolSpawnLocation = null;
+	
+	public CComponentInterface m_CircuitryComponent = null;
+	public CComponentInterface m_MechanicalComponent = null;
+	public bool m_Debug = false;
+
+	private CDUIDispenserRoot m_DUIDispenser = null;
+
+
     // Member Properties
 
 
     // Member Methods
-
-    void Start()
+	public void Start()
     {
 		// Get the DUI of the dispenser
 		m_DUIDispenser = m_DUIConsole.DUI.GetComponent<CDUIDispenserRoot>();
@@ -47,10 +58,11 @@ public class CDispenserBehaviour : MonoBehaviour
 	{
 		// Check there is enough nanites for the selected tool
 		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		if(sns.IsEnoughNanites(_DUI.SelectedToolCost))
+		if(sns.IsEnoughNanites(_DUI.SelectedToolCost) || m_Debug)
 		{
 			// Deduct the amount
-			sns.DeductNanites(_DUI.SelectedToolCost);
+			if(!m_Debug)
+				sns.DeductNanites(_DUI.SelectedToolCost);
 
 			// Spawn the selected tool
 			SpawnTool(_DUI.SelectedToolType);
@@ -68,21 +80,4 @@ public class CDispenserBehaviour : MonoBehaviour
 		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_ToolSpawnLocation.eulerAngles);
     }
 
-
-    void Update()
-    {
-        // Interpolate health
-		// Martin: Ill replace this with a UI to show status' :)
-        //transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
-    }
-	
-
-	public CDUIConsole m_DUIConsole = null;
-	public Transform m_ToolSpawnLocation = null;
-
-	public CComponentInterface m_CircuitryComponent = null;
-	public CComponentInterface m_MechanicalComponent = null;
-
-	private CDUIDispenserRoot m_DUIDispenser = null;
-	
 };

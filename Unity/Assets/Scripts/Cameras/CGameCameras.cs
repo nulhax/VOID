@@ -77,14 +77,12 @@ public class CGameCameras : MonoBehaviour
 	public void LateUpdate()
 	{
 		// Make sure the client has the most up to date information
-		if(!CNetwork.Connection.IsConnected ||
-		    CNetwork.Connection.IsDownloadingInitialGameData)
+		if(!CNetwork.Connection.IsDownloadingInitialGameData &&
+		   CNetwork.Connection.IsConnected)
 		{
-			return;
+			// Update the transforms of the cameras
+			UpdateCameraTransforms();
 		}
-
-		// Update the transforms of the cameras
-		UpdateCameraTransforms();
 	}
 
 	public static void SetPlayersViewPerspectiveToShip(Transform _PlayerHead)
