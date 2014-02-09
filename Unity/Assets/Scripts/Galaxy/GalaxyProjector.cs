@@ -75,7 +75,6 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
     void RefreshProjection()
     {
-        Profiler.BeginSample("RefreshProjection");
         ParticleEmitter emitter = GetComponent<ParticleEmitter>();
         emitter.ClearParticles();
 
@@ -99,8 +98,6 @@ public class GalaxyProjector : CNetworkMonoBehaviour
             mUpToDate = true;
 
         }
-
-        Profiler.EndSample();
     }
 
     void OnDrawGizmos()

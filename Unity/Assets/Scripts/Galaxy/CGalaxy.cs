@@ -197,34 +197,30 @@ public class CGalaxy : CNetworkMonoBehaviour
 		RenderSettings.skybox = null;
 
 		// Load skyboxes.
-		string[] skyboxFaces = new string[6];
-		skyboxFaces[0] = "Left";
-		skyboxFaces[1] = "Right";
-		skyboxFaces[2] = "Down";
-		skyboxFaces[3] = "Up";
-		skyboxFaces[4] = "Front";
-		skyboxFaces[5] = "Back";
+        string[] skyboxFaces = new string[6];
+        skyboxFaces[0] = "Left";
+        skyboxFaces[1] = "Right";
+        skyboxFaces[2] = "Down";
+        skyboxFaces[3] = "Up";
+        skyboxFaces[4] = "Front";
+        skyboxFaces[5] = "Back";
 
-		Profiler.BeginSample("Initialise cubemap from 6 textures");
-		for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-		{
-			for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
-			{
-				Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
-				if (!mSkyboxes[uiSkybox])
-					mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
-				mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
-				Resources.UnloadAsset(skyboxFace);
-			}
+        for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+        {
+            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
+            {
+                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
+                if (!mSkyboxes[uiSkybox])
+                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
+                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
+                Resources.UnloadAsset(skyboxFace);
+            }
 
-			mSkyboxes[uiSkybox].Apply(false, true);
-		}
-		Profiler.EndSample();
+            mSkyboxes[uiSkybox].Apply(false, true);
+        }
 
-		//Profiler.BeginSample("Load cubemaps");
-		//for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-		//    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
-		//Profiler.EndSample();
+        //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+        //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
 
 		UpdateGalaxyAesthetic(mCentreCell);
 
@@ -261,8 +257,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		Profiler.BeginSample("InstanceNetworkVars");
-
 		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 			mNoiseSeeds[ui] = _cRegistrar.CreateNetworkVar<int>(SyncNoiseSeed);
 
@@ -271,8 +265,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		mCentreCellZ = _cRegistrar.CreateNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
 		mGalaxySize = _cRegistrar.CreateNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
 		mNumCellSubsets = _cRegistrar.CreateNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
-
-		Profiler.EndSample();
 	}
 
 	void Update()
@@ -312,18 +304,12 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	private void UpdateCellLoadingUnloadingQueues()
 	{
-		Profiler.BeginSample("UpdateCellLoadingUnloadingQueues");
-
 		UpdateCellLoadingQueue();
 		UpdateCellUnloadingQueue();
-
-		Profiler.EndSample();
 	}
 
 	private void UpdateCellLoadingQueue()
 	{
-		Profiler.BeginSample("UpdateCellLoadingQueue");
-
 		mbValidCellValue = !mbValidCellValue;   // Alternate the valid cell value. All cells within proximity of an observer will be updated, while all others will retain the old value making it easier to detect and cull them.;
 
 		// Queue for loading: unloaded cells within proximity to observers.
@@ -365,14 +351,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 				}
 			}
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void UpdateCellUnloadingQueue()
 	{
-		Profiler.BeginSample("UpdateCellUnloadingQueue");
-
 		// Queue for unloading: cells too far away from observers.
 		bool restart;
 		do
@@ -403,39 +385,27 @@ public class CGalaxy : CNetworkMonoBehaviour
 				}
 			}
 		} while (restart);
-
-		Profiler.EndSample();
 	}
 
 	private void UnloadQueuedCell()
 	{
-		Profiler.BeginSample("UnloadQueuedCell");
-
 		if (mCellsToUnload.Count > 0)    // If there are cells to unload...
 		{
 			UnloadAbsoluteCell(mCellsToUnload[0]); // Unload the cell.
 			mCellsToUnload.RemoveAt(0); // Cell has been removed.
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void UpdateGubbinUnloadingQueue()
 	{
-		Profiler.BeginSample("UpdateGubbinUnloadingQueue");
-
 		mbValidGubbinValue = !mbValidGubbinValue;
 
 		MarkGubbinsToPreserve();
 		QueueGubbinsForUnloading();
-
-		Profiler.EndSample();
 	}
 
 	private void MarkGubbinsToPreserve()
 	{
-		Profiler.BeginSample("MarkGubbinsToPreserve");
-
 		// Find gubbins that are not within proximity to the cells.
 
 		//foreach (CRegisteredGubbin gubbin in mGubbins)
@@ -487,14 +457,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 				++x; if (x > iNeighboursPerDirection) x = -iNeighboursPerDirection;
 			} while (x != 0);
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void QueueGubbinsForUnloading()
 	{
-		Profiler.BeginSample("QueueGubbinsForUnloading");
-
 		// Queue for unloading: Gubbins that are not within proximity to the cells.
 		foreach (CRegisteredGubbin gubbin in mGubbins)
 		{
@@ -509,27 +475,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 				mGubbinsToUnload.Remove(gubbin);    // Unqueue for culling.
 			}
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void UnloadQueuedGubbin()
 	{
-		Profiler.BeginSample("UnloadQueuedGubbin");
-
 		if (mGubbinsToUnload.Count > 0)  // If there are gubbins to unload...
 		{
 			UnloadGubbin(mGubbinsToUnload[0]);
 			mGubbinsToUnload.RemoveAt(0);
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void ShiftGalaxy()
 	{
-		Profiler.BeginSample("ShiftGalaxy");
-
 		// Shift the galaxy if the average position of all points is far from the centre of the scene (0,0,0).
 		SCellPos relativeCentrePos = RelativePointToRelativeCell(CalculateAverageObserverPosition());
 		if (relativeCentrePos.x != 0)
@@ -538,27 +496,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 			mCentreCellY.Set(mCentreCell.y + relativeCentrePos.y);
 		if (relativeCentrePos.z != 0)
 			mCentreCellZ.Set(mCentreCell.z + relativeCentrePos.z);
-
-		Profiler.EndSample();
 	}
 
 	private void LoadQueuedCell()
 	{
-		Profiler.BeginSample("LoadQueuedCell");
-
 		if (mCellsToLoad.Count > 0)  // If there are cells to load...
 		{
 			LoadAbsoluteCell(mCellsToLoad[0]);  // Load the cell.
 			mCellsToLoad.RemoveAt(0);
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void LoadQueuedGubbin()
 	{
-		Profiler.BeginSample("LoadQueuedGubbin");
-
 		if (mGubbinsToLoad.Count > 0)    // If there are gubbins to load...
 		{
 			for (uint uiTry = 0; uiTry < 3; ++uiTry)   // Try a couple times to place the gubbin.
@@ -570,29 +520,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 			}
 			mGubbinsToLoad.RemoveAt(0);
 		}
-
-		Profiler.EndSample();
 	}
 
 	private void ShiftEntities(Vector3 translation)
 	{
-		Profiler.BeginSample("ShiftEntities");
-
 		foreach (GalaxyShiftable shiftableEntity in mShiftableEntities)
 			shiftableEntity.Shift(translation);
-
-		Profiler.EndSample();
 	}
 
 	private Vector3 CalculateAverageObserverPosition()
 	{
-		Profiler.BeginSample("CalculateAverageObserverPosition");
-
 		Vector3 result = new Vector3();
 		foreach (CRegisteredObserver observer in mObservers)
 			result += observer.mEntity.transform.position;
-
-		Profiler.EndSample();
 
 		return result / mObservers.Count;
 	}
@@ -630,15 +570,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public void RegisterObserver(GameObject observer, float boundingRadius)
 	{
-		Profiler.BeginSample("RegisterObserver");
 		mObservers.Add(new CRegisteredObserver(observer, boundingRadius));
-		Profiler.EndSample();
 	}
 
 	public void DeregisterObserver(GameObject observer)
 	{
-		Profiler.BeginSample("DeregisterObserver");
-
 		foreach (CRegisteredObserver elem in mObservers)
 		{
 			if (elem.mEntity.GetInstanceID() == observer.GetInstanceID())
@@ -647,32 +583,22 @@ public class CGalaxy : CNetworkMonoBehaviour
 				break;
 			}
 		}
-
-		Profiler.EndSample();
 	}
 
 	public void RegisterShiftableEntity(GalaxyShiftable shiftableEntity)
 	{
-		Profiler.BeginSample("RegisterShiftableEntity");
 		mShiftableEntities.Add(shiftableEntity);
-		Profiler.EndSample();
 	}
 
 	public void DeregisterShiftableEntity(GalaxyShiftable shiftableEntity)
 	{
-		Profiler.BeginSample("DeregisterShiftableEntity");
 		mShiftableEntities.Remove(shiftableEntity);
-		Profiler.EndSample();
 	}
 
 	void LoadAbsoluteCell(SCellPos absoluteCell)
 	{
-		Profiler.BeginSample("LoadAbsoluteCell");
-
-		Profiler.BeginSample("Push new cell to dictionary");
 		// If the cell was queued for loading, it will already have an entry in the cell dictionary, but unlike Add(); the [] operator allows overwriting existing elements in the dictionary.
 		mCells[absoluteCell] = new CCellContent(mbValidCellValue, ECellState.Loaded); // Create cell with updated alternator to indicate cell is within proximity of observer.
-		Profiler.EndSample();
 
 		// Load the content for the cell.
 		//if (false)   // TODO: If the content for the cell is on file...
@@ -687,18 +613,12 @@ public class CGalaxy : CNetworkMonoBehaviour
 			LoadSparseAsteroids(absoluteCell);
 			LoadDebris(absoluteCell);
 		}
-
-		Profiler.EndSample();
 	}
 
 	void UnloadAbsoluteCell(SCellPos absoluteCell)
 	{
-		Profiler.BeginSample("UnloadAbsoluteCell");
-
 		// Todo: Save stuff to file.
 		mCells.Remove(absoluteCell); // Unload the cell.
-
-		Profiler.EndSample();
 	}
 
 	public void DeregisterGubbin(GalaxyGubbin gubbinToDeregister)
@@ -720,16 +640,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public bool LoadGubbin(SGubbinMeta gubbin)
 	{
-		Profiler.BeginSample("LoadGubbin");
-
 		// Create object.
-		Profiler.BeginSample("Call to CNetwork.Factory.CreateObject()");
 		GameObject gubbinObject = CNetwork.Factory.CreateObject((ushort)gubbin.mPrefabID);
-		Profiler.EndSample();
 
 		if (gubbinObject == null)
 		{
-			Profiler.EndSample();   // LoadGubbin.
 			return false;
 		}
 
@@ -774,26 +689,18 @@ public class CGalaxy : CNetworkMonoBehaviour
 		if (networkedEntity)
 			networkedEntity.UpdateNetworkVars();
 
-		Profiler.BeginSample("Push gubbin to list of gubbins");
 		mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
-		Profiler.EndSample();
-
-		Profiler.EndSample();   // LoadGubbin.
 
 		return true;
 	}
 
 	void UnloadGubbin(CRegisteredGubbin gubbin)
 	{
-		Profiler.BeginSample("UnloadGubbin");
-
 		// Todo: Save gubbin to file.
 
 		gubbin.mEntity.GetComponent<GalaxyGubbin>().registeredWithGalaxy = false;
 		mGubbins.Remove(gubbin);
 		CNetwork.Factory.DestoryObject(gubbin.mNetworkViewID);
-
-		Profiler.EndSample();
 	}
 
 	public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell, float sampleScale)
@@ -814,80 +721,48 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)
 	{
-		Profiler.BeginSample("RelativeCellToRelativePoint");
-		Vector3 result = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
-		Profiler.EndSample();
-
-		return result;
+        return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 	}
 
 	public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
 	{
-		Profiler.BeginSample("AbsoluteCellToAbsolutePoint");
-		Vector3 result = new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
-		Profiler.EndSample();
-
-		return result;
+        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
 	}
 
 	public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
 	{
-		Profiler.BeginSample("RelativePointToRelativeCell");
-
 		relativePoint.x += cellRadius;
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-		SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
-
-		Profiler.EndSample();
-
-		return result;
+        return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 	}
 
 	public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
 	{
-		Profiler.BeginSample("AbsolutePointToAbsoluteCell");
-
 		absolutePoint.x += cellRadius;
 		absolutePoint.y += cellRadius;
 		absolutePoint.z += cellRadius;
 		absolutePoint /= cellDiameter;
-		SCellPos result = new SCellPos(Mathf.FloorToInt(absolutePoint.x), Mathf.FloorToInt(absolutePoint.y), Mathf.FloorToInt(absolutePoint.z));
-
-		Profiler.EndSample();
-
-		return result;
+		return new SCellPos(Mathf.FloorToInt(absolutePoint.x), Mathf.FloorToInt(absolutePoint.y), Mathf.FloorToInt(absolutePoint.z));
 	}
 
 	public SCellPos RelativePointToAbsoluteCell(Vector3 relativePoint)
 	{
-		Profiler.BeginSample("RelativePointToAbsoluteCell");
-
 		relativePoint.x += cellRadius;
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-		SCellPos result = new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
-
-		Profiler.EndSample();
-
-		return result;
+        return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
 	}
 
 	public SCellPos AbsolutePointToRelativeCell(Vector3 absolutePoint)
 	{
-		Profiler.BeginSample("AbsolutePointToRelativeCell");
-
 		absolutePoint.x += cellRadius;
 		absolutePoint.y += cellRadius;
 		absolutePoint.z += cellRadius;
 		absolutePoint /= cellDiameter;
-		SCellPos result = new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
-
-		Profiler.EndSample();
-
-		return result;
+        return new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
 	}
 
 	public Vector3 RelativePointToAbsolutePoint(Vector3 relativePoint) { return relativePoint + AbsoluteCellToAbsolutePoint(mCentreCell); }
@@ -895,21 +770,13 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public bool RelativeCellWithinProximityOfPoint(SCellPos relativeCell, Vector3 point, float pointRadius)
 	{
-		Profiler.BeginSample("RelativeCellWithinProximityOfPoint");
-
 		Vector3 cellCentrePos = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 		float cellBoundingSphereRadius = cellDiameter * 0.86602540378443864676372317075294f;
-		bool result = (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
-
-		Profiler.EndSample();
-
-		return result;
+        return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
 	}
 
 	void UpdateGalaxyAesthetic(SCellPos absoluteCell)
 	{
-		Profiler.BeginSample("UpdateGalaxyAesthetic");
-
 		// Skybox.
 		Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Stars]);
 
@@ -951,8 +818,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 			Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
 			Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
 		}
-
-		Profiler.EndSample();
 	}
 
 	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
@@ -1019,8 +884,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		uint uiNumAsteroids = SparseAsteroidCount(absoluteCell);
 		for (uint ui = 0; ui < uiNumAsteroids; ++ui)
 		{
-			Profiler.BeginSample("Create asteroid meta and queue for creation");
-
 			mGubbinsToLoad.Add(new SGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
@@ -1030,8 +893,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 												true,   // Has NetworkedEntity script.
 												false    // Has a rigid body.
 												));
-
-			Profiler.EndSample();
 		}
 	}
 
@@ -1042,8 +903,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		uint uiNumAsteroidClusters = AsteroidClusterCount(absoluteCell);
 		for (uint uiCluster = 0; uiCluster < uiNumAsteroidClusters; ++uiCluster)
 		{
-			Profiler.BeginSample("Create asteroid clusters");
-
 			uint uiNumAsteroidsInCluster = (uint)Random.Range(6, 21);
 			for (uint uiAsteroid = 0; uiAsteroid < uiNumAsteroidsInCluster; ++uiAsteroid)
 			{
@@ -1059,8 +918,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 													true    // Has a rigid body.
 													));
 			}
-
-			Profiler.EndSample();
 		}
 	}
 
@@ -1090,8 +947,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
 	{
-		Profiler.BeginSample("OnDrawGizmos");
-
 		if (CNetwork.IsServer)
 		{
 			foreach (CRegisteredObserver elem in mObservers)
@@ -1168,8 +1023,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 				Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
 			}
 		}
-
-		Profiler.EndSample();
 	}
 
 	public static float GetBoundingRadius(GameObject gameObject)
