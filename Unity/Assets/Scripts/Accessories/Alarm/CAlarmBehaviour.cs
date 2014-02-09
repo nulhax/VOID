@@ -26,6 +26,17 @@ public class CAlarmBehaviour : CNetworkMonoBehaviour
 // Member Types
 
 
+    public enum EType
+    {
+        INVALID,
+
+        Spinning,
+        Flashing,
+
+        MAX
+    }
+
+
 // Member Delegates & Events
 
 
@@ -70,7 +81,25 @@ public class CAlarmBehaviour : CNetworkMonoBehaviour
 	{
 		if (IsActive)
 		{
-			m_cSpinningLight.transform.Rotate(new Vector3(0.0f, m_fRotationSpeed * Time.deltaTime, 0.0f));
+            if (m_eType == EType.Spinning)
+            {
+                m_cSpinningLight.transform.Rotate(new Vector3(0.0f, m_fRotationSpeed * Time.deltaTime, 0.0f));
+            }
+            else if (m_eType == EType.Flashing)
+            {
+                m_fFlashTimer += Time.deltaTime;
+
+                if (m_fFlashTimer > 0.5f)
+                {
+                    m_cSpinningLight.light.enabled = false;
+
+                    if (m_fFlashTimer > 1.0f)
+                    {
+                        m_cSpinningLight.light.enabled = true;
+                        m_fFlashTimer = 0.0f;
+                    }
+                }
+            }
 		}
 	}
 
@@ -94,27 +123,36 @@ public class CAlarmBehaviour : CNetworkMonoBehaviour
 	void ActivateAlarm()
 	{
 		m_cSpinningLight.light.enabled = true;
-		gameObject.GetComponent<AudioSource>().enabled = true;
+
+        if (m_eType == EType.Spinning)
+        {
+            gameObject.GetComponent<AudioSource>().enabled = true;
+        }
 	}
 
 
 	void DeactivateAlarm()
 	{
 		m_cSpinningLight.light.enabled = false;
-		gameObject.GetComponent<AudioSource>().enabled = false;
+
+        if (m_eType == EType.Spinning)
+        {
+            gameObject.GetComponent<AudioSource>().enabled = false;
+        }
 	}
 
 
 // Member Fields
 
 
+    public EType m_eType = EType.INVALID;
 	public GameObject m_cSpinningLight = null;
-
 
 	CNetworkVar<bool> m_bActive = null;
 
 
 	float m_fRotationSpeed = 360.0f;
+    float m_fFlashTimer = 0.0f;
 
 
 };

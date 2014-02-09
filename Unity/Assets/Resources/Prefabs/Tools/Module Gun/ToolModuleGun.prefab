@@ -229,6 +229,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300008
 Renderer:
   m_ObjectHideFlags: 1
@@ -247,6 +250,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300010
 Renderer:
   m_ObjectHideFlags: 1
@@ -265,6 +271,9 @@ Renderer:
   m_UseLightProbes: 0
   m_LightProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!33 &3300002
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -395,10 +404,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0e9c209757062b4a8a997e99db26fa7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ActiveUITransform: {fileID: 400020}
   m_InactiveUITransform: {fileID: 400018}
   m_DUI: {fileID: 100012}
   m_UITransitionTime: .5
+  m_Debug: 1
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

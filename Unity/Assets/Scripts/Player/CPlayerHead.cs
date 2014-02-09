@@ -119,6 +119,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public void SetHeadRotations(float _LocalEulerX)
 	{
 		m_LocalXRotation = _LocalEulerX;
+
+		// Apply the pitch to the camera
+		m_cActorHead.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
 	}
 
 
@@ -175,7 +178,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			m_LocalXRotation = Mathf.Clamp(m_LocalXRotation, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
 
 			// Apply the pitch to the camera
-			m_cActorHead.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
+			SetHeadRotations(m_LocalXRotation);
 		}
 	}
 

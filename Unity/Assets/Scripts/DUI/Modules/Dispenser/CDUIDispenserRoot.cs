@@ -136,7 +136,8 @@ public class CDUIDispenserRoot : CNetworkMonoBehaviour
 		m_SelectedToolCost = 100;
 		
 		// Set the name
-		m_ToolNameLabel.text = m_SelectedToolType.ToString();
+		string name = CUtility.SplitCamelCase(m_SelectedToolType.ToString());
+		m_ToolNameLabel.text = name;
 		
 		// Set the desc
 		m_ToolDescLabel.text = desc;

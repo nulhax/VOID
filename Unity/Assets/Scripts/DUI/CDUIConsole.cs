@@ -29,7 +29,6 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	public GameObject m_ScreenObject = null;
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
-	private bool m_Initialised = false;
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	
     // Member Properties
@@ -43,13 +42,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 	public GameObject DUI 
 	{ 
-		get 
-		{ 
-			if(!m_Initialised && CNetwork.IsServer)
-				Start();
-
-			return(m_DUIViewId.Get().GameObject); 
-		} 
+		get { return(m_DUIViewId.Get().GameObject); } 
 	}
 
 	public GameObject ConsoleScreen
@@ -77,7 +70,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		if(CNetwork.IsServer && !m_Initialised)
+		if(CNetwork.IsServer)
 		{
 			if(m_DUI != CDUIRoot.EType.INVALID)
 			{
@@ -88,8 +81,6 @@ public class CDUIConsole : CNetworkMonoBehaviour
 				CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
 				dr.ConsoleViewId = ViewId;
 				DUIViewId = dr.ViewId;
-
-				m_Initialised = true;
 			}
 			else
 			{

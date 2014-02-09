@@ -15,6 +15,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 /* Implementation */
@@ -184,10 +185,11 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		m_SelectedModuleType = _tempModuleInterface.ModuleType;
 		m_SelectedModuleCategory = _tempModuleInterface.ModuleCategory; 
 		m_SelectedModuleSize = _tempModuleInterface.ModuleSize;
-		m_SelectedModuleCost = UnityEngine.Random.Range(100, 400) * 1000;
+		m_SelectedModuleCost = m_SelectedModuleSize == CModuleInterface.ESize.Small ? 400 : 800;
 
 		// Set the name
-		m_ModuleNameLabel.text = m_SelectedModuleType.ToString();
+		string name = CUtility.SplitCamelCase(m_SelectedModuleType.ToString());
+		m_ModuleNameLabel.text = name;
 		
 		// Set the category
 		m_ModuleCategoryLabel.text = m_SelectedModuleCategory.ToString();

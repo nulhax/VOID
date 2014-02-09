@@ -552,7 +552,10 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 		m_fConnectionElapsedTime = 0.0f;
 		m_fTick = 0;
 		m_fTickTotal = 0;
-		m_bDownloadingInitialGameState = true;
+
+		// Only set downloading game state if I am client
+		if(!CNetwork.IsServer)
+			m_bDownloadingInitialGameState = true;
 
         // Save server address
         m_cServerSystemAddress = new RakNet.SystemAddress(_cServerSystemAddress.ToString(), _cServerSystemAddress.GetPort());
@@ -768,7 +771,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     ushort m_usPort = 0;
 
 
-    bool m_bShowStats = true;
+    bool m_bShowStats = false;
 	bool m_bDownloadingInitialGameState = true;
 
 

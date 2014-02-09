@@ -219,7 +219,34 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
+        // Empty
+    }
 
+
+    void OnGUI()
+    {
+        if (CGamePlayers.SelfActor != null &&
+            CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility != null)
+        {
+            float fAtmosphereQuanity = CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantity;
+            float fAtmosphereVolumne = CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>().AtmosphereVolume;
+
+            float fPowerQuanity = CGameShips.Ship.GetComponent<CShipPowerSystem>().ShipCatteryChargePool;
+            //float fPowerVolumne = CGamePlayers.SelfActor.GetComponent<CFacilityPower>().AtmosphereVolume;
+
+
+            const float kBoxWidth = 200.0f;
+            const float kBoxMargin = 10.0f;
+            const float kBoxHeight = 54.0f;
+
+            // Hit points
+            GUI.Box(new Rect(kBoxMargin,
+                             Screen.height - kBoxHeight - kBoxMargin - 140,
+                             kBoxWidth, kBoxHeight),
+                             "[Facility Stats]\n" +
+                             "Atmosphere: " + Math.Round(fAtmosphereQuanity, 0).ToString() + "/" + fAtmosphereVolumne.ToString() + "\n" +
+                             "Power: " + Math.Round(fPowerQuanity, 0));
+        }
     }
 
 

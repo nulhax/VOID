@@ -330,7 +330,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 case ENetworkAction.ChangeTool:
                     byte bSlotId = _cStream.ReadByte();
                     cPlayerBelt.ChangeTool(bSlotId);
-					cPlayerBelt.EventEquipTool(cInteractableObject);
+                    if(cPlayerBelt.EventEquipTool != null) cPlayerBelt.EventEquipTool(cInteractableObject);
                     break;
 
                 case ENetworkAction.ReloadActiveTool:

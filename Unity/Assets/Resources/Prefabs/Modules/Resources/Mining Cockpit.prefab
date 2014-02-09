@@ -529,7 +529,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ModuleType: 9
   m_ModuleCategory: 10
-  m_ModuleSize: 1
+  m_ModuleSize: 2
   m_Internal: 1
   m_Buildable: 1
 --- !u!114 &11400002

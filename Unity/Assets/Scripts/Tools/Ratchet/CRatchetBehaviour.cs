@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
 /* Implementation */
 
+
 [RequireComponent(typeof(CToolInterface))]
 public class CRatchetBehaviour : CNetworkMonoBehaviour
 {
@@ -121,11 +122,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			if(CNetwork.IsServer)
 			{
 				m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);				
-			}
-			
-			//Update target for IK here
-			UpdateTarget();
-			
+				//Update target for IK here
+				UpdateTarget();
+			}		
 		}
 	}
 		
@@ -144,9 +143,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 				m_iTargetIndex = 0;
 			}		
 			
-			m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];
-			
+			m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];			
 			m_fTargetSwitchTimer = 0.0f;
+			Debug.Log("switched target.");
 		}
 	}
 	
@@ -156,14 +155,12 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			
 		m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
        
-        Transform[] children = _damagedComponent.GetComponentsInChildren<Transform>();
-        foreach(Transform child in children)
+        List<Transform> repairPositions = m_TargetComponent.GetComponent<CRatchetComponent>().RatchetRepairPosition;
+
+        foreach(Transform child in repairPositions)
         {
-            if(child.name == "Transform" && m_TargetList.Contains(child.position) == false)
-            {
-                m_TargetList.Add(child.position);
-                m_iTotalTargets++;
-            }
+            m_TargetList.Add(child.position);
+            m_iTotalTargets++;
         }   
 		
 		m_eRepairState = ERepairState.RepairActive;
@@ -188,13 +185,13 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	{
 		m_eRepairState = ERepairState.RepairInactive;
 		m_TargetComponent = null;
+		m_IKController.RightHandIKWeight = 0;
+		m_TargetList.Clear();
 	}
 
 
 // Member Fields
-	
-	
-	
+		
 	Vector3					m_ToolTarget;
 	List<Vector3>			m_TargetList;	
 	int 					m_iTotalTargets;

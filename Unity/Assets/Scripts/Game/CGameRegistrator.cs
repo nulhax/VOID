@@ -92,12 +92,12 @@ public class CGameRegistrator : MonoBehaviour
         CellSlot,
 
         // Parts
-        BlackMatterCell,
-        FuelCell,
-        PlasmaCell,
-        PowerCell,
-        BioCell,
-        ReplicatorCell,
+//        BlackMatterCell,
+//        FuelCell,
+//        PlasmaCell,
+//        PowerCell,
+//        BioCell,
+//        ReplicatorCell,
 
         // Tools
         ToolTorch,
@@ -105,8 +105,10 @@ public class CGameRegistrator : MonoBehaviour
         ToolExtinguisher,
         ToolAk47,
         ToolMedical,
-        ToolWiringKit,
+        ToolCircuitryKit,
 		ToolModuleGun,
+        ToolCalibrator,
+        ToolFluidizer,
 
         // Hazards
         Fire,
@@ -223,21 +225,23 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CellSlot,                    "Accessories/FuseBox");
 
         // Parts
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FuelCell,                    "Parts/Cells/FuelCell");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlasmaCell,                  "Parts/Cells/PlasmaCell");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCell,                   "Parts/Cells/PowerCell");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BioCell,                     "Parts/Cells/BioCell");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BlackMatterCell,             "Parts/Cells/BlackMatterCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FuelCell,                    "Parts/Cells/FuelCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlasmaCell,                  "Parts/Cells/PlasmaCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCell,                   "Parts/Cells/PowerCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.BioCell,                     "Parts/Cells/BioCell");
+//        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
 
 		// Tools
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                  "Tools/Ratchet/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/Ratchet/ToolRachet");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolWiringKit,               "Tools/Wiring Kit/ToolWiringKit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCalibrator,              "Tools/Calibrator/ToolCalibrator");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolFluidizer,               "Tools/FluidTool/ToolFluid");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -306,9 +310,9 @@ public class CGameRegistrator : MonoBehaviour
 	void RegisterTools()
 	{
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet, ENetworkPrefab.ToolRatchet);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit, ENetworkPrefab.ToolWiringKit);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator, ENetworkPrefab.ToolRatchet);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer, ENetworkPrefab.ToolRatchet);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit, ENetworkPrefab.ToolCircuitryKit);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator, ENetworkPrefab.ToolCalibrator);
+		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer, ENetworkPrefab.ToolFluidizer);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator, ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert, ENetworkPrefab.ToolModuleGun);

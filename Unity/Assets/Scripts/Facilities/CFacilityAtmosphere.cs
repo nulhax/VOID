@@ -113,7 +113,29 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 			UpdateConsumptionRate();
 			UpdateAtmosphereQuantity();
 		}
+
+
+        if (AtmospherePercentage < 25.0f &&
+            !m_bFired)
+        {
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
+            });
+        }
+        else if (m_bFired &&
+                 AtmospherePercentage > 25.0f)
+        {
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
+            });
+
+            m_bFired = false;
+        }
 	}
+
+    static bool m_bFired = false;
 
 	[AServerOnly]
 	public void RegisterAtmosphericConsumer(GameObject _Consumer)

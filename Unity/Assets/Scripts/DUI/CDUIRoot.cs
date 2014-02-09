@@ -117,8 +117,6 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		{
 			if(m_DUICamera3D.GetComponent<UICamera>().enabled)
 				m_DUICamera3D.GetComponent<UICamera>().enabled = false;
-
-			RenderTexture.active = m_DUICamera3D.camera.targetTexture;
 		}
 
 		if(m_DUICamera2D != null)

@@ -310,7 +310,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &100120
 GameObject:
   m_ObjectHideFlags: 1
@@ -332,7 +332,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &100124
 GameObject:
   m_ObjectHideFlags: 1
@@ -679,7 +679,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100106}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 500, y: -0, z: 0}
+  m_LocalPosition: {x: 650, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -690,7 +690,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100108}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 125, y: -0, z: 0}
+  m_LocalPosition: {x: 130, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -712,7 +712,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100112}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 625, y: -0, z: 0}
+  m_LocalPosition: {x: 780, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -723,7 +723,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100114}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 375, y: -0, z: 0}
+  m_LocalPosition: {x: 520, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -734,7 +734,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100116}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250, y: -0, z: 0}
+  m_LocalPosition: {x: 390, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -756,7 +756,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100120}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 250, y: -0, z: 0}
+  m_LocalPosition: {x: 260, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -1764,7 +1764,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -1874,7 +1874,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -1984,7 +1984,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2094,7 +2094,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2204,7 +2204,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2314,7 +2314,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2424,7 +2424,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2534,7 +2534,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2644,7 +2644,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 125
   mHeight: 125
-  mDepth: 3
+  mDepth: 5
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2674,8 +2674,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arrangement: 0
   maxPerLine: 0
-  cellWidth: 125
-  cellHeight: 125
+  cellWidth: 130
+  cellHeight: 130
   animateSmoothly: 1
   sorted: 1
   hideInactive: 1
@@ -2694,9 +2694,9 @@ MonoBehaviour:
   movement: 0
   dragEffect: 1
   restrictWithinPanel: 1
-  disableDragIfFits: 1
+  disableDragIfFits: 0
   smoothDragStart: 1
-  iOSDragEmulation: 1
+  iOSDragEmulation: 0
   scrollWheelFactor: 1
   momentumAmount: 35
   horizontalScrollBar: {fileID: 11400424}
@@ -2744,7 +2744,7 @@ MonoBehaviour:
   mClipping: 3
   mClipRange: {x: 439.5, y: 0, z: 859, w: 140}
   mClipSoftness: {x: 10, y: 10}
-  mDepth: 3
+  mDepth: 4
 --- !u!114 &11400372
 MonoBehaviour:
   m_ObjectHideFlags: 1

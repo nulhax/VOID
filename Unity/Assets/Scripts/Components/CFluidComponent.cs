@@ -30,7 +30,7 @@ public class CFluidComponent : CNetworkMonoBehaviour
 	
 	
 	// Member Properties
-	public List<Transform> RatchetRepairPosition
+	public List<Transform> ComponentRepairPosition
 	{
 		get { return(m_RepairPositions);}
 	}
@@ -85,8 +85,6 @@ public class CFluidComponent : CNetworkMonoBehaviour
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
 		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
-
-       // GetComponent<CActorInteractable>().EventHover += OnHover;
 	}
 	
 
@@ -95,51 +93,7 @@ public class CFluidComponent : CNetworkMonoBehaviour
         gameObject.GetComponent<CComponentInterface>().EventComponentBreak -= OnBreak;
         gameObject.GetComponent<CComponentInterface>().EventComponentFix   -= OnFix;
         gameObject.GetComponent<CComponentInterface>().EventHealthChange   -= OnHealthChange;
-
-       // GetComponent<CActorInteractable>().EventHover -= OnHover;
 	}
-
-
-    // TEMPORARY //
-    //
-    // Hover text logic that needs revision. OnGUI + Copy/Paste code = Terribad
-    //
-    // TEMPORARY //
-    bool bShowName = false;
-    bool bOnGUIHit = false;
-    void OnHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
-    {
-        bShowName = true;
-    }
-
-
-    public void OnGUI()
-    {
-        float fScreenCenterX = Screen.width / 2;
-        float fScreenCenterY = Screen.height / 2;
-        float fWidth = 100.0f;
-        float fHeight = 20.0f;
-        float fOriginX = fScreenCenterX + 25.0f;
-        float fOriginY = fScreenCenterY - 10.0f;
-
-        if (bShowName && !bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Fluid Component");
-            bOnGUIHit = true;
-        }
-        else if (bShowName && bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Fluid Component");
-            bShowName = false;
-            bOnGUIHit = false;
-        }
-    }
-    // TEMPORARY //
-    //
-    // 
-    //
-    // TEMPORARY //
-	
 	
 	void Update()
 	{

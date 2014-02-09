@@ -72,10 +72,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
         m_cCockpitBehaviour = GetComponent<CCockpit>();
 
+        m_cCockpitBehaviour.EventPlayerLeave += OnEventCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);
-
 
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Forward, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Backward, OnEventInputControlShip);
@@ -221,6 +221,41 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
                     Debug.LogError("Unknown input");
                     break;
             }
+        }
+    }
+
+
+    [AServerOnly]
+    void OnEventCockpitUnmount(ulong _ulPlayerId)
+    {
+        CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
+
+        for (CGalaxyShipMotor.EThrusters i = 0; i < CGalaxyShipMotor.EThrusters.MAX; ++i)
+        {
+            cGalaxyShipMotor.SetThrusterEnabled(i, 0.0f);
+        }
+    }
+
+
+
+    void OnGUI()
+    {
+        if (m_cCockpitBehaviour.MountedPlayerId == CNetwork.PlayerId)
+        {
+            float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;
+            Vector3 absShipPos = CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position);
+
+            string shipOutput = string.Format("\tShip Speed: [{0}] \nShip Position [{1}] ",
+                                        shipSpeed.ToString("F2"),
+                                        absShipPos.ToString("F2"));
+
+            float boxWidth = 320;
+            float boxHeight = 54;
+
+            GUI.Box(new Rect(Screen.width / 2 - boxWidth / 2,
+                             Screen.height - boxHeight - 200,
+                             boxWidth, boxHeight),
+                      "Ship Speed\n" + shipOutput);
         }
     }
 

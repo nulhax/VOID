@@ -20,6 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
+[RequireComponent(typeof(CModuleInterface))]
 public class CDispenserBehaviour : MonoBehaviour
 {
     // Member Types
@@ -28,20 +29,28 @@ public class CDispenserBehaviour : MonoBehaviour
     // Member Delegates & Events
 
 
+	// Member Fields
+	public CDUIConsole m_DUIConsole = null;
+	public Transform m_ToolSpawnLocation = null;
+	
+	public CComponentInterface m_CircuitryComponent = null;
+	public CComponentInterface m_MechanicalComponent = null;
+	public bool m_Debug = false;
+
+	private CDUIDispenserRoot m_DUIDispenser = null;
+
+
     // Member Properties
 
 
     // Member Methods
-
-    void Start()
+	public void Start()
     {
 		// Get the DUI of the dispenser
 		m_DUIDispenser = m_DUIConsole.DUI.GetComponent<CDUIDispenserRoot>();
 
 		// Register the event for building a tool
 		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
-
-        GetComponent<CActorInteractable>().EventHover += OnHover;
     }
 
 	[AServerOnly]
@@ -49,13 +58,14 @@ public class CDispenserBehaviour : MonoBehaviour
 	{
 		// Check there is enough nanites for the selected tool
 		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		//if(sns.IsEnoughNanites(_DUI.SelectedToolCost))
+		if(sns.IsEnoughNanites(_DUI.SelectedToolCost) || m_Debug)
 		{
+			// Deduct the amount
+			if(!m_Debug)
+				sns.DeductNanites(_DUI.SelectedToolCost);
+
 			// Spawn the selected tool
 			SpawnTool(_DUI.SelectedToolType);
-
-			// Negate the nantites from the ship pool
-			//sns.DeductNanites(_DUI.SelectedToolCost);
 		}
 	}
 	
@@ -70,66 +80,4 @@ public class CDispenserBehaviour : MonoBehaviour
 		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_ToolSpawnLocation.eulerAngles);
     }
 
-
-    void OnDestroy()
-    {
-        GetComponent<CActorInteractable>().EventHover -= OnHover;
-    }
-
-    void Update()
-    {
-        // Interpolate health
-		// Martin: Ill replace this with a UI to show status' :)
-        //transform.FindChild("Cube").renderer.material.color = Color.Lerp(Color.red, Color.green, m_fHealth / 100.0f);
-    }
-
-    // TEMPORARY //
-    //
-    // Hover text logic that needs revision. OnGUI + Copy/Paste code = Terribad
-    //
-    // TEMPORARY //
-    bool bShowName = false;
-    bool bOnGUIHit = false;
-    void OnHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
-    {
-        bShowName = true;
-    }
-
-
-    public void OnGUI()
-    {
-        float fScreenCenterX = Screen.width / 2;
-        float fScreenCenterY = Screen.height / 2;
-        float fWidth = 150.0f;
-        float fHeight = 20.0f;
-        float fOriginX = fScreenCenterX + 25.0f;
-        float fOriginY = fScreenCenterY - 10.0f;
-
-        if (bShowName && !bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Dispenser Module");
-            bOnGUIHit = true;
-        }
-        else if (bShowName && bOnGUIHit)
-        {
-            GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), "Dispenser Module");
-            bShowName = false;
-            bOnGUIHit = false;
-        }
-    }
-    // TEMPORARY //
-    //
-    // 
-    //
-    // TEMPORARY //
-	
-
-	public CDUIConsole m_DUIConsole = null;
-	public Transform m_ToolSpawnLocation = null;
-
-	public CComponentInterface m_CircuitryComponent = null;
-	public CComponentInterface m_MechanicalComponent = null;
-
-	private CDUIDispenserRoot m_DUIDispenser = null;
-	
 };
