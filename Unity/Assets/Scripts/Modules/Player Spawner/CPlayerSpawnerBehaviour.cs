@@ -72,14 +72,12 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
     void OnComponentDamaged(CComponentInterface _Component)
     {
-        Debug.Log("BLOCKED");
         m_bBlocked.Set(true);
     }
 
 
     void OnComponentRepaired(CComponentInterface _Component)
     {
-        Debug.Log("UN-BLOCKED");
         m_bBlocked.Set(false);
     }
 

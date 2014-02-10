@@ -99,5 +99,10 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	{
 		// Unregister self from facility
 		_Facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
+        
+        if (m_ActorLocator.LastEnteredFacility == null)
+        {
+            InsufficientAtmosphere();
+        }
 	}
 }
