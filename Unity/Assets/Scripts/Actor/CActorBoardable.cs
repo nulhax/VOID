@@ -54,7 +54,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BoardingState= _cRegistrar.CreateNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
+		m_BoardingState = _cRegistrar.CreateNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)
@@ -132,11 +132,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			// Transfer the actor to galaxy ship space
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
 
-			// Get the relative velocity of the actor boarding and apply the compensation force to the actor
+			// Get the relative velocity of the actor disembarking and apply the compensation force to the actor
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 
 			// Add the current velocity of the actor transformed to galaxy space
-			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
+			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.identity) * rigidbody.velocity;
 			transferedVelocity += currentVelocity;
 
 			// Set the compensation velocity of the actor
@@ -157,7 +157,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
 
 			// Add the current velocity of the actor transformed to simulation space
-			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(rigidbody.velocity.normalized)) * Vector3.forward * rigidbody.velocity.magnitude;
+			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.identity) * rigidbody.velocity;
 			transferedVelocity += currentVelocity;
 
 			// Transfer the actor to ship space
