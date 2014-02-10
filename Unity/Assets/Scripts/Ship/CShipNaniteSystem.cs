@@ -201,10 +201,13 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 	public void OnGUI()
 	{
-		float boxWidth = 150;
-		float boxHeight = 40;
+        if (CNetwork.IsConnectedToServer)
+        {
+            float boxWidth = 150;
+            float boxHeight = 40;
 
-        GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
-                         "[Ship Nanites]\n" + ShipNanites.ToString());
+            GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
+                             "[Ship Nanites]\n" + ShipNanites.ToString());
+        }
 	}
 }
