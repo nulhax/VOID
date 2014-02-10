@@ -62,9 +62,12 @@ public class CGalaxyShipCollider : MonoBehaviour
 		
 		// Get the mesh filters of the colliders
 		MeshFilter[] meshFilters = m_CompoundCollider.GetComponentsInChildren<MeshFilter>();
-        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		List<CombineInstance> combines = new List<CombineInstance>();
         for(int i = 0; i < meshFilters.Length; ++i) 
 		{
+			if(meshFilters[i].collider == null)
+				continue;
+
 			Vector3 scale = meshFilters[i].collider.bounds.size + new Vector3(1.0f, 0.0f, 1.0f);
 			scale.x = scale.x / Mathf.Sqrt(2.0f) * 2.0f;
 			scale.z = scale.z / Mathf.Sqrt(2.0f) * 2.0f;
@@ -72,9 +75,11 @@ public class CGalaxyShipCollider : MonoBehaviour
 			
 			newSphere.transform.localScale = scale;
 			newSphere.transform.localPosition = meshFilters[i].collider.bounds.center;
-			
-            combine[i].mesh = mf.sharedMesh;
-            combine[i].transform = mf.transform.localToWorldMatrix;
+
+			CombineInstance combine = new CombineInstance();
+			combine.mesh = mf.sharedMesh;
+			combine.transform = mf.transform.localToWorldMatrix;
+			combines.Add(combine);
         }
 		
 		// Destroy the cube
@@ -82,7 +87,7 @@ public class CGalaxyShipCollider : MonoBehaviour
 		
 		// Create a new mesh for the shield to use
         Mesh mesh = new Mesh();
-        mesh.CombineMeshes(combine);
+		mesh.CombineMeshes(combines.ToArray());
 	
 		// Update the shield bounds
 		gameObject.GetComponent<CGalaxyShipShield>().UpdateShieldBounds(mesh);
