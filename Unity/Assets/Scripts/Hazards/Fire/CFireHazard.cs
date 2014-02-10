@@ -22,13 +22,13 @@ public class CFireHazard : MonoBehaviour
 	void Awake()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
-		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
+		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
 	}
 
 	void OnDestroy()
 	{
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
-		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
+		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
 
 	void Update()
@@ -78,11 +78,11 @@ public class CFireHazard : MonoBehaviour
 		}
 	}
 
-//	void OnInsufficientAtmosphere()
-//	{
-//		CActorHealth ah = GetComponent<CActorHealth>();
-//		ah.health = ah.health_max;
-//	}
+    void OnInsufficientAtmosphere()
+    {
+        CActorHealth ah = GetComponent<CActorHealth>();
+        ah.health = ah.health_max;
+    }
 
 	[AServerOnly]
 	void OnTriggerStay(Collider collider)
