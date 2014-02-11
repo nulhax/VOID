@@ -17,16 +17,28 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
-	public bool burning = false;
+	private static System.Collections.Generic.List<CFireHazard> s_AllFires = new System.Collections.Generic.List<CFireHazard>();
+
+	public float spreadRadius = 3.0f;
+
+	public float timeBetweenSpreadProcess = 1.0f;
+	private float timeUntilNextSpreadProcess = 0.0f;
+
+	public bool burning { get { return burning_internal; } }
+	private bool burning_internal = false;
 
 	void Awake()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
 		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
+
+		s_AllFires.Add(this);
 	}
 
 	void OnDestroy()
 	{
+		s_AllFires.Remove(this);
+
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
 		//GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
@@ -35,6 +47,20 @@ public class CFireHazard : MonoBehaviour
 	{
 		if(burning && CNetwork.IsServer)
 		{
+			timeUntilNextSpreadProcess -= Time.deltaTime;
+			while(timeUntilNextSpreadProcess <= 0.0f)
+			{
+				timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
+
+				// Drain health of all fires within range, including one's self
+				for (int i = 0; i < s_AllFires.Count; ++i)
+				{
+					CFireHazard rhs = s_AllFires[i];
+					if ((rhs.transform.position - transform.position).sqrMagnitude <= spreadRadius * spreadRadius)
+						rhs.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
+				}
+			}
+
 			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
 
@@ -42,6 +68,11 @@ public class CFireHazard : MonoBehaviour
 			if(fa.AtmospherePercentage < thresholdPercentage)
 				ah.health += (1.0f / (fa.AtmospherePercentage / thresholdPercentage)) * Time.deltaTime;
 		}
+	}
+
+	void OnFixedUpdate()
+	{
+
 	}
 
 	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
@@ -76,6 +107,11 @@ public class CFireHazard : MonoBehaviour
 				}
 				break;
 		}
+	}
+
+	private void CacheStaticFireNode(CFireHazard rhs)
+	{
+
 	}
 
 //	void OnInsufficientAtmosphere()
