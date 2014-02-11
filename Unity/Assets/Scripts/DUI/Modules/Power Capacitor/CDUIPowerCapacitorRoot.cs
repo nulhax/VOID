@@ -86,12 +86,11 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 			m_CapacitorStatus.text = "Status: Charge InActive";
 
 			m_WarningReport.UpdateVisibility(false);
-			m_WarningReport.GetComponent<TweenScale>().enabled = false;
-
 			m_ErrorReport.UpdateVisibility(true);
+
 			m_ErrorReport.color = Color.red;
 			m_ErrorReport.text = "Error: All circuitry components defective!";
-			m_ErrorReport.GetComponent<TweenScale>().enabled = true;
+			m_ErrorReport.GetComponent<UITweener>().Play();
 		}
 		else if(active == 1)
 		{
@@ -100,9 +99,11 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 			m_CapacitorStatus.text = "Status: Charge NonOptimal";
 
 			m_WarningReport.UpdateVisibility(true);
+			m_ErrorReport.UpdateVisibility(false);
+
 			m_WarningReport.color = Color.yellow;
 			m_WarningReport.text = "Warning: Circuitry component defective!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = true;
+			m_WarningReport.GetComponent<UITweener>().Play();
 		}
 		else
 		{

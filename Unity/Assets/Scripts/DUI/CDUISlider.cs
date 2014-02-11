@@ -132,7 +132,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	private void SetSliderValue(float _Value)
+	public void SetSliderValue(float _Value)
 	{
 		m_Value.Set(_Value);
 	}
