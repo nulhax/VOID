@@ -397,32 +397,35 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-		GUIStyle cStyle = new GUIStyle();
-        if (CGamePlayers.SelfActor == null)
+        if (CNetwork.IsConnectedToServer)
         {
-            // Draw un-spawned message
-            cStyle.fontSize = 40;
-            cStyle.normal.textColor = Color.white;
+            GUIStyle cStyle = new GUIStyle();
+            if (CGamePlayers.SelfActor == null)
+            {
+                // Draw un-spawned message
+                cStyle.fontSize = 40;
+                cStyle.normal.textColor = Color.white;
 
-            GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
-                      "Waiting for spawner to be available...", cStyle);
+                GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
+                          "Waiting for spawner to be available...", cStyle);
+            }
+
+            if (CGamePlayers.SelfActor != null)
+            {
+                if (Input.GetKey(KeyCode.Tab))
+                {
+                    GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
+
+                    int iStartY = 115;
+
+                    foreach (KeyValuePair<ulong, string> entry in m_mPlayerName)
+                    {
+                        GUI.Label(new Rect(110, iStartY, 400, 400), "Player: " + entry.Value);
+                        iStartY += 10;
+                    }
+                }
+            }
         }
-
-		if (CGamePlayers.SelfActor != null)		
-		{
-			if(Input.GetKey(KeyCode.Tab))
-			{
-				GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
-
-				int iStartY = 115;
-
-				foreach(KeyValuePair<ulong, string> entry in m_mPlayerName)
-				{
-					GUI.Label(new Rect(110, iStartY, 400, 400), "Player: " + entry.Value);
-					iStartY += 10;
-				}
-			}
-		}
     }
 
 	void OnPlayerNameChange(string _sPlayerName)
