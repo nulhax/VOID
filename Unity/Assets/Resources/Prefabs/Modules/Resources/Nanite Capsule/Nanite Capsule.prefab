@@ -3439,7 +3439,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe1b46593c4212f46be18aa9837f688d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaximumCapacity: 800
+  m_iCurrentMaximumCapacity: 500
+  m_CompCalib: {fileID: 11400024}
+  m_CompFluid: {fileID: 11400016}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
