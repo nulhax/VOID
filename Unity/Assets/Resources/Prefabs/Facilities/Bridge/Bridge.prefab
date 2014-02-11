@@ -37792,7 +37792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 101240}
-  m_DUI: 1
+  m_DUI: 8
 --- !u!114 &11400616
 MonoBehaviour:
   m_ObjectHideFlags: 1

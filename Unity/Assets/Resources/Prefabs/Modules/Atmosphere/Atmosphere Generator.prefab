@@ -897,7 +897,7 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: Infinity
+  health_max: 100
   health_min: 0
   health_initial: 100
   health_previous: 0
@@ -956,7 +956,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &11400024
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
@@ -970,13 +970,12 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: Infinity
+  health_max: 100
   health_min: 0
-  health_initial: 1000
+  health_initial: 100
   health_previous: 0
-  state_initial: 1
-  stateTransitions:
-  - 0
+  state_initial: 0
+  stateTransitions: []
   state_previous: 0
   timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400026
@@ -1007,7 +1006,7 @@ MonoBehaviour:
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
   syncNetworkState: 1
-  health_max: Infinity
+  health_max: 100
   health_min: 0
   health_initial: 100
   health_previous: 0

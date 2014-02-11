@@ -64,6 +64,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		{
 			// Set the generation rate
 			m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
+			m_PowerGenerator.PowerGenerationRatePotential = m_MaxPowerGenerationRate;
 		}
 	}
 
@@ -100,6 +101,6 @@ public class CTestPowerGenerator: MonoBehaviour
 	private void HandleGenerationRateChange(CPowerGenerationBehaviour _PowerGen)
 	{
 		// Update the UI generation rate
-		m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_MaxPowerGenerationRate);
+		m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_PowerGenerator.PowerGenerationRatePotential);
 	}
 }

@@ -30,7 +30,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public bool takeDamageOnImpact = false;
 	[SerializeField] public bool syncNetworkState = true;
 
-	[SerializeField] public float health_max = float.PositiveInfinity;
+	[SerializeField] public float health_max = 100.0f;
 	[SerializeField] public float health_min = 0.0f;
 	[SerializeField] public float health_initial = 100.0f;
 	[HideInInspector] public float health_previous;
