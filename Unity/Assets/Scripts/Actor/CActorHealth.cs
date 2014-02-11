@@ -23,6 +23,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	public delegate void OnSetState(GameObject gameObject, byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	[SerializeField] public bool flammable = true;
 	[SerializeField] public bool callEventsOnStart = false;
 	[SerializeField] public bool syncNetworkHealth = true;
 	[SerializeField] public bool destroyOnZeroHealth = false;

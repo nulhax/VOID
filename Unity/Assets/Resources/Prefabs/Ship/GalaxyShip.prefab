@@ -126,7 +126,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   serializedVersion: 2
-  m_Mass: 10
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c12ac2a931d7a84094d11461c75c608, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impulseToRadius: 1
+  impulseToRadius: .25
 --- !u!114 &11400014
 MonoBehaviour:
   m_ObjectHideFlags: 1

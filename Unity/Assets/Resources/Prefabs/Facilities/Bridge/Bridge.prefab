@@ -33562,7 +33562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400008
 MonoBehaviour:
@@ -33586,7 +33586,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33818,7 +33819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400048
 MonoBehaviour:
@@ -33842,7 +33843,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33939,7 +33941,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400066
 MonoBehaviour:
@@ -33963,7 +33965,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34060,7 +34063,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400084
 MonoBehaviour:
@@ -34084,7 +34087,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34194,7 +34198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400104
 MonoBehaviour:
@@ -34218,7 +34222,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34280,7 +34285,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400116
 MonoBehaviour:
@@ -34304,7 +34309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34353,7 +34359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400126
 MonoBehaviour:
@@ -34377,7 +34383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34652,7 +34659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400174
 MonoBehaviour:
@@ -34676,7 +34683,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400178
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34725,7 +34733,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400184
 MonoBehaviour:
@@ -34749,7 +34757,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34798,7 +34807,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400194
 MonoBehaviour:
@@ -34822,7 +34831,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34871,7 +34881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400204
 MonoBehaviour:
@@ -34895,7 +34905,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35028,7 +35039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400226
 MonoBehaviour:
@@ -35052,7 +35063,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400230
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35101,7 +35113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400236
 MonoBehaviour:
@@ -35125,7 +35137,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400240
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35346,7 +35359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400270
 MonoBehaviour:
@@ -35370,7 +35383,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35419,7 +35433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400280
 MonoBehaviour:
@@ -35443,7 +35457,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35492,7 +35507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400290
 MonoBehaviour:
@@ -35516,7 +35531,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35626,7 +35642,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400310
 MonoBehaviour:
@@ -35650,7 +35666,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35760,7 +35777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400330
 MonoBehaviour:
@@ -35784,7 +35801,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35894,7 +35912,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400350
 MonoBehaviour:
@@ -35918,7 +35936,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36028,7 +36047,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400370
 MonoBehaviour:
@@ -36052,7 +36071,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36101,7 +36121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400380
 MonoBehaviour:
@@ -36125,7 +36145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400384
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36323,7 +36344,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400414
 MonoBehaviour:
@@ -36347,7 +36368,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36396,7 +36418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400424
 MonoBehaviour:
@@ -36420,7 +36442,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36517,7 +36540,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400442
 MonoBehaviour:
@@ -36541,7 +36564,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36762,7 +36786,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400478
 MonoBehaviour:
@@ -36786,7 +36810,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36896,7 +36921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400498
 MonoBehaviour:
@@ -36920,7 +36945,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400502
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36969,7 +36995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400508
 MonoBehaviour:
@@ -36993,7 +37019,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400512
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37042,7 +37069,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400518
 MonoBehaviour:
@@ -37066,7 +37093,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37115,7 +37143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400528
 MonoBehaviour:
@@ -37139,7 +37167,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37188,7 +37217,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400538
 MonoBehaviour:
@@ -37212,7 +37241,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37261,7 +37291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400548
 MonoBehaviour:
@@ -37285,7 +37315,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37334,7 +37365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: 1
+  m_AtmosphericConsumptionRate: .5
   m_ConsumingAtmosphere: 0
 --- !u!114 &11400558
 MonoBehaviour:
@@ -37358,7 +37389,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  burning: 0
+  spreadRadius: 3
+  timeBetweenSpreadProcess: 1
 --- !u!114 &11400562
 MonoBehaviour:
   m_ObjectHideFlags: 1

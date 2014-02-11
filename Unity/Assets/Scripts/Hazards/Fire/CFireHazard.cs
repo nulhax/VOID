@@ -17,12 +17,12 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
-	private static System.Collections.Generic.List<CFireHazard> s_AllFires = new System.Collections.Generic.List<CFireHazard>();
+	//private static System.Collections.Generic.List<CFireHazard> s_AllFires = new System.Collections.Generic.List<CFireHazard>();
 
-	public float spreadRadius = 3.0f;
+	//public float spreadRadius = 3.0f;
 
-	public float timeBetweenSpreadProcess = 1.0f;
-	private float timeUntilNextSpreadProcess = 0.0f;
+	//public float timeBetweenSpreadProcess = 1.0f;
+	//private float timeUntilNextSpreadProcess = 0.0f;
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
@@ -31,35 +31,36 @@ public class CFireHazard : MonoBehaviour
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
+	}
 
-		s_AllFires.Add(this);
+	void Start()
+	{
+		//s_AllFires.Add(this);
 	}
 
 	void OnDestroy()
 	{
-		s_AllFires.Remove(this);
+		//s_AllFires.Remove(this);
 
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
 
+	[AServerOnly]
 	void Update()
 	{
-		if(burning && CNetwork.IsServer)
+		if(CNetwork.IsServer && burning)
 		{
-			timeUntilNextSpreadProcess -= Time.deltaTime;
-			while(timeUntilNextSpreadProcess <= 0.0f)
-			{
-				timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
+			//timeUntilNextSpreadProcess -= Time.deltaTime;
+			//while(timeUntilNextSpreadProcess <= 0.0f)
+			//{
+			//    timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
 
-				// Drain health of all fires within range, including one's self
-				for (int i = 0; i < s_AllFires.Count; ++i)
-				{
-					CFireHazard rhs = s_AllFires[i];
-					if ((rhs.transform.position - transform.position).sqrMagnitude <= spreadRadius * spreadRadius)
-						rhs.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
-				}
-			}
+			//    // Drain health of all fires within range, including one's self (which is included in the list of neighbours).
+			//    foreach(CFireHazard fireHazard in s_AllFires)
+			//        if((fireHazard.transform.position - transform.position).sqrMagnitude - (spreadRadius * spreadRadius + fireHazard.spreadRadius * fireHazard.spreadRadius) <= 0.0f)
+			//            fireHazard.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
+			//}
 
 			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
@@ -68,11 +69,6 @@ public class CFireHazard : MonoBehaviour
 			if(fa.AtmospherePercentage < thresholdPercentage)
 				ah.health += (1.0f / (fa.AtmospherePercentage / thresholdPercentage)) * Time.deltaTime;
 		}
-	}
-
-	void OnFixedUpdate()
-	{
-
 	}
 
 	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
@@ -84,11 +80,9 @@ public class CFireHazard : MonoBehaviour
 					//gameObject.GetComponent<Collider>().enabled = true;
 					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
 					foreach (ParticleSystem particleSystem in particleSystems)
-					{
 						particleSystem.Play();
-					}
 
-					gameObject.GetComponent<CFireHazard>().burning = true;
+					gameObject.GetComponent<CFireHazard>().burning_internal = true;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
@@ -98,20 +92,13 @@ public class CFireHazard : MonoBehaviour
 					//gameObject.GetComponent<Collider>().enabled = false;
 					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
 					foreach (ParticleSystem particleSystem in particleSystems)
-					{
 						particleSystem.Stop();
-					}
 
-					gameObject.GetComponent<CFireHazard>().burning = false;
+					gameObject.GetComponent<CFireHazard>().burning_internal = false;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
-	}
-
-	private void CacheStaticFireNode(CFireHazard rhs)
-	{
-
 	}
 
 	void OnInsufficientAtmosphere()
@@ -127,12 +114,14 @@ public class CFireHazard : MonoBehaviour
 		{
 			if (burning)
 			{
-				// Ignite players and other fires.
-				CFireHazard otherFire = collider.GetComponent<CFireHazard>();
-				if (otherFire != null)
-					otherFire.GetComponent<CActorHealth>().health -= Time.fixedDeltaTime;
+				// Damage everything within radius that is flammable.
+				CActorHealth victimHealth = collider.GetComponent<CActorHealth>();
+				if (victimHealth != null)
+					if(victimHealth.flammable)
+						victimHealth.health -= Time.fixedDeltaTime;
 				else
 				{
+					// Damage players - they use their own health script.
 					CPlayerHealth otherPlayerhealth = collider.GetComponent<CPlayerHealth>();
 					if (otherPlayerhealth != null)
 						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
