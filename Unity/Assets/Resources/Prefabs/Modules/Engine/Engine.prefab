@@ -196,6 +196,7 @@ GameObject:
   - 114: {fileID: 11400020}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400026}
+  - 114: {fileID: 11400018}
   m_Layer: 0
   m_Name: Engine
   m_TagString: Untagged
@@ -1382,6 +1383,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eComponentType: 4
+--- !u!114 &11400018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb2eb1b0945a9d458c730c46874665f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OuterRing: {fileID: 400030}
+  m_MiddleRing: {fileID: 400032}
+  m_InnerRing: {fileID: 400020}
+  m_AverageSpeed: 180
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1

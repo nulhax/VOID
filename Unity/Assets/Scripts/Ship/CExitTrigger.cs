@@ -41,14 +41,22 @@ public class CExitTrigger : MonoBehaviour
 	{
 		if(_Other.rigidbody != null && CNetwork.IsServer)
 		{
-			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
-			if(dynamicActor != null)
+			GameObject actor = _Other.rigidbody.gameObject;
+			CActorBoardable boardableActor = actor.GetComponent<CActorBoardable>();
+			if(boardableActor != null)
 			{
 				// Ensure the actor is not onboard any other facility before disembarking
-				if(!CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(dynamicActor.gameObject))
+				bool isWithinOtherFacility = false;
+				if(actor.GetComponent<CActorLocator>() != null)
+					isWithinOtherFacility = _Other.rigidbody.GetComponent<CActorLocator>().LastEnteredFacility != null;
+				else
+					isWithinOtherFacility = CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(actor);
+
+				// If not onboard within another facility, disembark the actor
+				if(!isWithinOtherFacility)
 				{
 					// Set the disembarking state
-					dynamicActor.DisembarkActor();
+					boardableActor.DisembarkActor();
 				}
 			}
 		}

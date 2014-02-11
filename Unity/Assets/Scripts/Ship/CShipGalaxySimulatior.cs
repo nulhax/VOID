@@ -23,10 +23,16 @@ using System.Collections.Generic;
 public class CShipGalaxySimulatior : MonoBehaviour 
 {
 	// Member Types
-	
+
+
 	// Member Fields
+	public Transform m_SimulationLight = null;
+
+
+	private Transform m_GalaxyLight = null;
 	private GameObject m_GalaxyShip = null;
-	
+
+
 	// Member Properties
 	public GameObject GalaxyShip
 	{
@@ -44,6 +50,20 @@ public class CShipGalaxySimulatior : MonoBehaviour
 		{
 			m_GalaxyShip = GameObject.FindGameObjectWithTag("GalaxyShip");
 		}
+
+		// Create the galaxy light
+		m_GalaxyLight = ((GameObject)GameObject.Instantiate(m_SimulationLight.gameObject)).transform;
+
+		// Add galaxy layer and remove the default layer + player
+		m_GalaxyLight.light.cullingMask |= 1 << LayerMask.NameToLayer("Galaxy");
+		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
+		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
+	}
+
+	public void Update()
+	{
+		// Update the simulation light rotation
+		m_SimulationLight.rotation = GetGalaxyToSimulationRot(m_GalaxyLight.rotation);
 	}
 
 	public Vector3 GetSimulationToGalaxyPos(Vector3 _SimulationPos)
