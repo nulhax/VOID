@@ -33,11 +33,20 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 	public event NotifyStateChange EventGenerationRateChanged;
 
 // Member Fields
+	private CNetworkVar<float> m_PowerGenerationRatePotential = null;
 	private CNetworkVar<float> m_PowerGenerationRate = null;
 	private CNetworkVar<bool> m_PowerGenerationActive = null;
 
 
 // Member Properties
+	public float PowerGenerationRatePotential
+	{ 
+		get { return(m_PowerGenerationRatePotential.Get()); }
+
+		[AServerOnly]
+		set { m_PowerGenerationRatePotential.Set(value); }
+	}
+
 	public float PowerGenerationRate
 	{ 
 		get { return (m_PowerGenerationRate.Get()); }
@@ -56,6 +65,7 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_PowerGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerGenerationRatePotential = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_PowerGenerationActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	

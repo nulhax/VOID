@@ -52,6 +52,7 @@ public class CActorHealthEditor : Editor
 			myTarget.syncNetworkHealth = EditorGUILayout.Toggle("Sync Network", myTarget.syncNetworkHealth);
 			myTarget.destroyOnZeroHealth = EditorGUILayout.Toggle("Destroy On Zero", myTarget.destroyOnZeroHealth);
 			myTarget.takeDamageOnImpact = EditorGUILayout.Toggle("Impact Damage", myTarget.takeDamageOnImpact);
+			myTarget.flammable = EditorGUILayout.Toggle("Flammable", myTarget.flammable);
 		}
 
 		foldoutState = EditorGUILayout.Foldout(foldoutState, "State");

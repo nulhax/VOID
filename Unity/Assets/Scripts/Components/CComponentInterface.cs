@@ -163,9 +163,16 @@ public class CComponentInterface : CNetworkMonoBehaviour
             EventHealthChange(this, GetComponent<CActorHealth>());
         }
 
-		if(CNetwork.IsServer && _CurrentHealth == 0.0f)
+		if(CNetwork.IsServer) 
 		{
-			m_bIsFunctional.Set(false);
+			if(_CurrentHealth == 0.0f)
+			{
+				m_bIsFunctional.Set(false);
+			}
+			else if(_CurrentHealth == _Sender.GetComponent<CActorHealth>().health_max)
+			{
+				m_bIsFunctional.Set(true);
+			}
 		}
 	}
 

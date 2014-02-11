@@ -1316,8 +1316,8 @@ MonoBehaviour:
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
-  syncNetworkState: 0
-  health_max: Infinity
+  syncNetworkState: 1
+  health_max: 100
   health_min: 0
   health_initial: 100
   health_previous: 0
@@ -1340,8 +1340,8 @@ MonoBehaviour:
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
   takeDamageOnImpact: 1
-  syncNetworkState: 0
-  health_max: Infinity
+  syncNetworkState: 1
+  health_max: 100
   health_min: 0
   health_initial: 100
   health_previous: 0

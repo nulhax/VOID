@@ -23,13 +23,14 @@ public class CActorHealth : CNetworkMonoBehaviour
 	public delegate void OnSetState(GameObject gameObject, byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	[SerializeField] public bool flammable = true;
 	[SerializeField] public bool callEventsOnStart = false;
 	[SerializeField] public bool syncNetworkHealth = true;
 	[SerializeField] public bool destroyOnZeroHealth = false;
 	[SerializeField] public bool takeDamageOnImpact = false;
 	[SerializeField] public bool syncNetworkState = true;
 
-	[SerializeField] public float health_max = float.PositiveInfinity;
+	[SerializeField] public float health_max = 100.0f;
 	[SerializeField] public float health_min = 0.0f;
 	[SerializeField] public float health_initial = 100.0f;
 	[HideInInspector] public float health_previous;
