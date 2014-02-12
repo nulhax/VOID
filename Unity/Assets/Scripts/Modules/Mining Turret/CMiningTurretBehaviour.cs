@@ -76,8 +76,8 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		_cStream.Write(s_cSerializeStream);
 		s_cSerializeStream.Clear();
 	}
-	
-	
+
+
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
@@ -90,7 +90,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 			{
 				CMiningTurretBehaviour cMiningTurretBehaviour = cTurretObject.GetComponent<CMiningTurretBehaviour>();		
 				ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-				
+
 				switch (eAction)
 				{
 				case ENetworkAction.StartFractureLaser:
@@ -104,11 +104,11 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 				case ENetworkAction.StartExtractorBeam:
                     cMiningTurretBehaviour.m_bExtracterBeamButtonDown = true;
 					break;
-					
+
 				case ENetworkAction.StopExtractorBeam:
                     cMiningTurretBehaviour.m_bExtracterBeamButtonDown = false;
 					break;
-					
+
 				default:
 					Debug.LogError(string.Format("Unknown network action ({0})", eAction));
 					break;
@@ -145,13 +145,16 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			UpdateFractureLaser();
+            if (transform.FindChild("CalibratorComponent").GetComponent<CActorHealth>().health > 0)
+            {
+                UpdateFractureLaser();
+            }
 		}
 
 		UpdateFractureLaserProjectile();
         UpdateExtractorBeamProjectile();
 	}
-	
+
 
 	void UpdateFractureLaser()
 	{
@@ -264,8 +267,8 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             }
         }
     }
-	
-	
+
+
 	[AClientOnly]
 	void OnTurretControllerChange(ulong _ulPreviousPlayerId, ulong _ulNewPlayerId)
 	{
@@ -275,7 +278,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnLaserCommand);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnExtracterBeamCommand);
 		}
-		
+
 		if (_ulPreviousPlayerId == CNetwork.PlayerId)
 		{
 			// Unsubscriber to input events
@@ -378,7 +381,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	bool m_bFractureLaserButtonDown = false;
 	bool m_bExtracterBeamButtonDown = false;
-	
+
 	static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
