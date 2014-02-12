@@ -41,6 +41,8 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	private float m_ShipGenerationRatePotential = 0.0f;
 	private float m_ShipCurentGenerationRate = 0.0f;
 
+	private float m_ShipCurrentConsumptionRate = 0.0f;
+
 	// Member Properties
 	public float ShipGenerationRatePotential
 	{
@@ -67,6 +69,11 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		get { return (m_ShipCurrentChargeCapacity); } 
 	}
 
+	public float ShipCurrentConsumptionRate
+	{
+		get { return (m_ShipCurrentConsumptionRate); } 
+	}
+
 	
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -81,17 +88,15 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
-		// Update the generation variables
+		// Update the power variables
 		UpdateGenerationVariables();
+		UpdateChargeVariables();
+		UpdateConsumptionVariables();
 
 		if(CNetwork.IsServer)
 		{
-			UpdateShipPowerStorage();
-			UpdateFacilityPowerConsumption();
+			UpdatePowerGenerationAndConsumption();
 		}
-
-		// Update the charge variables
-		UpdateChargeVariables();
 	}
 	
 	public void RegisterPowerGenerator(GameObject _PowerGenerator)
@@ -160,62 +165,33 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	[AServerOnly]
-	private void UpdateShipPowerStorage()
+	private void UpdateConsumptionVariables()
 	{
-		// Get the actual generation for this frame
-		float combinedGeneration = m_ShipCurentGenerationRate * Time.deltaTime;
-
-		// Select the available storage units
-		var availableStorageUnits = 
-			from psm in m_PowerStorages
-			where psm.GetComponent<CPowerStorageBehaviour>().IsBatteryChargeAvailable
-			select psm;
-		
-		// Calculate the even distribution of power to all storage modules
-		float evenDistribution = combinedGeneration / availableStorageUnits.ToList().Count;
-
-		// Find the storage modules that are near capacity and fill them up
-		foreach(GameObject ps in availableStorageUnits)
+		// Calculate the combined consumption of all facilities
+		m_ShipCurrentConsumptionRate = 0.0f;
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 		{
-			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
-
-			float newCharge = psb.BatteryCharge + evenDistribution;
-			if(newCharge > psb.BatteryCapacity)
-			{
-				// Top-up the charge and re-evaluate the even distribution
-				float chargeAddition = psb.BatteryCapacity - psb.BatteryCharge;
-				psb.BatteryCharge = psb.BatteryCapacity;
-				evenDistribution -= chargeAddition;
-			}
-		}
-
-		// Apply the even amount to the rest of storage units
-		foreach(GameObject ps in availableStorageUnits)
-		{
-			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
-
-			if(psb.BatteryCharge != psb.BatteryCapacity)
-			{
-				psb.BatteryCharge += evenDistribution;
-			}
+			CFacilityPower fp = facility.GetComponent<CFacilityPower>();
+			
+			if(fp.IsPowerActive)
+				m_ShipCurrentConsumptionRate += fp.PowerConsumption;
 		}
 	}
 
 	[AServerOnly]
-	private void UpdateFacilityPowerConsumption()
+	private void UpdatePowerGenerationAndConsumption()
 	{
-		// Calculate the combined consumption of all facilities
-		float combinedConsumption = gameObject.GetComponent<CShipFacilities>().GetAllFacilities().Sum((f) => {
-			CFacilityPower fp = f.GetComponent<CFacilityPower>();
-			return(fp.IsPowerActive ? fp.PowerConsumption * Time.deltaTime : 0.0f);
-		});
+		// Calculate the actual generation for this frame
+		float combinedGeneration = m_ShipCurentGenerationRate * Time.deltaTime;
 
-		// Check if the pool of battery charge is insuffcient for the consumption
-		if(combinedConsumption > m_ShipCurrentCharge)
+		// Calculate the combined consumption of all facilities
+		float combinedConsumption = m_ShipCurrentConsumptionRate * Time.deltaTime;
+
+		// If the current charge + combined generation of the ship is less than this frames consumption, there is insufficient power
+		if(combinedConsumption > (m_ShipCurrentCharge + combinedGeneration))
 		{
 			// Deactivate power to all facilities onboard the ship
-			foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
+			foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 			{
 				CFacilityPower fp = facility.GetComponent<CFacilityPower>();
 				
@@ -223,29 +199,75 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 					fp.InsufficienttPower();
 			}
 		}
-		else
+
+		// Select the available storage units
+		var availableStorageUnits = 
+			from psm in m_PowerStorages
+			where psm.GetComponent<CPowerStorageBehaviour>().IsBatteryChargeAvailable
+			select psm.GetComponent<CPowerStorageBehaviour>();
+
+		// Distribute the charge and consumption to the storage units
+		DistributeChargeAndConsumption(combinedGeneration, combinedConsumption, availableStorageUnits.ToList());
+	}
+
+	private void DistributeChargeAndConsumption(float _ChargeAmount, float _ConsumptionAmount, List<CPowerStorageBehaviour> _AvailabeStorageUnits)
+	{
+		// Calculate the even distribution of power to all available storage modules
+		float evenDistribution = _ChargeAmount / _AvailabeStorageUnits.Count;
+		
+		// Calculate the combined ratio of battery charge vs. capacity of each power generator
+		float combinedChargeRatio = _AvailabeStorageUnits.Sum((psb) => {
+			return(psb.IsBatteryChargeAvailable ? psb.BatteryCharge / psb.BatteryCapacity : 0.0f);
+		});
+		
+		// Apply the new ammount of power to each
+		float leftOverCharge = 0.0f;
+		float comb = 0.0f;
+		foreach(CPowerStorageBehaviour psb in _AvailabeStorageUnits)
 		{
-			// Calculate the combined ratio of battery charge vs. capacity of each power generator
-			float combinedBatteryChargeRatio = m_PowerStorages.Sum((psm) => {
-				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
-				return(psb.IsBatteryChargeAvailable ? psb.BatteryCharge / psb.BatteryCapacity : 0.0f);
-			});
+			// Calculate the siphon amount based on the charge ratio of the battery / combined charge ratio of the ship
+			float chargeRatio = (psb.BatteryCharge / psb.BatteryCapacity);
+			float siphonAmount = chargeRatio / combinedChargeRatio * _ConsumptionAmount;
+			float finalAmount = evenDistribution + (siphonAmount * -1.0f);
 
-			// Siphon an average weighing of battery from each power generator
-			foreach(GameObject psm in m_PowerStorages)
+			comb+=siphonAmount;
+
+			// Make sure to count the left over charge if near capacity
+			float finalCharge = psb.BatteryCharge + finalAmount;
+			if(finalCharge > psb.BatteryCapacity)
 			{
-				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
+				// Cap the charge at the storage capacity and get the left over amount
+				leftOverCharge += finalCharge - psb.BatteryCapacity;
+				psb.BatteryCharge = psb.BatteryCapacity;
+			}
+			else if(finalCharge < 0.0f)
+			{
+				// Cap the charge at zero
+				psb.BatteryCharge = 0.0f;
+			}
+			else
+			{
+				// Apply the final amount to the storage charge
+				psb.BatteryCharge = finalCharge;
+			}
+		}
 
-				// Only count if battery charge is available
-				if(psb.IsBatteryChargeAvailable)
-				{
-					// Calculate the weighing based on the charge of the battery ratio to maximum capacity
-					float siphonAmount = psb.BatteryCharge / psb.BatteryCapacity / combinedBatteryChargeRatio * combinedConsumption;
+		if(!Mathf.Approximately(comb, _ConsumptionAmount))
+			Debug.Log(comb + " " + _ConsumptionAmount);
 
-					// Siphon the ammount out of the battery
-					if(!Single.IsNaN(siphonAmount))
-						psb.BatteryCharge -= siphonAmount;
-				}
+		// If there is any charge or consumption left over, distribute them again
+		if(!Mathf.Approximately(leftOverCharge, 0.0f))
+		{
+			// Select the storage units that are not fully charged yet
+			var availableStorageUnits = 
+				from psm in _AvailabeStorageUnits
+				where !psm.GetComponent<CPowerStorageBehaviour>().IsBatteryAtCapacity
+				select psm.GetComponent<CPowerStorageBehaviour>();
+
+			// Make sure there are some available
+			if(availableStorageUnits.Count() != 0)
+			{
+				DistributeChargeAndConsumption(leftOverCharge, 0.0f, availableStorageUnits.ToList());
 			}
 		}
 	}
@@ -311,7 +333,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		}
 		
 		string facilitiesOutput = "FacilityPowerInfo\n";
-		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 		{
 			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
 			CFacilityPower fp = facility.GetComponent<CFacilityPower>();

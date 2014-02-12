@@ -74,7 +74,7 @@ public class CDUIShipPropulsionRoot : MonoBehaviour
 		
 		// Update the lable
 		m_PropulsionRate.color = CDUIUtilites.LerpColor(value);
-		m_PropulsionRate.text = shipGeneration + " / " + shipGenerationPotential;
+		m_PropulsionRate.text = Mathf.RoundToInt(shipGeneration) + " / " + Mathf.RoundToInt(shipGenerationPotential);
 		
 		// Update the positive/negative report
 		if(value < m_LastPropulsionValue)
@@ -94,6 +94,7 @@ public class CDUIShipPropulsionRoot : MonoBehaviour
 			m_PropulsionNegative.enabled = false;
 			m_PropulsionPositive.enabled = false;
 			m_PropulsionIdle.enabled = true;
+			m_PropulsionIdle.color = CDUIUtilites.LerpColor(value);
 		}
 		
 		m_LastPropulsionValue = value;

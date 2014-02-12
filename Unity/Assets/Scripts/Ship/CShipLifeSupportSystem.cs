@@ -101,14 +101,14 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 	private void UpdateFacilityAtmosphereRefilling()
 	{
 		// Reset all facility refilling
-		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 		{
 			facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = 0.0f;
 		}
 
 		// Get the facilities that are requiring a refill of atmosphere (i.e, have a leak, hull breach, consumer)
 		var facilitiesRequiringRefilling = 
-			from facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities()
+			from facility in gameObject.GetComponent<CShipFacilities>().Facilities
 			where facility.GetComponent<CFacilityAtmosphere>().RequiresAtmosphereRefill
 			select facility;
 		
@@ -144,7 +144,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 	{
 		// Calculate the combined quantity of atmosphere between all facilities
 		float combinedVolume = 0.0f;
-		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 		{
 			combinedVolume += facility.GetComponent<CFacilityAtmosphere>().AtmosphereVolume;
 		}
@@ -207,7 +207,7 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		}
 
 		string facilitiesOutput = "FacilityAtmosphereInfo\n";
-		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().GetAllFacilities())
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 		{
 			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
 			CFacilityAtmosphere fa = facility.GetComponent<CFacilityAtmosphere>();

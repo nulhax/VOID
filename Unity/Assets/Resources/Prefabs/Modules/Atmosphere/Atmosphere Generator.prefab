@@ -29,7 +29,6 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400020}
-  - 114: {fileID: 11400024}
   m_Layer: 0
   m_Name: Atmosphere Generator
   m_TagString: Untagged
@@ -344,11 +343,11 @@ GameObject:
   - 114: {fileID: 11400056}
   - 114: {fileID: 11400054}
   - 82: {fileID: 8200002}
-  - 114: {fileID: 11400052}
   - 54: {fileID: 5400004}
   - 135: {fileID: 13500000}
   - 114: {fileID: 11400050}
   - 114: {fileID: 11400048}
+  - 114: {fileID: 11400052}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged
@@ -1151,31 +1150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc52d1f6e9f60498d8475f5e1ba2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400024
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flammable: 1
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: 100
-  health_min: 0
-  health_initial: 100
-  health_previous: 0
-  state_initial: 0
-  stateTransitions: []
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
 --- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1

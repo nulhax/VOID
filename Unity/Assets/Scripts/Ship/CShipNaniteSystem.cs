@@ -35,12 +35,12 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	private int m_ShipCurrentNanites = 0;
 
 	// Member Properties
-	public float ShipNanitesPotential
+	public int ShipNanitesPotential
 	{
 		get { return (m_ShipNanitesPotential); } 
 	}
 	
-	public float ShipCurentNanites
+	public int ShipCurentNanites
 	{
 		get { return (m_ShipCurrentNanites); } 
 	}

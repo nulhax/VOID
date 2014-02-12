@@ -326,11 +326,11 @@ GameObject:
   - 114: {fileID: 11400052}
   - 114: {fileID: 11400050}
   - 82: {fileID: 8200002}
-  - 114: {fileID: 11400014}
   - 54: {fileID: 5400004}
   - 135: {fileID: 13500000}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400010}
+  - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged

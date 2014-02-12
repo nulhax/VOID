@@ -44,10 +44,13 @@ public class CDUIShipPowerRoot : MonoBehaviour
 	public UIProgressBar m_ChargeBar = null;
 	public UILabel m_ChargeRate = null;
 
+	public UILabel m_Consumption = null;
+
 	public List<UISprite> m_ErrorIcons = new List<UISprite>();
 
 	private float m_LastGenerationValue = 0.0f;
 	private float m_LastChargeValue = 0.0f;
+	private int m_LastConsumptionValue = 0;
 
 	private bool m_ShowErrors = false;
 
@@ -65,6 +68,7 @@ public class CDUIShipPowerRoot : MonoBehaviour
 	{
 		UpdateGenerationInformation();
 		UpdateChargeInformation();
+		UpdateConsumptionInformation();
 		UpdateErrors();
 	}
 
@@ -83,7 +87,7 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		
 		// Update the lable
 		m_GenerationRate.color = CDUIUtilites.LerpColor(value);
-		m_GenerationRate.text = shipGeneration + " / " + shipGenerationPotential;
+		m_GenerationRate.text = Mathf.RoundToInt(shipGeneration) + " / " + Mathf.RoundToInt(shipGenerationPotential);
 
 		// Update the positive/negative report
 		if(value < m_LastGenerationValue)
@@ -103,22 +107,7 @@ public class CDUIShipPowerRoot : MonoBehaviour
 			m_GenerationNegative.enabled = false;
 			m_GenerationPositive.enabled = false;
 			m_GenerationIdle.enabled = true;
-		}
-
-		// Update the error icons
-		if(value < 0.2f)
-		{
-			foreach(UISprite s in m_ErrorIcons)
-			{
-				s.enabled = true;
-			}
-		}
-		else
-		{
-			foreach(UISprite s in m_ErrorIcons)
-			{
-				s.enabled = false;
-			}
+			m_GenerationIdle.color = CDUIUtilites.LerpColor(value);
 		}
 
 		m_LastGenerationValue = value;
@@ -139,7 +128,7 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		
 		// Update the lable
 		m_ChargeRate.color = CDUIUtilites.LerpColor(value);
-		m_ChargeRate.text = shipCharge + " / " + shipChargeCapacity;
+		m_ChargeRate.text = Mathf.RoundToInt(shipCharge) + " / " + Mathf.RoundToInt(shipChargeCapacity);
 		
 		// Update the positive/negative report
 		if(value < m_LastChargeValue)
@@ -159,16 +148,47 @@ public class CDUIShipPowerRoot : MonoBehaviour
 			m_ChargeNegative.enabled = false;
 			m_ChargePositive.enabled = false;
 			m_ChargeIdle.enabled = true;
+			m_ChargeIdle.color = CDUIUtilites.LerpColor(value);
 		}
 
 		m_LastChargeValue = value;
+	}
+
+	private void UpdateConsumptionInformation()
+	{
+		// Get the ship consumption and generation rate
+		float shipConsumptionRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().ShipCurrentConsumptionRate;
+		float shipGenerationRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().ShipCurentGenerationRate;
+		int finalValue = Mathf.RoundToInt(shipGenerationRate - shipConsumptionRate);
+
+		if(finalValue > 0)
+		{
+			// Update the text to be positive
+			m_Consumption.text = "+" + finalValue.ToString();
+			m_Consumption.color = Color.green;
+		}
+		else if(finalValue < 0)
+		{
+			// Update the text to be negative
+			m_Consumption.text = finalValue.ToString();
+			m_Consumption.color = Color.red;
+		}
+		else
+		{
+			// Update the text to be neutral
+			m_Consumption.text = finalValue.ToString();
+			m_Consumption.color = Color.cyan;
+		}
+
+		m_LastConsumptionValue = finalValue;
 	}
 
 	private void UpdateErrors()
 	{
 		// Update the error icons
 		bool showingErrors = m_ShowErrors;
-		if(m_LastChargeValue < 0.2f || m_LastGenerationValue < 0.2f)
+		if(m_LastChargeValue < 0.2f || 
+		   m_LastGenerationValue < 0.2f)
 		{
 			m_ShowErrors = true;
 		}

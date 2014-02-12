@@ -13,6 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CActorAtmosphericConsumer))]
 [RequireComponent(typeof(CActorHealth))]
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
@@ -29,13 +30,15 @@ public class CFireHazard : MonoBehaviour
 
 	void Awake()
 	{
-		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
-		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
+
 	}
 
 	void Start()
 	{
 		//s_AllFires.Add(this);
+
+		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
+		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
 	}
 
 	void OnDestroy()
