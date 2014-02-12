@@ -145,7 +145,9 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
             
             m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];            
             m_fTargetSwitchTimer = 0.0f;
-            Debug.Log("switched target.");
+            // Commented out by Nathan to avoid extraneous debug information.
+            // Feel free to uncomment for debugging purposes when required.
+            //Debug.Log("switched target.");
         }
     }
     
@@ -177,8 +179,10 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         s_cSerializeStream.Write(senderID);
         s_cSerializeStream.Write(targetID);     
         s_cSerializeStream.Write((byte)m_eRepairState);
-        
-        Debug.Log("Beginning repairs");
+
+        // Commented out by Nathan to avoid extraneous debug information.
+        // Feel free to uncomment for debugging purposes when required.
+        //Debug.Log("Beginning repairs");
     }
     
     public void EndRepairs()

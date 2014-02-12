@@ -1067,6 +1067,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_cSeat: {fileID: 100040}
   m_LookAt: {fileID: 400038}
+  m_Components:
+  - {fileID: 11400022}
+  - {fileID: 11400018}
+  - {fileID: 11400032}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1140,6 +1144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -1221,6 +1226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -1245,6 +1251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0

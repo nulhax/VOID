@@ -76,7 +76,11 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-		// Empty
+        CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
+
+        // Unsubscribe from cockpit events
+        cCockpit.EventPlayerEnter -= new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
+        cCockpit.EventPlayerLeave -= new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
 	}
 
 
