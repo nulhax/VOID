@@ -225,7 +225,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 		UpdateGalaxyAesthetic(mCentreCell);
 
 		// Statistical data sometimes helps spot errors.
-		Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
+        // Commented out by Nathan to avoid extranious logging details.
+        // Feel free to uncomment when required for debugging purposes.
+		//Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
 
 		if (CNetwork.IsServer)
 		{
