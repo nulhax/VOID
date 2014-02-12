@@ -351,6 +351,8 @@ public class CDUIElement : CNetworkMonoBehaviour
 		s_IsSyncingNetworkCallbacks = false;
 		
 		// Debug...
-		Debug.Log("Recieved Notification: " + _Notification.ToString() + " [" + gameObject.name + "]");
+        // Commented out by Nathan to avoid extraneous debug information.
+        // Feel free to uncomment for debugging purposes when required.
+		//Debug.Log("Recieved Notification: " + _Notification.ToString() + " [" + gameObject.name + "]");
 	}
 }
