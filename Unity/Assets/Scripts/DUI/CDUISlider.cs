@@ -20,8 +20,9 @@ using System;
 
 /* Implementation */
 
-[RequireComponent(typeof(UIProgressBar))]
+
 [RequireComponent(typeof(CDUIElement))]
+[RequireComponent(typeof(UIProgressBar))]
 public class CDUISlider : CNetworkMonoBehaviour 
 {
 	// Member Types
@@ -36,16 +37,15 @@ public class CDUISlider : CNetworkMonoBehaviour
 	
 	
 	// Member Fields
-	private CNetworkVar<float> m_Value = null;
 	private bool m_IsModifyingValueLocally = false;
-	private bool m_IgnoreLocalValueChange = false;
-	
+	private bool m_IsDirty = false;
+
+	private CNetworkVar<float> m_Value = null;
+	private UIProgressBar m_CachedProgressBar = null;
+
 	private float m_TimeSinceModification = 0.0f;
 	private float m_WaitTillLocalUpdateTime = 1.0f;
-	
-	private float m_TimeSinceIgnoreValueChange = 0.0f;
-	private float m_WaitTillValueHandle = 0.5f;
-	
+
 	static private CNetworkStream s_SliderNotificationStream = new CNetworkStream();
 	
 	
@@ -60,9 +60,12 @@ public class CDUISlider : CNetworkMonoBehaviour
 	
 	private void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
-
+		if(_cSyncedNetworkVar == m_Value)
+		{
+			m_IsDirty = true;
+		}
 	}
-	
+
 	[AClientOnly]
 	static public void SerializeSliderEvents(CNetworkStream _cStream)
 	{
@@ -93,63 +96,66 @@ public class CDUISlider : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+	public void Start()
+	{
+		m_CachedProgressBar = gameObject.GetComponent<UIProgressBar>();
+	}
 	
 	public void Update()
 	{
 		if(m_IsModifyingValueLocally)
+		{
 			m_TimeSinceModification += Time.deltaTime;
-		
-		if(m_TimeSinceModification > m_WaitTillLocalUpdateTime)
-		{
-			m_IsModifyingValueLocally = false;
+			m_IsDirty = false;
+
+			if(m_TimeSinceModification > m_WaitTillLocalUpdateTime)
+			{
+				m_IsModifyingValueLocally = false;
+			}
 		}
-		
-		// Only update after a period of not changing the value and if
-		// local value differs from the synced value
-		if(!m_IsModifyingValueLocally)
+
+		// If is not modifying locally and value is dirty, update it
+		if(!m_IsModifyingValueLocally && m_IsDirty)
 		{
-			UpdateLocalSliderValue();
+			UpdateLocalBarValue();
 		}
 	}
 	
 	public void HandleValueChange() 
 	{
-		// Don't handle a value change from myself
-		if(m_IgnoreLocalValueChange)
-			return;
-
-		// Only add to the stream when it is empty
-		if(!s_SliderNotificationStream.HasUnreadData)
+		if(CNetwork.IsServer)
 		{
-			// Serialise the event to the server
-			s_SliderNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
-			s_SliderNotificationStream.Write((byte)ESliderNotificationType.OnValueChange);
-			s_SliderNotificationStream.Write(UIProgressBar.current.value);
-			
-			m_IsModifyingValueLocally = true;
-			m_TimeSinceModification = 0.0f;
+			// Server updates the network var
+			SetSliderValue(UIProgressBar.current.value);
+		}
+		else
+		{
+			// Only add to the stream when it is empty
+			if(!s_SliderNotificationStream.HasUnreadData && !m_IsDirty)
+			{
+				// Serialise the event to the server
+				s_SliderNotificationStream.Write(GetComponent<CNetworkView>().ViewId);
+				s_SliderNotificationStream.Write((byte)ESliderNotificationType.OnValueChange);
+				s_SliderNotificationStream.Write(UIProgressBar.current.value);
+				
+				m_IsModifyingValueLocally = true;
+				m_TimeSinceModification = 0.0f;
+			}
 		}
 	}
-	
+
 	[AServerOnly]
-	public void SetSliderValue(float _Value)
+	protected void SetSliderValue(float _Value)
 	{
 		m_Value.Set(_Value);
 	}
 	
-	private void UpdateLocalSliderValue()
+	protected void UpdateLocalBarValue()
 	{
-		m_IgnoreLocalValueChange = true;
-
-		UIProgressBar pb = gameObject.GetComponent<UIProgressBar>();
-		float localValue = pb.value;
-		float syncValue = m_Value.Get();
-		if(localValue != syncValue)
-		{
-			pb.value = syncValue;
-		}
-
-		m_IgnoreLocalValueChange = false;
+		if(!Mathf.Approximately(m_CachedProgressBar.value, m_Value.Get()))
+			m_CachedProgressBar.value = m_Value.Get();
+		
+		m_IsDirty = false;
 	}
-	
 }

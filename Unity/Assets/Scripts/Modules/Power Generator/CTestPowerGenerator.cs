@@ -53,12 +53,10 @@ public class CTestPowerGenerator: MonoBehaviour
 		// Register for when the circuitry breaks/fixes
 		m_CircuitryComponent.EventComponentBreak += HandleCircuitryBreaking;
 		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
-		
-		// Register for when the generation rate changes
-		m_PowerGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
 
 		// Get the DUI of the power generator
 		m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
+		m_DUIPowerGeneration.RegisterPowerGenerator(gameObject);
 
 		if(CNetwork.IsServer)
 		{
@@ -82,9 +80,6 @@ public class CTestPowerGenerator: MonoBehaviour
 		{
 			m_PowerGenerator.DeactivatePowerGeneration();
 		}
-
-		// Update the UI generation active
-		m_DUIPowerGeneration.SetPowerGenerationActive(false);
 	}
 
 	private void HandleCircuitryFixing(CComponentInterface _Component)
@@ -93,14 +88,5 @@ public class CTestPowerGenerator: MonoBehaviour
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
 		}
-
-		// Update the UI generation active
-		m_DUIPowerGeneration.SetPowerGenerationActive(true);
-	}
-
-	private void HandleGenerationRateChange(CPowerGenerationBehaviour _PowerGen)
-	{
-		// Update the UI generation rate
-		m_DUIPowerGeneration.SetPowerGenerationRate(m_PowerGenerator.PowerGenerationRate, m_PowerGenerator.PowerGenerationRatePotential);
 	}
 }

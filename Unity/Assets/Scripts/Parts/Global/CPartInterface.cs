@@ -131,7 +131,7 @@ public class CPartInterface : CNetworkMonoBehaviour
             m_ulOwnerPlayerId = _ulPlayerId;
 
             // Set owning object view id
-            m_cOwnerActorViewId.Set(CGamePlayers.FindPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
+            m_cOwnerActorViewId.Set(CGamePlayers.GetPlayerActor(_ulPlayerId).GetComponent<CNetworkView>().ViewId);
 
             // Notify observers
             if (EventPickedUp != null)

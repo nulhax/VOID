@@ -65,7 +65,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			}
 			else
 			{
-				return (CNetwork.Factory.FindObject(CGamePlayers.FindPlayerActorViewId(MountedPlayerId)));
+				return (CNetwork.Factory.FindObject(CGamePlayers.GetPlayerActorViewId(MountedPlayerId)));
 			}
 		}
 	}
@@ -227,7 +227,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	[AServerOnly]
 	void HandleEnterCockpit(ulong _ulPlayerId)
 	{
-		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
+		GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_ulPlayerId);
 
 		if ( cPlayerActor != null &&!IsMounted)
 		{
@@ -262,7 +262,7 @@ public class CCockpit : CNetworkMonoBehaviour
 		if (MountedPlayerId == _ulPlayerId)
 		{
 			// Teleport player back to entered position
-			GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
+			GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_ulPlayerId);
 
 			if (cPlayerActor != null)
 			{

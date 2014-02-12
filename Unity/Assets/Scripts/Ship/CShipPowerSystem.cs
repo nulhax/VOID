@@ -31,7 +31,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private List<GameObject> m_PowerGenerators = new List<GameObject>();
-	private List<GameObject> m_PowerStorageModules = new List<GameObject>();
+	private List<GameObject> m_PowerStorages = new List<GameObject>();
 	
 	private float m_ShipCurrentCharge = 0.0f; 
 
@@ -42,7 +42,6 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	private float m_ShipCurentGenerationRate = 0.0f;
 
 	// Member Properties
-
 	public float ShipGenerationRatePotential
 	{
 		get { return (m_ShipGenerationRatePotential); } 
@@ -82,12 +81,17 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 	
 	public void Update()
 	{
+		// Update the generation variables
+		UpdateGenerationVariables();
+
 		if(CNetwork.IsServer)
 		{
 			UpdateShipPowerStorage();
 			UpdateFacilityPowerConsumption();
-      //      UpdateModulePowerConsumption();
 		}
+
+		// Update the charge variables
+		UpdateChargeVariables();
 	}
 	
 	public void RegisterPowerGenerator(GameObject _PowerGenerator)
@@ -108,25 +112,22 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 	public void RegisterPowerStorage(GameObject _PowerStorage)
 	{
-		if(!m_PowerStorageModules.Contains(_PowerStorage))
+		if(!m_PowerStorages.Contains(_PowerStorage))
 		{
-			m_PowerStorageModules.Add(_PowerStorage);
+			m_PowerStorages.Add(_PowerStorage);
 		}
 	}
 	
 	public void UnregisterPowerStorage(GameObject _PowerStorage)
 	{
-		if(m_PowerStorageModules.Contains(_PowerStorage))
+		if(m_PowerStorages.Contains(_PowerStorage))
 		{
-			m_PowerStorageModules.Remove(_PowerStorage);
+			m_PowerStorages.Remove(_PowerStorage);
 		}
 	}
 
-
-	[AServerOnly]
-	public void UpdateShipPowerStorage()
+	private void UpdateGenerationVariables()
 	{
-		// Calculate the combined generation of all the generators
 		m_ShipCurentGenerationRate = 0.0f;
 		m_ShipGenerationRatePotential = 0.0f;
 		foreach(GameObject pg in m_PowerGenerators)
@@ -138,13 +139,36 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			}
 			m_ShipGenerationRatePotential += pgb.PowerGenerationRatePotential;
 		}
+	}
 
+	private void UpdateChargeVariables()
+	{
+		m_ShipCurrentCharge = 0.0f;
+		m_ShipCurrentChargeCapacity = 0.0f;
+		m_ShipChargeCapacityPotential = 0.0f;
+		foreach(GameObject ps in m_PowerStorages)
+		{
+			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
+			
+			if(psb.IsBatteryChargeAvailable)
+			{
+				m_ShipCurrentCharge += psb.BatteryCharge;
+				m_ShipCurrentChargeCapacity += psb.BatteryCapacity;
+			}
+			
+			m_ShipChargeCapacityPotential += psb.BatteryCapacity;
+		}
+	}
+
+	[AServerOnly]
+	private void UpdateShipPowerStorage()
+	{
 		// Get the actual generation for this frame
 		float combinedGeneration = m_ShipCurentGenerationRate * Time.deltaTime;
 
 		// Select the available storage units
 		var availableStorageUnits = 
-			from psm in m_PowerStorageModules
+			from psm in m_PowerStorages
 			where psm.GetComponent<CPowerStorageBehaviour>().IsBatteryChargeAvailable
 			select psm;
 		
@@ -167,7 +191,6 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		}
 
 		// Apply the even amount to the rest of storage units
-		float totalBatteryCharge = 0.0f;
 		foreach(GameObject ps in availableStorageUnits)
 		{
 			CPowerStorageBehaviour psb = ps.GetComponent<CPowerStorageBehaviour>();
@@ -176,12 +199,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			{
 				psb.BatteryCharge += evenDistribution;
 			}
-
-			totalBatteryCharge += psb.BatteryCharge;
 		}
-		
-		// Set the battery charge pool
-		m_ShipCurrentCharge = totalBatteryCharge;
 	}
 
 	[AServerOnly]
@@ -208,16 +226,13 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		else
 		{
 			// Calculate the combined ratio of battery charge vs. capacity of each power generator
-			float combinedBatteryChargeRatio = m_PowerStorageModules.Sum((psm) => {
+			float combinedBatteryChargeRatio = m_PowerStorages.Sum((psm) => {
 				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
 				return(psb.IsBatteryChargeAvailable ? psb.BatteryCharge / psb.BatteryCapacity : 0.0f);
 			});
 
 			// Siphon an average weighing of battery from each power generator
-			m_ShipCurrentCharge = 0.0f;
-			m_ShipCurrentChargeCapacity = 0.0f;
-			m_ShipChargeCapacityPotential = 0.0f;
-			foreach(GameObject psm in m_PowerStorageModules)
+			foreach(GameObject psm in m_PowerStorages)
 			{
 				CPowerStorageBehaviour psb = psm.GetComponent<CPowerStorageBehaviour>();
 
@@ -230,11 +245,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 					// Siphon the ammount out of the battery
 					if(!Single.IsNaN(siphonAmount))
 						psb.BatteryCharge -= siphonAmount;
-
-					m_ShipCurrentCharge += psb.BatteryCharge;
-					m_ShipCurrentChargeCapacity += psb.BatteryCapacity;
 				}
-				m_ShipChargeCapacityPotential += psb.BatteryCapacity;
 			}
 		}
 	}
@@ -285,7 +296,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		}
 		
 		string storageOutput = "StorageInfo\n";
-		foreach(GameObject storage in m_PowerStorageModules)
+		foreach(GameObject storage in m_PowerStorages)
 		{
 			CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(storage);
 			CPowerStorageBehaviour psb = storage.GetComponent<CPowerStorageBehaviour>();

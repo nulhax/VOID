@@ -86,6 +86,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
     void Start()
     {
+		m_CachedShipPropulsionSystem = CGameShips.Ship.GetComponent<CShipPropulsionSystem>();
     }
 
 
@@ -96,7 +97,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
     void Update()
     {
-        // Empty
+		UpdateVariables();
     }
 
 
@@ -109,11 +110,27 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         }
     }
 
+	void UpdateVariables()
+	{
+		float currentPropulsion = m_CachedShipPropulsionSystem.ShipCurentPropulsion;
+
+		// Debug: Set the galaxy ship stuff based on the propulsion
+
+		m_fAngularAcceleration   = Mathf.Deg2Rad * currentPropulsion;
+		m_fAngularMaxSpeed       = Mathf.Deg2Rad * 60.0f;
+		m_fAngularVelocityDamp   = Mathf.Deg2Rad * 10.0f;
+		m_fAngularHandbreakpower = 2.0f;
+
+		m_fDirectionalMaxSpeed       = 400.0f;
+		m_fDirectionalAcceleration   = currentPropulsion;
+		m_fDirectionalHandbreakPower = 3.0f;
+	}
+
 
     void UpdateDirectionalThusters()
     {
         Rigidbody cGalaxyShipRigidbody = CGameShips.GalaxyShip.rigidbody;
-        Vector3 vDirectionalAcceleration = new Vector3();
+        Vector3 vDirectionalAcceleration = Vector3.zero;
         Vector3 vCurrentDirectionalVelocity = Quaternion.Inverse(cGalaxyShipRigidbody.transform.rotation) * cGalaxyShipRigidbody.velocity;
         float fDeltaAcceleration = m_fDirectionalAcceleration * Time.fixedDeltaTime;
 
@@ -240,15 +257,18 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
     float[] m_faThruserPowerRatios = new float[(int)EThrusters.MAX];
 
 
-    float m_fAngularAcceleration   = (3.14f / 180.0f) * 50.0f;
-    float m_fAngularMaxSpeed       = (3.14f / 180.0f) * 60.0f;
-    float m_fAngularVelocityDamp   = (3.14f / 180.0f) * 10.0f;
-    float m_fAngularHandbreakpower = 2.0f;
+	private CShipPropulsionSystem m_CachedShipPropulsionSystem = null;
 
 
-    float m_fDirectionalMaxSpeed       = 400.0f;
-    float m_fDirectionalAcceleration   = 50.0f;
-    float m_fDirectionalHandbreakPower = 3.0f;
+	float m_fAngularAcceleration   = 0.0f;
+	float m_fAngularMaxSpeed       = 0.0f;
+	float m_fAngularVelocityDamp   = 0.0f;
+	float m_fAngularHandbreakpower = 0.0f;
+
+
+    float m_fDirectionalMaxSpeed       = 0.0f;
+    float m_fDirectionalAcceleration   = 0.0f;
+    float m_fDirectionalHandbreakPower = 0.0f;
 
 
 // Server Members Fields

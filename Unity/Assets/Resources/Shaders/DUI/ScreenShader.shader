@@ -4,7 +4,7 @@ Shader "ScreenShader"
 	{
 _MainTex("Base (RGB) Gloss (A)", 2D) = "white" {}
 _EmissionPow("Emmision Power", Range(0,10) ) = 1.0
-_Alpha("Alpha", Range(0,1) ) = 0.9
+_Alpha("Alpha", Range(0,1) ) = 0.95
 
 	}
 	
@@ -12,7 +12,7 @@ _Alpha("Alpha", Range(0,1) ) = 0.9
 	{
 		Tags
 		{
-"Queue"="Transparent"
+"Queue"="Transparent-1"
 "IgnoreProjector"="True"
 "RenderType"="Transparent"
 
@@ -20,10 +20,8 @@ _Alpha("Alpha", Range(0,1) ) = 0.9
 
 		
 Cull Back
-Alphatest Greater 0 
 ZWrite Off 
 ColorMask RGB
-LOD 200
 Blend SrcAlpha OneMinusSrcAlpha
 Fog{
 }

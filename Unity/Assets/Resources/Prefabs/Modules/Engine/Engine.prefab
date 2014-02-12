@@ -196,7 +196,6 @@ GameObject:
   - 114: {fileID: 11400020}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400026}
-  - 114: {fileID: 11400018}
   m_Layer: 0
   m_Name: Engine
   m_TagString: Untagged
@@ -1219,7 +1218,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 1, z: 3}
+  m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: .5, z: 0}
 --- !u!95 &9500000
 Animator:
@@ -1312,6 +1311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -1336,6 +1336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -1383,21 +1384,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eComponentType: 4
---- !u!114 &11400018
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb2eb1b0945a9d458c730c46874665f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_OuterRing: {fileID: 400030}
-  m_MiddleRing: {fileID: 400032}
-  m_InnerRing: {fileID: 400020}
-  m_AverageSpeed: 180
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1449,8 +1435,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e0d20a52927a814bafb99521560e069, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RatchetComponent1: {fileID: 11400016}
-  m_RatchetComponent2: {fileID: 11400002}
+  m_MaxPropulsion: 150
+  m_DUIConsole: {fileID: 0}
+  m_MechanicalComponent1: {fileID: 11400016}
+  m_MechanicalComponent2: {fileID: 11400002}
+  m_OuterRing: {fileID: 400030}
+  m_MiddleRing: {fileID: 400032}
+  m_InnerRing: {fileID: 400020}
+  m_AverageAnimationSpeed: 360
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1

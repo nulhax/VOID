@@ -15,10 +15,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
 /* Implementation */
-using System.Linq;
 
 
 [RequireComponent(typeof(CPowerStorageBehaviour))]
@@ -42,30 +42,32 @@ public class CTestPowerCapacitor: MonoBehaviour
 
 
 	// Member Properties
-	
+	public int NumWorkingCircuitryComponents
+	{
+		get
+		{
+			int num = 0;
+			num += m_Circuitry1.IsFunctional ? 1 : 0;
+			num += m_Circuitry2.IsFunctional ? 1 : 0;
+			return(num);
+		}
+	}
+
 	
 	// Member Methods
 	public void Start()
 	{
 		m_PowerStorage = gameObject.GetComponent<CPowerStorageBehaviour>();
 
-		// Register charge/capacity state chages
-		m_PowerStorage.EventBatteryCapacityChanged += HandleCapacitorStateChange;
-		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
-
 		// Register for when the circuitry breaks/fixes
-		m_Circuitry1.EventComponentBreak += HandleCircuitryBreaking;
-		m_Circuitry1.EventComponentFix += HandleCircuitryFixing;
-		m_Circuitry2.EventComponentBreak += HandleCircuitryBreaking;
-		m_Circuitry2.EventComponentFix += HandleCircuitryFixing;
-
-		// Register for when the circuitry takes damage
-		m_PowerStorage.EventBatteryCapacityChanged += HandleCapacitorStateChange;
-		m_PowerStorage.EventBatteryChargeChanged += HandleCapacitorStateChange;
+		m_Circuitry1.EventComponentBreak += HandleCircuitryStateChange;
+		m_Circuitry1.EventComponentFix += HandleCircuitryStateChange;
+		m_Circuitry2.EventComponentBreak += HandleCircuitryStateChange;
+		m_Circuitry2.EventComponentFix += HandleCircuitryStateChange;
 
 		// Get the DUI of the power generator
 		m_DUIPowerCapacitor = m_DUIConsole.DUI.GetComponent<CDUIPowerCapacitorRoot>();
-		m_DUIPowerCapacitor.InitialCapacity = m_MaxPowerBatteryCapacity;
+		m_DUIPowerCapacitor.RegisterPowerCapacitor(gameObject);
 
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)
@@ -74,54 +76,26 @@ public class CTestPowerCapacitor: MonoBehaviour
 			m_PowerStorage.BatteryCharge = m_PowerStorage.BatteryCapacity / 2;
 		}
 	}
-
-	private void HandleCapacitorStateChange(CPowerStorageBehaviour _Capacitor)
-	{
-		m_DUIPowerCapacitor.UpdateCapacitorVariables(_Capacitor.BatteryCharge, _Capacitor.BatteryCapacity);
-	}
 	
-	private void HandleCircuitryBreaking(CComponentInterface _Component)
+	private void HandleCircuitryStateChange(CComponentInterface _Component)
 	{
-		int index = m_Circuitry1 == _Component ? 0 : 1;
 		if(CNetwork.IsServer)
 		{
-			// Get the number of working circuitry components
-			int numWorkingCircuitryComps = 0;
-			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
-			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
+			int numWorkingComponents = NumWorkingCircuitryComponents;
 
-			// Set the new battery capacity
-			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);
+			// Calculate the charge capacity
+			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * (float)numWorkingComponents / 2.0f;
 
 			// Deactive the charge availablity
-			if(numWorkingCircuitryComps == 0)
+			if(numWorkingComponents == 0)
 			{
 				m_PowerStorage.DeactivateBatteryChargeAvailability();
 			}
+			else
+			{
+				if(!m_PowerStorage.IsBatteryChargeAvailable)
+					m_PowerStorage.ActivateBatteryChargeAvailability();
+			}
 		}
-
-		// Update the UI
-		m_DUIPowerCapacitor.SetCircuitryStateChange(index, false);
-	}
-	
-	private void HandleCircuitryFixing(CComponentInterface _Component)
-	{
-		int index = m_Circuitry1 == _Component ? 0 : 1;
-		if(CNetwork.IsServer)
-		{
-			// Get the number of working circuitry components
-			int numWorkingCircuitryComps = 0;
-			if(m_Circuitry1.IsFunctional) numWorkingCircuitryComps++;
-			if(m_Circuitry2.IsFunctional) numWorkingCircuitryComps++;
-
-			// Set the new battery capacity
-			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity * ((float)numWorkingCircuitryComps / 2.0f);
-
-			// Activate the charge availablity
-			m_PowerStorage.ActivateBatteryChargeAvailability();
-		}
-
-		// Update the UI
-		m_DUIPowerCapacitor.SetCircuitryStateChange(index, true);
 	}
 }

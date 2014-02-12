@@ -13501,8 +13501,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100444}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: 2.5934548e-15, y: 2.91997004, z: -.19906354}
-  m_LocalScale: {x: .0250000004, y: .0500000007, z: .00999999978}
+  m_LocalPosition: {x: -1.48348477e-06, y: 1.57906187, z: .160230219}
+  m_LocalScale: {x: .0250000004, y: .0250000004, z: .00999999978}
   m_Children: []
   m_Father: {fileID: 400554}
 --- !u!4 &400446
@@ -18135,8 +18135,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 101222}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: 2.5934548e-15, y: 2.91997004, z: -.19906354}
-  m_LocalScale: {x: .0250000004, y: .0500000007, z: .00999999978}
+  m_LocalPosition: {x: 2.5934548e-15, y: 1.57906199, z: -.19906354}
+  m_LocalScale: {x: .0250000004, y: .0250000004, z: .00999999978}
   m_Children: []
   m_Father: {fileID: 401224}
 --- !u!4 &401224
@@ -33586,8 +33586,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33599,6 +33597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -33843,8 +33842,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33856,6 +33853,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -33965,8 +33963,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400070
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -33978,6 +33974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34087,8 +34084,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400088
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34100,6 +34095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34222,8 +34218,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34235,6 +34229,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34309,8 +34304,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34322,6 +34315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34383,8 +34377,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34396,6 +34388,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34683,8 +34676,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400178
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34696,6 +34687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34757,8 +34749,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400188
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34770,6 +34760,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34831,8 +34822,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34844,6 +34833,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34905,8 +34895,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400208
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -34918,6 +34906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -34966,6 +34955,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -34992,7 +34982,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100444}
-  m_DUI: 1
+  m_DUI: 10
 --- !u!114 &11400218
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35063,8 +35053,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400230
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35076,6 +35064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35137,8 +35126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400240
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35150,6 +35137,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35200,6 +35188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -35273,7 +35262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 13
+  m_PreplacedModuleType: 0
   m_Positioner: {fileID: 100188}
   m_Internal: 1
 --- !u!114 &11400258
@@ -35298,6 +35287,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -35383,8 +35373,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400274
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35396,6 +35384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35457,8 +35446,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400284
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35470,6 +35457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35531,8 +35519,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400294
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35544,6 +35530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35666,8 +35653,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400314
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35679,6 +35664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35801,8 +35787,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400334
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35814,6 +35798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -35936,8 +35921,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400354
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -35949,6 +35932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36071,8 +36055,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400374
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36084,6 +36066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36145,8 +36128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400384
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36158,6 +36139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36319,7 +36301,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 0
+  m_PreplacedModuleType: 13
   m_Positioner: {fileID: 101146}
   m_Internal: 1
 --- !u!114 &11400410
@@ -36368,8 +36350,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400418
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36381,6 +36361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36442,8 +36423,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400428
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36455,6 +36434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36564,8 +36544,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400446
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36577,6 +36555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36749,6 +36728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -36810,8 +36790,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400482
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36823,6 +36801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -36945,8 +36924,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400502
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -36958,6 +36935,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37019,8 +36997,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400512
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37032,6 +37008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37093,8 +37070,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400522
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37106,6 +37081,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37167,8 +37143,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37180,6 +37154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37241,8 +37216,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37254,6 +37227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37315,8 +37289,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400552
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37328,6 +37300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37389,8 +37362,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 3
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37402,6 +37373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0
@@ -37452,6 +37424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -37489,6 +37462,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -37586,6 +37560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -37611,6 +37586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -37683,6 +37659,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0
@@ -37709,7 +37686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 101222}
-  m_DUI: 1
+  m_DUI: 9
 --- !u!114 &11400602
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -37804,6 +37781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0

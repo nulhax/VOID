@@ -268,7 +268,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeBeltState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        GameObject cPlayerObject = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+        GameObject cPlayerObject = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
         CPlayerBelt cPlayerBelt = cPlayerObject.GetComponent<CPlayerBelt>();
 
 

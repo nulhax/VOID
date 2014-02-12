@@ -176,7 +176,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		GameObject cPlayerObject = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+		GameObject cPlayerObject = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
 		CPlayerBackPack cPlayerBackPack = cPlayerObject.GetComponent<CPlayerBackPack>();
 
 		// Process stream data

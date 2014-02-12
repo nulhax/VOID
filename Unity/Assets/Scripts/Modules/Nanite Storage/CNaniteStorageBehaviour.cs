@@ -46,7 +46,7 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 		set { m_iStoredNanites.Set(value); }
 	}
 
-	public int MaxNaniteCapacity
+	public int NaniteCapacity
 	{ 
 		get { return (m_iNaniteCapacity.Get()); }
 		
@@ -68,9 +68,9 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 		set { m_iNaniteCapacity.Set(value); }
 	}
 	
-	public bool HasAvailableNanites
+	public bool IsStorageAvailable
 	{
-		get { return (m_bNanitesAvailable.Get() && m_iStoredNanites.Get() != 0.0f); }
+		get { return (m_bNanitesAvailable.Get()); }
 	}
 	
 	// Member Functions

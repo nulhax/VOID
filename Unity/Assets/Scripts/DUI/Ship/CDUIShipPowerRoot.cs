@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CDUIShipPowerRoot : CNetworkMonoBehaviour 
+public class CDUIShipPowerRoot : MonoBehaviour 
 {
 	// Member Types
 	
@@ -51,21 +51,17 @@ public class CDUIShipPowerRoot : CNetworkMonoBehaviour
 
 	private bool m_ShowErrors = false;
 
+
 	// Member Properties
 	
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
-	{
-		
-	}
-	
-	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
-	{
-
-	}
-
 	public void Update()
+	{
+		UpdateDUI();
+	}
+
+	public void UpdateDUI()
 	{
 		UpdateGenerationInformation();
 		UpdateChargeInformation();
@@ -82,15 +78,11 @@ public class CDUIShipPowerRoot : CNetworkMonoBehaviour
 		float value = shipGeneration/shipGenerationPotential;
 
 		// Update the bar
-		Color fromColor = value > 0.5f ? Color.yellow : Color.red;
-		Color toColor = value > 0.5f ? Color.cyan : Color.yellow;
-		float barValue = value > 0.5f ? (value - 0.5f) / 0.5f : value / 0.5f;
-		m_GenerationBar.backgroundWidget.color = Color.Lerp(fromColor * 0.8f, toColor * 0.8f, barValue);
-		m_GenerationBar.foregroundWidget.color = Color.Lerp(fromColor, toColor, barValue);
+		CDUIUtilites.LerpBarColor(value, m_GenerationBar);
 		m_GenerationBar.value = value;
 		
 		// Update the lable
-		m_GenerationRate.color = Color.Lerp(Color.red, Color.cyan, value);
+		m_GenerationRate.color = CDUIUtilites.LerpColor(value);
 		m_GenerationRate.text = shipGeneration + " / " + shipGenerationPotential;
 
 		// Update the positive/negative report
@@ -142,15 +134,11 @@ public class CDUIShipPowerRoot : CNetworkMonoBehaviour
 		float value = shipCharge/shipChargeCapacity;
 		
 		// Update the bar
-		Color fromColor = m_ChargeBar.value > 0.5f ? Color.yellow : Color.red;
-		Color toColor = m_ChargeBar.value > 0.5f ? Color.cyan : Color.yellow;
-		float barValue = value > 0.5f ? (value - 0.5f) / 0.5f : value / 0.5f;
-		m_ChargeBar.backgroundWidget.color = Color.Lerp(fromColor * 0.8f, toColor * 0.8f, barValue);
-		m_ChargeBar.foregroundWidget.color = Color.Lerp(fromColor, toColor, barValue);
+		CDUIUtilites.LerpBarColor(value, m_ChargeBar);
 		m_ChargeBar.value = value;
 		
 		// Update the lable
-		m_ChargeRate.color = Color.Lerp(Color.red, Color.cyan, value);
+		m_ChargeRate.color = CDUIUtilites.LerpColor(value);
 		m_ChargeRate.text = shipCharge + " / " + shipChargeCapacity;
 		
 		// Update the positive/negative report

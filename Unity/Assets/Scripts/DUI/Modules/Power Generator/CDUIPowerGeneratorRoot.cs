@@ -35,107 +35,106 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 	public UILabel m_ErrorReport = null;
 	public UILabel m_WarningReport = null;
 
-	private bool m_CircuitryBroken = false;
-	private float m_CalibrationValue = 1.0f;
+	private GameObject m_PowerGenerator = null;
+	private CPowerGenerationBehaviour m_CachedPowerGeneratorBehaviour = null;
+	private CTestPowerGenerator m_CachedPowerGenerator = null;
 
 	// Member Properties
 
 	
 	// Member Methods
-	public void SetPowerGenerationRate(float _GenerationRate, float _MaximumGenerationRate)
+	public void RegisterPowerGenerator(GameObject _PowerGenerator)
 	{
-		float value = _GenerationRate/_MaximumGenerationRate;
-		m_CalibrationValue = value;
+		m_PowerGenerator = _PowerGenerator;
+		m_CachedPowerGeneratorBehaviour = m_PowerGenerator.GetComponent<CPowerGenerationBehaviour>();
+		m_CachedPowerGenerator = m_PowerGenerator.GetComponent<CTestPowerGenerator>();
+		
+		// Register generation rate state chages
+		m_CachedPowerGeneratorBehaviour.EventGenerationRateChanged += HandleGenerationStateChange;
+		m_CachedPowerGeneratorBehaviour.EventGenerationRatePotentialChanged += HandleGenerationStateChange;
 
-		// Update the bar
-		m_GenerationBar.backgroundWidget.color = Color.Lerp(Color.red * 0.8f, Color.cyan * 0.8f, value);
-		m_GenerationBar.foregroundWidget.color = Color.Lerp(Color.red, Color.cyan, value);
+		// Register for when the circuitry breaks/fixes
+		m_CachedPowerGenerator.m_CircuitryComponent.EventComponentBreak += HandleCircuitryStateChange;
+		m_CachedPowerGenerator.m_CircuitryComponent.EventComponentFix += HandleCircuitryStateChange;
+		
+		// Update initial values
+		UpdateDUI();
+	}
+
+	private void HandleGenerationStateChange(CPowerGenerationBehaviour _Generator)
+	{
+		UpdateDUI();
+	}
+	
+	private void HandleCircuitryStateChange(CComponentInterface _Component)
+	{
+		UpdateDUI();
+	}
+
+	private void UpdateDUI()
+	{
+		UpdateGeneratorVariables();
+		UpdateCircuitryState();
+	}
+
+	public void UpdateGeneratorVariables()
+	{
+		// Get the current generation current generation potential and detirmine the value
+		float currentGenerationRate = m_CachedPowerGeneratorBehaviour.PowerGenerationRate;
+		float currentGenerationRatePotential = m_CachedPowerGenerator.m_MaxPowerGenerationRate;
+		float value = currentGenerationRate/currentGenerationRatePotential;
+
+		// Update the generation value and bar color
 		m_GenerationBar.value = value;
+		CDUIUtilites.LerpBarColor(value, m_GenerationBar);
 
 		// Update the lable
-		m_GenerationRate.color = Color.Lerp(Color.red, Color.cyan, value);
-		m_GenerationRate.text = _GenerationRate.ToString() + " / " + _MaximumGenerationRate.ToString();
+		m_GenerationRate.color = CDUIUtilites.LerpColor(value);
+		m_GenerationRate.text = currentGenerationRate.ToString() + " / " + currentGenerationRatePotential.ToString();
 
 		// Update the status report
 		if(value <= 0.95f && value > 0.5f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.yellow;
 			m_WarningReport.text = "Warning: Calibration maintenace required!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = false;
 		}
 		else if(value <= 0.5f && value > 0.0f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.red;
 			m_WarningReport.text = "Warning: Calibration maintenace required!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = true;
 		}
 		else if(value == 0.0f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.red;
-			m_WarningReport.text = "Error: Calibration component defective!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = true;
+			m_WarningReport.text = "Warning: Calibration component defective!";
 		}
 		else
 		{
-			m_WarningReport.UpdateVisibility(false);
-			m_WarningReport.GetComponent<TweenScale>().enabled = false;
+			m_WarningReport.enabled = false;
 		}
-
-		UpdateActiveLabel();
 	}
 	
-	public void SetPowerGenerationActive(bool _Active)
+	private void UpdateCircuitryState()
 	{
-		m_CircuitryBroken = !_Active;
-
-		if(!m_CircuitryBroken)
+		if(m_CachedPowerGenerator.m_CircuitryComponent.IsFunctional)
 		{
+			m_GenerationActive.color = Color.green;
+			m_GenerationActive.text = "Status: Generation Active";
+
 			// Disable the status report
-			m_ErrorReport.UpdateVisibility(false);
-			
-			//m_StatusReport.GetComponent<TweenScale>().
-			m_ErrorReport.GetComponent<TweenScale>().enabled = false;
+			m_ErrorReport.enabled = false;
 		}
 		else 
 		{
-			// Enable the status report
-			m_ErrorReport.UpdateVisibility(true);
-			m_ErrorReport.color = Color.red;
-			m_ErrorReport.text = "Error: Circuitry component defective!";
-			m_ErrorReport.GetComponent<TweenScale>().enabled = true;
-		}
-
-		UpdateActiveLabel();
-	}
-
-	private void UpdateActiveLabel()
-	{
-		if(m_CircuitryBroken)
-		{
 			m_GenerationActive.color = Color.red;
 			m_GenerationActive.text = "Status: Generation InActive";
-		}
-		else
-		{
-			if(m_CalibrationValue < 0.95f)
-			{
-				m_GenerationActive.color = Color.yellow;
-				m_GenerationActive.text = "Status: Generation NonOptimal";
 
-			}
-			else if(m_CalibrationValue == 0.0f)
-			{
-				m_GenerationActive.color = Color.red;
-				m_GenerationActive.text = "Status: Generation InActive";
-			}
-			else
-			{
-				m_GenerationActive.color = Color.green;
-				m_GenerationActive.text = "Status: Generation Optimal";
-			}
+			// Enable the status report
+			m_ErrorReport.enabled = true;
+			m_ErrorReport.text = "Warning: Circuitry component defective!";
 		}
 	}
 }

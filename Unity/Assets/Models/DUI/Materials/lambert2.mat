@@ -24,17 +24,9 @@ Material:
       data:
         first:
           name: _Alpha
-        second: .899999976
-      data:
-        first:
-          name: _SpecPower
-        second: .00999999978
+        second: .949999988
       data:
         first:
           name: _EmissionPow
         second: 1
-    m_Colors:
-      data:
-        first:
-          name: _SpecularColor
-        second: {r: 0, g: 0, b: 0, a: 0}
+    m_Colors: {}

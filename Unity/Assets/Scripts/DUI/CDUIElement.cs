@@ -50,7 +50,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	public bool m_SyncOnDoubleClick = false;
 	public bool m_SyncOnPress = false;
 	public bool m_SyncOnSelect = false;
-	public bool m_SyncOnHover = false;
+	public bool m_SyncOnHover = true;
 	public bool m_SyncOnDrag = false;
 	public bool m_SyncOnDragStart = false;
 	public bool m_SyncOnDragEnd = false;
