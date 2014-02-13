@@ -302,14 +302,18 @@ public class CGamePlayers : CNetworkMonoBehaviour
             // If the spawner is not blocked
             if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
             {
-                // Set the player's position and rotation based upon the respawn position and rotation
+                // "Board" the ship
+                // Note: Does nothing unless the player 'dies' outside the ship
+                _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();
+
+                // Set the player's position and rotation based upon the spawner's position and rotation
                 _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
                 _SourcePlayer.GetComponent<CNetworkView>().SetEulerAngles(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
 
                 // Heal the player to full health
                 _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
 
-                // TODO: Reset other variables such as suit atmosphere
+                // TODO: Reset other variables such as suit atmosphere and equipped tools
 
                 // Break foreach loop
                 break;
