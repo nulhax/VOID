@@ -250,9 +250,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	void OnDestroy()
-	{
-	}
+	void OnDestroy() { }
 
 
 	void Update()
@@ -282,6 +280,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
+
+                        cPlayerActor.GetComponent<CPlayerHealth>().EventDeath += RespawnPlayer;
 						
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
@@ -290,6 +290,32 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+    void RespawnPlayer(GameObject _SourcePlayer)
+    {
+        // Save a list of currently constructed spawners
+        List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+        // iterate through every spawner
+        foreach (GameObject cPlayerSpawner in aPlayerSpawners)
+        {
+            // If the spawner is not blocked
+            if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+            {
+                // Set the player's position and rotation based upon the respawn position and rotation
+                _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
+                _SourcePlayer.GetComponent<CNetworkView>().SetEulerAngles(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
+
+                // Heal the player to full health
+                _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
+
+                // TODO: Reset other variables such as suit atmosphere
+
+                // Break foreach loop
+                break;
+            }
+        }
+    }
 
 	void OnPlayerJoin(CNetworkPlayer _cPlayer)
 	{
