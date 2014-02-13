@@ -23,16 +23,27 @@ using System.Collections.Generic;
 public class CMedicalSpray : CNetworkMonoBehaviour
 {
 
-    // Member Types
+// Member Types
 
 
-    // Member Delegates & Events
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        SprayStart,
+        SprayEnd,
+
+        MAX
+    }
 
 
-    // Member Properties
+// Member Delegates & Events
 
 
-    // Member Functions
+// Member Properties
+
+
+// Member Functions
 
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -41,42 +52,56 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
-    public void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    [AClientOnly]
+    public static void SerializeOutbound(CNetworkStream _cStream)
     {
-        if (_cSyncedVar == m_bActive)
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
+    }
+
+
+    [AServerOnly]
+    public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+        CNetworkViewId cMedicalSpayViewId = _cStream.ReadNetworkViewId();
+
+        switch (eAction)
         {
-            if (m_bActive.Get())
-            {
-                m_cSprayParticalSystem.Play();
-            }
-            else
-            {
-                m_cSprayParticalSystem.Stop();
-            }
+            case ENetworkAction.SprayStart:
+                cMedicalSpayViewId.GameObject.GetComponent<CMedicalSpray>().m_bActive.Set(true);
+                break;
+
+            case ENetworkAction.SprayEnd:
+                cMedicalSpayViewId.GameObject.GetComponent<CMedicalSpray>().m_bActive.Set(false);
+                break;
+
+            default:
+                Debug.LogError("Unknown network action");
+                break;
         }
     }
 
 
-    public void Awake()
+    void Awake()
     {
         m_cSprayParticalSystem = transform.FindChild("ParticalSprayer").particleSystem;
     }
 
 
-    public void Start()
+    void Start()
     {
-        gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
-        gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryActiveChange;
     }
 
 
-    public void OnDestroy()
+    void OnDestroy()
     {
-        // Empty
+        GetComponent<CToolInterface>().EventPrimaryActiveChange -= OnEventPrimaryActiveChange;
     }
 
 
-    public void Update()
+    void Update()
     {
         if (CNetwork.IsServer)
         {
@@ -97,27 +122,48 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
-    [AServerOnly]
-    public void OnUseStart(GameObject _cInteractableObject)
+    [AClientOnly]
+    void OnEventPrimaryActiveChange(bool _bActive)
     {
-        m_bActive.Set(true);
+        if (_bActive)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.SprayStart);
+        }
+        else
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.SprayEnd);
+        }
+
+        s_cSerializeStream.Write(ThisNetworkView.ViewId);
     }
 
 
-    [AServerOnly]
-	public void OnUseEnd(GameObject _cInteractableObject)
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        m_bActive.Set(false);
+        if (_cSyncedVar == m_bActive)
+        {
+            if (m_bActive.Get())
+            {
+                m_cSprayParticalSystem.Play();
+            }
+            else
+            {
+                m_cSprayParticalSystem.Stop();
+            }
+        }
     }
 
 
-    // Member Fields
+// Member Fields
 
 
     CNetworkVar<bool> m_bActive = null;
 
 
     ParticleSystem m_cSprayParticalSystem = null;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

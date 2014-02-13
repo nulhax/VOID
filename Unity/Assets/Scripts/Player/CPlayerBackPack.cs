@@ -117,8 +117,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 
 	[AClientOnly]
-	public void OnPickupModuleRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+	public void OnPickupModuleRequest(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
+        /*
 		if (_eType == CPlayerInteractor.EInteractionType.UseStart &&
 			_cInteractableObject.GetComponent<CPartInterface>() != null)
 		{
@@ -128,11 +129,13 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			// Target tool view id
 			s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
 		}
+         * */
 	}
 	
 	[AClientOnly]
-	public void OnCellInsertRequest(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+	public void OnCellInsertRequest(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
+        /*
 		if (_eType == CPlayerInteractor.EInteractionType.PrimaryStart &&
 			_cInteractableObject.GetComponent<CCellSlot>() != null &&
 			IsCarryingModule)
@@ -152,6 +155,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 				s_cSerializeStream.Write(_cInteractableObject.GetComponent<CNetworkView>().ViewId);
 			}
 		}
+         * */
 	}
 
 
@@ -209,9 +213,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
     void Start()
     {
-        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnPickupModuleRequest);
-        gameObject.GetComponent<CPlayerInteractor>().EventInteraction += new CPlayerInteractor.HandleInteraction(OnCellInsertRequest);
-        gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
+        //gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += new CPlayerInteractor.HandleTargetChange(OnPickupModuleRequest);
+       // gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += new CPlayerInteractor.HandleTargetChange(OnCellInsertRequest);
+       // gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnPreDestroy);
     }
 
 
@@ -225,9 +229,9 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
             }
         }
 
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnPickupModuleRequest;
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction -= OnCellInsertRequest;
-		gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
+		//gameObject.GetComponent<CPlayerInteractor>().EventTargetChange -= OnPickupModuleRequest;
+		//gameObject.GetComponent<CPlayerInteractor>().EventTargetChange -= OnCellInsertRequest;
+		//gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnPreDestroy;
     }
 
 

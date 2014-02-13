@@ -73,43 +73,76 @@ public class CNetwork : MonoBehaviour
 
 	public static bool IsServer
 	{
-		get { return (CNetwork.Server.IsActive); }
+        get 
+        { 
+            return (CNetwork.Server != null && CNetwork.Server.IsActive); 
+        }
 	}
 
 
 	public static bool IsConnectedToServer
 	{
-		get { return(CNetwork.Connection.IsConnected); }
+		get 
+        {
+            if (Connection == null) return false; 
+
+            return(Connection.IsConnected); 
+        }
 	}
 
 
 	public static CNetworkScanner Scanner
 	{
-		get { return (s_cInstance.GetComponent<CNetworkScanner>()); }
+		get 
+        {
+            if (s_cInstance == null) return null; 
+
+            return (s_cInstance.GetComponent<CNetworkScanner>()); 
+        }
 	}
 
 
 	public static CNetworkConnection Connection
 	{
-		get { return (s_cInstance.GetComponent<CNetworkConnection>()); }
+        get
+        { 
+            if (s_cInstance == null) return null; 
+            
+            return (s_cInstance.GetComponent<CNetworkConnection>()); 
+        }
 	}
 
 
 	public static CNetworkServer Server
 	{
-		get { return (s_cInstance.GetComponent<CNetworkServer>()); }
+		get 
+        {
+            if (s_cInstance == null) return null; 
+            
+            return (s_cInstance.GetComponent<CNetworkServer>()); 
+        }
 	}
 
 
 	public static CNetworkFactory Factory
 	{
-		get { return (s_cInstance.GetComponent<CNetworkFactory>()); }
+		get 
+        {
+            if (s_cInstance == null) return null; 
+
+            return (s_cInstance.GetComponent<CNetworkFactory>()); 
+        }
 	}
 
 
 	public static ulong PlayerId
 	{
-		get { return (Connection.RakPeer.GetMyGUID().g); }
+        get 
+        { 
+            if (Connection == null) return (0); 
+            
+            return (Connection.RakPeer.GetMyGUID().g); 
+        }
 	}
 
 

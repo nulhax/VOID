@@ -64,6 +64,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
+    public static CPlayerHealth Instance
+    {
+        get { return (s_cInstance); }
+    }
+
 // Member Functions
 
 
@@ -78,7 +83,19 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     [AServerOnly]
     public void ApplyDamage(float _fAmount)
     {
-        m_fHitPoints.Set(m_fHitPoints.Get() - _fAmount);
+        // If the player's current health, minus the new damage is still greater than 0.0f
+        if ((m_fHitPoints.Get() - _fAmount) > 0.0f)
+        {
+            // Apply the damage normally
+            m_fHitPoints.Set(m_fHitPoints.Get() - _fAmount);
+        }
+
+        // Else the player's current health, minus the new damage, is 0.0f or negative
+        else
+        {
+            // Set the player's helath to a flat 0.0f
+            m_fHitPoints.Set(0.0f);
+        }
 
         // Notify observers about dmagae
         if (EventApplyDamage != null) EventApplyDamage(gameObject, _fAmount);
@@ -88,7 +105,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     [AServerOnly]
     public void ApplyHeal(float _fAmount)
     {
-        if((m_fHitPoints.Get() + _fAmount) < k_fMaxHealth)
+        if((m_fHitPoints.Get() + _fAmount) <= k_fMaxHealth)
         {
             m_fHitPoints.Set(m_fHitPoints.Get() + _fAmount);
         }
@@ -97,7 +114,13 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         if (EventApplyHeal != null) EventApplyHeal(gameObject, _fAmount);
     }
 
-	
+
+    public void Awake()
+    {
+        s_cInstance = this;
+    }
+
+
 	void Start() 
     {
         // Death audio
@@ -141,7 +164,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         if (Alive)
         {
             // Check player is now dead
-            if (HitPoints < 0.0f)
+            if (HitPoints == 0.0f)
             {
                 m_bAlive.Set(false);
 
@@ -235,7 +258,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
 	CAudioCue m_LaughTrack;
-
+    static CPlayerHealth s_cInstance = null;
 
 }
 	

@@ -26,6 +26,17 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Types
 
 
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        ShootStart,
+        ShootEnd,
+
+        MAX
+    }
+
+
 // Member Delegates & Events
 
 
@@ -45,26 +56,59 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-
+        // Empty
 	}
 
 
-	public void Start()
+    [AClientOnly]
+    public static void SerializeOutbound(CNetworkStream _cStream)
+    {
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
+    }
+
+
+    [AServerOnly]
+    public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        while (_cStream.HasUnreadData)
+        {
+            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            CNetworkViewId cAk47ViewId = _cStream.ReadNetworkViewId();
+
+            switch (eAction)
+            {
+                case ENetworkAction.ShootStart:
+                    cAk47ViewId.GameObject.GetComponent<CAk47Behaviour>().m_bShoot = true;
+                    break;
+
+                case ENetworkAction.ShootEnd:
+                    cAk47ViewId.GameObject.GetComponent<CAk47Behaviour>().m_bShoot = false;
+                    break;
+
+                default:
+                    Debug.LogError("Unknown network action");
+                    break;
+            }
+        }
+    }
+
+
+	void Start()
 	{
 		m_cNossle = transform.FindChild("Nossle").gameObject;
 
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
+        gameObject.GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryActiveChange;
 	}
 
 
-	public void OnDestroy()
+	void OnDestroy()
 	{
-		// Empty
+        gameObject.GetComponent<CToolInterface>().EventPrimaryActiveChange -= OnEventPrimaryActiveChange;
 	}
 
 
-	public void Update()
+	void Update()
 	{
 		if (CNetwork.IsServer)
 		{
@@ -87,23 +131,23 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	void ExecuteShootEffect()
 	{
 		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Ak47/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
-
-
 		cBullet.rigidbody.AddForce(cBullet.transform.forward * 40.0f + rigidbody.velocity, ForceMode.VelocityChange);
 	}
 
 
-	[AServerOnly]
-	void OnUseStart(GameObject _cInteractableObject)
+	[AClientOnly]
+	void OnEventPrimaryActiveChange(bool _bActive)
 	{
-		m_bShoot = true;
-	}
+        if (_bActive)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.ShootStart);
+        }
+        else
+        {  
+            s_cSerializeStream.Write((byte)ENetworkAction.ShootEnd);
+        }
 
-
-	[AServerOnly]
-	void OnUseEnd(GameObject _cInteractableObject)
-	{
-		m_bShoot = false;
+        s_cSerializeStream.Write(ThisNetworkView.ViewId);
 	}
 
 
@@ -124,6 +168,9 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 
 	bool m_bShoot = false;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

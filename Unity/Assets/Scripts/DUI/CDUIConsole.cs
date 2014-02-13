@@ -32,6 +32,9 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 
 
+    CNetworkViewId m_cHoveringPlayerViewId = null;
+    bool m_bHoveringOn = false;
+	
     // Member Properties
 	public CNetworkViewId DUIViewId
 	{ 
@@ -106,10 +109,18 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		}
 	}
 
+    void Update()
+    {
+        if (m_bHoveringOn)
+        {
+            DUI.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(m_cHoveringPlayerViewId.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
+        }
+    }
+
 	[AClientOnly]
-	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
-	{	
-		// Update the camera viewport positions
-		DUIViewId.GameObject.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(_RayHit.textureCoord);
+	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
+	{
+        m_bHoveringOn = _bHover;
+        m_cHoveringPlayerViewId = _cPlayerActorViewId;
 	}
 }
