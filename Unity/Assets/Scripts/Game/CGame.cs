@@ -235,6 +235,28 @@ public class CGame : CNetworkMonoBehaviour
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
 
+        //public bool ConnectToServer(string _sServerIp, ushort _usServerPort, string _sServerPassword)
+        m_strRemoteServerIP = GUI.TextField(new Rect(10, 200, 200, 20), m_strRemoteServerIP);
+        m_strRemoteServerPort = GUI.TextField(new Rect(10, 225, 200, 20), m_strRemoteServerPort);
+
+        ushort.TryParse(m_strRemoteServerPort, out m_usRemoteServerPort);
+
+        //if (m_usRemoteServerPort != 0)
+        {
+            if (GUI.Button(new Rect(10, 250, 200, 20), "Connect"))
+            {
+                CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+            }
+        }
+
+ //       if ((CNetwork.IsServer &&
+ //               tServer.cGuid.g == CNetwork.Server.RakPeer.GetMyGUID().g ||
+ //               !CNetwork.IsServer) &&
+ //               GUILayout.Button("Connect"))
+ //       {
+ //           CNetwork.Connection.ConnectToServer(tServer.sIp, tServer.usPort, "");
+ //       }
+
 		// End scroll box
 	//GUILayout.EndScrollView(
 	}
@@ -299,6 +321,10 @@ public class CGame : CNetworkMonoBehaviour
 	
 
 	int m_iActiveTab = 1;
+
+    string m_strRemoteServerIP = "127.0.0.1";
+    string m_strRemoteServerPort = "1337";
+    ushort m_usRemoteServerPort = 0;
 
     const float m_fInputFieldWidth  = 200;
     const float m_fInputFieldHeight = 20;
