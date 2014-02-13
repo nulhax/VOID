@@ -36,7 +36,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		gameObject.GetComponent<CPlayerInteractor>().EventInteraction += OnPlayerInteraction;
+		//gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += OnPlayerInteraction;
 		gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
         gameObject.GetComponent<CPlayerBelt>().EventToolDropped += OnToolDrop;   
 	}
@@ -68,6 +68,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
         gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();  
     }
 	
+    /*
 	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
     {
         switch (_eType)
@@ -124,8 +125,10 @@ public class CPlayerRepairBehaviour : MonoBehaviour
             }
         }
     }
+     * */
 	
-	public void HandleToolUse(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+   
+	public void HandleToolUse(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		//Check that player is targetting a component
 		if(_cInteractableObject.GetComponent<CComponentInterface>()	!= null)
@@ -194,6 +197,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 			}
 		}
 	}	
+
 	
 	CToolInterface			m_HeldTool;	
     bool                    m_bRepairing = false;

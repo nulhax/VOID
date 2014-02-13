@@ -127,8 +127,8 @@ public class CCockpit : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Sign up for event
-		gameObject.GetComponent<CActorInteractable>().EventUseStart += new CActorInteractable.NotifyInteraction(OnUseInteraction);
-		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
+		gameObject.GetComponent<CActorInteractable>().EventUse += OnEventInteractionUse;
+		CNetwork.Server.EventPlayerDisconnect += OnPlayerDisconnect;
 
 
         CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnInputUse);
@@ -137,7 +137,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	public void OnDestroy()
 	{
-		// Empty
+        gameObject.GetComponent<CActorInteractable>().EventUse -= OnEventInteractionUse;
 	}
 
 
@@ -199,10 +199,11 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	
 	[AClientOnly]
-	void OnUseInteraction(RaycastHit _cRayHit, CNetworkViewId _cPlayerActorViewId)	
+    void OnEventInteractionUse(RaycastHit _tRayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)	
 	{
 		// Check there is no one in the cockpit locally
-		if (!IsMounted)
+		if (_bDown &&
+            !IsMounted)
 		{
 			// Write in enter cockpit action
 			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);

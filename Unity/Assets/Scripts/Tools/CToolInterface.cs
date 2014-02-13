@@ -62,18 +62,30 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}	
 
 // Member Delegates & Events
+
+
 	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
 	public delegate void NotifyToolInteraction();
 
-	public event NotifyObjectInteraction EventPrimaryActivate;
-	public event NotifyObjectInteraction EventPrimaryDeactivate;
-	public event NotifyObjectInteraction EventSecondaryActivate;
-	public event NotifyObjectInteraction EventSecondaryDeactivate;
+    [AClientOnly]
+    public delegate void NotifyPrimaryActiveChange(bool _bActive);
+    public event NotifyPrimaryActiveChange EventPrimaryActiveChange;
+
+    [AClientOnly]
+    public delegate void NotifySecondaryActiveChange(bool _bActive);
+	public event NotifySecondaryActiveChange EventSecondaryActiveChange;
+
+    [AClientOnly]
 	public event NotifyObjectInteraction EventUse;
 	
+    [AServerOnly]
 	public event NotifyToolInteraction EventReload;
-	public event NotifyToolInteraction EventPickedUp;
-	public event NotifyToolInteraction EventDropped;
+
+    [AServerOnly]
+    public event NotifyToolInteraction EventPickedUp;
+
+    [AServerOnly]
+    public event NotifyToolInteraction EventDropped;
 
 
 // Member Properties
@@ -205,93 +217,42 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerOnly]
-	public void SetPrimaryActive(bool _bActive, GameObject _cInteractableObject)
-	{
-		// Check not already active
-		if (_bActive &&
-			!m_bPrimaryActive)
-		{
-			// Set active
-			m_bPrimaryActive = true;
+    public void SetPrimaryActive(bool _bActive)
+    {
+        m_bPrimaryActive = _bActive;
 
-			// Notify observers
-			if (EventPrimaryActivate != null)
-			{
-				EventPrimaryActivate(_cInteractableObject);
-			}
-		}
-
-		// Check currently active
-		else if (!_bActive &&
-				 m_bPrimaryActive)
-		{
-			// Set deactive
-			m_bPrimaryActive = false;
-
-			// Notify observers
-			if (EventPrimaryDeactivate != null)
-			{
-				EventPrimaryDeactivate(_cInteractableObject);
-			}
-		}
-	}
+        if (EventPrimaryActiveChange != null) EventPrimaryActiveChange(_bActive);
+    }
 
 
-	public static void RegisterPrefab(EType _ToolType, CGameRegistrator.ENetworkPrefab _ePrefab)
-	{
-		s_mRegisteredPrefabs.Add(_ToolType, _ePrefab);
-	}
-	
-	
-	public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _ToolType)
-	{
-		if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
-		{
-			Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
-			
-			return (CGameRegistrator.ENetworkPrefab.INVALID);
-		}
-		
-		return (s_mRegisteredPrefabs[_ToolType]);
-	}
+    [AClientOnly]
+    public void SetSecondaryActive(bool _bActive)
+    {
+        m_bSecondaryActive = _bActive;
+
+        if (EventSecondaryActiveChange != null) EventSecondaryActiveChange(_bActive);
+    }
+
+
+    [AServerOnly]
+    public void Reload()
+    {
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
+
+        // Check currently held
+        if (IsHeld)
+        {
+            // Notify observers
+            if (EventReload != null)
+            {
+                EventReload();
+            }
+        }
+    }
 
 
 	[AServerOnly]
-	public void SetSecondaryActive(bool _bActive, GameObject _cInteractableObject)
-	{
-		// Check not already active
-		if (_bActive &&
-			!m_bSecondaryActive)
-		{
-			// Set active
-			m_bSecondaryActive = true;
-
-			// Notify observers
-			if (EventSecondaryActivate != null)
-			{
-				EventSecondaryActivate(_cInteractableObject);
-			}
-		}
-
-		// Check currently active
-		else if (!_bActive &&
-		         m_bSecondaryActive)
-		{
-			// Set deactive
-			m_bSecondaryActive = false;
-
-			// Notify observers
-			if (EventSecondaryDeactivate != null)
-			{
-				EventSecondaryDeactivate(_cInteractableObject);
-			}
-		}
-	}
-
-
-	[AServerOnly]
-	public void PickUp(ulong _ulPlayerId)
+	public void NotifyPickedUp(ulong _ulPlayerId)
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
@@ -310,7 +271,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void Drop()
+	public void NotifyDropped()
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
@@ -329,36 +290,23 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-	[AServerOnly]
-	public void Reload()
-	{
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
-
-		// Check currently held
-		if (IsHeld)
-		{
-			// Notify observers
-			if (EventReload != null)
-			{
-				EventReload();
-			}
-		}
-	}
+    public static void RegisterPrefab(EType _ToolType, CGameRegistrator.ENetworkPrefab _ePrefab)
+    {
+        s_mRegisteredPrefabs.Add(_ToolType, _ePrefab);
+    }
 
 
-	[AServerOnly]
-	public void Use(GameObject _cInteractableObject)
-	{
-		// Check currently held
-		if (IsHeld)
-		{
-			// Notify observers
-			if (EventUse != null)
-			{
-				EventUse(_cInteractableObject);
-			}
-		}
-	}
+    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _ToolType)
+    {
+        if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
+        {
+            Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
+
+            return (CGameRegistrator.ENetworkPrefab.INVALID);
+        }
+
+        return (s_mRegisteredPrefabs[_ToolType]);
+    }
 
 
 // Member Fields

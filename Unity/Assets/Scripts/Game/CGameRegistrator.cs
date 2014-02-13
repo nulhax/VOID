@@ -280,6 +280,15 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
+
+        // Tools
+        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerInteractor.SerializeOutbound, CPlayerInteractor.UnserializeInbound);
+
+        CNetworkConnection.RegisterThrottledSerializationTarget(CAk47Behaviour.SerializeOutbound            , CAk47Behaviour.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CFireExtinguisherSpray.SerializeOutbound    , CFireExtinguisherSpray.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CMedicalSpray.SerializeOutbound             , CMedicalSpray.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CTorchLight.SerializeOutbound               , CTorchLight.UnserializeInbound);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CModuleGunBehaviour.SerializeOutbound       , CModuleGunBehaviour.UnserializeInbound);
 	}
 
 

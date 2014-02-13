@@ -23,13 +23,26 @@ using System.Collections.Generic;
 public class CModuleGunBehaviour : CNetworkMonoBehaviour
 {
 	
-	// Member Types
-	
-	
-	// Member Delegates & Events
+// Member Types
 
 
-	// Member Fields
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        OpenDui,
+        CloseDui,
+
+        MAX
+    }
+	
+	
+// Member Delegates & Events
+
+
+// Member Fields
+
+
 	public Transform m_InactiveUITransform = null;
 	public GameObject m_DUI = null;
 	public float m_UITransitionTime = 0.5f;
@@ -43,14 +56,20 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 
 	private CNetworkVar<bool> m_DUIActive = null;
 
+    private static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
-	// Member Properties
+
+// Member Properties
+
+
 	public bool IsDUIActive
 	{
 		get { return(m_DUIActive.Get()); }
 	}
 	
-	// Member Methods
+// Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_DUIActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
@@ -74,10 +93,26 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	public void Start()
 	{
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += (_bDown) =>
+        {
+            if (_bDown)
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.OpenDui);
+                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+            }
+        };
+
+        GetComponent<CToolInterface>().EventSecondaryActiveChange += (_bDown) =>
+        {
+            if (_bDown)
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.CloseDui);
+                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+            }
+        };
+
 		// Register the interaction events
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
-		m_ToolInterface.EventPrimaryActivate += OnPrimaryStart;
-		m_ToolInterface.EventSecondaryActivate += OnSecondaryStart;
 
 		// Register DUI events
 		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIModuleCreationRoot>();
@@ -89,10 +124,54 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_DUI.transform.localScale = m_InactiveUITransform.localScale;
 	}
 
+    private void OnDestroy()
+    {
+        // Empty
+    }
+
 	public void Update()
 	{
 		UpdateDUITransform();
 	}
+
+
+    [AClientOnly]
+    public static void SerializeOutbound(CNetworkStream _cStream)
+    {
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
+    }
+
+
+    [AServerOnly]
+    public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        while (_cStream.HasUnreadData)
+        {
+            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            CNetworkViewId cModuleGunViewId = _cStream.ReadNetworkViewId();
+
+            GameObject cModuleGunObject = cModuleGunViewId.GameObject;
+            CToolInterface cToolInterface = cModuleGunObject.GetComponent<CToolInterface>();
+            CModuleGunBehaviour cModuleGunBehaviour = cModuleGunObject.GetComponent<CModuleGunBehaviour>();
+
+            switch (eAction)
+            {
+                case ENetworkAction.OpenDui:
+                    cModuleGunBehaviour.OpenDui(cToolInterface.OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetActorObject);
+                    break;
+
+                case ENetworkAction.CloseDui:
+                    cModuleGunBehaviour.CloseDui();
+                    break;
+
+                default:
+                    Debug.LogError("Unknown network action");
+                    break;
+            }
+        }
+    }
+
 	
 	private void ActivateDUI()
 	{
@@ -125,7 +204,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	private void OnPrimaryStart(GameObject _InteractableObject)
+	private void OpenDui(GameObject _InteractableObject)
 	{
 		if(_InteractableObject != null && !IsDUIActive && !m_Transitioning)
 		{
@@ -149,18 +228,18 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		}
 	}
 
+    [AServerOnly]
+    private void CloseDui()
+    {
+        // Turn off DUI when secondary is used
+        if (!m_Transitioning)
+            m_DUIActive.Set(false);
+    }
+
 	[AServerOnly]
 	private void OnPlayerMovement(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
 	{
 		// Turn off the DUI from any movement
-		if(!m_Transitioning)
-			m_DUIActive.Set(false);
-	}
-
-	[AServerOnly]
-	private void OnSecondaryStart(GameObject _InteractableObject)
-	{
-		// Turn off DUI when secondary is used
 		if(!m_Transitioning)
 			m_DUIActive.Set(false);
 	}
@@ -216,8 +295,6 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 
 			yield return null;
 		}
-
-
 	}
 
 	private IEnumerator InterpolateUIInActive()
