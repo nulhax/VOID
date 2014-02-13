@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CDUIPowerGeneratorRoot.cs
+//  File Name   :   CDUIAtmosphereGeneratorRoot.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -35,105 +35,110 @@ public class CDUIAtmosphereGeneratorRoot : MonoBehaviour
 	public UILabel m_ErrorReport = null;
 	public UILabel m_WarningReport = null;
 	
-	private bool m_CircuitryBroken = false;
-	private float m_FluidValue = 1.0f;
-	
+	private GameObject m_AtmosphereGenerator = null;
+	private CAtmosphereGeneratorBehaviour m_CachedAtmosphereGeneratorBehaviour = null;
+	private CTestAtmosphereGenerator m_CachedAtmosphereGenerator = null;
+
+
 	// Member Properties
-	
+	private bool IsCircuitryFunctional
+	{
+		get { return(m_CachedAtmosphereGenerator.m_CircuitryComponent.IsFunctional); }
+	}
+
 	
 	// Member Methods
-	public void SetAtmosphereGenerationRate(float _GenerationRate, float _MaximumGenerationRate)
+	public void RegisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
 	{
-		float value = _GenerationRate/_MaximumGenerationRate;
-		m_FluidValue = value;
+		m_AtmosphereGenerator = _AtmosphereGenerator;
+		m_CachedAtmosphereGeneratorBehaviour = m_AtmosphereGenerator.GetComponent<CAtmosphereGeneratorBehaviour>();
+		m_CachedAtmosphereGenerator = m_AtmosphereGenerator.GetComponent<CTestAtmosphereGenerator>();
 		
-		// Update the bar
-		m_GenerationBar.backgroundWidget.color = Color.Lerp(Color.red * 0.8f, Color.cyan * 0.8f, value);
-		m_GenerationBar.foregroundWidget.color = Color.Lerp(Color.red, Color.cyan, value);
+		// Register generation rate state chages
+		m_CachedAtmosphereGeneratorBehaviour.EventGenerationRateChanged += HandleGenerationRateStateChange;
+		
+		// Register for when the circuitry breaks/fixes
+		m_CachedAtmosphereGenerator.m_CircuitryComponent.EventComponentBreak += HandleCircuitryStateChange;
+		m_CachedAtmosphereGenerator.m_CircuitryComponent.EventComponentFix += HandleCircuitryStateChange;
+		
+		// Update initial values
+		UpdateDUI();
+	}
+	
+	private void HandleGenerationRateStateChange(CAtmosphereGeneratorBehaviour _Generator)
+	{
+		UpdateDUI();
+	}
+	
+	private void HandleCircuitryStateChange(CComponentInterface _Component)
+	{
+		UpdateDUI();
+	}
+	
+	private void UpdateDUI()
+	{
+		UpdateGeneratorVariables();
+		UpdateCircuitryState();
+	}
+
+	private void UpdateGeneratorVariables()
+	{
+		// Get the current generation current generation potential and detirmine the value
+		float currentGenerationRate = m_CachedAtmosphereGeneratorBehaviour.AtmosphereGenerationRate;
+		float currentGenerationRatePotential = m_CachedAtmosphereGenerator.m_MaxAtmosphereGenerationRate;
+		float value = currentGenerationRate/currentGenerationRatePotential;
+		
+		// Update the generation value and bar color
 		m_GenerationBar.value = value;
+		CDUIUtilites.LerpBarColor(value, m_GenerationBar);
 		
 		// Update the lable
-		m_GenerationRate.color = Color.Lerp(Color.red, Color.cyan, value);
-		m_GenerationRate.text = _GenerationRate.ToString() + " / " + _MaximumGenerationRate.ToString();
+		m_GenerationRate.color = CDUIUtilites.LerpColor(value);
+		m_GenerationRate.text = currentGenerationRate.ToString() + " / " + currentGenerationRatePotential.ToString();
 		
 		// Update the status report
 		if(value <= 0.95f && value > 0.5f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.yellow;
 			m_WarningReport.text = "Warning: Fluid maintenace required!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = false;
 		}
 		else if(value <= 0.5f && value > 0.0f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.red;
 			m_WarningReport.text = "Warning: Fluid maintenace required!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = true;
 		}
 		else if(value == 0.0f)
 		{
-			m_WarningReport.UpdateVisibility(true);
+			m_WarningReport.enabled = true;
 			m_WarningReport.color = Color.red;
-			m_WarningReport.text = "Error: Fluid component defective!";
-			m_WarningReport.GetComponent<TweenScale>().enabled = true;
+			m_WarningReport.text = "Warning: Fluid component defective!";
 		}
 		else
 		{
-			m_WarningReport.UpdateVisibility(false);
-			m_WarningReport.GetComponent<TweenScale>().enabled = false;
+			m_WarningReport.enabled = false;
 		}
-		
-		UpdateActiveLabel();
 	}
 	
-	public void SetAtmosphereGenerationActive(bool _Active)
+	private void UpdateCircuitryState()
 	{
-		m_CircuitryBroken = !_Active;
-		
-		if(!m_CircuitryBroken)
+		if(IsCircuitryFunctional)
 		{
-			// Disable the status report
-			m_ErrorReport.UpdateVisibility(false);
-			m_ErrorReport.GetComponent<TweenScale>().enabled = false;
+			m_GenerationActive.color = Color.green;
+			m_GenerationActive.text = "Status: Generation Active";
+			
+			// Disable the status reporting
+			m_ErrorReport.enabled = false;
 		}
 		else 
 		{
-			// Enable the status report
-			m_ErrorReport.UpdateVisibility(true);
-			m_ErrorReport.color = Color.red;
-			m_ErrorReport.text = "Error: Circuitry component defective!";
-			m_ErrorReport.GetComponent<TweenScale>().enabled = true;
-		}
-		
-		UpdateActiveLabel();
-	}
-	
-	private void UpdateActiveLabel()
-	{
-		if(m_CircuitryBroken)
-		{
 			m_GenerationActive.color = Color.red;
 			m_GenerationActive.text = "Status: Generation InActive";
-		}
-		else
-		{
-			if(m_FluidValue < 0.95f)
-			{
-				m_GenerationActive.color = Color.yellow;
-				m_GenerationActive.text = "Status: Generation NonOptimal";
-				
-			}
-			else if(m_FluidValue == 0.0f)
-			{
-				m_GenerationActive.color = Color.red;
-				m_GenerationActive.text = "Status: Generation InActive";
-			}
-			else
-			{
-				m_GenerationActive.color = Color.green;
-				m_GenerationActive.text = "Status: Generation Optimal";
-			}
+			
+			// Enable the status report
+			m_ErrorReport.enabled = true;
+			m_ErrorReport.text = "Warning: Circuitry component defective!";
 		}
 	}
 }

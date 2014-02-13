@@ -679,7 +679,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100106}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 650, y: -0, z: 0}
+  m_LocalPosition: {x: 780, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -712,7 +712,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100112}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 780, y: -0, z: 0}
+  m_LocalPosition: {x: 910, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -723,7 +723,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100114}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 520, y: -0, z: 0}
+  m_LocalPosition: {x: 650, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -734,7 +734,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100116}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 390, y: -0, z: 0}
+  m_LocalPosition: {x: 520, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -745,7 +745,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100118}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 375, y: -0, z: 0}
+  m_LocalPosition: {x: 390, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400126}
@@ -1659,7 +1659,7 @@ MonoBehaviour:
   m_DUICamera2D: {fileID: 100070}
   m_DUICamera3D: {fileID: 100042}
   m_DUIType: 7
-  m_RenderTexSize: {x: 1900, y: 1200}
+  m_RenderTexSize: {x: 1000, y: 720}
 --- !u!114 &11400242
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3057,19 +3057,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 0
     absolute: 30
   rightAnchor:
-    target: {fileID: 400166}
-    relative: .5
+    target: {fileID: 0}
+    relative: 1
     absolute: 0
   bottomAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 0
     absolute: 230
   topAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 1
     absolute: -30
   mColor: {r: .382785499, g: .402517587, b: .441176504, a: 1}
@@ -3425,20 +3425,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 0
     absolute: 30
   rightAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 1
     absolute: -30
   bottomAnchor:
-    target: {fileID: 400166}
+    target: {fileID: 0}
     relative: 0
     absolute: 40
   topAnchor:
-    target: {fileID: 400166}
-    relative: .5
+    target: {fileID: 0}
+    relative: 1
     absolute: -160
   mColor: {r: .382785469, g: .402517617, b: .441176474, a: 1}
   mPivot: 3

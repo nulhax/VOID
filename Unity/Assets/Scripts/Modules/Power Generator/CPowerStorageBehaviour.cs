@@ -65,7 +65,12 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 	
 	public bool IsBatteryChargeAvailable
 	{
-		get { return (m_BatteryChargeAvailable.Get() && BatteryCharge != 0.0f); }
+		get { return (m_BatteryChargeAvailable.Get()); }
+	}
+
+	public bool IsBatteryAtCapacity
+	{
+		get { return (BatteryCharge == BatteryCapacity); }
 	}
 	
 	// Member Functions

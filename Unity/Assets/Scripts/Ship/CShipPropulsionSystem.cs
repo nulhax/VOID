@@ -17,7 +17,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
+
 /* Implementation */
+
 
 public class CShipPropulsionSystem : CNetworkMonoBehaviour 
 {
@@ -30,11 +32,21 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 	// Member Fields
 	private List<GameObject> m_PropulsionGenerators = new List<GameObject>();
 	
-	private float m_fTotalPropulsion = 0.0f; 
+	private float m_ShipPropulsionPotential = 0.0f;
+	private float m_ShipCurrentPropulsion = 0.0f;
 
 
 	// Member Properties
-		
+	public float ShipPropulsionPotential
+	{
+		get { return (m_ShipPropulsionPotential); } 
+	}
+	
+	public float ShipCurentPropulsion
+	{
+		get { return (m_ShipCurrentPropulsion); } 
+	}
+
 
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -46,21 +58,16 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 	{
 		
 	}
-
-
-	// Use this for initialization
-	void Start () 
+	
+	public void Start() 
 	{
 		
 	}
-	
-	// Update is called once per frame
-	void Update () 
+
+	public void Update() 
 	{
-		if (CNetwork.IsServer) 
-		{
-			UpdateShipPropulsionPool ();
-		}
+		// Update propulsion variables
+		UpdatePropulsionVariables();
 	}
 
 	public void RegisterPropulsionGeneratorSystem(GameObject _PropulsionGeneratorSystem)
@@ -79,13 +86,18 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	[AServerOnly]
-	public void UpdateShipPropulsionPool()
-	{		
-		float fTotalPropulsion = m_PropulsionGenerators.Sum((pg) => {	CPropulsionGeneratorSystem pgs = pg.GetComponent<CPropulsionGeneratorSystem>();
-																		return(pgs.IsPropulsionGeneratorActive ? pgs.PropulsionForce : 0.0f); });
-		
-		// Set the battery charge pool
-		m_fTotalPropulsion = fTotalPropulsion;
+	private void UpdatePropulsionVariables()
+	{
+		m_ShipPropulsionPotential = 0.0f;
+		m_ShipCurrentPropulsion = 0.0f;
+		foreach(GameObject pg in m_PropulsionGenerators)
+		{
+			CPropulsionGeneratorBehaviour pgs = pg.GetComponent<CPropulsionGeneratorBehaviour>();
+			if(pgs.IsPropulsionGeneratorActive)
+			{
+				m_ShipCurrentPropulsion += pgs.PropulsionForce;
+			}
+			m_ShipPropulsionPotential += pgs.PropulsionPotential;
+		}
 	}
 }

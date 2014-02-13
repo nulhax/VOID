@@ -851,8 +851,8 @@ GameObject:
   - 65: {fileID: 6500038}
   - 114: {fileID: 11400302}
   - 114: {fileID: 11400300}
-  - 114: {fileID: 11400298}
   - 114: {fileID: 11400070}
+  - 114: {fileID: 11400298}
   m_Layer: 9
   m_Name: Control - Colored Progress Bar
   m_TagString: Untagged
@@ -3826,13 +3826,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 1260
+  mWidth: 1247
   mHeight: 987
   mDepth: -3
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.27659571
+  aspectRatio: 1.26342452
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -3874,13 +3874,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .343283594, g: .343283594, b: .343283594, a: .360784322}
   mPivot: 4
-  mWidth: 1260
+  mWidth: 1247
   mHeight: 987
   mDepth: -2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.27659571
+  aspectRatio: 1.26342452
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Stripes 2
   mType: 2

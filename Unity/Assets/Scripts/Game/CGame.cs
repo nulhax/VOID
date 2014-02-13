@@ -89,6 +89,10 @@ public class CGame : CNetworkMonoBehaviour
 
     public void OnGUI()
     {
+		float fViewWidth = 450;
+		float fViewHeight = 150;
+		float fPositionX = Screen.width / 2 - fViewWidth / 2;
+		float fPositionY = Screen.height / 2 + 50;
 		float fScreenCenterX = Screen.width / 2;
 		float fScreenCenterY = Screen.height / 2;
 
@@ -96,8 +100,8 @@ public class CGame : CNetworkMonoBehaviour
 		if (!CNetwork.Connection.IsConnected && 
             !CNetwork.Server.IsActive)
         {
-			GUI.Label(new Rect(fScreenCenterX - 226, fScreenCenterY - 180, 100, 30), "Server Title");
-			m_sServerTitle = GUI.TextField(new Rect(fScreenCenterX - 230, fScreenCenterY - 150, 200, 30), m_sServerTitle, 32);
+			GUI.Label(new Rect(fPositionX, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Server Title");
+            m_sServerTitle = GUI.TextField(new Rect(fPositionX, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sServerTitle, 32);
 			m_fNumSlots = GUI.HorizontalSlider(new Rect(fScreenCenterX - 230, fScreenCenterY - 50, 200, 30), m_fNumSlots, 1.0f, 32.0f);
 			GUI.Label(new Rect(fScreenCenterX - 158, fScreenCenterY - 80, 100, 30), "Slots: " + ((uint)m_fNumSlots).ToString());
 
@@ -129,14 +133,6 @@ public class CGame : CNetworkMonoBehaviour
 		if (!CNetwork.Connection.IsConnected)
         {
 			DrawLobbyGui();
-
-            if (!CNetwork.IsServer)
-            {
-                if (GUI.Button(new Rect(140, 20, 130, 50), "Bryce"))
-                {
-                    CNetwork.Connection.ConnectToServer("121.98.172.91", 1337, "");
-                }
-            }
         }
     }
 
@@ -152,9 +148,9 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Player Naming
 
-		GUI.Label(new Rect(fScreenCenterX + 226, fScreenCenterY - 180, 100, 30), "Player Name");
-		
-		string sPlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+        GUI.Label(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Player Name");
+
+        string sPlayerName = GUI.TextField(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sPlayerName, 32);
 		//PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
 		
 		if(PlayerName != sPlayerName)
@@ -304,7 +300,10 @@ public class CGame : CNetworkMonoBehaviour
 
 	int m_iActiveTab = 1;
 
-	
+    const float m_fInputFieldWidth  = 200;
+    const float m_fInputFieldHeight = 20;
+    const float m_fTextFieldOffset  = 200;
+    const float m_fTextLayoutOffset = 220;
 	static CGame s_cInstance = null;
 
 

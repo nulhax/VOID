@@ -31,34 +31,31 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	private List<GameObject> m_NaniteGenerators = new List<GameObject>();
 	private List<GameObject> m_NaniteSilos = new List<GameObject>();	
 
-	CNetworkVar<int> m_fShipNanitePool = null;
+	private int m_ShipNanitesPotential = 0;
+	private int m_ShipCurrentNanites = 0;
 
 	// Member Properties
-	public int ShipNanites
+	public int ShipNanitesPotential
 	{
-		get{return(m_fShipNanitePool.Get());}
-		set{m_fShipNanitePool.Set(value);}
+		get { return (m_ShipNanitesPotential); } 
 	}
 	
+	public int ShipCurentNanites
+	{
+		get { return (m_ShipCurrentNanites); } 
+	}
+
 	// Member Methods
 
 	// Use this for initialization
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fShipNanitePool = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
+       
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
 		
-	}
-	
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-
-		}
 	}
 	
 	public void RegisterNaniteGenerator(GameObject _NaniteGenerator)
@@ -93,9 +90,31 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 		}
 	}
 
+	public void Update()
+	{
+		// Update the storage variables
+		UpdateStorageVariables();
+	}
+
 	public bool IsEnoughNanites(int _iNanites)
 	{
-		return(ShipNanites >= _iNanites);
+		return(m_ShipCurrentNanites >= _iNanites);
+	}
+
+	private void UpdateStorageVariables()
+	{
+		m_ShipNanitesPotential = 0;
+		m_ShipCurrentNanites = 0;
+		foreach(GameObject ns in m_NaniteSilos)
+		{
+			CNaniteStorageBehaviour nsb = ns.GetComponent<CNaniteStorageBehaviour>();
+			
+			if(nsb.IsStorageAvailable)
+			{
+				m_ShipCurrentNanites += nsb.StoredNanites;
+				m_ShipNanitesPotential += nsb.NaniteCapacity;
+			}
+		}
 	}
 	
 	[AServerOnly]
@@ -111,28 +130,23 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 			float newNaniteAmount = siloBehaviour.StoredNanites + evenDistribution;
 
-			if(newNaniteAmount > siloBehaviour.MaxNaniteCapacity)
+			if(newNaniteAmount > siloBehaviour.NaniteCapacity)
 			{
 				int chargeAddition = siloBehaviour.AvailableNaniteCapacity;
-				siloBehaviour.StoredNanites = siloBehaviour.MaxNaniteCapacity;
+				siloBehaviour.StoredNanites = siloBehaviour.NaniteCapacity;
 				evenDistribution -= chargeAddition;
 			}
 		}
 
-		int totalNanites = 0;
 		foreach(GameObject silo in m_NaniteSilos)
 		{
 			CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour>();
 			
-			if(siloBehaviour.StoredNanites != siloBehaviour.MaxNaniteCapacity)
+			if(siloBehaviour.StoredNanites != siloBehaviour.NaniteCapacity)
 			{
 				siloBehaviour.StoredNanites += evenDistribution;
 			}
-			
-			 totalNanites += siloBehaviour.StoredNanites;
 		}
-
-		ShipNanites = totalNanites;
 	}
 		
 	[AServerOnly]
@@ -140,14 +154,14 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	{	
 		int iOriginalDebt = _iNanites;
 
-		if (_iNanites < ShipNanites) 
+		if (_iNanites < m_ShipCurrentNanites) 
 		{
 			// Take nanites from non-full silos first
 			foreach (GameObject silo in m_NaniteSilos) 
 			{
 				CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour> ();
 
-				if (siloBehaviour.HasAvailableNanites && siloBehaviour.StoredNanites < siloBehaviour.MaxNaniteCapacity) 
+				if (siloBehaviour.IsStorageAvailable && siloBehaviour.StoredNanites < siloBehaviour.NaniteCapacity) 
 				{
 					if (siloBehaviour.StoredNanites > _iNanites) 
 					{
@@ -171,7 +185,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 				{
 					CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour> ();
 			
-					if (siloBehaviour.HasAvailableNanites) 
+					if (siloBehaviour.IsStorageAvailable) 
 					{
 						if (siloBehaviour.StoredNanites > _iNanites) 
 						{
@@ -188,23 +202,22 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 					}
 				}
 			}
-
-			ShipNanites -= iOriginalDebt;
 		}
 		else
 		{
 			Debug.LogError("Insufficient nanites - always check available nanites before deducting");
 		}
-
-		//ShipNanites -= _iNanites;
 	}
 
 	public void OnGUI()
 	{
-		float boxWidth = 150;
-		float boxHeight = 40;
+        if (CNetwork.IsConnectedToServer)
+        {
+            float boxWidth = 150;
+            float boxHeight = 40;
 
-        GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
-                         "[Ship Nanites]\n" + ShipNanites.ToString());
+            GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
+                             "[Ship Nanites]\n" + m_ShipCurrentNanites.ToString());
+        }
 	}
 }

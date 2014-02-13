@@ -121,6 +121,9 @@ public class CGameRegistrator : MonoBehaviour
 		UIPowerCapacitor,
 		UIAtmosphereGenerator,
 		UIDispenser,
+		UIShipPower,
+		UIShipPropulsion,
+		UIShipResources,
 
 		// Other
 		LaserTurretProjectile,
@@ -254,6 +257,9 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerCapacitor,			"DUI/Modules/DUIPowerCapacitor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIAtmosphereGenerator,		"DUI/Modules/DUIAtmosphereGenerator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIDispenser,					"DUI/Modules/DUIDispenser");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPower,					"DUI/Ship/DUIShipPower");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPropulsion,			"DUI/Ship/DUIShipPropulsion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipResources,				"DUI/Ship/DUIShipResources");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -364,6 +370,9 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor, ENetworkPrefab.UIPowerCapacitor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator, ENetworkPrefab.UIAtmosphereGenerator);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser, ENetworkPrefab.UIDispenser);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower, ENetworkPrefab.UIShipPower);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion, ENetworkPrefab.UIShipPropulsion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources, ENetworkPrefab.UIShipResources);
 	}
 
 

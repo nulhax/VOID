@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -104,7 +104,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     private void HandlePlayerOxygenRefill(ulong _ulPlayerId)
     {
         //being broken may be done here, seeing as it is the server.
-        GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_ulPlayerId);
+        GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_ulPlayerId);
 
         cPlayerActor.GetComponent<CPlayerSuit>().AddOxygen(20.0f);
     }

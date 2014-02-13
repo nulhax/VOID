@@ -20,20 +20,25 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour 
+public class CPropulsionGeneratorBehaviour : CNetworkMonoBehaviour 
 {
+
 	// Member Types
 	
 	
 	// Member Delegates & Events
+	public delegate void NotifyStateChange(CPropulsionGeneratorBehaviour _Self);
 	
+	public event NotifyStateChange EventPropulsionOutputChanged;
+	public event NotifyStateChange EventPropulsionPotentialChanged;
+
 	
 	// Member Fields
-	const float m_kfMaximumPropulsion = 15.0f;
-
-	CNetworkVar<float> m_fPropulsionOutput = null;
-	CNetworkVar<bool> m_PropulsionGeneratorActive = null;
+	private CNetworkVar<float> m_PropulsionPotential = null;
+	private CNetworkVar<float> m_fPropulsionOutput = null;
+	private CNetworkVar<bool> m_PropulsionGeneratorActive = null;
 			
+
 	// Member Properties
 	public float PropulsionForce
 	{ 
@@ -41,6 +46,20 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 		
 		[AServerOnly]
 		set { m_fPropulsionOutput.Set(value); }
+	}
+
+	public float PropulsionPotential
+	{ 
+		get { return (m_PropulsionPotential.Get()); }
+		
+		[AServerOnly]
+		set 
+		{ 
+			m_PropulsionPotential.Set(value); 
+			
+			if(value < PropulsionForce)
+				PropulsionForce = value;
+		}
 	}
 
 	public bool IsPropulsionGeneratorActive
@@ -53,13 +72,23 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
+		m_PropulsionPotential = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_fPropulsionOutput = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_PropulsionGeneratorActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		
+		if(m_fPropulsionOutput == _VarInstance)
+		{
+			if(EventPropulsionOutputChanged != null)
+				EventPropulsionOutputChanged(this);
+		}
+		else if(m_PropulsionPotential == _VarInstance)
+		{
+			if(EventPropulsionPotentialChanged != null)
+				EventPropulsionPotentialChanged(this);
+		}
 	}
 	
 	public void Start()
@@ -69,22 +98,6 @@ public class CPropulsionGeneratorSystem : CNetworkMonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			ActivatePropulsionGeneration();
-		}
-	}
-	
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			UpdatePropulsion();
-		}
-	}
-	
-	public void UpdatePropulsion()
-	{
-		if (IsPropulsionGeneratorActive) 
-		{
-			m_fPropulsionOutput.Set(m_kfMaximumPropulsion);
 		}
 	}
 	

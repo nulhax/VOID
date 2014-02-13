@@ -146,7 +146,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);
                         cToolInterface.NotifyPickedUp(m_ulOwnerPlayerId);
 						ChangeTool((byte)i);
-                        Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolObjectName({1}) SlotId({2})", m_ulOwnerPlayerId, _cInteractableObject.name, i));
+                        // Commented out by Nathan to avoid extraneous debug information.
+                        // Feel free to uncomment for debugging purposes when required.
+						//Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolObjectName({1}) SlotId({2})", _ulPlayerId, _cInteractableObject.name, i));
 					}
 					break;
 				}
@@ -165,7 +167,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			m_bActiveToolId.Set(_bSlotId);
 
-            Debug.Log(string.Format("Changing tool to SlotId({0})", _bSlotId));
+            // Commented out by Nathan to avoid extraneous debug information.
+            // Feel free to uncomment for debugging purposes when required.
+            //Debug.Log(string.Format("Changing tool to SlotId({0})", _bSlotId));
 		}
 	}
 
@@ -233,7 +237,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-            CPlayerBelt cPlayerBelt = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerBelt>();
+            CPlayerBelt cPlayerBelt = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerBelt>();
 
             switch (eAction)
             {
@@ -250,7 +254,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void Start()
     {
-        m_ulOwnerPlayerId = CGamePlayers.FindPlayerActorsPlayerId(ThisNetworkView.ViewId);
+        m_ulOwnerPlayerId = CGamePlayers.GetPlayerActorsPlayerId(ThisNetworkView.ViewId);
 
         if (CNetwork.IsServer)
         {

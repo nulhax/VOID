@@ -103,7 +103,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 			if (!IsHeld) 
 				return null; 
 
-			return (CGamePlayers.FindPlayerActor(OwnerPlayerId)); 
+			return (CGamePlayers.GetPlayerActor(OwnerPlayerId)); 
 		}
     }
 

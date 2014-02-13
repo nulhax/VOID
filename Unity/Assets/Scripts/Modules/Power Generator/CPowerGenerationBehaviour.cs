@@ -31,13 +31,29 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 	public delegate void NotifyStateChange(CPowerGenerationBehaviour _Self);
 
 	public event NotifyStateChange EventGenerationRateChanged;
+	public event NotifyStateChange EventGenerationRatePotentialChanged;
 
 // Member Fields
+	private CNetworkVar<float> m_PowerGenerationRatePotential = null;
 	private CNetworkVar<float> m_PowerGenerationRate = null;
 	private CNetworkVar<bool> m_PowerGenerationActive = null;
 
 
 // Member Properties
+	public float PowerGenerationRatePotential
+	{ 
+		get { return(m_PowerGenerationRatePotential.Get()); }
+
+		[AServerOnly]
+		set 
+		{ 
+			m_PowerGenerationRatePotential.Set(value); 
+			
+			if(value < PowerGenerationRate)
+				PowerGenerationRate = value;
+		}
+	}
+
 	public float PowerGenerationRate
 	{ 
 		get { return (m_PowerGenerationRate.Get()); }
@@ -56,6 +72,7 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_PowerGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerGenerationRatePotential = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_PowerGenerationActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
@@ -65,6 +82,11 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 		{
 			if(EventGenerationRateChanged != null)
 				EventGenerationRateChanged(this);
+		}
+		else if(m_PowerGenerationRatePotential == _VarInstance)
+		{
+			if(EventGenerationRatePotentialChanged != null)
+				EventGenerationRatePotentialChanged(this);
 		}
 	}
 

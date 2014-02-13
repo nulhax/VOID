@@ -37,7 +37,11 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Properties
-
+	[AServerOnly]
+	public List<GameObject> Facilities
+	{
+		get { return (new List<GameObject>(m_mFacilities.Values)); }
+	}
 
 // Member Methods
 
@@ -132,15 +136,6 @@ public class CShipFacilities : MonoBehaviour
 		}
 		
 		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
-	}
-
-
-    [AServerOnly]
-	public List<GameObject> GetAllFacilities()
-	{
-		List<GameObject> ReturnList = new List<GameObject>(m_mFacilities.Values);
-		
-		return (ReturnList);
 	}
 
 

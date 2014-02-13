@@ -181,45 +181,48 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	{
 		if(_ulPlayerId == m_ulControllerPlayerId.Get())
 		{
-			switch (_eAxis)
-			{
-			case CUserInput.EAxis.MouseX:
-			{
-				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
-				
-				// Update rotation
-				vRotation.y += _fValue;
-				
-				// Apply rotations to turret
-				transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
-				m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+            if (transform.FindChild("MechanicalComponent").GetComponent<CActorHealth>().health > 0)
+            {
+                switch (_eAxis)
+                {
+                    case CUserInput.EAxis.MouseX:
+                        {
+                            Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
 
-				// Server updates the rotation for other clients
-				m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
-				break;
-			}
-				
-			case CUserInput.EAxis.MouseY:
-			{
-				Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
-				
-				// Update rotation
-				vRotation.x += _fValue;
-				vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
-				
-				// Apply rotations to turret
-				transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
-				m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+                            // Update rotation
+                            vRotation.y += _fValue;
 
-				// Server updates the rotation for other clients
-				m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
-				break;
-			}
-				
-			default:
-				Debug.LogError("Unknown input");
-				break;
-			}
+                            // Apply rotations to turret
+                            transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+                            m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+
+                            // Server updates the rotation for other clients
+                            m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
+                            break;
+                        }
+
+                    case CUserInput.EAxis.MouseY:
+                        {
+                            Vector2 vRotation = new Vector2(m_cBarrel.transform.eulerAngles.x, transform.rotation.eulerAngles.y);
+
+                            // Update rotation
+                            vRotation.x += _fValue;
+                            vRotation.x = Mathf.Clamp(vRotation.x, m_fMinRotationX, m_fMaxRotationX);
+
+                            // Apply rotations to turret
+                            transform.localEulerAngles = new Vector3(0.0f, vRotation.y, 0.0f);
+                            m_cBarrel.transform.localEulerAngles = new Vector3(vRotation.x, 0.0f, 0.0f);
+
+                            // Server updates the rotation for other clients
+                            m_tRotation.Set(new Vector2(vRotation.x, vRotation.y));
+                            break;
+                        }
+
+                    default:
+                        Debug.LogError("Unknown input");
+                        break;
+                }
+            }
 		}
 	}
 

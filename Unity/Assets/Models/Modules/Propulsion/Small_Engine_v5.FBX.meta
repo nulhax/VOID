@@ -1,0 +1,115 @@
+fileFormatVersion: 2
+guid: 1ef636011d324ec4da55c347f5a78932
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Base_Ring
+    100002: Center Sphere
+    100004: Center_Gravitron
+    100006: Octagon
+    100008: Pillar001
+    100010: Pillar002
+    100012: Pillar003
+    100014: Pillar004
+    100016: Ring_Inner
+    100018: Ring_Middle
+    100020: Ring_Outer
+    100022: //RootNode
+    400000: Base_Ring
+    400002: Center Sphere
+    400004: Center_Gravitron
+    400006: Octagon
+    400008: Pillar001
+    400010: Pillar002
+    400012: Pillar003
+    400014: Pillar004
+    400016: Ring_Inner
+    400018: Ring_Middle
+    400020: Ring_Outer
+    400022: //RootNode
+    2300000: Base_Ring
+    2300002: Center Sphere
+    2300004: Center_Gravitron
+    2300006: Octagon
+    2300008: Pillar001
+    2300010: Pillar002
+    2300012: Pillar003
+    2300014: Pillar004
+    2300016: Ring_Inner
+    2300018: Ring_Middle
+    2300020: Ring_Outer
+    3300000: Base_Ring
+    3300002: Center Sphere
+    3300004: Center_Gravitron
+    3300006: Octagon
+    3300008: Pillar001
+    3300010: Pillar002
+    3300012: Pillar003
+    3300014: Pillar004
+    3300016: Ring_Inner
+    3300018: Ring_Middle
+    3300020: Ring_Outer
+    4300000: Center_Gravitron
+    4300002: Base_Ring
+    4300004: Ring_Outer
+    4300006: Center Sphere
+    4300008: Ring_Inner
+    4300010: Ring_Middle
+    4300012: Octagon
+    4300014: Pillar001
+    4300016: Pillar002
+    4300018: Pillar003
+    4300020: Pillar004
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

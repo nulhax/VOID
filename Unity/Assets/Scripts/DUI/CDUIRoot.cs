@@ -35,6 +35,9 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		PowerCapacitor,
 		AtmosphereGenerator,
 		Dispenser,
+		ShipPower,
+		ShipPropulsion,
+		ShipResources,
 
 		MAX
 	}

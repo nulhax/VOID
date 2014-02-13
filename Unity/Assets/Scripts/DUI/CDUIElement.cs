@@ -50,7 +50,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	public bool m_SyncOnDoubleClick = false;
 	public bool m_SyncOnPress = false;
 	public bool m_SyncOnSelect = false;
-	public bool m_SyncOnHover = false;
+	public bool m_SyncOnHover = true;
 	public bool m_SyncOnDrag = false;
 	public bool m_SyncOnDragStart = false;
 	public bool m_SyncOnDragEnd = false;
@@ -351,6 +351,8 @@ public class CDUIElement : CNetworkMonoBehaviour
 		s_IsSyncingNetworkCallbacks = false;
 		
 		// Debug...
-		Debug.Log("Recieved Notification: " + _Notification.ToString() + " [" + gameObject.name + "]");
+        // Commented out by Nathan to avoid extraneous debug information.
+        // Feel free to uncomment for debugging purposes when required.
+		//Debug.Log("Recieved Notification: " + _Notification.ToString() + " [" + gameObject.name + "]");
 	}
 }

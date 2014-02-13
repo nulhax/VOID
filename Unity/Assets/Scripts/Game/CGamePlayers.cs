@@ -34,14 +34,17 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 // Member Delegates & Events
+	public delegate void NotifyPlayerActivity(ulong _PlayerId);
 
+	public event NotifyPlayerActivity EventPlayerJoin;
+	public event NotifyPlayerActivity EventPlayerLeave;
 
 // Member Properties
 	public string LocalPlayerName
 	{
 		get
 		{
-			return(m_mPlayerName[CNetwork.PlayerId]);
+			return(m_mPlayersNames[CNetwork.PlayerId]);
 		}
 	}
 
@@ -79,6 +82,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			return (s_cInstance.m_mPlayersActors[CNetwork.PlayerId]);
 		}
+	}
+
+	public static List<ulong> Players
+	{
+		get { return (new List<ulong>(s_cInstance.m_mPlayersActors.Keys)); }
 	}
 	
 	public static List<GameObject> PlayerActors
@@ -159,7 +167,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 				string sPlayerName = _cStream.ReadString();
 
 				//Send all dictionary entries to new player
-				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayerName) 
+				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayersNames) 
 				{
 					//Make sure you don't send RPC to yourself. Foreach loops will not let you modify the collections object (dictionary) you are operating on.
 					if(_cNetworkPlayer.PlayerId != CNetwork.PlayerId)
@@ -168,7 +176,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 					}
 				}
 						
-				//Send new player name to all other players
+				// Send new player name to all other players
 				CGamePlayers.s_cInstance.InvokeRpcAll("RegisterPlayerName", _cNetworkPlayer.PlayerId, sPlayerName);
 				
 				break;
@@ -177,7 +185,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	public static GameObject FindPlayerActor(ulong _ulPlayerId)
+	public static GameObject GetPlayerActor(ulong _ulPlayerId)
 	{
 		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
 		{
@@ -187,7 +195,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
 
-	public static CNetworkViewId FindPlayerActorViewId(ulong _ulPlayerId)
+	public static CNetworkViewId GetPlayerActorViewId(ulong _ulPlayerId)
 	{
 		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
 		{
@@ -197,8 +205,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayersActors[_ulPlayerId]);
 	}
 
-
-	public static ulong FindPlayerActorsPlayerId(CNetworkViewId _PlayerActorViewId)
+	public static ulong GetPlayerActorsPlayerId(CNetworkViewId _PlayerActorViewId)
 	{
 		if (!s_cInstance.m_mPlayerActorsPlayers.ContainsKey(_PlayerActorViewId))
 		{
@@ -208,6 +215,23 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayerActorsPlayers[_PlayerActorViewId]);
 	}
 
+	public static ulong GetPlayerActorsPlayerId(GameObject _PlayerActor)
+	{
+		if(_PlayerActor.GetComponent<CNetworkView>() == null)
+			return(ulong.MinValue);
+		else
+			return(GetPlayerActorsPlayerId(_PlayerActor.GetComponent<CNetworkView>().ViewId));
+	}
+
+	public static string GetPlayerName(ulong _ulPlayerId)
+	{
+		if (!s_cInstance.m_mPlayersNames.ContainsKey(_ulPlayerId))
+		{
+			return(string.Empty);
+		}
+		
+		return (s_cInstance.m_mPlayersNames[_ulPlayerId]);
+	}
 
 	public void Awake()
 	{
@@ -316,7 +340,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	
 	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
-		CNetworkViewId cPlayerActorNetworkViewId = FindPlayerActorViewId(_cPlayer.PlayerId);
+		CNetworkViewId cPlayerActorNetworkViewId = GetPlayerActorViewId(_cPlayer.PlayerId);
 
 		if (cPlayerActorNetworkViewId != null)
 		{
@@ -337,7 +361,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	{
 		m_mPlayersActors.Clear();
 		m_mPlayerActorsPlayers.Clear();
-		m_mPlayerName.Clear();
+		m_mPlayersNames.Clear();
 	}
 
 
@@ -357,24 +381,32 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void RegisterPlayerName(ulong _ulPlayerID, string _sPlayerUserName)
 	{
-		if(m_mPlayerName.ContainsKey(_ulPlayerID))
+		if(m_mPlayersNames.ContainsKey(_ulPlayerID))
 		{
-			m_mPlayerName[_ulPlayerID] = _sPlayerUserName;
+			m_mPlayersNames[_ulPlayerID] = _sPlayerUserName;
 			//Debug.LogError("Changed Player Name: " + _sPlayerUserName);
 		}
 		else
 		{
-			m_mPlayerName.Add(_ulPlayerID, _sPlayerUserName);
+			m_mPlayersNames.Add(_ulPlayerID, _sPlayerUserName);
 			//Debug.LogError("Added player: " + _sPlayerUserName);
 		}
+
+		// Call this after the name is registered
+		if(EventPlayerJoin != null)
+			EventPlayerJoin(_ulPlayerID);
 	}
 	[ANetworkRpc]
 	void UnregisterPlayerName(ulong _ulPlayerID)
 	{
-		if(m_mPlayerName.ContainsKey(_ulPlayerID))
+		if(m_mPlayersNames.ContainsKey(_ulPlayerID))
 		{
-			m_mPlayerName.Remove(_ulPlayerID);
+			m_mPlayersNames.Remove(_ulPlayerID);
 		}
+
+		// Call this after the name is unregistered
+		if(EventPlayerLeave != null)
+			EventPlayerLeave(_ulPlayerID);
 	}
 
 	[ANetworkRpc]
@@ -397,39 +429,42 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-		GUIStyle cStyle = new GUIStyle();
-        if (CGamePlayers.SelfActor == null)
+        if (CNetwork.IsConnectedToServer)
         {
-            // Draw un-spawned message
-            cStyle.fontSize = 40;
-            cStyle.normal.textColor = Color.white;
+            GUIStyle cStyle = new GUIStyle();
+            if (CGamePlayers.SelfActor == null)
+            {
+                // Draw un-spawned message
+                cStyle.fontSize = 40;
+                cStyle.normal.textColor = Color.white;
 
-            GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
-                      "Waiting for spawner to be available...", cStyle);
+                GUI.Label(new Rect(Screen.width / 2 - 290, Screen.height / 2 - 50, 576, 100),
+                          "Waiting for spawner to be available...", cStyle);
+            }
+
+            if (CGamePlayers.SelfActor != null)
+            {
+                if (Input.GetKey(KeyCode.Tab))
+                {
+                    GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
+
+                    int iStartY = 115;
+
+                    foreach (KeyValuePair<ulong, string> entry in m_mPlayersNames)
+                    {
+                        GUI.Label(new Rect(110, iStartY, 400, 400), "Player: " + entry.Value);
+                        iStartY += 10;
+                    }
+                }
+            }
         }
-
-		if (CGamePlayers.SelfActor != null)		
-		{
-			if(Input.GetKey(KeyCode.Tab))
-			{
-				GUI.Box(new Rect(100, 100, 400, 400), "Player List ");
-
-				int iStartY = 115;
-
-				foreach(KeyValuePair<ulong, string> entry in m_mPlayerName)
-				{
-					GUI.Label(new Rect(110, iStartY, 400, 400), "Player: " + entry.Value);
-					iStartY += 10;
-				}
-			}
-		}
     }
 
 	void OnPlayerNameChange(string _sPlayerName)
 	{
 		ulong ulPlayerID = CNetwork.PlayerId;
 
-		m_mPlayerName[ulPlayerID] = _sPlayerName;
+		m_mPlayersNames[ulPlayerID] = _sPlayerName;
 		m_sPlayerName = _sPlayerName;
 
 		CGamePlayers.m_bSerializeName = true;
@@ -439,7 +474,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	Dictionary<ulong, CNetworkViewId> m_mPlayersActors = new Dictionary<ulong, CNetworkViewId>();
 	Dictionary<CNetworkViewId, ulong> m_mPlayerActorsPlayers = new Dictionary<CNetworkViewId, ulong>();
-	Dictionary<ulong, string> m_mPlayerName = new Dictionary<ulong, string>();
+	Dictionary<ulong, string> m_mPlayersNames = new Dictionary<ulong, string>();
 
 	List<ulong> m_aUnspawnedPlayers = new List<ulong>();
 

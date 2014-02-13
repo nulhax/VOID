@@ -54,12 +54,10 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		// Register for when the circuitry breaks/fixes
 		m_CircuitryComponent.EventComponentBreak += HandleCircuitryBreaking;
 		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
-
-		// Register for when the generation rate changes
-		m_AtmosphereGenerator.EventGenerationRateChanged += HandleGenerationRateChange;
 		
 		// Get the DUI of the power generator
 		m_DUIAtmosphereGeneration = m_DUIConsole.DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
+		m_DUIAtmosphereGeneration.RegisterAtmosphereGenerator(gameObject);
 
 		if(CNetwork.IsServer)
 		{
@@ -71,7 +69,9 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 	private void HandleFluidHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
 	{
 		if(CNetwork.IsServer)
+		{
 			m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+		}
 	}
 	
 	private void HandleCircuitryBreaking(CComponentInterface _Component)
@@ -80,9 +80,6 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		{
 			m_AtmosphereGenerator.DeactivateGeneration();
 		}
-		
-		// Update the UI generation active
-		m_DUIAtmosphereGeneration.SetAtmosphereGenerationActive(false);
 	}
 	
 	private void HandleCircuitryFixing(CComponentInterface _Component)
@@ -91,14 +88,5 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		{
 			m_AtmosphereGenerator.ActivateGeneration();
 		}
-		
-		// Update the UI generation active
-		m_DUIAtmosphereGeneration.SetAtmosphereGenerationActive(true);
-	}
-	
-	private void HandleGenerationRateChange(CAtmosphereGeneratorBehaviour _AtmosphereGen)
-	{
-		// Update the UI generation rate
-		m_DUIAtmosphereGeneration.SetAtmosphereGenerationRate(m_AtmosphereGenerator.AtmosphereGenerationRate, m_MaxAtmosphereGenerationRate);
 	}
 }

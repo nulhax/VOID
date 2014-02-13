@@ -78,7 +78,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	[AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+		GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
 
 		if (cPlayerActor != null)
 		{
@@ -115,15 +115,20 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 					GetComponent<CPlayerGroundMotor>().DisableInput(this);
 				}
 
-				// Start realigning the head
-				m_RealignBodyWithHead = true;
-				
-				// Set the values to use for realigment
-				Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-				m_RealignFromRotation = transform.rotation;
-				m_RealignToRotation = actorHead.rotation;
-				m_RealignHeadTimer = 0.0f;
-				m_RealignHeadTime = 0.5f;
+				// Debug fix: make the head body realign instantly
+				Quaternion headRot = GetComponent<CPlayerHead>().ActorHead.transform.rotation;
+				transform.rotation = headRot;
+				GetComponent<CPlayerHead>().ActorHead.transform.rotation = headRot;
+
+//				// Start realigning the head
+//				m_RealignBodyWithHead = true;
+//				
+//				// Set the values to use for realigment
+//				Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+//				m_RealignFromRotation = transform.rotation;
+//				m_RealignToRotation = actorHead.rotation;
+//				m_RealignHeadTimer = 0.0f;
+//				m_RealignHeadTime = 0.0f;
 			}
 			else
 			{
@@ -211,28 +216,28 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 		if(m_RealignBodyWithHead)
 		{
-			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-
-			m_RealignHeadTimer += Time.deltaTime;
-			if(m_RealignHeadTimer > m_RealignHeadTime)
-			{
-				m_RealignHeadTimer = m_RealignHeadTime;
-				m_RealignBodyWithHead = false;
-			}
-
-			if(CNetwork.IsServer)
-			{
-				// Set the lerped rotation of the body
-				transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
-			}
-
-			// Set the rotation to the realignment rotation
-			actorHead.rotation = m_RealignToRotation;
-
-			if(!m_RealignBodyWithHead)
-			{
-				GetComponent<CPlayerHead>().SetHeadRotations(0.0f);
-			}
+//			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
+//
+//			m_RealignHeadTimer += Time.deltaTime;
+//			if(m_RealignHeadTimer > m_RealignHeadTime)
+//			{
+//				m_RealignHeadTimer = m_RealignHeadTime;
+//				m_RealignBodyWithHead = false;
+//			}
+//
+//			if(CNetwork.IsServer)
+//			{
+//				// Set the lerped rotation of the body
+//				transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
+//			}
+//
+//			// Set the rotation to the realignment rotation
+//			actorHead.rotation = m_RealignToRotation;
+//
+//			if(!m_RealignBodyWithHead)
+//			{
+//				GetComponent<CPlayerHead>().SetHeadRotations(0.0f);
+//			}
 		}
 	}
 

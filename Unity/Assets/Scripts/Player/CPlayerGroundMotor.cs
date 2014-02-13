@@ -138,7 +138,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		GameObject cPlayerActor = CGamePlayers.FindPlayerActor(_cNetworkPlayer.PlayerId);
+		GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
 
 		if (cPlayerActor != null)
 		{
