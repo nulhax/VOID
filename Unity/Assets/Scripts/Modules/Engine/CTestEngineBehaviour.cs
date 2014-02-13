@@ -47,7 +47,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 	private float m_VarianceTimer3 = 0.0f;
 
 	private CPropulsionGeneratorBehaviour m_PropulsionGenerator = null;
-	//private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
+	private CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
 
 	// Member Properties
@@ -63,8 +63,8 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_MechanicalComponent2.EventHealthChange += HandleMechanicalHealthChange;
 
 		// Get the DUI of the power generator
-		//m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
-		//m_DUIPowerGeneration.RegisterPowerGenerator(gameObject);
+		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
+		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
 
 		if(CNetwork.IsServer)
 		{

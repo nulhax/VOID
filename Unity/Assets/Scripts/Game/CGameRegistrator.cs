@@ -124,6 +124,8 @@ public class CGameRegistrator : MonoBehaviour
 		UIShipPower,
 		UIShipPropulsion,
 		UIShipResources,
+		UINaniteCapsule,
+		UIEngine,
 
 		// Other
 		LaserTurretProjectile,
@@ -260,6 +262,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPower,					"DUI/Ship/DUIShipPower");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPropulsion,			"DUI/Ship/DUIShipPropulsion");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipResources,				"DUI/Ship/DUIShipResources");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UINaniteCapsule,				"DUI/Modules/DUINaniteCapsule");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIEngine,					"DUI/Modules/DUIPropulsionEngine");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -364,6 +368,8 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower, ENetworkPrefab.UIShipPower);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion, ENetworkPrefab.UIShipPropulsion);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources, ENetworkPrefab.UIShipResources);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NaniteCapsule, ENetworkPrefab.UINaniteCapsule);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine, ENetworkPrefab.UIEngine);
 	}
 
 

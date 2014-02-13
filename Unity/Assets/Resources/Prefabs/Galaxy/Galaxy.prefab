@@ -50,6 +50,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ce7a48f44e1bed419435bf2802f0b3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mfTimeBetweenUpdateCellLoadUnloadQueues: .150000006
+  mfTimeBetweenCellLoads: .0250000004
+  mfTimeBetweenCellUnloads: .0250000004
+  mfTimeBetweenUpdateGubbinUnloadQueue: .150000006
+  mfTimeBetweenGubbinLoads: .0250000004
+  mfTimeBetweenGubbinUnloads: .0250000004
+  mfTimeBetweenShiftTests: .5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

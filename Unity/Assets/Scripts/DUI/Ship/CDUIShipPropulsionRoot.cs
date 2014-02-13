@@ -67,7 +67,9 @@ public class CDUIShipPropulsionRoot : MonoBehaviour
 		
 		// Calculate the value ratio
 		float value = shipGeneration/shipGenerationPotential;
-		
+		if(float.IsNaN(value)) 
+			value = 0.0f;
+
 		// Update the bar
 		CDUIUtilites.LerpBarColor(value, m_PropulsionBar);
 		m_PropulsionBar.value = value;

@@ -50,6 +50,10 @@ public class CDUIShipPlayersRoot : MonoBehaviour
 		{
 			AddPlayer(player);
 		}
+	}
+
+	public void Update()
+	{
 		UpdateListInformation();
 	}
 
@@ -62,30 +66,38 @@ public class CDUIShipPlayersRoot : MonoBehaviour
 	private void HandlePlayerJoin(ulong _PlayerId)
 	{
 		AddPlayer(_PlayerId);
-		UpdateListInformation();
 	}
 
 	private void HandlePlayerLeave(ulong _PlayerId)
 	{
 		RemovePlayer(_PlayerId);
-		UpdateListInformation();
 	}
 
 	private void AddPlayer(ulong _PlayerId)
 	{
 		// Add this player if they dont exist yet
+		GameObject listItem = null;
 		if(!m_PlayersList.ContainsKey(_PlayerId))
 		{
-			GameObject newListItem = (GameObject)GameObject.Instantiate(m_ListItemTemplate);
-			newListItem.SetActive(true);
-			newListItem.name += m_PlayersList.Count;
-			newListItem.transform.parent = m_PlayersGridList.transform;
-			newListItem.transform.localPosition = Vector3.one;
-			newListItem.transform.localEulerAngles = Vector3.zero;
-			newListItem.transform.localScale = Vector3.one;
-			
-			m_PlayersList.Add(_PlayerId, newListItem);
+			listItem = (GameObject)GameObject.Instantiate(m_ListItemTemplate);
+			listItem.SetActive(true);
+			listItem.name += m_PlayersList.Count;
+			listItem.transform.parent = m_PlayersGridList.transform;
+			listItem.transform.localPosition = Vector3.one;
+			listItem.transform.localEulerAngles = Vector3.zero;
+			listItem.transform.localScale = Vector3.one;
+
+			m_PlayersList.Add(_PlayerId, listItem);
 		}
+		else
+		{
+			listItem = m_PlayersList[_PlayerId];
+		}
+
+		// Update the player name
+		string playerName = CGamePlayers.GetPlayerName(_PlayerId);
+		UILabel nameLabel = listItem.GetComponentInChildren<UILabel>();
+		nameLabel.text = playerName;
 
 		// Reorganize the list
 		m_PlayersGridList.Reposition();
@@ -108,11 +120,6 @@ public class CDUIShipPlayersRoot : MonoBehaviour
 	{
 		foreach(KeyValuePair<ulong, GameObject> listItem in m_PlayersList)
 		{
-			// Set the player name
-			string playerName = CGamePlayers.GetPlayerName(listItem.Key);
-			UILabel nameLabel = listItem.Value.GetComponentInChildren<UILabel>();
-			nameLabel.text = playerName;
-
 			// Set the alive status
 			CPlayerHealth playerActorHealth = CGamePlayers.GetPlayerActor(listItem.Key).GetComponent<CPlayerHealth>();
 			if(playerActorHealth.Alive)

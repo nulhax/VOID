@@ -121,7 +121,9 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		
 		// Calculate the value ratio
 		float value = shipCharge/shipChargeCapacity;
-		
+		if(float.IsNaN(value)) 
+			value = 0.0f;
+
 		// Update the bar
 		CDUIUtilites.LerpBarColor(value, m_ChargeBar);
 		m_ChargeBar.value = value;

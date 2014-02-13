@@ -140,7 +140,7 @@ GameObject:
   - 4: {fileID: 400018}
   - 114: {fileID: 11400018}
   m_Layer: 9
-  m_Name: Rate
+  m_Name: Propulsion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -186,8 +186,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400020}
-  - 114: {fileID: 11400034}
-  - 114: {fileID: 11400032}
+  - 114: {fileID: 11400028}
+  - 114: {fileID: 11400026}
   - 114: {fileID: 11400024}
   m_Layer: 9
   m_Name: Control - Colored Progress Bar
@@ -204,7 +204,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400022}
-  - 114: {fileID: 11400036}
+  - 114: {fileID: 11400030}
   m_Layer: 9
   m_Name: BG - Vignette
   m_TagString: Untagged
@@ -220,7 +220,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400024}
-  - 114: {fileID: 11400038}
+  - 114: {fileID: 11400032}
   m_Layer: 9
   m_Name: BG - Stripes
   m_TagString: Untagged
@@ -236,7 +236,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400028}
-  - 114: {fileID: 11400040}
+  - 114: {fileID: 11400034}
   - 54: {fileID: 5400000}
   m_Layer: 9
   m_Name: Main Window
@@ -253,9 +253,9 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400030}
-  - 114: {fileID: 11400044}
+  - 114: {fileID: 11400038}
   - 54: {fileID: 5400002}
-  - 114: {fileID: 11400042}
+  - 114: {fileID: 11400036}
   m_Layer: 9
   m_Name: UI Root
   m_TagString: Untagged
@@ -271,11 +271,11 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400032}
-  - 114: {fileID: 11400050}
-  - 114: {fileID: 11400048}
-  - 114: {fileID: 11400046}
+  - 114: {fileID: 11400042}
+  - 114: {fileID: 11400040}
+  - 114: {fileID: 11400044}
   m_Layer: 0
-  m_Name: DUIAtmosphereGenerator
+  m_Name: DUIPropulsionEngine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -647,13 +647,13 @@ MonoBehaviour:
     absolute: -63
   mColor: {r: 1, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 305
+  mWidth: 322
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 19.0625
+  aspectRatio: 20.125
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -746,13 +746,13 @@ MonoBehaviour:
     absolute: -47
   mColor: {r: 1, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 305
+  mWidth: 322
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 19.0625
+  aspectRatio: 20.125
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -806,17 +806,17 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 505
+  mWidth: 522
   mHeight: 46
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 10.978261
+  aspectRatio: 11.347826
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
   mFont: {fileID: 0}
-  mText: 'State: Generation Active'
+  mText: 'State: Propulsion Active'
   mFontSize: 40
   mFontStyle: 0
   mEncoding: 1
@@ -914,17 +914,17 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 7
-  mWidth: 26
+  mWidth: 34
   mHeight: 14
   mDepth: 5
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.85714281
+  aspectRatio: 2.42857146
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: 52%
+  mText: 100%
   mFontSize: 20
   mFontStyle: 0
   mEncoding: 1
@@ -1032,7 +1032,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
-  mText: Rate
+  mText: Propulsion
   mFontSize: 20
   mFontStyle: 0
   mEncoding: 1
@@ -1082,17 +1082,17 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 505
+  mWidth: 522
   mHeight: 100
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 5.05000019
+  aspectRatio: 5.21999979
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 7a48ea22e80d1ac4b97fdd87f9009546, type: 2}
-  mText: Atmosphere Generator
+  mText: Engine
   mFontSize: 28
   mFontStyle: 0
   mEncoding: 1
@@ -1152,7 +1152,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
-  mText: Generation Rate
+  mText: Propulsion Force
   mFontSize: 20
   mFontStyle: 0
   mEncoding: 1
@@ -1184,7 +1184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1bd99dcf43f97d48bb6215c70f0cd40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400032
+--- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1196,7 +1196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thumb: {fileID: 400004}
-  mBG: {fileID: 11400034}
+  mBG: {fileID: 11400028}
   mFG: {fileID: 11400012}
   mValue: 1
   mFill: 0
@@ -1205,7 +1205,7 @@ MonoBehaviour:
   - mTarget: {fileID: 11400014}
     mMethodName: SetCurrentPercent
     oneShot: 0
---- !u!114 &11400034
+--- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1253,7 +1253,7 @@ MonoBehaviour:
   rightType: 1
   bottomType: 1
   topType: 1
---- !u!114 &11400036
+--- !u!114 &11400030
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1282,13 +1282,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 505
+  mWidth: 522
   mHeight: 400
   mDepth: -3
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.26250005
+  aspectRatio: 1.30499995
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -1301,7 +1301,7 @@ MonoBehaviour:
   rightType: 1
   bottomType: 1
   topType: 1
---- !u!114 &11400038
+--- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1330,13 +1330,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .343283594, g: .343283594, b: .343283594, a: .360784322}
   mPivot: 4
-  mWidth: 505
+  mWidth: 522
   mHeight: 400
   mDepth: -2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.26250005
+  aspectRatio: 1.30499995
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Stripes 2
   mType: 2
@@ -1349,7 +1349,7 @@ MonoBehaviour:
   rightType: 1
   bottomType: 1
   topType: 1
---- !u!114 &11400040
+--- !u!114 &11400034
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1389,7 +1389,7 @@ MonoBehaviour:
   mClipRange: {x: 0, y: 0, z: 20, w: 20}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 1
---- !u!114 &11400042
+--- !u!114 &11400036
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1429,7 +1429,7 @@ MonoBehaviour:
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 0
---- !u!114 &11400044
+--- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1444,23 +1444,7 @@ MonoBehaviour:
   manualHeight: 400
   minimumHeight: 320
   maximumHeight: 1536
---- !u!114 &11400046
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100032}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ce32e11994ad974499d64f553b95c379, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_GenerationBar: {fileID: 11400032}
-  m_GenerationRate: {fileID: 11400018}
-  m_GenerationActive: {fileID: 11400010}
-  m_ErrorReport: {fileID: 11400008}
-  m_WarningReport: {fileID: 11400004}
---- !u!114 &11400048
+--- !u!114 &11400040
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1473,9 +1457,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100000}
   m_DUICamera3D: {fileID: 0}
-  m_DUIType: 6
+  m_DUIType: 12
   m_RenderTexSize: {x: 2000, y: 1200}
---- !u!114 &11400050
+--- !u!114 &11400042
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -1486,6 +1470,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e804801891ad2e448979d9928e2b891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PropulsionBar: {fileID: 11400026}
+  m_PropulsionRate: {fileID: 11400018}
+  m_PropulsionActive: {fileID: 11400010}
+  m_ErrorReport: {fileID: 11400008}
+  m_WarningReport: {fileID: 11400004}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

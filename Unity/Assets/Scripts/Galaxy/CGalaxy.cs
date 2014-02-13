@@ -144,26 +144,26 @@ public class CGalaxy : CNetworkMonoBehaviour
 	protected CNetworkVar<uint> mNumCellSubsets;
 	public uint numCellSubsets { get { return muiNumCellSubsets; } }
 
-	public const float mfTimeBetweenUpdateCellLoadUnloadQueues = 0.15f;
-	private float mfTimeUntilNextUpdateCellLoadUnloadQueues = 0.0f;
+	public float mfTimeBetweenUpdateCellLoadUnloadQueues = 0.15f;
+	private float mfTimeUntilNextUpdateCellLoadUnloadQueues;
 
-	public const float mfTimeBetweenCellLoads = 0.05f;
-	private float mfTimeUntilNextCellLoad = 0.0f;
+	public float mfTimeBetweenCellLoads = 0.05f;
+	private float mfTimeUntilNextCellLoad;
 
-	public const float mfTimeBetweenCellUnloads = mfTimeBetweenCellLoads;
-	private float mfTimeUntilNextCellUnload = mfTimeBetweenCellLoads / 2;
+	public float mfTimeBetweenCellUnloads = 0.05f;
+	private float mfTimeUntilNextCellUnload;
 
-	public const float mfTimeBetweenUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues;
-	private float mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues / 2;
+	public float mfTimeBetweenUpdateGubbinUnloadQueue = 0.15f;
+	private float mfTimeUntilNextUpdateGubbinUnloadQueue;
 
-	public const float mfTimeBetweenGubbinLoads = 0.1f;
-	private float mfTimeUntilNextGubbinLoad = 0.0f;
+	public float mfTimeBetweenGubbinLoads = 0.1f;
+	private float mfTimeUntilNextGubbinLoad;
 
-	public const float mfTimeBetweenGubbinUnloads = mfTimeBetweenGubbinLoads;
-	private float mfTimeUntilNextGubbinUnload = mfTimeBetweenGubbinLoads / 2;
+	public float mfTimeBetweenGubbinUnloads = 0.1f;
+	private float mfTimeUntilNextGubbinUnload;
 
-	public const float mfTimeBetweenShiftTests = 0.5f;
-	private float mfTimeUntilNextShiftTest = 0.0f;
+	public float mfTimeBetweenShiftTests = 0.5f;
+	private float mfTimeUntilNextShiftTest;
 
 	private uint mNumExtraNeighbourCells = 3;   // Number of extra cells to load in every direction (i.e. load neighbours up to some distance).
 	public uint numExtraNeighbourCells { get { return mNumExtraNeighbourCells; } }
@@ -186,6 +186,17 @@ public class CGalaxy : CNetworkMonoBehaviour
 		// Instantiate galaxy noises.
 		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 			mNoises[ui] = new PerlinSimplexNoise();
+	}
+
+	void Awake()
+	{
+		mfTimeUntilNextUpdateCellLoadUnloadQueues = 0.0f;
+		mfTimeUntilNextCellLoad = 0.0f;
+		mfTimeUntilNextCellUnload = mfTimeBetweenCellLoads / 2;
+		mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateCellLoadUnloadQueues / 2;
+		mfTimeUntilNextGubbinLoad = 0.0f;
+		mfTimeUntilNextGubbinUnload = mfTimeBetweenGubbinLoads / 2;
+		mfTimeUntilNextShiftTest = 0.0f;
 	}
 
 	void Start()
@@ -665,6 +676,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 		CNetworkView networkView = gubbinObject.GetComponent<CNetworkView>(); System.Diagnostics.Debug.Assert(networkView != null); // Get network view - the object is assumed to have one.
 		NetworkedEntity networkedEntity = gubbin.mHasNetworkedEntityScript ? gubbinObject.GetComponent<NetworkedEntity>() : null;   // Get networked entity script IF it has one.
 		Rigidbody rigidBody = gubbin.mHasRigidBody ? gubbinObject.GetComponent<Rigidbody>() : null; // Get rigid body IF it has one.
+
+		float uniformScale = Random.Range(0.5f, 2.0f);
+		gubbinObject.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
 
 		// Parent object.
 		gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.

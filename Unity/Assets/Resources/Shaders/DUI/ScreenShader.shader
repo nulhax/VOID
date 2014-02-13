@@ -12,7 +12,7 @@ _Alpha("Alpha", Range(0,1) ) = 0.95
 	{
 		Tags
 		{
-"Queue"="Transparent-1"
+"Queue"="Transparent"
 "IgnoreProjector"="True"
 "RenderType"="Transparent"
 
