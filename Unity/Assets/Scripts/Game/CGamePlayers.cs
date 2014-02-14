@@ -276,7 +276,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 						
 						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-						cPlayerActor.GetComponent<CNetworkView>().SetEulerAngles(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
+						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 						
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
@@ -308,7 +308,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
                 // Set the player's position and rotation based upon the spawner's position and rotation
                 _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-                _SourcePlayer.GetComponent<CNetworkView>().SetEulerAngles(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation.eulerAngles);
+				_SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 
                 // Heal the player to full health
                 _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);

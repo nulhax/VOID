@@ -113,6 +113,14 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11400016, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+      propertyPath: m_UseOculus
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400016, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+      propertyPath: m_UseOculusRift
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_RootGameObject: {fileID: 1432749547}
@@ -136,6 +144,7 @@ GameObject:
   - 114: {fileID: 1432749558}
   - 114: {fileID: 1432749557}
   - 114: {fileID: 1432749553}
+  - 114: {fileID: 1432749554}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -220,6 +229,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00414ed365ffe234aaa456afceec96b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1432749554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432749547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e933e81d3c20c74ea6fdc708a67e3a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitialPredictionTime: .0500000007
+  InitialAccelGain: .0500000007
+  ResetTracker: 1
 --- !u!114 &1432749557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 740814e8ed423064782598e63b6c477b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_UseOculusRift: 1
 --- !u!114 &1432749561
 MonoBehaviour:
   m_ObjectHideFlags: 0

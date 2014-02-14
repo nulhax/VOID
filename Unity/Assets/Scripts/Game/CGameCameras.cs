@@ -21,81 +21,118 @@ using System;
 /* Implementation */
 
 
-public class CCompositeCameraSystem : MonoBehaviour
+public class CGameCameras : MonoBehaviour
 {
-
-// Member Types
-
-
-// Member Delegates & Events
-
 	
-// Member Fields
-	private Camera m_ShipCamera = null;
-	private Camera m_GalaxyCamera = null;
-	private Camera m_DeepGalaxyCamera = null;
+	// Member Types
+	
+	
+	// Member Delegates & Events
+	
+	
+	// Member Fields
+	public bool m_UseOculusRift = false;
 
-	private bool m_IsObserverOutside = false;
+	private static GameObject s_ShipCamera = null;
+	private static GameObject s_GalaxyCamera = null;
 
+	private static bool s_OculusRiftActive = false;
 
-// Member Properties
-	public GameObject PlayersHeadCamera
+	private static bool s_IsObserverOutside = false;
+	private static CGameCameras s_Instance = null;
+	
+	// Member Properties
+	public static CGameCameras Instance
 	{
 		get
 		{
-			if(!m_IsObserverOutside)
-				return(m_ShipCamera.gameObject);
-			else
-				return(m_GalaxyCamera.gameObject);
+			return(s_Instance);
 		}
 	}
 	
-// Member Methods
-	public void LateUpdate()
+	public static GameObject GalaxyCamera
 	{
-		if(!CNetwork.Connection.IsConnected ||
-		    CNetwork.Connection.IsDownloadingInitialGameData)
+		get
 		{
-			return;
+			return(s_GalaxyCamera);
 		}
-
-		// Update the transforms of the cameras
-		UpdateCameraTransforms();
+	}
+	
+	public static GameObject PlayersHeadCamera
+	{
+		get
+		{
+			if(!s_IsObserverOutside)
+				return(s_ShipCamera);
+			else
+				return(s_GalaxyCamera);
+		}
 	}
 
+	public static bool IsOculusRiftActive
+	{
+		get { return(s_OculusRiftActive); }
+	}
+	
+	// Member Methods
 	public void Start()
 	{	
+		s_Instance = this;
+		
 		CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	}
 
-	public void SetPlayersViewPerspectiveToShip(Transform _PlayerHead)
+	public void Update()
 	{
-		m_IsObserverOutside = false;
-		
-		// Set the perspective of the ship camera
-		m_ShipCamera.transform.parent = _PlayerHead;
-		m_ShipCamera.transform.localPosition = Vector3.zero;
-		m_ShipCamera.transform.localRotation = Quaternion.identity;
-		
-		// Unparent the galaxy camera
-		m_GalaxyCamera.transform.parent = null;
+		if(s_OculusRiftActive)
+		{
+			if(Input.GetKeyDown(KeyCode.F2))
+			{
+				for(int i = 0; i < OVRDevice.SensorCount; ++i)
+					OVRDevice.ResetOrientation(i);
+			}
+		}
 	}
 	
-	public void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
+	public void LateUpdate()
 	{
-		m_IsObserverOutside = true;
+		// Make sure the client has the most up to date information
+		if(!CNetwork.Connection.IsDownloadingInitialGameData &&
+		   CNetwork.Connection.IsConnected)
+		{
+			// Update the transforms of the cameras
+			UpdateCameraTransforms();
+		}
+	}
+	
+	public static void SetPlayersViewPerspectiveToShip(Transform _PlayerHead)
+	{
+		s_IsObserverOutside = false;
+		
+		// Set the perspective of the ship camera
+		s_ShipCamera.transform.parent = _PlayerHead;
+		s_ShipCamera.transform.localPosition = Vector3.zero;
+		s_ShipCamera.transform.localRotation = Quaternion.identity;
+		
+		// Unparent the galaxy camera
+		s_GalaxyCamera.transform.parent = null;
+	}
+	
+	public static void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
+	{
+		s_IsObserverOutside = true;
 		
 		// Set the perspective of the galaxy camera
-		m_GalaxyCamera.transform.parent = _PlayerHead;
-		m_GalaxyCamera.transform.localPosition = Vector3.zero;
-		m_GalaxyCamera.transform.localRotation = Quaternion.identity;
+		s_GalaxyCamera.transform.parent = _PlayerHead;
+		s_GalaxyCamera.transform.localPosition = Vector3.zero;
+		s_GalaxyCamera.transform.localRotation = Quaternion.identity;
 		
 		// Unparent the ship camera
-		m_ShipCamera.transform.parent = null;
+		s_ShipCamera.transform.parent = null;
 	}
-
-	public void SetDefaultViewPerspective()
+	
+	public static void SetDefaultViewPerspective()
 	{
 		// Ensure player actor exists
 		if (CGamePlayers.SelfActor != null)
@@ -106,48 +143,47 @@ public class CCompositeCameraSystem : MonoBehaviour
 	
 	private void UpdateCameraTransforms()
 	{		
-		if(!m_IsObserverOutside)
+		if(!s_IsObserverOutside)
 		{
 			// Transfer the galaxy camera based off the ship camera
-			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, m_GalaxyCamera.transform);
+			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_ShipCamera.transform.position, s_ShipCamera.transform.rotation, s_GalaxyCamera.transform);
 		}
 		else
 		{
 			// Transfer the ship camera based off the galaxy camera
-			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(m_GalaxyCamera.transform.position, m_GalaxyCamera.transform.rotation, m_ShipCamera.transform);	
+			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_GalaxyCamera.transform.position, s_GalaxyCamera.transform.rotation, s_ShipCamera.transform);	
 		}
-
-		// Update the rotation
-		m_DeepGalaxyCamera.transform.rotation = m_GalaxyCamera.transform.rotation;
 	}
-
+	
 	private void OnConnect()
 	{
-		// Instantiate the galaxy camera (must be first!)
-		m_GalaxyCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera"))).camera;
+		// If wanting to use oculus, check if the device is intialised
+		if(m_UseOculusRift)
+		{
+			s_OculusRiftActive = OVRDevice.IsInitialized() && OVRDevice.SensorCount > 0;
+		}
+
+		// Instantiate the galaxy camera
+		s_GalaxyCamera = s_OculusRiftActive ? 
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/OVRGalaxyCamera"))):
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera")));
 		
 		// Instantiate the ship camera
-		m_ShipCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera"))).camera;
-
-		// Instantiate the deep galaxy camera
-		m_DeepGalaxyCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/DeepGalaxyCamera"))).camera;
+		s_ShipCamera =  s_OculusRiftActive ? 
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/OVRShipCamera"))):
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera")));
 	}
-
+	
 	private void OnDisconnect()
 	{
-		if(m_GalaxyCamera != null)
+		if(s_GalaxyCamera != null)
 		{
-			Destroy(m_GalaxyCamera.gameObject);
+			Destroy(s_GalaxyCamera);
 		}
-
-		if(m_ShipCamera != null)
+		
+		if(s_ShipCamera != null)
 		{
-			Destroy(m_ShipCamera.gameObject);
-		}
-
-		if(m_DeepGalaxyCamera != null)
-		{
-			Destroy(m_DeepGalaxyCamera.gameObject);
+			Destroy(s_ShipCamera);
 		}
 	}
 };

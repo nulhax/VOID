@@ -48,6 +48,8 @@ public class CDUIShipPowerRoot : MonoBehaviour
 
 	public List<UISprite> m_ErrorIcons = new List<UISprite>();
 
+	public SkinnedMeshRenderer m_TestHead = null;
+
 	private float m_LastGenerationValue = 0.0f;
 	private float m_LastChargeValue = 0.0f;
 	private int m_LastConsumptionValue = 0;
@@ -193,10 +195,12 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		   m_LastGenerationValue < 0.2f)
 		{
 			m_ShowErrors = true;
+			m_TestHead.materials[0].color = Color.red;
 		}
 		else
 		{
 			m_ShowErrors = false;
+			m_TestHead.materials[0].color = Color.cyan;
 		}
 
 		if(m_ShowErrors != showingErrors)
