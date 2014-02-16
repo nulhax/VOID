@@ -101,6 +101,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     public void OnUseStart(GameObject _cInteractableObject)
     {
         m_bActive.Set(true);
+        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
     }
 
 
@@ -108,6 +109,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
 	public void OnUseEnd(GameObject _cInteractableObject)
     {
         m_bActive.Set(false);
+        gameObject.GetComponent<CAudioCue>().StopAllSound();
     }
 
 

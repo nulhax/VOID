@@ -346,7 +346,9 @@ public class CAudioSystem : MonoBehaviour
 	{
 		try 
 		{
-			Destroy(s_activeAudio.Find(s => s.audioSource == _toStop).audioSource.gameObject);
+			ClipInfo clip = s_activeAudio.Find(s => s.audioSource == _toStop);
+            s_activeAudio.Remove(clip);
+            _toStop.Stop();
 		} 
 		catch 
 		{
