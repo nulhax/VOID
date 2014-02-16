@@ -81,7 +81,7 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 	{
 		// Get the current generation current generation potential and detirmine the value
 		float currentGenerationRate = m_CachedPowerGeneratorBehaviour.PowerGenerationRate;
-		float currentGenerationRatePotential = m_CachedPowerGenerator.m_MaxPowerGenerationRate;
+		float currentGenerationRatePotential = m_CachedPowerGeneratorBehaviour.PowerGenerationRatePotential;
 		float value = currentGenerationRate/currentGenerationRatePotential;
 
 		// Update the generation value and bar color

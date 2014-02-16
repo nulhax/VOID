@@ -27,16 +27,14 @@ public class CActorInteractable : CNetworkMonoBehaviour
 // Member Delegates
 
 
-	public delegate void NotifyInteraction(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId);
+	public delegate void NotifyHoverInteraction(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover);
+	public event NotifyHoverInteraction EventHover;
 
 
-	public event NotifyInteraction EventHover;
-	public event NotifyInteraction EventPrimaryStart;
-	public event NotifyInteraction EventSecondaryStart;
-	public event NotifyInteraction EventPrimaryEnd;
-	public event NotifyInteraction EventSecondaryEnd;
-	public event NotifyInteraction EventUseStart;
-    public event NotifyInteraction EventUseEnd;
+    public delegate void NotifyInputInteraction(RaycastHit _tRayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown);
+    public event NotifyInputInteraction EventPrimary;
+    public event NotifyInputInteraction EventSecondary;
+    public event NotifyInputInteraction EventUse;
 	
 	
 // Member Properties
@@ -50,46 +48,38 @@ public class CActorInteractable : CNetworkMonoBehaviour
 		// Empty
 	}
 
-	public void OnInteractionEvent(CPlayerInteractor.EInteractionType _InteractionEvent, GameObject _PlayerInteractor, RaycastHit _RayHit)
+
+    [AClientOnly]
+    public void OnInteractionHover(GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bHover)
+    {
+        CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
+
+		if(EventHover != null)
+            EventHover(_cRaycastHit, cNetworkViewId, _bHover);
+    }
+
+
+    [AClientOnly]
+    public void OnInteractionInput(CPlayerInteractor.EInputInteractionType _eInputInteractionEvent, GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bDown)
 	{
-		CNetworkViewId cNetworkViewId = GetComponent<CNetworkView>().ViewId;
+        CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
-		switch(_InteractionEvent)
+		switch(_eInputInteractionEvent)
 		{
-		case CPlayerInteractor.EInteractionType.Hover:
-			if(EventHover != null)
-				EventHover(_RayHit, cNetworkViewId);
-			break; 
-
-		case CPlayerInteractor.EInteractionType.PrimaryStart:
-			if(EventPrimaryStart != null)
-				EventPrimaryStart(_RayHit, cNetworkViewId);
+		case CPlayerInteractor.EInputInteractionType.Primary:
+			if(EventPrimary != null)
+                EventPrimary(_cRaycastHit, cNetworkViewId, _bDown);
 			break;
 			
-		case CPlayerInteractor.EInteractionType.SecondaryStart:
-			if(EventSecondaryStart != null)
-				EventSecondaryStart(_RayHit, cNetworkViewId);
-			break;
-
-		case CPlayerInteractor.EInteractionType.PrimaryEnd:
-			if(EventPrimaryEnd != null)
-				EventPrimaryEnd(_RayHit, cNetworkViewId);
+		case CPlayerInteractor.EInputInteractionType.Secondary:
+			if(EventSecondary != null)
+                EventSecondary(_cRaycastHit, cNetworkViewId, _bDown);
 			break;
 			
-		case CPlayerInteractor.EInteractionType.SecondaryEnd:
-			if(EventSecondaryEnd != null)
-				EventSecondaryEnd(_RayHit, cNetworkViewId);
+		case CPlayerInteractor.EInputInteractionType.Use:
+			if (EventUse != null)
+                EventUse(_cRaycastHit, cNetworkViewId, _bDown);
 			break;
-			
-		case CPlayerInteractor.EInteractionType.UseStart:
-			if (EventUseStart != null)
-				EventUseStart(_RayHit, cNetworkViewId);
-			break;
-
-        case CPlayerInteractor.EInteractionType.UseEnd:
-            if (EventUseEnd != null)
-                EventUseEnd(_RayHit, cNetworkViewId);
-            break;
 			
 		default:
 			break;

@@ -23,16 +23,27 @@ using System.Collections.Generic;
 public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 {
 
-	// Member Types
+// Member Types
 
 
-	// Member Delegates & Events
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        ExtinguishFireStart,
+        ExtinguishFireEnd,
+
+        MAX
+    }
 
 
-	// Member Properties
+// Member Delegates & Events
 
 
-	// Member Functions
+// Member Properties
+
+
+// Member Functions
 
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -41,42 +52,56 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
-	{
-		if (_cSyncedVar == m_bActive)
-		{
-			if (m_bActive.Get())
-			{
-				m_cSprayParticalSystem.Play();
-			}
-			else
-			{
-				m_cSprayParticalSystem.Stop();
-			}
-		}
-	}
+    [AClientOnly]
+    public static void SerializeOutbound(CNetworkStream _cStream)
+    {
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
+    }
 
 
-	public void Awake()
+    [AServerOnly]
+    public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+        CNetworkViewId cFireExtinguisherViewId = _cStream.ReadNetworkViewId();
+
+        switch (eAction)
+        {
+            case ENetworkAction.ExtinguishFireStart:
+                cFireExtinguisherViewId.GameObject.GetComponent<CFireExtinguisherSpray>().m_bActive.Set(true);
+                break;
+
+            case ENetworkAction.ExtinguishFireEnd:
+                cFireExtinguisherViewId.GameObject.GetComponent<CFireExtinguisherSpray>().m_bActive.Set(false);
+                break;
+
+            default:
+                Debug.LogError("Unknown network action");
+                break;
+        }
+    }
+
+
+	void Awake()
 	{
 		m_cSprayParticalSystem = transform.FindChild("ParticalSprayer").particleSystem;
 	}
 
 
-	public void Start()
+	void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += OnUseStart;
-		gameObject.GetComponent<CToolInterface>().EventPrimaryDeactivate += OnUseEnd;
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryActiveChange;
 	}
 
 
-	public void OnDestroy()
+	void OnDestroy()
 	{
-		// Empty
+        GetComponent<CToolInterface>().EventPrimaryActiveChange -= OnEventPrimaryActiveChange;
 	}
 
 
-	public void Update()
+	void Update()
 	{
 		if (CNetwork.IsServer)
 		{
@@ -107,7 +132,20 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
         Debug.Log("OnUseStart");
 	}
+    [AClientOnly]
+    void OnEventPrimaryActiveChange(bool _bActive)
+    {
+        if (_bActive)
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireStart);
+        }
+        else
+        {
+            s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireEnd);
+        }
 
+        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+    }
 
 	[AServerOnly]
 	public void OnUseEnd(GameObject _cInteractableObject)
@@ -116,14 +154,32 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_bActive)
+        {
+            if (m_bActive.Get())
+            {
+                m_cSprayParticalSystem.Play();
+            }
+            else
+            {
+                m_cSprayParticalSystem.Stop();
+            }
+        }
+    }
 
-	// Member Fields
+
+// Member Fields
 
 
 	CNetworkVar<bool> m_bActive = null;
 
 
 	ParticleSystem m_cSprayParticalSystem = null;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };

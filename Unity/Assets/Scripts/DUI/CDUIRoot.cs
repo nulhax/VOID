@@ -38,6 +38,8 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		ShipPower,
 		ShipPropulsion,
 		ShipResources,
+		NaniteCapsule,
+		Engine,
 
 		MAX
 	}

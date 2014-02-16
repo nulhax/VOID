@@ -30,6 +30,10 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
+
+
+    CNetworkViewId m_cHoveringPlayerViewId = null;
+    bool m_bHoveringOn = false;
 	
     // Member Properties
 	public CNetworkViewId DUIViewId
@@ -40,14 +44,23 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		set { m_DUIViewId.Set(value); }
 	}
 
-	public GameObject DUI 
-	{ 
-		get { return(m_DUIViewId.Get().GameObject); } 
-	}
-
 	public GameObject ConsoleScreen
 	{
 		get { return(m_ScreenObject); } 
+	}
+
+	public GameObject DUI
+	{
+		get
+		{
+			// Create the UI if it hasnt been created already
+			if(CNetwork.IsServer && m_DUIViewId.Get() == null)
+			{
+				CreateUserInterface();
+			}
+
+			return(DUIViewId.GameObject);
+		}
 	}
 	
 	// Member Methods
@@ -70,29 +83,44 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		if(CNetwork.IsServer)
+		// Create the UI if it hasnt been created already
+		if(CNetwork.IsServer && m_DUIViewId.Get() == null)
 		{
-			if(m_DUI != CDUIRoot.EType.INVALID)
-			{
-				// Instantiate the DUI object
-				GameObject DUIObj = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DUI));
-
-				// Set the view ids
-				CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
-				dr.ConsoleViewId = ViewId;
-				DUIViewId = dr.ViewId;
-			}
-			else
-			{
-				Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
-			}
+			CreateUserInterface();
 		}
 	}
 
+	[AServerOnly]
+	private void CreateUserInterface()
+	{
+		if(m_DUI != CDUIRoot.EType.INVALID)
+		{
+			// Instantiate the DUI object
+			GameObject DUIObj = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DUI));
+			
+			// Set the view ids
+			CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
+			dr.ConsoleViewId = ViewId;
+			DUIViewId = dr.ViewId;
+		}
+		else
+		{
+			Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
+		}
+	}
+
+    void Update()
+    {
+        if (m_bHoveringOn)
+        {
+            DUI.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(m_cHoveringPlayerViewId.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
+        }
+    }
+
 	[AClientOnly]
-	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
-	{	
-		// Update the camera viewport positions
-		DUI.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(_RayHit.textureCoord);
+	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
+	{
+        m_bHoveringOn = _bHover;
+        m_cHoveringPlayerViewId = _cPlayerActorViewId;
 	}
 }

@@ -68,22 +68,22 @@ public class CShipGalaxySimulatior : MonoBehaviour
 
 	public Vector3 GetSimulationToGalaxyPos(Vector3 _SimulationPos)
 	{
-		return(m_GalaxyShip.transform.rotation * (_SimulationPos - transform.position) + m_GalaxyShip.transform.position);
+		return(m_GalaxyShip.rigidbody.rotation * (_SimulationPos - transform.position) + m_GalaxyShip.rigidbody.position);
 	}
 
 	public Quaternion GetSimulationToGalaxyRot(Quaternion _SimulationRot)
 	{
-		return(m_GalaxyShip.transform.rotation * _SimulationRot);
+		return(m_GalaxyShip.rigidbody.rotation * _SimulationRot);
 	}
 
 	public Vector3 GetGalaxyToSimulationPos(Vector3 _GalaxyPos)
 	{
-		return(Quaternion.Inverse(m_GalaxyShip.transform.rotation) * (_GalaxyPos - m_GalaxyShip.transform.position) + transform.position);
+		return(Quaternion.Inverse(m_GalaxyShip.rigidbody.rotation) * (_GalaxyPos - m_GalaxyShip.rigidbody.position) + transform.position);
 	}
 	
 	public Quaternion GetGalaxyToSimulationRot(Quaternion _GalaxyRot)
 	{
-		return(Quaternion.Inverse(m_GalaxyShip.transform.rotation) *_GalaxyRot);
+		return(Quaternion.Inverse(m_GalaxyShip.rigidbody.rotation) * _GalaxyRot);
 	}
 
 	public void TransferFromSimulationToGalaxy(Vector3 _SimulationPos, Quaternion _SimulationRot, Transform _ToTransfer)
@@ -102,7 +102,6 @@ public class CShipGalaxySimulatior : MonoBehaviour
 	
 	public Vector3 GetGalaxyVelocityRelativeToShip(Vector3 _GalaxyPos)
 	{
-		//Vector3 velocity = m_GalaxyShip.GetComponent<CGalaxyShipMotor>().GetRelativePointVelocity(_GalaxyPos);
-		return(Vector3.forward);
+		return(GalaxyShip.rigidbody.GetRelativePointVelocity(_GalaxyPos));
 	}
 }

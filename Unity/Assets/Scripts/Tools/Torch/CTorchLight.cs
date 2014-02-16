@@ -26,6 +26,18 @@ public class CTorchLight : CNetworkMonoBehaviour
 // Member Types
 
 
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        TurnOnLight,
+        TurnOffLight,
+        ToggleColour,
+
+        MAX
+    }
+
+
 // Member Delegates & Events
 
 
@@ -42,45 +54,76 @@ public class CTorchLight : CNetworkMonoBehaviour
     }
 
 
-    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    [AClientOnly]
+    public static void SerializeOutbound(CNetworkStream _cStream)
     {
-		if (_cVarInstance == m_bTorchLit)
-		{
-			if (!m_bTorchLit.Get())
-			{
-				light.intensity = 0;
-			}
-			else
-			{
-				light.intensity = 2;
-			}			
-
-		}
-		else if (_cVarInstance == m_bTorchColour)
-		{
-			switch (m_bTorchColour.Get())
-			{
-				case 0:
-					light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
-					break;
-				case 1:
-					light.color = new Color(1.0f, 0, 0);
-					break;
-				case 2:
-					light.color = new Color(0, 1.0f, 0);
-					break;
-				case 3:
-					light.color = new Color(0, 0, 1.0f);
-					break;
-			}
-		}
+        _cStream.Write(s_cSerializeStream);
+        s_cSerializeStream.Clear();
     }
 
 
-	public void Start()
+    [AServerOnly]
+    public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    {
+        while (_cStream.HasUnreadData)
+        {
+            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            CNetworkViewId cModuleGunViewId = _cStream.ReadNetworkViewId();
+
+            GameObject cModuleGunObject = cModuleGunViewId.GameObject;
+            CToolInterface cToolInterface = cModuleGunObject.GetComponent<CToolInterface>();
+            CTorchLight cTorchLight = cModuleGunObject.GetComponent<CTorchLight>();
+
+            switch (eAction)
+            {
+                case ENetworkAction.TurnOnLight:
+                    cTorchLight.SetActive(true);
+                    break;
+
+                case ENetworkAction.TurnOffLight:
+                    cTorchLight.SetActive(false);
+                    break;
+
+                case ENetworkAction.ToggleColour:
+                    cTorchLight.ToggleColour();
+                    break;
+
+
+                default:
+                    Debug.LogError("Unknown network action: " + eAction);
+                    break;
+            }
+        }
+    }
+
+
+	void Start()
 	{
-		gameObject.GetComponent<CToolInterface>().EventPrimaryActivate += ToggleActivate;
-		gameObject.GetComponent<CToolInterface>().EventSecondaryActivate += ToggleColour;
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += (_bDown) =>
+        {
+            if (_bDown)
+            {
+                if (m_bTorchLit.Get())
+                {
+                    s_cSerializeStream.Write((byte)ENetworkAction.TurnOffLight);
+                    s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                }
+                else
+                {
+                    s_cSerializeStream.Write((byte)ENetworkAction.TurnOnLight);
+                    s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                }
+            }
+        };
+
+        GetComponent<CToolInterface>().EventSecondaryActiveChange += (_bDown) =>
+        {
+            if (_bDown)
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.ToggleColour);
+                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+            }
+        };
 
 		if (CNetwork.IsServer)
 		{
@@ -92,33 +135,27 @@ public class CTorchLight : CNetworkMonoBehaviour
 	}
 
 
-	public void OnDestroy()
+	void OnDestroy()
 	{
 	}
 
 
-	public void Update()
+	void Update()
 	{
 	}
 
 
-	void ToggleActivate(GameObject _cInteractableObject)
+    [AServerOnly]
+	void SetActive(bool _bActive)
     {
-        if (!m_bTorchLit.Get())
-        {
-            m_bTorchLit.Set(true);		
-        }
-        else
-        {
-            m_bTorchLit.Set(false);			
-	    }
+        m_bTorchLit.Set(_bActive);		
     }
 
 
-	void ToggleColour(GameObject _cInteractableObject)
+    [AServerOnly]
+	void ToggleColour()
     {
 		byte bNextNumber = (byte)(m_bTorchColour.Get() + 1);
-
 
 		if (bNextNumber > 3)
 		{
@@ -129,9 +166,49 @@ public class CTorchLight : CNetworkMonoBehaviour
 	}
 
 
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    {
+        if (_cVarInstance == m_bTorchLit)
+        {
+            if (!m_bTorchLit.Get())
+            {
+                light.intensity = 0;
+            }
+            else
+            {
+                light.intensity = 2;
+            }
+
+        }
+        else if (_cVarInstance == m_bTorchColour)
+        {
+            switch (m_bTorchColour.Get())
+            {
+                case 0:
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
+                    break;
+                case 1:
+                    light.color = new Color(1.0f, 0, 0);
+                    break;
+                case 2:
+                    light.color = new Color(0, 1.0f, 0);
+                    break;
+                case 3:
+                    light.color = new Color(0, 0, 1.0f);
+                    break;
+            }
+        }
+    }
+
+
 // Member Fields
 
 
     CNetworkVar<bool> m_bTorchLit = null;
 	CNetworkVar<byte> m_bTorchColour = null;
+
+
+    static CNetworkStream s_cSerializeStream = new CNetworkStream();
+
+
 };

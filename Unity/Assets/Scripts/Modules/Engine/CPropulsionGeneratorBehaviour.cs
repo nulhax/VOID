@@ -20,6 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
+[RequireComponent(typeof(CModuleInterface))]
 public class CPropulsionGeneratorBehaviour : CNetworkMonoBehaviour 
 {
 

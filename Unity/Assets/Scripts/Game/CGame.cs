@@ -90,7 +90,6 @@ public class CGame : CNetworkMonoBehaviour
     public void OnGUI()
     {
 		float fViewWidth = 450;
-		float fViewHeight = 150;
 		float fPositionX = Screen.width / 2 - fViewWidth / 2;
 		float fPositionY = Screen.height / 2 + 50;
 		float fScreenCenterX = Screen.width / 2;
@@ -229,14 +228,29 @@ public class CGame : CNetworkMonoBehaviour
 			GUILayout.EndHorizontal();
 		}
 
-
-
 		GUILayout.Space(14);
 		GUILayout.EndVertical();
 		GUILayout.EndArea();
 
-		// End scroll box
-	//GUILayout.EndScrollView(
+        // Text field for IP input
+        m_strRemoteServerIP = GUI.TextField(new Rect(10, 200, 200, 20), m_strRemoteServerIP);
+
+        // Text field for port input
+        m_strRemoteServerPort = GUI.TextField(new Rect(10, 225, 200, 20), m_strRemoteServerPort);
+
+        // Convert text string of port number to ushort
+        ushort.TryParse(m_strRemoteServerPort, out m_usRemoteServerPort);
+
+        // If the port is above 999
+        if (m_usRemoteServerPort >= 1000)
+        {
+            // if GUI.Button "Connect" is pressed
+            if (GUI.Button(new Rect(10, 250, 200, 20), "Connect"))
+            {
+                // Attempt to connect to server using the above text fields
+                CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+            }
+        }
 	}
 
 
@@ -299,6 +313,11 @@ public class CGame : CNetworkMonoBehaviour
 	
 
 	int m_iActiveTab = 1;
+
+    // Manual server connection variables
+    string m_strRemoteServerIP = "127.0.0.1";
+    string m_strRemoteServerPort = "1337";
+    ushort m_usRemoteServerPort = 0;
 
     const float m_fInputFieldWidth  = 200;
     const float m_fInputFieldHeight = 20;

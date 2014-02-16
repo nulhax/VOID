@@ -47,7 +47,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     {
         CActorInteractable ai = GetComponent<CActorInteractable>();
 
-        ai.EventUseStart += OnPlayerUse;
+        ai.EventUse += OnPlayerUse;
     }
 
 
@@ -92,7 +92,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     }
 
     [AClientOnly]
-    private void OnPlayerUse(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId)
+    private void OnPlayerUse(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)
     {
         // TODO: if broken do not call this section
         s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);

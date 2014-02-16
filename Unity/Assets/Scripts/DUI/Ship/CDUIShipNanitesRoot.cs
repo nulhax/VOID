@@ -62,7 +62,9 @@ public class CDUIShipNanitesRoot : MonoBehaviour
 		
 		// Calculate the value ratio
 		float value = (float)shipNanites/(float)shipNanitesPotential;
-		
+		if(float.IsNaN(value)) 
+			value = 0.0f;
+
 		// Update the bar
 		CDUIUtilites.LerpBarColor(value, m_NanitesBar);
 		m_NanitesBar.value = value;

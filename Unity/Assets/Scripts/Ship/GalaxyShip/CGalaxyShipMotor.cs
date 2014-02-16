@@ -116,14 +116,14 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 		// Debug: Set the galaxy ship stuff based on the propulsion
 
-		m_fAngularAcceleration   = Mathf.Deg2Rad * currentPropulsion;
+		m_fAngularAcceleration   = Mathf.Deg2Rad * currentPropulsion * 0.33f;
 		m_fAngularMaxSpeed       = Mathf.Deg2Rad * 60.0f;
 		m_fAngularVelocityDamp   = Mathf.Deg2Rad * 10.0f;
-		m_fAngularHandbreakpower = 2.0f;
+		m_fAngularHandbreakpower = 0.5f;
 
 		m_fDirectionalMaxSpeed       = 400.0f;
 		m_fDirectionalAcceleration   = currentPropulsion;
-		m_fDirectionalHandbreakPower = 3.0f;
+		m_fDirectionalHandbreakPower = 1.0f;
 	}
 
 

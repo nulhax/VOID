@@ -252,9 +252,6 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			}
 		}
 
-		if(!Mathf.Approximately(comb, _ConsumptionAmount))
-			Debug.Log(comb + " " + _ConsumptionAmount);
-
 		// If there is any charge or consumption left over, distribute them again
 		if(!Mathf.Approximately(leftOverCharge, 0.0f))
 		{

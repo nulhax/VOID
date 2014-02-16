@@ -28,16 +28,18 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	
 	
 	// Member Delegates & Events
+	public delegate void NotifyStateChange(CNaniteStorageBehaviour _Self);
 	
-	
-	// Member Fields
-	CNetworkVar<int> m_iStoredNanites = null;
-	CNetworkVar<int> m_iNaniteCapacity = null;
-	CNetworkVar<bool> m_bNanitesAvailable = null;
+	public event NotifyStateChange EventNaniteStorageChanged;
+	public event NotifyStateChange EventNaniteCapacityChanged;
 
-    public const int m_kiAbsoluteMaximumCapacity = 500;
-	public int m_iCurrentMaximumCapacity         = 500;
-	
+
+	// Member Fields
+	private CNetworkVar<int> m_iStoredNanites = null;
+	private CNetworkVar<int> m_iNaniteCapacity = null;
+	private CNetworkVar<bool> m_bNanitesAvailable = null;
+
+
 	// Member Properties
 	public int StoredNanites
 	{ 
@@ -75,26 +77,29 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	}
 	
 	// Member Functions
-	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_iStoredNanites = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
-		m_iNaniteCapacity = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, m_iCurrentMaximumCapacity);
+		m_iNaniteCapacity = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
 		m_bNanitesAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-
+		if(_VarInstance == m_iStoredNanites)
+		{
+			if(EventNaniteStorageChanged != null)
+				EventNaniteStorageChanged(this);
+		}
+		else if(_VarInstance == m_iNaniteCapacity)
+		{
+			if(EventNaniteCapacityChanged != null)
+				EventNaniteCapacityChanged(this);
+		}
 	}
 	
 	public void Start()
 	{
-        m_CompCalib.EventComponentBreak += OnComponentStateChange;
-        m_CompFluid.EventComponentBreak += OnComponentStateChange;
-        m_CompCalib.EventComponentFix   += OnComponentStateChange;
-        m_CompFluid.EventComponentFix   += OnComponentStateChange;
-        
 		CGameShips.Ship.GetComponent<CShipNaniteSystem>().RegisterNaniteSilo(gameObject);
 		
 		if(CNetwork.IsServer)
@@ -102,14 +107,6 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 			ActivateNaniteAvailability();
 		}
 	}
-
-    void OnDestroy()
-    {
-        m_CompCalib.EventComponentBreak -= OnComponentStateChange;
-        m_CompFluid.EventComponentBreak -= OnComponentStateChange;
-        m_CompCalib.EventComponentFix   -= OnComponentStateChange;
-        m_CompFluid.EventComponentFix   -= OnComponentStateChange;
-    }
 	
 	[AServerOnly]
 	public void ActivateNaniteAvailability()
@@ -118,7 +115,7 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	public void Deactivate()
+	public void DeactivateNaniteAvailability()
 	{
 		m_bNanitesAvailable.Set(false);
 	}
@@ -128,39 +125,4 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	{
 		StoredNanites = StoredNanites - _iNanites;
 	}
-
-    [AServerOnly]
-    void OnComponentStateChange(CComponentInterface _Sender)
-    {
-        // Local variables
-        float fMultiplicationCoefficient = 0.0f;
-        byte NumFunctionalComponents     = 0;
-
-        // Count the number of functional components
-        if (m_CompCalib.IsFunctional) { ++NumFunctionalComponents; }
-        if (m_CompFluid.IsFunctional) { ++NumFunctionalComponents; }
-
-        // Determine nanite multiplication coefficient
-        fMultiplicationCoefficient = 0.5f * NumFunctionalComponents;
-
-        // Halve the maximum amount of nanites that can be stored by this module
-        m_iCurrentMaximumCapacity = ((int)(m_kiAbsoluteMaximumCapacity * fMultiplicationCoefficient));
-
-        // Update maximum capacity network var
-        m_iNaniteCapacity.Set(m_iCurrentMaximumCapacity);
-
-        // If the amount of nanites currently stored exceeds the storage maximum
-        if (StoredNanites > m_iCurrentMaximumCapacity)
-        {
-            // Set the amount of stored nanites to the maximum
-            // Deduct all surplus nanites from the ship's total
-            CGameShips.Ship.GetComponent<CShipNaniteSystem>().DeductNanites(StoredNanites - m_iCurrentMaximumCapacity);
-
-            // Cause an explosion as excess nanites are released
-            // TODO: Add an explosion here
-        }
-    }
-
-    public CComponentInterface m_CompCalib;
-    public CComponentInterface m_CompFluid;
 }
