@@ -1291,7 +1291,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 3
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -1664,8 +1664,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f6e8b1ee3723e74b97e89d4e0dcc6b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spreadRadius: 1
-  timeBetweenSpreadProcess: 1
 --- !u!114 &11400044
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1677,6 +1675,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 0
   destroyOnZeroHealth: 0

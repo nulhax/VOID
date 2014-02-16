@@ -268,6 +268,13 @@ MonoBehaviour:
   WireMode: 0
   LensCorrection: 1
   Chromatic: 0
+  BackgroundColor:
+    r: .192000002
+    g: .301999986
+    b: .474999994
+    a: 1
+  NearClipPlane: .150000006
+  FarClipPlane: 1000
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -281,7 +288,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InitialPredictionTime: .0299999993
   InitialAccelGain: .0500000007
-  ResetTracker: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
