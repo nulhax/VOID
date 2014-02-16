@@ -30,7 +30,8 @@ public class CFireHazard : MonoBehaviour
 
 	void Awake()
 	{
-
+		if (GetComponentsInChildren<ParticleSystem>() != null)
+			Debug.LogError("Replace Fire hazard on " + transform.parent.gameObject.name);
 	}
 
 	void Start()
@@ -54,19 +55,10 @@ public class CFireHazard : MonoBehaviour
 	{
 		if(CNetwork.IsServer && burning)
 		{
-			//timeUntilNextSpreadProcess -= Time.deltaTime;
-			//while(timeUntilNextSpreadProcess <= 0.0f)
-			//{
-			//    timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
-
-			//    // Drain health of all fires within range, including one's self (which is included in the list of neighbours).
-			//    foreach(CFireHazard fireHazard in s_AllFires)
-			//        if((fireHazard.transform.position - transform.position).sqrMagnitude - (spreadRadius * spreadRadius + fireHazard.spreadRadius * fireHazard.spreadRadius) <= 0.0f)
-			//            fireHazard.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
-			//}
-
 			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
+
+			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
 
 			float thresholdPercentage = 0.25f;
 			if(fa.AtmospherePercentage < thresholdPercentage)
@@ -81,10 +73,7 @@ public class CFireHazard : MonoBehaviour
 			case 0:	// Begin fire.
 				{
 					//gameObject.GetComponent<Collider>().enabled = true;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Play();
-
+					gameObject.GetComponent<ParticleSystem>().Play();
 					gameObject.GetComponent<CFireHazard>().burning_internal = true;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
@@ -93,10 +82,7 @@ public class CFireHazard : MonoBehaviour
 			case 2:	// End fire.
 				{
 					//gameObject.GetComponent<Collider>().enabled = false;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Stop();
-
+					gameObject.GetComponent<ParticleSystem>().Stop();
 					gameObject.GetComponent<CFireHazard>().burning_internal = false;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
@@ -130,6 +116,17 @@ public class CFireHazard : MonoBehaviour
 						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
 				}
 			}
+		}
+	}
+
+	void OnParticleCollision(GameObject other)
+	{
+		if (CNetwork.IsServer)
+		{
+			CActorHealth otherHealth = other.GetComponent<CActorHealth>();
+			if (otherHealth != null)
+				if (otherHealth.flammable)
+					otherHealth.health -= 10.0f;
 		}
 	}
 }
