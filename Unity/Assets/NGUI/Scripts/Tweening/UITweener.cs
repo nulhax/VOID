@@ -207,22 +207,51 @@ public abstract class UITweener : MonoBehaviour
 			mFactor = Mathf.Clamp01(mFactor);
 			Sample(mFactor, true);
 
+			// Disable this script unless the function calls above changed something
+			if (duration == 0f || (mFactor == 1f && mAmountPerDelta > 0f || mFactor == 0f && mAmountPerDelta < 0f))
+				enabled = false;
+
 			current = this;
 
-			// Notify the listener delegates
-			EventDelegate.Execute(onFinished);
+			if (onFinished != null)
+			{
+				mTemp = onFinished;
+				onFinished = new List<EventDelegate>();
+
+				// Notify the listener delegates
+				EventDelegate.Execute(mTemp);
+
+				// Re-add the previous persistent delegates
+				for (int i = 0; i < mTemp.Count; ++i)
+					EventDelegate.Add(onFinished, mTemp[i]);
+				mTemp = null;
+			}
 
 			// Deprecated legacy functionality support
 			if (eventReceiver != null && !string.IsNullOrEmpty(callWhenFinished))
 				eventReceiver.SendMessage(callWhenFinished, this, SendMessageOptions.DontRequireReceiver);
 
 			current = null;
-
-			// Disable this script unless the function calls above changed something
-			if (duration == 0f || (mFactor == 1f && mAmountPerDelta > 0f || mFactor == 0f && mAmountPerDelta < 0f))
-				enabled = false;
 		}
 		else Sample(mFactor, false);
+	}
+
+	List<EventDelegate> mTemp = null;
+
+	/// <summary>
+	/// Convenience function -- add a new OnFinished event delegate (here for to be consistent with RemoveOnFinished).
+	/// </summary>
+
+	public void AddOnFinished (EventDelegate del) { EventDelegate.Add(onFinished, del); }
+
+	/// <summary>
+	/// Remove an OnFinished delegate. Will work even while iterating through the list when the tweener has finished its operation.
+	/// </summary>
+
+	public void RemoveOnFinished (EventDelegate del)
+	{
+		if (onFinished != null) onFinished.Remove(del);
+		if (mTemp != null) mTemp.Remove(del);
 	}
 
 	/// <summary>
@@ -340,6 +369,8 @@ public abstract class UITweener : MonoBehaviour
 
 	/// <summary>
 	/// Manually reset the tweener's state to the beginning.
+	/// If the tween is playing forward, this means the tween's start.
+	/// If the tween is playing in reverse, this means the tween's end.
 	/// </summary>
 
 	public void ResetToBeginning ()

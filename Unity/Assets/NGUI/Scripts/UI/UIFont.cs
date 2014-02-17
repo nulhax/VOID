@@ -19,7 +19,7 @@ using System.Text;
 /// </summary>
 
 [ExecuteInEditMode]
-[AddComponentMenu("NGUI/UI/Font")]
+[AddComponentMenu("NGUI/UI/NGUI Font")]
 public class UIFont : MonoBehaviour
 {
 	[HideInInspector][SerializeField] Material mMat;
@@ -227,7 +227,7 @@ public class UIFont : MonoBehaviour
 		{
 			if (mReplacement != null) return mReplacement.uvRect;
 
-			if (mAtlas != null && (mSprite == null && sprite != null))
+			if (mAtlas != null && (!mSpriteSet && sprite != null))
 			{
 				Texture tex = mAtlas.texture;
 

@@ -40,13 +40,13 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
     public float OxygenSupply
     {
-        get { return (m_fOxygen.Get()); }
+        get { return (m_fOxygen.Value); }
     }
 
 
     public bool IsVisorDown
     {
-        get { return (m_bVisorDown.Get()); }
+		get { return (m_bVisorDown.Value); }
     }
 
 
@@ -64,6 +64,9 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
         m_cVisorTexture = Resources.Load("Textures/GUI/CrackedVisor", typeof(Texture2D)) as Texture2D;
 		m_AtmosphereConsumer = GetComponent<CActorAtmosphericConsumer>();
+
+		if(CGamePlayers.SelfActor == gameObject)
+			EventVisorChange += OnVisorChange;
 	}
 
 
@@ -147,33 +150,30 @@ public class CPlayerSuit : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_bVisorDown)
         {
-            if (m_bVisorDown.Get())
-            {
-               
-            }
-            else
-            {
-
-            }
-
             if (EventVisorChange != null) 
-				EventVisorChange(this, m_bVisorDown.Get());
+				EventVisorChange(this, m_bVisorDown.Value);
         }
     }
+
+	[AClientOnly]
+	void OnVisorChange(CPlayerSuit _cPlayerSuit, bool _bDown)
+	{
+		CHUDRoot.VisorOverlay.enabled = _bDown;
+	}
 
 
     void OnGUI()
     {
         if (gameObject == CGamePlayers.SelfActor)
         {
-            if (IsVisorDown)
-            {
-				if(!CGameCameras.IsOculusRiftActive)
-               		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
-				else
-					GUI.DrawTexture(new Rect(0, 0, Screen.width * 0.5f, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
-					GUI.DrawTexture(new Rect(Screen.width * 0.5f, 0, Screen.width * 0.5f, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
-            }
+//            if (IsVisorDown)
+//            {
+//				if(!CGameCameras.IsOculusRiftActive)
+//               		GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
+//				else
+//					GUI.DrawTexture(new Rect(0, 0, Screen.width * 0.5f, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
+//					GUI.DrawTexture(new Rect(Screen.width * 0.5f, 0, Screen.width * 0.5f, Screen.height), m_cVisorTexture, ScaleMode.StretchToFill, true);
+//            }
 
             // Hit points
             GUI.Box(new Rect(Screen.width - 160,
