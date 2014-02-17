@@ -111,7 +111,31 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
     void Start()
     {       
         m_TargetList = new List<Vector3>();
-        m_eRepairState = ERepairState.RepairInactive;       
+        m_eRepairState = ERepairState.RepairInactive;
+
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += (bool _bDown) =>
+        {
+            if (_bDown &&
+                m_eRepairState == ERepairState.RepairInactive)
+            {
+                GameObject cTargetActorInteractable = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetActorObject;
+
+                if (cTargetActorInteractable != null)
+                {
+                    CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
+
+                    if (cActorComponentInterface != null &&
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CalibratorComp)
+                    {
+                        BeginRepair(cTargetActorInteractable);
+                    }
+                }
+            }
+            else if (m_eRepairState == ERepairState.RepairActive)
+            {
+                EndRepairs();
+            }
+        };
     }   
     
     void Update()
@@ -123,8 +147,14 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
             {
                 m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);               
                 //Update target for IK here
+            }
+
+            if (GetComponent<CToolInterface>().OwnerPlayerActor == CGamePlayers.SelfActor &&
+                m_eRepairState == ERepairState.RepairActive)
+            {
+                //Update target for IK here
                 UpdateTarget();
-            }       
+            }
         }
     }
     
