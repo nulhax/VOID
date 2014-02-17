@@ -356,8 +356,9 @@ public class UICamera : MonoBehaviour
 
 	// <CUSTOM>
 	
+	public bool m_IsDUI = false;
 	public Vector3 m_ViewPortPos = Vector3.zero;
-
+	
 	// </CUSTOM>
 
 	/// <summary>
@@ -422,7 +423,7 @@ public class UICamera : MonoBehaviour
 					currentCamera = uicam.mCam;
 					UICamera.currentScheme = scheme;
 					Notify(mCurrentSelection, "OnSelect", false);
-					//current = null;
+					current = null;
 				}
 			}
 
@@ -456,7 +457,7 @@ public class UICamera : MonoBehaviour
 			currentCamera = mCam;
 			UICamera.currentScheme = mNextScheme;
 			Notify(mCurrentSelection, "OnSelect", true);
-			//current = null;
+			current = null;
 		}
 	}
 
@@ -609,6 +610,19 @@ public class UICamera : MonoBehaviour
 					for (int b = 0; b < hits.Length; ++b)
 					{
 						GameObject go = hits[b].collider.gameObject;
+						UIWidget w = go.GetComponent<UIWidget>();
+
+						if (w != null)
+						{
+							if (!w.isVisible) continue;
+							if (w.hitCheck != null && !w.hitCheck(hits[b].point)) continue;
+						}
+						else
+						{
+							UIRect rect = NGUITools.FindInParents<UIRect>(go);
+							if (rect != null && rect.finalAlpha < 0.001f) continue;
+						}
+
 						mHit.depth = NGUITools.CalculateRaycastDepth(go);
 
 						if (mHit.depth != int.MaxValue)
@@ -636,11 +650,28 @@ public class UICamera : MonoBehaviour
 					}
 					mHits.Clear();
 				}
-				else if (hits.Length == 1 && IsVisible(ref hits[0]))
+				else if (hits.Length == 1)
 				{
-					hit = hits[0];
-					hoveredObject = hit.collider.gameObject;
-					return true;
+					Collider c = hits[0].collider;
+					UIWidget w = c.GetComponent<UIWidget>();
+
+					if (w != null)
+					{
+						if (!w.isVisible) continue;
+						if (w.hitCheck != null && !w.hitCheck(hits[0].point)) continue;
+					}
+					else
+					{
+						UIRect rect = NGUITools.FindInParents<UIRect>(c.gameObject);
+						if (rect != null && rect.finalAlpha < 0.001f) continue;
+					}
+
+					if (IsVisible(ref hits[0]))
+					{
+						hit = hits[0];
+						hoveredObject = hit.collider.gameObject;
+						return true;
+					}
 				}
 				continue;
 			}
@@ -813,6 +844,9 @@ public class UICamera : MonoBehaviour
 
 	void Awake ()
 	{
+		if(!m_IsDUI)
+			m_ViewPortPos = Input.mousePosition;
+
 		mWidth = Screen.width;
 		mHeight = Screen.height;
 
@@ -893,11 +927,13 @@ public class UICamera : MonoBehaviour
 	/// Check the input and send out appropriate events.
 	/// </summary>
 
-	public void Update ()
+	void Update ()
 	{
+		if(!m_IsDUI)
+			m_ViewPortPos = Input.mousePosition;
+
 		// Only the first UI layer should be processing events
-		if (!Application.isPlaying || !handlesEvents) 
-			return;
+		if (!Application.isPlaying || !handlesEvents) return;
 
 		current = this;
 
@@ -968,7 +1004,7 @@ public class UICamera : MonoBehaviour
 				ShowTooltip(true);
 			}
 		}
-		//current = null;
+		current = null;
 	}
 
 	/// <summary>
@@ -996,9 +1032,6 @@ public class UICamera : MonoBehaviour
 
 		for (int i = 0; i < 3; ++i)
 		{
-			if(i == 1)
-				continue;
-
 			if (Input.GetMouseButtonDown(i))
 			{
 				currentScheme = ControlScheme.Mouse;
@@ -1072,7 +1105,7 @@ public class UICamera : MonoBehaviour
 			ProcessTouch(pressed, unpressed);
 			currentKey = KeyCode.None;
 		}
-		//currentTouch = null;
+		currentTouch = null;
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
@@ -1131,7 +1164,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			//currentTouch = null;
+			currentTouch = null;
 
 			// Don't consider other touches
 			if (!allowMultiTouch) break;
@@ -1184,7 +1217,7 @@ public class UICamera : MonoBehaviour
 			// If the touch has ended, remove it from the list
 			if (unpressed) RemoveTouch(currentTouchID);
 			currentTouch.last = null;
-			//currentTouch = null;
+			currentTouch = null;
 		}
 	}
 
@@ -1294,8 +1327,8 @@ public class UICamera : MonoBehaviour
 			Notify(mCurrentSelection, "OnKey", KeyCode.Escape);
 		}
 
-		//currentTouch = null;
-		//currentKey = KeyCode.None;
+		currentTouch = null;
+		currentKey = KeyCode.None;
 	}
 
 	/// <summary>
@@ -1345,8 +1378,10 @@ public class UICamera : MonoBehaviour
 				currentTouch.delta = currentTouch.totalDelta;
 
 				// OnDragOver is sent for consistency, so that OnDragOut is always preceded by OnDragOver
+				isDragging = true;
 				Notify(currentTouch.dragged, "OnDragStart", null);
 				Notify(currentTouch.last, "OnDragOver", currentTouch.dragged);
+				isDragging = false;
 			}
 			else if (!currentTouch.dragStarted && drag < mag)
 			{

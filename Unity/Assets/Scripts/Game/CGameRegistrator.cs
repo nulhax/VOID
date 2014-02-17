@@ -114,18 +114,18 @@ public class CGameRegistrator : MonoBehaviour
         Fire,
 
 		// User Interfaces
-		UITest,
-		UIFacilityExpansion,
-		UIModuleCreation,
-		UIPowerGenerator,
-		UIPowerCapacitor,
-		UIAtmosphereGenerator,
-		UIDispenser,
-		UIShipPower,
-		UIShipPropulsion,
-		UIShipResources,
-		UINaniteCapsule,
-		UIEngine,
+		DUITest,
+		DUIFacilityExpansion,
+		DUIModuleCreation,
+		DUIPowerGenerator,
+		DUIPowerCapacitor,
+		DUIAtmosphereGenerator,
+		DUIDispenser,
+		DUIShipPower,
+		DUIShipPropulsion,
+		DUIShipResources,
+		DUINaniteCapsule,
+		DUIEngine,
 
 		// Other
 		LaserTurretProjectile,
@@ -252,18 +252,18 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
 
 		// User Interface
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UITest,						"DUI/DUIControlsTest");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIFacilityExpansion,			"DUI/DUIFacilityExpansion");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIModuleCreation,			"DUI/DUIModuleCreation");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerGenerator,			"DUI/Modules/DUIPowerGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIPowerCapacitor,			"DUI/Modules/DUIPowerCapacitor");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIAtmosphereGenerator,		"DUI/Modules/DUIAtmosphereGenerator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIDispenser,					"DUI/Modules/DUIDispenser");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPower,					"DUI/Ship/DUIShipPower");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipPropulsion,			"DUI/Ship/DUIShipPropulsion");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIShipResources,				"DUI/Ship/DUIShipResources");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UINaniteCapsule,				"DUI/Modules/DUINaniteCapsule");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.UIEngine,					"DUI/Modules/DUIPropulsionEngine");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUITest,							"User Interface/DUI/DUIControlsTest");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityExpansion,			"User Interface/DUI/DUIFacilityExpansion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIModuleCreation,				"User Interface/DUI/DUIModuleCreation");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPowerGenerator,				"User Interface/DUI/Modules/DUIPowerGenerator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPowerCapacitor,				"User Interface/DUI/Modules/DUIPowerCapacitor");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAtmosphereGenerator,			"User Interface/DUI/Modules/DUIAtmosphereGenerator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIDispenser,					"User Interface/DUI/Modules/DUIDispenser");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipPower,					"User Interface/DUI/Ship/DUIShipPower");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipPropulsion,				"User Interface/DUI/Ship/DUIShipPropulsion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipResources,				"User Interface/DUI/Ship/DUIShipResources");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINaniteCapsule,				"User Interface/DUI/Modules/DUINaniteCapsule");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,						"User Interface/DUI/Modules/DUIPropulsionEngine");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Defence/Laser Turret/Laser Turret Projectile");
@@ -367,18 +367,18 @@ public class CGameRegistrator : MonoBehaviour
 
 	void RegisterUserInterfaces()
 	{
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.UITest);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.UIFacilityExpansion);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.UIModuleCreation);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator, ENetworkPrefab.UIPowerGenerator);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor, ENetworkPrefab.UIPowerCapacitor);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator, ENetworkPrefab.UIAtmosphereGenerator);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser, ENetworkPrefab.UIDispenser);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower, ENetworkPrefab.UIShipPower);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion, ENetworkPrefab.UIShipPropulsion);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources, ENetworkPrefab.UIShipResources);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NaniteCapsule, ENetworkPrefab.UINaniteCapsule);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine, ENetworkPrefab.UIEngine);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest, ENetworkPrefab.DUITest);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion, ENetworkPrefab.DUIFacilityExpansion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation, ENetworkPrefab.DUIModuleCreation);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator, ENetworkPrefab.DUIPowerGenerator);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor, ENetworkPrefab.DUIPowerCapacitor);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator, ENetworkPrefab.DUIAtmosphereGenerator);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser, ENetworkPrefab.DUIDispenser);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower, ENetworkPrefab.DUIShipPower);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion, ENetworkPrefab.DUIShipPropulsion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources, ENetworkPrefab.DUIShipResources);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NaniteCapsule, ENetworkPrefab.DUINaniteCapsule);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine, ENetworkPrefab.DUIEngine);
 	}
 
 

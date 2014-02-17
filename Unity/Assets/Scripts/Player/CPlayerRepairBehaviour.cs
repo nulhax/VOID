@@ -134,6 +134,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
      * */
 	
    
+    /*
 	public void HandleToolUse(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
 		//Check that player is targetting a component
@@ -203,6 +204,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 			}
 		}
 	}	
+     * */
 
 	
 	CToolInterface			m_HeldTool;	

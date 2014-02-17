@@ -22,13 +22,13 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CComponentInterface))]
 public class CRatchetComponent : CNetworkMonoBehaviour
 {
-	// Member Types
+// Member Types
 	
 	
-	// Member Delegates & Events
+// Member Delegates & Events
 
 	
-	// Member Properties
+// Member Properties
 	public List<Transform> RatchetRepairPosition
 	{
 		get { return(m_RepairPositions);}
@@ -100,7 +100,7 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 
 	}
 	
-	// Member Fields
+// Member Fields
 
 	private List<Transform> m_RepairPositions = new List<Transform>();
 	private float m_CurrentHealth = 0.0f;
