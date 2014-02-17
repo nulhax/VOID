@@ -124,17 +124,10 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 		}
 	}
 
-
-	[AServerOnly]
-	public void OnUseStart(GameObject _cInteractableObject)
-	{
-		m_bActive.Set(true);
-        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
-        Debug.Log("OnUseStart");
-	}
     [AClientOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
+        //m_bActive.Set(true);
         if (_bActive)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireStart);
@@ -145,6 +138,14 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         }
 
         s_cSerializeStream.Write(ThisNetworkView.ViewId);
+    }
+
+    [AServerOnly]
+    public void OnUseStart(GameObject _cInteractableObject)
+    {
+        m_bActive.Set(true);
+        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
+        Debug.Log("OnUseStart");
     }
 
 	[AServerOnly]
@@ -161,10 +162,12 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             if (m_bActive.Get())
             {
                 m_cSprayParticalSystem.Play();
+                gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
             }
             else
             {
                 m_cSprayParticalSystem.Stop();
+                gameObject.GetComponent<CAudioCue>().StopAllSound();
             }
         }
     }

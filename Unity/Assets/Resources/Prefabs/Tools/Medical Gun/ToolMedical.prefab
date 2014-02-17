@@ -530,7 +530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: 
+  m_strCueName: Medical Spray Noise
   m_fPitchMin: 1
   m_fpitchMax: 1
   m_fVolumeMin: 1
