@@ -6,8 +6,8 @@
 //  File Name   :   CActorHealth.cs
 //  Description :   --------------------------
 //
-//  Author  	:  Scott Emery
-//  Mail    	:  scott.ipod@gmail.com
+//  Author  	:  
+//  Mail    	:  @hotmail.com
 //
 
 
@@ -17,101 +17,210 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-/* Implementation */
 
+/* Implementation */
 public class CPlayerHealth : CNetworkMonoBehaviour
 {
-
 // Member Types
+    // Damage Type
+    [Flags]
+    public enum DamageType
+    {
+        None         = 0,
+        Fire         = 1,
+        Physical     = 2,
+        Electrical   = 4,
+        Asphyxiation = 8
+    }
+
+    // Health State
+    public enum HealthState
+    {
+        HEALTH_INVALID = -1,
+
+        HEALTH_ALIVE,
+        HEALTH_DOWNED,
+        HEALTH_DEAD,
+
+        HEALTH_MAX
+    }
 
 
 // Member Delegates & Events
+    // Health Value
+    public delegate void OnHealthChanged(GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue);
 
-
-	public delegate void OnPlayerApplyHeal(GameObject _TargetPlayer, float _fHealAmount);
-	public delegate void OnPlayerApplyDamage(GameObject _TargetPlayer, float _fDamageAmount);
-	public delegate void OnPlayerDeath(GameObject _SourcePlayer);
-	public delegate void OnPlayerRevive(GameObject _SourcePlayer);
+    // Health State
+	public delegate void OnHealthStateChange (GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState);
 	
+    // Health Value
+    public event OnHealthChanged EventHealthChanged;
 
-	public event OnPlayerApplyHeal   EventApplyHeal;
-	public event OnPlayerApplyDamage EventApplyDamage;
-	public event OnPlayerDeath       EventDeath;
-	public event OnPlayerRevive      EventRevive;
+    // Health State
+    public event OnHealthStateChange EventHealthStateChanged;
 
 
 // Member Properties
+	public float Health
+	{
+        // Get
+		get { return (m_fHealth.Get()); }
+
+        // Set
+        set
+        {
+            // Local variables
+            float fNewHealthValue = value;                   // New health value
+            float fCurrentHealth  = m_fHealth.Get();         // Current health
+            float fHealthDelta    = value - m_fHealth.Get(); // Delta: New - Old
+
+            // NOTE:
+            // If fHealthDelta is ZERO, health is UNCHANGED
+            // If fHealthDelta is a POSITIVE number, health INCREASED
+            // If fHealthDelta is a NEGATIVE number, health DECREASED
+
+            // If health is attempting to increase
+            if (fHealthDelta > 0.0f)
+            {
+                // If new health value is below the max health
+                if (fNewHealthValue < k_fMaxHealth)
+                {
+                    // Trigger EventHealthIncreased
+                    if (EventHealthIncreased != null) { EventHealthIncreased(gameObject, fHealthDelta); }
+
+                    // Assign the new health value
+
+                }
+            }
+
+            // If health is attempting to decrease
+            else if (fHealthDelta < 0.0f)
+            {
+
+            }
 
 
-	public float HitPoints
-	{ 
-		get { return (m_fHitPoints.Get()); }
-		set { m_fHitPoints.Set(value); }
+
+
+
+
+
+            // If fHealthDelta is not 0 (health has changed)
+            // And fHealthDelta is less than 0 (health increased) and health is not currently at max health (health can increase)
+            // Or fHealthDelta is greater than 0 (health decreased) and health is not currently 0 (health can decrease)
+            if ((fHealthDelta != 0.0f) && ((fHealthDelta < 0.0f && (m_fHealth.Get() != k_fMaxHealth)) || (fHealthDelta > 0.0f && (m_fHealth.Get() != 0.0f))))
+            {
+                // If old value minus new value is a positive number
+                if (fHealthDelta > 0.0f)
+                {
+                    // Trigger EventHealthDecreased
+                    if (EventHealthDecreased != null) { EventHealthDecreased(gameObject, fHealthDelta); }
+                }
+
+                // If old value minus new value is a negative number
+                else if (fHealthDelta < 0.0f)
+                {
+                    // Trigger EventHealthIncreased
+                    if (EventHealthIncreased != null) { EventHealthIncreased(gameObject, fHealthDelta); }
+                }
+
+                // If the new health value is 0 or above, and less than the max health
+                if ((value >= 0.0f) && (value <= k_fMaxHealth))
+                {
+                    // Assign the new health value
+                    m_fHealth.Set(value);
+                }
+
+                // If the new health value is less than 0
+                else if (value < 0.0f)
+                {
+                    // Set health to 0
+                    m_fHealth.Set(0.0f);
+                }
+
+                // If the new health is above the max health
+                else if (value > k_fMaxHealth)
+                {
+                    // Set health to max health
+                    m_fHealth.Set(k_fMaxHealth);
+                }
+            }
+        }
 	}
 	
 
-	public bool Alive
+	public HealthState CurrentHealthState
 	{
-		get { return (m_bAlive.Get()); }
-		set { m_bAlive.Set(value); }
+        // Get
+        get
+        {
+            // Convert the CNetworkVar 'm_HealthState' to a standard type
+            // Convert standard type to a string
+            // Convert byte string to enum type
+            // Return converted enum type
+            //          Type   String->Enum           Type      CNetworkVar->Standard Type->String
+            return ((HealthState)Enum.Parse(typeof(HealthState), m_HealthState.Get().ToString()));
+
+            // TODO: Test shortcut logic
+            // TODO: Use Enum.IsDefined() to avoid exception cases
+        }
+
+        // Set
+		set
+        {
+            // Convert value to string
+            // Convert string to byte
+            // Convert byte and save to CNetworkVar
+            m_HealthState.Set(byte.Parse(value.ToString()));
+
+            // TODO: Exception checking
+        }
 	}
 	
 
 	public float Breath
 	{
+        // Get
 		get { return(m_fOxygenUseRate.Get()); }
+
+        // Set
 		set { m_fOxygenUseRate.Set(value); }
 	}
 
 
     public static CPlayerHealth Instance
     {
+        // Get
         get { return (s_cInstance); }
     }
 
+
 // Member Functions
-
-
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fHitPoints = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-		m_bAlive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+        //                                              Type   Callback          Initial Vlaue
+		m_fHealth        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
+        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, byte.Parse(HealthState.HEALTH_INVALID.ToString()));
 		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
 
     [AServerOnly]
-    public void ApplyDamage(float _fAmount)
+    public void ApplyDamage(float _fValue)
     {
-        // If the player's current health, minus the new damage is still greater than 0.0f
-        if ((m_fHitPoints.Get() - _fAmount) > 0.0f)
-        {
-            // Apply the damage normally
-            m_fHitPoints.Set(m_fHitPoints.Get() - _fAmount);
-        }
-
-        // Else the player's current health, minus the new damage, is 0.0f or negative
-        else
-        {
-            // Set the player's helath to a flat 0.0f
-            m_fHitPoints.Set(0.0f);
-        }
-
-        // Notify observers about dmagae
-        if (EventApplyDamage != null) EventApplyDamage(gameObject, _fAmount);
+        // Set new health value
+        m_fHealth.Set(m_fHealth.Get() - _fValue);
     }
 
 
     [AServerOnly]
     public void ApplyHeal(float _fAmount)
     {
-        if((m_fHitPoints.Get() + _fAmount) <= k_fMaxHealth)
+        // Set new health value
+        if((m_fHealth.Get() + _fAmount) <= k_fMaxHealth)
         {
-            m_fHitPoints.Set(m_fHitPoints.Get() + _fAmount);
+            m_fHealth.Set(m_fHealth.Get() + _fAmount);
         }
-
-        // Notify observers about heal
-        if (EventApplyHeal != null) EventApplyHeal(gameObject, _fAmount);
     }
 
 
@@ -164,23 +273,23 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         if (Alive)
         {
             // Check player is now dead
-            if (HitPoints == 0.0f)
+            if (Health == 0.0f)
             {
-                m_bAlive.Set(false);
+                m_HealthState.Set(false);
 
                 // Notify observers
-                if (EventDeath != null) EventDeath(gameObject);
+                if (EventHealthDead != null) EventHealthDead(gameObject);
             }
         }
         else
         {
             // Check player is now alive
-            if (HitPoints > 0.0f)
+            if (Health > 0.0f)
             {
-                m_bAlive.Set(true);
+                m_HealthState.Set(true);
 
                 // Notify observers
-                if (EventRevive != null) EventRevive(gameObject);
+                if (EventHealthRevived != null) EventHealthRevived(gameObject);
             }
         }
 	}
@@ -188,10 +297,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
-        if (_cVarInstance == m_bAlive)
+        if (_cVarInstance == m_HealthState)
         {
             // Player is alive
-            if (m_bAlive.Get())
+            if (m_HealthState.Get())
             {
                 transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
                 transform.GetComponent<CPlayerHead>().ReenableInput(this);
@@ -204,20 +313,20 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 transform.GetComponent<CPlayerHead>().DisableInput(this);
             }
         }
-        else  if (_cVarInstance == m_fHitPoints &&
+        else  if (_cVarInstance == m_fHealth &&
                   m_LaughTrack != null)
         {
             m_LaughTrack.Play(0.5f, false, -1);
 
             if (CNetwork.IsServer)
             {
-                if (m_fHitPoints.Get() <= 0.0f)
+                if (m_fHealth.Get() <= 0.0f)
                 {
-                    m_bAlive.Set(false);
+                    m_HealthState.Set(false);
                 }
-                else if (m_fHitPoints.Get() > 0.0f)
+                else if (m_fHealth.Get() > 0.0f)
                 {
-                    m_bAlive.Set(true);
+                    m_HealthState.Set(true);
                 }
             }
         }
@@ -241,7 +350,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             GUI.Box(new Rect(Screen.width  - kBoxWidth - kBoxMargin,
                              Screen.height - kBoxHeight - kBoxMargin,
                              kBoxWidth, kBoxHeight),
-                             "Health: " + Math.Round(m_fHitPoints.Get(), 2) + "/" + k_fMaxHealth);
+                             "Health: " + Math.Round(m_fHealth.Get(), 2) + "/" + k_fMaxHealth);
 		}
     }
 	
@@ -252,13 +361,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	const float k_fMaxHealth = 100.0f;
 
 
-	CNetworkVar<float> m_fHitPoints;
+	CNetworkVar<float> m_fHealth;
 	CNetworkVar<float> m_fOxygenUseRate;
-	CNetworkVar<bool> m_bAlive;
+	CNetworkVar<byte> m_HealthState;
 
-
-	CAudioCue m_LaughTrack;
     static CPlayerHealth s_cInstance = null;
-
 }
 	
