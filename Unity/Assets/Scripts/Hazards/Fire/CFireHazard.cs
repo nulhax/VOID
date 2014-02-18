@@ -30,8 +30,38 @@ public class CFireHazard : MonoBehaviour
 
 	void Awake()
 	{
-		if (GetComponentsInChildren<ParticleSystem>() != null)
-			Debug.LogError("Replace Fire hazard on " + transform.parent.gameObject.name);
+		if (Random.Range(0, 1) == 0)
+			return;
+
+		// Manual creation/initialisation of particle system.
+		{
+			// MeshFilter used by ParticleEmitter for emitting particles along the surface of a mesh.
+			MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>(); if (meshFilter == null) meshFilter = gameObject.AddComponent<MeshFilter>();	// Get or create MeshFilter (there must be one).
+
+			// Inherit mesh from parent if there isn't one already.
+			if (meshFilter.sharedMesh == null/* && inheritMesh*/)
+			{
+				Transform parentTransform = transform.parent;
+				if (parentTransform != null)
+				{
+					MeshFilter parentMeshFilter = parentTransform.GetComponent<MeshFilter>();
+					if (parentMeshFilter != null)
+						meshFilter.sharedMesh = parentMeshFilter.sharedMesh;
+				}
+			}
+
+			// If no current mesh and no parent mesh - use quad.
+			if (meshFilter.sharedMesh == null)
+				meshFilter.sharedMesh = Resources.Load<Mesh>("Quad");	// Todo: Rotate by 90 degrees if quad is vertical.
+		}
+
+		{
+			// ParticleRenderer.
+			ParticleRenderer particleRenderer = gameObject.GetComponent<ParticleRenderer>(); if (particleRenderer == null) particleRenderer = gameObject.AddComponent<ParticleRenderer>();	// Get or create ParticleRenderer (there must be one).
+			particleRenderer.castShadows = false;
+			particleRenderer.receiveShadows = true;
+			particleRenderer.materials
+		}
 	}
 
 	void Start()
