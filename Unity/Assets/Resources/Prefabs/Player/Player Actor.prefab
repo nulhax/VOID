@@ -1533,6 +1533,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cActorHead: {fileID: 100080}
+  m_OxygenReleaseParticles:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1612,6 +1618,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1519e8c8e4b0414487ff4f2bd9b307c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Visor: {fileID: 0}
 --- !u!114 &11400030
 MonoBehaviour:
   m_ObjectHideFlags: 1

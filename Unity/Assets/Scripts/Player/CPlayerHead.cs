@@ -30,6 +30,28 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+// Member Fields
+	public GameObject m_cActorHead = null;
+	public List<ParticleSystem> m_OxygenReleaseParticles = new List<ParticleSystem>();
+	
+	List<Type> m_cInputDisableQueue = new List<Type>();
+	
+	
+	CNetworkVar<float> m_fHeadEulerX = null;
+	
+	
+	float m_LocalXRotation = 0.0f;
+	
+	
+	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
+	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);
+	Vector2 m_vHeadMinRotation = new Vector2(-30, -60);
+	Vector2 m_vHeadMaxRotation = new Vector2(30, 70); 
+	
+	
+	float m_HeadYRotationLimit = 80.0f;
+
+
 // Member Properties
 
 
@@ -181,29 +203,5 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			SetHeadRotations(m_LocalXRotation);
 		}
 	}
-
-
-// Member Fields
-
-	List<Type> m_cInputDisableQueue = new List<Type>();
-
-
-	CNetworkVar<float> m_fHeadEulerX = null;
-
-
-	public GameObject m_cActorHead = null;
-
-
-	float m_LocalXRotation = 0.0f;
-	
-
-	Vector2 m_vCameraMinRotation = new Vector2(-60.0f, -360.0f);
-	Vector2 m_vCameraMaxRotation = new Vector2(70.0f, 360.0f);
-	Vector2 m_vHeadMinRotation = new Vector2(-30, -60);
-	Vector2 m_vHeadMaxRotation = new Vector2(30, 70); 
-	
-	
-	float m_HeadYRotationLimit = 80.0f;
-
 
 };

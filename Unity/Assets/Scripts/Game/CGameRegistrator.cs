@@ -388,6 +388,7 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Secondary, KeyCode.Mouse1);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.Use, KeyCode.F);
+		CUserInput.SetKeyBinding(CUserInput.EInput.Visor, KeyCode.C);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Forward, KeyCode.W);
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Backwards, KeyCode.S);

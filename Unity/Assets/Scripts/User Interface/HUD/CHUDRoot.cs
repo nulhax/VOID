@@ -30,22 +30,31 @@ public class CHUDRoot : MonoBehaviour
 	
 	
 	// Member Fields
-	public UICamera m_HUDCamera = null;
+	public GameObject m_HUDCamera2D = null;
+	public GameObject m_HUDCamera3D = null;
 
-	public UISprite m_VisorOverlay = null;
+	public CHUDVisor m_Visor = null;
 	public UISprite m_Reticle = null;
+
+	private UICamera m_CachedHUDCamerera2D = null;
+	private UICamera m_CachedHUDCamerera3D = null;
 
 	private static CHUDRoot s_Instance = null;
 
 	// Member Properties
-	public static UICamera HUDCamera 
+	public static UICamera HUDCamerera2D 
 	{ 
-		get { return(s_Instance.m_HUDCamera); } 
+		get { return(s_Instance.m_CachedHUDCamerera2D); } 
 	}
 
-	public static UISprite VisorOverlay 
+	public static UICamera HUDCamerera3D 
 	{ 
-		get { return(s_Instance.m_VisorOverlay); } 
+		get { return(s_Instance.m_CachedHUDCamerera2D); } 
+	}
+
+	public static CHUDVisor Visor 
+	{ 
+		get { return(s_Instance.m_Visor); } 
 	}
 	
 	// Member Methods
@@ -56,7 +65,8 @@ public class CHUDRoot : MonoBehaviour
 	
 	public void Start()
 	{
-
+		m_CachedHUDCamerera2D = m_HUDCamera2D.GetComponent<UICamera>();
+		m_CachedHUDCamerera3D = m_HUDCamera2D.GetComponent<UICamera>();
 	}
 
 	public static void UpdateReticleTarget(Transform _Target)
