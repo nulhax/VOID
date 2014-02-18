@@ -110,8 +110,32 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
     
     void Start()
     {       
-        m_TargetList = new List<Vector3>();
-        m_eRepairState = ERepairState.RepairInactive;       
+        m_TargetList = new List<Transform>();
+        m_eRepairState = ERepairState.RepairInactive;
+
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += (bool _bDown) =>
+        {
+            if (_bDown &&
+                m_eRepairState == ERepairState.RepairInactive)
+            {
+                GameObject cTargetActorInteractable = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetActorObject;
+
+                if (cTargetActorInteractable != null)
+                {
+                    CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
+
+                    if (cActorComponentInterface != null &&
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CalibratorComp)
+                    {
+                        BeginRepair(cTargetActorInteractable);
+                    }
+                }
+            }
+            else if (m_eRepairState == ERepairState.RepairActive)
+            {
+                EndRepairs();
+            }
+        };
     }   
     
     void Update()
@@ -123,8 +147,14 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
             {
                 m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);               
                 //Update target for IK here
+            }
+
+            if (GetComponent<CToolInterface>().OwnerPlayerActor == CGamePlayers.SelfActor &&
+                m_eRepairState == ERepairState.RepairActive)
+            {
+                //Update target for IK here
                 UpdateTarget();
-            }       
+            }
         }
     }
     
@@ -161,7 +191,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         
         foreach(Transform child in repairPositions)
         {
-            m_TargetList.Add(child.position);
+            m_TargetList.Add(child);
             m_iTotalTargets++;
         }   
         
@@ -197,7 +227,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
     // Member Fields
     
     Vector3                 m_ToolTarget;
-    List<Vector3>           m_TargetList;   
+    List<Transform>         m_TargetList;   
     int                     m_iTotalTargets;
     int                     m_iTargetIndex;         
     float                   m_fRepairRate = 30.0f;

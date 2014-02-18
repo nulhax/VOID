@@ -117,6 +117,9 @@ public class CGameCameras : MonoBehaviour
 		
 		// Unparent the galaxy camera
 		s_GalaxyCamera.transform.parent = null;
+
+		// Update the HUD
+		CHUDRoot.UpdateHUDGameCamera(PlayersHeadCamera.camera);
 	}
 	
 	public static void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
@@ -130,6 +133,9 @@ public class CGameCameras : MonoBehaviour
 		
 		// Unparent the ship camera
 		s_ShipCamera.transform.parent = null;
+
+		// Update the HUD
+		CHUDRoot.UpdateHUDGameCamera(PlayersHeadCamera.camera);
 	}
 	
 	public static void SetDefaultViewPerspective()
@@ -172,6 +178,9 @@ public class CGameCameras : MonoBehaviour
 		s_ShipCamera =  s_OculusRiftActive ? 
 			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/OVRShipCamera"))):
 			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera")));
+
+		// Instantiate the HUD
+		GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD Root"));
 	}
 	
 	private void OnDisconnect()

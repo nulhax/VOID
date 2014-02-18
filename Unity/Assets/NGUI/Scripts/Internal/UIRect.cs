@@ -196,6 +196,12 @@ public abstract class UIRect : MonoBehaviour
 	public virtual bool isAnchoredVertically { get { return bottomAnchor.target || topAnchor.target; } }
 
 	/// <summary>
+	/// Whether the rectangle can be anchored.
+	/// </summary>
+
+	public virtual bool canBeAnchored { get { return true; } }
+
+	/// <summary>
 	/// Get the rectangle's parent, if any.
 	/// </summary>
 
@@ -239,7 +245,7 @@ public abstract class UIRect : MonoBehaviour
 	{
 		get
 		{
-			return leftAnchor.target || rightAnchor.target || topAnchor.target || bottomAnchor.target;
+			return (leftAnchor.target || rightAnchor.target || topAnchor.target || bottomAnchor.target) && canBeAnchored;
 		}
 	}
 
@@ -267,22 +273,16 @@ public abstract class UIRect : MonoBehaviour
 
 	public abstract Vector3[] worldCorners { get; }
 
-	int mLastInvalidate = -1;
-
 	/// <summary>
 	/// Sets the local 'changed' flag, indicating that some parent value(s) are now be different, such as alpha for example.
 	/// </summary>
 
-	public void Invalidate (bool includeChildren)
+	public virtual void Invalidate (bool includeChildren)
 	{
-		if (mLastInvalidate != Time.frameCount)
-		{
-			mLastInvalidate = Time.frameCount;
-			mChanged = true;
-			if (includeChildren)
-				for (int i = 0; i < mChildren.size; ++i)
-					mChildren.buffer[i].Invalidate(true);
-		}
+		mChanged = true;
+		if (includeChildren)
+			for (int i = 0; i < mChildren.size; ++i)
+				mChildren.buffer[i].Invalidate(true);
 	}
 
 	// Temporary variable to avoid GC allocation
@@ -577,8 +577,11 @@ public abstract class UIRect : MonoBehaviour
 
 	protected virtual void OnValidate ()
 	{
-		ResetAnchors();
-		Invalidate(true);
+		if (NGUITools.GetActive(this))
+		{
+			ResetAnchors();
+			Invalidate(true);
+		}
 	}
 #endif
 }

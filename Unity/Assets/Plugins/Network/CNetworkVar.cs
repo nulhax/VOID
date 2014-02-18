@@ -34,6 +34,14 @@ public class CNetworkVar<TYPE> : INetworkVar
 	public delegate void OnSyncCallback(INetworkVar _cVarInstance);
 
 
+// Member Properties
+	public TYPE Value
+	{
+		get {return(Get());}
+		set {Set(value);}
+	}
+
+
 // Member Functions
 
     // public:

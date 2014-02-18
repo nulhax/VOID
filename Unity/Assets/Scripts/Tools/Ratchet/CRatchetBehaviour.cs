@@ -59,21 +59,6 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		m_bRepairState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
 	}
 
-	public void OnNetworkVarSync(INetworkVar _cSyncedVar)
-	{
-		if(_cSyncedVar == m_bRepairState)
-		{
-			if( (m_bRepairState.Get() & (uint)ERepairState.RepairActive) > 0)
-			{
-				m_eRepairState = ERepairState.RepairActive;
-			}
-			
-			if( (m_bRepairState.Get() & (uint)ERepairState.RepairInactive) > 0)
-			{
-				m_eRepairState = ERepairState.RepairInactive;
-			}
-		}
-	}
 	
 	[AClientOnly]
     public static void Serialize(CNetworkStream _cStream)
@@ -108,11 +93,37 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		}
 	}
 
+
 	void Start()
-	{		
-		m_TargetList = new List<Vector3>();
-		m_eRepairState = ERepairState.RepairInactive;		
+	{	
+		m_TargetList = new List<Transform>();
+		m_eRepairState = ERepairState.RepairInactive;
+
+        GetComponent<CToolInterface>().EventPrimaryActiveChange += (bool _bDown) =>
+        {
+            if (_bDown &&
+                m_eRepairState == ERepairState.RepairInactive)
+            {
+                GameObject cTargetActorInteractable = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetActorObject;
+
+                if (cTargetActorInteractable != null)
+                {
+                    CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
+
+                    if (cActorComponentInterface != null &&
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.MechanicalComp)
+                    {
+                        BeginRepair(cTargetActorInteractable);
+                    }
+                }
+            }
+            else if (m_eRepairState == ERepairState.RepairActive)
+            {
+                EndRepairs();
+            }
+        };
 	}	
+
 
 	void Update()
 	{
@@ -122,11 +133,19 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			if(CNetwork.IsServer)
 			{
 				m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);				
-				//Update target for IK here
-				UpdateTarget();
-			}		
+			}
+
+            if (GetComponent<CToolInterface>().OwnerPlayerActor == CGamePlayers.SelfActor &&
+                m_eRepairState == ERepairState.RepairActive)
+            {
+                Debug.Log("Switch target");
+
+                //Update target for IK here
+                UpdateTarget();
+            }
 		}
 	}
+
 		
 	void UpdateTarget()
 	{
@@ -149,39 +168,41 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		}
 	}
 	
-	public void BeginRepair(GameObject _damagedComponent)
-	{		
-		m_iTotalTargets = 0;		
-			
-		m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
-       
+
+	void BeginRepair(GameObject _damagedComponent)
+	{
+        m_iTotalTargets = 0;
+
+        m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
+
         List<Transform> repairPositions = m_TargetComponent.GetComponent<CRatchetComponent>().RatchetRepairPosition;
 
-        foreach(Transform child in repairPositions)
+        foreach (Transform child in repairPositions)
         {
-            m_TargetList.Add(child.position);
+            m_TargetList.Add(child);
             m_iTotalTargets++;
-        }   
-		
-		m_eRepairState = ERepairState.RepairActive;
-			
-		m_fTargetSwitchTimer = 0.0f;
-		
-		m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
-		m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];	
-		
-		CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
-		CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
-		
-		s_cSerializeStream.Write((byte)ENetworkAction.SetRepairState);
-		s_cSerializeStream.Write(senderID);
-		s_cSerializeStream.Write(targetID);		
-		s_cSerializeStream.Write((byte)m_eRepairState);
+        }
+
+        m_eRepairState = ERepairState.RepairActive;
+
+        m_fTargetSwitchTimer = 0.0f;
+
+        m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
+        m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];
+
+        CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
+        CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
+
+        s_cSerializeStream.Write((byte)ENetworkAction.SetRepairState);
+        s_cSerializeStream.Write(senderID);
+        s_cSerializeStream.Write(targetID);
+        s_cSerializeStream.Write((byte)m_eRepairState);
 		
 		Debug.Log("Beginning repairs");
 	}
 	
-	public void EndRepairs()
+
+	void EndRepairs()
 	{
 		m_eRepairState = ERepairState.RepairInactive;
 		m_TargetComponent = null;
@@ -189,11 +210,31 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		m_TargetList.Clear();
 	}
 
+	void OnEquip()
+	{
+
+	}
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_bRepairState)
+        {
+            if ((m_bRepairState.Get() & (uint)ERepairState.RepairActive) > 0)
+            {
+                m_eRepairState = ERepairState.RepairActive;
+            }
+
+            if ((m_bRepairState.Get() & (uint)ERepairState.RepairInactive) > 0)
+            {
+                m_eRepairState = ERepairState.RepairInactive;
+            }
+        }
+    }
+
 
 // Member Fields
 		
-	Vector3					m_ToolTarget;
-	List<Vector3>			m_TargetList;	
+	List<Transform>			m_TargetList;	
 	int 					m_iTotalTargets;
 	int 					m_iTargetIndex;			
 	float					m_fRepairRate = 30.0f;
@@ -208,4 +249,8 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	
 	CNetworkVar<byte>		m_bRepairState;
 	static CNetworkStream 	s_cSerializeStream = new CNetworkStream();	
+
+	//Tool child Transforms
+	Transform				m_Muzzle;
+	Transform				m_HandPosition;
 };

@@ -255,6 +255,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
     void OnGUI()
     {
+		return;
         if (gameObject == CGamePlayers.SelfActor)
         {
             string sModuleText = "Part: ";

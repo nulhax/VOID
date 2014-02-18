@@ -54,6 +54,7 @@ public class CUserInput : CNetworkMonoBehaviour
 		Secondary,                // Move Left
                                  
 		Use,                      // F
+		Visor,                    // C
                                  
 		MoveGround_Forward,       // W
 		MoveGround_Backwards,     // S
