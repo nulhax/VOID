@@ -110,7 +110,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
     
     void Start()
     {       
-        m_TargetList = new List<Vector3>();
+        m_TargetList = new List<Transform>();
         m_eRepairState = ERepairState.RepairInactive;
 
         GetComponent<CToolInterface>().EventPrimaryActiveChange += (bool _bDown) =>
@@ -188,7 +188,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         
         foreach(Transform child in repairPositions)
         {
-            m_TargetList.Add(child.position);
+            m_TargetList.Add(child);
             m_iTotalTargets++;
         }   
         
@@ -222,7 +222,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
     // Member Fields
     
     Vector3                 m_ToolTarget;
-    List<Vector3>           m_TargetList;   
+    List<Transform>         m_TargetList;   
     int                     m_iTotalTargets;
     int                     m_iTargetIndex;         
     float                   m_fRepairRate = 30.0f;

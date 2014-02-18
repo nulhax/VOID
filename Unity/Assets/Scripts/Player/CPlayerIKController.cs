@@ -25,7 +25,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	//Member Types
 	public enum ENetworkAction : byte
 	{
-		UpdateTarget,
+		SetRightTransform,
+		SetLeftTransform,
 	}
 	
 	//Member Delegates & Events
@@ -33,13 +34,13 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	
 	// Member Properties
 	
-	public Vector3 RightHandIKTarget
+	public Transform RightHandIKTarget
 	{
-        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; m_fRightHandIKWeight = 1;}			 
+        set { m_RightHandTarget = value; m_fRightHandLerpTimer = 0; }			 
 		get { return (m_RightHandTarget); }
 	}
 
-    public Vector3 LeftHandIKTarget
+	public Transform LeftHandIKTarget
     {
         set { m_LeftHandTarget = value; m_fLeftHandLerpTimer = 0; }
         get { return (m_LeftHandTarget); }
@@ -50,24 +51,34 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		set { m_fRightHandIKWeight = value;  }
         get { return (m_fRightHandIKWeight); }
 	}
+
+	public float LeftHandIKWeight
+	{
+		set { m_fLeftHandIKWeight = value;  }
+		get { return (m_fLeftHandIKWeight); }
+	}
 	
 	//Member variables
 	Animator m_ThirdPersonAnim;
-    CNetworkVar<Vector3>    m_RightHandNetworkedTarget;
-    CNetworkVar<Vector3>    m_LeftHandNetworkedTarget;
+    CNetworkVar<Vector3>    m_RightHandNetworkedPos;
+    CNetworkVar<Vector3>    m_LeftHandNetworkedPos;
+
+	CNetworkVar<Vector3>    m_RightHandNetworkedRot;
+	CNetworkVar<Vector3>    m_LeftHandNetworkedRot;
 
 	//Right hand
 	float 					m_fRightHandIKWeight;
-	Vector3					m_RightHandPos;
-    Vector3					m_RightHandTarget;
+	Transform				m_RightHandPos;
+	Transform				m_RightHandTarget;
 	const float 			m_kfRightHandLerpTime = 0.75f;
-	float 					m_fRightHandLerpTimer = 0.0f;
+	float 					m_fRightHandLerpTimer = 0.75f;
  
 	//Left hand
 	float 					m_fLeftHandIKWeight;
-	Vector3					m_LeftHandTarget;	
-	float 					m_fLeftHandLerpTime = 0.1f;
-	float 					m_fLeftHandLerpTimer = 0.0f;		
+	Transform				m_LeftHandPos;
+	Transform				m_LeftHandTarget;	
+	const float 			m_kfLeftHandLerpTime = 0.75f;
+	float 					m_fLeftHandLerpTimer = 0.75f;		
 
 	//Member Methods
 	
@@ -79,35 +90,54 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_RightHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-		m_LeftHandNetworkedTarget = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);     
+		m_RightHandNetworkedPos = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_RightHandNetworkedRot = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+
+		m_LeftHandNetworkedPos = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_LeftHandNetworkedRot = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);   
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{ 
-		if(_cSyncedNetworkVar == m_RightHandNetworkedTarget)
+		if(_cSyncedNetworkVar == m_RightHandNetworkedPos)
         {
-            RightHandIKTarget = m_RightHandNetworkedTarget.Get();           
+            RightHandIKTarget.position = m_RightHandNetworkedPos.Get();           
         }
-        if(_cSyncedNetworkVar == m_LeftHandNetworkedTarget)
+        if(_cSyncedNetworkVar == m_LeftHandNetworkedPos)
         {
-            LeftHandIKTarget = m_LeftHandNetworkedTarget.Get();          
+            LeftHandIKTarget.position = m_LeftHandNetworkedPos.Get();          
         }
 	} 
 	
 	public static void SerializeIKTarget(CNetworkStream _cStream)
 	{
 		GameObject cSelfActor = CGamePlayers.SelfActor;
-		
-		if (cSelfActor != null)
+		CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
+				
+		if (cSelfActor != null && cSelfIKController.m_RightHandTarget != null)
 		{
-			CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
-			
 			// Write rotation states
-			_cStream.Write((byte)ENetworkAction.UpdateTarget);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.x);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.y);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.z);	      
+			_cStream.Write((byte)ENetworkAction.SetRightTransform);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.x);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.y);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.z);	      
+
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.x);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.y);
+			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.z);
+		}
+
+		if (cSelfActor != null && cSelfIKController.m_LeftHandTarget != null)
+		{
+			// Write rotation states
+			_cStream.Write((byte)ENetworkAction.SetLeftTransform);
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.x);
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.y);
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.z);	      
+			
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.x);
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.y);
+			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.z);
 		}
 	}
 	
@@ -123,13 +153,47 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			
 			switch (eNetworkAction)
 			{
-			case ENetworkAction.UpdateTarget:
+			case ENetworkAction.SetRightTransform:
 			{
-				cPlayerIKController.m_RightHandTarget.x = _cStream.ReadFloat();
-				cPlayerIKController.m_RightHandTarget.y = _cStream.ReadFloat();
-				cPlayerIKController.m_RightHandTarget.z = _cStream.ReadFloat();	
+				Vector3 pos = new Vector3();
+				Vector3 rot = new Vector3();
+
+				pos.x = _cStream.ReadFloat();
+				pos.y = _cStream.ReadFloat();
+				pos.z = _cStream.ReadFloat();
+
+				cPlayerIKController.m_RightHandTarget.position = pos;
+
+				rot.x = _cStream.ReadFloat();
+				rot.y = _cStream.ReadFloat();
+				rot.z = _cStream.ReadFloat();	
+
+				cPlayerIKController.m_RightHandTarget.rotation = Quaternion.Euler(rot);
 				
-				cPlayerIKController.m_RightHandNetworkedTarget.Set(cPlayerIKController.m_RightHandTarget);              
+				cPlayerIKController.m_RightHandNetworkedPos.Set(cPlayerIKController.m_RightHandTarget.position);              
+				cPlayerIKController.m_RightHandNetworkedRot.Set(cPlayerIKController.m_RightHandTarget.rotation.eulerAngles);
+			}
+				break;
+
+			case ENetworkAction.SetLeftTransform:
+			{
+				Vector3 pos = new Vector3();
+				Vector3 rot = new Vector3();
+				
+				pos.x = _cStream.ReadFloat();
+				pos.y = _cStream.ReadFloat();
+				pos.z = _cStream.ReadFloat();
+				
+				cPlayerIKController.m_LeftHandTarget.position = pos;
+				
+				rot.x = _cStream.ReadFloat();
+				rot.y = _cStream.ReadFloat();
+				rot.z = _cStream.ReadFloat();	
+				
+				cPlayerIKController.m_LeftHandTarget.rotation = Quaternion.Euler(rot);
+				
+				cPlayerIKController.m_RightHandNetworkedPos.Set(cPlayerIKController.m_LeftHandTarget.position);              
+				cPlayerIKController.m_RightHandNetworkedRot.Set(cPlayerIKController.m_LeftHandTarget.rotation.eulerAngles);
 			}
 				break;
 				
@@ -144,6 +208,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	void Update ()
 	{ 			
        	LerpRightHand();             				
+		LerpLeftHand();
 	}  
 
     void LerpRightHand()
@@ -155,9 +220,22 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			Vector3 pos = m_ThirdPersonAnim.GetIKPosition(AvatarIKGoal.RightHand);			
             float LerpFactor = m_fRightHandLerpTimer / m_kfRightHandLerpTime;
 			
-            m_RightHandPos = Vector3.Lerp(pos, m_RightHandTarget, LerpFactor);
+            m_RightHandPos.position = Vector3.Lerp(pos, m_RightHandTarget.position, LerpFactor);
         }        
     }
+
+	void LerpLeftHand()
+	{
+		if(m_fLeftHandLerpTimer < m_kfLeftHandLerpTime)
+		{
+			m_fLeftHandLerpTimer += Time.deltaTime;   
+			
+			Vector3 pos = m_ThirdPersonAnim.GetIKPosition(AvatarIKGoal.LeftHand);			
+			float LerpFactor = m_fLeftHandLerpTimer / m_kfLeftHandLerpTime;
+			
+			m_LeftHandPos.position = Vector3.Lerp(pos, m_LeftHandTarget.position, LerpFactor);
+		}        
+	}
 	
 	void OnAnimatorIK()
 	{
@@ -170,9 +248,20 @@ public class CPlayerIKController : CNetworkMonoBehaviour
                 m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
                 m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
 													
-				m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.RightHand, m_RightHandPos);
-				//m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.RightHand, handRotation);
-			}			
+				m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.RightHand, m_RightHandPos.position);
+				m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.RightHand, m_RightHandPos.rotation);
+			}	
+
+			//Right hand IK						
+			//set the position and the rotation of the right hand where the external object is
+			if(m_LeftHandTarget != null)
+			{
+				m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.LeftHand, m_fRightHandIKWeight);
+				m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.LeftHand, m_fRightHandIKWeight);
+				
+				m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.LeftHand, m_RightHandPos.position);
+				m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.LeftHand, m_RightHandPos.rotation);
+			}
 		}
 	}  
 }
