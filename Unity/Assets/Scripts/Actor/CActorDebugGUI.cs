@@ -31,7 +31,6 @@ public class CActorDebugGUI : MonoBehaviour
 
 	// Member Fields
 	bool bShowName = false;
-	bool bOnGUIHit = false;
 
 	
 	// Member Properties
@@ -50,23 +49,16 @@ public class CActorDebugGUI : MonoBehaviour
 	
 	public void OnGUI()
 	{
-		float fScreenCenterX = Screen.width / 2;
-		float fScreenCenterY = Screen.height / 2;
-		float fWidth = 150.0f;
-		float fHeight = 20.0f;
-		float fOriginX = fScreenCenterX + 25.0f;
-		float fOriginY = fScreenCenterY - 10.0f;
+		if (bShowName)
+		{
+			float fScreenCenterX = Screen.width / 2;
+			float fScreenCenterY = Screen.height / 2;
+			float fWidth = 150.0f;
+			float fHeight = 20.0f;
+			float fOriginX = fScreenCenterX + 25.0f;
+			float fOriginY = fScreenCenterY - 10.0f;
 		
-		if (bShowName && !bOnGUIHit)
-		{
 			GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), gameObject.name);
-			bOnGUIHit = true;
-		}
-		else if (bShowName && bOnGUIHit)
-		{
-			GUI.Label(new Rect(fOriginX, fOriginY, fWidth, fHeight), gameObject.name);
-			bShowName = false;
-			bOnGUIHit = false;
 		}
 	}
 	
