@@ -169,7 +169,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 		}
 
 		// Write in internal stream
-		if (s_cSerializeStream.Size > 0)
+		if (s_cSerializeStream.ByteSize > 0)
 		{
 			_cStream.Write(s_cSerializeStream);
 			s_cSerializeStream.Clear();
