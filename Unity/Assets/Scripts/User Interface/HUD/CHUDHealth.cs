@@ -44,7 +44,10 @@ public class CHUDHealth : MonoBehaviour
 	
 	public void Update()
 	{
-		UpdateOverlay();
+		if(CGamePlayers.SelfActor != null)
+		{
+			UpdateOverlay();
+		}
 	}
 	
 	private void UpdateOverlay()

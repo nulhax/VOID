@@ -72,6 +72,12 @@ public class CTestEngineBehaviour: MonoBehaviour
 			m_PropulsionGenerator.PropulsionForce = m_MaxPropulsion;
 			m_PropulsionGenerator.PropulsionPotential = m_MaxPropulsion;
 		}
+
+		// Set the cubemap for the children
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
+		}
 	}
 
 	private void HandleMechanicalHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)

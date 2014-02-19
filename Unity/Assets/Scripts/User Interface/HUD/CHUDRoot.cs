@@ -66,7 +66,7 @@ public class CHUDRoot : MonoBehaviour
 	public void Start()
 	{
 		m_CachedHUDCamerera2D = m_HUDCamera2D.GetComponent<UICamera>();
-		m_CachedHUDCamerera3D = m_HUDCamera2D.GetComponent<UICamera>();
+		m_CachedHUDCamerera3D = m_HUDCamera2D.GetComponent<UICamera>();	
 	}
 
 	public static void UpdateReticleTarget(Transform _Target)
