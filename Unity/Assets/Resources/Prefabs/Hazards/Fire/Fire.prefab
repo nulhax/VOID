@@ -31,7 +31,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -442,15 +442,15 @@ ParticleSystem:
   ShapeModule:
     serializedVersion: 2
     enabled: 1
-    type: 6
-    radius: 1
+    type: 4
+    radius: 3
     angle: 25
     length: 5
     boxX: 1
     boxY: 1
     boxZ: 1
     placementMode: 2
-    m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+    m_Mesh: {fileID: 10213, guid: 0000000000000000e000000000000000, type: 0}
     randomDirection: 1
   EmissionModule:
     enabled: 1
