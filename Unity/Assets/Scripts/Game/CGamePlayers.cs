@@ -281,7 +281,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
-                        cPlayerActor.GetComponent<CPlayerHealth>().EventHealthDead += RespawnPlayer;
+                        cPlayerActor.GetComponent<CPlayerHealth>().EventHealthStateChanged += RespawnPlayer;
 						
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
@@ -291,32 +291,37 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
-    void RespawnPlayer(GameObject _SourcePlayer)
+    void RespawnPlayer(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
     {
-        // Save a list of currently constructed spawners
-        List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
-
-        // iterate through every spawner
-        foreach (GameObject cPlayerSpawner in aPlayerSpawners)
+        // If the previous health state was DEAD
+        // And current health state is ALIVE
+        if ( (_eHealthPreviousState == CPlayerHealth.HealthState.DEAD) && (_eHealthCurrentState == CPlayerHealth.HealthState.ALIVE) )
         {
-            // If the spawner is not blocked
-            if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+            // Save a list of currently constructed spawners
+            List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+            // Iterate through every spawner
+            foreach (GameObject cPlayerSpawner in aPlayerSpawners)
             {
-                // "Board" the ship
-                // Note: Does nothing unless the player 'dies' outside the ship
-                _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();
+                // If the spawner is not blocked
+                if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+                {
+                    // "Board" the ship
+                    // Note: Does nothing unless the player 'dies' outside the ship
+                    _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();
 
-                // Set the player's position and rotation based upon the spawner's position and rotation
-                _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-				_SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
+                    // Set the player's position and rotation based upon the spawner's position and rotation
+                    _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
+                    _SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 
-                // Heal the player to full health
-                _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
+                    // Heal the player to full health
+                    _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
 
-                // TODO: Reset other variables such as suit atmosphere and equipped tools
+                    // TODO: Reset other variables such as suit atmosphere and equipped tools
 
-                // Break foreach loop
-                break;
+                    // Break loop
+                    break;
+                }
             }
         }
     }

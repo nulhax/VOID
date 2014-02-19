@@ -96,7 +96,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{	
-		m_TargetList = new List<Vector3>();
+		m_TargetList = new List<Transform>();
 		m_eRepairState = ERepairState.RepairInactive;
 
         GetComponent<CToolInterface>().EventPrimaryActiveChange += (bool _bDown) =>
@@ -179,7 +179,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 
         foreach (Transform child in repairPositions)
         {
-            m_TargetList.Add(child.position);
+            m_TargetList.Add(child);
             m_iTotalTargets++;
         }
 
@@ -210,6 +210,10 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		m_TargetList.Clear();
 	}
 
+	void OnEquip()
+	{
+
+	}
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
@@ -230,8 +234,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 
 // Member Fields
 		
-	Vector3					m_ToolTarget;
-	List<Vector3>			m_TargetList;	
+	List<Transform>			m_TargetList;	
 	int 					m_iTotalTargets;
 	int 					m_iTargetIndex;			
 	float					m_fRepairRate = 30.0f;
@@ -246,4 +249,8 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	
 	CNetworkVar<byte>		m_bRepairState;
 	static CNetworkStream 	s_cSerializeStream = new CNetworkStream();	
+
+	//Tool child Transforms
+	Transform				m_Muzzle;
+	Transform				m_HandPosition;
 };
