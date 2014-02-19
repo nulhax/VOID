@@ -66,6 +66,8 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
 		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
 
+        gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+
 		if(CNetwork.IsServer)
 		{
 			// Set the generation rate

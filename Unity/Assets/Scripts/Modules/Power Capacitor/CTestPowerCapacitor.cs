@@ -69,11 +69,14 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_DUIPowerCapacitor = m_DUIConsole.DUI.GetComponent<CDUIPowerCapacitorRoot>();
 		m_DUIPowerCapacitor.RegisterPowerCapacitor(gameObject);
 
+        gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)
 		{
 			m_PowerStorage.BatteryCapacity = m_MaxPowerBatteryCapacity;
 			m_PowerStorage.BatteryCharge = m_PowerStorage.BatteryCapacity / 2;
+
 		}
 	}
 	
@@ -90,11 +93,16 @@ public class CTestPowerCapacitor: MonoBehaviour
 			if(numWorkingComponents == 0)
 			{
 				m_PowerStorage.DeactivateBatteryChargeAvailability();
+                gameObject.GetComponent<CAudioCue>().StopAllSound();
 			}
 			else
 			{
-				if(!m_PowerStorage.IsBatteryChargeAvailable)
-					m_PowerStorage.ActivateBatteryChargeAvailability();
+                if (!m_PowerStorage.IsBatteryChargeAvailable)
+                {
+                    m_PowerStorage.ActivateBatteryChargeAvailability();
+
+                    gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+                }
 			}
 		}
 	}

@@ -59,6 +59,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		m_DUIAtmosphereGeneration = m_DUIConsole.DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
 		m_DUIAtmosphereGeneration.RegisterAtmosphereGenerator(gameObject);
 
+        gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+
 		if(CNetwork.IsServer)
 		{
 			// Set the generation rate
@@ -79,6 +81,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_AtmosphereGenerator.DeactivateGeneration();
+            gameObject.GetComponent<CAudioCue>().StopAllSound();
 		}
 	}
 	
@@ -87,6 +90,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_AtmosphereGenerator.ActivateGeneration();
+            gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
 		}
 	}
 }
