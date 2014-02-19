@@ -238,6 +238,16 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         }
     }
 
+
+    private void UpdateHealthStateDowned()
+    {
+        if (CurrentHealthState == HealthState.DOWNED)
+        {
+            UpdateHealthState(null, 0.0f, 0.0f);
+        }
+    }
+
+
     [AServerOnly]
     public void ApplyDamage(float _fValue)
     {
@@ -276,6 +286,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 	void Update()
 	{
+        // Update the downed timer
+        UpdateHealthStateDowned();
+
         if (CNetwork.IsServer)
         {
             UpdateAtmosphereEffects();
@@ -284,37 +297,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void UpdateAtmosphereEffects()
-    {
-    }
-
-
-    //[AServerOnly]
-    //void UpdatePlayerAlive()
-    //{
-    //    if (Alive)
-    //    {
-    //        // Check player is now dead
-    //        if (Health == 0.0f)
-    //        {
-    //            m_HealthState.Set(false);
-
-    //            // Notify observers
-    //            if (EventHealthDead != null) EventHealthDead(gameObject);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // Check player is now alive
-    //        if (Health > 0.0f)
-    //        {
-    //            m_HealthState.Set(true);
-
-    //            // Notify observers
-    //            if (EventHealthRevived != null) EventHealthRevived(gameObject);
-    //        }
-    //    }
-    //}
+    void UpdateAtmosphereEffects() { }
 
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
@@ -365,40 +348,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 }
             }
         }
-
-        //if (_cVarInstance == m_HealthState)
-        //{
-        //    // Player is alive
-        //    if (m_HealthState.Get())
-        //    {
-        //        transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
-        //        transform.GetComponent<CPlayerHead>().ReenableInput(this);
-        //    }
-
-        //    // Player is dead
-        //    else
-        //    {
-        //        transform.GetComponent<CPlayerGroundMotor>().DisableInput(this);
-        //        transform.GetComponent<CPlayerHead>().DisableInput(this);
-        //    }
-        //}
-        //else  if (_cVarInstance == m_fHealth &&
-        //          m_LaughTrack != null)
-        //{
-        //    m_LaughTrack.Play(0.5f, false, -1);
-
-        //    if (CNetwork.IsServer)
-        //    {
-        //        if (m_fHealth.Get() <= 0.0f)
-        //        {
-        //            m_HealthState.Set(false);
-        //        }
-        //        else if (m_fHealth.Get() > 0.0f)
-        //        {
-        //            m_HealthState.Set(true);
-        //        }
-        //    }
-        //}
     }
 
 
@@ -425,12 +374,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	
 
 // Member Fields
-
-
 	public const float k_fMaxHealth              = 100.0f;
     public const float k_fMinHealth              = 0.0f;
     public const float k_fInitHealth             = k_fMaxHealth;
-    public const float k_fTimerDownedMaxDuration = 0.0f;
+    public const float k_fTimerDownedMaxDuration = 5.0f;
 
     float fTimerDowned = 0.0f;
 	CNetworkVar<float> m_fHealth;
