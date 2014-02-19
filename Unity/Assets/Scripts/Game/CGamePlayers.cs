@@ -295,7 +295,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
     {
         // If the previous health state was DEAD
         // And current health state is ALIVE
-        if ( (_eHealthPreviousState == CPlayerHealth.HealthState.DEAD) && (_eHealthCurrentState == CPlayerHealth.HealthState.ALIVE) )
+        if (_eHealthCurrentState == CPlayerHealth.HealthState.DEAD)
         {
             // Save a list of currently constructed spawners
             List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
@@ -314,8 +314,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
                     _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
                     _SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 
-                    // Heal the player to full health
-                    _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
+                    // Heal the player to max health
+                    _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(_SourcePlayer.GetComponent<CPlayerHealth>().MaxHealth);
 
                     // TODO: Reset other variables such as suit atmosphere and equipped tools
 

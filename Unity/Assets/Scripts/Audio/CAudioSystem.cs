@@ -70,8 +70,6 @@ public class CAudioSystem : MonoBehaviour
 	void Awake() 
 	{
 		s_cInstance = this;
-		
-        Debug.Log("AudioManager Initialising");
        		
 		s_activeAudio = new List<ClipInfo>();
 		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));

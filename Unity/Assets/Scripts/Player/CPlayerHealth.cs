@@ -34,9 +34,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
     // Health State
-    public enum HealthState
+    public enum HealthState : byte
     {
-        INVALID = -1,
+        INVALID = 0,
 
         ALIVE,
         DOWNED,
@@ -87,15 +87,15 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                     m_fHealth.Set(fNewHealthValue);
                 }
 
-                // Else if new health value is less than zero
-                else if (fNewHealthValue < 0.0f)
+                // Else if new health value is less than or equal to zero
+                else if (fNewHealthValue <= 0.0f)
                 {
                     // Set health to min health
                     m_fHealth.Set(k_fMinHealth);
                 }
 
-                // Else if new health value is greater than max health
-                else if (fNewHealthValue > k_fMaxHealth)
+                // Else if new health value is greater than or equal to max health
+                else if (fNewHealthValue >= k_fMaxHealth)
                 {
                     // Set health to max health
                     m_fHealth.Set(k_fMaxHealth);
@@ -111,29 +111,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	public HealthState CurrentHealthState
 	{
         // Get
-        get
-        {
-            // Convert the CNetworkVar 'm_HealthState' to a standard type
-            // Convert standard type to a string
-            // Convert byte string to enum type
-            // Return converted enum type
-            //          Type   String->Enum           Type      CNetworkVar->Standard Type->String
-            return ((HealthState)Enum.Parse(typeof(HealthState), m_HealthState.Get().ToString()));
-
-            // TODO: Test shortcut logic
-            // TODO: Use Enum.IsDefined() to avoid exception cases
-        }
+        get { return ((HealthState)m_HealthState.Get()); }
 
         // Set
-		set
-        {
-            // Convert value to string
-            // Convert string to byte
-            // Convert byte and save to CNetworkVar
-            m_HealthState.Set(byte.Parse(value.ToString()));
-
-            // TODO: Exception checking
-        }
+		set { m_HealthState.Set((byte)value); }
 	}
 
 
@@ -154,7 +135,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	public float Breath
 	{
         // Get
-		get { return(m_fOxygenUseRate.Get()); }
+		get { return (m_fOxygenUseRate.Get()); }
 
         // Set
 		set { m_fOxygenUseRate.Set(value); }
@@ -173,7 +154,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	{
         //                                              Type   Callback          Initial Vlaue
 		m_fHealth        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, byte.Parse(HealthState.INVALID.ToString()));
+        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.INVALID);
 		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
@@ -192,6 +173,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 if (m_fHealth.Get() == k_fMinHealth)
                 {
                     // Change player's state to downed
+                    PrevHealthState    = CurrentHealthState;
                     CurrentHealthState = HealthState.DOWNED;
                 }
 
@@ -206,6 +188,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 if (!(m_fHealth.Get() == k_fMinHealth))
                 {
                     // Change player's state to downed
+                    PrevHealthState    = CurrentHealthState;
                     CurrentHealthState = HealthState.ALIVE;
                 }
 
@@ -223,6 +206,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 if (fTimerDowned >= k_fTimerDownedMaxDuration)
                 {
                     // Change player's state to dead
+                    PrevHealthState    = CurrentHealthState;
                     CurrentHealthState = HealthState.DEAD;
 
                     // Reset downed timer
@@ -277,7 +261,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 	void Start() 
     {
-        
+        if (Health == MaxHealth)
+        {
+            CurrentHealthState = HealthState.ALIVE;
+        }
 	}
 		 
 
@@ -292,7 +279,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             UpdateAtmosphereEffects();
-           // UpdatePlayerAlive();
         }
 	}
 
@@ -342,6 +328,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 // Alive
                 case HealthState.ALIVE:
                 {
+                    // Enable input
                     transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
                     transform.GetComponent<CPlayerHead>().ReenableInput(this);
 
@@ -352,9 +339,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 // Dead
                 case HealthState.DEAD:
                 {
-                    transform.GetComponent<CPlayerGroundMotor>().DisableInput(this);
-                    transform.GetComponent<CPlayerHead>().DisableInput(this);
-
                     // Break switch
                     break;
                 }
@@ -362,6 +346,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 // Downed
                 case HealthState.DOWNED:
                 {
+                    // Disable input
                     transform.GetComponent<CPlayerGroundMotor>().DisableInput(this);
                     transform.GetComponent<CPlayerHead>().DisableInput(this);
 
