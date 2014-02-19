@@ -94,12 +94,15 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public void DestoryObject(GameObject _cObject)
 	{
-		if (_cObject.GetComponent<CNetworkView>() == null)
-		{
-			Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
-		}
+        if (_cObject != null)
+        {
+            if (_cObject.GetComponent<CNetworkView>() == null)
+            {
+                Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
+            }
 
-		DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+            DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+        }
 	}
 
 
