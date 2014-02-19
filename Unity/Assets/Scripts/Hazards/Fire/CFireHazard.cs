@@ -30,38 +30,59 @@ public class CFireHazard : MonoBehaviour
 
 	void Awake()
 	{
-		if (Random.Range(0, 1) == 0)
-			return;
+		//if (Random.Range(0, 1) == 0)
+		//    return;
 
-		// Manual creation/initialisation of particle system.
-		{
-			// MeshFilter used by ParticleEmitter for emitting particles along the surface of a mesh.
-			MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>(); if (meshFilter == null) meshFilter = gameObject.AddComponent<MeshFilter>();	// Get or create MeshFilter (there must be one).
+		//// Manual creation/initialisation of particle system.
+		//{
+		//    // MeshFilter used by ParticleEmitter for emitting particles along the surface of a mesh.
+		//    MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>(); if (meshFilter == null) meshFilter = gameObject.AddComponent<MeshFilter>();	// Get or create MeshFilter (there must be one).
 
-			// Inherit mesh from parent if there isn't one already.
-			if (meshFilter.sharedMesh == null/* && inheritMesh*/)
-			{
-				Transform parentTransform = transform.parent;
-				if (parentTransform != null)
-				{
-					MeshFilter parentMeshFilter = parentTransform.GetComponent<MeshFilter>();
-					if (parentMeshFilter != null)
-						meshFilter.sharedMesh = parentMeshFilter.sharedMesh;
-				}
-			}
+		//    // Inherit mesh from parent if there isn't one already.
+		//    if (meshFilter.sharedMesh == null/* && inheritMesh*/)
+		//    {
+		//        Transform parentTransform = transform.parent;
+		//        if (parentTransform != null)
+		//        {
+		//            MeshFilter parentMeshFilter = parentTransform.GetComponent<MeshFilter>();
+		//            if (parentMeshFilter != null)
+		//                meshFilter.sharedMesh = parentMeshFilter.sharedMesh;
+		//        }
+		//    }
 
-			// If no current mesh and no parent mesh - use quad.
-			if (meshFilter.sharedMesh == null)
-				meshFilter.sharedMesh = Resources.Load<Mesh>("Quad");	// Todo: Rotate by 90 degrees if quad is vertical.
-		}
+		//    // If no current mesh and no parent mesh - use quad.
+		//    if (meshFilter.sharedMesh == null)
+		//        meshFilter.sharedMesh = Resources.Load<Mesh>("Quad");	// Todo: Rotate by 90 degrees if quad is vertical.
+		//}
 
-		{
-			// ParticleRenderer.
-			ParticleRenderer particleRenderer = gameObject.GetComponent<ParticleRenderer>(); if (particleRenderer == null) particleRenderer = gameObject.AddComponent<ParticleRenderer>();	// Get or create ParticleRenderer (there must be one).
-			particleRenderer.castShadows = false;
-			particleRenderer.receiveShadows = true;
-			particleRenderer.materials
-		}
+		//{
+		//    // ParticleRenderer.
+		//    ParticleRenderer particleRenderer = gameObject.GetComponent<ParticleRenderer>(); if (particleRenderer == null) particleRenderer = gameObject.AddComponent<ParticleRenderer>();	// Get or create ParticleRenderer (there must be one).
+		//    particleRenderer.castShadows = false;
+		//    particleRenderer.receiveShadows = true;
+		//    particleRenderer.sharedMaterial = Resources.Load<Material>("Materials/FireMaterial");
+		//    particleRenderer.useLightProbes = false;
+		//    particleRenderer.cameraVelocityScale = 0.0f;
+		//    particleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
+		//    particleRenderer.lengthScale = 1.0f;
+		//    particleRenderer.velocityScale = 0.0f;
+		//    particleRenderer.maxParticleSize = 1e+10f;
+		//    particleRenderer.maxPartileSize = 1e+10f;
+		//    particleRenderer.uvAnimationCycles = 1.0f;
+		//    particleRenderer.uvAnimationXTile = 1;
+		//    particleRenderer.uvAnimationYTile = 3;
+		//    //particleRenderer.uvTiles;0.333333333333333333333
+		//}
+
+		//{
+		//    // ParticleAnimator.
+		//    ParticleAnimator particleAnimator = gameObject.GetComponent<ParticleAnimator>(); if (particleAnimator == null) particleAnimator = gameObject.AddComponent<ParticleAnimator>();	// Get or create ParticleAnimator (there must be one).
+		//    particleAnimator.doesAnimateColor = true;
+		//    particleAnimator.colorAnimation = new Color[3];
+		//    particleAnimator.colorAnimation[0] = Color.red;
+		//    particleAnimator.colorAnimation[1] = Color.green;
+		//    particleAnimator.colorAnimation[2] = Color.blue;
+		//}
 	}
 
 	void Start()
@@ -103,7 +124,7 @@ public class CFireHazard : MonoBehaviour
 			case 0:	// Begin fire.
 				{
 					//gameObject.GetComponent<Collider>().enabled = true;
-					gameObject.GetComponent<ParticleSystem>().Play();
+					gameObject.particleSystem.Play();
 					gameObject.GetComponent<CFireHazard>().burning_internal = true;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
@@ -112,7 +133,7 @@ public class CFireHazard : MonoBehaviour
 			case 2:	// End fire.
 				{
 					//gameObject.GetComponent<Collider>().enabled = false;
-					gameObject.GetComponent<ParticleSystem>().Stop();
+					gameObject.particleSystem.Stop();
 					gameObject.GetComponent<CFireHazard>().burning_internal = false;
 					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}

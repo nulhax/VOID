@@ -276,9 +276,6 @@ GameObject:
   - 4: {fileID: 1530887196}
   - 198: {fileID: 1530887195}
   - 199: {fileID: 1530887194}
-  - 87: {fileID: 1530887193}
-  - 26: {fileID: 1530887192}
-  - 12: {fileID: 1530887191}
   - 33: {fileID: 1530887190}
   m_Layer: 0
   m_Name: ShortCircuit
@@ -293,97 +290,6 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1530887189}
-  m_Mesh: {fileID: 4300018, guid: e32ceebea819f884aab98d6038c7bbbe, type: 3}
---- !u!12 &1530887191
-ParticleAnimator:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1530887189}
-  Does Animate Color?: 1
-  colorAnimation[0]:
-    serializedVersion: 2
-    rgba: 184549375
-  colorAnimation[1]:
-    serializedVersion: 2
-    rgba: 3036676095
-  colorAnimation[2]:
-    serializedVersion: 2
-    rgba: 4294967295
-  colorAnimation[3]:
-    serializedVersion: 2
-    rgba: 3036676095
-  colorAnimation[4]:
-    serializedVersion: 2
-    rgba: 184549375
-  worldRotationAxis: {x: 0, y: 0, z: 0}
-  localRotationAxis: {x: 0, y: 0, z: 0}
-  sizeGrow: 0
-  rndForce: {x: 0, y: 0, z: 0}
-  force: {x: 0, y: 0, z: 0}
-  damping: 1
-  stopSimulation: 0
-  autodestruct: 0
---- !u!26 &1530887192
-ParticleRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1530887189}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
-  serializedVersion: 2
-  m_CameraVelocityScale: 0
-  m_StretchParticles: 0
-  m_LengthScale: 2
-  m_VelocityScale: 0
-  m_MaxParticleSize: .25
-  UV Animation:
-    x Tile: 1
-    y Tile: 1
-    cycles: 1
---- !u!87 &1530887193
-MeshParticleEmitter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1530887189}
-  serializedVersion: 2
-  m_Enabled: 1
-  m_Emit: 1
-  minSize: .100000001
-  maxSize: .100000001
-  minEnergy: 3
-  maxEnergy: 3
-  minEmission: 50
-  maxEmission: 50
-  worldVelocity: {x: 0, y: 0, z: 0}
-  localVelocity: {x: 0, y: 0, z: 0}
-  rndVelocity: {x: 0, y: 0, z: 0}
-  emitterVelocityScale: .0500000007
-  tangentVelocity: {x: 0, y: 0, z: 0}
-  angularVelocity: 0
-  rndAngularVelocity: 0
-  rndRotation: 0
-  Simulate in Worldspace?: 1
-  m_OneShot: 0
-  m_InterpolateTriangles: 0
-  m_Systematic: 0
-  m_MinNormalVelocity: 0
-  m_MaxNormalVelocity: 0
   m_Mesh: {fileID: 4300018, guid: e32ceebea819f884aab98d6038c7bbbe, type: 3}
 --- !u!199 &1530887194
 ParticleSystemRenderer:
@@ -676,7 +582,7 @@ ParticleSystem:
     boxY: 1
     boxZ: 1
     placementMode: 2
-    m_Mesh: {fileID: 4300006, guid: bf731be0f8f7e904d9088fc42143ce77, type: 3}
+    m_Mesh: {fileID: 0}
     randomDirection: 1
   EmissionModule:
     enabled: 1
@@ -1474,7 +1380,7 @@ Transform:
   m_PrefabInternal: {fileID: 1876274604}
   m_GameObject: {fileID: 1530887189}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 3933.32422, y: 9589.22656, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1531,11 +1437,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 400000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 3933.32422
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 9589.22656
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
       propertyPath: m_LocalPosition.z
@@ -1584,6 +1490,10 @@ Prefab:
     - target: {fileID: 19800000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
       propertyPath: ColorModule.gradient.maxGradient.m_NumColorKeys
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19800000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
+      propertyPath: ShapeModule.m_Mesh
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fb7d7a7383a5f8644bea800182283dca, type: 2}
