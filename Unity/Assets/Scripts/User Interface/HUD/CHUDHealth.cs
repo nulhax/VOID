@@ -50,8 +50,8 @@ public class CHUDHealth : MonoBehaviour
 	private void UpdateOverlay()
 	{
 		// Get the player oxygen supplu
-		float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().HitPoints;
-		float maxHealth = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().k_fMaxHealth;
+		float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Health;
+        float maxHealth = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().MaxHealth;
 		
 		// Calculate the value ratio
 		float value = 1.0f - health/maxHealth;
