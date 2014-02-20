@@ -44,7 +44,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
 	
 	
-	private float k_fOxygenCapacity = 60.0f;
+	private float k_fOxygenCapacity = 600.0f;
 	private float k_fOxygenDepleteRate = 1.0f;
 	private float k_fOxygenRefillRate = 10.0f;
 	
