@@ -54,9 +54,9 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldCollider += ShipShieldCollider;
-		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldDamage += ShipShieldDamage;
-		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldRecharge += ShieldRecharge;
+//		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldCollider += ShipShieldCollider;
+//		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldDamage += ShipShieldDamage;
+//		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldRecharge += ShieldRecharge;
 	}
 
 	public void UpdateShieldBounds(Mesh _ShieldMesh)
