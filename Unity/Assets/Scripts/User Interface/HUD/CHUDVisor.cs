@@ -42,6 +42,7 @@ public class CHUDVisor : MonoBehaviour
 	public UILabel m_O2Value = null;
 	public UIProgressBar m_02Bar = null;
 	public UILabel m_Status = null;
+	public CHUDLocator m_ShipIndicator = null;
 
 	private bool m_VisorDown = false;
 	private bool m_VisorUIActive = false;
@@ -58,7 +59,7 @@ public class CHUDVisor : MonoBehaviour
 	public void Start()
 	{
 		// Start the visor up
-		SetVisorState(false);
+		UpdateVisorTransform(m_VisorUpTrans.position, m_VisorUpTrans.rotation);
 	}
 
 	public void Update()
@@ -88,6 +89,21 @@ public class CHUDVisor : MonoBehaviour
 
 			if(EventVisorUp != null)
 				EventVisorUp();
+		}
+
+		// Update the indicator
+		if(CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility == null)
+		{
+			if(!m_ShipIndicator.gameObject.activeSelf)
+				m_ShipIndicator.gameObject.SetActive(true);
+			
+			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
+			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera.camera;
+		}
+		else
+		{
+			if(m_ShipIndicator.gameObject.activeSelf)
+				m_ShipIndicator.gameObject.SetActive(false);
 		}
 	}
 
