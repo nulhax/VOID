@@ -290,6 +290,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
 		CNetworkConnection.RegisterThrottledSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
+        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerRagdoll.Serialize                    , CPlayerRagdoll.Unserialize);
 
         // Tools
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerInteractor.SerializeOutbound, CPlayerInteractor.UnserializeInbound);

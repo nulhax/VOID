@@ -281,7 +281,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
-                        cPlayerActor.GetComponent<CPlayerHealth>().EventDeath += RespawnPlayer;
+                        //cPlayerActor.GetComponent<CPlayerHealth>().EventDeath += RespawnPlayer;
 						
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;

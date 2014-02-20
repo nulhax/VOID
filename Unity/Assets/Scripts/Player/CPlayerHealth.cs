@@ -153,6 +153,21 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             UpdateAtmosphereEffects();
             UpdatePlayerAlive();
         }
+
+		if (CNetwork.IsServer) 
+        {
+			if (Input.GetKeyDown (KeyCode.Q)) 
+            {
+				if (HitPoints > 0) 
+                {
+					ApplyDamage (100);
+				} 
+                else 
+                {
+					ApplyHeal (100);	
+				}
+			}
+		}
 	}
 
 

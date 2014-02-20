@@ -172,7 +172,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	private void TransferPlayerPerspectiveToShipSpace()
+	public void TransferPlayerPerspectiveToShipSpace()
 	{
 		CGameCameras.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
 
