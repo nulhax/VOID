@@ -30,7 +30,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 	public enum ENetworkAction : byte
 	{
-		UpdateStates,
+		UpdateStates
 	}
 
 
@@ -142,34 +142,39 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 		if (cPlayerActor != null)
 		{
-			// Retrieve player actor motor
-			CPlayerGroundMotor cPlayerActorMotor = cPlayerActor.GetComponent<CPlayerGroundMotor>();
+            
+            //while (_cStream.HasUnreadData)
+            {
+                // Retrieve player actor motor  
+                CPlayerGroundMotor cPlayerActorMotor = cPlayerActor.GetComponent<CPlayerGroundMotor>();
 
-			ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
-		
-			switch (eNetworkAction)
-			{
-			case ENetworkAction.UpdateStates:
-				{
-					cPlayerActorMotor.m_uiMovementStates = _cStream.ReadByte();
+                ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
 
-					if (cPlayerActor != CGamePlayers.SelfActor)
-					{
-						cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.ReadFloat(),  0.0f);
-					}
-					else
-					{
-						_cStream.ReadFloat();
-					}
+                switch (eNetworkAction)
+                {
+                    case ENetworkAction.UpdateStates:
+                        {
+                            cPlayerActorMotor.m_uiMovementStates = _cStream.ReadByte();
 
-					cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);
-				}
-				break;
+                            if (cPlayerActor != CGamePlayers.SelfActor)
+                            {
+                                cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.ReadFloat(), 0.0f);
+                            }
+                            else
+                            {
+                                _cStream.ReadFloat();
+                            }
 
-			default:
-				Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
-				break;
-			}
+                            cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);
+                        }
+                        break;
+
+
+                    default:
+                        Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
+                        break;
+                }
+            }
 		}
 	}
 

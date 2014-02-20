@@ -20,11 +20,66 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: 951c9942f7a92ee48ab8e6b1c0bc3ec7, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: 1d34b088ae31b154b84385b134ad342a, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 2800000, guid: f15855083addd5c46acd33a81319293a, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 2800000, guid: a35c5468556e568478cc15b7929ccda7, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Cube
+        second:
+          m_Texture: {fileID: 8900000, guid: 66cfb777569ca1e47856b4dfb0fb85cb, type: 2}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _Shininess
         second: .699999988
+      data:
+        first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerR
+        second: .446428567
+      data:
+        first:
+          name: _EmissivePowerG
+        second: .535714269
+      data:
+        first:
+          name: _EmissivePowerB
+        second: .553571403
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
     m_Colors:
       data:
         first:
@@ -38,3 +93,27 @@ Material:
         first:
           name: _Emission
         second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _EmissiveColor
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 1, g: .68235296, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: .627451003, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 1, g: .227450982, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: 1, g: 1, b: 1, a: .490196079}

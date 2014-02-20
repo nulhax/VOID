@@ -2,11 +2,10 @@
 {
 	Properties 
 	{
-_Diffuse("_Diffuse", 2D) = "gray" {}
-_SpecMap("_SpecMap", 2D) = "black" {}
+_Diffuse("_Emissive", 2D) = "gray" {}
 _Normal("_Normal", 2D) = "black" {}
-_SpecPower("_SpecPower", Float) = 1
-_Glossiness("_Glossiness", Float) = 1
+_AlphaMap("_AlphaMap", 2D) = "white" {}
+_EmissivePower("_EmissivePower", Float) = 1
 _Tint("_Tint", Color) = (1,1,1,1)
 	}
 	
@@ -14,9 +13,9 @@ _Tint("_Tint", Color) = (1,1,1,1)
 	{
 		Tags
 		{
-"Queue"="Geometry" // Geometry
+"Queue"="Transparent" // Geometry
 "IgnoreProjector"="True"
-"RenderType"="Opaque" //Opaque
+"RenderType"="Transparent" //Opaque
 
 		}
 
@@ -36,10 +35,9 @@ Fog{
 
 
 sampler2D _Diffuse;
-sampler2D _SpecMap;
 sampler2D _Normal;
-float _SpecPower;
-float _Glossiness;
+sampler2D _AlphaMap;
+float _EmissivePower;
 float4 _Tint;
 
 			struct EditorSurfaceOutput {
@@ -82,7 +80,8 @@ return c;
 			struct Input {
 				float2 uv_Diffuse;
 float2 uv_Normal;
-float2 uv_SpecMap;
+float2 uv_AlphaMap;
+
 
 			};
 
@@ -106,18 +105,16 @@ float4 VertexOutputMaster0_3_NoInput = float4(0,0,0,0);
 				o.Specular = 0.0;
 				o.Custom = 0.0;
 				
-float4 Tex2D0=tex2D(_Diffuse,(IN.uv_Diffuse.xyxy).xy) * _Tint;
-float4 Tex2DNormal0=float4(UnpackNormal( tex2D(_Normal,(IN.uv_Normal.xyxy).xy)).xyz, 1.0 );
-float4 Tex2D1=tex2D(_SpecMap,(IN.uv_SpecMap.xyxy).xy);
-float4 Multiply0=Tex2D1 * _SpecPower.xxxx;
+float4 Tex2D0 = tex2D(_Diffuse,(IN.uv_Diffuse.xyxy).xy) * _Tint;
+float4 Tex2DNormal0 = float4(UnpackNormal( tex2D(_Normal,(IN.uv_Normal.xyxy).xy)).xyz, 1.0 );
+float4 Tex2D1 = tex2D(_AlphaMap,(IN.uv_AlphaMap.xyxy).xy);
 float4 Master0_2_NoInput = float4(0,0,0,0);
 float4 Master0_5_NoInput = float4(1,1,1,1);
 float4 Master0_7_NoInput = float4(0,0,0,0);
 float4 Master0_6_NoInput = float4(1,1,1,1);
-o.Albedo = Tex2D0;
+o.Emission = Tex2D0 * _EmissivePower;
 o.Normal = Tex2DNormal0;
-o.Specular = _Glossiness.xxxx;
-o.Gloss = Multiply0;
+o.Alpha = Tex2D1.xxxx;
 
 				o.Normal = normalize(o.Normal);
 			}

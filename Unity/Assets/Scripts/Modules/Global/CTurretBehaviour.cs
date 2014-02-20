@@ -62,12 +62,39 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	public event NotifyControllerChange EventControllerChange;
 
 
+// Member Fields
+	
+	
+	CNetworkVar<Vector2> m_tRotation = null;
+	CNetworkVar<ulong> m_ulControllerPlayerId = null;
+	
+	
+	public GameObject m_ShipCamera = null;
+	public GameObject m_GalaxyCamera = null;
+	public GameObject m_cBarrel = null;
+
+
+	private RenderTexture m_CameraRenderTexture = null;
+	
+	float m_fMinRotationX		= 290.0f;
+	float m_fMaxRotationX		= 359.9f;
+	float m_fRotationSpeed		= 2.0f;
+	
+	
+	static CNetworkStream s_cSerializeStream = new CNetworkStream();
+
+
 // Member Properties
 
 
+	public RenderTexture CameraRenderTexture
+	{
+		get { return(m_CameraRenderTexture); }
+	}
+
 	public GameObject TurretCameraNode
 	{
-		get { return (m_cCameraObject); }
+		get { return (m_ShipCamera); }
 	}
 
 
@@ -132,6 +159,16 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	{
 		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisControlTurret);
 		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisControlTurret);
+
+		// Disable the cameras to begin with
+		m_ShipCamera.camera.enabled = false;
+		m_GalaxyCamera.camera.enabled = false;
+
+		// Create the rendertexture
+		m_CameraRenderTexture = new RenderTexture(2500, 1000, 16);
+		m_CameraRenderTexture.Create();
+		m_ShipCamera.camera.targetTexture = m_CameraRenderTexture;
+		m_GalaxyCamera.camera.targetTexture = m_CameraRenderTexture;
 	}
 	
 	
@@ -147,6 +184,13 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		{
 			UpdateRotation();
 		}
+	}
+
+
+	void LateUpdate()
+	{
+		// Update the camera position
+		CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_ShipCamera.transform.position, m_ShipCamera.transform.rotation, m_GalaxyCamera.transform);
 	}
 
 
@@ -240,40 +284,23 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		}
 		else if (_cSyncedVar == m_ulControllerPlayerId)
 		{
-			if(ControllerPlayerId == CNetwork.PlayerId)
+			if(ControllerPlayerId != 0)
 			{
-				// Debug: Move camera to turret camera position
-				CGameCameras.SetPlayersViewPerspectiveToShip(m_cCameraObject.transform);
+				// Enable the cameras
+				m_ShipCamera.camera.enabled = true;
+				m_GalaxyCamera.camera.enabled = true;
 			}
-			else if(m_ulControllerPlayerId.GetPrevious() == CNetwork.PlayerId)
+			else
 			{
-				// Debug: Move camera to player head position
-				CGameCameras.SetDefaultViewPerspective();
+				// Disable the cameras
+				m_ShipCamera.camera.enabled = false;
+				m_GalaxyCamera.camera.enabled = false;
 			}
 
 			if (EventControllerChange != null)
 				EventControllerChange(m_ulControllerPlayerId.GetPrevious(), m_ulControllerPlayerId.Get());
 		}
 	}
-
-
-// Member Fields
-
-
-	CNetworkVar<Vector2> m_tRotation = null;
-	CNetworkVar<ulong> m_ulControllerPlayerId = null;
-
-
-	public GameObject m_cCameraObject = null;
-	public GameObject m_cBarrel = null;
-
-
-	float m_fMinRotationX		= 290.0f;
-	float m_fMaxRotationX		= 359.9f;
-	float m_fRotationSpeed		= 2.0f;
-
-
-	static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 
 };
