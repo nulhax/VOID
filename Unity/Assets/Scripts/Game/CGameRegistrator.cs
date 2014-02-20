@@ -292,14 +292,15 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterThrottledSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
         CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerRagdoll.Serialize                    , CPlayerRagdoll.Unserialize);
 
+        
         // Tools
-        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerInteractor.SerializeOutbound, CPlayerInteractor.UnserializeInbound);
-
-        CNetworkConnection.RegisterThrottledSerializationTarget(CAk47Behaviour.SerializeOutbound            , CAk47Behaviour.UnserializeInbound);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CFireExtinguisherSpray.SerializeOutbound    , CFireExtinguisherSpray.UnserializeInbound);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CMedicalSpray.SerializeOutbound             , CMedicalSpray.UnserializeInbound);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CTorchLight.SerializeOutbound               , CTorchLight.UnserializeInbound);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CModuleGunBehaviour.SerializeOutbound       , CModuleGunBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerInteractor.SerializeOutbound, CPlayerInteractor.UnserializeInbound);
+        
+        CNetworkConnection.RegisterSerializationTarget(CAk47Behaviour.SerializeOutbound            , CAk47Behaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CFireExtinguisherSpray.SerializeOutbound    , CFireExtinguisherSpray.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMedicalSpray.SerializeOutbound             , CMedicalSpray.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CTorchLight.SerializeOutbound               , CTorchLight.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CModuleGunBehaviour.SerializeOutbound       , CModuleGunBehaviour.UnserializeInbound);
 	}
 
 

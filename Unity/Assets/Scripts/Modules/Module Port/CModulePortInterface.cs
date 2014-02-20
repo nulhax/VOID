@@ -37,7 +37,9 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
 	public GameObject m_Positioner = null;
 	public bool m_Internal = true;
-	
+
+	private Camera m_CubemapCam = null;
+	private Cubemap m_CubemapSnapshot = null;
 	
 	CNetworkVar<CNetworkViewId> m_cAttachedModuleViewId = null;
 
@@ -75,6 +77,11 @@ public class CModulePortInterface : CNetworkMonoBehaviour
         get { return (AttachedModuleViewId != null); }
     }
 
+	public Cubemap CubeMapSnapshot
+	{
+		get { return(m_CubemapSnapshot); }
+	}
+
 
 // Member Methods
 
@@ -100,9 +107,10 @@ public class CModulePortInterface : CNetworkMonoBehaviour
         return (cModuleObject);
     }
 
-
 	void Start()
 	{
+		UpdateCubemap();
+
         if (m_PreplacedModuleType != CModuleInterface.EType.INVALID &&
             CNetwork.IsServer)
         {
@@ -111,12 +119,42 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 	}
 
 
-	void OnDestroy()
+	public void UpdateCubemap()
 	{
+		// Disable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = false;
+		}
+
+		if(m_CubemapSnapshot == null)
+		{
+			m_CubemapSnapshot = new Cubemap(1024, TextureFormat.ARGB32, false);
+		}
+
+		if(m_CubemapCam == null)
+		{
+			GameObject tempCam = new GameObject();
+			tempCam.transform.parent = transform;
+			tempCam.transform.localPosition = Vector3.up * 1.5f;
+			tempCam.transform.localRotation = Quaternion.identity;
+			m_CubemapCam = tempCam.AddComponent<Camera>();
+			m_CubemapCam.cullingMask = 1 << LayerMask.NameToLayer("Default");
+			m_CubemapCam.farClipPlane = 100;
+			m_CubemapCam.enabled = false;
+		}
+
+		m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
+
+		// Re-enable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = true;
+		}
 	}
 
 
-	void Update()
+	void OnDestroy()
 	{
 	}
 

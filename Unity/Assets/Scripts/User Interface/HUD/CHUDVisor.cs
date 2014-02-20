@@ -27,21 +27,14 @@ public class CHUDVisor : MonoBehaviour
 	
 	
 	// Member Delegates & Events
-	public delegate void HandleVisorStateChange();
-
-	public event HandleVisorStateChange EventVisorUp;
-	public event HandleVisorStateChange EventVisorDown;
 
 
 	// Member Fields
-	public Transform m_VisorUpTrans = null;
-	public Transform m_VisorDownTrans = null;
-
-	public float m_TransitionTime = 0.3f;
-
 	public UILabel m_O2Value = null;
 	public UIProgressBar m_02Bar = null;
 	public UILabel m_Status = null;
+
+	public CHUDLocator m_ShipIndicator = null;
 
 	private bool m_VisorDown = false;
 	private bool m_VisorUIActive = false;
@@ -55,40 +48,23 @@ public class CHUDVisor : MonoBehaviour
 	}
 	
 	// Member Methods
-	public void Start()
-	{
-		// Start the visor up
-		SetVisorState(false);
-	}
-
 	public void Update()
 	{
-		if(m_VisorUIActive)
-		{
-			UpdateUI();
-		}
+		UpdateUI();
 	}
 
 	public void SetVisorState(bool _Down)
 	{
+		if(_Down && !m_VisorDown)
+		{
+			animation.CrossFade("VisorDown");
+ 		}
+		else if(!_Down && m_VisorDown)
+		{
+			animation.CrossFade("VisorUp");
+		}
+
 		m_VisorDown = _Down;
-
-		if(_Down)
-		{
-			this.StopAllCoroutines();
-			this.StartCoroutine(InterpolateVisorDown());
-
-			if(EventVisorDown != null)
-				EventVisorDown();
-		}
-		else
-		{
-			this.StopAllCoroutines();
-			this.StartCoroutine(InterpolateVisorUp());
-
-			if(EventVisorUp != null)
-				EventVisorUp();
-		}
 	}
 
 	private void UpdateUI()
@@ -144,6 +120,22 @@ public class CHUDVisor : MonoBehaviour
 				m_Status.GetComponent<UITweener>().enabled = false;
 			}
 		}
+
+		// Turn on and update the indicator
+		if(CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility == null && m_VisorUIActive)
+		{
+			if(!m_ShipIndicator.gameObject.activeSelf)
+				m_ShipIndicator.gameObject.SetActive(true);
+			
+			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
+			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera.camera;
+		}
+		else
+		{
+			// Turn off ship indicator
+			if(m_ShipIndicator.gameObject.activeSelf)
+				m_ShipIndicator.gameObject.SetActive(false);
+		}
 	}
 
 	private void UpdateVisorTransform(Vector3 _Position, Quaternion _Rotation)
@@ -152,51 +144,27 @@ public class CHUDVisor : MonoBehaviour
 		transform.rotation = _Rotation;
 	}
 
-	private IEnumerator InterpolateVisorDown()
+	private void ActivateUI()
 	{
-		bool lerping = true;
-		while(lerping)
-		{
-			m_TransitionValue += Time.deltaTime;
-			if(m_TransitionValue > m_TransitionTime)
-			{
-				m_TransitionValue = m_TransitionTime;
-				lerping = false;
+		// Turn on visor UI
+		m_VisorUIActive = true;
 
-				// Turn on visor UI
-				m_VisorUIActive = true;
-			}
-			
-			float lerpValue = m_TransitionValue/m_TransitionTime;
-			
-			UpdateVisorTransform(Vector3.Lerp(m_VisorUpTrans.position, m_VisorDownTrans.position, lerpValue),
-			                     Quaternion.Slerp(m_VisorUpTrans.rotation, m_VisorDownTrans.rotation, lerpValue));
-			
-			yield return null;
-		}
+		// Play the tweeners
+		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Forward;
+		gameObject.GetComponent<UIPlayTween>().Play(true);
 	}
 
-	private IEnumerator InterpolateVisorUp()
+	private void DeactivateUI()
 	{
-		bool lerping = true;
-		while(lerping)
-		{
-			m_TransitionValue -= Time.deltaTime;
-			if(m_TransitionValue < 0.0f)
-			{
-				m_TransitionValue = 0.0f;
-				lerping = false;
+		// Turn off visor
+		m_VisorUIActive = false;
 
-				// Turn off visor
-				m_VisorUIActive = false;
-			}
-			
-			float lerpValue = m_TransitionValue/m_TransitionTime;
-			
-			UpdateVisorTransform(Vector3.Lerp(m_VisorUpTrans.position, m_VisorDownTrans.position, lerpValue),
-			                     Quaternion.Slerp(m_VisorUpTrans.rotation, m_VisorDownTrans.rotation, lerpValue));
-			
-			yield return null;
-		}
+		// Play the tweeners
+		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Reverse;
+		gameObject.GetComponent<UIPlayTween>().Play(true);
+
+		// Turn off ship indicator
+		if(m_ShipIndicator.gameObject.activeSelf)
+			m_ShipIndicator.gameObject.SetActive(false);
 	}
 }

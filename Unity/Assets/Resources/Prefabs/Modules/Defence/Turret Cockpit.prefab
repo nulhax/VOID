@@ -287,23 +287,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &100032
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 400032}
-  - 23: {fileID: 2300010}
-  - 102: {fileID: 10200000}
-  m_Layer: 0
-  m_Name: Text
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &100034
 GameObject:
   m_ObjectHideFlags: 1
@@ -446,6 +429,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100050
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400050}
+  m_Layer: 0
+  m_Name: LookAt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -482,7 +480,6 @@ Transform:
   m_Children:
   - {fileID: 400048}
   - {fileID: 400000}
-  - {fileID: 400032}
   m_Father: {fileID: 0}
 --- !u!4 &400006
 Transform:
@@ -637,17 +634,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400024}
---- !u!4 &400032
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100032}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 400004}
 --- !u!4 &400034
 Transform:
   m_ObjectHideFlags: 1
@@ -660,9 +646,9 @@ Transform:
   m_Children:
   - {fileID: 400014}
   - {fileID: 400012}
+  - {fileID: 400024}
   - {fileID: 400036}
   - {fileID: 400038}
-  - {fileID: 400024}
   - {fileID: 400040}
   m_Father: {fileID: 400006}
 --- !u!4 &400036
@@ -672,8 +658,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100036}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
-  m_LocalPosition: {x: .0437534228, y: -.462584436, z: 1.15722406}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 1.25302911}
+  m_LocalPosition: {x: .0437534153, y: -1.08425343, z: 1.75058806}
+  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
   m_Children: []
   m_Father: {fileID: 400034}
 --- !u!4 &400038
@@ -683,9 +669,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100038}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
-  m_LocalPosition: {x: .0437534228, y: -.462584436, z: 1.15722406}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 1.25302911}
-  m_Children: []
+  m_LocalPosition: {x: .0437534153, y: -1.08425343, z: 1.75058806}
+  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_Children:
+  - {fileID: 400050}
   m_Father: {fileID: 400034}
 --- !u!4 &400040
 Transform:
@@ -745,6 +732,17 @@ Transform:
   - {fileID: 400044}
   - {fileID: 400042}
   m_Father: {fileID: 400004}
+--- !u!4 &400050
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100050}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.39999998, z: 1.29999995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400038}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -842,27 +840,6 @@ Renderer:
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
   - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
---- !u!23 &2300010
-Renderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100032}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 2100000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -1214,27 +1191,6 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
---- !u!102 &10200000
-TextMesh:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100032}
-  m_Text: Turret Cockpit
-  m_OffsetZ: 0
-  m_CharacterSize: .100000001
-  m_LineSpacing: 1
-  m_Anchor: 7
-  m_Alignment: 0
-  m_TabSize: 4
-  m_FontSize: 100
-  m_FontStyle: 0
-  m_RichText: 1
-  m_Font: {fileID: 12800000, guid: e53f57807e4dfc445860b0e0e8442a82, type: 3}
-  m_Color:
-    serializedVersion: 2
-    rgba: 4294967295
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1248,6 +1204,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CockpitSeat: {fileID: 100034}
   m_CockpitCenter: {fileID: 100006}
+  m_CockpitScreen: {fileID: 100038}
+  m_CockpitScreen2: {fileID: 100036}
   m_MinMaxEulerX: {x: 340, y: 370}
 --- !u!114 &11400002
 MonoBehaviour:
@@ -1261,7 +1219,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cSeat: {fileID: 100040}
-  m_LookAt: {fileID: 400038}
+  m_LookAt: {fileID: 400050}
   m_Components:
   - {fileID: 11400022}
   - {fileID: 11400018}
