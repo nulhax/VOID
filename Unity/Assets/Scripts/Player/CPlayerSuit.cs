@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
+[RequireComponent(typeof(CActorPowerConsumer))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 
@@ -41,7 +41,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
 	private bool m_VisorDownState = false;
-	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
+	private CActorPowerConsumer m_AtmosphereConsumer = null;
 	
 	
 	private float k_fOxygenCapacity = 600.0f;
