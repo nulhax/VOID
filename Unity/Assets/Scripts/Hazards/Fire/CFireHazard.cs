@@ -117,25 +117,25 @@ public class CFireHazard : MonoBehaviour
 		}
 	}
 
-	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
+	void OnSetState(byte prevState, byte currState)
 	{
 		switch (currState)
 		{
 			case 0:	// Begin fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = true;
-					gameObject.particleSystem.Play();
-					gameObject.GetComponent<CFireHazard>().burning_internal = true;
-					gameObject.GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(true);
+					//GetComponent<Collider>().enabled = true;
+					particleSystem.Play();
+					GetComponent<CFireHazard>().burning_internal = true;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
 			case 2:	// End fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = false;
-					gameObject.particleSystem.Stop();
-					gameObject.GetComponent<CFireHazard>().burning_internal = false;
-					gameObject.GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(false);
+					//GetComponent<Collider>().enabled = false;
+					particleSystem.Stop();
+					GetComponent<CFireHazard>().burning_internal = false;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}

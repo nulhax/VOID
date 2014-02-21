@@ -41,7 +41,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
 	private bool m_VisorDownState = false;
-	private CActorPowerConsumer m_AtmosphereConsumer = null;
+	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
 	
 	
 	private float k_fOxygenCapacity = 600.0f;

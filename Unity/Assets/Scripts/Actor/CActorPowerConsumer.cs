@@ -4,7 +4,7 @@
 //
 //  (c) 2013 VOID
 //
-//  File Name   :   CActorAtmosphericConsumer.cs
+//  File Name   :   CActorPowerConsumer.cs
 //  Description :   --------------------------
 //
 //  Author      :  Programming Team
@@ -18,10 +18,10 @@ using System.Collections;
 
 public class CActorPowerConsumer : MonoBehaviour
 {
-	public delegate void NotifyPowerConsumptionState();
+	public delegate void NotifyConsumptionState(bool consuming);
 
 	// Member Fields
-	public event NotifyPowerConsumptionState EventConsumptionToggle;
+	public event NotifyConsumptionState EventConsumptionToggle;
 	private CFacilityPower m_ParentFacility = null;
 	public float m_InitialConsumptionRate = 1.0f;
 	[HideInInspector] public float m_CurrentConsumptionRate = 0.0f;
@@ -42,24 +42,28 @@ public class CActorPowerConsumer : MonoBehaviour
 		}
 	}
 
+	public void OnDestroy()
+	{
+		if (m_ParentFacility != null)
+		{
+			m_ParentFacility.EventFacilityPowerActivated -= FacilityActivate;
+			m_ParentFacility.EventFacilityPowerDeactivated -= FacilityDeactivate;
+		}
+	}
+
 	[AServerOnly]
 	public void FacilityActivate(GameObject sender)
 	{
 		m_CurrentConsumptionRate = m_InitialConsumptionRate;
+		if (EventConsumptionToggle != null)
+			EventConsumptionToggle(true);
 	}
 
 	[AServerOnly]
 	public void FacilityDeactivate(GameObject sender)
 	{
 		m_CurrentConsumptionRate = 0.0f;
-	}
-
-	[AServerOnly]
-	public void InsufficientPower(GameObject _Sender)
-	{
 		if (EventConsumptionToggle != null)
-			EventConsumptionToggle();
-
-		m_CurrentConsumptionRate = 0.0f;
+			EventConsumptionToggle(false);
 	}
 }
