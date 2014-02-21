@@ -36,7 +36,15 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     
     //Member variables
 
-	GameObject Ragdoll;
+    public Transform m_RootSkeleton = null;
+    public Transform m_RootSkeletonRagdoll = null;
+
+	public GameObject m_Ragdoll = null;
+    public GameObject m_PlayerModel = null;
+    public GameObject m_RagdollModel = null;
+
+    public GameObject m_PlayerHead = null;
+    public GameObject m_RagdollHead = null;
 
     CNetworkVar<byte>       m_bRagdollState;
 
@@ -55,15 +63,13 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             {
                 case ENetworkAction.EventDeath:
                 {
-                    OnDeath(gameObject);
-                    
+                    SetRagdollActive();                    
                     break;                
                 }
                 
                 case ENetworkAction.EventRevive:
                 {
-                    OnRevive(gameObject);
-                
+                    DeactivateRagdoll();                
                     break;                
                 }
             }
@@ -75,8 +81,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     {
         // Write in internal stream
         _cStream.Write(s_cSerializeStream);
-        s_cSerializeStream.Clear();
-        
+        s_cSerializeStream.Clear();        
     }
     
     [AServerOnly]
@@ -95,97 +100,96 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     // Use this for initialization
     void Start ()
 	{
-		//Find ragdoll
-		foreach (Transform child in gameObject.GetComponentsInChildren<Transform>()) 
-		{
-			if (child.name == "Player Ragdoll") 
-			{
-				Ragdoll = child.gameObject;
-				Debug.Log("Found ragdoll");
-			}
-		}
-
-		Ragdoll.SetActive (false);
-
-		gameObject.GetComponent<CPlayerHealth> ().EventDeath += OnDeath;
-		gameObject.GetComponent<CPlayerHealth> ().EventRevive += OnRevive;
+		m_Ragdoll.SetActive (false);
+        gameObject.GetComponent<CPlayerHealth> ().EventHealthStateChanged += OnHealthStateChanged;
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-			
+        transform.position = m_Ragdoll.transform.position;
 	}
 
-	void OnDeath(GameObject _SourcePlayer)
-	{                
-        s_cSerializeStream.Write((byte)ENetworkAction.EventDeath);  
+    [AServerOnly]
+    void OnHealthStateChanged(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
+	{       
+        switch (_eHealthCurrentState)
+        {
+            case CPlayerHealth.HealthState.DOWNED:
+            {
+                s_cSerializeStream.Write((byte)ENetworkAction.EventDeath);
+                break;
+            }           
+            case CPlayerHealth.HealthState.ALIVE:
+            {
+               
+                s_cSerializeStream.Write((byte)ENetworkAction.EventRevive);
+                break;
+            }
+        }    
+    }
 
+    [AClientOnly]
+    void SetRagdollActive()
+    {
         //Disable all collisions
         Vector3 parentVelocity = rigidbody.velocity;    
         
         //Disable all rendering
-        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
-        {
-            renderer.enabled = false;
-        }
-        
-        //Disable animations
+        m_PlayerModel.renderer.enabled = false;   
+
+        //Disable collisions
+        rigidbody.collider.enabled = false;
+
+         //Disable animations
         gameObject.GetComponent<Animator>().enabled = false;
         
         //Enable ragdoll and set position
-        Ragdoll.SetActive(true);
-        Ragdoll.transform.rotation = transform.rotation;
-        Ragdoll.transform.position = transform.position;
-              
-        //Apply velocity
-        foreach (Rigidbody body in gameObject.GetComponentsInChildren<Rigidbody>())
-        {
-            if (!body.isKinematic)
-            {
-                body.velocity = parentVelocity;
-            }
-        }
 
-        foreach (Renderer renderer in Ragdoll.GetComponentsInChildren<Renderer>())
-        {
-            renderer.enabled = true;
-        }
-        
-        //Transfer camera to ragdoll head
-        foreach (Transform child in Ragdoll.GetComponentsInChildren<Transform>())
-        {
-            if (child.name == "Head")
-            {
-                gameObject.GetComponent<CPlayerHead>().m_cActorHead = child.gameObject;
-                gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
-            }
-        }
+        m_Ragdoll.SetActive(true);
+
+        //Position Ragdoll
+        SynchBones();       
+
+        gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_RagdollHead;
+        gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();            
     }
-    
-    void OnRevive(GameObject _SourcePlayer)
-    {
-        s_cSerializeStream.Write((byte)ENetworkAction.EventRevive);  
 
+    [AClientOnly]
+    void DeactivateRagdoll()
+    {
         //Enable all rendering
-        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
-        {
-            renderer.enabled = true;
-        }
+        m_PlayerModel.renderer.enabled = true;
         
         //enabled animations
-        gameObject.GetComponent<Animator>().enabled = true;
-        
+        gameObject.GetComponent<Animator>().enabled = true;        
+
+        //Transfer camera to player head
+        gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_PlayerHead;
+        gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
+    
         //Disable ragdoll and set position
-        Ragdoll.SetActive(false);
-        //transform.position = Ragdoll.transform.position;
-        
-        foreach (Rigidbody body in gameObject.GetComponentsInChildren<Rigidbody>())
+        m_Ragdoll.SetActive(false);
+    }
+
+    //This function synchronises all ragdoll bone positions to player bone positions
+    void SynchBones()
+    {
+        m_RootSkeletonRagdoll.position = m_RootSkeleton.position; 
+
+        Transform[] ragdollBones = m_RootSkeletonRagdoll.GetComponentsInChildren<Transform>();
+        Transform[] playerBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
+
+        for (int i = 0; i < ragdollBones.Length; i++)
         {
-            if (!body.isKinematic)
+            ragdollBones[i].position = playerBones[i].position;
+            ragdollBones[i].rotation = playerBones[i].rotation;
+
+            //Attempt to apply velocity
+            if(ragdollBones[i].rigidbody != null)
             {
-                body.velocity = new Vector3(0, 0, 0);
-            }
-        }
+                ragdollBones[i].rigidbody.velocity = rigidbody.velocity;                   
+            }           
+        }       
     }
 }

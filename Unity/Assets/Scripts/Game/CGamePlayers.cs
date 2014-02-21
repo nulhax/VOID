@@ -306,6 +306,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
                 // If the spawner is not blocked
                 if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
                 {
+                    //Ensure the collider is enabled!
+                    _SourcePlayer.rigidbody.collider.enabled = true;
+
                     // "Board" the ship
                     // Note: Does nothing unless the player 'dies' outside the ship
                     _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();

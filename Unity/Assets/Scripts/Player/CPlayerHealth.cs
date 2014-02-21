@@ -298,18 +298,13 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         {
 			if (Input.GetKeyDown (KeyCode.Q)) 
             {
-				if (HitPoints > 0) 
+				if (Health > 0) 
                 {
 					ApplyDamage (100);
-				} 
-                else 
-                {
-					ApplyHeal (100);	
-				}
+				}                
 			}
 		}
 	}
-
 
     [AServerOnly]
     void UpdateAtmosphereEffects() { }

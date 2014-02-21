@@ -273,24 +273,24 @@ public class CGameRegistrator : MonoBehaviour
 
 	void RegisterSerailizationTargets()
 	{
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerGroundMotor.SerializePlayerState     , CPlayerGroundMotor.UnserializePlayerState);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerHead.SerializePlayerState            , CPlayerHead.UnserializePlayerState);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions , CBridgeCockpit.UnserializeCockpitInteractions);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CCockpit.SerializeOutbound                  , CCockpit.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerAirMotor.SerializeOutbound           , CPlayerAirMotor.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerIKController.SerializeIKTarget		, CPlayerIKController.UnserializeIKTarget);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CGamePlayers.SerializeData					, CGamePlayers.UnserializeData);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CGameChat.SerializeData                     , CGameChat.UnserializeData);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CLaserTurretBehaviour.SerializeOutbound     , CLaserTurretBehaviour.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState                       , CPlayerBelt.UnserializeBeltState);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound                    , CPlayerBackPack.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CDUISlider.SerializeSliderEvents    		, CDUISlider.UnserializeSliderEvents);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CMiningTurretBehaviour.SerializeOutbound    , CMiningTurretBehaviour.UnserializeInbound);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CUserInput.SerializeOutbound                , CUserInput.UnserializeInbound);
-		CNetworkConnection.RegisterThrottledSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
-        CNetworkConnection.RegisterThrottledSerializationTarget(CPlayerRagdoll.Serialize                    , CPlayerRagdoll.Unserialize);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerGroundMotor.SerializePlayerState      , CPlayerGroundMotor.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializePlayerState             , CPlayerHead.UnserializePlayerState);
+        CNetworkConnection.RegisterSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions  , CBridgeCockpit.UnserializeCockpitInteractions);
+        CNetworkConnection.RegisterSerializationTarget(CCockpit.SerializeOutbound                   , CCockpit.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerAirMotor.SerializeOutbound            , CPlayerAirMotor.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget		, CPlayerIKController.UnserializeIKTarget);
+        CNetworkConnection.RegisterSerializationTarget(CGamePlayers.SerializeData				    , CGamePlayers.UnserializeData);
+        CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
+        CNetworkConnection.RegisterSerializationTarget(CLaserTurretBehaviour.SerializeOutbound      , CLaserTurretBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMiningTurretBehaviour.SerializeOutbound     , CMiningTurretBehaviour.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState               , CPlayerBelt.UnserializeBeltState);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound            , CPlayerBackPack.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
+        CNetworkConnection.RegisterSerializationTarget(CDUISlider.SerializeSliderEvents    		    , CDUISlider.UnserializeSliderEvents);
+        CNetworkConnection.RegisterSerializationTarget(CMiningTurretBehaviour.SerializeOutbound     , CMiningTurretBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CUserInput.SerializeOutbound                 , CUserInput.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerRagdoll.Serialize                     , CPlayerRagdoll.Unserialize);
 
         
         // Tools
