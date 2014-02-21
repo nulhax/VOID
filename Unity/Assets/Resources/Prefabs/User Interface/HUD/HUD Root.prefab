@@ -1862,13 +1862,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .156862751, g: 0, b: 0, a: 0}
   mPivot: 4
-  mWidth: 1335
+  mWidth: 1977
   mHeight: 1024
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.30371094
+  aspectRatio: 1.93066406
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -2414,7 +2414,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 632, y: 505, z: 0}
+  m_ViewPortPos: {x: 2122, y: 179, z: 0}
 --- !u!114 &11400150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2451,7 +2451,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 632, y: 505, z: 0}
+  m_ViewPortPos: {x: 2122, y: 179, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

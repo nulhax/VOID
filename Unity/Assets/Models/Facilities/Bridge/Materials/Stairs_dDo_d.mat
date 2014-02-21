@@ -31,14 +31,7 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 415dad0cf8405c14a97cc45de9136821, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _SpecMap
-        second:
-          m_Texture: {fileID: 2800000, guid: b64e18675e850e845a54a37c0fc5078a, type: 3}
+          m_Texture: {fileID: 2800000, guid: a3cb86625a33a3649bd64bf6172cf3f5, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -46,6 +39,13 @@ Material:
           name: _Normal
         second:
           m_Texture: {fileID: 2800000, guid: 1a5639ebda31af842a71ce106e916d29, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _SpecMap
+        second:
+          m_Texture: {fileID: 2800000, guid: e970c37c964917b45907cbeb59e9083e, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:

@@ -56,6 +56,11 @@ public class CHUDRoot : MonoBehaviour
 	{ 
 		get { return(s_Instance.m_Visor); } 
 	}
+
+	public static CHUDRoot Instance
+	{
+		get { return(s_Instance); }
+	}
 	
 	// Member Methods
 	public void Awake()
