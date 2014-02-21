@@ -24,13 +24,16 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Types
     // Damage Type
     [Flags]
-    public enum DamageType
+    public enum HealthChangeSourceType
     {
         None         = 0,
+
         Fire         = 1,
         Physical     = 2,
         Electrical   = 4,
-        Asphyxiation = 8
+        Asphyxiation = 8,
+
+        Heal = 16
     }
 
     // Health State
@@ -72,10 +75,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // If fHealthDelta is ZERO, health is UNCHANGED
             // If fHealthDelta is a POSITIVE number, health INCREASED
             // If fHealthDelta is a NEGATIVE number, health DECREASED
-
-            // TODO: Consider moving the below code into seperate functions.
-            //       Note that doing so will require calling m_fHealth.Set()
-            //       outside of Health's set method.
 
             // If health changed
             if (fHealthDelta != 0.0f)
