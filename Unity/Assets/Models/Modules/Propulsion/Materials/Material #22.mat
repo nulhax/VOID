@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: 'Material #22'
-  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
+  m_Shader: {fileID: 4800000, guid: ae7c50188058ddb43900c27672f8216f, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -41,11 +41,41 @@ Material:
           m_Texture: {fileID: 2800000, guid: 9b77d25e6aca3224d8d82f228f48b21f, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Cube
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _SpecPower
         second: 2
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
     m_Colors:
       data:
         first:
@@ -55,3 +85,23 @@ Material:
         first:
           name: _EmissiveColor
         second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: .490196079, g: .490196079, b: .490196079, a: .490196079}

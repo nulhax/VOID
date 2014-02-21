@@ -8,10 +8,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400002}
-  - 33: {fileID: 3300000}
-  - 23: {fileID: 2300000}
   m_Layer: 0
-  m_Name: pPlane207
+  m_Name: LookAt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -297,6 +295,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100038
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400038}
+  - 33: {fileID: 3300000}
+  - 23: {fileID: 2300000}
+  m_Layer: 0
+  m_Name: pPlane207
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -314,11 +329,11 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
-  m_LocalPosition: {x: .0437534228, y: -.462584436, z: 1.15722406}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 1.25302911}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.39999998, z: 1.29999995}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 400010}
+  m_Father: {fileID: 400038}
 --- !u!4 &400004
 Transform:
   m_ObjectHideFlags: 1
@@ -326,8 +341,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
-  m_LocalPosition: {x: .0437534228, y: -.462584436, z: 1.15722406}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 1.25302911}
+  m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
+  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
   m_Children: []
   m_Father: {fileID: 400010}
 --- !u!4 &400006
@@ -368,7 +383,7 @@ Transform:
   m_LocalScale: {x: .823385, y: .823385, z: .823385}
   m_Children:
   - {fileID: 400004}
-  - {fileID: 400002}
+  - {fileID: 400038}
   - {fileID: 400000}
   m_Father: {fileID: 400012}
 --- !u!4 &400012
@@ -488,12 +503,24 @@ Transform:
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 400006}
+--- !u!4 &400038
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100038}
+  m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
+  m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
+  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_Children:
+  - {fileID: 400002}
+  m_Father: {fileID: 400010}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
+  m_GameObject: {fileID: 100038}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -682,7 +709,7 @@ MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
+  m_GameObject: {fileID: 100038}
   m_Mesh: {fileID: 4300010, guid: bf731be0f8f7e904d9088fc42143ce77, type: 3}
 --- !u!33 &3300002
 MeshFilter:
@@ -949,6 +976,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CockpitSeat: {fileID: 100010}
   m_CockpitCenter: {fileID: 100012}
+  m_CockpitScreen: {fileID: 100038}
+  m_CockpitScreen2: {fileID: 100002}
   m_MinMaxEulerX: {x: 340, y: 370}
 --- !u!114 &11400004
 MonoBehaviour:

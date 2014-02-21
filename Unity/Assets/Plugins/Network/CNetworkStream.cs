@@ -68,6 +68,18 @@ public class CNetworkStream
     }
 
 
+    public void WriteBits(byte[] _baByteArray, uint _uiNumBits)
+    {
+        m_cBitStream.WriteBits(_baByteArray, _uiNumBits);
+    }
+
+
+    public void WriteBits(object _cObject, uint _uiNumBits)
+    {
+        m_cBitStream.WriteBits(Converter.ToByteArray(_cObject, _cObject.GetType()), _uiNumBits); 
+    }
+
+
     public void Write(CNetworkStream _cStream)
     {
 		_cStream.SetReadOffset(0);
@@ -219,6 +231,18 @@ public class CNetworkStream
 	}
 
 
+    public void IgnoreBits(int _iNumBits)
+    {
+        IgnoreBits(_iNumBits);
+    }
+
+
+    public void IgnoreBits(uint _uiNumBits)
+    {
+        m_cBitStream.IgnoreBits(_uiNumBits);
+    }
+
+
 	public CNetworkViewId ReadNetworkViewId()
 	{
 		ushort usViewId = ReadUShort();
@@ -294,6 +318,16 @@ public class CNetworkStream
 			// Convert serialized data to object
 			return (Converter.ToObject(ReadBytes(iSize), _cType));
 		}
+    }
+
+
+    public TYPE ReadBits<TYPE>(uint _uiNumBits)
+    {
+        byte[] baData = new byte[(int)Marshal.SizeOf(typeof(TYPE))];
+
+        m_cBitStream.ReadBits(baData, _uiNumBits);
+
+        return ((TYPE)Converter.ToObject(baData, typeof(TYPE)));
     }
 
 
@@ -427,10 +461,16 @@ public class CNetworkStream
 	}
 
 
-	public uint Size
+	public uint ByteSize
 	{
 		get { return (BitStream.GetNumberOfBytesUsed()); }
 	}
+
+
+    public uint BitSize
+    {
+        get { return (BitStream.GetNumberOfBitsUsed()); }
+    }
 
 
 	public uint NumReadByes
@@ -439,15 +479,27 @@ public class CNetworkStream
 	}
 
 
+    public uint NumReadBits
+    {
+        get { return (m_cBitStream.GetReadOffset()); }
+    }
+
+
     public uint NumUnreadBytes
     {
-        get { return (Size - NumReadByes); }
+        get { return (ByteSize - NumReadByes); }
+    }
+
+
+    public uint NumUnreadBits
+    {
+        get { return (this.m_cBitStream.GetNumberOfUnreadBits()); }
     }
 
 
 	public bool HasUnreadData
 	{
-		get { return (this.NumReadByes < this.Size); }
+		get { return (this.m_cBitStream.GetNumberOfUnreadBits() > 0); }
 	}
 
 

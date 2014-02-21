@@ -64,6 +64,12 @@ public class CTestPowerGenerator: MonoBehaviour
 			m_PowerGenerator.PowerGenerationRate = m_MaxPowerGenerationRate;
 			m_PowerGenerator.PowerGenerationRatePotential = m_MaxPowerGenerationRate;
 		}
+
+		// Set the cubemap for the children
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
+		}
 	}
 
 	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)

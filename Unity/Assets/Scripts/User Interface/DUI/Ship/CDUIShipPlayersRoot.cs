@@ -122,7 +122,7 @@ public class CDUIShipPlayersRoot : MonoBehaviour
 		{
 			// Set the alive status
 			CPlayerHealth playerActorHealth = CGamePlayers.GetPlayerActor(listItem.Key).GetComponent<CPlayerHealth>();
-			if(playerActorHealth.Alive)
+			if(playerActorHealth.CurrentHealthState == CPlayerHealth.HealthState.ALIVE)
 			{
 				listItem.Value.transform.FindChild("StatusAlive").gameObject.SetActive(true);
 				listItem.Value.transform.FindChild("StatusDead").gameObject.SetActive(false);

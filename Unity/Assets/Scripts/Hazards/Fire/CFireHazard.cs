@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
+[RequireComponent(typeof(CActorPowerConsumer))]
 [RequireComponent(typeof(CActorHealth))]
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
@@ -126,7 +126,7 @@ public class CFireHazard : MonoBehaviour
 					//gameObject.GetComponent<Collider>().enabled = true;
 					gameObject.particleSystem.Play();
 					gameObject.GetComponent<CFireHazard>().burning_internal = true;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
+					gameObject.GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
@@ -135,7 +135,7 @@ public class CFireHazard : MonoBehaviour
 					//gameObject.GetComponent<Collider>().enabled = false;
 					gameObject.particleSystem.Stop();
 					gameObject.GetComponent<CFireHazard>().burning_internal = false;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
+					gameObject.GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
