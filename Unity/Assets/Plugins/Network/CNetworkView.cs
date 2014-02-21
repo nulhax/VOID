@@ -459,6 +459,21 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+	public void SetScale(float _fX, float _fY, float _fZ)
+	{
+		// Ensure servers only set transforms
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform scale!!!");
+		
+		InvokeRpcAll("RemoteSetScale", _fX, _fY, _fZ);
+	}
+
+
+	public void SetScale(Vector3 _Scale)
+	{
+		SetScale(_Scale.x, _Scale.y, _Scale.z);
+	}
+
+
 	public CNetworkViewId ViewId
 	{
 		set
