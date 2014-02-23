@@ -32,27 +32,27 @@ Material:
           name: _Diffuse
         second:
           m_Texture: {fileID: 2800000, guid: 492aa162550c61347be8b8f7b12cfca0, type: 3}
-          m_Scale: {x: 24, y: 24}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _SpecMap
         second:
           m_Texture: {fileID: 2800000, guid: 5cbe0f8afe9235749be9930d8f9193a1, type: 3}
-          m_Scale: {x: 24, y: 24}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
           m_Texture: {fileID: 2800000, guid: 740adec07da9a124ea5f1d37310b172d, type: 3}
-          m_Scale: {x: 24, y: 24}
+          m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _SpecPower
-        second: 2
+        second: 3
       data:
         first:
           name: _Glossiness

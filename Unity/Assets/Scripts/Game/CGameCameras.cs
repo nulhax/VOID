@@ -180,6 +180,8 @@ public class CGameCameras : MonoBehaviour
 			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera")));
 
 		// Instantiate the HUD
+		if(CHUDRoot.Instance != null)
+			Destroy(CHUDRoot.Instance.gameObject);
 		GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD Root"));
 	}
 	
