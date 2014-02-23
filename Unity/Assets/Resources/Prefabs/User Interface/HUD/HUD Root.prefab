@@ -653,7 +653,7 @@ Transform:
   m_GameObject: {fileID: 100054}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .00202634255, y: .00202634255, z: .00202634255}
+  m_LocalScale: {x: .001953125, y: .001953125, z: .001953125}
   m_Children:
   - {fileID: 400048}
   - {fileID: 400000}
@@ -932,19 +932,19 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 0}
     relative: 0
-    absolute: 0
+    absolute: -150
   rightAnchor:
     target: {fileID: 0}
     relative: 1
-    absolute: 0
+    absolute: 150
   bottomAnchor:
     target: {fileID: 0}
     relative: 0
-    absolute: 0
+    absolute: -100
   topAnchor:
     target: {fileID: 0}
     relative: 1
-    absolute: 0
+    absolute: 100
   showInPanelTool: 1
   generateNormals: 0
   widgetsAreStatic: 0
@@ -1092,8 +1092,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c5ecb5660b11414fb042fb826e03b73, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scalingStyle: 0
-  manualHeight: 720
+  scalingStyle: 1
+  manualHeight: 1024
   minimumHeight: 320
   maximumHeight: 1536
 --- !u!114 &11400012
@@ -1687,13 +1687,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .156862751, g: 0, b: 0, a: 0}
   mPivot: 4
-  mWidth: 1906
-  mHeight: 987
+  mWidth: 1900
+  mHeight: 1024
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.85589099
+  aspectRatio: 1.5
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -1742,7 +1742,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 953, y: 512, z: 0}
+  m_ViewPortPos: {x: 953, y: 532, z: 0}
 --- !u!114 &11400150
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1779,7 +1779,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 953, y: 512, z: 0}
+  m_ViewPortPos: {x: 953, y: 532, z: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

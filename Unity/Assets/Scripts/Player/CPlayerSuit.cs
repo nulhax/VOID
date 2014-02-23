@@ -204,11 +204,15 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 			// Cache the last visor state
 			m_VisorDownState = CHUDRoot.Visor.IsVisorDown;
 			CHUDRoot.Visor.SetVisorState(true);
+            //transform.FindChild("Head").FindChild("ShipCamera(Clone)").GetComponent<AudioListener>().enabled = false;
+            AudioListener.volume = 0.0f;
 		}
 		else
 		{
 			CHUDRoot.Visor.SetVisorState(m_VisorDownState);
-		}
+            //transform.FindChild("Head").FindChild("ShipCamera(Clone)").GetComponent<AudioListener>().enabled = true;
+            AudioListener.volume = 1.0f; 
+        }
 	}
 
 

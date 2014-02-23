@@ -248,6 +248,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
             // Forget the server address
             m_cServerSystemAddress = null;
+            m_bDownloadingInitialGameState = false;
 
             Logger.Write("Connection disconnected");
         }
@@ -267,15 +268,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
 	public static void RegisterSerializationTarget(SerializeMethod _nSerializeMethod, UnserializeMethod _nUnserializeMethod)
 	{
-		int iTargetId = s_mSerializeTargets.Count + 1;
-
-
-		s_mSerializeTargets.Add((byte)iTargetId, new TSerializationMethods(_nSerializeMethod, _nUnserializeMethod));
-	}
-
-
-	public static void RegisterThrottledSerializationTarget(SerializeMethod _nSerializeMethod, UnserializeMethod _nUnserializeMethod)
-	{
 		int iTargetId = s_mThrottledSerializeTargets.Count + 1;
 
 
@@ -287,49 +279,39 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	{
 		// Create packet stream
 		CNetworkStream cStream = new CNetworkStream(_baData);
-
-		cStream.IgnoreBytes(1); // Packet id
+        
+        // Ignore timestamp packet id
+		cStream.IgnoreBytes(1);
 
 		// Retrieve latency
 		ulong ulLatency = RakNet.RakNet.GetTime() - cStream.ReadULong();
 
-		cStream.IgnoreBytes(1); // Packet id
+        // Ignmore serialized data packet id
+		cStream.IgnoreBytes(1);
 
 		// Iterate through the packet data
-		while (cStream.HasUnreadData)
+		while (cStream.HasUnreadData &&
+               cStream.NumUnreadBits > 18)
 		{
 			// Extract the target identifier
 			byte bTargetIdentifier = cStream.ReadByte();
 
-			// Extract the target type
-			ESerializeTargetType eTargetType = (ESerializeTargetType)cStream.ReadByte();
-
 			// Extract the size of the data
-			byte bSize = cStream.ReadByte();
+            ushort usBitSize = cStream.ReadBits<ushort>(10);
+            ushort usByteSize = (ushort)((float)usBitSize / 8.0f);
 
 			// Extract the data
-			byte[] baData = cStream.ReadBytes(bSize);
+            byte[] baData = new byte[usByteSize];
+            cStream.BitStream.ReadBits(baData, usBitSize);
 
 			// Create stream for the control
-			CNetworkStream cTargetStream = new CNetworkStream(baData);
+			CNetworkStream cTargetStream = new CNetworkStream();
+            cTargetStream.WriteBits(baData, usBitSize);
 
 			// Have the target process its data
-			if (eTargetType == ESerializeTargetType.Unthrottled)
-			{
-				s_mSerializeTargets[bTargetIdentifier].nUnserializeMethod(_cPlayer, cTargetStream);
-			}
-			else if (eTargetType == ESerializeTargetType.Throttled)
-			{
-				s_mThrottledSerializeTargets[bTargetIdentifier].nUnserializeMethod(_cPlayer, cTargetStream);
-			}
-			else
-			{
-				Logger.WriteError("Unknown serialize target type");
-			}
+			s_mThrottledSerializeTargets[bTargetIdentifier].nUnserializeMethod(_cPlayer, cTargetStream);
 		}
 	}
-
-
 
 
     void Awake()
@@ -481,8 +463,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     {
 		if (!m_bDownloadingInitialGameState)
 		{
-			CompileSerializeTargetsOutboundData();
-
 			// Increment outbound timer
 			m_fPacketOutboundTimer += Time.deltaTime;
 
@@ -492,18 +472,16 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 				cOutboundStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
 				cOutboundStream.Write(RakNet.RakNet.GetTime());
 				cOutboundStream.Write((byte)CNetworkServer.EPacketId.PlayerSerializedData);
-				cOutboundStream.Write(s_cUntrottledSerializationStream);
 
 				CompileThrottledSerializeTargetsOutboundData(cOutboundStream);
 
 				// Check player has data to be sent to the server
-				if (cOutboundStream.Size > 10)
+				if (cOutboundStream.ByteSize > 10) // (byte)Packet Id + (ulong)timestamp + (byte)Packet Id
 				{
-					m_tOutboundRateData.uiBytes += cOutboundStream.Size;
+					m_tOutboundRateData.uiBytes += cOutboundStream.ByteSize;
 					m_tOutboundRateData.uiNumEntries += 1;
 
 					// Dispatch data to the server
-					
 					m_cRnPeer.Send(cOutboundStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, m_cServerSystemAddress, false);
 
 					// Reset stream
@@ -601,6 +579,9 @@ public class CNetworkConnection : CNetworkMonoBehaviour
             EventDisconnect();
         }
 
+        m_cServerSystemAddress = null;
+        m_bDownloadingInitialGameState = false;
+
         Logger.Write("Disconnect notification ({0})", _eDisconnectType);
     }
 	
@@ -687,59 +668,22 @@ public class CNetworkConnection : CNetworkMonoBehaviour
     }
 
 
-    static void CompileSerializeTargetsOutboundData()
-    {
-        // Create packet stream
-        CNetworkStream cSerializedDataStream = new CNetworkStream();
-
-
-        foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mSerializeTargets)
-        {
-            tEntry.Value.nSerializeMethod(cSerializedDataStream);
-
-
-            if (cSerializedDataStream.Size > 0)
-            {
-                // Write the control identifier
-                s_cUntrottledSerializationStream.Write(tEntry.Key);
-
-                // Write the serializing target type
-                s_cUntrottledSerializationStream.Write((byte)ESerializeTargetType.Unthrottled);
-
-                // Write the size of the data
-                s_cUntrottledSerializationStream.Write((byte)cSerializedDataStream.Size);
-
-                // Write the data
-                s_cUntrottledSerializationStream.Write(cSerializedDataStream);
-
-                // Clear target stream
-                cSerializedDataStream.Clear();
-            }
-        }
-    }
-
-
     static void CompileThrottledSerializeTargetsOutboundData(CNetworkStream _cOutboundStream)
     {
         // Create packet stream
         CNetworkStream cSerializedDataStream = new CNetworkStream();
 
-
         foreach (KeyValuePair<byte, TSerializationMethods> tEntry in s_mThrottledSerializeTargets)
         {
             tEntry.Value.nSerializeMethod(cSerializedDataStream);
 
-
-            if (cSerializedDataStream.Size > 0)
+            if (cSerializedDataStream.BitSize > 0)
             {
                 // Write the control identifier
                 _cOutboundStream.Write(tEntry.Key);
 
-                // Write the serializing target type
-                _cOutboundStream.Write((byte)ESerializeTargetType.Throttled);
-
                 // Write the size of the data
-                _cOutboundStream.Write((byte)cSerializedDataStream.Size);
+                _cOutboundStream.WriteBits(cSerializedDataStream.BitSize, 10);
 
                 // Write the data
                 _cOutboundStream.Write(cSerializedDataStream);
@@ -776,7 +720,6 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
 
 	static CNetworkStream s_cUntrottledSerializationStream = new CNetworkStream();
-	static Dictionary<byte, TSerializationMethods> s_mSerializeTargets = new Dictionary<byte, TSerializationMethods>();
 	static Dictionary<byte, TSerializationMethods> s_mThrottledSerializeTargets = new Dictionary<byte, TSerializationMethods>();
 
 

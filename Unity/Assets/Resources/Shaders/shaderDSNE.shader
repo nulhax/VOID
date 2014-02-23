@@ -1,12 +1,20 @@
-Shader "DSNE"
+Shader "VOID/DiffuseSpecNormalEmis"
 {
 	Properties 
 	{
 		_Diffuse("_Diffuse", 2D) = "gray" {}
 		_Normal("Normal", 2D) = "blue" {}
 		_Specular("_Specular", 2D) = "black" {}
+		_Emissive("_Emissive", 2D) = "black" {}
 		_SpecPower("SpecPower", Float) = 1
-		_EmissiveColor("EmissiveColor", Color) = (0,0,0,1)
+		_EmissiveColorR("EmissiveColorR", Color) = (0,0,0,1)
+		_EmissivePowerR("_EmissivePowerR", Range(0, 5)) = 1
+		_EmissiveColorG("EmissiveColorG", Color) = (0,0,0,1)
+		_EmissivePowerG("_EmissivePowerG", Range(0, 5)) = 1
+		_EmissiveColorB("EmissiveColorB", Color) = (0,0,0,1)
+		_EmissivePowerB("_EmissivePowerB", Range(0, 5)) = 1
+		_EmissiveColorA("EmissiveColorA", Color) = (0,0,0,1)
+		_EmissivePowerA("_EmissivePowerA", Range(0, 5)) = 1
 	}
 	
 	SubShader 
@@ -18,13 +26,11 @@ Shader "DSNE"
 			"RenderType"="Opaque"
 		}
 
-		
 		Cull Back
 		ZWrite On
 		ZTest LEqual
 		ColorMask RGBA
 		Fog{}
-
 
 		CGPROGRAM
 		#pragma surface surf BlinnPhongEditor vertex:vert
@@ -34,8 +40,17 @@ Shader "DSNE"
 		sampler2D _Diffuse;
 		sampler2D _Normal;
 		sampler2D _Specular;
+		sampler2D _Emissive;
 		float _SpecPower;
-		float4 _EmissiveColor;
+		float4 _EmissiveColorR;
+		float _EmissivePowerR;
+		float4 _EmissiveColorG;
+		float _EmissivePowerG;
+		float4 _EmissiveColorB;
+		float _EmissivePowerB;
+		float4 _EmissiveColorA;
+		float _EmissivePowerA;
+		
 
 		struct EditorSurfaceOutput 
 		{
@@ -79,6 +94,7 @@ Shader "DSNE"
 			float2 uv_Diffuse;
 			float2 uv_Normal;
 			float2 uv_Specular;
+			float2 uv_Emissive;
 		};
 
 		void vert (inout appdata_full v, out Input o) 
@@ -103,13 +119,17 @@ Shader "DSNE"
 			float4 Tex2D0= tex2D(_Diffuse,(IN.uv_Diffuse.xyxy).xy);
 			float4 Tex2DNormal0= float4(UnpackNormal( tex2D(_Normal,(IN.uv_Normal.xyxy).xy)).xyz, 1.0);
 			float4 Tex2D1= tex2D(_Specular,(IN.uv_Specular.xyxy).xy);
+			float4 Tex2D2= tex2D(_Emissive,(IN.uv_Emissive.xyxy).xy);
 			float4 Multiply0 = Tex2D1 * _SpecPower.xxxx;
 			float4 Master0_2_NoInput = float4(0,0,0,0);
 			float4 Master0_5_NoInput = float4(1,1,1,1);
 			float4 Master0_7_NoInput = float4(0,0,0,0);
 			float4 Master0_6_NoInput = float4(1,1,1,1);
 			o.Albedo = Tex2D0;
-			o.Emission = Tex2D0.a * _EmissiveColor;
+			o.Emission = Tex2D2.r * _EmissiveColorR * _EmissiveColorR.a * _EmissivePowerR + 
+						 Tex2D2.g * _EmissiveColorG * _EmissiveColorG.a * _EmissivePowerG + 
+						 Tex2D2.b * _EmissiveColorB * _EmissiveColorB.a * _EmissivePowerB + 
+						 Tex2D2.a * _EmissiveColorA * _EmissiveColorA.a * _EmissivePowerA;
 			o.Normal = Tex2DNormal0;
 			o.Specular = Tex2D1.a;
 			o.Gloss = Multiply0;

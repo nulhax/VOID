@@ -31,7 +31,7 @@ public class CBlendShape : MonoBehaviour
 		{
 			skinnedMeshRenderer.SetBlendShapeWeight (0, blendOne);
 			blendOne += blendSpeed * Time.deltaTime;
-		} 
+		}
 		else 
 		{
 			blendOneFinished = true;

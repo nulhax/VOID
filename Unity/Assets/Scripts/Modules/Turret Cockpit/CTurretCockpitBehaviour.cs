@@ -33,6 +33,8 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Fields
 	public GameObject m_CockpitSeat = null;
 	public GameObject m_CockpitCenter = null;
+	public GameObject m_CockpitScreen = null;
+	public GameObject m_CockpitScreen2 = null;
 
 	public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
 
@@ -175,6 +177,10 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 				// Set initial states
 				HandleCockpitRotations(tb.TurretRotations, tb.MinMaxRotationX);
+
+				// Set the render texture from the turret
+				m_CockpitScreen.renderer.material.SetTexture("_MainTex", tb.CameraRenderTexture);
+				m_CockpitScreen2.renderer.material.SetTexture("_MainTex", tb.CameraRenderTexture);
 			}
 
 			// Unregister previous the handling cockpit rotations

@@ -23,7 +23,7 @@ public class CAudioCue : MonoBehaviour
 	{
 		
 	}
-				
+
 	//As implied, stops all sounds that are currently playing.
 	public void StopAllSound()
 	{
