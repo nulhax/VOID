@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
+[RequireComponent(typeof(CActorPowerConsumer))]
 [RequireComponent(typeof(CActorHealth))]
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
@@ -30,7 +30,59 @@ public class CFireHazard : MonoBehaviour
 
 	void Awake()
 	{
+		//if (Random.Range(0, 1) == 0)
+		//    return;
 
+		//// Manual creation/initialisation of particle system.
+		//{
+		//    // MeshFilter used by ParticleEmitter for emitting particles along the surface of a mesh.
+		//    MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>(); if (meshFilter == null) meshFilter = gameObject.AddComponent<MeshFilter>();	// Get or create MeshFilter (there must be one).
+
+		//    // Inherit mesh from parent if there isn't one already.
+		//    if (meshFilter.sharedMesh == null/* && inheritMesh*/)
+		//    {
+		//        Transform parentTransform = transform.parent;
+		//        if (parentTransform != null)
+		//        {
+		//            MeshFilter parentMeshFilter = parentTransform.GetComponent<MeshFilter>();
+		//            if (parentMeshFilter != null)
+		//                meshFilter.sharedMesh = parentMeshFilter.sharedMesh;
+		//        }
+		//    }
+
+		//    // If no current mesh and no parent mesh - use quad.
+		//    if (meshFilter.sharedMesh == null)
+		//        meshFilter.sharedMesh = Resources.Load<Mesh>("Quad");	// Todo: Rotate by 90 degrees if quad is vertical.
+		//}
+
+		//{
+		//    // ParticleRenderer.
+		//    ParticleRenderer particleRenderer = gameObject.GetComponent<ParticleRenderer>(); if (particleRenderer == null) particleRenderer = gameObject.AddComponent<ParticleRenderer>();	// Get or create ParticleRenderer (there must be one).
+		//    particleRenderer.castShadows = false;
+		//    particleRenderer.receiveShadows = true;
+		//    particleRenderer.sharedMaterial = Resources.Load<Material>("Materials/FireMaterial");
+		//    particleRenderer.useLightProbes = false;
+		//    particleRenderer.cameraVelocityScale = 0.0f;
+		//    particleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
+		//    particleRenderer.lengthScale = 1.0f;
+		//    particleRenderer.velocityScale = 0.0f;
+		//    particleRenderer.maxParticleSize = 1e+10f;
+		//    particleRenderer.maxPartileSize = 1e+10f;
+		//    particleRenderer.uvAnimationCycles = 1.0f;
+		//    particleRenderer.uvAnimationXTile = 1;
+		//    particleRenderer.uvAnimationYTile = 3;
+		//    //particleRenderer.uvTiles;0.333333333333333333333
+		//}
+
+		//{
+		//    // ParticleAnimator.
+		//    ParticleAnimator particleAnimator = gameObject.GetComponent<ParticleAnimator>(); if (particleAnimator == null) particleAnimator = gameObject.AddComponent<ParticleAnimator>();	// Get or create ParticleAnimator (there must be one).
+		//    particleAnimator.doesAnimateColor = true;
+		//    particleAnimator.colorAnimation = new Color[3];
+		//    particleAnimator.colorAnimation[0] = Color.red;
+		//    particleAnimator.colorAnimation[1] = Color.green;
+		//    particleAnimator.colorAnimation[2] = Color.blue;
+		//}
 	}
 
 	void Start()
@@ -54,19 +106,10 @@ public class CFireHazard : MonoBehaviour
 	{
 		if(CNetwork.IsServer && burning)
 		{
-			//timeUntilNextSpreadProcess -= Time.deltaTime;
-			//while(timeUntilNextSpreadProcess <= 0.0f)
-			//{
-			//    timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
-
-			//    // Drain health of all fires within range, including one's self (which is included in the list of neighbours).
-			//    foreach(CFireHazard fireHazard in s_AllFires)
-			//        if((fireHazard.transform.position - transform.position).sqrMagnitude - (spreadRadius * spreadRadius + fireHazard.spreadRadius * fireHazard.spreadRadius) <= 0.0f)
-			//            fireHazard.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
-			//}
-
 			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
+
+			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
 
 			float thresholdPercentage = 0.25f;
 			if(fa.AtmospherePercentage < thresholdPercentage)
@@ -74,31 +117,25 @@ public class CFireHazard : MonoBehaviour
 		}
 	}
 
-	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
+	void OnSetState(byte prevState, byte currState)
 	{
 		switch (currState)
 		{
 			case 0:	// Begin fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = true;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Play();
-
-					gameObject.GetComponent<CFireHazard>().burning_internal = true;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
+					//GetComponent<Collider>().enabled = true;
+					particleSystem.Play();
+					GetComponent<CFireHazard>().burning_internal = true;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
 			case 2:	// End fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = false;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Stop();
-
-					gameObject.GetComponent<CFireHazard>().burning_internal = false;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
+					//GetComponent<Collider>().enabled = false;
+					particleSystem.Stop();
+					GetComponent<CFireHazard>().burning_internal = false;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
@@ -130,6 +167,17 @@ public class CFireHazard : MonoBehaviour
 						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
 				}
 			}
+		}
+	}
+
+	void OnParticleCollision(GameObject other)
+	{
+		if (CNetwork.IsServer)
+		{
+			CActorHealth otherHealth = other.GetComponent<CActorHealth>();
+			if (otherHealth != null)
+				if (otherHealth.flammable)
+					otherHealth.health -= 10.0f;
 		}
 	}
 }

@@ -40,7 +40,7 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	public float AtmosphericConsumptionRate
 	{
 		set { m_AtmosphericConsumptionRate = value; }
-		get { return(m_AtmosphericConsumptionRate); }
+		get { return (m_AtmosphericConsumptionRate); }
 	}
 
 	[AServerOnly]
@@ -52,7 +52,7 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	[AServerOnly]
 	public bool IsConsumingAtmosphere
 	{
-		get { return(m_ConsumingAtmosphere); }
+		get { return (m_ConsumingAtmosphere); }
 	}
 
 	// Member Methods
@@ -84,7 +84,7 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	public void OnEnterFacility(GameObject _Facility)
 	{
 		// Unregister self from other facility atmosphere
-		foreach(GameObject facility in m_ActorLocator.ContainingFacilities)
+		foreach (GameObject facility in m_ActorLocator.ContainingFacilities)
 		{
 			if(facility != _Facility)
 				facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
@@ -99,8 +99,8 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	{
 		// Unregister self from facility
 		_Facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
-        
-        if (m_ActorLocator.LastEnteredFacility == null)
+
+		if (m_ActorLocator.LastEnteredFacility == null)
         {
             InsufficientAtmosphere();
         }

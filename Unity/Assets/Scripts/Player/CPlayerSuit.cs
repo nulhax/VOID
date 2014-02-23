@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
+[RequireComponent(typeof(CActorPowerConsumer))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 

@@ -116,7 +116,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 					if (oldFireType != null)
 						oldFireType.Health -= 80.0f * Time.deltaTime;
 
-					CFireHazard fire = _rh.collider.gameObject.GetComponent<CFireHazard>();
+					CShortCircuit fire = _rh.collider.gameObject.GetComponent<CShortCircuit>();
 					if (fire != null)
 						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
 				}

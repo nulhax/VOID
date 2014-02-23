@@ -24,13 +24,9 @@ Material:
       data:
         first:
           name: _Alpha
-        second: .789285719
+        second: .949999988
       data:
         first:
           name: _EmissionPow
         second: 1
-    m_Colors:
-      data:
-        first:
-          name: _Color
-        second: {r: 1, g: 1, b: 1, a: .13333334}
+    m_Colors: {}
