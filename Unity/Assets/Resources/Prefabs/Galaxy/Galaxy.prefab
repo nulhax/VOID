@@ -51,8 +51,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mfTimeBetweenUpdateCellLoadUnloadQueues: .150000006
-  mfTimeBetweenCellLoads: .0250000004
-  mfTimeBetweenCellUnloads: .0250000004
+  mfTimeBetweenCellLoads: .100000001
+  mfTimeBetweenCellUnloads: .100000001
   mfTimeBetweenUpdateGubbinUnloadQueue: .150000006
   mfTimeBetweenGubbinLoads: .0250000004
   mfTimeBetweenGubbinUnloads: .0250000004
