@@ -30,7 +30,7 @@ public class CHUDHealth : MonoBehaviour
 	
 	
 	// Member Fields
-	public TweenAlpha m_HealthOverlayTween = null;
+	private TweenAlpha m_HealthOverlayTween = null;
 
 
 	// Member Properties
@@ -39,7 +39,15 @@ public class CHUDHealth : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
+		// Cache the health tween
+		m_HealthOverlayTween = GetComponent<TweenAlpha>();
 
+		// Set the health amcors as screen size
+		UISprite sprite = GetComponent<UISprite>();
+		sprite.leftAnchor.absolute = -Screen.width / 2;
+		sprite.rightAnchor.absolute = Screen.width / 2;
+		sprite.bottomAnchor.absolute = -Screen.height / 2;
+		sprite.topAnchor.absolute = Screen.height / 2;
 	}
 	
 	public void Update()

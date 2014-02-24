@@ -56,7 +56,7 @@ public class OVRCameraControllerEditor : Editor
 			
 			m_Component.VerticalFOV         = EditorGUILayout.FloatField("Vertical FOV", m_Component.VerticalFOV);
 			m_Component.IPD         		= EditorGUILayout.FloatField("IPD", m_Component.IPD);
-			
+
 			OVREditorGUIUtility.Separator();
 			
 			m_Component.CameraRootPosition  = EditorGUILayout.Vector3Field("Camera Root Position", m_Component.CameraRootPosition);
