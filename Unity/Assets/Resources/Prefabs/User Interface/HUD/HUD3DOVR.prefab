@@ -449,6 +449,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400056}
   - 114: {fileID: 11400070}
+  - 20: {fileID: 2000004}
   m_Layer: 8
   m_Name: CameraOVR
   m_TagString: Untagged
@@ -830,6 +831,35 @@ Camera:
   orthographic: 0
   orthographic size: 100
   m_Depth: 5
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 256
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_HDR: 0
+  m_OcclusionCulling: 1
+--- !u!20 &2000004
+Camera:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100056}
+  m_Enabled: 0
+  serializedVersion: 2
+  m_ClearFlags: 3
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: .5
+    height: 1
+  near clip plane: .00999999978
+  far clip plane: 2
+  field of view: 70
+  orthographic: 0
+  orthographic size: 100
+  m_Depth: 2
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 256
