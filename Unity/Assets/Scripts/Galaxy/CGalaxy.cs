@@ -677,8 +677,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 		NetworkedEntity networkedEntity = gubbin.mHasNetworkedEntityScript ? gubbinObject.GetComponent<NetworkedEntity>() : null;   // Get networked entity script IF it has one.
 		Rigidbody rigidBody = gubbin.mHasRigidBody ? gubbinObject.GetComponent<Rigidbody>() : null; // Get rigid body IF it has one.
 
-		float uniformScale = Random.Range(0.5f, 2.0f);
-		gubbinObject.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
+		//float uniformScale = Random.Range(0.5f, 2.0f);
+		//gubbinObject.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
 
 		// Parent object.
 		gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.

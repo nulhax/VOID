@@ -30,8 +30,6 @@ public class CHUDLocator : MonoBehaviour
 
 	
 	// Member Fields
-	public Camera m_HUDCamera = null;
-
 	public UISprite m_WithinBoundsIcon = null;
 	public UISprite m_OutOfBoundsIcon = null;
 
@@ -73,6 +71,7 @@ public class CHUDLocator : MonoBehaviour
 	public void LateUpdate()
 	{
 		Vector3 pos = Vector3.zero;
+		Camera HUDCamera = CHUD3D.HUDCamera.camera;
 
 		if(CGameCameras.IsOculusRiftActive)
 		{
@@ -88,8 +87,6 @@ public class CHUDLocator : MonoBehaviour
 		{
 			pos = m_GameCamera.camera.WorldToViewportPoint(m_Tracker.position);
 		}
-
-		Debug.Log(pos);
 
 		// Clamp the position within the frame of the view port
 		pos.x = Mathf.Clamp01(pos.x);
@@ -146,7 +143,7 @@ public class CHUDLocator : MonoBehaviour
 		pos.z = transform.parent.localPosition.z;
 
 		// Set the position
-		transform.position = m_HUDCamera.ViewportToWorldPoint(pos);
+		transform.position = HUDCamera.ViewportToWorldPoint(pos);
 		pos = transform.localPosition;
 		pos.x = pos.x;
 		pos.y = pos.y;
