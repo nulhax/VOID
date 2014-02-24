@@ -42,7 +42,9 @@ public class OVRCamera : OVRComponent
 	
 	// We will search for camera controller and set it here for access to its members
 	private OVRCameraController CameraController = null;
-	
+
+	public bool m_DontUpdateOrientation = false;
+
 	// PUBLIC MEMBERS
 	// camera position...	
 	// From root of camera to neck (translation only)
@@ -197,6 +199,9 @@ public class OVRCamera : OVRComponent
 	// SetCameraOrientation
 	void SetCameraOrientation()
 	{
+		if(m_DontUpdateOrientation)
+			return;
+
 		Quaternion q   = Quaternion.identity;
 		Vector3    dir = Vector3.forward;		
 		

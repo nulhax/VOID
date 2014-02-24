@@ -35,13 +35,15 @@ public class CHUDLocator : MonoBehaviour
 	public UISprite m_WithinBoundsIcon = null;
 	public UISprite m_OutOfBoundsIcon = null;
 
-	private Camera m_GameCamera = null;
+	private GameObject m_GameCamera = null;
 	private Transform m_Tracker = null;
 	private bool m_OutsideBounds = false;
 
+	private float m_MaxDistance = 0.9f;
+
 	
 	// Member Properties
-	public Camera GameCamera
+	public GameObject GameCamera
 	{
 		set { m_GameCamera = value; }
 	}
@@ -61,12 +63,33 @@ public class CHUDLocator : MonoBehaviour
 	{
 		// Default in bounds
 		EnteredBounds();
+
+		// Set the max distance much closer for oculus
+		if(CGameCameras.IsOculusRiftActive)
+			m_MaxDistance = 0.6f;
 	}
 
 	// Member Methods
 	public void LateUpdate()
 	{
-		Vector3 pos = m_GameCamera.WorldToViewportPoint(m_Tracker.position);
+		Vector3 pos = Vector3.zero;
+
+		if(CGameCameras.IsOculusRiftActive)
+		{
+			Camera left = m_GameCamera.transform.FindChild("CameraLeft").camera;
+			Camera right = m_GameCamera.transform.FindChild("CameraRight").camera;
+
+			Vector3 leftPos = left.WorldToViewportPoint(m_Tracker.position);
+			Vector3 rightPos = right.WorldToViewportPoint(m_Tracker.position);
+
+			pos = (leftPos + rightPos) / 2.0f;
+		}
+		else
+		{
+			pos = m_GameCamera.camera.WorldToViewportPoint(m_Tracker.position);
+		}
+
+		Debug.Log(pos);
 
 		// Clamp the position within the frame of the view port
 		pos.x = Mathf.Clamp01(pos.x);
@@ -78,7 +101,7 @@ public class CHUDLocator : MonoBehaviour
 		outsideTest.y = (pos.y * 2.0f) - 1.0f;
 
 		// Check the bounds
-		if(outsideTest.sqrMagnitude > (0.9f * 0.9f) || pos.z < 0.0f)
+		if(outsideTest.sqrMagnitude > (m_MaxDistance * m_MaxDistance) || pos.z < 0.0f)
 		{
 			if(!m_OutsideBounds)
 			{
@@ -110,14 +133,17 @@ public class CHUDLocator : MonoBehaviour
 			Vector3 newPos = Quaternion.Inverse(m_GameCamera.transform.rotation) * projTot;
 
 			// Set this -1, 1 space back to 0 1 space.
-			pos.x = ((newPos.x * 0.9f) + 1.0f) / 2.0f;
-			pos.y = ((newPos.y * 0.9f) + 1.0f) / 2.0f;
+			pos.x = ((newPos.x * m_MaxDistance) + 1.0f) / 2.0f;
+			pos.y = ((newPos.y * m_MaxDistance) + 1.0f) / 2.0f;
 
 			// Update the rotation of the icon
 			Vector3 euler = Vector3.zero;
 			euler.z = Mathf.Atan2(newPos.y, newPos.x) * Mathf.Rad2Deg + 45.0f;
-			m_OutOfBoundsIcon.transform.eulerAngles = euler;
+			m_OutOfBoundsIcon.transform.localEulerAngles = euler;
 		}
+
+		// Set the z to be appropriate pos away form camera
+		pos.z = transform.parent.localPosition.z;
 
 		// Set the position
 		transform.position = m_HUDCamera.ViewportToWorldPoint(pos);
