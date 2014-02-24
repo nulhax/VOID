@@ -136,11 +136,11 @@ public class OVRCameraController : OVRComponent
 	// Update 
 	new void Update()
 	{
-		base.Update();		
+		base.Update();	
 	}
 
-	new void LateUpdate()
-	{	
+	void LateUpdate()
+	{
 		UpdateCameras();
 	}
 		
@@ -205,7 +205,11 @@ public class OVRCameraController : OVRComponent
 		perspOffset = LensOffsetRight;
 		eyePositionOffset = IPD * 0.5f;
 		ConfigureCamera(ref CameraRight, distOffset, perspOffset, eyePositionOffset);
-		
+
+		Camera selfCam = gameObject.camera;
+		if(selfCam != null)
+			ConfigureCamera(ref selfCam, 0.0f, 0.0f, 0.0f);
+
 		UpdateCamerasDirtyFlag = false;
 	}
 	
@@ -221,6 +225,9 @@ public class OVRCameraController : OVRComponent
 		// Aspect ratio 
 		camera.aspect = AspectRatio;
 			
+		if(camera.GetComponent<OVRCamera>() == null)
+			return true;
+
 		// Centre of lens correction
 		camera.GetComponent<OVRLensCorrection>()._Center.x = distOffset;
 		ConfigureCameraLensCorrection(ref camera);
@@ -354,6 +361,7 @@ public class OVRCameraController : OVRComponent
 	{
 		VerticalFOV = verticalFOV;
 		UpdateCamerasDirtyFlag = true;
+		UpdateCameras();
 	}
 	
 	//Get/SetAspectRatio
