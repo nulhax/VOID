@@ -50,7 +50,10 @@ public class CHUDVisor : MonoBehaviour
 	// Member Methods
 	public void Update()
 	{
-		UpdateUI();
+        if (CGamePlayers.SelfActor != null)
+        {
+            UpdateUI();
+        }
 	}
 
 	public void SetVisorState(bool _Down)

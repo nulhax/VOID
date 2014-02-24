@@ -103,6 +103,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
                 // Trigger EventHealthChanged
                 EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                Debug.Log("State: " + CurrentHealthState.ToString());
             }
         }
     }
@@ -158,6 +159,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
 	}
 
+
+	[AServerOnly]
     private void UpdateHealthState(GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue)
     {
         // Set an invalid initial previous health state
@@ -239,6 +242,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
+	[AServerOnly]
     private void UpdateHealthStateDowned()
     {
         if (CurrentHealthState == HealthState.DOWNED)
@@ -300,16 +304,18 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             {
 				if (Health > 0) 
                 {
-					ApplyDamage (100);
+					ApplyDamage(100);
 				}                
 			}
 		}
 	}
 
+
     [AServerOnly]
     void UpdateAtmosphereEffects() { }
 
 
+	[AServerOnly]
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
         // If the updated network var was the health state
@@ -360,7 +366,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         }
     }
 
-
+	[AClientOnly]
     void OnGUI()
     {
         const float kBoxMargin = 10.0f;

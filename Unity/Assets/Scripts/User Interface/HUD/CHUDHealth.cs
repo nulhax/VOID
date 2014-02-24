@@ -52,17 +52,17 @@ public class CHUDHealth : MonoBehaviour
 	
 	private void UpdateOverlay()
 	{
-		// Get the player oxygen supplu
-		float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Health;
+        // Get the player oxygen supplu
+        float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Health;
         float maxHealth = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().MaxHealth;
 		
-		// Calculate the value ratio
-		float value = 1.0f - health/maxHealth;
-		float alphaTweenRange = value * 0.5f;
+        // Calculate the value ratio
+        float value = 1.0f - health / maxHealth;
+        float alphaTweenRange = value * 0.5f;
 
-		// Update the bar
-		m_HealthOverlayTween.to = value;
-		m_HealthOverlayTween.from = value - alphaTweenRange;
-		m_HealthOverlayTween.duration = 0.5f;
+        // Update the bar
+        m_HealthOverlayTween.to = value;
+        m_HealthOverlayTween.from = value - alphaTweenRange;
+        m_HealthOverlayTween.duration = 0.5f;
 	}
 }
