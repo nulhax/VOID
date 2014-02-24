@@ -17,10 +17,10 @@ using System.Collections;
 [System.Serializable]
 public class CActorHealth : CNetworkMonoBehaviour
 {
-	public delegate void OnSetHealth(GameObject gameObject, float prevHealth, float currHealth);
+	public delegate void OnSetHealth(float prevHealth, float currHealth);
 	public event OnSetHealth EventOnSetHealth;
 
-	public delegate void OnSetState(GameObject gameObject, byte prevState, byte currState);
+	public delegate void OnSetState(byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
 	[SerializeField] public bool flammable = true;
@@ -62,10 +62,10 @@ public class CActorHealth : CNetworkMonoBehaviour
 		if (callEventsOnStart)
 		{
 			if (EventOnSetHealth != null)
-				EventOnSetHealth(gameObject, health_previous, health_current);
+				EventOnSetHealth(health_previous, health_current);
 
 			if (EventOnSetState != null)
-				EventOnSetState(gameObject, state_previous, state_current);
+				EventOnSetState(state_previous, state_current);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		}
 
 		if (EventOnSetHealth != null && health_current != health_previous)
-			EventOnSetHealth(gameObject, health_previous, health_current);
+			EventOnSetHealth(health_previous, health_current);
 
 		health_previous = health_current;
 
@@ -127,7 +127,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 			state_current = state_internal.Get();
 
 		if (EventOnSetState != null && state_current != state_previous)
-			EventOnSetState(gameObject, state_previous, state_current);
+			EventOnSetState(state_previous, state_current);
 
 		state_previous = state_current;
 	}

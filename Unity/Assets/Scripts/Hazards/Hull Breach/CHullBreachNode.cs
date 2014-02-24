@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CHullBreachNode : MonoBehaviour
 {
-	public delegate void OnSetBreached(GameObject gameObject, bool breached);
+	public delegate void OnSetBreached(bool breached);
 
 	public Mesh goodMesh = null;
 	public Mesh breachedMesh = null;
@@ -14,7 +14,7 @@ public class CHullBreachNode : MonoBehaviour
 	uint numChildrenBreached = 0;
 
 	public OnSetBreached EventOnSetBreached;
-	public bool breached { get { return breached_internal; } set { if (breached_internal != value) { breached_internal = value; if (EventOnSetBreached != null)EventOnSetBreached(gameObject, value); } } }
+	public bool breached { get { return breached_internal; } set { if (breached_internal != value) { breached_internal = value; if (EventOnSetBreached != null)EventOnSetBreached(value); } } }
 	private bool breached_internal = false;
 
 	void Awake()
@@ -69,13 +69,13 @@ public class CHullBreachNode : MonoBehaviour
 		}
 	}
 
-	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
+	void OnSetState(byte prevState, byte currState)
 	{
 		switch (currState)
 		{
 			case 0:	// Hull breach threshold.
 				{
-					CHullBreachNode hullBreachNode = gameObject.GetComponent<CHullBreachNode>();
+					CHullBreachNode hullBreachNode = GetComponent<CHullBreachNode>();
 
 					if (!hullBreachNode.breached)	// If the hull was not breached before passing the breach threshold...
 					{
@@ -91,8 +91,8 @@ public class CHullBreachNode : MonoBehaviour
 						}
 
 						// Set breached mesh model and collider.
-						gameObject.GetComponent<MeshFilter>().sharedMesh = hullBreachNode.breachedMesh;
-						gameObject.GetComponent<MeshCollider>().sharedMesh = hullBreachNode.breachedMesh;
+						GetComponent<MeshFilter>().sharedMesh = hullBreachNode.breachedMesh;
+						GetComponent<MeshCollider>().sharedMesh = hullBreachNode.breachedMesh;
 
 						// Set breached state.
 						hullBreachNode.breached = true;
@@ -106,7 +106,7 @@ public class CHullBreachNode : MonoBehaviour
 
 			case 2:	// Hull fix threshold.
 				{
-					CHullBreachNode hullBreachNode = gameObject.GetComponent<CHullBreachNode>();
+					CHullBreachNode hullBreachNode = GetComponent<CHullBreachNode>();
 
 					if (hullBreachNode.breached)	// If the hull was breached before passing the fix threshold...
 					{
@@ -122,8 +122,8 @@ public class CHullBreachNode : MonoBehaviour
 						}
 
 						// Set breached mesh model and collider.
-						gameObject.GetComponent<MeshFilter>().sharedMesh = hullBreachNode.goodMesh;
-						gameObject.GetComponent<MeshCollider>().sharedMesh = hullBreachNode.goodMesh;
+						GetComponent<MeshFilter>().sharedMesh = hullBreachNode.goodMesh;
+						GetComponent<MeshCollider>().sharedMesh = hullBreachNode.goodMesh;
 
 						// Set breached state.
 						hullBreachNode.breached = false;
@@ -137,9 +137,9 @@ public class CHullBreachNode : MonoBehaviour
 		}
 	}
 
-	static void OnChildSetBreached(GameObject gameObject, bool breached)
+	void OnChildSetBreached(bool breached)
 	{
-		CHullBreachNode hullBreachNode = gameObject.transform.parent.GetComponent<CHullBreachNode>();
+		CHullBreachNode hullBreachNode = transform.parent.GetComponent<CHullBreachNode>();
 
 		if (breached)	// If the child is now breached...
 		{

@@ -129,7 +129,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 		if(m_CubemapSnapshot == null)
 		{
-			m_CubemapSnapshot = new Cubemap(1024, TextureFormat.ARGB32, false);
+			m_CubemapSnapshot = new Cubemap(16, TextureFormat.ARGB32, false);
 		}
 
 		if(m_CubemapCam == null)
@@ -144,7 +144,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 			m_CubemapCam.enabled = false;
 		}
 
-		m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
+		//m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
 
 		// Re-enable all of the renderers for self
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
