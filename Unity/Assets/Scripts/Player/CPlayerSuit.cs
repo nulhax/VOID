@@ -47,7 +47,10 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	private float k_fOxygenCapacity = 600.0f;
 	private float k_fOxygenDepleteRate = 1.0f;
 	private float k_fOxygenRefillRate = 10.0f;
-	
+
+
+	private CHUDVisor m_CachedVisor = null;
+
 	
 	CNetworkVar<float> m_fOxygen = null;
 	CNetworkVar<bool>  m_EnviromentalOxygen = null;
@@ -93,6 +96,8 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 			EventEnviromentalOxygenChange += OnEnviromentOxygenChange;
 
 		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+
+		m_CachedVisor = CHUD3D.Visor;
 	}
 
 
@@ -106,7 +111,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(_eInput == CUserInput.EInput.Visor && _bDown)
 		{
 			// Toggle between up/down visor
-			CHUDRoot.Visor.SetVisorState(!CHUDRoot.Visor.IsVisorDown);
+			m_CachedVisor.SetVisorState(!CHUD3D.Visor.IsVisorDown);
 		}
 	}
 
@@ -143,7 +148,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
                 // Consume oxygen
                 float fOxygen = OxygenSupply - k_fOxygenDepleteRate * Time.deltaTime;
 
-				if(!CHUDRoot.Visor.IsVisorDown)
+				if(!m_CachedVisor.IsVisorDown)
 					fOxygen = OxygenSupply;
 
                 if (fOxygen < 0.0f)
@@ -161,7 +166,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(10.0f * Time.deltaTime);
 				}
-				else if(!CHUDRoot.Visor.IsVisorDown)
+				else if(!CHUD3D.Visor.IsVisorDown)
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(500.0f * Time.deltaTime);
 				}
@@ -202,12 +207,12 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(!_Breathable)
 		{
 			// Cache the last visor state
-			m_VisorDownState = CHUDRoot.Visor.IsVisorDown;
-			CHUDRoot.Visor.SetVisorState(true);
+			m_VisorDownState = m_CachedVisor.IsVisorDown;
+			m_CachedVisor.SetVisorState(true);
 		}
 		else
 		{
-			CHUDRoot.Visor.SetVisorState(m_VisorDownState);
+			m_CachedVisor.SetVisorState(m_VisorDownState);
 		}
 	}
 

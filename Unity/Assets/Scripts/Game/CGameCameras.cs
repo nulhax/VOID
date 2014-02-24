@@ -117,9 +117,6 @@ public class CGameCameras : MonoBehaviour
 		
 		// Unparent the galaxy camera
 		s_GalaxyCamera.transform.parent = null;
-
-		// Update the HUD
-		CHUDRoot.UpdateHUDGameCamera(PlayersHeadCamera.camera);
 	}
 	
 	public static void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
@@ -133,9 +130,6 @@ public class CGameCameras : MonoBehaviour
 		
 		// Unparent the ship camera
 		s_ShipCamera.transform.parent = null;
-
-		// Update the HUD
-		CHUDRoot.UpdateHUDGameCamera(PlayersHeadCamera.camera);
 	}
 	
 	public static void SetDefaultViewPerspective()
@@ -171,18 +165,23 @@ public class CGameCameras : MonoBehaviour
 
 		// Instantiate the galaxy camera
 		s_GalaxyCamera = s_OculusRiftActive ? 
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/OVRGalaxyCamera"))):
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCameraOVR"))):
 			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera")));
 		
 		// Instantiate the ship camera
-		s_ShipCamera =  s_OculusRiftActive ? 
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/OVRShipCamera"))):
+		s_ShipCamera = s_OculusRiftActive ? 
+			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCameraOVR"))):
 			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera")));
 
-		// Instantiate the HUD
-		if(CHUDRoot.Instance != null)
-			Destroy(CHUDRoot.Instance.gameObject);
-		GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD Root"));
+		// Ensure the HUD is destroyed if existing
+		if(CHUD3D.Instance != null)
+			Destroy(CHUD3D.Instance.gameObject);
+
+		// Instantiate the 3D HUD
+		if(s_OculusRiftActive)
+			GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"));
+		else
+			GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"));
 	}
 	
 	private void OnDisconnect()

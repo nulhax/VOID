@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CHullBreachNode : MonoBehaviour
 {
 	public delegate void OnSetBreached(bool breached);
@@ -19,6 +20,8 @@ public class CHullBreachNode : MonoBehaviour
 
 	void Awake()
 	{
+		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate = 100.0f;
+
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
 
 		Transform parentTransform = gameObject.transform.parent;
@@ -75,15 +78,13 @@ public class CHullBreachNode : MonoBehaviour
 		{
 			case 0:	// Hull breach threshold.
 				{
-					CHullBreachNode hullBreachNode = GetComponent<CHullBreachNode>();
-
-					if (!hullBreachNode.breached)	// If the hull was not breached before passing the breach threshold...
+					if (!breached)	// If the hull was not breached before passing the breach threshold...
 					{
 						// Breach the hull.
-						if (hullBreachNode.childBreaches.Count > 0)	// If this breach is a parent...
+						if (childBreaches.Count > 0)	// If this breach is a parent...
 						{
 							// Remove the models set by children.
-							foreach (CHullBreachNode childBreach in hullBreachNode.childBreaches)
+							foreach (CHullBreachNode childBreach in childBreaches)
 							{
 								childBreach.GetComponent<MeshFilter>().sharedMesh = null;
 								childBreach.GetComponent<MeshCollider>().sharedMesh = null;
@@ -91,30 +92,31 @@ public class CHullBreachNode : MonoBehaviour
 						}
 
 						// Set breached mesh model and collider.
-						GetComponent<MeshFilter>().sharedMesh = hullBreachNode.breachedMesh;
-						GetComponent<MeshCollider>().sharedMesh = hullBreachNode.breachedMesh;
+						GetComponent<MeshFilter>().sharedMesh = breachedMesh;
+						GetComponent<MeshCollider>().sharedMesh = breachedMesh;
 
 						// Set breached state.
-						hullBreachNode.breached = true;
+						breached = true;
+
+						// Consume atmosphere.
+						GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 
 						// Inform the facility this breach resides in.
-						if (hullBreachNode.parentFacilityHull != null)
-							hullBreachNode.parentFacilityHull.AddBreach(gameObject);
+						if (parentFacilityHull != null)
+							parentFacilityHull.AddBreach(gameObject);
 					}
 				}
 				break;
 
 			case 2:	// Hull fix threshold.
 				{
-					CHullBreachNode hullBreachNode = GetComponent<CHullBreachNode>();
-
-					if (hullBreachNode.breached)	// If the hull was breached before passing the fix threshold...
+					if (breached)	// If the hull was breached before passing the fix threshold...
 					{
 						// Fix the breach.
-						if (hullBreachNode.childBreaches.Count > 0)	// If this breach is a parent...
+						if (childBreaches.Count > 0)	// If this breach is a parent...
 						{
 							// Fix the children.
-							foreach (CHullBreachNode childBreach in hullBreachNode.childBreaches)
+							foreach (CHullBreachNode childBreach in childBreaches)
 							{
 								CActorHealth childActorHealth = childBreach.GetComponent<CActorHealth>();
 								childActorHealth.health = childActorHealth.health_max;	// Force all children to repair.
@@ -122,15 +124,18 @@ public class CHullBreachNode : MonoBehaviour
 						}
 
 						// Set breached mesh model and collider.
-						GetComponent<MeshFilter>().sharedMesh = hullBreachNode.goodMesh;
-						GetComponent<MeshCollider>().sharedMesh = hullBreachNode.goodMesh;
+						GetComponent<MeshFilter>().sharedMesh = goodMesh;
+						GetComponent<MeshCollider>().sharedMesh = goodMesh;
 
 						// Set breached state.
-						hullBreachNode.breached = false;
+						breached = false;
+
+						// Stop consuming atmosphere.
+						GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 
 						// Inform the facility this breach resides in.
-						if (hullBreachNode.parentFacilityHull != null)
-							hullBreachNode.parentFacilityHull.RemoveBreach(gameObject);
+						if (parentFacilityHull != null)
+							parentFacilityHull.RemoveBreach(gameObject);
 					}
 				}
 				break;
@@ -139,19 +144,19 @@ public class CHullBreachNode : MonoBehaviour
 
 	void OnChildSetBreached(bool breached)
 	{
-		CHullBreachNode hullBreachNode = transform.parent.GetComponent<CHullBreachNode>();
+		//CHullBreachNode hullBreachNode = transform.parent.GetComponent<CHullBreachNode>();
 
 		if (breached)	// If the child is now breached...
 		{
-			++hullBreachNode.numChildrenBreached;
+			++numChildrenBreached;
 
-			if (hullBreachNode.numChildrenBreached >= hullBreachNode.childBreaches.Count)	// If all children are breached...
+			if (numChildrenBreached >= childBreaches.Count)	// If all children are breached...
 			{
-				CActorHealth hullBreachActorHealth = hullBreachNode.GetComponent<CActorHealth>();
+				CActorHealth hullBreachActorHealth = GetComponent<CActorHealth>();
 				hullBreachActorHealth.health = hullBreachActorHealth.health_min;	// Force this parent to breach.
 			}
 		}
 		else
-			--hullBreachNode.numChildrenBreached;
+			--numChildrenBreached;
 	}
 }
