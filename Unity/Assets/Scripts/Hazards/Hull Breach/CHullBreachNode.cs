@@ -80,6 +80,9 @@ public class CHullBreachNode : MonoBehaviour
 				{
 					if (!breached)	// If the hull was not breached before passing the breach threshold...
 					{
+						if(particleSystem != null)
+							particleSystem.Play();
+
 						// Breach the hull.
 						if (childBreaches.Count > 0)	// If this breach is a parent...
 						{
@@ -112,6 +115,9 @@ public class CHullBreachNode : MonoBehaviour
 				{
 					if (breached)	// If the hull was breached before passing the fix threshold...
 					{
+						if(particleSystem != null)
+							particleSystem.Stop();
+
 						// Fix the breach.
 						if (childBreaches.Count > 0)	// If this breach is a parent...
 						{

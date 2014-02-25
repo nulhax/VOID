@@ -54,8 +54,11 @@ public class CShieldEventHandler : MonoBehaviour {
 
 	void OnTriggerEnter(Collider _Collider)
 	{
-		EventShieldCollider(_Collider);
-		EventShieldDamage(_Collider);
+		if(EventShieldCollider != null)
+			EventShieldCollider(_Collider);
+		
+		if(EventShieldDamage != null)
+			EventShieldDamage(_Collider);
 	}
 
 
