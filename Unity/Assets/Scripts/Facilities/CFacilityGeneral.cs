@@ -109,7 +109,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		{	
 			if(m_CreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
-				CGameShips.Ship.GetComponent<CShipFacilities>().CreateFacility(m_FacilitySelected, GetComponent<CFacilityInterface>().FacilityId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
+				//CGameShips.Ship.GetComponent<CShipFacilities>().CreateFacility(m_FacilitySelected, GetComponent<CFacilityInterface>().FacilityId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
 				
 				m_FacilitySelected = CFacilityInterface.EType.INVALID;
 				m_LocalExpansionPortIdSelected = 0;

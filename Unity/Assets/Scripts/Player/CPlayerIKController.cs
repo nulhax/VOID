@@ -112,6 +112,12 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	public static void SerializeIKTarget(CNetworkStream _cStream)
 	{
 		GameObject cSelfActor = CGamePlayers.SelfActor;
+
+        if (cSelfActor == null)
+        {
+            return ;
+        }
+
 		CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
 				
 		if (cSelfActor != null && cSelfIKController.m_RightHandTarget != null)

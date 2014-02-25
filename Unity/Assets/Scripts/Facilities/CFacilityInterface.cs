@@ -44,6 +44,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		HallwayCorner,
 		HallwayTSection,
 		HallwayXSection,
+        Airlock,
 
 		MAX,
 	}
@@ -76,20 +77,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	
 	public EType FacilityType 
 	{
-		get { return(m_FacilityType.Get()); }
-
-		[AServerOnly]
-		set
-		{
-			if(m_FacilityType.Get() == EType.INVALID)
-			{
-				m_FacilityType.Set(value);
-			}
-			else
-			{
-				Debug.LogError("Cannot set facility type value twice!");
-			}
-		}
+        get { return (m_eType); }
 	}
 
 
@@ -99,7 +87,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_FacilityId = _cRegistrar.CreateNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_FacilityType = _cRegistrar.CreateNetworkVar<EType>(OnNetworkVarSync, EType.INVALID);
 	}
 
 
@@ -182,8 +169,29 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	}
 
 
+    void Awake()
+    {
+        // Empty
+    }
+
+
 	void Start()
 	{
+        if (CNetwork.IsServer)
+        {
+            // Register facility
+            CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(gameObject);
+
+            // Unregister facility
+            ThisNetworkView.EventPreDestory += () =>
+            {
+                CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(gameObject);
+            };
+
+            // Parent self to ship
+            ThisNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
+        }
+
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetPrefabType(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
@@ -253,8 +261,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     // Member Fields
 
 
+    public EType m_eType = EType.INVALID;
+
+
     CNetworkVar<uint> m_FacilityId = null;
-    CNetworkVar<EType> m_FacilityType = null;
 
 
     Dictionary<CAccessoryInterface.EType, List<GameObject>> m_mAccessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
