@@ -180,7 +180,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         {
             gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_RagdollHead;
             gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
-            Debug.Log("Attempted to set playr head to " + m_RagdollHead.name.ToString());
+            Debug.Log("Attempted to set player head to " + m_RagdollHead.name.ToString());
         }
     }
 
@@ -198,7 +198,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         {
             gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_PlayerHead;
             gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
-            Debug.Log("Attempted to set playr head to " + m_RagdollHead.name.ToString());
+            Debug.Log("Attempted to set player head to " + m_RagdollHead.name.ToString());
         }
 
         //Disable ragdoll and set position

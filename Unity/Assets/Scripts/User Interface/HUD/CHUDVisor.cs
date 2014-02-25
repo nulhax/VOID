@@ -131,7 +131,7 @@ public class CHUDVisor : MonoBehaviour
 				m_ShipIndicator.gameObject.SetActive(true);
 			
 			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
-			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera.camera;
+			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera;
 		}
 		else
 		{
@@ -139,12 +139,6 @@ public class CHUDVisor : MonoBehaviour
 			if(m_ShipIndicator.gameObject.activeSelf)
 				m_ShipIndicator.gameObject.SetActive(false);
 		}
-	}
-
-	private void UpdateVisorTransform(Vector3 _Position, Quaternion _Rotation)
-	{
-		transform.position = _Position;
-		transform.rotation = _Rotation;
 	}
 
 	private void ActivateUI()
