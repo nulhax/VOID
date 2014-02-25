@@ -75,7 +75,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
  
 	//Left hand
 	float 					m_fLeftHandIKWeight;
-    Transform				m_LeftHandPos;
+	Transform				m_LeftHandPos;
 	Transform				m_LeftHandTarget;	
 	const float 			m_kfLeftHandLerpTime = 0.75f;
 	float 					m_fLeftHandLerpTimer = 0.75f;		
@@ -213,27 +213,29 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 
     void LerpRightHand()
     {
-        if(m_fRightHandLerpTimer < m_kfRightHandLerpTime && m_RightHandPos != null)
+        if(m_fRightHandLerpTimer < m_kfRightHandLerpTime)
         {
             m_fRightHandLerpTimer += Time.deltaTime;   
 			
 			Vector3 pos = m_ThirdPersonAnim.GetIKPosition(AvatarIKGoal.RightHand);			
             float LerpFactor = m_fRightHandLerpTimer / m_kfRightHandLerpTime;
-			
-            m_RightHandPos.position = Vector3.Lerp(pos, m_RightHandTarget.position, LerpFactor);
+
+			if (m_RightHandPos != null)
+				m_RightHandPos.position = Vector3.Lerp(pos, m_RightHandTarget.position, LerpFactor);
         }        
     }
 
 	void LerpLeftHand()
 	{
-        if(m_fLeftHandLerpTimer < m_kfLeftHandLerpTime && m_LeftHandPos != null)
+		if(m_fLeftHandLerpTimer < m_kfLeftHandLerpTime)
 		{
 			m_fLeftHandLerpTimer += Time.deltaTime;   
 			
 			Vector3 pos = m_ThirdPersonAnim.GetIKPosition(AvatarIKGoal.LeftHand);			
 			float LerpFactor = m_fLeftHandLerpTimer / m_kfLeftHandLerpTime;
-			
-			m_LeftHandPos.position = Vector3.Lerp(pos, m_LeftHandTarget.position, LerpFactor);
+
+			if (m_LeftHandPos != null)
+				m_LeftHandPos.position = Vector3.Lerp(pos, m_LeftHandTarget.position, LerpFactor);
 		}        
 	}
 	
@@ -243,24 +245,30 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		{		
 			//Right hand IK						
 			//set the position and the rotation of the right hand where the external object is
-            if(m_RightHandPos != null)
+			if(m_RightHandTarget != null)
 			{
                 m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
                 m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_fRightHandIKWeight);
-													
-				m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.RightHand, m_RightHandPos.position);
-				m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.RightHand, m_RightHandPos.rotation);
+
+				if (m_RightHandPos != null)
+				{
+					m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.RightHand, m_RightHandPos.position);
+					m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.RightHand, m_RightHandPos.rotation);
+				}
 			}	
 
 			//Left hand IK						
 			//set the position and the rotation of the right hand where the external object is
-            if(m_LeftHandPos != null)
+			if(m_LeftHandTarget != null)
 			{
-                m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.LeftHand, m_fLeftHandIKWeight);
-                m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.LeftHand, m_fLeftHandIKWeight);
-				
-                m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.LeftHand, m_LeftHandPos.position);
-                m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.LeftHand, m_LeftHandPos.rotation);
+				m_ThirdPersonAnim.SetIKPositionWeight(AvatarIKGoal.LeftHand, m_fLeftHandIKWeight);
+				m_ThirdPersonAnim.SetIKRotationWeight(AvatarIKGoal.LeftHand, m_fLeftHandIKWeight);
+
+				if (m_LeftHandPos != null)
+				{
+					m_ThirdPersonAnim.SetIKPosition(AvatarIKGoal.LeftHand, m_LeftHandPos.position);
+					m_ThirdPersonAnim.SetIKRotation(AvatarIKGoal.LeftHand, m_LeftHandPos.rotation);
+				}
 			}
 		}
 	}  
