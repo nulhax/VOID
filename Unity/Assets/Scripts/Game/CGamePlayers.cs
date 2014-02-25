@@ -260,7 +260,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-			List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			    List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+                if (aPlayerSpawners == null ||
+                    aPlayerSpawners.Count == 0)
+                {
+                    break;
+                }
 				
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{
@@ -345,7 +351,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
         //CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);

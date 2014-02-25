@@ -72,6 +72,11 @@ public class CHUDVisor : MonoBehaviour
 
 	private void UpdateUI()
 	{
+        if (CGamePlayers.SelfActor == null)
+        {
+            return;
+        }
+
 		// Get the player oxygen supplu
 		float oxygenSupply = CGamePlayers.SelfActor.GetComponent<CPlayerSuit>().OxygenSupply;
 		float oxygenCapacity = CGamePlayers.SelfActor.GetComponent<CPlayerSuit>().OxygenCapacity;

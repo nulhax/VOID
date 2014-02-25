@@ -40,6 +40,8 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		ShipResources,
 		NaniteCapsule,
 		Engine,
+        AirlockInternal,
+        FacilityDoor,
 
 		MAX
 	}
