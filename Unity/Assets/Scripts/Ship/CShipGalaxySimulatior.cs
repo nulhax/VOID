@@ -58,6 +58,7 @@ public class CShipGalaxySimulatior : MonoBehaviour
 		m_GalaxyLight.light.cullingMask |= 1 << LayerMask.NameToLayer("Galaxy");
 		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
 		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
+		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 	}
 
 	public void Update()

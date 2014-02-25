@@ -15,7 +15,6 @@ using System.Collections;
 
 [RequireComponent(typeof(CActorPowerConsumer))]
 [RequireComponent(typeof(CActorHealth))]
-[RequireComponent(typeof(Collider))]
 public class CShortCircuit : MonoBehaviour
 {
 	public bool shorting { get { return shorting_internal; } }
