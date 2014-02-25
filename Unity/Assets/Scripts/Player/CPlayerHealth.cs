@@ -10,8 +10,6 @@
 //  Mail    	:  @hotmail.com
 //
 
-// NOTE:
-//      Server goes into player's health script
 
 // Namespaces
 using UnityEngine;
@@ -104,7 +102,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 }
 
                 // Trigger EventHealthChanged
-                EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                if (EventHealthChanged != null)
+                {
+                    EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                }
             }
         }
     }
@@ -169,21 +170,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
-    void Start()
-    {
-        // Set the player to alive
-        if (Health == MaxHealth)
-        {
-            CurrentHealthState = HealthState.ALIVE;
-        }
-    }
-
-
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
         //                                              Type   Callback          Initial Vlaue
 		m_fHealth        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.INVALID);
+        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.ALIVE);
 		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
         m_fTimerDowned   = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
@@ -263,7 +254,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
              (PrevHealthState != CurrentHealthState))
         {
             // Trigger EventHealthStateChanged
-            EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
+            if (EventHealthStateChanged != null)
+            {
+                EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
+            }
         }
     }
 
@@ -274,6 +268,14 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         if (CurrentHealthState == HealthState.DOWNED)
         {
             fTimerDowned += Time.deltaTime;
+
+            if (fTimerDowned >= k_fTimerDownedMaxDuration)
+            {
+                if (CNetwork.IsServer)
+                {
+                    UpdateHealthState();
+                }
+            }
         }
     }
 
@@ -289,12 +291,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     public void ApplyHeal(float _fValue)
     {
         Health += _fValue;
-    }
-		 
-
-    void OnDestroy()
-    {
-        
     }
 
 
@@ -313,12 +309,17 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     void UpdateAtmosphereEffects() { }
 
 
-    [AServerOnly]
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
         // If the updated network var was the health state
         if (_cVarInstance == m_fHealth)
         {
+            if (CNetwork.IsServer)
+            {
+                // Update health states
+                UpdateHealthState();
+            }
+
             // Switch on the current health state
             switch (CurrentHealthState)
             {
@@ -386,6 +387,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                              "Health: " + Math.Round(m_fHealth.Get(), 2) + "/" + k_fMaxHealth);
 		}
     }
+
+
+    // Unused Functions
+    void Start(){}
+    void OnDestroy(){}
 	
 
 // Member Fields
@@ -403,4 +409,3 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
     CNetworkVar<float> m_fTimerDowned;
 }
-	
