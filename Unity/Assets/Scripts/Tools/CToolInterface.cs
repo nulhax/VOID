@@ -52,6 +52,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 		Norbert,
 		HealingKit,
 		AK47,
+		MiningDrill,
 
 		MAX
 	}
@@ -211,7 +212,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		if (IsHeld)
         { 
-            Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform;
+            Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
             gameObject.transform.rotation = ActorHead.rotation;
         }
 	}

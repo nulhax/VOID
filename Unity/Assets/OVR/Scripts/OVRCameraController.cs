@@ -77,7 +77,7 @@ public class OVRCameraController : OVRComponent
 	
 	// Set to true if we want the rotation of the camera controller to be influenced by tracker
 	public bool  		TrackerRotatesY	= false;
-	
+
 	public bool    		PortraitMode 	 = false; // We currently default to landscape mode for render
 	private bool 		PrevPortraitMode = false;
 	
@@ -465,7 +465,7 @@ public class OVRCameraController : OVRComponent
 	{
 		TrackerRotatesY = trackerRotatesY;
 	}
-	
+
 	// Camera orientation and position
 	
 	// GetCameraOrientationEulerAngles

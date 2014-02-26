@@ -53,19 +53,32 @@ MonoBehaviour:
     paddingRight: 0
     paddingTop: 0
     paddingBottom: 0
-  - name: reticle
-    x: 0
-    y: 139
-    width: 40
-    height: 40
+  - name: reticleInner
+    x: 501
+    y: 504
+    width: 8
+    height: 8
     borderLeft: 0
     borderRight: 0
     borderTop: 0
     borderBottom: 0
-    paddingLeft: 12
-    paddingRight: 12
-    paddingTop: 12
-    paddingBottom: 12
+    paddingLeft: 28
+    paddingRight: 28
+    paddingTop: 28
+    paddingBottom: 28
+  - name: reticleOuter
+    x: 0
+    y: 131
+    width: 48
+    height: 48
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 8
+    paddingRight: 8
+    paddingTop: 8
+    paddingBottom: 8
   mPixelSize: 1
   mReplacement: {fileID: 0}
   mCoordinates: 0

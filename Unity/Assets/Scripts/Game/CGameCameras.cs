@@ -33,39 +33,51 @@ public class CGameCameras : MonoBehaviour
 	// Member Fields
 	public bool m_UseOculusRift = false;
 
-	private static GameObject s_ShipCamera = null;
-	private static GameObject s_GalaxyCamera = null;
+	private static GameObject s_MainCamera = null;
+	private static GameObject s_ProjectedCamera = null;
+	private static GameObject s_HUDCamera = null;
+
+	private static bool s_IsPlayerInsideShip = false;
 
 	private static bool s_OculusRiftActive = false;
 
-	private static bool s_IsObserverOutside = false;
 	private static CGameCameras s_Instance = null;
 	
 	// Member Properties
 	public static CGameCameras Instance
 	{
-		get
-		{
-			return(s_Instance);
-		}
+		get { return(s_Instance); }
 	}
 	
-	public static GameObject GalaxyCamera
+	public static GameObject ProjectedCamera
 	{
-		get
-		{
-			return(s_GalaxyCamera);
-		}
+		get { return(s_ProjectedCamera);}
 	}
 	
-	public static GameObject PlayersHeadCamera
+	public static GameObject MainCamera
 	{
-		get
-		{
-			if(!s_IsObserverOutside)
-				return(s_ShipCamera);
+		get { return(s_MainCamera); }
+	}
+
+	public static GameObject CameraRenderingGalaxy
+	{
+		get 
+		{ 
+			if(!s_IsPlayerInsideShip)
+				return(s_MainCamera); 
 			else
-				return(s_GalaxyCamera);
+				return(s_ProjectedCamera); 
+		}
+	}
+	
+	public static GameObject CameraRenderingDefault
+	{
+		get 
+		{ 
+			if(!s_IsPlayerInsideShip)
+				return(s_ProjectedCamera); 
+			else
+				return(s_MainCamera); 
 		}
 	}
 
@@ -78,11 +90,10 @@ public class CGameCameras : MonoBehaviour
 	public void Start()
 	{	
 		s_Instance = this;
-		
-		CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
+
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	}
-
+	
 	public void Update()
 	{
 		if(s_OculusRiftActive)
@@ -105,95 +116,159 @@ public class CGameCameras : MonoBehaviour
 			UpdateCameraTransforms();
 		}
 	}
-	
-	public static void SetPlayersViewPerspectiveToShip(Transform _PlayerHead)
+
+	public static void SetupCameras()
 	{
-		s_IsObserverOutside = false;
-		
-		// Set the perspective of the ship camera
-		s_ShipCamera.transform.parent = _PlayerHead;
-		s_ShipCamera.transform.localPosition = Vector3.zero;
-		s_ShipCamera.transform.localRotation = Quaternion.identity;
-		
-		// Unparent the galaxy camera
-		s_GalaxyCamera.transform.parent = null;
-	}
-	
-	public static void SetPlayersViewPerspectiveToGalaxy(Transform _PlayerHead)
-	{
-		s_IsObserverOutside = true;
-		
-		// Set the perspective of the galaxy camera
-		s_GalaxyCamera.transform.parent = _PlayerHead;
-		s_GalaxyCamera.transform.localPosition = Vector3.zero;
-		s_GalaxyCamera.transform.localRotation = Quaternion.identity;
-		
-		// Unparent the ship camera
-		s_ShipCamera.transform.parent = null;
-	}
-	
-	public static void SetDefaultViewPerspective()
-	{
-		// Ensure player actor exists
-		if (CGamePlayers.SelfActor != null)
+		// If wanting to use oculus, check if the device is intialised
+		if(s_Instance.m_UseOculusRift)
 		{
-			SetPlayersViewPerspectiveToShip(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform);
+			s_OculusRiftActive = OVRDevice.IsInitialized() && OVRDevice.SensorCount > 0;
 		}
+		
+		// Instantiate the head camera
+		if(s_OculusRiftActive)
+		{
+			s_MainCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/CameraOVR"));
+			s_MainCamera.name = "Camera_MainOVR";
+
+			// Set the main camera parented to the player
+			s_MainCamera.transform.parent = CGamePlayers.SelfActor.transform;
+
+			// Set the rift to track the body rotations
+			s_MainCamera.GetComponent<OVRCameraController>().FollowOrientation = CGamePlayers.SelfActorHead.transform;
+		}
+		else
+		{
+			s_MainCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/Camera"));
+			s_MainCamera.name = "Camera_Main";
+
+			// Set the main camera parented to the players head
+			s_MainCamera.transform.parent = CGamePlayers.SelfActorHead.transform;
+		}
+
+		// Move the camera to the head location
+		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
+		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
+		
+		// Instantiate the projected camera (copy from head camera)
+		s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
+
+		// Clean name up
+		s_ProjectedCamera.name = s_ProjectedCamera.name.Replace("Main", "Proj");
+		s_ProjectedCamera.name = s_ProjectedCamera.name.Replace("(Clone)", "");
+		
+		// Set the defult view perspective
+		SetPlayersViewPerspective(true);
+		
+		// Instantiate the 3D HUD
+		if(s_OculusRiftActive)
+		{
+			s_HUDCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"))).transform.FindChild("CameraOVR").gameObject;
+		}
+		else
+		{
+			s_HUDCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).transform.FindChild("Camera").gameObject;
+		}
+	}
+	
+	public static void SetPlayersViewPerspective(bool _IsInsideShip)
+	{
+		s_IsPlayerInsideShip = _IsInsideShip;
+
+		if(s_OculusRiftActive)
+		{
+			if(_IsInsideShip)
+			{
+				SetCameraDefaultValues(s_MainCamera.transform.FindChild("CameraLeft").camera, 1.0f);
+				SetCameraDefaultValues(s_MainCamera.transform.FindChild("CameraRight").camera, 4.0f);
+
+				SetCameraGalaxyValues(s_ProjectedCamera.transform.FindChild("CameraLeft").camera, 0.0f);
+				SetCameraGalaxyValues(s_ProjectedCamera.transform.FindChild("CameraRight").camera, 3.0f);
+			}
+			else
+			{
+				SetCameraDefaultValues(s_ProjectedCamera.transform.FindChild("CameraLeft").camera, 1.0f);
+				SetCameraDefaultValues(s_ProjectedCamera.transform.FindChild("CameraRight").camera, 4.0f);
+
+				SetCameraGalaxyValues(s_MainCamera.transform.FindChild("CameraLeft").camera, 0.0f);
+				SetCameraGalaxyValues(s_MainCamera.transform.FindChild("CameraRight").camera, 3.0f);
+			}
+		}
+		else
+		{
+			if(_IsInsideShip)
+			{
+				SetCameraDefaultValues(s_MainCamera.camera, 1.0f);
+				SetCameraGalaxyValues(s_ProjectedCamera.camera, 0.0f);
+			}
+			else
+			{
+				SetCameraDefaultValues(s_ProjectedCamera.camera, 1.0f);
+				SetCameraGalaxyValues(s_MainCamera.camera, 0.0f);
+			}
+		}
+	}
+
+	private static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
+	{
+		// Set the clear flags / culling mask
+		_Camera.clearFlags = CameraClearFlags.SolidColor;
+		_Camera.cullingMask = 1 << LayerMask.NameToLayer("Galaxy");
+
+		// Set the depth
+		_Camera.depth = _Depth;
+
+//		// Remove the current audio listener
+//		if(_Camera.gameObject.GetComponent<AudioListener>() != null)
+//			Destroy(_Camera.gameObject.GetComponent<AudioListener>());
+	}
+	
+	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
+	{
+		// Set the clear flags / culling mask
+		_Camera.clearFlags = CameraClearFlags.Nothing;
+		_Camera.cullingMask = int.MaxValue;
+		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Galaxy"));
+		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
+		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 2D"));
+		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 3D"));
+
+		// Set the depth
+		_Camera.depth = _Depth;
+
+//		// Set as the current audio listener
+//		if(_Camera.gameObject.GetComponent<AudioListener>() == null)
+//			_Camera.gameObject.AddComponent<AudioListener>();
 	}
 	
 	private void UpdateCameraTransforms()
 	{		
-		if(!s_IsObserverOutside)
+		// Transfer the projected camera based off the head camera
+		if(s_IsPlayerInsideShip)
 		{
-			// Transfer the galaxy camera based off the ship camera
-			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_ShipCamera.transform.position, s_ShipCamera.transform.rotation, s_GalaxyCamera.transform);
+			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);
 		}
 		else
 		{
-			// Transfer the ship camera based off the galaxy camera
-			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_GalaxyCamera.transform.position, s_GalaxyCamera.transform.rotation, s_ShipCamera.transform);	
+			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
 		}
-	}
-	
-	private void OnConnect()
-	{
-		// If wanting to use oculus, check if the device is intialised
-		if(m_UseOculusRift)
-		{
-			s_OculusRiftActive = OVRDevice.IsInitialized() && OVRDevice.SensorCount > 0;
-		}
-
-		// Instantiate the galaxy camera
-		s_GalaxyCamera = s_OculusRiftActive ? 
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCameraOVR"))):
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/GalaxyCamera")));
-		
-		// Instantiate the ship camera
-		s_ShipCamera = s_OculusRiftActive ? 
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCameraOVR"))):
-			((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/ShipCamera")));
-
-		// Ensure the HUD is destroyed if existing
-		if(CHUD3D.Instance != null)
-			Destroy(CHUD3D.Instance.gameObject);
-
-		// Instantiate the 3D HUD
-		if(s_OculusRiftActive)
-			GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"));
-		else
-			GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"));
 	}
 	
 	private void OnDisconnect()
 	{
-		if(s_GalaxyCamera != null)
+		if(s_ProjectedCamera != null)
 		{
-			Destroy(s_GalaxyCamera);
+			Destroy(s_ProjectedCamera);
 		}
 		
-		if(s_ShipCamera != null)
+		if(s_MainCamera != null)
 		{
-			Destroy(s_ShipCamera);
+			Destroy(s_MainCamera);
+		}
+
+		if(CHUD3D.Instance.gameObject != null)
+		{
+			Destroy(CHUD3D.Instance.gameObject);
 		}
 	}
 };

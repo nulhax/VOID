@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -132,8 +132,7 @@ public class CHUDVisor : MonoBehaviour
 			if(!m_ShipIndicator.gameObject.activeSelf)
 				m_ShipIndicator.gameObject.SetActive(true);
 			
-			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
-			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera;
+			m_ShipIndicator.Target = CGameShips.GalaxyShip.transform;
 		}
 		else
 		{

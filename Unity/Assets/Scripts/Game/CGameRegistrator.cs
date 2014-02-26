@@ -348,6 +348,7 @@ public class CGameRegistrator : MonoBehaviour
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert         , ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.HealingKit      , ENetworkPrefab.ToolMedical);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47            , ENetworkPrefab.ToolAk47);   
+		CToolInterface.RegisterPrefab(CToolInterface.EType.MiningDrill     , ENetworkPrefab.ToolMiningDrill);  
 	}
 
 
