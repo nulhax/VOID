@@ -27,6 +27,14 @@ public class CFireHazard : MonoBehaviour
 	{
 		if (particleSystem == null)
 			Debug.LogError("FIX FIRE ON  " + transform.parent.name);
+
+		// Add components at runtime instead of updating all the prefabs.
+		{
+			// CAudioCue
+			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+			audioCue.m_arAudioClipPool = new AudioClip[1];
+			audioCue.m_arAudioClipPool[0] = Resources.Load<AudioClip>("Resources/Fire/Fire.wav");
+		}
 	}
 
 	void Start()
@@ -63,6 +71,7 @@ public class CFireHazard : MonoBehaviour
 		{
 			case 0:	// Begin fire.
 				{
+					GetComponent<CAudioCue>().Play(1.0f, true, 0);
 					particleSystem.Play();
 					GetComponent<CFireHazard>().burning_internal = true;
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
@@ -71,6 +80,7 @@ public class CFireHazard : MonoBehaviour
 
 			case 2:	// End fire.
 				{
+					GetComponent<CAudioCue>().StopAllSound();
 					particleSystem.Stop();
 					GetComponent<CFireHazard>().burning_internal = false;
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);

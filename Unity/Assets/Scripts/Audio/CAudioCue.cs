@@ -112,8 +112,8 @@ public class CAudioCue : MonoBehaviour
 		newAudioSource.clip = m_arAudioClipPool[index];
 		
 		//Allow the AudioSystem to handle the new audio source.
-		CAudioSystem.Play( 	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
-								   		Random.Range(m_fPitchMin, m_fpitchMax), loop,
+		CAudioSystem.Play(	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+										Random.Range(m_fPitchMin, m_fpitchMax), loop,
 										m_fFadeInTimeList[index],
 										m_eSoundType, true );	
 		
@@ -157,8 +157,8 @@ public class CAudioCue : MonoBehaviour
 			
 		//Allow the AudioSystem to handle the new audio source.
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
-											  		 	Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
-											   			Random.Range(m_fPitchMin, m_fpitchMax), loop,
+														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+														Random.Range(m_fPitchMin, m_fpitchMax), loop,
 														m_fFadeInTimeList[index],
 														m_eSoundType, true);	
 		
