@@ -37,21 +37,26 @@ public class CGameCameras : MonoBehaviour
 	private static GameObject s_ProjectedCamera = null;
 	private static GameObject s_HUDCamera = null;
 
-	private static bool s_IsPlayerInsideShip = false;
+	private static bool s_IsObserverInsideShip = false;
 
 	private static bool s_OculusRiftActive = false;
 
+	private static Transform s_CachedMainCameraLeft = null;
+	private static Transform s_CachedMainCameraRight = null;
+
+	private static Transform s_CachedProjectedCameraLeft = null;
+	private static Transform s_CachedProjectedCameraRight = null;
+
+	private static Transform s_CachedHUDCameraLeft = null;
+	private static Transform s_CachedHUDCameraRight = null;
+
 	private static CGameCameras s_Instance = null;
-	
+
+
 	// Member Properties
 	public static CGameCameras Instance
 	{
 		get { return(s_Instance); }
-	}
-	
-	public static GameObject ProjectedCamera
-	{
-		get { return(s_ProjectedCamera);}
 	}
 	
 	public static GameObject MainCamera
@@ -59,26 +64,49 @@ public class CGameCameras : MonoBehaviour
 		get { return(s_MainCamera); }
 	}
 
-	public static GameObject CameraRenderingGalaxy
+	public static Transform MainCameraLeft
 	{
-		get 
-		{ 
-			if(!s_IsPlayerInsideShip)
-				return(s_MainCamera); 
-			else
-				return(s_ProjectedCamera); 
-		}
+		get { return(s_CachedMainCameraLeft); }
+	}
+
+	public static Transform MainCameraRight
+	{
+		get { return(s_CachedMainCameraRight); }
+	}
+
+	public static GameObject ProjectedCamera
+	{
+		get { return(s_ProjectedCamera);}
 	}
 	
-	public static GameObject CameraRenderingDefault
+	public static Transform ProjectedCameraLeft
 	{
-		get 
-		{ 
-			if(!s_IsPlayerInsideShip)
-				return(s_ProjectedCamera); 
-			else
-				return(s_MainCamera); 
-		}
+		get { return(s_CachedProjectedCameraLeft); }
+	}
+	
+	public static Transform ProjectedCameraRight
+	{
+		get { return(s_CachedProjectedCameraRight); }
+	}
+
+	public static GameObject HUDCamera
+	{
+		get { return(s_HUDCamera); }
+	}
+
+	public static Transform HUDCameraLeft
+	{
+		get { return(s_CachedHUDCameraLeft); }
+	}
+
+	public static Transform HUDCameraRight
+	{
+		get { return(s_CachedHUDCameraRight); }
+	}
+
+	public static bool IsObserverInsideShip
+	{
+		get { return(s_IsObserverInsideShip); }
 	}
 
 	public static bool IsOculusRiftActive
@@ -136,6 +164,22 @@ public class CGameCameras : MonoBehaviour
 
 			// Set the rift to track the body rotations
 			s_MainCamera.GetComponent<OVRCameraController>().FollowOrientation = CGamePlayers.SelfActorHead.transform;
+
+			// Cache the left and right camera
+			s_CachedMainCameraLeft = s_MainCamera.transform.FindChild("CameraLeft");
+			s_CachedMainCameraRight = s_MainCamera.transform.FindChild("CameraRight");
+
+			// Instantiate the projected camera (copy from head camera)
+			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
+			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_ProjectedOVR";
+
+			// Cache the left and right camera
+			s_CachedProjectedCameraLeft = s_ProjectedCamera.transform.FindChild("CameraLeft");
+			s_CachedProjectedCameraRight = s_ProjectedCamera.transform.FindChild("CameraRight");
+
+			// Set to not update orientation automatically
+			s_CachedProjectedCameraLeft.GetComponent<OVRCamera>().m_DontUpdateOrientation = true;
+			s_CachedProjectedCameraRight.GetComponent<OVRCamera>().m_DontUpdateOrientation = true;
 		}
 		else
 		{
@@ -144,18 +188,15 @@ public class CGameCameras : MonoBehaviour
 
 			// Set the main camera parented to the players head
 			s_MainCamera.transform.parent = CGamePlayers.SelfActorHead.transform;
+
+			// Instantiate the projected camera (copy from head camera)
+			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
+			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
 		}
 
 		// Move the camera to the head location
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
-		
-		// Instantiate the projected camera (copy from head camera)
-		s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
-
-		// Clean name up
-		s_ProjectedCamera.name = s_ProjectedCamera.name.Replace("Main", "Proj");
-		s_ProjectedCamera.name = s_ProjectedCamera.name.Replace("(Clone)", "");
 		
 		// Set the defult view perspective
 		SetPlayersViewPerspective(true);
@@ -169,29 +210,33 @@ public class CGameCameras : MonoBehaviour
 		{
 			s_HUDCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).transform.FindChild("Camera").gameObject;
 		}
+
+		// Cache the left and right camera
+		s_CachedHUDCameraLeft = s_HUDCamera.transform.FindChild("CameraLeft");
+		s_CachedHUDCameraRight = s_HUDCamera.transform.FindChild("CameraRight");
 	}
 	
 	public static void SetPlayersViewPerspective(bool _IsInsideShip)
 	{
-		s_IsPlayerInsideShip = _IsInsideShip;
+		s_IsObserverInsideShip = _IsInsideShip;
 
 		if(s_OculusRiftActive)
 		{
 			if(_IsInsideShip)
 			{
-				SetCameraDefaultValues(s_MainCamera.transform.FindChild("CameraLeft").camera, 1.0f);
-				SetCameraDefaultValues(s_MainCamera.transform.FindChild("CameraRight").camera, 4.0f);
+				SetCameraDefaultValues(s_CachedMainCameraLeft.camera, 1.0f);
+				SetCameraDefaultValues(s_CachedMainCameraRight.camera, 4.0f);
 
-				SetCameraGalaxyValues(s_ProjectedCamera.transform.FindChild("CameraLeft").camera, 0.0f);
-				SetCameraGalaxyValues(s_ProjectedCamera.transform.FindChild("CameraRight").camera, 3.0f);
+				SetCameraGalaxyValues(s_CachedProjectedCameraLeft.camera, 0.0f);
+				SetCameraGalaxyValues(s_CachedProjectedCameraRight.camera, 3.0f);
 			}
 			else
 			{
-				SetCameraDefaultValues(s_ProjectedCamera.transform.FindChild("CameraLeft").camera, 1.0f);
-				SetCameraDefaultValues(s_ProjectedCamera.transform.FindChild("CameraRight").camera, 4.0f);
+				SetCameraDefaultValues(s_CachedProjectedCameraLeft.camera, 1.0f);
+				SetCameraDefaultValues(s_CachedProjectedCameraRight.camera, 4.0f);
 
-				SetCameraGalaxyValues(s_MainCamera.transform.FindChild("CameraLeft").camera, 0.0f);
-				SetCameraGalaxyValues(s_MainCamera.transform.FindChild("CameraRight").camera, 3.0f);
+				SetCameraGalaxyValues(s_CachedMainCameraLeft.camera, 0.0f);
+				SetCameraGalaxyValues(s_CachedMainCameraRight.camera, 3.0f);
 			}
 		}
 		else
@@ -217,10 +262,6 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
-
-//		// Remove the current audio listener
-//		if(_Camera.gameObject.GetComponent<AudioListener>() != null)
-//			Destroy(_Camera.gameObject.GetComponent<AudioListener>());
 	}
 	
 	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
@@ -235,22 +276,37 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
-
-//		// Set as the current audio listener
-//		if(_Camera.gameObject.GetComponent<AudioListener>() == null)
-//			_Camera.gameObject.AddComponent<AudioListener>();
 	}
 	
 	private void UpdateCameraTransforms()
 	{		
 		// Transfer the projected camera based off the head camera
-		if(s_IsPlayerInsideShip)
+		if(s_IsObserverInsideShip)
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);
 		}
 		else
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
+		}
+
+		// Update the HUD camera transform
+		s_HUDCamera.transform.position = s_MainCamera.transform.position;
+		s_HUDCamera.transform.rotation = s_MainCamera.transform.rotation;
+
+		if(CGameCameras.IsOculusRiftActive)
+		{
+			// Update the left/right HUD cameras transform
+			s_CachedHUDCameraLeft.position = s_CachedMainCameraLeft.position;
+			s_CachedHUDCameraLeft.rotation = s_CachedMainCameraLeft.rotation;
+			s_CachedHUDCameraRight.position = s_CachedMainCameraRight.position;
+			s_CachedHUDCameraRight.rotation = s_CachedMainCameraRight.rotation;
+
+			// Update the left/right galaxy cameras transform
+			s_CachedProjectedCameraLeft.localPosition = s_CachedMainCameraLeft.localPosition;
+			s_CachedProjectedCameraLeft.localRotation = s_CachedMainCameraLeft.localRotation;
+			s_CachedProjectedCameraRight.localPosition = s_CachedMainCameraRight.localPosition;
+			s_CachedProjectedCameraRight.localRotation = s_CachedMainCameraRight.localRotation;
 		}
 	}
 	

@@ -128,7 +128,6 @@ public class OVRCamera : OVRComponent
 		// being set to render are satisfied. 
 		if(CameraController.CallInPreRender == false)
 			SetCameraOrientation();
-	
 	}
 	
 	// OnPreRender

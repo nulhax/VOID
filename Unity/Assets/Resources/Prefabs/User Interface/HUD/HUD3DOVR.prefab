@@ -550,7 +550,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: .100000001}
+  m_LocalPosition: {x: 0, y: 0, z: .0500000007}
   m_LocalScale: {x: .00100000005, y: .00100000005, z: .00100000005}
   m_Children:
   - {fileID: 400044}
@@ -692,7 +692,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100032}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: .100000001}
+  m_LocalPosition: {x: 0, y: 0, z: .0250000004}
   m_LocalScale: {x: .00100000005, y: .00100000005, z: .00100000005}
   m_Children:
   - {fileID: 400040}
@@ -1151,7 +1151,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HUDCamera: {fileID: 100056}
-  m_HUDCameraFOV: 111
   m_Visor: {fileID: 11400002}
   m_ReticleOuter: {fileID: 11400084}
 --- !u!114 &11400008
@@ -1671,7 +1670,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3001
   mAlpha: 0
   mClipping: 4
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
@@ -1919,7 +1918,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3001
   mAlpha: 0
   mClipping: 4
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
@@ -1959,7 +1958,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3001
   mAlpha: 1
   mClipping: 0
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
@@ -2223,6 +2222,7 @@ MonoBehaviour:
   m_WithinBoundsIcon: {fileID: 100038}
   m_OutOfBoundsIcon: {fileID: 100034}
   m_UseOutOfBounds: 1
+  m_OVRDominantEye: 2
 --- !u!114 &11400050
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2254,7 +2254,7 @@ MonoBehaviour:
   mPivot: 4
   mWidth: 54
   mHeight: 54
-  mDepth: 0
+  mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
@@ -2338,13 +2338,13 @@ MonoBehaviour:
     absolute: 500
   mColor: {r: .156862751, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 747
+  mWidth: 1200
   mHeight: 747
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1
+  aspectRatio: 1.60642576
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Glow - Inner
   mType: 1
@@ -2657,7 +2657,7 @@ MonoBehaviour:
   mClipping: 0
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
   mClipSoftness: {x: 4, y: 4}
-  mDepth: 4
+  mDepth: 0
 --- !u!114 &11400084
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2672,6 +2672,7 @@ MonoBehaviour:
   m_WithinBoundsIcon: {fileID: 100050}
   m_OutOfBoundsIcon: {fileID: 0}
   m_UseOutOfBounds: 0
+  m_OVRDominantEye: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

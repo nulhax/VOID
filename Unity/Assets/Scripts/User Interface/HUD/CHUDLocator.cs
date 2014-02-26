@@ -24,7 +24,12 @@ using System.Collections.Generic;
 public class CHUDLocator : MonoBehaviour
 {
 	// Member Types
-	
+	public enum EDominantEye
+	{
+		BOTH,
+		RIGHT,
+		LEFT
+	}
 	
 	// Member Delegates & Events
 
@@ -34,6 +39,8 @@ public class CHUDLocator : MonoBehaviour
 	public GameObject m_OutOfBoundsIcon = null;
 
 	public bool m_UseOutOfBounds = true;
+
+	public EDominantEye m_OVRDominantEye = EDominantEye.BOTH;
 
 	private Transform m_Target = null;
 	private bool m_OutsideBounds = false;
@@ -77,26 +84,37 @@ public class CHUDLocator : MonoBehaviour
 		// Ensure there is a target
 		if(m_Target == null)
 			return;
-		
+
+		// Figure out which camera to use
+		bool useMainCamera = m_Target.gameObject.layer != LayerMask.NameToLayer("Galaxy");
+
 		// Select the camera depending on which layer the target is
-		GameObject gameCamera = m_Target.gameObject.layer == LayerMask.NameToLayer("Galaxy") ?
-			CGameCameras.CameraRenderingGalaxy : CGameCameras.CameraRenderingDefault;
-		
+		Transform gameCamera = null;
+		Camera HUDCamera = null;
+
+		// Get the position from the world - viewport
 		Vector3 pos = Vector3.zero;
-		Camera HUDCamera = CHUD3D.HUDCamera.camera;
-		
-		if(CGameCameras.IsOculusRiftActive)
+
+		// If using the rift, need to take into consideration eye dominance
+		if(CGameCameras.IsOculusRiftActive && m_OVRDominantEye != EDominantEye.BOTH)
 		{
-			Camera left = gameCamera.transform.FindChild("CameraLeft").camera;
-			Camera right = gameCamera.transform.FindChild("CameraRight").camera;
-			
-			Vector3 leftPos = left.WorldToViewportPoint(m_Target.position);
-			Vector3 rightPos = right.WorldToViewportPoint(m_Target.position);
-			
-			pos = (leftPos + rightPos) / 2.0f;
+			if(m_OVRDominantEye == EDominantEye.RIGHT)
+			{
+				gameCamera = useMainCamera ? CGameCameras.MainCameraRight : CGameCameras.ProjectedCameraRight;
+				HUDCamera = CGameCameras.HUDCameraRight.camera;
+				pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
+			}
+			else if(m_OVRDominantEye == EDominantEye.LEFT)
+			{
+				gameCamera = useMainCamera ? CGameCameras.MainCameraLeft : CGameCameras.ProjectedCameraLeft;
+				HUDCamera = CGameCameras.HUDCameraLeft.camera;
+				pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
+			}
 		}
 		else
 		{
+			gameCamera = useMainCamera ? CGameCameras.MainCamera.transform : CGameCameras.ProjectedCamera.transform;
+			HUDCamera = CGameCameras.HUDCamera.camera;
 			pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
 		}
 		
@@ -127,15 +145,15 @@ public class CHUDLocator : MonoBehaviour
 		if(m_OutsideBounds)
 		{
 			// Calculate the difference vector
-			Vector3 dir = (m_Target.position - gameCamera.transform.position).normalized;
+			Vector3 dir = (m_Target.position - gameCamera.position).normalized;
 			
 			// Project the vector onto the cameras facing plane
-			Vector3 projRight = Vector3.Project(dir, gameCamera.transform.right);
-			Vector3 projUp = Vector3.Project(dir, gameCamera.transform.up);
+			Vector3 projRight = Vector3.Project(dir, gameCamera.right);
+			Vector3 projUp = Vector3.Project(dir, gameCamera.up);
 			Vector3 projTot = (projRight + projUp).normalized;
 			
 			// Find the new position from the totalprojection normalised rotated by the camera facing direction
-			Vector3 newPos = Quaternion.Inverse(gameCamera.transform.rotation) * projTot;
+			Vector3 newPos = Quaternion.Inverse(gameCamera.rotation) * projTot;
 			
 			// Set this -1, 1 space back to 0 1 space.
 			pos.x = ((newPos.x * m_MaxDistance) + 1.0f) / 2.0f;
