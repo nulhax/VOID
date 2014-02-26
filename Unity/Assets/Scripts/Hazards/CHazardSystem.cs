@@ -144,39 +144,253 @@ public class CHazardSystem : MonoBehaviour
     }
 
 
-    // DEBUG WORK IN PROGRESS PUT HERE TO SAVE
-//    #include <Windows.h>
+// DEBUG WORK IN PROGRESS PUT HERE TO SAVE
+//#include <Windows.h>
 //#include <iostream>
+//#include <stdlib.h>
+//#include <time.h>
 
 //using namespace std;
 
+//enum HazardType
+//{
+//    HAZARD_NONE        = -1,
+
+//    HAZARD_FIRE        =  0,
+//    HAZARD_HULL_BREACH =  1,
+//    HAZARD_MALFUNCTION =  2,
+
+//    HAZARD_MAX
+//};
+
 //float CalculateScaledValue(float _fX, float _fNewMin = 0.0f, float _fNewMax = 100.0f, float _fOldMin = 0.0f, float _fOldMax = 100.0f);
+//int GetTotalHazardsOfType(HazardType _eType);
+
+//HazardType HazardUpdate();
 
 //int main()
 //{
-//    float iTotalHazards = 100;
-//    float iFireHazards = 50;
-//    float iHullBreaches = 25;
-//    float iAtmos = 25;
+//    // // // WINDOWS // // //
+//    srand((unsigned int)time(NULL));
+//    // // // WINDOWS // // //
 
-//    float fDifficultyMod = 0.5f * 100.0f;
+//    float TimePrev  = 0.0f;
+//    float TimeCurr  = 0.0f;
+//    float TimeDelta = 0.0f;
+//    float Timer = 0.0f;
 
-//    // Inversion logic needs work
-//    // Must convert more common (higher value) hazards to lower percentage ratio
+//    while (true)
+//    {
+//        TimePrev  = TimeCurr;
+//        TimeCurr  = time(NULL);
+//        TimeDelta = TimeCurr - TimePrev;
 
-//    float fRatioFire =  (1.0f - (iFireHazards / iTotalHazards)) * 100.0f;
-//    float fRatioHullBreach = (1.0f - (iHullBreaches / iTotalHazards)) * 100.0f;
-//    float fRatioAtmos = (1.0f - (iAtmos / iTotalHazards)) * 100.0f;
-//  //  float fDebug;
+//        Timer += TimeDelta;
 
-//    cout << "Fire ratio: " << fRatioFire << endl << "Hull breach ratio: " << fRatioHullBreach << endl << "Atmo ratio: " << fRatioAtmos << endl << endl;
+//        if (Timer >= 1000.0f)
+//        {
+//            Timer = 0.0f;
+//            cout << "HIT" << endl;
+//            //HazardUpdate();
+//        }
+//    }
 
-//    cout << "Threshold One: " << CalculateScaledValue(fDifficultyMod);
+////    // // // DEBUG // // //
+////    cout << "---------------" << endl;
+////    // // // DEBUG // // //
+////
+////    // // // WORKING // // //
+////    float Total              = 100.0f;
+////    float Difficulty         = Total - 75.0f;
+////    float WeightedDifficulty = Difficulty;
+////    float Remainder          = Total - Difficulty;
+////
+////    float FireHazards   = 125.0f;
+////    float HullBreaches  = 30.0f;
+////    float Malfuncs      = 55.0f;
+////    float TotalHazards  = FireHazards + HullBreaches + Malfuncs;
+////    // // // WORKING // // //
+////
+////    // // // DEBUG // // //
+////    cout << "Total:       " << Total      << endl;
+////    cout << "Difficulty:  " << Difficulty << endl;
+////    cout << "Remainder:   " << Remainder  << endl;
+////    cout << endl;
+////    // // // DEBUG // // //
+////
+////    // // // WORKING // // //
+////    float RatioTotalFire       = (FireHazards  / TotalHazards) * 100.0f;
+////    float RatioTotalHullBreach = (HullBreaches / TotalHazards) * 100.0f;
+////    float RatioTotalMalfunc    = (Malfuncs     / TotalHazards) * 100.0f;
+////    float RatioTotalTotal      = RatioTotalFire + RatioTotalHullBreach + RatioTotalMalfunc;
+////    // // // WORKING // // //
+////
+////    // // // DEBUG // // //
+////    cout << "Fire  Ratio: "  << RatioTotalFire << endl;
+////    cout << "HuBr  Ratio: "  << RatioTotalHullBreach << endl;
+////    cout << "Malf  Ratio: "  << RatioTotalMalfunc << endl;
+////    cout << "Ratio Total: "  << RatioTotalTotal << endl;
+////    cout << endl;
+////    // // // DEBUG // // //
+////
+////    // // // WORKING // // //
+////    float RatioRemainderFire =       CalculateScaledValue(RatioTotalFire, 0.0f, Remainder);
+////    float RatioRemainderHullBreach = CalculateScaledValue(RatioTotalHullBreach, 0.0f, Remainder);
+////    float RatioRemainderMalfunc =    CalculateScaledValue(RatioTotalMalfunc, 0.0f, Remainder);
+////    float RatioRemainderTotal =      RatioRemainderFire + RatioRemainderHullBreach + RatioRemainderMalfunc;
+////    // // // WORKING // // //
+////
+////    // // // DEBUG // // //
+////    cout << "FRem  Ratio: " << RatioRemainderFire << endl;
+////    cout << "HRem  Ratio: " << RatioRemainderHullBreach << endl;
+////    cout << "MRem  Ratio: " << RatioRemainderMalfunc << endl;
+////    cout << "RemR Total:  " << RatioRemainderTotal << endl;
+////    cout << endl;
+////    // // // DEBUG // // //
+////    
+////    // // // WORKING // // //
+////    float Threshold1 = WeightedDifficulty;
+////    float Threshold2 = Threshold1 + RatioRemainderFire;
+////    float Threshold3 = Threshold2 + RatioRemainderHullBreach;
+////    float Threshold4 = Threshold3 + RatioRemainderMalfunc;
+////    // // // WORKING // // //
+////
+////    // // // DEBUG // // //
+////    cout << "Threshold1:  " << Threshold1 << endl;
+////    cout << "Threshold2:  " << Threshold2 << endl;
+////    cout << "Threshold3:  " << Threshold3 << endl;
+////    cout << "Threshold4:  " << Threshold4 << endl;
+////    // // // DEBUG // // //
+////
+////    // // // DEBUG // // //
+////    cout << "---------------";
+////    // // // DEBUG // // //
 
+//    // // // WINDOWS // // //
 //    char cWinHold = NULL;
 //    cin >> cWinHold;
+//    // // // WINDOWS // // //
 
 //    return (0);
+//}
+
+//HazardType HazardUpdate()
+//{
+//    // // // DEBUG // // //
+//    int   Total              = 100;
+//    float Difficulty         = Total - 12.0f;
+//    float WeightedDifficulty = Difficulty;
+//    float Remainder          = Total - Difficulty;
+//    // // // DEBUG // // //
+
+//    // Local Types
+//    struct HazardInfo
+//    {
+//        float      fHazardRatio;
+//        float      fHazardRatioNormalised;
+//        int        iNumHazards;
+//        HazardType eHazardType;
+//    };
+
+//    // Hazard return value
+//    HazardType eHazard = HAZARD_NONE;
+
+//    // Generate random number
+//    const int HazardRandomValue = rand() % Total;
+//    cout << "Random value: " << HazardRandomValue << endl;
+
+//    // Get number of unique hazard types
+//    // DEBUG: Default
+//    const int UniqueHazardTypes = HAZARD_MAX;
+//    cout << "Unique hazard types: " << UniqueHazardTypes << endl;
+
+//    // Threshold container
+//    float Thresholds[UniqueHazardTypes + 1];//      = new float[UniqueHazardTypes + 1];
+//    cout << "Thresholds: " << (sizeof(Thresholds) / sizeof(float)) << endl;
+
+//    Thresholds[0] = Difficulty;
+
+//    // Hazard info container
+//    HazardInfo * pHazardInfo = new HazardInfo[UniqueHazardTypes];
+
+//    // Hazard total containers
+//    int * pHazardTotalsContainer = new int[UniqueHazardTypes];
+//    int iTotalHazards = 0;
+
+//    for (short i = 0; i < UniqueHazardTypes; ++i)
+//    {
+//        // Get the number of active hazards of the current type
+//        // DEBUG: Default
+//        pHazardTotalsContainer[i] = GetTotalHazardsOfType((HazardType)i);
+
+//        cout << "Total hazards of type " << i << ": " << pHazardTotalsContainer[i] << endl;
+
+//        iTotalHazards += pHazardTotalsContainer[i];
+//    }
+
+//    cout << "Total hazards: " << iTotalHazards << endl;
+    
+//    cout << endl << endl;
+//    for (int i = 0; i < UniqueHazardTypes; ++i)
+//    {
+//        // Set the current hazard's type
+//        pHazardInfo[i].eHazardType  = (HazardType)i;
+//        cout << "Current hazard type: " << (HazardType)i << endl;
+
+//        // Get the number of active hazards of the current type
+//        // DEBUG: Default
+//        int iTotalHazardsOfThisType = pHazardTotalsContainer[i];
+//        cout << "Total hazards of this type: " << iTotalHazardsOfThisType << endl;
+
+//        // Determine the ratio of this hazard type to the total number of hazards
+//        pHazardInfo[i].fHazardRatio = ((float)pHazardTotalsContainer[i]  / (float)iTotalHazards) * 100.0f;
+//        cout << "Current hazard ratio: " << pHazardInfo[i].fHazardRatio << endl;
+
+//        // Normalise the ratio to within current range
+//        pHazardInfo[i].fHazardRatioNormalised = CalculateScaledValue(pHazardInfo[i].fHazardRatio, 0.0f, Remainder);
+//        cout << "Normalized current hazard ratio: " << pHazardInfo[i].fHazardRatioNormalised << endl;
+
+//        // Set next threshold
+//        // Note: First threshold is set by difficulty, not hazards
+//        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioNormalised;
+//        cout << "Threshold: " << Thresholds[i + 1] << endl;
+//    }
+
+//    cout << endl << endl;
+//    for (short i = 0; i < UniqueHazardTypes + 1; ++i)
+//    {
+//        cout << "Threshold " << i << ": " << Thresholds[i] << endl;
+//    }
+
+//    return (eHazard);
+//}
+
+//int GetTotalHazardsOfType(HazardType _eType)
+//{
+//    int iReturn = 0;
+
+//    switch (_eType)
+//    {
+//    case HAZARD_FIRE:
+//        {
+//            iReturn = rand() % 20;
+//            break;
+//        }
+
+//    case HAZARD_HULL_BREACH:
+//        {
+//            iReturn = rand() % 20;
+//            break;
+//        }
+
+//    case HAZARD_MALFUNCTION:
+//        {
+//            iReturn = rand() % 20;
+//            break;
+//        }
+//    }
+
+//    return (iReturn);
 //}
 
 //float CalculateScaledValue(float _fX, float _fNewMin, float _fNewMax, float _fOldMin, float _fOldMax)
@@ -184,7 +398,7 @@ public class CHazardSystem : MonoBehaviour
 //    // Temporary return variable
 //    float fReturn = 0.0f;
 
-//    // Scale _fX to fit within new range
+//    // Scale _fX to fit within the new range
 //    fReturn = ((((_fX - _fOldMin) * (_fNewMax - _fNewMin)) / (_fOldMax - _fOldMin)) + _fNewMin);
 
 //    // Return
