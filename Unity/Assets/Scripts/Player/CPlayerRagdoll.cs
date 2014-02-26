@@ -20,14 +20,14 @@ using System.Collections;
 public class CPlayerRagdoll : CNetworkMonoBehaviour 
 {
     //Member Types
-    public enum ENetworkAction : byte
+    public enum ERagdollState : byte
     {
-        EventInvalid,
+        Invalid,
 
-        EventDeath,
-        EventRevive,
+        PlayerDown,
+        PlayerRevive,
 
-        EventMax,
+        Max,
     }
     
     //Member Delegates & Events   
@@ -40,6 +40,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
    
     public GameObject m_PlayerHead = null;
     public GameObject m_RagdollHead = null;
+
+    private Vector3 m_initialOffset = new Vector3(0,0,0);
 
     CNetworkVar<byte>       m_bRagdollState;
 
@@ -54,15 +56,15 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     { 
         if (_cSyncedNetworkVar == m_bRagdollState)
         {
-            switch((ENetworkAction) m_bRagdollState.Get())
+            switch((ERagdollState) m_bRagdollState.Get())
             {
-                case ENetworkAction.EventDeath:
+                case ERagdollState.PlayerDown:
                 {
                     SetRagdollActive();                    
                     break;                
                 }
                 
-                case ENetworkAction.EventRevive:
+                case ERagdollState.PlayerRevive:
                 {
                     DeactivateRagdoll();                
                     break;                
@@ -83,11 +85,11 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     public static void Unserialize(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         //Extract network action
-        ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+        ERagdollState eNetworkAction = (ERagdollState)_cStream.ReadByte();
         
         switch (eNetworkAction)
         {
-            case ENetworkAction.EventDeath:
+            case ERagdollState.PlayerDown:
             {
                 ulong uPlayerID = _cStream.ReadULong();
 
@@ -98,7 +100,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
                 break;
             }
-            case ENetworkAction.EventRevive:
+            case ERagdollState.PlayerRevive:
             {
                 ulong uPlayerID = _cStream.ReadULong();
                 
@@ -115,15 +117,23 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     // Use this for initialization
     void Start ()
 	{
-        SetKinematicRagdoll();
-		
+        SetKinematicRagdoll();		
+        SetRagdollLayer();
+
+        m_initialOffset = transform.localPosition;
+        gameObject.rigidbody.isKinematic = false;
+
         gameObject.GetComponent<CPlayerHealth>().EventHealthStateChanged += OnHealthStateChanged;
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-
+        //Constrain the skeleton to the player
+        if ((ERagdollState)m_bRagdollState.Get() == ERagdollState.PlayerDown)
+        {
+           // transform.position = m_RootSkeleton.position;
+        }
 	}
 
     [AServerOnly]
@@ -133,7 +143,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         {
             case CPlayerHealth.HealthState.DOWNED:
             {
-                s_cSerializeStream.Write((byte)ENetworkAction.EventDeath);
+                s_cSerializeStream.Write((byte)ERagdollState.PlayerDown);
                 //Send in player ID
                 s_cSerializeStream.Write((ulong)CGamePlayers.GetPlayerActorsPlayerId(_SourcePlayer));
 
@@ -141,7 +151,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             }           
             case CPlayerHealth.HealthState.ALIVE:
             {           
-                s_cSerializeStream.Write((byte)ENetworkAction.EventRevive);
+                s_cSerializeStream.Write((byte)ERagdollState.PlayerRevive);
                 //Send in player ID
                 s_cSerializeStream.Write((ulong)CGamePlayers.GetPlayerActorsPlayerId(_SourcePlayer));
                 break;
@@ -185,7 +195,10 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         {
             if(body.gameObject.GetComponent<Rigidbody>())
             {
+                body.rigidbody.velocity = new Vector3(0, 0, 0);
                 body.rigidbody.isKinematic = true;
+                body.rigidbody.useGravity = false;
+                body.rigidbody.mass = 9.0f;
             }
             if(body.gameObject.GetComponent<Collider>())
             {
@@ -193,8 +206,9 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             }
         } 
 
-        gameObject.rigidbody.velocity = new Vector3(0, 0, 0);
-        gameObject.collider.enabled = true;           
+        //gameObject.collider.enabled = true;     
+     
+        Debug.LogWarning("Ragdoll deactivated!");
     }
 
     void SetDynamicRagdoll()
@@ -212,8 +226,19 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             {
                 body.collider.enabled = true;
             }
-        }
+        }      
 
-        gameObject.collider.enabled = false;
+        //gameObject.collider.enabled = false;
+        Debug.LogWarning("Ragdoll activated!");
+    }
+
+    void SetRagdollLayer()
+    {
+        Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
+
+        foreach (Transform body in ragdollBones)
+        {
+            body.gameObject.layer = 14;
+        }
     }
 }

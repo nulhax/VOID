@@ -65,7 +65,10 @@ public class CHUD3D : MonoBehaviour
 		m_CachedTransform = transform;
 
 		// Save transform of the head
-		m_CachedPlayerHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform;
+        if (CGamePlayers.SelfActor != null)
+        {
+            m_CachedPlayerHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform;
+        }
 
 		// Adjust the camera FOV if oculus rift is being used
 		if(CGameCameras.IsOculusRiftActive)
@@ -76,8 +79,18 @@ public class CHUD3D : MonoBehaviour
 
 	public void LateUpdate()
 	{
-		// Update the 3D hud location
-		m_CachedTransform.position = m_CachedPlayerHead.position;
-		m_CachedTransform.rotation = m_CachedPlayerHead.rotation;
+        if (m_CachedPlayerHead != null)
+        {
+            // Update the 3D hud location
+            m_CachedTransform.position = m_CachedPlayerHead.position;
+            m_CachedTransform.rotation = m_CachedPlayerHead.rotation;
+        } 
+        else
+        {
+            if(CGamePlayers.SelfActor != null)
+            {
+                m_CachedPlayerHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform;
+            }
+        }
 	}
 }

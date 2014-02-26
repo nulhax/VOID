@@ -79,8 +79,10 @@ public class CActorGravity : CNetworkMonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			if(rigidbody != null && IsUnderGravityInfluence)
-			{	
-				foreach(Rigidbody body in gameObject.GetComponentsInChildren<Rigidbody>())
+			{
+                Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody>();
+
+                foreach(Rigidbody body in rigidBodies)
 				{
 					body.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
 				}
