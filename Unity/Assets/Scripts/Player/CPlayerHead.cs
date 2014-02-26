@@ -63,6 +63,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public GameObject ActorHead
 	{
 		get { return (m_cActorHead); }
+        set { m_cActorHead = value; }
 	}
 
 	public bool InputDisabled

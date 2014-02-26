@@ -37,12 +37,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     //Member variables
 
     public Transform m_RootSkeleton = null;
-    public Transform m_RootSkeletonRagdoll = null;
-
-	public GameObject m_Ragdoll = null;
-    public GameObject m_PlayerModel = null;
-    public GameObject m_RagdollModel = null;
-
+   
     public GameObject m_PlayerHead = null;
     public GameObject m_RagdollHead = null;
 
@@ -120,14 +115,15 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     // Use this for initialization
     void Start ()
 	{
-		m_Ragdoll.SetActive (false);
+        SetKinematicRagdoll();
+		
         gameObject.GetComponent<CPlayerHealth>().EventHealthStateChanged += OnHealthStateChanged;
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-        transform.position = m_Ragdoll.transform.position;
+
 	}
 
     [AServerOnly]
@@ -155,74 +151,69 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     [AClientOnly]
     void SetRagdollActive()
-    {
-        //Disable all collisions
-        Vector3 parentVelocity = rigidbody.velocity;    
-    
-        //Disable all rendering
-        m_PlayerModel.renderer.enabled = false;   
-
-        //Disable collisions
-        rigidbody.collider.enabled = false;
-
-        //Disable animations
-        gameObject.GetComponent<Animator>().enabled = false;
-    
+    {       
         //Enable ragdoll and set position
+        SetDynamicRagdoll();     
 
-        m_Ragdoll.SetActive(true);
-
-        //Position Ragdoll
-        SynchBones();       
-
-        //Transfer camera to ragdoll head, if the ragdolling player is the local player
+        //Transfer camera pos
         if (gameObject == CGamePlayers.SelfActor)
         {
-            gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_RagdollHead;
-            gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
-            Debug.Log("Attempted to set player head to " + m_RagdollHead.name.ToString());
+            gameObject.GetComponent<CPlayerHead>().ActorHead = m_RagdollHead;        
+            gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();;
         }
+
     }
 
     [AClientOnly]
     void DeactivateRagdoll()
-    {
-        //Enable all rendering
-        m_PlayerModel.renderer.enabled = true;
-    
-        //enabled animations
-        gameObject.GetComponent<Animator>().enabled = true;        
+    {         
+        //Disable ragdoll and set position
+        SetKinematicRagdoll();
 
-        //Transfer camera to player head, if the ragdolling player is the local player
         if (gameObject == CGamePlayers.SelfActor)
         {
-            gameObject.GetComponent<CPlayerHead>().m_cActorHead = m_PlayerHead;
-            gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();
-            Debug.Log("Attempted to set player head to " + m_RagdollHead.name.ToString());
+            gameObject.GetComponent<CPlayerHead>().ActorHead = m_PlayerHead;        
+            gameObject.GetComponent<CPlayerHead>().TransferPlayerPerspectiveToShipSpace();;
         }
-
-        //Disable ragdoll and set position
-        m_Ragdoll.SetActive(false);
     }
 
-    //This function synchronises all ragdoll bone positions to player bone positions
-    void SynchBones()
+    void SetKinematicRagdoll()
     {
-        m_RootSkeletonRagdoll.position = m_RootSkeleton.position; 
+        Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
 
-        Transform[] ragdollBones = m_RootSkeletonRagdoll.GetComponentsInChildren<Transform>();
-        Transform[] playerBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
-
-        for (int i = 0; i < ragdollBones.Length; i++)
+        foreach (Transform body in ragdollBones)
         {
-            ragdollBones[i].position = playerBones[i].position;
-            ragdollBones[i].rotation = playerBones[i].rotation;
-
-            //Attempt to apply velocity
-            if(ragdollBones[i].rigidbody != null)
+            if(body.gameObject.GetComponent<Rigidbody>())
             {
-                ragdollBones[i].rigidbody.velocity = rigidbody.velocity;                   
-            }           
-        }       
+                body.rigidbody.isKinematic = true;
+            }
+            if(body.gameObject.GetComponent<Collider>())
+            {
+                body.collider.enabled = false;
+            }
+        } 
+
+        gameObject.rigidbody.velocity = new Vector3(0, 0, 0);
+        gameObject.collider.enabled = true;           
+    }
+
+    void SetDynamicRagdoll()
+    {
+        Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
+
+        foreach (Transform body in ragdollBones)
+        {
+            if(body.gameObject.GetComponent<Rigidbody>())
+            {
+                body.rigidbody.isKinematic = false;
+                body.rigidbody.velocity = rigidbody.velocity;
+            }
+            if(body.gameObject.GetComponent<Collider>())
+            {
+                body.collider.enabled = true;
+            }
+        }
+
+        gameObject.collider.enabled = false;
     }
 }

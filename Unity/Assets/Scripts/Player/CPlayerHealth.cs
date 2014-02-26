@@ -300,6 +300,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
         if (CNetwork.IsServer)
         {
+            if(Input.GetKeyDown(KeyCode.Q))
+            {
+                ApplyDamage(100);
+            }
+
             UpdateAtmosphereEffects();
         }
 	}
