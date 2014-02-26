@@ -18,6 +18,8 @@ public class CHullBreachNode : MonoBehaviour
 	public bool breached { get { return breached_internal; } set { if (breached_internal != value) { breached_internal = value; if (EventOnSetBreached != null)EventOnSetBreached(value); } } }
 	private bool breached_internal = false;
 
+	private int audioClipIndex = -1;
+
 	void Awake()
 	{
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate = 100.0f;
@@ -40,6 +42,13 @@ public class CHullBreachNode : MonoBehaviour
 				childBreachNode.EventOnSetBreached += OnChildSetBreached;
 				childBreaches.Add(childBreachNode);
 			}
+		}
+
+		// Add components at runtime instead of updating all the prefabs.
+		{
+			// CAudioCue
+			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+			audioClipIndex = audioCue.AddSound("Audio/HullBreach", 0.0f, 0.0f, true);
 		}
 	}
 
@@ -77,72 +86,72 @@ public class CHullBreachNode : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Hull breach threshold.
+				if (!breached)	// If the hull was not breached before passing the breach threshold...
 				{
-					if (!breached)	// If the hull was not breached before passing the breach threshold...
+					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
+
+					if(particleSystem != null)
+						particleSystem.Play();
+
+					// Breach the hull.
+					if (childBreaches.Count > 0)	// If this breach is a parent...
 					{
-						if(particleSystem != null)
-							particleSystem.Play();
-
-						// Breach the hull.
-						if (childBreaches.Count > 0)	// If this breach is a parent...
+						// Remove the models set by children.
+						foreach (CHullBreachNode childBreach in childBreaches)
 						{
-							// Remove the models set by children.
-							foreach (CHullBreachNode childBreach in childBreaches)
-							{
-								childBreach.GetComponent<MeshFilter>().sharedMesh = null;
-								childBreach.GetComponent<MeshCollider>().sharedMesh = null;
-							}
+							childBreach.GetComponent<MeshFilter>().sharedMesh = null;
+							childBreach.GetComponent<MeshCollider>().sharedMesh = null;
 						}
-
-						// Set breached mesh model and collider.
-						GetComponent<MeshFilter>().sharedMesh = breachedMesh;
-						GetComponent<MeshCollider>().sharedMesh = breachedMesh;
-
-						// Set breached state.
-						breached = true;
-
-						// Consume atmosphere.
-						GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
-
-						// Inform the facility this breach resides in.
-						if (parentFacilityHull != null)
-							parentFacilityHull.AddBreach(gameObject);
 					}
+
+					// Set breached mesh model and collider.
+					GetComponent<MeshFilter>().sharedMesh = breachedMesh;
+					GetComponent<MeshCollider>().sharedMesh = breachedMesh;
+
+					// Set breached state.
+					breached = true;
+
+					// Consume atmosphere.
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
+
+					// Inform the facility this breach resides in.
+					if (parentFacilityHull != null)
+						parentFacilityHull.AddBreach(gameObject);
 				}
 				break;
 
 			case 2:	// Hull fix threshold.
+				if (breached)	// If the hull was breached before passing the fix threshold...
 				{
-					if (breached)	// If the hull was breached before passing the fix threshold...
+					GetComponent<CAudioCue>().StopAllSound();
+
+					if(particleSystem != null)
+						particleSystem.Stop();
+
+					// Fix the breach.
+					if (childBreaches.Count > 0)	// If this breach is a parent...
 					{
-						if(particleSystem != null)
-							particleSystem.Stop();
-
-						// Fix the breach.
-						if (childBreaches.Count > 0)	// If this breach is a parent...
+						// Fix the children.
+						foreach (CHullBreachNode childBreach in childBreaches)
 						{
-							// Fix the children.
-							foreach (CHullBreachNode childBreach in childBreaches)
-							{
-								CActorHealth childActorHealth = childBreach.GetComponent<CActorHealth>();
-								childActorHealth.health = childActorHealth.health_max;	// Force all children to repair.
-							}
+							CActorHealth childActorHealth = childBreach.GetComponent<CActorHealth>();
+							childActorHealth.health = childActorHealth.health_max;	// Force all children to repair.
 						}
-
-						// Set breached mesh model and collider.
-						GetComponent<MeshFilter>().sharedMesh = goodMesh;
-						GetComponent<MeshCollider>().sharedMesh = goodMesh;
-
-						// Set breached state.
-						breached = false;
-
-						// Stop consuming atmosphere.
-						GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
-
-						// Inform the facility this breach resides in.
-						if (parentFacilityHull != null)
-							parentFacilityHull.RemoveBreach(gameObject);
 					}
+
+					// Set breached mesh model and collider.
+					GetComponent<MeshFilter>().sharedMesh = goodMesh;
+					GetComponent<MeshCollider>().sharedMesh = goodMesh;
+
+					// Set breached state.
+					breached = false;
+
+					// Stop consuming atmosphere.
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
+
+					// Inform the facility this breach resides in.
+					if (parentFacilityHull != null)
+						parentFacilityHull.RemoveBreach(gameObject);
 				}
 				break;
 		}

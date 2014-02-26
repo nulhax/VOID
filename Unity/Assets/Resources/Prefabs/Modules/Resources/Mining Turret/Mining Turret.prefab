@@ -92,6 +92,10 @@ GameObject:
   - 4: {fileID: 400010}
   - 198: {fileID: 19800000}
   - 199: {fileID: 19900000}
+  - 114: {fileID: 11400036}
+  - 114: {fileID: 11400038}
+  - 114: {fileID: 11400040}
+  - 114: {fileID: 11400042}
   m_Layer: 0
   m_Name: ShortCircuit
   m_TagString: Untagged
@@ -944,6 +948,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a815e9622c6faae438a31f386da93db5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InitialConsumptionRate: 10
+  m_CurrentConsumptionRate: 0
+--- !u!114 &11400038
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400040
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flammable: 0
+  callEventsOnStart: 0
+  syncNetworkHealth: 0
+  destroyOnZeroHealth: 0
+  takeDamageOnImpact: 1
+  syncNetworkState: 1
+  health_max: 25
+  health_min: 0
+  health_initial: 25
+  health_previous: 0
+  state_initial: 2
+  stateTransitions:
+  - 1
+  - 20
+  state_previous: 0
+  timeBetweenNetworkSyncs: .100000001
+--- !u!114 &11400042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58551118509673f47a51e2111722fc8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1

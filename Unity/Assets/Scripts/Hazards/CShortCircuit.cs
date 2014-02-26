@@ -19,6 +19,17 @@ public class CShortCircuit : MonoBehaviour
 {
 	public bool shorting { get { return shorting_internal; } }
 	private bool shorting_internal = false;
+	private int audioClipIndex = -1;
+
+	void Awake()
+	{
+		// Add components at runtime instead of updating all the prefabs.
+		{
+			// CAudioCue
+			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+			audioClipIndex = audioCue.AddSound("Audio/ShortCircuit", 0.0f, 0.0f, true);
+		}
+	}
 
 	void Start()
 	{
@@ -37,17 +48,21 @@ public class CShortCircuit : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Begin short circuit.
+				if(!shorting)
 				{
+					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
 					particleSystem.Play();
-					GetComponent<CShortCircuit>().shorting_internal = true;
+					shorting_internal = true;
 					//GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
 			case 2:	// End short circuit.
+				if(shorting)
 				{
+					GetComponent<CAudioCue>().StopAllSound();
 					particleSystem.Stop();
-					GetComponent<CShortCircuit>().shorting_internal = false;
+					shorting_internal = false;
 					//GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;

@@ -1,4 +1,4 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -50,12 +50,15 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-    public delegate void OnHealthChanged     (GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue);
-	public delegate void OnHealthStateChange (GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState);
+    public delegate void EventHealthChanged     (GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue);
+	public delegate void EventHealthStateChange (GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState);
 
-    public event OnHealthChanged     EventHealthChanged;
-    public event OnHealthStateChange EventHealthStateChanged;
+    public event EventHealthChanged     m_EventHealthChanged;
+    public event EventHealthStateChange m_EventHealthStateChanged;
 
+	private int m_PlayerForceDamageSoundIndex = -1;
+	private int m_PlayerForceDeathSoundIndex = -1;
+	float m_PlayerForceDamageSoundIndex_Time = 0.0f;
 
 // Member Properties
 	public float Health
@@ -102,9 +105,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 }
 
                 // Trigger EventHealthChanged
-                if (EventHealthChanged != null)
+                if (m_EventHealthChanged != null)
                 {
-                    EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                    m_EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
                 }
             }
         }
@@ -166,8 +169,18 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Functions
     public void Awake()
     {
-        s_cInstance = this;
-    }
+		s_cInstance = this;
+
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+
+		m_PlayerForceDamageSoundIndex = audioCue.AddSound("Audio/PlayerForceDamage", 0.0f, 0.0f, false);
+		m_PlayerForceDeathSoundIndex = audioCue.AddSound("Audio/PlayerForceDeath", 0.0f, 0.0f, false);
+
+		m_EventHealthChanged += OnHealthChange;
+		m_EventHealthStateChanged += OnHealthStateChange;
+	}
 
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -254,9 +267,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
              (PrevHealthState != CurrentHealthState))
         {
             // Trigger EventHealthStateChanged
-            if (EventHealthStateChanged != null)
+            if (m_EventHealthStateChanged != null)
             {
-                EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
+                m_EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
             }
         }
     }
@@ -306,8 +319,30 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void UpdateAtmosphereEffects() { }
+	void UpdateAtmosphereEffects() { }
 
+	private void OnHealthChange(GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue)
+	{
+		if (gameObject != _TargetPlayer) Debug.LogError("CPlayerHealth→OnHealthChange is not returning the correct player!");
+		if (_fHealthCurrentValue == _fHealthPreviousValue) Debug.LogError("CPlayerHealth→OnHealthChange is being called despite no change!");
+
+		// Play ouchies.
+		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
+		{
+			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
+			GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
+		}
+	}
+
+	private void OnHealthStateChange(GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState)
+	{
+		if (gameObject != _SourcePlayer) Debug.LogError("CPlayerHealth→OnHealthStateChange is not returning the correct player!");
+		if (_eHealthCurrentState == _eHealthPreviousState) Debug.LogError("CPlayerHealth→OnHealthStateChange is being called despite no change!");
+
+		// Play ooies.
+		if (_eHealthCurrentState == HealthState.DOWNED)
+			GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDeathSoundIndex);
+	}
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
