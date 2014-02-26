@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -32,11 +32,12 @@ public class CHUD3D : MonoBehaviour
 	// Member Fields
 	public GameObject m_HUDCamera = null;
 	public CHUDVisor m_Visor = null;
+	public CHUDLocator m_ReticleOuter = null;
 	
-	private static CHUD3D s_Instance = null;
+	private Transform m_CachedReticlePanel = null;
 
-	private Transform m_CachedTransform = null;
-	private Transform m_CachedPlayerHead = null;
+	private static CHUD3D s_Instance = null;
+	
 
 	// Member Properties
 	public static GameObject HUDCamera 
@@ -62,22 +63,48 @@ public class CHUD3D : MonoBehaviour
 
 	public void Start()
 	{
-		m_CachedTransform = transform;
+		// Set the locator on the players aiming position
+		m_ReticleOuter.Target = CGamePlayers.SelfActorHead.transform.FindChild("Aim");
 
-		// Save transform of the head
-		m_CachedPlayerHead = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ActorHead.transform;
-
-		// Adjust the camera FOV if oculus rift is being used
 		if(CGameCameras.IsOculusRiftActive)
 		{
-			m_HUDCamera.GetComponent<OVRCameraController>().SetVerticalFOV(70.0f);
+			// Cache the reticle panel
+			m_CachedReticlePanel = m_ReticleOuter.transform.parent;
+			m_CachedReticlePanel.GetComponent<CHUDPanel>().ContinuouslyUpdateScale = true;
+		}
+	}
+
+	public void Update()
+	{
+		if(CGameCameras.IsOculusRiftActive)
+		{
+			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameCameras.HUDCameraLeft.camera.fieldOfView;
+
+			if(CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().TargetActorObject != null)
+			{
+				RaycastHit rayHit = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().TargetRaycastHit;
+
+				// Update the reticle panel z position to be the same distance to the current target
+				if(rayHit.distance < CPlayerInteractor.s_InteractionRange)
+				{
+					m_CachedReticlePanel.localPosition = Vector3.forward * rayHit.distance * fovCoefficient;
+				}
+				else
+				{
+					m_CachedReticlePanel.localPosition = Vector3.forward * CPlayerInteractor.s_InteractionRange * fovCoefficient;
+				}
+			}
+			else
+			{
+				m_CachedReticlePanel.localPosition = Vector3.forward * CPlayerInteractor.s_InteractionRange * fovCoefficient;
+			}
 		}
 	}
 
 	public void LateUpdate()
 	{
 		// Update the 3D hud location
-		m_CachedTransform.position = m_CachedPlayerHead.position;
-		m_CachedTransform.rotation = m_CachedPlayerHead.rotation;
+		transform.position = CGameCameras.MainCamera.transform.position;
+		transform.rotation = CGameCameras.MainCamera.transform.rotation;
 	}
 }

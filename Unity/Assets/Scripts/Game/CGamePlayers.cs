@@ -71,6 +71,21 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+	public static GameObject SelfActorHead
+	{
+		get 
+		{ 
+			GameObject playerActorHead = null;
+			
+			if(SelfActorViewId != null)
+			{
+				playerActorHead = CNetwork.Factory.FindObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
+			}
+			
+			return(playerActorHead); 
+		}
+	}
+
 	public static CNetworkViewId SelfActorViewId
 	{
 		get 
@@ -348,7 +363,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
         //CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);

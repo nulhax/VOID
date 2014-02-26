@@ -116,9 +116,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				}
 
 				// Debug fix: make the head body realign instantly
-				Quaternion headRot = GetComponent<CPlayerHead>().ActorHead.transform.rotation;
+				Quaternion headRot = GetComponent<CPlayerHead>().Head.transform.rotation;
 				transform.rotation = headRot;
-				GetComponent<CPlayerHead>().ActorHead.transform.rotation = headRot;
+				GetComponent<CPlayerHead>().Head.transform.rotation = headRot;
 
 //				// Start realigning the head
 //				m_RealignBodyWithHead = true;

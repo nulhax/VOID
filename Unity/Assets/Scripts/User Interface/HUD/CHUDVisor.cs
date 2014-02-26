@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -127,13 +127,12 @@ public class CHUDVisor : MonoBehaviour
 		}
 
 		// Turn on and update the indicator
-		if(CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility == null && m_VisorUIActive)
+		if(!CGameCameras.IsObserverInsideShip)
 		{
 			if(!m_ShipIndicator.gameObject.activeSelf)
 				m_ShipIndicator.gameObject.SetActive(true);
 			
-			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
-			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera;
+			m_ShipIndicator.Target = CGameShips.GalaxyShip.transform;
 		}
 		else
 		{
