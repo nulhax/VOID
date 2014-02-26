@@ -36,10 +36,6 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
 // Member Fields
-	
-	public CHUDVisor m_Visor = null;
-
-
 	private bool m_VisorDownState = false;
 	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
 	
@@ -93,11 +89,13 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		m_AtmosphereConsumer = GetComponent<CActorAtmosphericConsumer>();
 
 		if(CGamePlayers.SelfActor == gameObject)
+		{
 			EventEnviromentalOxygenChange += OnEnviromentOxygenChange;
 
-		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+			CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
 
-		m_CachedVisor = CHUD3D.Visor;
+			m_CachedVisor = CHUD3D.Visor;
+		}
 	}
 
 
@@ -148,7 +146,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
                 // Consume oxygen
                 float fOxygen = OxygenSupply - k_fOxygenDepleteRate * Time.deltaTime;
 
-				if(!m_CachedVisor.IsVisorDown)
+				if(!m_VisorDownState)
 					fOxygen = OxygenSupply;
 
                 if (fOxygen < 0.0f)

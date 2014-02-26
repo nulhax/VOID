@@ -116,20 +116,20 @@ public class CDUIRoot : CNetworkMonoBehaviour
 			gameObject.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
 			gameObject.GetComponent<CNetworkView>().SetEulerAngles(Quaternion.identity.eulerAngles);
 
-			if(m_DUICamera3D != null)
-			{
-				m_Cached3DCamera = m_DUICamera3D.GetComponent<UICamera>();
-				m_Cached3DCamera.m_IsDUI = true;
-			}
-			
-			if(m_DUICamera2D != null)
-			{
-				m_Cached2DCamera = m_DUICamera2D.GetComponent<UICamera>();
-				m_Cached2DCamera.m_IsDUI = true;
-			}
-
 			// Increment the offset
 			s_UIOffset += 10.0f;
+		}
+
+		if(m_DUICamera3D != null)
+		{
+			m_Cached3DCamera = m_DUICamera3D.GetComponent<UICamera>();
+			m_Cached3DCamera.m_IsDUI = true;
+		}
+		
+		if(m_DUICamera2D != null)
+		{
+			m_Cached2DCamera = m_DUICamera2D.GetComponent<UICamera>();
+			m_Cached2DCamera.m_IsDUI = true;
 		}
 	}
 

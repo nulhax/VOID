@@ -127,7 +127,7 @@ public class CHUDVisor : MonoBehaviour
 		}
 
 		// Turn on and update the indicator
-		if(CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility == null && m_VisorUIActive)
+		if(!CGameCameras.IsObserverInsideShip)
 		{
 			if(!m_ShipIndicator.gameObject.activeSelf)
 				m_ShipIndicator.gameObject.SetActive(true);
