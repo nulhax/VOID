@@ -1984,7 +1984,7 @@ ParticleSystem:
         m_PostInfinity: 2
       minMaxState: 1
     gravityModifier: 0
-    inheritVelocity: 0
+    inheritVelocity: .5
     maxNumParticles: 45
   ShapeModule:
     serializedVersion: 2
