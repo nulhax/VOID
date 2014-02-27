@@ -35,7 +35,6 @@ public class CGameCameras : MonoBehaviour
 
 	private static GameObject s_MainCamera = null;
 	private static GameObject s_ProjectedCamera = null;
-	private static GameObject s_HUDCamera = null;
 
 	private static bool s_IsObserverInsideShip = false;
 
@@ -46,9 +45,6 @@ public class CGameCameras : MonoBehaviour
 
 	private static Transform s_CachedProjectedCameraLeft = null;
 	private static Transform s_CachedProjectedCameraRight = null;
-
-	private static Transform s_CachedHUDCameraLeft = null;
-	private static Transform s_CachedHUDCameraRight = null;
 
 	private static CGameCameras s_Instance = null;
 
@@ -89,21 +85,6 @@ public class CGameCameras : MonoBehaviour
 		get { return(s_CachedProjectedCameraRight); }
 	}
 
-	public static GameObject HUDCamera
-	{
-		get { return(s_HUDCamera); }
-	}
-
-	public static Transform HUDCameraLeft
-	{
-		get { return(s_CachedHUDCameraLeft); }
-	}
-
-	public static Transform HUDCameraRight
-	{
-		get { return(s_CachedHUDCameraRight); }
-	}
-
 	public static bool IsObserverInsideShip
 	{
 		get { return(s_IsObserverInsideShip); }
@@ -115,10 +96,13 @@ public class CGameCameras : MonoBehaviour
 	}
 	
 	// Member Methods
-	public void Start()
+	public void Awake()
 	{	
 		s_Instance = this;
+	}
 
+	public void Start()
+	{
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	}
 	
@@ -200,20 +184,6 @@ public class CGameCameras : MonoBehaviour
 		
 		// Set the defult view perspective
 		SetPlayersViewPerspective(true);
-		
-		// Instantiate the 3D HUD
-		if(s_OculusRiftActive)
-		{
-			s_HUDCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"))).transform.FindChild("CameraOVR").gameObject;
-		}
-		else
-		{
-			s_HUDCamera = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).transform.FindChild("Camera").gameObject;
-		}
-
-		// Cache the left and right camera
-		s_CachedHUDCameraLeft = s_HUDCamera.transform.FindChild("CameraLeft");
-		s_CachedHUDCameraRight = s_HUDCamera.transform.FindChild("CameraRight");
 	}
 	
 	public static void SetPlayersViewPerspective(bool _IsInsideShip)
@@ -290,18 +260,8 @@ public class CGameCameras : MonoBehaviour
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
 		}
 
-		// Update the HUD camera transform
-		s_HUDCamera.transform.position = s_MainCamera.transform.position;
-		s_HUDCamera.transform.rotation = s_MainCamera.transform.rotation;
-
 		if(CGameCameras.IsOculusRiftActive)
 		{
-			// Update the left/right HUD cameras transform
-			s_CachedHUDCameraLeft.position = s_CachedMainCameraLeft.position;
-			s_CachedHUDCameraLeft.rotation = s_CachedMainCameraLeft.rotation;
-			s_CachedHUDCameraRight.position = s_CachedMainCameraRight.position;
-			s_CachedHUDCameraRight.rotation = s_CachedMainCameraRight.rotation;
-
 			// Update the left/right galaxy cameras transform
 			s_CachedProjectedCameraLeft.localPosition = s_CachedMainCameraLeft.localPosition;
 			s_CachedProjectedCameraLeft.localRotation = s_CachedMainCameraLeft.localRotation;
@@ -320,11 +280,6 @@ public class CGameCameras : MonoBehaviour
 		if(s_MainCamera != null)
 		{
 			Destroy(s_MainCamera);
-		}
-
-		if(CHUD3D.Instance.gameObject != null)
-		{
-			Destroy(CHUD3D.Instance.gameObject);
 		}
 	}
 };
