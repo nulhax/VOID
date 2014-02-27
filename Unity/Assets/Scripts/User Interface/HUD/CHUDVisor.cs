@@ -27,11 +27,14 @@ public class CHUDVisor : MonoBehaviour
 	
 	
 	// Member Delegates & Events
+	public delegate void NotifyVisorHUDState();
+
+	public event NotifyVisorHUDState EventVisorHUDActivated = null;
+	public event NotifyVisorHUDState EventVisorHUDDeactivated = null;
 
 
 	// Member Fields
 	private bool m_VisorDown = false;
-	private bool m_VisorUIActive = false;
 
 
 	// Member Properties
@@ -42,41 +45,44 @@ public class CHUDVisor : MonoBehaviour
 	
 
 	// Member Methods
+	public void Start()
+	{
+		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+	}
+
 	public void SetVisorState(bool _Down)
 	{
+		if(_Down && !m_VisorDown)
+		{
+			animation.CrossFade("VisorDown");
+ 		}
+		else if(!_Down && m_VisorDown)
+		{
+			animation.CrossFade("VisorUp");
+		}
+
 		m_VisorDown = _Down;
-
-//		if(_Down && !m_VisorDown)
-//		{
-//			animation.CrossFade("VisorDown");
-// 		}
-//		else if(!_Down && m_VisorDown)
-//		{
-//			animation.CrossFade("VisorUp");
-//		}
 	}
 
-	private void ActivateUI()
+	[AClientOnly]
+	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
 	{
-		// Turn on visor UI
-		m_VisorUIActive = true;
-
-		// Play the tweeners
-		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Forward;
-		gameObject.GetComponent<UIPlayTween>().Play(true);
+		// Toggle between up/down visor
+		if(_eInput == CUserInput.EInput.Visor && _bDown)
+		{
+			SetVisorState(!m_VisorDown);
+		}
 	}
 
-	private void DeactivateUI()
+	private void ActivateHUD()
 	{
-		// Turn off visor
-		m_VisorUIActive = false;
+		if(EventVisorHUDActivated != null)
+			EventVisorHUDActivated();
+	}
 
-		// Play the tweeners
-		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Reverse;
-		gameObject.GetComponent<UIPlayTween>().Play(true);
-
-//		// Turn off ship indicator
-//		if(m_ShipIndicator.gameObject.activeSelf)
-//			m_ShipIndicator.gameObject.SetActive(false);
+	private void DeactivateHUD()
+	{
+		if(EventVisorHUDDeactivated != null)
+			EventVisorHUDDeactivated();
 	}
 }

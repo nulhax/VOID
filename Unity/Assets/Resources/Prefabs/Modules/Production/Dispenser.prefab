@@ -201,7 +201,6 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400024}
-  - 114: {fileID: 11400022}
   m_Layer: 0
   m_Name: CircuitryComponent
   m_TagString: Untagged
@@ -224,7 +223,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400040}
   - 114: {fileID: 11400038}
-  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: MechanicalComponent
   m_TagString: Untagged
@@ -927,17 +925,6 @@ MonoBehaviour:
   m_CircuitryComponent: {fileID: 11400034}
   m_MechanicalComponent: {fileID: 11400048}
   m_Debug: 1
---- !u!114 &11400022
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1022,17 +1009,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eComponentType: 3
---- !u!114 &11400036
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1

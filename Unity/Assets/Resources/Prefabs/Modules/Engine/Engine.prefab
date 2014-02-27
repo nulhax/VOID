@@ -442,7 +442,6 @@ GameObject:
   - 54: {fileID: 5400004}
   - 114: {fileID: 11400046}
   - 114: {fileID: 11400044}
-  - 114: {fileID: 11400042}
   m_Layer: 0
   m_Name: MechanicalComponent
   m_TagString: Untagged
@@ -465,7 +464,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400032}
   - 114: {fileID: 11400030}
-  - 114: {fileID: 11400028}
   m_Layer: 0
   m_Name: MechanicalComponent
   m_TagString: Untagged
@@ -1669,17 +1667,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AtmosphericConsumptionRate: .100000001
   m_ConsumingAtmosphere: 0
---- !u!114 &11400028
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1763,17 +1750,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eComponentType: 4
---- !u!114 &11400042
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100056}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400044
 MonoBehaviour:
   m_ObjectHideFlags: 1

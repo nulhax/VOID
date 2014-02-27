@@ -254,7 +254,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
             Debug.LogError(string.Format("Prefab could not be found. PrefabId({0}) PrefabName({1})", _usPrefabId, sPrefabName));
         }
 
-        cNewgameObject = GameObject.Instantiate(cNewgameObject) as GameObject;
+		cNewgameObject = HierarchicalPrefabUtility.Instantiate(cNewgameObject);
 
 		// Extract network view component from created object
         CNetworkView cNetworkView = cNewgameObject.GetComponent<CNetworkView>();

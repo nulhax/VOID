@@ -215,7 +215,6 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400028}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400002}
   m_Layer: 0
   m_Name: MechanicalComponent
   m_TagString: Untagged
@@ -271,7 +270,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400034}
   - 114: {fileID: 11400032}
-  - 114: {fileID: 11400030}
   m_Layer: 0
   m_Name: CalibratorComponent
   m_TagString: Untagged
@@ -724,17 +722,6 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 0
   m_Buildable: 1
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -913,17 +900,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
---- !u!114 &11400030
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1

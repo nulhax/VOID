@@ -58,7 +58,7 @@ public class CHUDLocator : MonoBehaviour
 		get { return(m_OutsideBounds); }
 	}
 
-
+	// Member Methods
 	private void Start()
 	{
 		// If m_WithinBoundsIcon is null, select self
@@ -72,8 +72,7 @@ public class CHUDLocator : MonoBehaviour
 		if(CGameCameras.IsOculusRiftActive)
 			m_MaxDistance = 0.6f;
 	}
-
-	// Member Methods
+	
 	private void LateUpdate()
 	{
 		UpdateIconTracking();
@@ -86,7 +85,8 @@ public class CHUDLocator : MonoBehaviour
 			return;
 
 		// Figure out which camera to use
-		bool useMainCamera = m_Target.gameObject.layer != LayerMask.NameToLayer("Galaxy");
+		bool useMainCamera = CGameCameras.IsObserverInsideShip && m_Target.gameObject.layer != LayerMask.NameToLayer("Galaxy") ||
+							 !CGameCameras.IsObserverInsideShip && m_Target.gameObject.layer == LayerMask.NameToLayer("Galaxy");
 
 		// Select the camera depending on which layer the target is
 		Transform gameCamera = null;

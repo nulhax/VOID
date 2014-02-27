@@ -30,6 +30,8 @@ public class CHUDHealth : MonoBehaviour
 	
 	
 	// Member Fields
+	public GameObject m_HealthOverlay = null;
+
 	private TweenAlpha m_HealthOverlayTween = null;
 
 
@@ -40,10 +42,10 @@ public class CHUDHealth : MonoBehaviour
 	public void Start()
 	{
 		// Cache the health tween
-		m_HealthOverlayTween = GetComponent<TweenAlpha>();
+		m_HealthOverlayTween = m_HealthOverlay.GetComponent<TweenAlpha>();
 
 		// Set the health amcors as screen size
-		UISprite sprite = GetComponent<UISprite>();
+		UISprite sprite = m_HealthOverlay.GetComponent<UISprite>();
 		sprite.leftAnchor.absolute = -Screen.width / 2;
 		sprite.rightAnchor.absolute = Screen.width / 2;
 		sprite.bottomAnchor.absolute = -Screen.height / 2;

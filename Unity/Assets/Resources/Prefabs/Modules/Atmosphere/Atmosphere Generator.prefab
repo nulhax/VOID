@@ -124,7 +124,6 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400042}
   - 114: {fileID: 11400040}
-  - 114: {fileID: 11400044}
   m_Layer: 0
   m_Name: CircuitryComponent
   m_TagString: Untagged
@@ -180,7 +179,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400038}
   - 114: {fileID: 11400036}
-  - 114: {fileID: 11400046}
   m_Layer: 0
   m_Name: FluidComponent
   m_TagString: Untagged
@@ -1127,28 +1125,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
---- !u!114 &11400044
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100014}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400046
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400048
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -36,16 +36,13 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
 // Member Fields
-	private bool m_VisorDownState = false;
+	private bool m_PreviousVisorDownState = false;
 	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
 	
 	
 	private float k_fOxygenCapacity = 600.0f;
 	private float k_fOxygenDepleteRate = 1.0f;
 	private float k_fOxygenRefillRate = 10.0f;
-
-
-	private CHUDVisor m_CachedVisor = null;
 
 	
 	CNetworkVar<float> m_fOxygen = null;
@@ -91,10 +88,6 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(CGamePlayers.SelfActor == gameObject)
 		{
 			EventEnviromentalOxygenChange += OnEnviromentOxygenChange;
-
-			CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
-
-			m_CachedVisor = CGameHUD.Visor;
 		}
 	}
 
@@ -104,18 +97,9 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		// Empty
 	}
 
-	void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
-	{
-		if(_eInput == CUserInput.EInput.Visor && _bDown)
-		{
-			// Toggle between up/down visor
-			m_CachedVisor.SetVisorState(!m_CachedVisor.IsVisorDown);
-		}
-	}
-
 	void Update()
 	{
-        if (CNetwork.IsServer)
+        if(CNetwork.IsServer)
         {
 			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().LastEnteredFacility;
 
@@ -141,12 +125,13 @@ public class CPlayerSuit : CNetworkMonoBehaviour
                 }
             }
 
+			// If there is no oxygen in the atmosphere
 			if(!m_EnviromentalOxygen.Value)
             {
                 // Consume oxygen
                 float fOxygen = OxygenSupply - k_fOxygenDepleteRate * Time.deltaTime;
 
-				if(!m_VisorDownState)
+				if(CGameHUD.Visor.IsVisorDown)
 					fOxygen = OxygenSupply;
 
                 if (fOxygen < 0.0f)
@@ -164,7 +149,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(10.0f * Time.deltaTime);
 				}
-				else if(!m_VisorDownState)
+				else if(!CGameHUD.Visor.IsVisorDown)
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(500.0f * Time.deltaTime);
 				}
@@ -204,13 +189,14 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
 		if(!_Breathable)
 		{
-			// Cache the last visor state
-			m_VisorDownState = true;
-			m_CachedVisor.SetVisorState(true);
+			// Save the last visor state
+			m_PreviousVisorDownState = CGameHUD.Visor.IsVisorDown;
+			CGameHUD.Visor.SetVisorState(true);
 		}
 		else
 		{
-			m_CachedVisor.SetVisorState(m_VisorDownState);
+			// Use the old visor state
+			CGameHUD.Visor.SetVisorState(m_PreviousVisorDownState);
 		}
 	}
 

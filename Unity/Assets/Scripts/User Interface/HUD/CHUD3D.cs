@@ -40,11 +40,11 @@ public class CHUD3D : MonoBehaviour
 	public UILabel m_O2Value = null;
 	public UIProgressBar m_02Bar = null;
 	public UILabel m_Status = null;
-	
-	public CHUDLocator m_ShipIndicator = null;
-	
+
 	private Transform m_CachedReticlePanel = null;
-	
+
+	private bool m_HUDActive = false;
+
 
 	// Member Properties
 	public GameObject HUDCamera
@@ -60,6 +60,11 @@ public class CHUD3D : MonoBehaviour
 	public Transform HUDCameraRight
 	{
 		get { return(m_CachedHUDCameraRight); }
+	}
+
+	public bool IsHUDActive
+	{
+		get { return(m_HUDActive); }
 	}
 	
 	// Member Methods
@@ -81,11 +86,18 @@ public class CHUD3D : MonoBehaviour
 			m_CachedReticlePanel = m_ReticleOuter.transform.parent;
 			m_CachedReticlePanel.GetComponent<CHUDPanel>().ContinuouslyUpdateScale = true;
 		}
+
+		// Register events for UI activation from the visor
+		CGameHUD.Visor.EventVisorHUDActivated += OnActivateHUD;
+		CGameHUD.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
 	}
 
 	public void Update()
 	{
-		//UpdateUI();
+		if(m_HUDActive)
+		{
+			UpdateUI();
+		}
 	}
 
 	private void UpdateUI()
@@ -95,7 +107,7 @@ public class CHUD3D : MonoBehaviour
 			return;
 		}
 
-		// Update reticle
+		// Update reticle panel position for the rift
 		if(CGameCameras.IsOculusRiftActive)
 		{
 			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameHUD.HUD3D.HUDCameraLeft.camera.fieldOfView;
@@ -171,20 +183,23 @@ public class CHUD3D : MonoBehaviour
 				m_Status.GetComponent<UITweener>().enabled = false;
 			}
 		}
-		
-		// Turn on and update the indicator
-		if(!CGameCameras.IsObserverInsideShip)
-		{
-			if(!m_ShipIndicator.gameObject.activeSelf)
-				m_ShipIndicator.gameObject.SetActive(true);
-			
-			m_ShipIndicator.Target = CGameShips.GalaxyShip.transform;
-		}
-		else
-		{
-			// Turn off ship indicator
-			if(m_ShipIndicator.gameObject.activeSelf)
-				m_ShipIndicator.gameObject.SetActive(false);
-		}
+	}
+
+	private void OnActivateHUD()
+	{
+		m_HUDActive = true;
+
+		// Play the tweeners
+		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Forward;
+		gameObject.GetComponent<UIPlayTween>().Play(true);
+	}
+
+	private void OnDeactivateHUD()
+	{
+		m_HUDActive = false;
+
+		// Play the tweeners
+		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Reverse;
+		gameObject.GetComponent<UIPlayTween>().Play(true);
 	}
 }

@@ -237,10 +237,10 @@ Light:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Type: 2
-  m_Color: {r: .963235319, g: .717053473, b: .0708261356, a: 1}
+  m_Color: {r: .963235319, g: .827835321, b: .0708261356, a: 1}
   m_Intensity: 1.60000002
   m_Range: 10
   m_SpotAngle: 30
@@ -277,6 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flammable: 1
   callEventsOnStart: 0
   syncNetworkHealth: 1
   destroyOnZeroHealth: 0

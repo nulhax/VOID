@@ -72,10 +72,8 @@ public class CGameHUD : MonoBehaviour
 			s_Instance.m_HUD3D = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).GetComponent<CHUD3D>();
 		}
 
-		// Instantiate the visor
-		s_Instance.m_Visor = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUDVisor"))).GetComponent<CHUDVisor>();
-		s_Instance.m_Visor.transform.parent = CGameCameras.MainCamera.transform;
-		s_Instance.m_Visor.transform.localRotation = Quaternion.identity;
+		// Hold onto the visor
+		s_Instance.m_Visor = CGamePlayers.SelfActorHead.transform.GetComponentInChildren<CHUDVisor>();
 
 		// Need to offset for oculus rift
 		if(!CGameCameras.IsOculusRiftActive)

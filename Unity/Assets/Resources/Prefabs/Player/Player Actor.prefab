@@ -618,6 +618,7 @@ GameObject:
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400026}
   - 81: {fileID: 8100000}
+  - 114: {fileID: 11400048}
   m_Layer: 13
   m_Name: Player Actor
   m_TagString: Untagged
@@ -673,6 +674,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400084}
+  - 114: {fileID: 11400050}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1653,6 +1655,101 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400048
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac4bfc37ea3274cbc917ae283140e017, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bCanBeInstantiatedAtRuntime: 1
+  m_iHierarchicalPrefabVersionNumber: 10
+  m_rPrefabObject: {fileID: 100100000}
+  m_rCompiledHierarchicalPrefab: {fileID: 100092, guid: 90b377bc22bf8574e8259f64b12e94bf,
+    type: 2}
+  m_bSceneInstance: 0
+--- !u!114 &11400050
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100084}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b97227f48c81409cadfdb31f98e4bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_rNestedPrefabDatas:
+  - m_rLastModifiedNestedPrefab: {fileID: 0}
+    m_rPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+    m_oPropertyModificationsFromPrefab:
+      m_oNestedPrefabPropertyModifications:
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalPosition.x
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalPosition.y
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalPosition.z
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.x
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: -.707106829
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.y
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.z
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.w
+        target: {fileID: 400004, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: .707106829
+        isRootTransform: 1
+        targetTransformPrefabObject: {fileID: 100100000, guid: 57152cb389d38e64aa3d65ffd7749600,
+          type: 2}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.x
+        target: {fileID: 400006, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 0
+        isRootTransform: 0
+        targetTransformPrefabObject: {fileID: 0}
+      - objectReference: {fileID: 0}
+        propertyPath: m_LocalRotation.w
+        target: {fileID: 400006, guid: 57152cb389d38e64aa3d65ffd7749600, type: 2}
+        value: 1
+        isRootTransform: 0
+        targetTransformPrefabObject: {fileID: 0}
+  m_bHasInstantiate: 0
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
