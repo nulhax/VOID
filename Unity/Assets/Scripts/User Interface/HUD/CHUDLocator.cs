@@ -101,20 +101,20 @@ public class CHUDLocator : MonoBehaviour
 			if(m_OVRDominantEye == EDominantEye.RIGHT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraRight : CGameCameras.ProjectedCameraRight;
-				HUDCamera = CGameCameras.HUDCameraRight.camera;
+				HUDCamera = CGameHUD.HUD3D.HUDCameraRight.camera;
 				pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
 			}
 			else if(m_OVRDominantEye == EDominantEye.LEFT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraLeft : CGameCameras.ProjectedCameraLeft;
-				HUDCamera = CGameCameras.HUDCameraLeft.camera;
+				HUDCamera = CGameHUD.HUD3D.HUDCameraLeft.camera;
 				pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
 			}
 		}
 		else
 		{
 			gameCamera = useMainCamera ? CGameCameras.MainCamera.transform : CGameCameras.ProjectedCamera.transform;
-			HUDCamera = CGameCameras.HUDCamera.camera;
+			HUDCamera = CGameHUD.HUD3D.HUDCamera.camera;
 			pos = gameCamera.camera.WorldToViewportPoint(m_Target.position);
 		}
 		

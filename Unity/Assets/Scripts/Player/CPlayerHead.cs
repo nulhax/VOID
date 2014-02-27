@@ -98,6 +98,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			// Setup the game cameras
 			CGameCameras.SetupCameras();
 
+			// Setup the HUD
+			CGameHUD.SetupHUD();
+
 			// Set the ship view perspective of the camera to the actors head
 			TransferPlayerPerspectiveToShipSpace();
 			

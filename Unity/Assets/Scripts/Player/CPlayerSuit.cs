@@ -94,7 +94,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 			CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
 
-			m_CachedVisor = CHUD3D.Visor;
+			m_CachedVisor = CGameHUD.Visor;
 		}
 	}
 
@@ -109,7 +109,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(_eInput == CUserInput.EInput.Visor && _bDown)
 		{
 			// Toggle between up/down visor
-			m_CachedVisor.SetVisorState(!CHUD3D.Visor.IsVisorDown);
+			m_CachedVisor.SetVisorState(!m_CachedVisor.IsVisorDown);
 		}
 	}
 
@@ -164,7 +164,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(10.0f * Time.deltaTime);
 				}
-				else if(!CHUD3D.Visor.IsVisorDown)
+				else if(!m_VisorDownState)
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(500.0f * Time.deltaTime);
 				}

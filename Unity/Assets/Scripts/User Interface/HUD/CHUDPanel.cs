@@ -46,7 +46,7 @@ public class CHUDPanel : MonoBehaviour
 	private void Start()
 	{
 		// Cache the HUD camera
-		m_CachedCamera = CHUD3D.HUDCamera.camera;
+		m_CachedCamera = CGameHUD.HUD3D.HUDCamera.camera;
 
 		// Update the scale
 		UpdateScale();
