@@ -10,10 +10,10 @@ public class CAudioCue : MonoBehaviour
 	public float m_fpitchMax = 1.0f;
 	public float m_fVolumeMin = 1.0f;
 	public float m_fVolumeMax = 1.0f;
-	public float[] m_fFadeInTimeList;
-	public float[] m_fFadeOutTimeList;
-	public AudioClip[] m_arAudioClipPool;
-	public bool[] m_barLoopList; //Determines which sounds should be looped.
+	public float[] m_fFadeInTimeList = new float[0];
+	public float[] m_fFadeOutTimeList = new float[0];
+	public AudioClip[] m_arAudioClipPool = new AudioClip[0];
+	public bool[] m_barLoopList = new bool[0]; //Determines which sounds should be looped.
 	public bool m_bContinuousEvent = false; // if this is set to true, the audiocue will start a new clip after a specified amount of time.
 	public float m_fPlayFrequency; //if an audio cue is a continuous event, this determines how often a new sound will be played. 
 	public CAudioSystem.SoundType m_eSoundType;
@@ -23,12 +23,53 @@ public class CAudioCue : MonoBehaviour
 	{
 		
 	}
+
+	/// <summary>
+	/// Initialises the sound so it can be played later.
+	/// </summary>
+	/// <param name="pathname">Path and name of the sound.</param>
+	/// <param name="fadeInTime">Fade in effect, in seconds.</param>
+	/// <param name="fadeOutTime">Face out effect, in seconds.</param>
+	/// <param name="loop">Will loop the audio if true.</param>
+	/// <returns>Sound index to provide to the Play function.</returns>
+	public int AddSound(string pathname, float fadeInTime, float fadeOutTime, bool loop)
+	{
+		bool glitchInTheMatrix = false;	// Know when to get to the phone.
+		int index = m_arAudioClipPool.Length;
+
+		// Audio clip.
+		AudioClip[] newAudioClipArray = new AudioClip[index + 1];	// Create new array to contain new AudioClip.
+		for (int i = 0; i < index; ++i) newAudioClipArray[i] = m_arAudioClipPool[i];	// Copy over existing audio clips.
+		newAudioClipArray[index] = Resources.Load<AudioClip>(pathname);	// Load new AudioClip from resource.
+		if (newAudioClipArray[index] == null) { Debug.LogError("AudioClip " + pathname + " does not exist!"); glitchInTheMatrix = true; }	// Error check.
+		m_arAudioClipPool = newAudioClipArray;	// Switch to new array.
+
+		// Fade in time.
+		float[] newFadeInTimeList = new float[index + 1];	// Create new array to contain new fade in time.
+		for (int i = 0; i < index && i < m_fFadeInTimeList.Length; ++i) newFadeInTimeList[i] = m_fFadeInTimeList[i];	// Copy over existing fade in times.
+		newFadeInTimeList[index] = fadeInTime;	// Add new fade in time.
+		m_fFadeInTimeList = newFadeInTimeList;	// Switch to new fade in time array.
+
+		// Fade out time.
+		float[] newFadeOutTimeList = new float[index + 1];	// Create new array to contain new fade out time.
+		for (int i = 0; i < index && i < m_fFadeOutTimeList.Length; ++i) newFadeOutTimeList[i] = m_fFadeOutTimeList[i];	// Copy over existing fade out times.
+		newFadeOutTimeList[index] = fadeOutTime;	// Add new fade out time.
+		m_fFadeOutTimeList = newFadeOutTimeList;	// Switch to new fade out time array.
+
+		// Loop.
+		bool[] newLoopList = new bool[index + 1];	// Create new array to contain new loop setting.
+		for (int i = 0; i < index && i < m_barLoopList.Length; ++i) newLoopList[i] = m_barLoopList[i];	// Copy over existing loop settings.
+		newLoopList[index] = loop;	// Add new loop setting.
+		m_barLoopList = newLoopList;	// Switch to new loop setting array.
+
+		return glitchInTheMatrix ? -1 : index;
+	}
 				
 	//As implied, stops all sounds that are currently playing.
 	public void StopAllSound()
 	{
-		if(m_arAttachedAudioSource != null)
-		{
+		//if(m_arAttachedAudioSource != null)	// Jade: Unnecessary as the list is created on construction.
+		//{
 			foreach(AudioSource audioSource in m_arAttachedAudioSource)
 			{
 				if(audioSource != null && audioSource.isPlaying)
@@ -38,7 +79,7 @@ public class CAudioCue : MonoBehaviour
 			}		
 			
 			m_arAttachedAudioSource.Clear();
-		}
+		//}
 	}
 	
 	//If there is relevant information set, this function will fade out sounds over time, then stop them.
@@ -84,7 +125,7 @@ public class CAudioCue : MonoBehaviour
 		AudioSource newAudioSource = GetComponent<AudioSource>();
 		
 		//Make sure fade in times are set. If not, assign default values.
-		if(m_fFadeInTimeList.Length < m_arAudioClipPool.Length)
+		if (m_fFadeInTimeList.Length < m_arAudioClipPool.Length)
 		{
 			m_fFadeInTimeList = new float[m_arAudioClipPool.Length];
 			for(int i = 0; i < m_arAudioClipPool.Length; i++)
@@ -112,8 +153,8 @@ public class CAudioCue : MonoBehaviour
 		newAudioSource.clip = m_arAudioClipPool[index];
 		
 		//Allow the AudioSystem to handle the new audio source.
-		CAudioSystem.Play( 	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
-								   		Random.Range(m_fPitchMin, m_fpitchMax), loop,
+		CAudioSystem.Play(	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+										Random.Range(m_fPitchMin, m_fpitchMax), loop,
 										m_fFadeInTimeList[index],
 										m_eSoundType, true );	
 		
@@ -124,7 +165,6 @@ public class CAudioCue : MonoBehaviour
 	//Will play specified sound if one is set. Otherwise, a random clip will be used.
 	//A random sound can be specified be setting the index to negative one (-1).
 	//This function should only be used if the object needs to have an audiosource attached to it.
-	
 	public void Play( Transform parent, float volumeScale, bool loop, int index)
 	{
 		AudioSource newAudioSource;
@@ -157,8 +197,8 @@ public class CAudioCue : MonoBehaviour
 			
 		//Allow the AudioSystem to handle the new audio source.
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
-											  		 	Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
-											   			Random.Range(m_fPitchMin, m_fpitchMax), loop,
+														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+														Random.Range(m_fPitchMin, m_fpitchMax), loop,
 														m_fFadeInTimeList[index],
 														m_eSoundType, true);	
 		
@@ -193,5 +233,3 @@ public class CAudioCue : MonoBehaviour
 		return(false);
 	}		
 }
-
-

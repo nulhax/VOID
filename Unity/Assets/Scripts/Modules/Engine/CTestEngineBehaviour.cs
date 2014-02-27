@@ -49,11 +49,22 @@ public class CTestEngineBehaviour: MonoBehaviour
 	private CPropulsionGeneratorBehaviour m_PropulsionGenerator = null;
 	private CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
+	private int m_AmbientHumSoundIndex = -1;
+
 
 	// Member Properties
-	
-	
+
+
 	// Member Methods
+
+	void Awake()
+	{
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+		m_AmbientHumSoundIndex = audioCue.AddSound("Audio/SmallEngineAmbientHum", 0.0f, 0.0f, true);
+	}
+
 	public void Start()
 	{
 		m_PropulsionGenerator = gameObject.GetComponent<CPropulsionGeneratorBehaviour>();
@@ -78,6 +89,10 @@ public class CTestEngineBehaviour: MonoBehaviour
 		{
 			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
 		}
+
+		// Begin playing the sound.
+		// Todo: Once individual sounds can be disabled, this must be moved to where the engine turns on and off.
+		GetComponent<CAudioCue>().Play(transform, 1.0f, true, m_AmbientHumSoundIndex);
 	}
 
 	private void HandleMechanicalHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)

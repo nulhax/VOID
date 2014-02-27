@@ -94,6 +94,8 @@ GameObject:
   - 114: {fileID: 1432749553}
   - 114: {fileID: 1432749554}
   - 114: {fileID: 1432749555}
+  - 114: {fileID: 1432749556}
+  - 114: {fileID: 1432749562}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -205,6 +207,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f38e07bd2ad83f4186f6e90b7ae6bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1432749556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432749547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c5ddf66bfa348f4fbe43d280992a120, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1432749557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +279,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e8ffc7a7b368e54c877ffddf49bef5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1432749562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432749547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inheritMeshFromParent: 0
 --- !u!1001 &1789043272
 Prefab:
   m_ObjectHideFlags: 0

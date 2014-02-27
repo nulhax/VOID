@@ -189,7 +189,6 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400020}
   - 114: {fileID: 11400018}
-  - 114: {fileID: 11400016}
   m_Layer: 0
   m_Name: CalibratorComponent
   m_TagString: Untagged
@@ -212,7 +211,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 114: {fileID: 11400038}
   - 114: {fileID: 11400040}
-  - 114: {fileID: 11400042}
   m_Layer: 0
   m_Name: CalibratorComponent
   m_TagString: Untagged
@@ -981,17 +979,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400016
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100022}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1156,17 +1143,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &11400042
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b641db9460a5d744a6bcadbd99d6509, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &11400044

@@ -142,8 +142,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 		if (cPlayerActor != null)
 		{
-            
-            //while (_cStream.HasUnreadData)
+            while (_cStream.HasUnreadData)
             {
                 // Retrieve player actor motor  
                 CPlayerGroundMotor cPlayerActorMotor = cPlayerActor.GetComponent<CPlayerGroundMotor>();

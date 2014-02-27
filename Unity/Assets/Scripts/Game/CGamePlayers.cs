@@ -71,6 +71,21 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+	public static GameObject SelfActorHead
+	{
+		get 
+		{ 
+			GameObject playerActorHead = null;
+			
+			if(SelfActorViewId != null)
+			{
+				playerActorHead = CNetwork.Factory.FindObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
+			}
+			
+			return(playerActorHead); 
+		}
+	}
+
 	public static CNetworkViewId SelfActorViewId
 	{
 		get 
@@ -260,7 +275,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-			List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			    List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+                if (aPlayerSpawners == null ||
+                    aPlayerSpawners.Count == 0)
+                {
+                    break;
+                }
 				
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{
@@ -281,7 +302,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
-                        cPlayerActor.GetComponent<CPlayerHealth>().EventHealthStateChanged += RespawnPlayer;
+                        cPlayerActor.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += RespawnPlayer;
 						
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
@@ -342,7 +363,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
         //CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);

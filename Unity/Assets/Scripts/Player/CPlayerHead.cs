@@ -31,9 +31,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Fields
-	public GameObject m_cActorHead = null;
-	public List<ParticleSystem> m_OxygenReleaseParticles = new List<ParticleSystem>();
-	
+	public GameObject m_Head = null;
+
+
 	List<Type> m_cInputDisableQueue = new List<Type>();
 	
 	
@@ -60,9 +60,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		get { return (m_fHeadEulerX.Get()); }
 	}
 
-	public GameObject ActorHead
+	public GameObject Head
 	{
-		get { return (m_cActorHead); }
+		get { return (m_Head); }
 	}
 
 	public bool InputDisabled
@@ -86,7 +86,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		if (CGamePlayers.SelfActor != gameObject && 
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
-	        m_cActorHead.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
+	        m_Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
     }
 	
@@ -95,6 +95,12 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{	
 		if(CGamePlayers.SelfActor == gameObject)
 		{
+			// Setup the game cameras
+			CGameCameras.SetupCameras();
+
+			// Setup the HUD
+			CGameHUD.SetupHUD();
+
 			// Set the ship view perspective of the camera to the actors head
 			TransferPlayerPerspectiveToShipSpace();
 			
@@ -102,11 +108,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			gameObject.GetComponent<CActorBoardable>().EventBoard += TransferPlayerPerspectiveToShipSpace;
 			gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
 
-			// Subscribe to mouse movement input
+			// Register for mouse movement input
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 		}
 	}
-
 
 	void OnDestroy()
 	{
@@ -115,13 +120,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
         CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 	}
-
-
-    public void Update()
-    {
-		// Empty
-    }
-
 
 	[AClientOnly]
 	public void DisableInput(object _cFreezeRequester)
@@ -142,8 +140,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{
 		m_LocalXRotation = _LocalEulerX;
 
-		// Apply the pitch to the camera
-		m_cActorHead.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
+		// Apply the rotation
+		m_Head.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
 	}
 
 
@@ -174,7 +172,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGameCameras.SetPlayersViewPerspectiveToShip(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspective(true);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -182,7 +180,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGameCameras.SetPlayersViewPerspectiveToGalaxy(m_cActorHead.transform);
+		CGameCameras.SetPlayersViewPerspective(false);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
@@ -203,5 +201,4 @@ public class CPlayerHead : CNetworkMonoBehaviour
 			SetHeadRotations(m_LocalXRotation);
 		}
 	}
-
 };
