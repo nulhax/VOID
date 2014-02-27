@@ -44,16 +44,16 @@ public class CHUDVisor : MonoBehaviour
 	// Member Methods
 	public void SetVisorState(bool _Down)
 	{
-		if(_Down && !m_VisorDown)
-		{
-			animation.CrossFade("VisorDown");
- 		}
-		else if(!_Down && m_VisorDown)
-		{
-			animation.CrossFade("VisorUp");
-		}
-
 		m_VisorDown = _Down;
+
+//		if(_Down && !m_VisorDown)
+//		{
+//			animation.CrossFade("VisorDown");
+// 		}
+//		else if(!_Down && m_VisorDown)
+//		{
+//			animation.CrossFade("VisorUp");
+//		}
 	}
 
 	private void ActivateUI()

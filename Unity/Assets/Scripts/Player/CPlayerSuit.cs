@@ -205,7 +205,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(!_Breathable)
 		{
 			// Cache the last visor state
-			m_VisorDownState = m_CachedVisor.IsVisorDown;
+			m_VisorDownState = true;
 			m_CachedVisor.SetVisorState(true);
 		}
 		else

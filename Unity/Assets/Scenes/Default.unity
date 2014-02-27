@@ -265,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 740814e8ed423064782598e63b6c477b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UseOculusRift: 1
+  m_UseOculusRift: 0
 --- !u!114 &1432749561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,7 +331,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400016, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
       propertyPath: m_UseOculusRift
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
