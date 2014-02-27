@@ -165,8 +165,21 @@ public class CHazardSystem : MonoBehaviour
 
 //float CalculateScaledValue(float _fX, float _fNewMin = 0.0f, float _fNewMax = 100.0f, float _fOldMin = 0.0f, float _fOldMax = 100.0f);
 //int GetTotalHazardsOfType(HazardType _eType);
+//void TriggerHazard(HazardType _Hazard);
 
 //HazardType HazardUpdate();
+
+//// // // DEBUG // // //
+//int TotalFireHazards        = 0;
+//int TotalHullBreachHazards  = 0;
+//int TotalMalfunctionHazards = 0;
+//int TotalHazards            = 0;
+
+//int   Total                 = 100;
+//float Difficulty            = Total - 75.0f;
+//float WeightedDifficulty    = Difficulty;
+//float Remainder             = Total - WeightedDifficulty;
+//// // // DEBUG // // //
 
 //int main()
 //{
@@ -174,24 +187,31 @@ public class CHazardSystem : MonoBehaviour
 //    srand((unsigned int)time(NULL));
 //    // // // WINDOWS // // //
 
-//    float TimePrev  = 0.0f;
-//    float TimeCurr  = 0.0f;
-//    float TimeDelta = 0.0f;
-//    float Timer = 0.0f;
+//    TotalFireHazards = rand() % 10;
+//    TotalHullBreachHazards = rand() % 10;
+//    TotalMalfunctionHazards = rand() % 10;
+
+//    TotalHazards = TotalFireHazards + TotalHullBreachHazards + TotalMalfunctionHazards;
+
+//    DWORD TimePrev  = timeGetTime();;
+//    DWORD TimeCurr  = TimePrev;
+//    DWORD TimeDelta = 0;
+//    DWORD Timer     = 0;
 
 //    while (true)
 //    {
 //        TimePrev  = TimeCurr;
-//        TimeCurr  = time(NULL);
+//        TimeCurr  = timeGetTime();
 //        TimeDelta = TimeCurr - TimePrev;
 
 //        Timer += TimeDelta;
 
-//        if (Timer >= 1000.0f)
+//        if (Timer >= 1000)
 //        {
-//            Timer = 0.0f;
-//            cout << "HIT" << endl;
-//            //HazardUpdate();
+//            HazardType Hazard = HazardUpdate();
+//            TriggerHazard(Hazard);
+
+//            Timer = 0;
 //        }
 //    }
 
@@ -274,20 +294,57 @@ public class CHazardSystem : MonoBehaviour
 //    return (0);
 //}
 
+//void TriggerHazard(HazardType _Hazard)
+//{
+//    switch (_Hazard)
+//    {
+//    case HAZARD_NONE:
+//        {
+//            cout << "No hazard triggered, adjusting weightings" << endl << endl;
+//            WeightedDifficulty -= Difficulty * 0.1f;
+//            Remainder           = Total - WeightedDifficulty;
+//            break;
+//        }
+//    case HAZARD_FIRE:
+//        {
+//            cout << "Triggering Hazard: " << _Hazard << " - Fire" << endl;
+//            cout << "Total Fire Hazards: " << TotalFireHazards << endl << endl;
+//            WeightedDifficulty = Difficulty;
+//            Remainder          = Total - WeightedDifficulty;
+//            ++TotalFireHazards;
+//            break;
+//        }
+
+//    case HAZARD_HULL_BREACH:
+//        {
+//            cout << "Triggering Hazard: " << _Hazard << " - Hull Breach" << endl;
+//            cout << "Total Hull Breach Hazards: " << TotalHullBreachHazards << endl << endl;
+//            WeightedDifficulty = Difficulty;
+//            Remainder          = Total - WeightedDifficulty;
+//            ++TotalHullBreachHazards;
+//            break;
+//        }
+
+//    case HAZARD_MALFUNCTION:
+//        {
+//            cout << "Triggering Hazard: " << _Hazard << " - Malfunction" << endl;
+//            cout << "Total Malfunction Hazards: " << TotalMalfunctionHazards << endl << endl;
+//            WeightedDifficulty = Difficulty;
+//            Remainder          = Total - WeightedDifficulty;
+//            ++TotalMalfunctionHazards;
+//            break;
+//        }
+//    }
+//}
+
 //HazardType HazardUpdate()
 //{
-//    // // // DEBUG // // //
-//    int   Total              = 100;
-//    float Difficulty         = Total - 12.0f;
-//    float WeightedDifficulty = Difficulty;
-//    float Remainder          = Total - Difficulty;
-//    // // // DEBUG // // //
-
 //    // Local Types
 //    struct HazardInfo
 //    {
 //        float      fHazardRatio;
 //        float      fHazardRatioNormalised;
+//        float      fHazardRatioFinal;
 //        int        iNumHazards;
 //        HazardType eHazardType;
 //    };
@@ -297,18 +354,18 @@ public class CHazardSystem : MonoBehaviour
 
 //    // Generate random number
 //    const int HazardRandomValue = rand() % Total;
-//    cout << "Random value: " << HazardRandomValue << endl;
+//    cout << "Random Value: " << HazardRandomValue << endl;
 
 //    // Get number of unique hazard types
 //    // DEBUG: Default
 //    const int UniqueHazardTypes = HAZARD_MAX;
-//    cout << "Unique hazard types: " << UniqueHazardTypes << endl;
+////    cout << "Unique hazard types: " << UniqueHazardTypes << endl;
 
 //    // Threshold container
 //    float Thresholds[UniqueHazardTypes + 1];//      = new float[UniqueHazardTypes + 1];
-//    cout << "Thresholds: " << (sizeof(Thresholds) / sizeof(float)) << endl;
+////    cout << "Thresholds: " << (sizeof(Thresholds) / sizeof(float)) << endl;
 
-//    Thresholds[0] = Difficulty;
+//    Thresholds[0] = WeightedDifficulty;
 
 //    // Hazard info container
 //    HazardInfo * pHazardInfo = new HazardInfo[UniqueHazardTypes];
@@ -323,19 +380,19 @@ public class CHazardSystem : MonoBehaviour
 //        // DEBUG: Default
 //        pHazardTotalsContainer[i] = GetTotalHazardsOfType((HazardType)i);
 
-//        cout << "Total hazards of type " << i << ": " << pHazardTotalsContainer[i] << endl;
+// //       cout << "Total hazards of type " << i << ": " << pHazardTotalsContainer[i] << endl;
 
 //        iTotalHazards += pHazardTotalsContainer[i];
 //    }
 
-//    cout << "Total hazards: " << iTotalHazards << endl;
-    
-//    cout << endl << endl;
+////    cout << "Total hazards: " << iTotalHazards << endl;
+
+// //   cout << endl << endl;
 //    for (int i = 0; i < UniqueHazardTypes; ++i)
 //    {
 //        // Set the current hazard's type
 //        pHazardInfo[i].eHazardType  = (HazardType)i;
-//        cout << "Current hazard type: " << (HazardType)i << endl;
+// //       cout << "Current hazard type: " << (HazardType)i << endl;
 
 //        // Get the number of active hazards of the current type
 //        // DEBUG: Default
@@ -352,14 +409,36 @@ public class CHazardSystem : MonoBehaviour
 
 //        // Set next threshold
 //        // Note: First threshold is set by difficulty, not hazards
-//        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioNormalised;
-//        cout << "Threshold: " << Thresholds[i + 1] << endl;
+////        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioNormalised;
+//    //    cout << "Threshold: " << Thresholds[i + 1] << endl;
 //    }
 
-//    cout << endl << endl;
+//    for (int i = 0; i < UniqueHazardTypes / 2; ++i)
+//    {
+//        int mod2 = UniqueHazardTypes - i - 1;
+
+//        pHazardInfo[i].fHazardRatioFinal = pHazardInfo[mod2].fHazardRatioNormalised;
+//        pHazardInfo[mod2].fHazardRatioFinal = pHazardInfo[i].fHazardRatioNormalised;
+//    }
+
+//    for (int i = 0; i < UniqueHazardTypes; ++i)
+//    {
+//        cout << "Final ratio " << i << ": " << pHazardInfo[i].fHazardRatioFinal << endl;
+//        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioFinal;
+//    }
+
+////    cout << endl << endl;
 //    for (short i = 0; i < UniqueHazardTypes + 1; ++i)
 //    {
 //        cout << "Threshold " << i << ": " << Thresholds[i] << endl;
+//    }
+
+//    for (int i = 0; i < UniqueHazardTypes; ++i)
+//    {
+//        if ((HazardRandomValue >= Thresholds[i]) && (HazardRandomValue < Thresholds[i + 1]))
+//        {
+//            eHazard = (HazardType)(i);
+//        }
 //    }
 
 //    return (eHazard);
@@ -373,19 +452,19 @@ public class CHazardSystem : MonoBehaviour
 //    {
 //    case HAZARD_FIRE:
 //        {
-//            iReturn = rand() % 20;
+//            iReturn = TotalFireHazards;
 //            break;
 //        }
 
 //    case HAZARD_HULL_BREACH:
 //        {
-//            iReturn = rand() % 20;
+//            iReturn = TotalHullBreachHazards;
 //            break;
 //        }
 
 //    case HAZARD_MALFUNCTION:
 //        {
-//            iReturn = rand() % 20;
+//            iReturn = TotalMalfunctionHazards;
 //            break;
 //        }
 //    }
