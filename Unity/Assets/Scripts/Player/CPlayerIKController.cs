@@ -112,33 +112,36 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	public static void SerializeIKTarget(CNetworkStream _cStream)
 	{
 		GameObject cSelfActor = CGamePlayers.SelfActor;
-		CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
-				
-		if (cSelfActor != null && cSelfIKController.m_RightHandTarget != null)
-		{
-			// Write rotation states
-			_cStream.Write((byte)ENetworkAction.SetRightTransform);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.x);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.y);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.position.z);	      
+        if (cSelfActor != null)
+        {
+            CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
+    				
+            if (cSelfActor != null && cSelfIKController.m_RightHandTarget != null)
+            {
+                // Write rotation states
+                _cStream.Write((byte)ENetworkAction.SetRightTransform);
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.position.x);
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.position.y);
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.position.z);	      
 
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.x);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.y);
-			_cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.z);
-		}
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.x);
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.y);
+                _cStream.Write((float)cSelfIKController.m_RightHandTarget.rotation.eulerAngles.z);
+            }
 
-		if (cSelfActor != null && cSelfIKController.m_LeftHandTarget != null)
-		{
-			// Write rotation states
-			_cStream.Write((byte)ENetworkAction.SetLeftTransform);
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.x);
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.y);
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.z);	      
-			
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.x);
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.y);
-			_cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.z);
-		}
+            if (cSelfActor != null && cSelfIKController.m_LeftHandTarget != null)
+            {
+                // Write rotation states
+                _cStream.Write((byte)ENetworkAction.SetLeftTransform);
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.x);
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.y);
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.position.z);	      
+    			
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.x);
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.y);
+                _cStream.Write((float)cSelfIKController.m_LeftHandTarget.rotation.eulerAngles.z);
+            }
+        }
 	}
 	
 	public static void UnserializeIKTarget(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
