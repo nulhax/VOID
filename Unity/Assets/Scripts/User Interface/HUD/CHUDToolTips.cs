@@ -30,7 +30,7 @@ public class CHUDToolTips : MonoBehaviour
 	
 	
 	// Member Fields
-	public CHUDLocator m_ComponentToolTip = null;
+	public CHUDLocator m_ActiveToolTip = null;
 
 	
 	// Member Properties
@@ -46,21 +46,37 @@ public class CHUDToolTips : MonoBehaviour
 	{
 		if(_CNewTargetObject == null)
 		{
-			// Disable all tooltips
-			m_ComponentToolTip.gameObject.SetActive(false);
+			// Disable the tooltip
+			m_ActiveToolTip.gameObject.SetActive(false);
+
+			// Delete the old tooltip
+			if(m_ActiveToolTip.m_WithinBoundsIcon != null)
+			{
+				Destroy(m_ActiveToolTip.m_WithinBoundsIcon);
+				m_ActiveToolTip.m_WithinBoundsIcon = null;
+			}
 		}
 		else
 		{
 			// Check if the target is a component
-			CComponentInterface ci = _CNewTargetObject.GetComponent<CComponentInterface>();
-			if(ci != null)
+			CActorInteractable ai = _CNewTargetObject.GetComponent<CActorInteractable>();
+
+			if(ai.m_ToolTipPrefab != null)
 			{
-				UpdateComponentToolTip(ci);
+				// Activate the tooltip
+				m_ActiveToolTip.gameObject.SetActive(true);
+				m_ActiveToolTip.Target = _CNewTargetObject.transform;
+				m_ActiveToolTip.m_WithinBoundsIcon = (GameObject)GameObject.Instantiate(ai.m_ToolTipPrefab);
+				m_ActiveToolTip.m_WithinBoundsIcon.transform.parent = m_ActiveToolTip.transform;
+				m_ActiveToolTip.m_WithinBoundsIcon.transform.localPosition = Vector3.zero;
+				m_ActiveToolTip.m_WithinBoundsIcon.transform.localScale = Vector3.one;
+				m_ActiveToolTip.m_WithinBoundsIcon.transform.localRotation = Quaternion.identity;
 			}
 			else
 			{
-				// Disable the componet tooltip
-				m_ComponentToolTip.gameObject.SetActive(false);
+				// Delete the old tooltip
+				Destroy(m_ActiveToolTip.m_WithinBoundsIcon);
+				m_ActiveToolTip.m_WithinBoundsIcon = null;
 			}
 		}
 	}
@@ -68,36 +84,36 @@ public class CHUDToolTips : MonoBehaviour
 	private void UpdateComponentToolTip(CComponentInterface _ComponentInterface)
 	{
 		// Activate the component tooltip
-		m_ComponentToolTip.gameObject.SetActive(true);
-		m_ComponentToolTip.Target = _ComponentInterface.transform;
+		m_ActiveToolTip.gameObject.SetActive(true);
+		m_ActiveToolTip.Target = _ComponentInterface.transform;
 
 		// Disable the old tooltip
-		if(m_ComponentToolTip.m_WithinBoundsIcon != null)
+		if(m_ActiveToolTip.m_WithinBoundsIcon != null)
 		{
-			m_ComponentToolTip.m_WithinBoundsIcon.SetActive(false);
+			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(false);
 		}
 		
 		// Select the tracker icon to use
 		switch (_ComponentInterface.ComponentType) 
 		{
 		case CComponentInterface.EType.CalibratorComp:
-			m_ComponentToolTip.m_WithinBoundsIcon = m_ComponentToolTip.transform.FindChild("Calibration").gameObject;
-			m_ComponentToolTip.m_WithinBoundsIcon.SetActive(true);
+			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Calibration").gameObject;
+			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
 			break;
 
 		case CComponentInterface.EType.MechanicalComp:
-			m_ComponentToolTip.m_WithinBoundsIcon = m_ComponentToolTip.transform.FindChild("Mechanical").gameObject;
-			m_ComponentToolTip.m_WithinBoundsIcon.SetActive(true);
+			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Mechanical").gameObject;
+			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
 			break;
 
 		case CComponentInterface.EType.CircuitryComp:
-			m_ComponentToolTip.m_WithinBoundsIcon = m_ComponentToolTip.transform.FindChild("Circuitry").gameObject;
-			m_ComponentToolTip.m_WithinBoundsIcon.SetActive(true);
+			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Circuitry").gameObject;
+			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
 			break;
 
 		case CComponentInterface.EType.FluidComp:
-			m_ComponentToolTip.m_WithinBoundsIcon = m_ComponentToolTip.transform.FindChild("Fluids").gameObject;
-			m_ComponentToolTip.m_WithinBoundsIcon.SetActive(true);
+			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Fluids").gameObject;
+			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
 			break;
 			
 		default:

@@ -73,7 +73,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // Local variables
             float fNewHealthValue = value;                   // New health value
             float fPrevHealth     = m_fHealth.Get();         // Current health
-            float fHealthDelta    = value - m_fHealth.Get(); // Delta: New - Old
+			float fHealthDelta    = fNewHealthValue - fPrevHealth; // Delta: New - Old
 
             // NOTE:
             // If fHealthDelta is ZERO, health is UNCHANGED

@@ -61,10 +61,6 @@ public class CHUDLocator : MonoBehaviour
 	// Member Methods
 	private void Start()
 	{
-		// If m_WithinBoundsIcon is null, select self
-		if(m_WithinBoundsIcon == null)
-			m_WithinBoundsIcon = gameObject;
-
 		// Default in bounds
 		EnteredBounds();
 
@@ -179,7 +175,8 @@ public class CHUDLocator : MonoBehaviour
 
 	private void LeftBounds()
 	{
-		m_WithinBoundsIcon.SetActive(false);
+		if(m_WithinBoundsIcon != null)
+			m_WithinBoundsIcon.SetActive(false);
 
 		if(m_OutOfBoundsIcon != null)
 			m_OutOfBoundsIcon.SetActive(true);
@@ -192,6 +189,7 @@ public class CHUDLocator : MonoBehaviour
 		if(m_OutOfBoundsIcon != null)
 			m_OutOfBoundsIcon.SetActive(false);
 
-		m_WithinBoundsIcon.SetActive(true);
+		if(m_WithinBoundsIcon != null)
+			m_WithinBoundsIcon.SetActive(true);
 	}
 }
