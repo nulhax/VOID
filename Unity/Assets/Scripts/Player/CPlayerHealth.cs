@@ -71,17 +71,21 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         set
         {
             // Local variables
-            float fNewHealthValue = value;                   // New health value
-            float fPrevHealth     = m_fHealth.Get();         // Current health
-			float fHealthDelta    = fNewHealthValue - fPrevHealth; // Delta: New - Old
+            float fNewHealthValue = value;                         // New health value
+            float fPrevHealth     = m_fHealth.Get();               // Current health
+            float fHealthDelta    = fNewHealthValue - fPrevHealth; // Delta: New - Old
 
             // NOTE:
             // If fHealthDelta is ZERO, health is UNCHANGED
             // If fHealthDelta is a POSITIVE number, health INCREASED
             // If fHealthDelta is a NEGATIVE number, health DECREASED
 
-            // If health changed
-            if (fHealthDelta != 0.0f)
+            // If health is not (max and being incremented) and
+            // If health is not (min and being decremented) and
+            // If health delta is not 0
+            if (!( (fPrevHealth  == k_fMaxHealth) && (fHealthDelta > 0.0f) ) &&
+                !( (fPrevHealth  == k_fMinHealth) && (fHealthDelta < 0.0f) ) &&
+                 (fHealthDelta != 0.0f))
             {
                 // If new health value is  between the min and max values
                 if ( (fNewHealthValue > k_fMinHealth) && (fNewHealthValue < k_fMaxHealth) )
