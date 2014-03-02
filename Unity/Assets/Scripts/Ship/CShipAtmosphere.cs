@@ -21,124 +21,94 @@ using System.Linq;
 /* Implementation */
 
 
-public class CShipLifeSupportSystem : CNetworkMonoBehaviour 
+public class CShipAtmosphere : CNetworkMonoBehaviour 
 {
-	// Member Types
+
+// Member Types
 
 
-	// Member Delegates & Events
+// Member Delegates & Events
 
-	
-	// Member Fields
-	private List<GameObject> m_AtmosphereGenerators = new List<GameObject>();
-	private List<GameObject> m_AtmosphereConditioners = new List<GameObject>();
 
-	private CNetworkVar<float> m_ShipAtmosphericQuality = null;
+// Member Properties
 
-	// Member Properties
+
 	public float ShipAtmosphericQuality
 	{
-		get { return(m_ShipAtmosphericQuality.Get()); }
-		
-		[AServerOnly]
-		set { m_ShipAtmosphericQuality.Set(value); }
+		get { return(m_fGlobalAtmosphericQuality.Get()); }
 	}
 
 	
-	// Member Methods
+// Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ShipAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-	}
-	
-	public void OnNetworkVarSync(INetworkVar _VarInstance)
-	{
-		
+		m_fGlobalAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			UpdateFacilityAtmosphereRefilling();
-			UpdateFacilityAtmosphereQuality();
-		}
-	}
 
-	public void RegisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
-	{
-		if(!m_AtmosphereGenerators.Contains(_AtmosphereGenerator))
-		{
-			m_AtmosphereGenerators.Add(_AtmosphereGenerator);
-		}
-	}
-	
-	public void UnregisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
-	{
-		if(m_AtmosphereGenerators.Contains(_AtmosphereGenerator))
-		{
-			m_AtmosphereGenerators.Remove(_AtmosphereGenerator);
-		}
-	}
+    public void Update()
+    {
+        if (CNetwork.IsServer)
+        {
+            // Create list of facilities that require refilling
+            // Calculate total consumption rate
+            List<GameObject> aRefillingFacilities = new List<GameObject>();
+            float fTotalConsumptionRate = 0.0f;
 
-	public void RegisterAtmosphereConditioner(GameObject _AtmosphereConditioner)
-	{
-		if(!m_AtmosphereConditioners.Contains(_AtmosphereConditioner))
-		{
-			m_AtmosphereConditioners.Add(_AtmosphereConditioner);
-		}
-	}
+            Dictionary<CFacilityInterface.EType, List<GameObject>> mFacilities = CFacilityInterface.GetAllFacilities();
 
-	public void UnregisterAtmosphereConditioner(GameObject _AtmosphereConditioner)
-	{
-		if(m_AtmosphereConditioners.Contains(_AtmosphereConditioner))
-		{
-			m_AtmosphereConditioners.Remove(_AtmosphereConditioner);
-		}
-	}
+            foreach (KeyValuePair<CFacilityInterface.EType, List<GameObject>> tEntry in mFacilities)
+            {
+                tEntry.Value.ForEach((GameObject cFacilityObject) =>
+                {
+                    CFacilityAtmosphere cFacilityAtmosphere = cFacilityObject.GetComponent<CFacilityAtmosphere>();
 
-	[AServerOnly]
-	private void UpdateFacilityAtmosphereRefilling()
-	{
-		// Reset all facility refilling
-		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
-		{
-			facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = 0.0f;
-		}
+                    if (cFacilityAtmosphere.IsAtmosphereRefillingRequired)
+                    {
+                        aRefillingFacilities.Add(cFacilityObject);
+                    }
 
-		// Get the facilities that are requiring a refill of atmosphere (i.e, have a leak, hull breach, consumer)
-		var facilitiesRequiringRefilling = 
-			from facility in gameObject.GetComponent<CShipFacilities>().Facilities
-			where facility.GetComponent<CFacilityAtmosphere>().RequiresAtmosphereRefill
-			select facility;
-		
-		// If there are facilities requiring this, calculate the refilling output
-		int numFacilitiesRequiringRefill = facilitiesRequiringRefilling.ToArray().Length;
-		if(numFacilitiesRequiringRefill != 0)
-		{
-			// Get the combined output of all atmosphere distributors
-			float combinedOutput = 0.0f;
-			foreach(GameObject ag in m_AtmosphereGenerators)
-			{
-				CAtmosphereGeneratorBehaviour agb = ag.GetComponent<CAtmosphereGeneratorBehaviour>();
+                    if (cFacilityAtmosphere.IsAtmosphereRefillingEnabled)
+                    {
+                        fTotalConsumptionRate += cFacilityAtmosphere.AtmosphereConsumeRate;
+                    }
+                });
+            }
 
-				if(agb.IsAtmosphereGenerationActive)
-				{
-					combinedOutput += agb.AtmosphereGenerationRate;
-				}
-			}
-			
-			// Calculate the output for each facility evenly
-			float evenDistribution = combinedOutput / numFacilitiesRequiringRefill;
-			
-			// Apply this refilling value to the facilities that need it
-			foreach(GameObject facility in facilitiesRequiringRefilling)
-			{
-				facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = evenDistribution;
-			}
-		}
-	}
+            // Calculate the total generation available 
+            List<GameObject> aAtmosphereGenerators = CModuleInterface.FindModulesByType(CModuleInterface.EType.AtmosphereGenerator);
+            float fTotalGeneration = 0.0f;
 
+            aAtmosphereGenerators.ForEach((GameObject cGeneratorObject) =>
+            {
+                fTotalGeneration += cGeneratorObject.GetComponent<CAtmosphereGeneratorBehaviour>().AtmosphereGenerationRate;
+            });
+
+            // Calculate delta atmosphere
+            float fDeltaGeneration = (fTotalGeneration * Time.deltaTime) + (fTotalConsumptionRate * Time.deltaTime);
+
+            if (aRefillingFacilities.Count > 0)
+            {
+                float fDeltaFacilityGeneration = fDeltaGeneration / aRefillingFacilities.Count;
+
+                aRefillingFacilities.ForEach((GameObject _cRefillingFacility) =>
+                {
+                    _cRefillingFacility.GetComponent<CFacilityAtmosphere>().IncrementQuantity(fDeltaFacilityGeneration);
+                });
+            }
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        // Empty
+    }
+
+
+    /*
 	[AServerOnly]
 	private void UpdateFacilityAtmosphereQuality()
 	{
@@ -170,7 +140,55 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 
 		ShipAtmosphericQuality = atmosphereQuality;
 	}
+    */
 
+
+    /*
+	[AServerOnly]
+	private void UpdateFacilityAtmosphereRefilling()
+	{
+		// Reset all facility refilling
+		foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
+		{
+			facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = 0.0f;
+		}
+
+		// Get the facilities that are requiring a refill of atmosphere (i.e, have a leak, hull breach, consumer)
+		var facilitiesRequiringRefilling = 
+			from facility in gameObject.GetComponent<CShipFacilities>().Facilities
+			where facility.GetComponent<CFacilityAtmosphere>().IsAtmosphereRefillingRequired
+			select facility;
+		
+		// If there are facilities requiring this, calculate the refilling output
+		int numFacilitiesRequiringRefill = facilitiesRequiringRefilling.ToArray().Length;
+		if(numFacilitiesRequiringRefill != 0)
+		{
+			// Get the combined output of all atmosphere distributors
+			float combinedOutput = 0.0f;
+			foreach(GameObject ag in m_AtmosphereGenerators)
+			{
+				CAtmosphereGeneratorBehaviour agb = ag.GetComponent<CAtmosphereGeneratorBehaviour>();
+
+				if(agb.IsAtmosphereGenerationActive)
+				{
+					combinedOutput += agb.AtmosphereGenerationRate;
+				}
+			}
+			
+			// Calculate the output for each facility evenly
+			float evenDistribution = combinedOutput / numFacilitiesRequiringRefill;
+			
+			// Apply this refilling value to the facilities that need it
+			foreach(GameObject facility in facilitiesRequiringRefilling)
+			{
+				facility.GetComponent<CFacilityAtmosphere>().AtmosphereRefillRate = evenDistribution;
+			}
+		}
+	}
+    */
+
+
+    /*
 	public void OnGUI()
 	{
         return;
@@ -227,4 +245,13 @@ public class CShipLifeSupportSystem : CNetworkMonoBehaviour
 		GUI.Label(new Rect(Screen.width / 2, 0.0f, boxWidth, boxHeight),
 		          "Atmosphere Status'\n" + shipLifeSupportOutput + generatorOutput + conditionerOutput + facilitiesOutput);
 	}
+     * */
+
+
+// Member Fields
+
+
+    CNetworkVar<float> m_fGlobalAtmosphericQuality = null;
+
+
 }

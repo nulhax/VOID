@@ -29,194 +29,205 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-// Member Fields
-
-	private CNetworkVar<float> m_AtmosphereQuantity = null;
-
-	private CNetworkVar<float> m_fAtmosphereConsumptionRate = null;
-	private CNetworkVar<float> m_fAtmosphereRefillRate = null;
-	
-	private List<GameObject> m_AtmosphericConsumers = new List<GameObject>();
-	
-	private float m_AtmosphereVolume = 1000.0f;
-
-
 // Member Properties
+	
 
     public float AtmosphereQuantity
     {
-        get { return (m_AtmosphereQuantity.Get()); }
+        get { return (m_fQuantity.Get()); }
     }
 
-    public float AtmospherePercentage
+
+    public float AtmosphereQuantityPercentage
     {
-		get { return ((AtmosphereQuantity / m_AtmosphereVolume) * 100.0f); }
+		get { return ((AtmosphereQuantity / m_fVolume) * 100.0f); }
     }
+
 
 	public float AtmosphereVolume
 	{
-		get { return (m_AtmosphereVolume); } 
+		get { return (m_fVolume); } 
 	}
 
-	public float AtmosphereRefillRate
-	{
-		get { return(m_fAtmosphereRefillRate.Get()); }
-
-		[AServerOnly]
-		set { m_fAtmosphereRefillRate.Set(value); }
-	}
 
 	public float AtmosphereConsumeRate
 	{
-		get { return(m_fAtmosphereConsumptionRate.Get()); }
-
-		[AServerOnly]
-		set { m_fAtmosphereConsumptionRate.Set(value); }
+        get { return (m_fConsumptionRate); }
 	}
 
-	public bool RequiresAtmosphereRefill
+
+	public bool IsAtmosphereRefillingRequired
 	{
-		get { return(AtmosphereConsumeRate != 0.0f || AtmospherePercentage != 1.0f); } 
+        get { return (IsAtmosphereRefillingEnabled &&
+                      AtmosphereQuantityPercentage != 1.0f); } 
 	}
+
+
+    public bool IsAtmosphereRefillingEnabled
+    {
+        get { return (m_bRefillingEnabled); }
+    }
 
 
 // Member Methods
 	
+
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_AtmosphereQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fAtmosphereRefillRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fAtmosphereConsumptionRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
-	public void OnNetworkVarSync(INetworkVar _VarInstance)
-	{
 
-	}
+    public void IncrementQuantity(float _fQuantity)
+    {
+        float fNewQuanity = m_fQuantity.Get() + _fQuantity;
 
-	public void Start()
-	{
-		if(CNetwork.IsServer)
-		{
-			// Debug: Atmosphere starts at half the total volume
-			m_AtmosphereQuantity.Set(AtmosphereVolume / 2);
-		}
-	}
+        if (fNewQuanity < 0.0f)
+        {
+            fNewQuanity = 0.0f;
+        }
+        else if (fNewQuanity > m_fVolume)
+        {
+            fNewQuanity = m_fVolume;
+        }
+
+        m_fQuantity.Set(fNewQuanity);
+    }
+
+
+    [AServerOnly]
+    public void RegisterAtmosphericConsumer(GameObject _cConsumer)
+    {
+        if (!m_aConsumers.Contains(_cConsumer))
+        {
+            m_aConsumers.Add(_cConsumer);
+        }
+    }
+
+
+    [AServerOnly]
+    public void UnregisterAtmosphericConsumer(GameObject _cConsumer)
+    {
+        if (m_aConsumers.Contains(_cConsumer))
+        {
+            m_aConsumers.Remove(_cConsumer);
+        }
+    }
+
+
+    void Start()
+    {
+        if (CNetwork.IsServer)
+        {
+            // Debug: Atmosphere starts at half the total volume
+            m_fQuantity.Set(AtmosphereVolume / 2);
+
+            GetComponent<CFacilityHull>().EventBreached += () =>
+            {
+                m_bExplosiveDepressurizing = true;
+            };
+
+            GetComponent<CFacilityHull>().EventBreachFixed += () =>
+            {
+                m_bExplosiveDepressurizing = false;
+            };
+        }
+    }
+
 	
-	public void Update()
+	void Update()
 	{
 		if(CNetwork.IsServer)
 		{
 			// Remove consumers that are now null
-			m_AtmosphericConsumers.RemoveAll(item => item == null);
+			m_aConsumers.RemoveAll((item) => item == null);
 
 			UpdateConsumptionRate();
-			UpdateAtmosphereQuantity();
-		}
 
-
-        if (AtmospherePercentage < 25.0f &&
-            !m_bFired)
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+            // Turn on warning alarms
+            if (!m_bAlarmsActive &&
+                AtmosphereQuantityPercentage < 25.0f)
             {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
-            });
-        }
-        else if (m_bFired &&
-                 AtmospherePercentage > 25.0f)
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+                gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+                {
+                    _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
+                });
+            }
+            
+            // Turn off alarms
+            else if (m_bAlarmsActive &&
+                     AtmosphereQuantityPercentage > 25.0f)
             {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
-            });
+                gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+                {
+                    _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
+                });
 
-            m_bFired = false;
-        }
-	}
+                m_bAlarmsActive = false;
+            }
 
-    static bool m_bFired = false;
-
-	[AServerOnly]
-	public void RegisterAtmosphericConsumer(GameObject _Consumer)
-	{
-		if(!m_AtmosphericConsumers.Contains(_Consumer))
-		{
-			m_AtmosphericConsumers.Add(_Consumer);
+            // Compute explosive decompression
+            if (m_bExplosiveDepressurizing)
+            {
+                if (m_fQuantity.Get() != 0.0f)
+                {
+                    IncrementQuantity(-m_fVolume * k_fExplosiveDecompressionRatio * Time.deltaTime);
+                }
+            }
 		}
 	}
 
-	[AServerOnly]
-	public void UnregisterAtmosphericConsumer(GameObject _Consumer)
-	{
-		if(m_AtmosphericConsumers.Contains(_Consumer))
-		{
-			m_AtmosphericConsumers.Remove(_Consumer);
-		}
-	}
 
 	[AServerOnly]
-	private void UpdateConsumptionRate()
+	void UpdateConsumptionRate()
 	{
 		// Calulate the combined consumption rate within the facility
-		float consumptionRate = 0.0f;
-		foreach(GameObject consumer in m_AtmosphericConsumers)
-		{
-			CActorAtmosphericConsumer aac = consumer.GetComponent<CActorAtmosphericConsumer>();
+		float fConsumptionRate = 0.0f;
 
-			if(aac.IsConsumingAtmosphere)
-				consumptionRate += aac.AtmosphericConsumptionRate;
-		}
+		m_aConsumers.ForEach((GameObject _cConsumer) =>
+		{
+            CActorAtmosphericConsumer cActorAtmosphereConsumer = _cConsumer.GetComponent<CActorAtmosphericConsumer>();
+
+            if (cActorAtmosphereConsumer.IsConsumingAtmosphere)
+            {
+                fConsumptionRate += cActorAtmosphereConsumer.AtmosphericConsumptionRate;
+            }
+		});
 
 		// Set the consumption rate
-		AtmosphereConsumeRate = consumptionRate;
+		m_fConsumptionRate = fConsumptionRate;
 	}
 
-	[AServerOnly]
-	private void UpdateAtmosphereQuantity()
+
+    void OnNetworkVarSync(INetworkVar _cSynedVar)
     {
-		float consumptionAmount = 0.0f;
-		float refillAmount = 0.0f;
+        // Empty
+    }
 
-		// If the atmosphere is being consumed, calculate the consumption rate
-		if(m_AtmosphericConsumers.Count != 0)
-		{
-			// Calculate the consumption amount
-			consumptionAmount = -AtmosphereConsumeRate * Time.deltaTime;
-		}
 
-		// If the facility requires a refill, calculate the refill rate
-		if(RequiresAtmosphereRefill)
-        {
-			refillAmount = AtmosphereRefillRate * Time.deltaTime;
-        }
+// Member Fields
 
-		// Combine the refill and consumption amounts to get the final rate
-		float finalAmount = consumptionAmount + refillAmount;
 
-		// Calculate the new quantity
-		float newQuantity = AtmosphereQuantity + finalAmount;
+    public float m_fVolume = 1000.0f;
 
-		// Clamp atmosphere
-		if(newQuantity > AtmosphereVolume)
-		{
-			newQuantity = AtmosphereVolume;
-		}
-		else if(newQuantity < 0.0f)
-		{
-			newQuantity = 0.0f;
+    List<GameObject> m_aConsumers = new List<GameObject>();
 
-			// There was inssuficent atmosphere, let the consumers know
-			foreach(GameObject consumer in m_AtmosphericConsumers)
-			{
-				CActorAtmosphericConsumer aac = consumer.GetComponent<CActorAtmosphericConsumer>();
-				
-				if(aac.IsConsumingAtmosphere)
-					aac.InsufficientAtmosphere();
-			}
-		}
-		
-		// Increase atmosphere amount
-		m_AtmosphereQuantity.Set(newQuantity);
-	}
+    CNetworkVar<float> m_fQuantity = null;
+
+    bool m_bAlarmsActive = false;
+
+
+    const float k_fExplosiveDecompressionRatio = 0.1f;
+
+
+// Server Member Fields
+
+
+    float m_fConsumptionRate = 0.0f;
+
+    bool m_bRefillingEnabled = true;
+    bool m_bDepressurizing = false;
+    bool m_bExplosiveDepressurizing = false;
+
+
 };
