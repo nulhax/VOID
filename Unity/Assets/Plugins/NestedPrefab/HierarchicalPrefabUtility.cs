@@ -5,6 +5,8 @@ using System.Collections.Generic;
 // The hierarchical prefab utility
 public static class HierarchicalPrefabUtility
 {
+	private static bool s_WarningSent = false;
+
 	// Summary : Instantiate a Prefab GameObject 
 	// Note : Same as the GameObject.Instantiate (You can use this method as replacement)
 	// But add the capability to instantiate the compiled version of a Hierarchical Prefab
@@ -59,9 +61,10 @@ public static class HierarchicalPrefabUtility
 	static private void DisplayCompilationNotUpToDateWarningIfNeeded()
 	{
 #if UNITY_EDITOR
-		if(NestedPrefabEditorSettings.MustCompile)
+		if(NestedPrefabEditorSettings.MustCompile && !s_WarningSent)
 		{
 			Debug.LogWarning("Warning : Nested prefab Compilation is not up to date. Please use the Compile button on the nested prefab Editor.");
+			s_WarningSent = true;
 		}
 #endif
 	}

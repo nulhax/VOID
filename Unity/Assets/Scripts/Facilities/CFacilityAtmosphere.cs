@@ -30,7 +30,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 
 // Member Fields
-		
+
 	private CNetworkVar<float> m_AtmosphereQuantity = null;
 
 	private CNetworkVar<float> m_fAtmosphereConsumptionRate = null;
@@ -42,7 +42,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
 
 // Member Properties
-	
+
     public float AtmosphereQuantity
     {
         get { return (m_AtmosphereQuantity.Get()); }

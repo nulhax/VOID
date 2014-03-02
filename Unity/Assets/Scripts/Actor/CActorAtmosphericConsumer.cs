@@ -27,7 +27,8 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	public delegate void NotifyAtmosphereConsumptionState();
 
 	public event NotifyAtmosphereConsumptionState EventInsufficientAtmosphere;
-	
+
+
 	// Member Fields
 	public float m_AtmosphericConsumptionRate = 0.0f;
 	public bool m_ConsumingAtmosphere = false;
@@ -100,7 +101,7 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 		// Unregister self from facility
 		_Facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
 
-		if (m_ActorLocator.LastEnteredFacility == null)
+		if (m_ActorLocator.CurrentFacility == null)
         {
             InsufficientAtmosphere();
         }

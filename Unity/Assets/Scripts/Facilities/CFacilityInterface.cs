@@ -234,10 +234,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     void OnGUI()
     {
         if (CGamePlayers.SelfActor != null &&
-            CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility != null)
+            CGamePlayers.SelfActor.GetComponent<CActorLocator>().CurrentFacility != null)
         {
-            float fAtmosphereQuanity = CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantity;
-            float fAtmosphereVolumne = CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>().AtmosphereVolume;
+            float fAtmosphereQuanity = CGamePlayers.SelfActor.GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantity;
+            float fAtmosphereVolumne = CGamePlayers.SelfActor.GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityAtmosphere>().AtmosphereVolume;
 
             float fPowerQuanity = CGameShips.Ship.GetComponent<CShipPowerSystem>().ShipCurrentCharge;
             //float fPowerVolumne = CGamePlayers.SelfActor.GetComponent<CFacilityPower>().AtmosphereVolume;

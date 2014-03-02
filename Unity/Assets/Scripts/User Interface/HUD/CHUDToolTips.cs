@@ -30,7 +30,7 @@ public class CHUDToolTips : MonoBehaviour
 	
 	
 	// Member Fields
-	public CHUDLocator m_ActiveToolTip = null;
+	public CHUDToolTip m_ActiveToolTip = null;
 
 	
 	// Member Properties
@@ -39,6 +39,7 @@ public class CHUDToolTips : MonoBehaviour
 	// Member Methods
 	private void Start()
 	{
+		// Register to target change events
 		CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().EventTargetChange += OnTargetChange;
 	}
 	
@@ -46,78 +47,47 @@ public class CHUDToolTips : MonoBehaviour
 	{
 		if(_CNewTargetObject == null)
 		{
+			// Destroy the old tooltip
+			if(m_ActiveToolTip.m_ToolTip != null)
+			{
+				Destroy(m_ActiveToolTip.m_ToolTip);
+				m_ActiveToolTip.m_ToolTip = null;
+			}
+
 			// Disable the tooltip
 			m_ActiveToolTip.gameObject.SetActive(false);
-
-			// Delete the old tooltip
-			if(m_ActiveToolTip.m_WithinBoundsIcon != null)
-			{
-				Destroy(m_ActiveToolTip.m_WithinBoundsIcon);
-				m_ActiveToolTip.m_WithinBoundsIcon = null;
-			}
 		}
 		else
 		{
-			// Check if the target is a component
+			// Check if the target has a tooltip component
 			CActorInteractable ai = _CNewTargetObject.GetComponent<CActorInteractable>();
 
 			if(ai.m_ToolTipPrefab != null)
 			{
+				// Instantiate the tooltip
+				GameObject newTooltip = (GameObject)GameObject.Instantiate(ai.m_ToolTipPrefab);
+				newTooltip.transform.parent = m_ActiveToolTip.transform;
+				newTooltip.transform.localPosition = Vector3.zero;
+				newTooltip.transform.localRotation = Quaternion.identity;
+				newTooltip.transform.localScale = Vector3.one;
+
 				// Activate the tooltip
 				m_ActiveToolTip.gameObject.SetActive(true);
 				m_ActiveToolTip.Target = _CNewTargetObject.transform;
-				m_ActiveToolTip.m_WithinBoundsIcon = (GameObject)GameObject.Instantiate(ai.m_ToolTipPrefab);
-				m_ActiveToolTip.m_WithinBoundsIcon.transform.parent = m_ActiveToolTip.transform;
-				m_ActiveToolTip.m_WithinBoundsIcon.transform.localPosition = Vector3.zero;
-				m_ActiveToolTip.m_WithinBoundsIcon.transform.localScale = Vector3.one;
-				m_ActiveToolTip.m_WithinBoundsIcon.transform.localRotation = Quaternion.identity;
+				m_ActiveToolTip.m_ToolTip = newTooltip;
 			}
 			else
 			{
-				// Delete the old tooltip
-				Destroy(m_ActiveToolTip.m_WithinBoundsIcon);
-				m_ActiveToolTip.m_WithinBoundsIcon = null;
+				// Destroy the old tooltip
+				if(m_ActiveToolTip.m_ToolTip != null)
+				{
+					Destroy(m_ActiveToolTip.m_ToolTip);
+					m_ActiveToolTip.m_ToolTip = null;
+				}
+
+				// Disable the tooltip
+				m_ActiveToolTip.gameObject.SetActive(false);
 			}
-		}
-	}
-
-	private void UpdateComponentToolTip(CComponentInterface _ComponentInterface)
-	{
-		// Activate the component tooltip
-		m_ActiveToolTip.gameObject.SetActive(true);
-		m_ActiveToolTip.Target = _ComponentInterface.transform;
-
-		// Disable the old tooltip
-		if(m_ActiveToolTip.m_WithinBoundsIcon != null)
-		{
-			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(false);
-		}
-		
-		// Select the tracker icon to use
-		switch (_ComponentInterface.ComponentType) 
-		{
-		case CComponentInterface.EType.CalibratorComp:
-			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Calibration").gameObject;
-			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
-			break;
-
-		case CComponentInterface.EType.MechanicalComp:
-			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Mechanical").gameObject;
-			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
-			break;
-
-		case CComponentInterface.EType.CircuitryComp:
-			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Circuitry").gameObject;
-			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
-			break;
-
-		case CComponentInterface.EType.FluidComp:
-			m_ActiveToolTip.m_WithinBoundsIcon = m_ActiveToolTip.transform.FindChild("Fluids").gameObject;
-			m_ActiveToolTip.m_WithinBoundsIcon.SetActive(true);
-			break;
-			
-		default:
-			break;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿
+
 //  Auckland
 //  New Zealand
 //
@@ -17,6 +17,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+
+[RequireComponent(typeof(Rigidbody))]
 public class CActorLocator : MonoBehaviour 
 {
 	// Member Types
@@ -32,13 +34,13 @@ public class CActorLocator : MonoBehaviour
 
 	// Member Fields
 	private List<GameObject> m_ContainingFacilities = new List<GameObject>();
-	private GameObject m_LastEnteredFacility = null;
+	private GameObject m_CurrentFacility = null;
 
 
 	// Member Properties	
-	public GameObject LastEnteredFacility
+	public GameObject CurrentFacility
 	{
-		get { return(m_LastEnteredFacility); }
+		get { return(m_CurrentFacility); }
 	}
 
 	public List<GameObject> ContainingFacilities
@@ -52,7 +54,7 @@ public class CActorLocator : MonoBehaviour
 	{
 		m_ContainingFacilities.Add(_Facility);
 		
-		m_LastEnteredFacility = _Facility;
+		m_CurrentFacility = _Facility;
 
 		if(EventEnteredFacility != null)
 			EventEnteredFacility(_Facility);
@@ -64,7 +66,7 @@ public class CActorLocator : MonoBehaviour
 		m_ContainingFacilities.Remove(_Facility);
 		
 		if(m_ContainingFacilities.Count == 0)
-			m_LastEnteredFacility = null;
+			m_CurrentFacility = null;
 
 		if(EventExitedFacility != null)
 			EventExitedFacility(_Facility);

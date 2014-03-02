@@ -35,7 +35,7 @@ public class CHUD3D : MonoBehaviour
 	private Transform m_CachedHUDCameraLeft = null;
 	private Transform m_CachedHUDCameraRight = null;
 
-	public CHUDLocator m_ReticleOuter = null;
+	public CHUDToolTip m_ReticleOuter = null;
 
 	public UILabel m_O2Value = null;
 	public UIProgressBar m_02Bar = null;

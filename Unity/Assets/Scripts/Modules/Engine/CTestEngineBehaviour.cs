@@ -45,7 +45,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 	private float m_VarianceTimer1 = 0.0f;
 	private float m_VarianceTimer2 = 0.0f;
 	private float m_VarianceTimer3 = 0.0f;
-
+	
 	private CPropulsionGeneratorBehaviour m_PropulsionGenerator = null;
 	private CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
