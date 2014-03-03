@@ -60,6 +60,8 @@ public class CActorGravity : CNetworkMonoBehaviour
 		{
 			m_GravityAcceleration = Vector3.zero;
 
+			CheckGravityInfluence();
+
 			if(!IsUnderGravityInfluence)
 				return;
 
@@ -86,16 +88,56 @@ public class CActorGravity : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	public void ActorEnteredGravityTrigger(GameObject _Facility)
+	private void CheckGravityInfluence()
 	{
 		if(m_FacilitiesInfluencingGravity.Count == 0)
 		{
-			m_UnderGravityInfluence.Set(true);
-
-			if(EventEnteredGravityZone != null)
-				EventEnteredGravityZone();
+			if(m_UnderGravityInfluence.Value)
+			{
+				m_UnderGravityInfluence.Value = false;
+				
+				if(EventExitedGravityZone != null)
+					EventExitedGravityZone();
+			}
 		}
+		else
+		{
+			bool gravityFound = false;
+			foreach(GameObject facility in m_FacilitiesInfluencingGravity)
+			{
+				if(facility.GetComponent<CFacilityGravity>().IsGravityEnabled)
+				{
+					gravityFound = true;
+					break;
+				}
+			}
+			
+			if(!gravityFound)
+			{
+				if(m_UnderGravityInfluence.Value)
+				{
+					m_UnderGravityInfluence.Value = false;
+					
+					if(EventExitedGravityZone != null)
+						EventExitedGravityZone();
+				}
+			}
+			else
+			{
+				if(!m_UnderGravityInfluence.Value)
+				{
+					m_UnderGravityInfluence.Value = true;
+					
+					if(EventEnteredGravityZone != null)
+						EventEnteredGravityZone();
+				}
+			}
+		}
+	}
 
+	[AServerOnly]
+	public void ActorEnteredGravityTrigger(GameObject _Facility)
+	{
 		if(!m_FacilitiesInfluencingGravity.Contains(_Facility))
 			m_FacilitiesInfluencingGravity.Add(_Facility);
 	}
@@ -105,13 +147,5 @@ public class CActorGravity : CNetworkMonoBehaviour
 	{
 		if(m_FacilitiesInfluencingGravity.Contains(_Facility))
 			m_FacilitiesInfluencingGravity.Remove(_Facility);
-
-		if(m_FacilitiesInfluencingGravity.Count == 0)
-		{
-			m_UnderGravityInfluence.Set(false);
-
-			if(EventExitedGravityZone != null)
-				EventExitedGravityZone();
-		}
 	}
 }

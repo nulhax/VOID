@@ -595,7 +595,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 400078}
   - 54: {fileID: 5400000}
-  - 136: {fileID: 13600000}
   - 95: {fileID: 9500000}
   - 82: {fileID: 8200000}
   - 114: {fileID: 11400020}
@@ -617,8 +616,8 @@ GameObject:
   - 114: {fileID: 11400016}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400026}
-  - 81: {fileID: 8100000}
   - 114: {fileID: 11400048}
+  - 136: {fileID: 13600000}
   m_Layer: 13
   m_Name: Player Actor
   m_TagString: Untagged
@@ -675,6 +674,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400084}
   - 114: {fileID: 11400050}
+  - 81: {fileID: 8100000}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -1232,7 +1232,7 @@ AudioListener:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100078}
+  m_GameObject: {fileID: 100084}
   m_Enabled: 1
 --- !u!82 &8200000
 AudioSource:
@@ -1667,9 +1667,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bCanBeInstantiatedAtRuntime: 1
-  m_iHierarchicalPrefabVersionNumber: 10
+  m_iHierarchicalPrefabVersionNumber: 13
   m_rPrefabObject: {fileID: 100100000}
-  m_rCompiledHierarchicalPrefab: {fileID: 100092, guid: 90b377bc22bf8574e8259f64b12e94bf,
+  m_rCompiledHierarchicalPrefab: {fileID: 100092, guid: d3fca60de4b3ff548b1ee3d7e85a0a31,
     type: 2}
   m_bSceneInstance: 0
 --- !u!114 &11400050

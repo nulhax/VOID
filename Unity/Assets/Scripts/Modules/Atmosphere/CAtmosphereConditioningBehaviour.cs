@@ -63,7 +63,7 @@ public class CAtmosphereConditioningBehaviour : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register myself as a atmosphere conditioner
-		CGameShips.Ship.GetComponent<CShipLifeSupportSystem>().RegisterAtmosphereConditioner(gameObject);
+		//CGameShips.Ship.GetComponent<CShipAtmosphere>().RegisterAtmosphereConditioner(gameObject);
 		
 		if(CNetwork.IsServer)
 			ActivateConditioning();
