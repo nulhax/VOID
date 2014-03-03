@@ -41,8 +41,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 
 
 	// Member Properties
-	
-	
+
+
 	// Member Methods
 	public void Start()
 	{
@@ -50,16 +50,16 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 
 		// Register for when the calibrator breaks/fixes
 		m_LiquidComponent.EventHealthChange += HandleFluidHealthChange;
-		
+
 		// Register for when the circuitry breaks/fixes
 		m_CircuitryComponent.EventComponentBreak += HandleCircuitryBreaking;
 		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
-		
+
 		// Get the DUI of the power generator
 		m_DUIAtmosphereGeneration = m_DUIConsole.DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
 		m_DUIAtmosphereGeneration.RegisterAtmosphereGenerator(gameObject);
 
-        gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+        gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
 
 		if(CNetwork.IsServer)
 		{
@@ -73,6 +73,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_AtmosphereGenerator.AtmosphereGenerationRate = m_MaxAtmosphereGenerationRate * (_ComponentHealth.health / _ComponentHealth.health_initial);
+
+            gameObject.GetComponentInChildren<Light>().intensity = (m_AtmosphereGenerator.AtmosphereGenerationRate / 20.0f);
 		}
 	}
 	
@@ -90,7 +92,8 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_AtmosphereGenerator.ActivateGeneration();
-            gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+
+            gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
 		}
 	}
 }

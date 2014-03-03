@@ -46,8 +46,7 @@ public class CFluidComponent : CNetworkMonoBehaviour
 	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
 	void OnBreak(CComponentInterface _Sender)
 	{
-		// TODO: swap between fixed to broken
-		
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
 	}
 	
 
@@ -55,7 +54,7 @@ public class CFluidComponent : CNetworkMonoBehaviour
 	void OnFix(CComponentInterface _Sender)
 	{
 		//TODO swap between broken to fixed
-		
+        gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 	
 
@@ -85,6 +84,8 @@ public class CFluidComponent : CNetworkMonoBehaviour
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
 		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
+
+        //gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 	
 

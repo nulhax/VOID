@@ -66,7 +66,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
 		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
 
-        gameObject.GetComponent<CAudioCue>().Play(0.1f, true, 0);
+        gameObject.GetComponent<CAudioCue>().Play(0.06f, true, 0);
 
 		if(CNetwork.IsServer)
 		{
@@ -127,5 +127,9 @@ public class CTestEngineBehaviour: MonoBehaviour
 		angle = currentSpeed * 2.0f * Time.deltaTime;
 		axis = new Vector3(Mathf.Sin(m_VarianceTimer1), -Mathf.Cos(m_VarianceTimer1), 0.0f).normalized;
 		m_InnerRing.transform.Rotate(axis, angle);
+
+        //make the light change intensity depending on the currentSpeed
+        gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 22.0f);// (8.0f / (currentSpeed + 1.0f));
+        //Debug.Log("Engine Anim Speed = " + currentSpeed);
 	}
 }

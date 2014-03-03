@@ -58,7 +58,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
 		m_DUIPowerGeneration.RegisterPowerGenerator(gameObject);
 
-        gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
 
 		if(CNetwork.IsServer)
 		{
@@ -96,7 +96,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
-            gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
+            gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
 		}
 	}
 }
