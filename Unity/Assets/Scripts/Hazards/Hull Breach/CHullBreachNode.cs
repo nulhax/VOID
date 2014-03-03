@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CActorHealth))]
 [RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CHullBreachNode : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class CHullBreachNode : MonoBehaviour
 
 	void Awake()
 	{
+		// Remember the good mesh if none is defined but one is attached to this gameobject.
+		Mesh mf = GetComponent<MeshFilter>().sharedMesh;
+		if (mf != null && goodMesh == null)
+			goodMesh = mf;
+
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate = 100.0f;
 
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
