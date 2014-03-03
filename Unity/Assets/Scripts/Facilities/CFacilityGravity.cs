@@ -61,6 +61,12 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 		
 	}
 
+	[AServerOnly]
+	public void SetGravityEnabled(bool _State)
+	{
+		m_GravityEnabled.Value = _State;
+	}
+
 	public void Start()
 	{
 		// Register the actors entering/exiting the trigger zone

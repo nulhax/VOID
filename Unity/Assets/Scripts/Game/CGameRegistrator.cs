@@ -130,6 +130,7 @@ public class CGameRegistrator : MonoBehaviour
 		DUIEngine,
         DUIAirlockInternal,
         DuiFacilityDoor,
+		DUIFacilityControl,
 
 		// Other
 		LaserTurretProjectile,
@@ -272,6 +273,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,					"User Interface/DUI/Modules/DUIPropulsionEngine");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiFacilityDoor");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Other/Laser Turret Projectile");
@@ -393,6 +395,7 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine               , ENetworkPrefab.DUIEngine);
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      , ENetworkPrefab.DUIAirlockInternal);
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         , ENetworkPrefab.DuiFacilityDoor);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
 	}
 
 

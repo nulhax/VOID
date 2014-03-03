@@ -54,6 +54,11 @@ public class CFacilityPower : CNetworkMonoBehaviour
 		set { m_PowerConsumptionRate.Set(value); }
     }
 
+	public List<GameObject> PowerConsumers
+	{
+		get { return (m_PowerConsumers); }
+	}
+
 	public bool IsPowerActive
 	{
 		get { return (m_PowerActive.Get()); }

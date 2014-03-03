@@ -51,7 +51,17 @@ public class CActorGravity : CNetworkMonoBehaviour
 
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)
 	{
-
+		if(_SyncedVar == m_UnderGravityInfluence)
+		{
+			if(!m_UnderGravityInfluence.Value)
+			{
+				// Give a slight force to the object to get it moving
+				if(CNetwork.IsServer && rigidbody != null)
+				{
+					rigidbody.AddForce(Random.onUnitSphere * 0.1f, ForceMode.VelocityChange);
+				}
+			}
+		}
 	}
 
 	public void Update()
