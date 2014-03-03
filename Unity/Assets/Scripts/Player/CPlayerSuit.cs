@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorPowerConsumer))]
+[RequireComponent(typeof(CModulePowerConsumption))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 
@@ -101,25 +101,22 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
         if(CNetwork.IsServer)
         {
-			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().LastEnteredFacility;
+			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().CurrentFacility;
 
-            // Control visor state
+            // Check enviromental oxygen state
 			if (currentFacility == null)
             {
                 m_EnviromentalOxygen.Set(false);
             }
             else
             {
-				if (currentFacility.GetComponent<CFacilityAtmosphere>().AtmospherePercentage < 25.0f)
+				if(currentFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantityPercentage < 25.0f)
                 {
 					m_AtmosphereConsumer.SetAtmosphereConsumption(false);
                     m_EnviromentalOxygen.Set(false);
                 }
                 else
                 {
-					// Set the origninal consumption rate
-					m_AtmosphereConsumer.AtmosphericConsumptionRate = m_AtmosphereConsumer.InitialAtmosphericConsumptionRate;
-
 					m_AtmosphereConsumer.SetAtmosphereConsumption(true);
                     m_EnviromentalOxygen.Set(true);
                 }
@@ -128,11 +125,8 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 			// If there is no oxygen in the atmosphere
 			if(!m_EnviromentalOxygen.Value)
             {
-                // Consume oxygen
+                // Consume oxygen from the suit supply
                 float fOxygen = OxygenSupply - k_fOxygenDepleteRate * Time.deltaTime;
-
-				if(CGameHUD.Visor.IsVisorDown)
-					fOxygen = OxygenSupply;
 
                 if (fOxygen < 0.0f)
                 {
@@ -149,10 +143,6 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(10.0f * Time.deltaTime);
 				}
-				else if(!CGameHUD.Visor.IsVisorDown)
-				{
-					GetComponent<CPlayerHealth>().ApplyDamage(500.0f * Time.deltaTime);
-				}
             }
             else
             {
@@ -165,7 +155,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 					// Add to current oxygen to suit
 					m_fOxygen.Set(OxygenSupply + k_fOxygenRefillRate * Time.deltaTime);
 
-                    if (OxygenSupply > k_fOxygenCapacity)
+                    if(OxygenSupply > k_fOxygenCapacity)
                     {
                         m_fOxygen.Set(k_fOxygenCapacity);
                     }
@@ -189,13 +179,11 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
 		if(!_Breathable)
 		{
-			// Save the last visor state
 			m_PreviousVisorDownState = CGameHUD.Visor.IsVisorDown;
 			CGameHUD.Visor.SetVisorState(true);
 		}
 		else
 		{
-			// Use the old visor state
 			CGameHUD.Visor.SetVisorState(m_PreviousVisorDownState);
 		}
 	}

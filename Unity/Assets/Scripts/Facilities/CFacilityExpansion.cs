@@ -33,7 +33,6 @@ public class CFacilityExpansion : MonoBehaviour
 // Member Properties
 
 
-
     public int ExpansionPortCount
     {
         get { return (m_aExpansionPorts.Length); }

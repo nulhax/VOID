@@ -48,7 +48,7 @@ public class CExitTrigger : MonoBehaviour
 				// Ensure the actor is not onboard any other facility before disembarking
 				bool isWithinOtherFacility = false;
 				if(actor.GetComponent<CActorLocator>() != null)
-					isWithinOtherFacility = _Other.rigidbody.GetComponent<CActorLocator>().LastEnteredFacility != null;
+					isWithinOtherFacility = _Other.rigidbody.GetComponent<CActorLocator>().CurrentFacility != null;
 				else
 					isWithinOtherFacility = CGameShips.Ship.GetComponent<CShipOnboardActors>().IsActorOnboardShip(actor);
 

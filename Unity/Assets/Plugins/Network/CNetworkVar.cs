@@ -35,6 +35,8 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 
 // Member Properties
+
+
 	public TYPE Value
 	{
 		get {return(Get());}

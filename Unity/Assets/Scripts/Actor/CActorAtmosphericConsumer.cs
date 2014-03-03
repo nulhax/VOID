@@ -27,13 +27,17 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 	public delegate void NotifyAtmosphereConsumptionState();
 
 	public event NotifyAtmosphereConsumptionState EventInsufficientAtmosphere;
-	
+
+
 	// Member Fields
 	public float m_AtmosphericConsumptionRate = 0.0f;
 	public bool m_ConsumingAtmosphere = false;
 
 	private float m_InitialConsumptionRate = 0.0f;
 	private CActorLocator m_ActorLocator = null;
+
+    private GameObject m_cRegisteredFacilityObject = null;
+    private bool m_bRegistered = false;
 
 	// Member Properties	
 	[AServerOnly]
@@ -65,6 +69,12 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 		m_InitialConsumptionRate = m_AtmosphericConsumptionRate;
 	}
 
+    public void OnDestroy()
+    {
+        m_cRegisteredFacilityObject.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
+        m_bRegistered = false;
+    }
+
 	[AServerOnly]
 	public void InsufficientAtmosphere()
 	{
@@ -92,15 +102,22 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 
 		// Register myself to the facility atmosphere
 		_Facility.GetComponent<CFacilityAtmosphere>().RegisterAtmosphericConsumer(gameObject);
+        m_bRegistered = true;
+        m_cRegisteredFacilityObject = _Facility;
 	}
 	
 	[AServerOnly]
 	public void OnExitFacility(GameObject _Facility)
 	{
+        //if (_Facility != m_cRegisteredFacilityObject)
+        //    Debug.LogError("Actor consumer is unregistering from a facility that it was not registered to");
+
 		// Unregister self from facility
 		_Facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
+        m_bRegistered = false;
+        m_cRegisteredFacilityObject = null;
 
-		if (m_ActorLocator.LastEnteredFacility == null)
+		if (m_ActorLocator.CurrentFacility == null)
         {
             InsufficientAtmosphere();
         }

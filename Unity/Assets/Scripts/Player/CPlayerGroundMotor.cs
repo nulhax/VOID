@@ -309,9 +309,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
         {
             if (gameObject != CGamePlayers.SelfActor)
             {
-                transform.eulerAngles = new Vector3(0.0f,
-                                                    m_fRotationY.Get(),
-				                                    0.0f);
+                transform.eulerAngles = new Vector3(0.0f, m_fRotationY.Get(),  0.0f);
             }
         }
 	}

@@ -485,7 +485,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400072}
-  - 135: {fileID: 13500002}
+  - 65: {fileID: 6500004}
   - 54: {fileID: 5400004}
   - 144: {fileID: 14400000}
   m_Layer: 13
@@ -674,6 +674,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400008}
+  - 81: {fileID: 8100000}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -748,7 +749,6 @@ GameObject:
   m_Component:
   - 4: {fileID: 400014}
   - 54: {fileID: 5400002}
-  - 136: {fileID: 13600000}
   - 95: {fileID: 9500000}
   - 82: {fileID: 8200002}
   - 114: {fileID: 11400028}
@@ -770,7 +770,7 @@ GameObject:
   - 114: {fileID: 11400032}
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400022}
-  - 81: {fileID: 8100000}
+  - 136: {fileID: 13600000}
   - 114: {fileID: 11400050}
   m_Layer: 13
   m_Name: Player Actor
@@ -1617,12 +1617,24 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: .192675784, y: .287535965, z: .262901336}
   m_Center: {x: 0, y: .111035436, z: -.0183700919}
+--- !u!65 &6500004
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100060}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: .300000012, y: .200000003, z: .300000012}
+  m_Center: {x: 0, y: .100000001, z: .0500000007}
 --- !u!81 &8100000
 AudioListener:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100092}
+  m_GameObject: {fileID: 100084}
   m_Enabled: 1
 --- !u!82 &8200000
 AudioSource:
@@ -1966,6 +1978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bSimulateClientGravity: 1
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2084,7 +2097,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RootSkeleton: {fileID: 400016}
-  m_RagdollJoint: {fileID: 0}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -2097,18 +2109,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &13500002
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100060}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0307110585
-  m_Center: {x: 0, y: .0307110585, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

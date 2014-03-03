@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -54,14 +54,14 @@ public class CFireHazard : MonoBehaviour
 	{
 		if(CNetwork.IsServer && burning)
 		{
-			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
+			CFacilityAtmosphere fa = GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
 
 			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
 
 			float thresholdPercentage = 0.25f;
-			if(fa.AtmospherePercentage < thresholdPercentage)
-				ah.health += (1.0f / (fa.AtmospherePercentage / thresholdPercentage)) * Time.deltaTime;
+			if(fa.AtmosphereQuantityPercentage < thresholdPercentage)
+                ah.health += (1.0f / (fa.AtmosphereQuantityPercentage / thresholdPercentage)) * Time.deltaTime;
 		}
 	}
 

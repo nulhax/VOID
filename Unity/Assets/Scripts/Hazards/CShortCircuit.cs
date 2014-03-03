@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CActorPowerConsumer))]
+[RequireComponent(typeof(CModulePowerConsumption))]
 [RequireComponent(typeof(CActorHealth))]
 public class CShortCircuit : MonoBehaviour
 {
@@ -34,13 +34,13 @@ public class CShortCircuit : MonoBehaviour
 	void Start()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
-		GetComponent<CActorPowerConsumer>().EventConsumptionToggle += OnConsumptionToggle;
+		//GetComponent<CModulePowerConsumption>().EventInsufficientPower += OnConsumptionToggle;
 	}
 
 	void OnDestroy()
 	{
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
-		GetComponent<CActorPowerConsumer>().EventConsumptionToggle -= OnConsumptionToggle;
+		//GetComponent<CModulePowerConsumption>().EventInsufficientPower -= OnConsumptionToggle;
 	}
 
 	void OnSetState(byte prevState, byte currState)
@@ -69,7 +69,7 @@ public class CShortCircuit : MonoBehaviour
 		}
 	}
 
-	void OnConsumptionToggle(bool consuming)
+	void OnConsumptionToggle()
 	{
 		// Todo: Toggle short circuit.
 	}

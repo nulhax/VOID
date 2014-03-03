@@ -37,7 +37,6 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     //Member variables
 
     public Transform m_RootSkeleton = null;
-    public CharacterJoint m_RagdollJoint = null;
 
     //public GameObject m_PlayerHead = null;
     //public GameObject m_RagdollHead = null;
@@ -121,16 +120,21 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         SetKinematicRagdoll();		
         SetRagdollLayer();
 
-        m_initialOffset = transform.localPosition;
         gameObject.rigidbody.isKinematic = false;
 
         gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += OnHealthStateChanged;
+
+		//Disable client side rigidbody
+		if (!CNetwork.IsServer) 
+		{
+			rigidbody.isKinematic = true;
+		}
     }
 	
 	// Update is called once per frame
 	void Update () 
 	{
-        m_RootSkeleton.position = transform.position;
+        
 	}
 
     [AServerOnly]
@@ -180,7 +184,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             {
                 body.rigidbody.velocity = new Vector3(0, 0, 0);
                 body.rigidbody.isKinematic = true;
-                body.rigidbody.useGravity = false;
+                
                 body.rigidbody.mass = 9.0f;
             }
             if(body.gameObject.GetComponent<Collider>())
@@ -199,6 +203,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             if(body.gameObject.GetComponent<Rigidbody>())
             {
                 body.rigidbody.isKinematic = false;
+				body.rigidbody.useGravity = false;
                 body.rigidbody.velocity = rigidbody.velocity;
             }
             if(body.gameObject.GetComponent<Collider>())

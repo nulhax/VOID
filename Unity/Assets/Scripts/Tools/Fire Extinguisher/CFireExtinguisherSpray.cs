@@ -105,16 +105,18 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			if (m_bActive.Get())
+			if (m_bActive.Value)
 			{
-				RaycastHit _rh;
-				Ray ray = new Ray(m_cSprayParticalSystem.gameObject.transform.position, m_cSprayParticalSystem.gameObject.transform.forward);
+				Collider[] colliders = Physics.OverlapSphere(m_cSprayParticalSystem.transform.position + m_cSprayParticalSystem.transform.forward * 2.0f, 2.0f);
 
-				if (Physics.Raycast(ray, out _rh, 2.0f))
+				foreach(Collider collider in colliders)
 				{
-					CFireHazard fire = _rh.collider.gameObject.GetComponent<CFireHazard>();
+					CFireHazard fire = collider.gameObject.GetComponent<CFireHazard>();
 					if (fire != null)
+					{
 						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
+						break;
+					}
 				}
 			}
 		}
