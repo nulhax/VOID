@@ -211,11 +211,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
             {
                 cNewTargetActorObject = cActorInteractable.gameObject;
                 cTargetRaycastHit = cRaycastHit;
+				break;
             }
-
-			// Break out - if the first non-trigger collider wasn't interactable. This is intentional
-			if(!cRaycastHit.collider.isTrigger)
+			else if(!cRaycastHit.collider.isTrigger)
 			{
+				// Break out - if the first non-trigger collider wasn't interactable. This is intentional
 				break;
 			}
         }
