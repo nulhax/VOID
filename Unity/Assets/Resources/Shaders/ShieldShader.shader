@@ -2,10 +2,11 @@ Shader "ShieldShader"
 {
 	Properties 
 	{
+
 _Range1("_Range1", Range(0.1,5) ) = 0.5
 _Range2("_Range2", Range(1,100) ) = 50
 _Alpha("Alpha", Range(0.01,1) ) = 0.5
-
+_Offset("Time", Range(0,1)) = 0.0
 	}
 	
 	SubShader 
@@ -35,6 +36,7 @@ Fog{
 float _Range1;
 float _Range2;
 float _Alpha;
+float _Offset;
 
 			struct EditorSurfaceOutput {
 				half3 Albedo;
@@ -122,5 +124,5 @@ o.Alpha = _Alpha.xxxx;
 			}
 		ENDCG
 	}
-	Fallback "Diffuse"
+	Fallback "Transparent/VertexLit"
 }
