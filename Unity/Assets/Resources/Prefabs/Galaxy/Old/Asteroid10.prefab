@@ -18,7 +18,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 64: {fileID: 6400000}
   m_Layer: 11
-  m_Name: Asteroid12
+  m_Name: Asteroid10
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: a1f30c6b2183c3f4a9ffa3cb444d6ddc, type: 2}
+  - {fileID: 2100000, guid: 2e08fe5be185e6c4aac3ea670ecd5492, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -62,7 +62,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 4be3fc1b37a54fe4f8b066d2c05dee73, type: 3}
+  m_Mesh: {fileID: 4300000, guid: dfe682398e60f3b4986b56e5620464d6, type: 3}
 --- !u!54 &5400000
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -70,7 +70,7 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   serializedVersion: 2
-  m_Mass: 1333
+  m_Mass: 1000
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
@@ -90,7 +90,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 4be3fc1b37a54fe4f8b066d2c05dee73, type: 3}
+  m_Mesh: {fileID: 4300000, guid: dfe682398e60f3b4986b56e5620464d6, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -110,7 +110,7 @@ MonoBehaviour:
   syncNetworkState: 0
   health_max: Infinity
   health_min: 0
-  health_initial: 1333
+  health_initial: 1000
   health_previous: 0
   state_initial: 0
   stateTransitions: []
@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3e26481c7f479546831f204059b49ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Synchronise: 1
   Position: 1
   Angle: 1
   PositionalVelocity: 1

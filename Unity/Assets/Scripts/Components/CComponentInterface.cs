@@ -146,7 +146,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		}
 		else
 		{
-			Debug.LogError("Could not find module to register to");
+			Debug.LogError(gameObject.name + " Could not find module to register to");
 		}
 
         if (EventHealthChange != null)

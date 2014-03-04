@@ -40,7 +40,7 @@ public class CGameRegistrator : MonoBehaviour
         // Galaxy
         Galaxy,
         Asteroid_FIRST,
-        Asteroid_LAST = Asteroid_FIRST + 19,
+        Asteroid_LAST = Asteroid_FIRST + 2,
 
         // Minerals
         Crystal,
@@ -131,6 +131,10 @@ public class CGameRegistrator : MonoBehaviour
         DUIAirlockInternal,
         DuiFacilityDoor,
 		DUIFacilityControl,
+
+		// NulOS
+		DUINOSPanel,
+		NOSMenuNode,
 
 		// Other
 		LaserTurretProjectile,
@@ -274,6 +278,11 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiFacilityDoor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINOSPanel,					"User Interface/DUI/DUINOSMain");
+
+		// NulOS
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSMenuNode,					"User Interface/DUI/NulOS/MenuNode");
+
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Other/Laser Turret Projectile");
@@ -396,6 +405,7 @@ public class CGameRegistrator : MonoBehaviour
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      , ENetworkPrefab.DUIAirlockInternal);
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         , ENetworkPrefab.DuiFacilityDoor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanel 			, ENetworkPrefab.DUINOSPanel);
 	}
 
 
