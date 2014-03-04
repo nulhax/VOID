@@ -1436,7 +1436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e567bb5c4edb2b84a8b9368a7e310a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxPowerGenerationRate: 15
+  m_MaxPowerGenerationRate: 100
   m_DUIConsole: {fileID: 11400028}
   m_CircuitryComponent: {fileID: 11400010}
   m_CalibrationComponent: {fileID: 11400018}
