@@ -58,8 +58,8 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-        m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(true);
+        m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
+        m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
 
         // Open airlock
         if (CNetwork.IsServer)
@@ -67,8 +67,8 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
             m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenAirlock += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_bStates.Set((byte)(m_bStates.Get() | (1 << (byte)EStates.Decompressing)));
-                m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-                m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(false);
+                m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
+                m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
 
                 foreach (GameObject cAlarmObject in gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning))
                 {
@@ -80,15 +80,14 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
             m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseAirlock += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_bStates.Set((byte)(m_bStates.Get() & ~(1 << (byte)EStates.Decompressing)));
-                m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-                m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(true);
+
+                m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
+                m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
 
                 foreach (GameObject cAlarmObject in gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning))
                 {
                     cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
                 }
-
-                //gameObject.GetComponent<CFacilityAtmosphere>().
             };
         }
 
@@ -216,16 +215,14 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 // Member Fields
 
-
-    public GameObject m_cDoorExternal = null;
-    public GameObject m_cDoorFacility = null;
+    public CExpansionPortBehaviour m_cFacilityExpansionPortBehaviour = null;
+    public CExpansionPortBehaviour m_cHullExpansionPortBehaviour = null;
 
     public GameObject m_cDuiInternal = null;
     public GameObject m_cDuiFacility = null;
     public GameObject m_cDuiExternal = null;
 
     public GameObject[] m_caOxygenParticalSprayers = null;
-
 
     CNetworkVar<byte> m_bStates = null;
 

@@ -39,6 +39,13 @@ public class CExpansionPortBehaviour : MonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void HandleFacilityCreate(GameObject _cFacilityObject);
+    public event HandleFacilityCreate EventFacilityCreate;
+
+
+    public delegate void HandleFacilityDestroy();
+
+
 // Member Properties
 	
 	
@@ -60,9 +67,21 @@ public class CExpansionPortBehaviour : MonoBehaviour
 	}
 
 
-    public GameObject AttachedExpansionPortObject
+    public GameObject AttachedFacilityObject
     {
-        get { return (m_cAttachedExpansionPortObject); }
+        get { if (m_cAttachedExpansionPortObject == null) return (null); return (m_cAttachedExpansionPortObject.transform.parent.gameObject); }
+    }
+
+
+    public CDoorBehaviour DoorBehaviour
+    {
+        get 
+        { 
+            if (m_cDoorObject == null) 
+                return (m_cAttachedExpansionPortObject.GetComponent<CExpansionPortBehaviour>().DoorBehaviour);  
+            
+            return (m_cDoorObject.GetComponent<CDoorBehaviour>()); 
+        }
     }
 	
 
@@ -110,6 +129,8 @@ public class CExpansionPortBehaviour : MonoBehaviour
 
         // Remmeber who I am currently connected to
         m_cAttachedExpansionPortObject = cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId);
+
+        if (EventFacilityCreate != null) EventFacilityCreate(cCreatedFacilityObject);
 
         return (cCreatedFacilityObject);
     }

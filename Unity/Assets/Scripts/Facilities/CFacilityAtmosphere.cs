@@ -174,6 +174,41 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
                     IncrementQuantity(-m_fVolume * k_fExplosiveDecompressionRatio * Time.deltaTime);
                 }
             }
+
+            // Loop through expansion ports
+            foreach (GameObject cExpansionPortObject in GetComponent<CFacilityExpansion>().ExpansionPorts)
+            {
+                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPortObject.GetComponent<CExpansionPortBehaviour>();
+
+                // Check door is open on this expansion port
+                if (cExpansionPortBehaviour.DoorBehaviour.GetComponent<CDoorBehaviour>().IsOpened)
+                {
+                    GameObject cAttachedFacilityObject = cExpansionPortBehaviour.AttachedFacilityObject;
+
+                    // Check there is not a neighbouring facility
+                    if (cAttachedFacilityObject == null)
+                    {
+                        /* The open door leads to outside space. Decompress */
+                        gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+                        {
+                            _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
+                        });
+
+                        Debug.LogError("Ahhhh the door to the outside is open. BREACHHHHEEDDD");
+                    }
+                    else
+                    {
+                        if (cAttachedFacilityObject.GetComponent<CFacilityAtmosphere>().AtmosphereQuantityPercentage < AtmosphereQuantityPercentage)
+                        {
+
+
+
+
+                            Debug.LogError("Ahhhh the atmosphere in the other facility is lower then mine" + cAttachedFacilityObject.GetComponent<CFacilityAtmosphere>().AtmosphereQuantityPercentage + ":" + AtmosphereQuantityPercentage);
+                        }
+                    }
+                }
+            }
 		}
 	}
 

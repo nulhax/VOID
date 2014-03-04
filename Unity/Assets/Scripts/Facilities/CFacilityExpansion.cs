@@ -60,6 +60,12 @@ public class CFacilityExpansion : MonoBehaviour
     }
 
 
+    void Start()
+    {
+        // Empty
+    }
+
+
 	void DebugAddPortNames()
 	{
         uint uiCount = 0;
