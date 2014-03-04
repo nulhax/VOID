@@ -70,7 +70,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_DUIPowerCapacitor.RegisterPowerCapacitor(gameObject);
 
         //begin the initial ambient sound
-        gameObject.GetComponent<CAudioCue>().Play(0.08f, true, 0);
+        gameObject.GetComponent<CAudioCue>().Play(0.13f, true, 0);
 
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)
@@ -97,7 +97,7 @@ public class CTestPowerCapacitor: MonoBehaviour
                 //stop the ambient sound from playing as the capacitor no longer works
                 gameObject.GetComponent<CAudioCue>().StopAllSound();
 
-                //turn off the light, should be a better place to do this. See: Engine
+                //turn off the light, should be a better place to do this. For example: Engine
                 gameObject.GetComponentInChildren<Light>().intensity = (0.0f);
 			}
 			else
@@ -109,8 +109,8 @@ public class CTestPowerCapacitor: MonoBehaviour
                     //change lighting depending on power
                     //gameObject.GetComponentInChildren<Light>().intensity = (m_PowerStorage.BatteryCharge / 150.0f);
 
-                    //rebegin playing the ambient sound
-                    gameObject.GetComponent<CAudioCue>().Play(0.08f, true, 0);
+                    //restart playing the ambient sound
+                    gameObject.GetComponent<CAudioCue>().Play(0.13f, true, 0);
                 }
 			}
 		}

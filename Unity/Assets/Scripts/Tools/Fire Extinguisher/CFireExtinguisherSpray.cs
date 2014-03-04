@@ -105,25 +105,36 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			if (m_bActive.Get())
+			if (m_bActive.Value)
 			{
-				RaycastHit _rh;
-				Ray ray = new Ray(m_cSprayParticalSystem.gameObject.transform.position, m_cSprayParticalSystem.gameObject.transform.forward);
+				Collider[] colliders = Physics.OverlapSphere(m_cSprayParticalSystem.transform.position + m_cSprayParticalSystem.transform.forward * 2.0f, 2.0f);
 
-				if (Physics.Raycast(ray, out _rh, 2.0f))
+				foreach(Collider collider in colliders)
 				{
-					CFireHazard fire = _rh.collider.gameObject.GetComponent<CFireHazard>();
+					CFireHazard fire = collider.gameObject.GetComponent<CFireHazard>();
 					if (fire != null)
+					{
 						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
+						break;
+					}
 				}
 			}
 		}
 	}
 
+
+	[AServerOnly]
+	public void OnUseStart(GameObject _cInteractableObject)
+	{
+		m_bActive.Set(true);
+        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
+        Debug.Log("OnUseStart");
+	}
+
+
     [AClientOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
-        //m_bActive.Set(true);
         if (_bActive)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireStart);
@@ -136,13 +147,6 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         s_cSerializeStream.Write(ThisNetworkView.ViewId);
     }
 
-    [AServerOnly]
-    public void OnUseStart(GameObject _cInteractableObject)
-    {
-        m_bActive.Set(true);
-        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
-        Debug.Log("OnUseStart");
-    }
 
 	[AServerOnly]
 	public void OnUseEnd(GameObject _cInteractableObject)
@@ -151,6 +155,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 
+
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
         if (_cSyncedVar == m_bActive)
@@ -158,12 +163,10 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             if (m_bActive.Get())
             {
                 m_cSprayParticalSystem.Play();
-                gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
             }
             else
             {
                 m_cSprayParticalSystem.Stop();
-                gameObject.GetComponent<CAudioCue>().StopAllSound();
             }
         }
     }

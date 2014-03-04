@@ -45,15 +45,26 @@ public class CTestEngineBehaviour: MonoBehaviour
 	private float m_VarianceTimer1 = 0.0f;
 	private float m_VarianceTimer2 = 0.0f;
 	private float m_VarianceTimer3 = 0.0f;
-
+	
 	private CPropulsionGeneratorBehaviour m_PropulsionGenerator = null;
 	private CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
+	private int m_AmbientHumSoundIndex = -1;
+
 
 	// Member Properties
-	
-	
+
+
 	// Member Methods
+
+	void Awake()
+	{
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+		//m_AmbientHumSoundIndex = audioCue.AddSound("Audio/SmallEngineAmbientHum", 0.0f, 0.0f, true);
+	}
+
 	public void Start()
 	{
 		m_PropulsionGenerator = gameObject.GetComponent<CPropulsionGeneratorBehaviour>();
@@ -65,8 +76,6 @@ public class CTestEngineBehaviour: MonoBehaviour
 		// Get the DUI of the power generator
 		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
 		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
-
-        gameObject.GetComponent<CAudioCue>().Play(0.06f, true, 0);
 
 		if(CNetwork.IsServer)
 		{
@@ -80,6 +89,10 @@ public class CTestEngineBehaviour: MonoBehaviour
 		{
 			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
 		}
+
+		// Begin playing the sound.
+		// Todo: Once individual sounds can be disabled, this must be moved to where the engine turns on and off.
+		GetComponent<CAudioCue>().Play(0.15f, true, 0);
 	}
 
 	private void HandleMechanicalHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
@@ -128,8 +141,8 @@ public class CTestEngineBehaviour: MonoBehaviour
 		axis = new Vector3(Mathf.Sin(m_VarianceTimer1), -Mathf.Cos(m_VarianceTimer1), 0.0f).normalized;
 		m_InnerRing.transform.Rotate(axis, angle);
 
-        //make the light change intensity depending on the currentSpeed
-        gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 22.0f);// (8.0f / (currentSpeed + 1.0f));
-        //Debug.Log("Engine Anim Speed = " + currentSpeed);
+        gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 15.0f);
+
+        Debug.Log(gameObject.GetComponentInChildren<Light>().intensity);
 	}
 }

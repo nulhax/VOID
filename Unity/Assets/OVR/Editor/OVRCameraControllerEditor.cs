@@ -73,7 +73,7 @@ public class OVRCameraControllerEditor : Editor
 																		m_Component.FollowOrientation,
 																		typeof(Transform), true) as Transform;
 			m_Component.TrackerRotatesY 	= EditorGUILayout.Toggle("Tracker Rotates Y", m_Component.TrackerRotatesY);
-			
+
 			OVREditorGUIUtility.Separator();	
 
 			// Remove Portrait Mode from Inspector window for now

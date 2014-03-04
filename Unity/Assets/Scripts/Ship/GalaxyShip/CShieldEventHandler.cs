@@ -48,13 +48,17 @@ public class CShieldEventHandler : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		EventShieldRecharge();
+		if(EventShieldRecharge != null)
+			EventShieldRecharge();
 	}
 
 	void OnTriggerEnter(Collider _Collider)
 	{
-		EventShieldCollider(_Collider);
-		EventShieldDamage(_Collider);
+		if(EventShieldCollider != null)
+			EventShieldCollider(_Collider);
+		
+		if(EventShieldDamage != null)
+			EventShieldDamage(_Collider);
 	}
 
 

@@ -39,10 +39,21 @@ public class CTestPowerGenerator: MonoBehaviour
 	private CPowerGenerationBehaviour m_PowerGenerator = null;
 	private CDUIPowerGeneratorRoot m_DUIPowerGeneration = null;
 
+	private int m_AmbientHumSoundIndex = -1;
+
 	// Member Properties
 	
 	
 	// Member Methods
+
+	void Awake()
+	{
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+		//m_AmbientHumSoundIndex = audioCue.AddSound("Audio/PowerGeneratorAmbientHum", 0.0f, 0.0f, true);
+	}
+
 	public void Start()
 	{
 		m_PowerGenerator = gameObject.GetComponent<CPowerGenerationBehaviour>();
@@ -58,8 +69,6 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
 		m_DUIPowerGeneration.RegisterPowerGenerator(gameObject);
 
-        gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
-
 		if(CNetwork.IsServer)
 		{
 			// Set the generation rate
@@ -72,6 +81,10 @@ public class CTestPowerGenerator: MonoBehaviour
 		{
 			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
 		}
+
+		// Begin playing the sound.
+		// Todo: Once individual sounds can be disabled, this must be moved to where the power generator turns on and off.
+		GetComponent<CAudioCue>().Play(transform, 0.25f, true, 0);
 	}
 
 	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
@@ -87,7 +100,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.DeactivatePowerGeneration();
-            gameObject.GetComponent<CAudioCue>().StopAllSound();
+            GetComponent<CAudioCue>().StopAllSound();
 		}
 	}
 
@@ -96,7 +109,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
-            gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
+            GetComponent<CAudioCue>().Play(transform, 0.25f, true, 0);
 		}
 	}
 }

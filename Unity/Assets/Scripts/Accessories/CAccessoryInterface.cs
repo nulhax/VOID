@@ -33,6 +33,7 @@ public class CAccessoryInterface : MonoBehaviour
         Alarm,
         DuiMonitor,
         Alarm_Warning,
+        Door,
 
         MAX
     }

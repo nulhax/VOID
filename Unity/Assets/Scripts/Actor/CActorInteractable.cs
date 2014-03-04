@@ -35,7 +35,13 @@ public class CActorInteractable : CNetworkMonoBehaviour
     public event NotifyInputInteraction EventPrimary;
     public event NotifyInputInteraction EventSecondary;
     public event NotifyInputInteraction EventUse;
-	
+
+
+// Member Fields
+
+
+	public GameObject m_ToolTipPrefab = null;
+
 	
 // Member Properties
 
@@ -85,10 +91,6 @@ public class CActorInteractable : CNetworkMonoBehaviour
 			break;
 		}
 	}
-
-
-// Member Fields
-
 
 }
 

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -174,7 +174,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			CFacilityPower fp = facility.GetComponent<CFacilityPower>();
 			
 			if(fp.IsPowerActive)
-				m_ShipCurrentConsumptionRate += fp.PowerConsumption;
+				m_ShipCurrentConsumptionRate += fp.PowerConsumptionRate;
 		}
 	}
 
@@ -217,30 +217,29 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 		
 		// Calculate the combined ratio of battery charge vs. capacity of each power generator
 		float combinedChargeRatio = _AvailabeStorageUnits.Sum((psb) => {
-			return(psb.IsBatteryChargeAvailable ? psb.BatteryCharge / psb.BatteryCapacity : 0.0f);
+			float value = psb.BatteryCharge / psb.BatteryCapacity;
+			return(psb.IsBatteryChargeAvailable ? value : 0.0f);
 		});
 		
 		// Apply the new ammount of power to each
 		float leftOverCharge = 0.0f;
-		float comb = 0.0f;
 		foreach(CPowerStorageBehaviour psb in _AvailabeStorageUnits)
 		{
 			// Calculate the siphon amount based on the charge ratio of the battery / combined charge ratio of the ship
-			float chargeRatio = (psb.BatteryCharge / psb.BatteryCapacity);
+			float chargeRatio = psb.BatteryCharge / psb.BatteryCapacity;
 			float siphonAmount = chargeRatio / combinedChargeRatio * _ConsumptionAmount;
-			float finalAmount = evenDistribution + (siphonAmount * -1.0f);
-
-			comb+=siphonAmount;
+			float finalAmount = evenDistribution + (float.IsNaN(siphonAmount) ? 0.0f : (siphonAmount * -1.0f));
 
 			// Make sure to count the left over charge if near capacity
 			float finalCharge = psb.BatteryCharge + finalAmount;
+
 			if(finalCharge > psb.BatteryCapacity)
 			{
 				// Cap the charge at the storage capacity and get the left over amount
 				leftOverCharge += finalCharge - psb.BatteryCapacity;
 				psb.BatteryCharge = psb.BatteryCapacity;
 			}
-			else if(finalCharge < 0.0f)
+			else if(finalCharge < 0.0f || float.IsNaN(finalCharge))
 			{
 				// Cap the charge at zero
 				psb.BatteryCharge = 0.0f;
@@ -339,7 +338,7 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			                                  fi.FacilityId, 
 			                                  fi.FacilityType,
 			                                  fp.IsPowerActive,
-			                                  Math.Round(fp.PowerConsumption, 2));
+			                                  Math.Round(fp.PowerConsumptionRate, 2));
 			
 		}
 		

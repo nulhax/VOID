@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PhysicalForceDamage : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () 
+public class PhysicalForceDamage : MonoBehaviour
+{
+	void Start ()
 	{
-	
+
 	}
 	
 	// Update is called once per frame
-	void Update () 
+	void Update ()
 	{
 	
 	}

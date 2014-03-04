@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -13,24 +13,34 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CActorPowerConsumer))]
+[RequireComponent(typeof(CModulePowerConsumption))]
 [RequireComponent(typeof(CActorHealth))]
-[RequireComponent(typeof(Collider))]
 public class CShortCircuit : MonoBehaviour
 {
 	public bool shorting { get { return shorting_internal; } }
 	private bool shorting_internal = false;
+	private int audioClipIndex = -1;
+
+	void Awake()
+	{
+		// Add components at runtime instead of updating all the prefabs.
+		{
+			// CAudioCue
+			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+			audioClipIndex = audioCue.AddSound("Audio/ShortCircuit", 0.0f, 0.0f, true);
+		}
+	}
 
 	void Start()
 	{
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
-		GetComponent<CActorPowerConsumer>().EventConsumptionToggle += OnConsumptionToggle;
+		//GetComponent<CModulePowerConsumption>().EventInsufficientPower += OnConsumptionToggle;
 	}
 
 	void OnDestroy()
 	{
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
-		GetComponent<CActorPowerConsumer>().EventConsumptionToggle -= OnConsumptionToggle;
+		//GetComponent<CModulePowerConsumption>().EventInsufficientPower -= OnConsumptionToggle;
 	}
 
 	void OnSetState(byte prevState, byte currState)
@@ -38,24 +48,28 @@ public class CShortCircuit : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Begin short circuit.
+				if(!shorting)
 				{
+					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
 					particleSystem.Play();
-					GetComponent<CShortCircuit>().shorting_internal = true;
+					shorting_internal = true;
 					//GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
 			case 2:	// End short circuit.
+				if(shorting)
 				{
+					GetComponent<CAudioCue>().StopAllSound();
 					particleSystem.Stop();
-					GetComponent<CShortCircuit>().shorting_internal = false;
+					shorting_internal = false;
 					//GetComponent<CActorPowerConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
 	}
 
-	void OnConsumptionToggle(bool consuming)
+	void OnConsumptionToggle()
 	{
 		// Todo: Toggle short circuit.
 	}

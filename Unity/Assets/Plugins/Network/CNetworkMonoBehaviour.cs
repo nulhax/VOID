@@ -28,6 +28,8 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 
 
 // Member Properties
+
+
 	public CNetworkViewId ViewId
 	{
 		get { return(ThisNetworkView.ViewId); }

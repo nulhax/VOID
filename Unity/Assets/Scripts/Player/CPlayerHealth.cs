@@ -1,4 +1,4 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -24,13 +24,16 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 // Member Types
     // Damage Type
     [Flags]
-    public enum DamageType
+    public enum HealthChangeSourceType
     {
         None         = 0,
+
         Fire         = 1,
         Physical     = 2,
         Electrical   = 4,
-        Asphyxiation = 8
+        Asphyxiation = 8,
+
+        Heal = 16
     }
 
     // Health State
@@ -47,12 +50,15 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
-    public delegate void OnHealthChanged     (GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue);
-	public delegate void OnHealthStateChange (GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState);
+    public delegate void EventHealthChanged     (GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue);
+	public delegate void EventHealthStateChange (GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState);
 
-    public event OnHealthChanged     EventHealthChanged;
-    public event OnHealthStateChange EventHealthStateChanged;
+    public event EventHealthChanged     m_EventHealthChanged;
+    public event EventHealthStateChange m_EventHealthStateChanged;
 
+	private int m_PlayerForceDamageSoundIndex = -1;
+	private int m_PlayerForceDeathSoundIndex = -1;
+	float m_PlayerForceDamageSoundIndex_Time = 0.0f;
 
 // Member Properties
 	public float Health
@@ -61,24 +67,25 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		get { return (m_fHealth.Get()); }
 
         // Set
+        [AServerOnly]
         set
         {
             // Local variables
-            float fNewHealthValue = value;                   // New health value
-            float fPrevHealth     = m_fHealth.Get();         // Current health
-            float fHealthDelta    = value - m_fHealth.Get(); // Delta: New - Old
+            float fNewHealthValue = value;                         // New health value
+            float fPrevHealth     = m_fHealth.Get();               // Current health
+            float fHealthDelta    = fNewHealthValue - fPrevHealth; // Delta: New - Old
 
             // NOTE:
             // If fHealthDelta is ZERO, health is UNCHANGED
             // If fHealthDelta is a POSITIVE number, health INCREASED
             // If fHealthDelta is a NEGATIVE number, health DECREASED
 
-            // TODO: Consider moving the below code into seperate functions.
-            //       Note that doing so will require calling m_fHealth.Set()
-            //       outside of Health's set method.
-
-            // If health changed
-            if (fHealthDelta != 0.0f)
+            // If health is not (max and being incremented) and
+            // If health is not (min and being decremented) and
+            // If health delta is not 0
+            if (!( (fPrevHealth  == k_fMaxHealth) && (fHealthDelta > 0.0f) ) &&
+                !( (fPrevHealth  == k_fMinHealth) && (fHealthDelta < 0.0f) ) &&
+                 (fHealthDelta != 0.0f))
             {
                 // If new health value is  between the min and max values
                 if ( (fNewHealthValue > k_fMinHealth) && (fNewHealthValue < k_fMaxHealth) )
@@ -102,7 +109,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 }
 
                 // Trigger EventHealthChanged
-                EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                if (m_EventHealthChanged != null)
+                {
+                    m_EventHealthChanged(gameObject, m_fHealth.Get(), fPrevHealth);
+                }
             }
         }
     }
@@ -114,6 +124,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         get { return ((HealthState)m_HealthState.Get()); }
 
         // Set
+        [AServerOnly]
 		set { m_HealthState.Set((byte)value); }
 	}
 
@@ -142,6 +153,16 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
+    public float DownedTimer
+    {
+        // Get
+        get { return (m_fTimerDowned.Get()); }
+
+        // Set
+        set { m_fTimerDowned.Set(value); }
+    }
+
+
     public static CPlayerHealth Instance
     {
         // Get
@@ -150,15 +171,34 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
 // Member Functions
+    public void Awake()
+    {
+		s_cInstance = this;
+
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+
+		m_PlayerForceDamageSoundIndex = audioCue.AddSound("Audio/PlayerForceDamage", 0.0f, 0.0f, false);
+		m_PlayerForceDeathSoundIndex = audioCue.AddSound("Audio/PlayerForceDeath", 0.0f, 0.0f, false);
+
+		m_EventHealthChanged += OnHealthChange;
+		m_EventHealthStateChanged += OnHealthStateChange;
+	}
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
         //                                              Type   Callback          Initial Vlaue
 		m_fHealth        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.INVALID);
+        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.ALIVE);
 		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
+        m_fTimerDowned   = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
-    private void UpdateHealthState(GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue)
+
+    [AServerOnly]
+    private void UpdateHealthState()
     {
         // Set an invalid initial previous health state
         HealthState PrevHealthState = HealthState.INVALID;
@@ -170,7 +210,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             case HealthState.ALIVE:
             {
                 // If the player's health is the minimum health
-                if (m_fHealth.Get() == k_fMinHealth)
+                if (Health == k_fMinHealth)
                 {
                     // Change player's state to downed
                     PrevHealthState    = CurrentHealthState;
@@ -185,7 +225,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             case HealthState.DEAD:
             {
                 // If the player's health is not the minimum health
-                if (!(m_fHealth.Get() == k_fMinHealth))
+                if (!(Health == k_fMinHealth))
                 {
                     // Change player's state to downed
                     PrevHealthState    = CurrentHealthState;
@@ -199,9 +239,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             // Downed
             case HealthState.DOWNED:
             {
-                // Increment the downed timer
-                fTimerDowned += Time.deltaTime;
-
                 // If downed timer is equal to or greater than the max downed timer duration
                 if (fTimerDowned >= k_fTimerDownedMaxDuration)
                 {
@@ -231,19 +268,31 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         // If the previous health state is valid
         // And previous health state is not the same as the current health state
         if ( (PrevHealthState != HealthState.INVALID) && (PrevHealthState != HealthState.MAX) &&
-             (PrevHealthState != CurrentHealthState) )
+             (PrevHealthState != CurrentHealthState))
         {
             // Trigger EventHealthStateChanged
-            EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
+            if (m_EventHealthStateChanged != null)
+            {
+                m_EventHealthStateChanged(gameObject, CurrentHealthState, PrevHealthState);
+            }
         }
     }
 
 
+    [AServerOnly]
     private void UpdateHealthStateDowned()
     {
         if (CurrentHealthState == HealthState.DOWNED)
         {
-            UpdateHealthState(null, 0.0f, 0.0f);
+            fTimerDowned += Time.deltaTime;
+
+            if (fTimerDowned >= k_fTimerDownedMaxDuration)
+            {
+                if (CNetwork.IsServer)
+                {
+                    UpdateHealthState();
+                }
+            }
         }
     }
 
@@ -262,31 +311,8 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
-    public void Awake()
-    {
-        s_cInstance = this;
-        EventHealthChanged += UpdateHealthState;
-    }
-
-
-	void Start() 
-    {
-        if (Health == MaxHealth)
-        {
-            CurrentHealthState = HealthState.ALIVE;
-        }
-	}
-		 
-
-    void OnDestroy()
-    {
-        EventHealthChanged -= UpdateHealthState;
-    }
-
-
 	void Update()
 	{
-        // Update the downed timer
         UpdateHealthStateDowned();
 
         if (CNetwork.IsServer)
@@ -297,14 +323,44 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void UpdateAtmosphereEffects() { }
+	void UpdateAtmosphereEffects() { }
 
+	private void OnHealthChange(GameObject _TargetPlayer, float _fHealthCurrentValue, float _fHealthPreviousValue)
+	{
+		if (gameObject != _TargetPlayer) Debug.LogError("CPlayerHealth→OnHealthChange is not returning the correct player!");
+		if (_fHealthCurrentValue == _fHealthPreviousValue) Debug.LogError("CPlayerHealth→OnHealthChange is being called despite no change!");
+
+		// Play ouchies.
+		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
+		{
+			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
+			//GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
+		}
+	}
+
+	private void OnHealthStateChange(GameObject _SourcePlayer, HealthState _eHealthCurrentState, HealthState _eHealthPreviousState)
+	{
+		if (gameObject != _SourcePlayer) Debug.LogError("CPlayerHealth→OnHealthStateChange is not returning the correct player!");
+		if (_eHealthCurrentState == _eHealthPreviousState) Debug.LogError("CPlayerHealth→OnHealthStateChange is being called despite no change!");
+
+		// Play ooies.
+        if (_eHealthCurrentState == HealthState.DOWNED)
+        {
+            //GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDeathSoundIndex);
+        }
+	}
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
     {
         // If the updated network var was the health state
-        if (_cVarInstance == m_HealthState)
+        if (_cVarInstance == m_fHealth)
         {
+            if (CNetwork.IsServer)
+            {
+                // Update health states
+                UpdateHealthState();
+            }
+
             // Switch on the current health state
             switch (CurrentHealthState)
             {
@@ -351,6 +407,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
+    [AClientOnly]
     void OnGUI()
     {
         const float kBoxMargin = 10.0f;
@@ -371,6 +428,11 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                              "Health: " + Math.Round(m_fHealth.Get(), 2) + "/" + k_fMaxHealth);
 		}
     }
+
+
+    // Unused Functions
+    void Start(){}
+    void OnDestroy(){}
 	
 
 // Member Fields
@@ -385,5 +447,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	CNetworkVar<byte> m_HealthState;
 
     static CPlayerHealth s_cInstance = null;
+
+    CNetworkVar<float> m_fTimerDowned;
 }
-	

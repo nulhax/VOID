@@ -30,23 +30,43 @@ public class CHUDPanel : MonoBehaviour
 	
 	
 	// Member Fields
+	private Camera m_CachedCamera = null;
 
-	
+	private bool m_ContinuouslyUpdateScale = false;
+
+
 	// Member Properties
+	public bool ContinuouslyUpdateScale
+	{
+		set { m_ContinuouslyUpdateScale = value; }
+	}
 
 	
 	// Member Methods
-	public void Start()
+	private void Start()
 	{
-		// Get the HUD camera
-		Camera HUDCamera = CHUD3D.HUDCamera.camera;
+		// Cache the HUD camera
+		m_CachedCamera = CGameHUD.HUD3D.HUDCamera.camera;
 
+		// Update the scale
+		UpdateScale();
+	}
+
+	private void Update()
+	{
+		if(m_ContinuouslyUpdateScale)
+		{
+			UpdateScale();
+		}
+	}
+
+	private void UpdateScale()
+	{
 		// Find the pixel size of this panel
-		float zDistance = Mathf.Abs(HUDCamera.transform.position.z - transform.position.z);
-		float pixelSize = HUDCamera.pixelHeight / 2.0f / zDistance / Mathf.Tan(HUDCamera.fieldOfView / 2.0f * Mathf.Deg2Rad);
-
+		float zDistance = Mathf.Abs(transform.localPosition.z);
+		float pixelSize = m_CachedCamera.pixelHeight / 2.0f / zDistance / Mathf.Tan(m_CachedCamera.fieldOfView / 2.0f * Mathf.Deg2Rad);
+		
 		// Adjust the local scale to be such
 		transform.localScale = Vector3.one * 1.0f / pixelSize;
 	}
-
 }

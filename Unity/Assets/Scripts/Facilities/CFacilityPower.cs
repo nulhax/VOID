@@ -27,34 +27,37 @@ public class CFacilityPower : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
+
 	public delegate void FacilityPowerToggleHandler(GameObject _Sender);
 
 	public event FacilityPowerToggleHandler EventFacilityPowerActivated;
 	public event FacilityPowerToggleHandler EventFacilityPowerDeactivated;
 
-	[AServerOnly]
-	public event FacilityPowerToggleHandler EventFacilityInsufficientPower;
 
 // Member Fields
+	
+	public float m_SelfConsumptionRate = 0.0f;
 
-	[AServerOnly]
-	public float m_CurrentPowerConsumption = 0.0f;
-
-	private CNetworkVar<float> m_PowerConsumption = null;
+	private CNetworkVar<float> m_PowerConsumptionRate = null;
 	private CNetworkVar<bool> m_PowerActive = null;
 
-	private float m_PrevPowerConsumptionRate = 0.0f;
+	private List<GameObject> m_PowerConsumers = new List<GameObject>();
 
 
 // Member Properties
 	
-    public float PowerConsumption
+    public float PowerConsumptionRate
     {
-        get { return (m_PowerConsumption.Get()); }
+        get { return (m_PowerConsumptionRate.Get()); }
 
 		[AServerOnly]
-		set { m_PowerConsumption.Set(value); }
+		set { m_PowerConsumptionRate.Set(value); }
     }
+
+	public List<GameObject> PowerConsumers
+	{
+		get { return (m_PowerConsumers); }
+	}
 
 	public bool IsPowerActive
 	{
@@ -69,7 +72,7 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PowerConsumption = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerConsumptionRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 		m_PowerActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
@@ -100,13 +103,47 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			if(m_PrevPowerConsumptionRate != m_CurrentPowerConsumption)
-			{
-				PowerConsumption = m_CurrentPowerConsumption;
+			// Remove consumers that are now null
+			m_PowerConsumers.RemoveAll(item => item == null);
 
-				m_PrevPowerConsumptionRate = m_CurrentPowerConsumption;
-			}
+			// Calculate current power consumption
+			UpdateConsumptionRate();
 		}
+	}
+
+	[AServerOnly]
+	public void RegisterPowerConsumer(GameObject _Consumer)
+	{
+		if(!m_PowerConsumers.Contains(_Consumer))
+		{
+			m_PowerConsumers.Add(_Consumer);
+		}
+	}
+	
+	[AServerOnly]
+	public void UnregisterPowerConsumer(GameObject _Consumer)
+	{
+		if(m_PowerConsumers.Contains(_Consumer))
+		{
+			m_PowerConsumers.Remove(_Consumer);
+		}
+	}
+
+	[AServerOnly]
+	private void UpdateConsumptionRate()
+	{
+		// Calulate the combined consumption rate within the facility
+		float consumptionRate = 0.0f;
+		foreach(GameObject consumer in m_PowerConsumers)
+		{
+			CModulePowerConsumption mpc = consumer.GetComponent<CModulePowerConsumption>();
+			
+			if(mpc.IsConsumingPower)
+				consumptionRate += mpc.PowerConsumptionRate;
+		}
+		
+		// Set the consumption rate
+		PowerConsumptionRate = consumptionRate + m_SelfConsumptionRate;
 	}
 
 	[AServerOnly]
@@ -124,8 +161,14 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	[AServerOnly]
 	public void InsufficienttPower()
 	{
-		if(EventFacilityInsufficientPower != null)
-			EventFacilityInsufficientPower(gameObject);
+		// There was inssuficent power, let the consumers know
+		foreach(GameObject consumer in m_PowerConsumers)
+		{
+			CModulePowerConsumption mpc = consumer.GetComponent<CModulePowerConsumption>();
+			
+			if(mpc.IsConsumingPower)
+				mpc.InsufficientPower();
+		}
 
 		DeactivatePower();
 	}

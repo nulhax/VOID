@@ -86,17 +86,16 @@ public class CDUIRoot2D : CNetworkMonoBehaviour
 			CDUIPanel panel = PreviouslyActivePanel.GetComponent<CDUIPanel>();
 			panel.EventTransitionOutFinished += PanelFinisehdTranstionOut;
 
-			// Unregister the transition in handler just incase
-			panel.EventTransitionInFinished -= PanelFinishedTranstionIn;
-
 			// Transition this panel out
 			panel.TransitionOut();
 		}
 		else
 		{
 			// Set active and transition the current panel in
-			ActivePanel.SetActive(true);
 			CDUIPanel panel = ActivePanel.GetComponent<CDUIPanel>();
+			panel.EventTransitionInFinished += PanelFinishedTranstionIn;
+
+			// Transition this panel in
 			panel.TransitionIn();
 		}
 	}
@@ -104,13 +103,14 @@ public class CDUIRoot2D : CNetworkMonoBehaviour
 	private void PanelFinisehdTranstionOut(GameObject _Panel)
 	{
 		// Set inactive and Unregister the transition out handler
-		_Panel.SetActive(false);
 		CDUIPanel panel = _Panel.GetComponent<CDUIPanel>();
 		panel.EventTransitionOutFinished -= PanelFinisehdTranstionOut;
 
 		// Set active and transition the current panel in
-		ActivePanel.SetActive(true);
 		panel = ActivePanel.GetComponent<CDUIPanel>();
+		panel.EventTransitionInFinished += PanelFinishedTranstionIn;
+		
+		// Transition this panel in
 		panel.TransitionIn();
 	}
 

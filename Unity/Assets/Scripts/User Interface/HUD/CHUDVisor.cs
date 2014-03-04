@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -27,30 +27,27 @@ public class CHUDVisor : MonoBehaviour
 	
 	
 	// Member Delegates & Events
+	public delegate void NotifyVisorHUDState();
+
+	public event NotifyVisorHUDState EventVisorHUDActivated = null;
+	public event NotifyVisorHUDState EventVisorHUDDeactivated = null;
 
 
 	// Member Fields
-	public UILabel m_O2Value = null;
-	public UIProgressBar m_02Bar = null;
-	public UILabel m_Status = null;
-
-	public CHUDLocator m_ShipIndicator = null;
-
 	private bool m_VisorDown = false;
-	private bool m_VisorUIActive = false;
-	private float m_TransitionValue = 0.0f;
 
 
 	// Member Properties
 	public bool IsVisorDown
 	{
-		get {return(m_VisorDown);}
+		get { return(m_VisorDown); }
 	}
 	
+
 	// Member Methods
-	public void Update()
+	public void Start()
 	{
-		UpdateUI();
+		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
 	}
 
 	public void SetVisorState(bool _Down)
@@ -67,98 +64,25 @@ public class CHUDVisor : MonoBehaviour
 		m_VisorDown = _Down;
 	}
 
-	private void UpdateUI()
+	[AClientOnly]
+	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
 	{
-		// Get the player oxygen supplu
-		float oxygenSupply = CGamePlayers.SelfActor.GetComponent<CPlayerSuit>().OxygenSupply;
-		float oxygenCapacity = CGamePlayers.SelfActor.GetComponent<CPlayerSuit>().OxygenCapacity;
-		
-		// Calculate the value ratio
-		float value = oxygenSupply/oxygenCapacity;
-		
-		// Update the bar
-		CDUIUtilites.LerpBarColor(value, m_02Bar);
-		m_02Bar.value = value;
-		
-		// Update the label
-		m_O2Value.color = CDUIUtilites.LerpColor(value);
-		m_O2Value.text = Mathf.RoundToInt(oxygenSupply) + " / " + Mathf.RoundToInt(oxygenCapacity);
-
-		// Update the status label
-		if(value == 0.0f)
+		// Toggle between up/down visor
+		if(_eInput == CUserInput.EInput.Visor && _bDown)
 		{
-			m_Status.color = Color.red;
-			m_Status.text = "CRITICAL:\nOXYGEN DEPLETED!";
-
-			m_Status.GetComponent<UITweener>().enabled = true;
-		}
-		else if(value < 0.20f)
-		{
-			m_Status.color = Color.red;
-			m_Status.text = "Critical:\nLow Oxygen!";
-
-			m_Status.GetComponent<UITweener>().enabled = true;
-		}
-		else if(value < 0.50f)
-		{
-			m_Status.color = Color.yellow;
-			m_Status.text = "Warning:\nLow Oxygen!";
-
-			if(m_Status.GetComponent<UITweener>().enabled)
-			{
-				m_Status.GetComponent<UITweener>().ResetToBeginning();
-				m_Status.GetComponent<UITweener>().enabled = false;
-			}
-		}
-		else
-		{
-			m_Status.text = "";
-
-			if(m_Status.GetComponent<UITweener>().enabled)
-			{
-				m_Status.GetComponent<UITweener>().ResetToBeginning();
-				m_Status.GetComponent<UITweener>().enabled = false;
-			}
-		}
-
-		// Turn on and update the indicator
-		if(CGamePlayers.SelfActor.GetComponent<CActorLocator>().LastEnteredFacility == null && m_VisorUIActive)
-		{
-			if(!m_ShipIndicator.gameObject.activeSelf)
-				m_ShipIndicator.gameObject.SetActive(true);
-			
-			m_ShipIndicator.Tracker = CGameShips.GalaxyShip.transform;
-			m_ShipIndicator.GameCamera = CGameCameras.PlayersHeadCamera;
-		}
-		else
-		{
-			// Turn off ship indicator
-			if(m_ShipIndicator.gameObject.activeSelf)
-				m_ShipIndicator.gameObject.SetActive(false);
+			SetVisorState(!m_VisorDown);
 		}
 	}
 
-	private void ActivateUI()
+	private void ActivateHUD()
 	{
-		// Turn on visor UI
-		m_VisorUIActive = true;
-
-		// Play the tweeners
-		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Forward;
-		gameObject.GetComponent<UIPlayTween>().Play(true);
+		if(EventVisorHUDActivated != null)
+			EventVisorHUDActivated();
 	}
 
-	private void DeactivateUI()
+	private void DeactivateHUD()
 	{
-		// Turn off visor
-		m_VisorUIActive = false;
-
-		// Play the tweeners
-		gameObject.GetComponent<UIPlayTween>().playDirection = AnimationOrTween.Direction.Reverse;
-		gameObject.GetComponent<UIPlayTween>().Play(true);
-
-		// Turn off ship indicator
-		if(m_ShipIndicator.gameObject.activeSelf)
-			m_ShipIndicator.gameObject.SetActive(false);
+		if(EventVisorHUDDeactivated != null)
+			EventVisorHUDDeactivated();
 	}
 }

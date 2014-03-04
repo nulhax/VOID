@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorPowerConsumer))]
+[RequireComponent(typeof(CModulePowerConsumption))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 
@@ -36,20 +36,13 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 
 // Member Fields
-	
-	public CHUDVisor m_Visor = null;
-
-
-	private bool m_VisorDownState = false;
+	private bool m_PreviousVisorDownState = false;
 	private CActorAtmosphericConsumer m_AtmosphereConsumer = null;
 	
 	
 	private float k_fOxygenCapacity = 600.0f;
 	private float k_fOxygenDepleteRate = 1.0f;
 	private float k_fOxygenRefillRate = 10.0f;
-
-
-	private CHUDVisor m_CachedVisor = null;
 
 	
 	CNetworkVar<float> m_fOxygen = null;
@@ -93,11 +86,9 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		m_AtmosphereConsumer = GetComponent<CActorAtmosphericConsumer>();
 
 		if(CGamePlayers.SelfActor == gameObject)
+		{
 			EventEnviromentalOxygenChange += OnEnviromentOxygenChange;
-
-		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
-
-		m_CachedVisor = CHUD3D.Visor;
+		}
 	}
 
 
@@ -106,50 +97,36 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		// Empty
 	}
 
-	void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
-	{
-		if(_eInput == CUserInput.EInput.Visor && _bDown)
-		{
-			// Toggle between up/down visor
-			m_CachedVisor.SetVisorState(!CHUD3D.Visor.IsVisorDown);
-		}
-	}
-
 	void Update()
 	{
-        if (CNetwork.IsServer)
+        if(CNetwork.IsServer)
         {
-			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().LastEnteredFacility;
+			GameObject currentFacility = gameObject.GetComponent<CActorLocator>().CurrentFacility;
 
-            // Control visor state
+            // Check enviromental oxygen state
 			if (currentFacility == null)
             {
                 m_EnviromentalOxygen.Set(false);
             }
             else
             {
-				if (currentFacility.GetComponent<CFacilityAtmosphere>().AtmospherePercentage < 25.0f)
+				if(currentFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantityPercentage < 25.0f)
                 {
 					m_AtmosphereConsumer.SetAtmosphereConsumption(false);
                     m_EnviromentalOxygen.Set(false);
                 }
                 else
                 {
-					// Set the origninal consumption rate
-					m_AtmosphereConsumer.AtmosphericConsumptionRate = m_AtmosphereConsumer.InitialAtmosphericConsumptionRate;
-
 					m_AtmosphereConsumer.SetAtmosphereConsumption(true);
                     m_EnviromentalOxygen.Set(true);
                 }
             }
 
+			// If there is no oxygen in the atmosphere
 			if(!m_EnviromentalOxygen.Value)
             {
-                // Consume oxygen
+                // Consume oxygen from the suit supply
                 float fOxygen = OxygenSupply - k_fOxygenDepleteRate * Time.deltaTime;
-
-				if(!m_CachedVisor.IsVisorDown)
-					fOxygen = OxygenSupply;
 
                 if (fOxygen < 0.0f)
                 {
@@ -166,10 +143,6 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 				{
 					GetComponent<CPlayerHealth>().ApplyDamage(10.0f * Time.deltaTime);
 				}
-				else if(!CHUD3D.Visor.IsVisorDown)
-				{
-					GetComponent<CPlayerHealth>().ApplyDamage(500.0f * Time.deltaTime);
-				}
             }
             else
             {
@@ -182,7 +155,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 					// Add to current oxygen to suit
 					m_fOxygen.Set(OxygenSupply + k_fOxygenRefillRate * Time.deltaTime);
 
-                    if (OxygenSupply > k_fOxygenCapacity)
+                    if(OxygenSupply > k_fOxygenCapacity)
                     {
                         m_fOxygen.Set(k_fOxygenCapacity);
                     }
@@ -206,16 +179,12 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
 		if(!_Breathable)
 		{
-			// Cache the last visor state
-
-			m_VisorDownState = m_CachedVisor.IsVisorDown;
-			m_CachedVisor.SetVisorState(true);
-           AudioListener.volume = 0.0f;
+			m_PreviousVisorDownState = CGameHUD.Visor.IsVisorDown;
+			CGameHUD.Visor.SetVisorState(true);
 		}
 		else
 		{
-			m_CachedVisor.SetVisorState(m_VisorDownState);
-            AudioListener.volume = 1.0f; 
+			CGameHUD.Visor.SetVisorState(m_PreviousVisorDownState);
 		}
 	}
 

@@ -31,12 +31,17 @@ public class CFacilityOnboardActors : MonoBehaviour
 	
 	public event FacilityActorEnterExit EventActorEnteredFacility;
 	public event FacilityActorEnterExit EventActorExitedFacility;
-	
+
+
 	// Member Fields
 	private List<GameObject> m_ActorsOnboard = new List<GameObject>();
-	
+
+
 	// Member Properties
-	
+	public List<GameObject> ActorsOnboard
+	{
+		get { return(m_ActorsOnboard); }
+	}
 	
 	// Member Methods
 	public void Start()
@@ -44,6 +49,12 @@ public class CFacilityOnboardActors : MonoBehaviour
 		// Register the ship to new actor entering/exiting events
 		EventActorEnteredFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger;
 		EventActorExitedFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger;
+	}
+
+	private void Update()
+	{
+		// Remove consumers that are now null
+		m_ActorsOnboard.RemoveAll(item => item == null);
 	}
 
 	[AServerOnly]

@@ -143,6 +143,12 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
     }
 
 
+	void Awake()
+	{
+		s_InteractionRange = m_fRayRange;
+	}
+
+
 	void Start()
 	{
 		if (gameObject == CGamePlayers.SelfActor)
@@ -177,40 +183,39 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     void UpdateTarget()
     {
-        GameObject cPlayerCamera = CGameCameras.PlayersHeadCamera;
-        Ray cCameraRay = new Ray(cPlayerCamera.transform.position, cPlayerCamera.transform.forward);
+        GameObject cPlayerHead = CGamePlayers.SelfActorHead;
+        Ray cCameraRay = new Ray(cPlayerHead.transform.position, cPlayerHead.transform.forward);
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
         // Do the raycast against all objects in path
-        RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, k_fRayRange).OrderBy(_cRay => _cRay.distance).ToArray();
+        RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, m_fRayRange).OrderBy(_cRay => _cRay.distance).ToArray();
 
 		// Check each one for an interactable objectg
         foreach (RaycastHit cRaycastHit in cRaycastHits)
         {
-			// Iteractable objects must be non-trigger
-			if(!cRaycastHit.collider.isTrigger)
+            // Get the game object which owns this mesh
+            GameObject cHitObject = cRaycastHit.collider.gameObject;
+
+            // Check the object itself for the interactable script
+            CActorInteractable cActorInteractable = cHitObject.GetComponent<CActorInteractable>();
+
+            // Check the parents until we find the one that has CActorInteractable on it
+            if (cActorInteractable == null)
+            {
+                cActorInteractable = CUtility.FindInParents<CActorInteractable>(cHitObject);
+            }
+
+            // If found an interactable select it
+            if (cActorInteractable != null)
+            {
+                cNewTargetActorObject = cActorInteractable.gameObject;
+                cTargetRaycastHit = cRaycastHit;
+				break;
+            }
+			else if(!cRaycastHit.collider.isTrigger)
 			{
-	            // Get the game object which owns this mesh
-	            GameObject cHitObject = cRaycastHit.collider.gameObject;
-
-	            // Check the object itself for the interactable script
-	            CActorInteractable cActorInteractable = cHitObject.GetComponent<CActorInteractable>();
-
-	            // Check the parents until we find the one that has CActorInteractable on it
-	            if (cActorInteractable == null)
-	            {
-	                cActorInteractable = CUtility.FindInParents<CActorInteractable>(cHitObject);
-	            }
-
-	            // If found an interactable select it
-	            if (cActorInteractable != null)
-	            {
-	                cNewTargetActorObject = cActorInteractable.gameObject;
-	                cTargetRaycastHit = cRaycastHit;
-	            }
-
-				// Break out - if the first propper collider wasn't interactable this is intentional
+				// Break out - if the first non-trigger collider wasn't interactable. This is intentional
 				break;
 			}
         }
@@ -288,7 +293,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fRayRange = 5.0f;
+    public float m_fRayRange = 5.0f;
 
 
     GameObject m_cOldTargetActorObject = null;
@@ -298,7 +303,10 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
+
+	public static float s_InteractionRange = 0.0f;
     
+
 // Server Member Fields
 
 

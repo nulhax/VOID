@@ -142,8 +142,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 		if (cPlayerActor != null)
 		{
-            
-            //while (_cStream.HasUnreadData)
+            while (_cStream.HasUnreadData)
             {
                 // Retrieve player actor motor  
                 CPlayerGroundMotor cPlayerActorMotor = cPlayerActor.GetComponent<CPlayerGroundMotor>();
@@ -310,9 +309,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
         {
             if (gameObject != CGamePlayers.SelfActor)
             {
-                transform.eulerAngles = new Vector3(0.0f,
-                                                    m_fRotationY.Get(),
-				                                    0.0f);
+                transform.eulerAngles = new Vector3(0.0f, m_fRotationY.Get(),  0.0f);
             }
         }
 	}
