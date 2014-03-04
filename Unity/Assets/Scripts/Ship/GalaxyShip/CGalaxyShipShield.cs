@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -36,15 +36,15 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	// Member Fields
 	public GameObject m_Shield = null;
 	
-	private float m_ShieldPower = 1.0f;
-	private const float m_MaxShieldPower = 5.0f;
+	private float m_ShieldPower = 100.0f;
+	private const float m_MaxShieldPower = 100.0f;
 	
 	// Take this from the module to determine active
 	private bool m_Active = true;
 	
 	private EShieldState m_ShieldState = EShieldState.PoweredDown;
 	
-	private const float cShipRechargeRate = 1.0f;
+	private const float cShipRechargeRate = 5.0f;
 	
 	// Member Properies
 	
@@ -66,6 +66,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldCollider += ShipShieldCollider;
 		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldDamage += ShipShieldDamage;
 		gameObject.GetComponentInChildren<CShieldEventHandler>().EventShieldRecharge += ShieldRecharge;
+		gameObject.GetComponentInChildren<CShieldEventHandler>().EventAnimateShield += AnimateShield;
 
 		// Sign up to shield module event and set the active shield.
 		// TODO: Make module first. 
@@ -78,7 +79,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		m_Shield.GetComponent<MeshCollider>().sharedMesh = null;
 		m_Shield.GetComponent<MeshCollider>().sharedMesh = _ShieldMesh;
 
-
+		m_Shield.GetComponent<MeshRenderer>().enabled = false;
 	}
 	
 	void ShipShieldCollider(Collider _Collider)
@@ -115,16 +116,15 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				
 				// Set the network var
 				m_bVarIsActive.Set (m_Active);
-
-				// Disable the mesh from rendering
-				m_Shield.GetComponent<MeshRenderer>().enabled = false;
-
 			}
 			else
 			{
 				m_ShieldPower -= fDamage;
 			}
-			
+
+			// Save the asteroid for the raycast to fire at
+			AsteroidPos = _Collider.transform.position;
+
 			Debug.Log ("Shield Health is at: " + m_ShieldPower);
 		}
 	}
@@ -150,7 +150,30 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+	void AnimateShield(Collider _Collider)
+	{
+		GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+
+		RaycastHit hit;
+
+		// Get the direction of the asteroid from the origin
+		Vector3 dir = (AsteroidPos - transform.position).normalized;
+
+		if(Physics.Raycast(transform.position, dir, out hit))
+		{
+			if(hit.collider.gameObject.tag == "Asteroid")
+			{
+				Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+
+				plane.transform.position = hit.point;
+				plane.transform.parent = transform;
 	
+				Destroy(plane, 10.0f);
+			}
+		}
+	}
+
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
 		m_Active = m_bVarIsActive.Get();
@@ -164,7 +187,11 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		m_bVarIsActive =  _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync);
 		m_fVarShieldPower =  _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, m_ShieldPower);
 	}
-	
+
+
+	// Save the (asteroid) collider position for the ray cast to fire at
+	Vector3 AsteroidPos = new Vector3(0.0f, 0.0f, 0.0f);
+
 	CNetworkVar<bool> m_bVarIsActive;
 	CNetworkVar<float> m_fVarShieldPower;
 }
