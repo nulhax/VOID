@@ -140,7 +140,11 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				{
 					m_ShieldPower += cShipRechargeRate * Time.deltaTime;
 
-					Debug.Log ("Shield Health: " + m_ShieldPower);
+                    // Commented out by Nathan to prevent spamming other people's screens.
+                    // Please remember to remove these sorts of debugging tools before you push to develop.
+                    // Just makes it easier for everyone else to see what we're working on.
+                    // Thanks. ^.^
+					// Debug.Log ("Shield Health: " + m_ShieldPower);
 				}
 			}
 			else

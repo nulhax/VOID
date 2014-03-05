@@ -25,11 +25,11 @@ using System.Linq;
 public class CTestPowerCapacitor: MonoBehaviour 
 {
 	// Member Types
-	
-	
+
+
 	// Member Delegates & Events
-	
-	
+
+
 	// Member Fields
 	public float m_MaxPowerBatteryCapacity = 1000.0f;
 	public CDUIConsole m_DUIConsole = null;
@@ -53,7 +53,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 		}
 	}
 
-	
+
 	// Member Methods
 	public void Start()
 	{
@@ -69,6 +69,9 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_DUIPowerCapacitor = m_DUIConsole.DUI.GetComponent<CDUIPowerCapacitorRoot>();
 		m_DUIPowerCapacitor.RegisterPowerCapacitor(gameObject);
 
+        //begin the initial ambient sound
+        gameObject.GetComponent<CAudioCue>().Play(0.13f, true, 0);
+
 		// Debug: Set the charge to half its total capacity
 		if(CNetwork.IsServer)
 		{
@@ -76,7 +79,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 			m_PowerStorage.BatteryCharge = m_PowerStorage.BatteryCapacity / 2;
 		}
 	}
-	
+
 	private void HandleCircuitryStateChange(CComponentInterface _Component)
 	{
 		if(CNetwork.IsServer)
@@ -90,11 +93,25 @@ public class CTestPowerCapacitor: MonoBehaviour
 			if(numWorkingComponents == 0)
 			{
 				m_PowerStorage.DeactivateBatteryChargeAvailability();
+
+                //stop the ambient sound from playing as the capacitor no longer works
+                gameObject.GetComponent<CAudioCue>().StopAllSound();
+
+                //turn off the light, should be a better place to do this. For example: Engine
+                gameObject.GetComponentInChildren<Light>().intensity = (0.0f);
 			}
 			else
 			{
-				if(!m_PowerStorage.IsBatteryChargeAvailable)
-					m_PowerStorage.ActivateBatteryChargeAvailability();
+                if (!m_PowerStorage.IsBatteryChargeAvailable)
+                {
+                    m_PowerStorage.ActivateBatteryChargeAvailability();
+
+                    //change lighting depending on power
+                    //gameObject.GetComponentInChildren<Light>().intensity = (m_PowerStorage.BatteryCharge / 150.0f);
+
+                    //restart playing the ambient sound
+                    gameObject.GetComponent<CAudioCue>().Play(0.13f, true, 0);
+                }
 			}
 		}
 	}

@@ -30,6 +30,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		Invalid,
 		
 		SetRepairState,
+		//RepairHullBreach,
 		
 		Max,
 	}
@@ -84,11 +85,21 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 					//Figure out which ratchet sent it's new state
 					CRatchetBehaviour ratchet = _cStream.ReadNetworkViewId().GameObject.GetComponent<CRatchetBehaviour>();
 					
-					ratchet.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
+					ratchet.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject;
 					ratchet.m_eRepairState = (ERepairState)_cStream.ReadByte();
 					
 					break;
 				}
+				//case ENetworkAction.RepairHullBreach:
+				//{
+				//    //Figure out which ratchet sent it's new state
+				//    CRatchetBehaviour ratchet = _cStream.ReadNetworkViewId().GameObject.GetComponent<CRatchetBehaviour>();
+
+				//    ratchet.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject;
+				//    ratchet.m_eRepairState = (ERepairState)_cStream.ReadByte();
+
+				//    break;
+				//}
 			}
 		}
 	}
@@ -109,12 +120,21 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
                 if (cTargetActorInteractable != null)
                 {
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
+					CHullBreachNode cHullBreachNode = cTargetActorInteractable.GetComponent<CHullBreachNode>();
 
                     if (cActorComponentInterface != null &&
                         cActorComponentInterface.ComponentType == CComponentInterface.EType.MechanicalComp)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }
+					else if (cHullBreachNode != null)
+					{
+						m_eRepairState = ERepairState.RepairActive;
+						s_cSerializeStream.Write((byte)/*ENetworkAction.RepairHullBreach*/ENetworkAction.SetRepairState);
+						s_cSerializeStream.Write(GetComponent<CNetworkView>().ViewId);
+						s_cSerializeStream.Write(cHullBreachNode.GetComponent<CNetworkView>().ViewId);
+						s_cSerializeStream.Write((byte)m_eRepairState);
+					}
                 }
             }
             else if (m_eRepairState == ERepairState.RepairActive)
@@ -132,7 +152,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 			//Do repairs here
 			if(CNetwork.IsServer)
 			{
-				m_TargetComponent.gameObject.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);				
+				m_TargetComponent.GetComponent<CActorHealth>().health += (m_fRepairRate * Time.deltaTime);				
 			}
 
             if (GetComponent<CToolInterface>().OwnerPlayerActor == CGamePlayers.SelfActor &&
@@ -173,7 +193,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	{
         m_iTotalTargets = 0;
 
-        m_TargetComponent = _damagedComponent.GetComponent<CComponentInterface>();
+        m_TargetComponent = _damagedComponent;
 
         List<Transform> repairPositions = m_TargetComponent.GetComponent<CRatchetComponent>().RatchetRepairPosition;
 
@@ -242,7 +262,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	float 					m_fTargetSwitchTimer = 0.0f;
 	float 					m_fTargetSwitchFrequency = 0.75f;
 	
-	CComponentInterface 	m_TargetComponent;	
+	GameObject 				m_TargetComponent;	
 	ERepairState 			m_eRepairState;
 	
 	CPlayerIKController		m_IKController;

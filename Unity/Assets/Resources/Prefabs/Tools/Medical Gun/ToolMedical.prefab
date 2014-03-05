@@ -386,7 +386,7 @@ AudioSource:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   serializedVersion: 3
-  m_audioClip: {fileID: 8300000, guid: 5f2ada86fcb742a459c5b6ded5127d71, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 743eb4fb3f79e1544aa9920dacf35c69, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -530,7 +530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: 
+  m_strCueName: Medical Spray Noise
   m_fPitchMin: 1
   m_fpitchMax: 1
   m_fVolumeMin: 1
@@ -540,7 +540,7 @@ MonoBehaviour:
   m_fFadeOutTimeList:
   - 0
   m_arAudioClipPool:
-  - {fileID: 8300000, guid: 5f2ada86fcb742a459c5b6ded5127d71, type: 3}
+  - {fileID: 8300000, guid: 743eb4fb3f79e1544aa9920dacf35c69, type: 3}
   m_barLoopList: 00
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0

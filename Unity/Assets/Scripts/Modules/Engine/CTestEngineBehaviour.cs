@@ -62,7 +62,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 		CAudioCue audioCue = GetComponent<CAudioCue>();
 		if (audioCue == null)
 			audioCue = gameObject.AddComponent<CAudioCue>();
-		m_AmbientHumSoundIndex = audioCue.AddSound("Audio/SmallEngineAmbientHum", 0.0f, 0.0f, true);
+		//m_AmbientHumSoundIndex = audioCue.AddSound("Audio/SmallEngineAmbientHum", 0.0f, 0.0f, true);
 	}
 
 	public void Start()
@@ -92,7 +92,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 
 		// Begin playing the sound.
 		// Todo: Once individual sounds can be disabled, this must be moved to where the engine turns on and off.
-		GetComponent<CAudioCue>().Play(transform, 1.0f, true, m_AmbientHumSoundIndex);
+		GetComponent<CAudioCue>().Play(0.15f, true, 0);
 	}
 
 	private void HandleMechanicalHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
@@ -140,5 +140,13 @@ public class CTestEngineBehaviour: MonoBehaviour
 		angle = currentSpeed * 2.0f * Time.deltaTime;
 		axis = new Vector3(Mathf.Sin(m_VarianceTimer1), -Mathf.Cos(m_VarianceTimer1), 0.0f).normalized;
 		m_InnerRing.transform.Rotate(axis, angle);
+
+        gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 15.0f);
+
+        // Commented out by Nathan to prevent spamming other people's screens.
+        // Please remember to remove these sorts of debugging tools before you push to develop.
+        // Just makes it easier for everyone else to see what we're working on.
+        // Thanks. ^.^
+        //Debug.Log(gameObject.GetComponentInChildren<Light>().intensity);
 	}
 }

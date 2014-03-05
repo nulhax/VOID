@@ -194,29 +194,28 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 		// Check each one for an interactable objectg
         foreach (RaycastHit cRaycastHit in cRaycastHits)
         {
-			// Iteractable objects must be non-trigger
-			if(!cRaycastHit.collider.isTrigger)
+            // Get the game object which owns this mesh
+            GameObject cHitObject = cRaycastHit.collider.gameObject;
+
+            // Check the object itself for the interactable script
+            CActorInteractable cActorInteractable = cHitObject.GetComponent<CActorInteractable>();
+
+            // Check the parents until we find the one that has CActorInteractable on it
+            if (cActorInteractable == null)
+            {
+                cActorInteractable = CUtility.FindInParents<CActorInteractable>(cHitObject);
+            }
+
+            // If found an interactable select it
+            if (cActorInteractable != null)
+            {
+                cNewTargetActorObject = cActorInteractable.gameObject;
+                cTargetRaycastHit = cRaycastHit;
+				break;
+            }
+			else if(!cRaycastHit.collider.isTrigger)
 			{
-	            // Get the game object which owns this mesh
-	            GameObject cHitObject = cRaycastHit.collider.gameObject;
-
-	            // Check the object itself for the interactable script
-	            CActorInteractable cActorInteractable = cHitObject.GetComponent<CActorInteractable>();
-
-	            // Check the parents until we find the one that has CActorInteractable on it
-	            if (cActorInteractable == null)
-	            {
-	                cActorInteractable = CUtility.FindInParents<CActorInteractable>(cHitObject);
-	            }
-
-	            // If found an interactable select it
-	            if (cActorInteractable != null)
-	            {
-	                cNewTargetActorObject = cActorInteractable.gameObject;
-	                cTargetRaycastHit = cRaycastHit;
-	            }
-
-				// Break out - if the first propper collider wasn't interactable this is intentional
+				// Break out - if the first non-trigger collider wasn't interactable. This is intentional
 				break;
 			}
         }

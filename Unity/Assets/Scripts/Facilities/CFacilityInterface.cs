@@ -23,7 +23,6 @@ using System;
 
 [RequireComponent(typeof(CFacilityAtmosphere))]
 [RequireComponent(typeof(CFacilityExpansion))]
-[RequireComponent(typeof(CFacilityGeneral))]
 [RequireComponent(typeof(CFacilityGravity))]
 [RequireComponent(typeof(CFacilityHull))]
 [RequireComponent(typeof(CFacilityOnboardActors))]
@@ -51,6 +50,26 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 
 // Member Delegates & Events
+
+
+
+// Member Fields
+	
+	
+	public EType m_eType = EType.INVALID;
+	public CDUIConsole m_FacilityControlPanel = null;
+	
+	CNetworkVar<uint> m_FacilityId = null;
+	
+	
+	Dictionary<CAccessoryInterface.EType, List<GameObject>> m_mAccessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
+	Dictionary<CModuleInterface.EType, List<GameObject>> m_mModules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
+	
+	
+	static Dictionary<EType, List<GameObject>> s_mFacilityObjects = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+
 
 
 // Member Properties
@@ -203,6 +222,12 @@ public class CFacilityInterface : CNetworkMonoBehaviour
             ThisNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
         }
 
+		// Register self for the console control panel
+		if(m_FacilityControlPanel != null)
+		{
+			m_FacilityControlPanel.DUI.GetComponent<CDUIFacilityControlPower>().RegisterFacility(gameObject);
+		}
+
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetPrefabType(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
@@ -246,24 +271,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     {
         // Empty
     }
-
-
-    // Member Fields
-
-
-    public EType m_eType = EType.INVALID;
-
-
-    CNetworkVar<uint> m_FacilityId = null;
-
-
-    Dictionary<CAccessoryInterface.EType, List<GameObject>> m_mAccessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
-    Dictionary<CModuleInterface.EType, List<GameObject>> m_mModules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
-
-
-    static Dictionary<EType, List<GameObject>> s_mFacilityObjects = new Dictionary<EType, List<GameObject>>();
-    static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 };
