@@ -79,7 +79,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		m_Shield.GetComponent<MeshCollider>().sharedMesh = null;
 		m_Shield.GetComponent<MeshCollider>().sharedMesh = _ShieldMesh;
 
-		m_Shield.GetComponent<MeshRenderer>().enabled = false;
+		//m_Shield.GetComponent<MeshRenderer>().enabled = false;
 	}
 	
 	void ShipShieldCollider(Collider _Collider)
@@ -161,19 +161,26 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 
 		RaycastHit hit;
 
-		// Get the direction of the asteroid from the origin
-		Vector3 dir = (AsteroidPos - transform.position).normalized;
-
-		if(Physics.Raycast(transform.position, dir, out hit))
+		if(_Collider.gameObject.tag == "Asteroid")
 		{
-			if(hit.collider.gameObject.tag == "Asteroid")
-			{
-				Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+			// Get the direction of the asteroid from the origin
+			Vector3 dir = (AsteroidPos - transform.position).normalized;
 
-				plane.transform.position = hit.point;
-				plane.transform.parent = transform;
-	
-				Destroy(plane, 10.0f);
+			if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
+			{
+				//if(hit.collider.gameObject.tag == "Asteroid")
+				//{
+					Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+
+					plane.transform.position = hit.point;
+					plane.transform.parent = transform;
+		
+					Destroy(plane, 10.0f);
+				//}
+				//else
+				//{
+
+				//}
 			}
 		}
 	}

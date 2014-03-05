@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ShieldMat
-  m_Shader: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 6b69226c22bf545a2baf68fc60f7066d, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -27,6 +27,20 @@ Material:
           m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShieldTexture
+        second:
+          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 1, y: 1}
+      data:
+        first:
+          name: _ShieldTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
+          m_Scale: {x: 2, y: 2}
+          m_Offset: {x: 4, y: 4}
       data:
         first:
           name: _Diffuse
@@ -97,12 +111,24 @@ Material:
         second: .5
       data:
         first:
+          name: _InvFade
+        second: 1
+      data:
+        first:
           name: _Shininess
         second: .00999999978
       data:
         first:
-          name: _InvFade
-        second: 1
+          name: _RimPower
+        second: .5
+      data:
+        first:
+          name: _AlphaRimPower
+        second: 3.21428561
+      data:
+        first:
+          name: _TimeSpeed
+        second: 0
       data:
         first:
           name: _EmissionPow
@@ -164,6 +190,10 @@ Material:
         first:
           name: _Emission
         second: {r: .171929047, g: .779411793, b: .377216399, a: 1}
+      data:
+        first:
+          name: _RimColor
+        second: {r: .0817474276, g: .0848347396, b: .529411793, a: 1}
       data:
         first:
           name: _TintColor
