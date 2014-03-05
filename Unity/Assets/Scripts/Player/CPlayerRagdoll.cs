@@ -38,8 +38,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     public Transform m_RootSkeleton = null;
 
-    //public GameObject m_PlayerHead = null;
-    //public GameObject m_RagdollHead = null;
+    public GameObject m_PlayerHead = null;
+    public GameObject m_RagdollHead = null;
 
     private Vector3 m_initialOffset = new Vector3(0,0,0);
 
@@ -124,6 +124,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
         gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += OnHealthStateChanged;
 
+		m_initialOffset = m_RootSkeleton.localPosition;
+
 		//Disable client side rigidbody
 		if (!CNetwork.IsServer) 
 		{
@@ -132,9 +134,16 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     }
 	
 	// Update is called once per frame
-	void Update () 
+	void LateUpdate () 
 	{
-        
+		if (m_bRagdollState.Get() == (byte)ERagdollState.PlayerDown) 
+		{
+			//Vector3 skeletonPos = m_RootSkeleton.position;
+			//transform.position = m_RootSkeleton.position;
+			//m_RootSkeleton.position = skeletonPos;
+
+			//m_RootSkeleton.localPosition = m_initialOffset;
+		}
 	}
 
     [AServerOnly]
@@ -164,14 +173,22 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     void SetRagdollActive()
     {       
         //Enable ragdoll and set position
-        SetDynamicRagdoll();       
+        SetDynamicRagdoll();
+
+		CGameCameras.SetMainCameraParent(m_RagdollHead);
     }
 
     [AClientOnly]
     void DeactivateRagdoll()
     {         
         //Disable ragdoll and set position
-        SetKinematicRagdoll();          
+        SetKinematicRagdoll(); 
+
+		CGameCameras.SetMainCameraParent(m_PlayerHead);
+		CGameCameras.ResetCamera();
+
+		m_RagdollHead.transform.rotation = Quaternion.identity;
+
     }
 
     void SetKinematicRagdoll()
@@ -182,7 +199,6 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         {
             if(body.gameObject.GetComponent<Rigidbody>())
             {
-                body.rigidbody.velocity = new Vector3(0, 0, 0);
                 body.rigidbody.isKinematic = true;
                 
                 body.rigidbody.mass = 9.0f;
@@ -191,7 +207,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             {
                 body.collider.enabled = false;
             }
-        }       
+        }  
     }
 
     void SetDynamicRagdoll()
@@ -205,13 +221,14 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
                 body.rigidbody.isKinematic = false;
 				body.rigidbody.useGravity = false;
                 body.rigidbody.velocity = rigidbody.velocity;
+				body.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }
             if(body.gameObject.GetComponent<Collider>())
             {
                 body.collider.enabled = true;
             }
-        }   
-    }
+        }
+	}
 
     void SetRagdollLayer()
     {
