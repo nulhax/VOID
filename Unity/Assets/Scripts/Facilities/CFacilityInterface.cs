@@ -222,12 +222,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
             ThisNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
         }
 
-		// Register self for the console control panel
-		if(m_FacilityControlPanel != null)
-		{
-			m_FacilityControlPanel.DUI.GetComponent<CDUIFacilityControlPower>().RegisterFacility(gameObject);
-		}
-
 		// Attach the collider for the facility to the galaxy ship
 		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
 		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetPrefabType(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);

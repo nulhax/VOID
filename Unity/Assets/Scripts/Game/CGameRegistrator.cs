@@ -32,26 +32,26 @@ public class CGameRegistrator : MonoBehaviour
 		//^^ Learn to spell Registrar and I'll consider it. ^^
 		//^^												^^
 		
-		INVALID,
+		INVALID 				= 0,
 
         // Player
-        PlayerActor,
+        PlayerActor 			= 1,
 
         // Galaxy
-        Galaxy,
+        Galaxy					= 10,
         Asteroid_FIRST,
-        Asteroid_LAST = Asteroid_FIRST + 2,
+        Asteroid_LAST 			= Asteroid_FIRST + 2,
 
         // Minerals
-        Crystal,
+        Crystal					= 100,
 
 		// Ships
-		Ship,
+		Ship					= 200,
 		GalaxyShip,
 		EnemyShip,
 		
 		// Facilities
-		FacilityBridge,
+		FacilityBridge			= 300,
         FacilityAirlock,
         HallwayStraight,
         HallwayCorner,
@@ -59,20 +59,20 @@ public class CGameRegistrator : MonoBehaviour
         HallwayXSection,
 
 		// Facility Miniature
-		MiniFacilityBridge, 
+		MiniFacilityBridge		= 400, 
 		MiniHallwayStraight,
 		MiniHallwayCorner,
 		MiniHallwayTSection,
 		MiniHallwayXSection,
 		
 		// Accessories
-        Alarm,
+        Alarm					= 500,
         ControlConsole,
 		Door,
         DuiMontior,
 		
 		// Modules
-		AtmosphereGenerator,
+		AtmosphereGenerator		= 600,
 		PlayerSpawner,
 		LaserCockpit,
 		LaserTurret,
@@ -89,7 +89,7 @@ public class CGameRegistrator : MonoBehaviour
 
 		
 		// Components
-		PanelFuseBox,
+		PanelFuseBox			= 700,
         CellSlot,
 
         // Parts
@@ -101,7 +101,7 @@ public class CGameRegistrator : MonoBehaviour
 //        ReplicatorCell,
 
         // Tools
-        ToolTorch,
+        ToolTorch				= 800,
         ToolRatchet,
         ToolExtinguisher,
         ToolAk47,
@@ -113,10 +113,10 @@ public class CGameRegistrator : MonoBehaviour
         ToolMiningDrill,
 
         // Hazards
-        Fire,
+        Fire					= 900,
 
 		// User Interfaces
-		DUITest,
+		DUITest					= 1000,
 		DUIFacilityExpansion,
 		DUIModuleCreation,
 		DUIPowerGenerator,
@@ -133,11 +133,14 @@ public class CGameRegistrator : MonoBehaviour
 		DUIFacilityControl,
 
 		// NulOS
-		DUINOSPanel,
-		NOSMenuNode,
+		NOSPanelWide			= 1100,
+
+		// NulOS Widgets
+		NOSWFacilityControl		= 1200,
+		NOSWShipPropulsion,
 
 		// Other
-		LaserTurretProjectile,
+		LaserTurretProjectile	= 1300,
 		LaserHitParticles,
 
 		MAX
@@ -167,6 +170,7 @@ public class CGameRegistrator : MonoBehaviour
         RegisterModules();
         RegisterComponents();
 		RegisterUserInterfaces();
+		RegisterNulOSWidgets();
         RegisterKeyBindings();
 		RegisterTools();
 	}
@@ -278,11 +282,14 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiFacilityDoor");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINOSPanel,					"User Interface/DUI/DUINOSMain");
+
 
 		// NulOS
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSMenuNode,					"User Interface/DUI/NulOS/MenuNode");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelWide,				"User Interface/NulOS/NOSPanelWide");
 
+		// NulOS Widgets
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipPropulsion,			"User Interface/NulOS/Widgets/NOSWShipPropulsion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWFacilityControl,			"User Interface/NulOS/Widgets/NOSWFacilityControl");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Other/Laser Turret Projectile");
@@ -405,7 +412,14 @@ public class CGameRegistrator : MonoBehaviour
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      , ENetworkPrefab.DUIAirlockInternal);
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         , ENetworkPrefab.DuiFacilityDoor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanel 			, ENetworkPrefab.DUINOSPanel);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 		, ENetworkPrefab.NOSPanelWide);
+	}
+
+
+	void RegisterNulOSWidgets()
+	{
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipPropulsion 	, ENetworkPrefab.NOSWShipPropulsion);
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.FacilityControl 	, ENetworkPrefab.NOSWFacilityControl);
 	}
 
 

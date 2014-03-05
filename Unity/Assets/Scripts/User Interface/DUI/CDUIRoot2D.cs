@@ -63,7 +63,7 @@ public class CDUIRoot2D : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Start on beginning panel
-		if(CNetwork.IsServer)
+		if(CNetwork.IsServer && m_StartingPanel != null)
 			SwitchToPanel(m_StartingPanel);
 	}
 
@@ -93,7 +93,6 @@ public class CDUIRoot2D : CNetworkMonoBehaviour
 		{
 			// Set active and transition the current panel in
 			CDUIPanel panel = ActivePanel.GetComponent<CDUIPanel>();
-			panel.EventTransitionInFinished += PanelFinishedTranstionIn;
 
 			// Transition this panel in
 			panel.TransitionIn();

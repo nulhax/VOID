@@ -20,6 +20,8 @@ public class UIDragDropItem : MonoBehaviour
 		PressAndHold,
 	}
 
+	public Transform m_Target = null;
+
 	/// <summary>
 	/// What kind of restriction is applied to the drag & drop logic before dragging is made possible.
 	/// </summary>
@@ -50,7 +52,11 @@ public class UIDragDropItem : MonoBehaviour
 
 	protected virtual void Start ()
 	{
-		mTrans = transform;
+		if(m_Target != null)
+			mTrans = m_Target;
+		else
+			mTrans = transform;
+
 		mCollider = collider;
 		mDragScrollView = GetComponent<UIDragScrollView>();
 	}

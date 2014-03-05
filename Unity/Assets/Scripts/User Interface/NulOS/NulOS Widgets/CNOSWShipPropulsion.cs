@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CDUIShipPropulsionRoot : MonoBehaviour 
+public class CNOSWShipPropulsion : MonoBehaviour 
 {
 	// Member Types
 	

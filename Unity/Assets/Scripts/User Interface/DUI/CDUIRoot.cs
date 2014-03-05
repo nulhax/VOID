@@ -43,7 +43,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
         AirlockInternal,
         FacilityDoor,
 		FacilityControl,
-		NOSPanel,
+		NOSPanelWide,
 
 		MAX
 	}

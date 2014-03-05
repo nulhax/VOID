@@ -19,8 +19,8 @@ using System.Collections.Generic;
 
 /* Implementation */
 
-
-public class CDUIFacilityControlPower : MonoBehaviour 
+[RequireComponent(typeof(CNOSWidget))]
+public class CNOSWFacilityControl : MonoBehaviour 
 {
 	// Member Types
 	
@@ -32,17 +32,18 @@ public class CDUIFacilityControlPower : MonoBehaviour
 	
 	public UILabel m_PowerConsumers = null;
 	public UILabel m_PowerConsumption = null;
-
+	
 	private GameObject m_CachedFacility = null;
 	private CFacilityPower m_CachedFacilityPower = null;
-
-	private bool m_Registered = false;
 	
+	private bool m_Registered = false;
+
+
 	// Member Properties
 	
 	
 	// Member Methods
-
+	
 	public void RegisterFacility(GameObject _Facility)
 	{
 		m_CachedFacility = _Facility;
@@ -50,18 +51,13 @@ public class CDUIFacilityControlPower : MonoBehaviour
 
 		m_Registered = true;
 	}
-
+	
 	private void Update()
 	{
 		if(m_Registered)
-			UpdateDUI();
+			UpdatePowerLabels();
 	}
 	
-	private void UpdateDUI()
-	{
-		UpdatePowerLabels();
-	}
-
 	public void OnGravityToggle()
 	{
 		if(CNetwork.IsServer && m_Registered)
@@ -83,7 +79,7 @@ public class CDUIFacilityControlPower : MonoBehaviour
 			if(mpc.IsConsumingPower)
 				++numActiveConsumers;
 		}
-
+		
 		// Update the labels
 		m_PowerConsumption.text = consumptionRate.ToString();
 		m_PowerConsumers.text = numActiveConsumers.ToString() + " / " + (numConsumers - numActiveConsumers).ToString();
