@@ -11,532 +11,411 @@
 //
 
 
-// NOTES:
-// Consider modifying time between hazard triggers
-// based upon game difficulty and current hazard total
-
 // Namespaces
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 
-/* Implementation */
 public class CHazardSystem : MonoBehaviour
 {
 // Member Types
+    enum EHazardType
+    {
+        INVALID     = -2,
+                    
+        NONE        = -1,
+        FIRE,
+        HULL_BREACH,
+        MALFUNCTION,
+
+        MAX
+    };
+
+    struct HazardInfo
+    {
+        public EHazardType eType;
+        public float       fRatio;
+        public uint        uiTotal;
+    };
 
 
 // Member Delegates & Events
-    public delegate void OnHazardTriggered(/*Hazard information goes here*/);
 
-    public event OnHazardTriggered EventHazardTriggered;
 
 // Member Properties
-
-
-// Member Functions
-    public void Awake() { }
-
-
-    public void Start()
+    public float Difficulty
     {
-        // TODO: Data-drive / .ini / .xml the initial data
-        m_fModifierDifficulty = 0.0f;
-        m_fModifierAsteroids  = 0.0f;
-        m_fModifierFires      = 0.0f;
-        m_fModifierModules    = 0.0f;
-        m_fModifierDebug      = 0.0f;
-    }
+        get { return (m_fDifficulty); }
 
-
-    public void Update()
-    {
-        // Increment timer
-        m_fTimerHazard += Time.deltaTime;
-
-        // If the timer is greater than the threshold
-        if (m_fTimerHazard >= m_fTimerHazardThreshold)
+        set
         {
-            // Reset timer
-            m_fTimerHazard = 0.0f;
-
-            // Update hazard total
-            // TODO: Implement method to get number of all currently active hazards
-            // m_HazardTotalActive   = ???;
-
-            // Update difficulty modifier
-            // TODO: Determine how difficulty will scale as the game progresses
-            // m_fModifierDifficulty = ???;
-
-            // Update modifiers for each hazard type
-            // m_fModifierAsteroids  = ???;
-            // m_fModifierModules    = ???;
-            // m_fModifierFire       = ???;
-            // m_fModifierDebug      = ???;
-
-            // PSYDO CODE:
-            // Get numbers of hazards
-            // ushort usNumHazardsTotal = ???;
-            // ushort usNumHazardsFire = ???;
-            // ushort usNumHazardsHullBreach = ???;
-            // ushort usNumHazardsNoAtmo = ???;
-
-            // Get ratio of each hazard type to the total number
-            // float fHazardFireRatio = usNumHazardsTotal / usNumHazardsFire;
-            // float fHazardHullBreachRatio = usNumHazardsTotal / usNumHazardsHullBreach;
-            // float fHazardNoAtmoRatio = usNumHazardsTotal / usNumHazardsNoAtmo;
-
-            // Note all ratios added together should equal 1.0f
-
-            // Random a number between 1 and 100
-            // float fNumberRandom = 1-100;
-
-            // Threshold One
-            float fThresholdOne   = CalculateScaledValue(m_fModifierDifficulty);
-
-            // Threshold Two
-            float fThresholdTwo   = CalculateScaledValue(m_fModifierFires, fThresholdOne);
-
-            // Threshold Three
-            float fThresholdThree = CalculateScaledValue(m_fModifierFires, fThresholdTwo);
-            
-            // Algorithm if logic
-            // if (fNumberRandom < first threshold)
-            // {
-            //      // Do something
-            // }
-            //
-            // else if (fNumberRandom < second threshold)
-            // {
-            //      // Do something
-            // }
-            //
-            // else if (fNumberRandom < third threshold)
-            // {
-            //      // Do something
-            // }
-            //
-            // else if (fNumberRandom < fourth threshold)
-            // {
-            //      // Do something
-            // }
-            //
-            // else
-            // {
-            //      // Something else
-            // }
-
-            // IDEA:
-            // Ship hazard biases randomly selected on startup
-            // Ship has a bias towards triggering certain types of hazards
-            // Ee.g. more fire than other types, or more malfunctions
-            // Result would be more hazards of the biased type
-            // Fewer hazards of non-biased types
-            // Subtley different gameplay from hazard triggers each playthrough
-
-            // Determine what type of hazard to trigger
-
-            // Determine where to trigger the hazard
-
-            // Trigger the hazard
+            if (CNetwork.IsServer)
+            {
+                m_fDifficulty = value;
+            }
         }
     }
 
 
-// DEBUG WORK IN PROGRESS PUT HERE TO SAVE
-//#include <Windows.h>
-//#include <iostream>
-//#include <stdlib.h>
-//#include <time.h>
+// Member Functions
+    void Start()
+    {
+        // Set initial values for member data
+        m_iTotal                       = 100;
+        m_fDifficulty                  = m_iTotal - Difficulty;
+        m_fDifficultyWeighted          = m_fDifficulty;
+        m_fRemainder                   = m_iTotal - m_fDifficultyWeighted;
+        
+        m_iTotalHazardsFire            = 0;
+        m_iTotalHazardsHullBreach      = 0;
+        m_iTotalHazardsMalfunction     = 0;
+        m_iTotalHazards                = 0;
+        
+        m_fHazardTriggerTimer          = 0.0f;
+        m_fHazardTriggerTimerThreshold = 1000.0f;
+    }
 
-//using namespace std;
 
-//enum HazardType
-//{
-//    HAZARD_NONE        = -1,
+    void Update()
+    {
+        // Update the timer
+        m_fHazardTriggerTimer += Time.deltaTime;
 
-//    HAZARD_FIRE        =  0,
-//    HAZARD_HULL_BREACH =  1,
-//    HAZARD_MALFUNCTION =  2,
+        // If the timer equals or exceeds the threshold
+        if (m_fHazardTriggerTimer >= m_fHazardTriggerTimerThreshold)
+        {
+            // Reset the timer
+            m_fHazardTriggerTimer = 0.0f;
 
-//    HAZARD_MAX
-//};
+            // Determine what hazard to trigger
+            EHazardType eHazardTypeToTrigger = UpdateHazardTrigger();
 
-//float CalculateScaledValue(float _fX, float _fNewMin = 0.0f, float _fNewMax = 100.0f, float _fOldMin = 0.0f, float _fOldMax = 100.0f);
-//int GetTotalHazardsOfType(HazardType _eType);
-//void TriggerHazard(HazardType _Hazard);
+            // Trigger a hazard of the returned type
+            TriggerHazardOfType(eHazardTypeToTrigger);
+        }
+    }
 
-//HazardType HazardUpdate();
 
-//// // // DEBUG // // //
-//int TotalFireHazards        = 0;
-//int TotalHullBreachHazards  = 0;
-//int TotalMalfunctionHazards = 0;
-//int TotalHazards            = 0;
+    EHazardType UpdateHazardTrigger()
+    {
+        // Local variables
+        int iUniqueHazardTypes             = (int)EHazardType.MAX;
 
-//int   Total                 = 100;
-//float Difficulty            = Total - 75.0f;
-//float WeightedDifficulty    = Difficulty;
-//float Remainder             = Total - WeightedDifficulty;
-//// // // DEBUG // // //
+        // Local containers
+        List<float> HazardRatios           = new List<float>();
+        List<HazardInfo> HazardTotals      = new List<HazardInfo>();
+        List<HazardInfo> HazardInformation = new List<HazardInfo>();
 
-//int main()
-//{
-//    // // // WINDOWS // // //
-//    srand((unsigned int)time(NULL));
-//    // // // WINDOWS // // //
+        // Hazard return value
+        EHazardType eHazardReturn = EHazardType.NONE;
 
-//    TotalFireHazards = rand() % 10;
-//    TotalHullBreachHazards = rand() % 10;
-//    TotalMalfunctionHazards = rand() % 10;
+        // For each hazard type
+        for (int i = 0; i < iUniqueHazardTypes; ++i)
+        {
+            // Get the number of hazards of this type
+            int iHazardsOfThisType = GetTotalHazardsOfType((EHazardType)i);
 
-//    TotalHazards = TotalFireHazards + TotalHullBreachHazards + TotalMalfunctionHazards;
+            // Create a new 'hazard'
+            HazardInfo NewHazard = new HazardInfo();
+            NewHazard.eType      = (EHazardType)i;
+            NewHazard.uiTotal    = (uint)iHazardsOfThisType;
 
-//    DWORD TimePrev  = timeGetTime();;
-//    DWORD TimeCurr  = TimePrev;
-//    DWORD TimeDelta = 0;
-//    DWORD Timer     = 0;
+            // Add the new hazard into the totals container
+            HazardTotals.Add(NewHazard);
 
-//    while (true)
-//    {
-//        TimePrev  = TimeCurr;
-//        TimeCurr  = timeGetTime();
-//        TimeDelta = TimeCurr - TimePrev;
+            // Calculate the ratio of this hazard to all hazards
+            // ((float)iHazardsOfThisType / (float)m_iTotalHazards)) * 100.0f
 
-//        Timer += TimeDelta;
+            // Normalise the ratio from hazards down to fit within the remainder
+            float fNormalisedRatio = CalculateScaledValue(((float)iHazardsOfThisType / (float)m_iTotalHazards) * 100.0f,
+                                                          0.0f,
+                                                          m_fRemainder,
+                                                          0.0f,
+                                                          100.0f);
 
-//        if (Timer >= 1000)
-//        {
-//            HazardType Hazard = HazardUpdate();
-//            TriggerHazard(Hazard);
+            // Add the normalised ratio to the ratio list
+            HazardRatios.Add(fNormalisedRatio);
+        }
 
-//            Timer = 0;
-//        }
-//    }
+        // Order the totals: SMALLEST -> LARGEST
+        OrderTotals(HazardTotals);
 
-////    // // // DEBUG // // //
-////    cout << "---------------" << endl;
-////    // // // DEBUG // // //
-////
-////    // // // WORKING // // //
-////    float Total              = 100.0f;
-////    float Difficulty         = Total - 75.0f;
-////    float WeightedDifficulty = Difficulty;
-////    float Remainder          = Total - Difficulty;
-////
-////    float FireHazards   = 125.0f;
-////    float HullBreaches  = 30.0f;
-////    float Malfuncs      = 55.0f;
-////    float TotalHazards  = FireHazards + HullBreaches + Malfuncs;
-////    // // // WORKING // // //
-////
-////    // // // DEBUG // // //
-////    cout << "Total:       " << Total      << endl;
-////    cout << "Difficulty:  " << Difficulty << endl;
-////    cout << "Remainder:   " << Remainder  << endl;
-////    cout << endl;
-////    // // // DEBUG // // //
-////
-////    // // // WORKING // // //
-////    float RatioTotalFire       = (FireHazards  / TotalHazards) * 100.0f;
-////    float RatioTotalHullBreach = (HullBreaches / TotalHazards) * 100.0f;
-////    float RatioTotalMalfunc    = (Malfuncs     / TotalHazards) * 100.0f;
-////    float RatioTotalTotal      = RatioTotalFire + RatioTotalHullBreach + RatioTotalMalfunc;
-////    // // // WORKING // // //
-////
-////    // // // DEBUG // // //
-////    cout << "Fire  Ratio: "  << RatioTotalFire << endl;
-////    cout << "HuBr  Ratio: "  << RatioTotalHullBreach << endl;
-////    cout << "Malf  Ratio: "  << RatioTotalMalfunc << endl;
-////    cout << "Ratio Total: "  << RatioTotalTotal << endl;
-////    cout << endl;
-////    // // // DEBUG // // //
-////
-////    // // // WORKING // // //
-////    float RatioRemainderFire =       CalculateScaledValue(RatioTotalFire, 0.0f, Remainder);
-////    float RatioRemainderHullBreach = CalculateScaledValue(RatioTotalHullBreach, 0.0f, Remainder);
-////    float RatioRemainderMalfunc =    CalculateScaledValue(RatioTotalMalfunc, 0.0f, Remainder);
-////    float RatioRemainderTotal =      RatioRemainderFire + RatioRemainderHullBreach + RatioRemainderMalfunc;
-////    // // // WORKING // // //
-////
-////    // // // DEBUG // // //
-////    cout << "FRem  Ratio: " << RatioRemainderFire << endl;
-////    cout << "HRem  Ratio: " << RatioRemainderHullBreach << endl;
-////    cout << "MRem  Ratio: " << RatioRemainderMalfunc << endl;
-////    cout << "RemR Total:  " << RatioRemainderTotal << endl;
-////    cout << endl;
-////    // // // DEBUG // // //
-////    
-////    // // // WORKING // // //
-////    float Threshold1 = WeightedDifficulty;
-////    float Threshold2 = Threshold1 + RatioRemainderFire;
-////    float Threshold3 = Threshold2 + RatioRemainderHullBreach;
-////    float Threshold4 = Threshold3 + RatioRemainderMalfunc;
-////    // // // WORKING // // //
-////
-////    // // // DEBUG // // //
-////    cout << "Threshold1:  " << Threshold1 << endl;
-////    cout << "Threshold2:  " << Threshold2 << endl;
-////    cout << "Threshold3:  " << Threshold3 << endl;
-////    cout << "Threshold4:  " << Threshold4 << endl;
-////    // // // DEBUG // // //
-////
-////    // // // DEBUG // // //
-////    cout << "---------------";
-////    // // // DEBUG // // //
+        // Order the ratios: LARGEST -> SMALLEST
+        OrderRatios(HazardRatios);
 
-//    // // // WINDOWS // // //
-//    char cWinHold = NULL;
-//    cin >> cWinHold;
-//    // // // WINDOWS // // //
+        // Merge ratios and totals
+        // [1] -> [1] <- [1]
+        // [0] -> [0] <- [0]
+        // [2] -> [2] <- [2]
+        MergeRatiosWithTotals(HazardInformation, HazardTotals, HazardRatios);
 
-//    return (0);
-//}
+        // Order the merged ratios and totals by their type
+        // [0]
+        // [1]
+        // [2]
+        OrderMerged(HazardInformation);
 
-//void TriggerHazard(HazardType _Hazard)
-//{
-//    switch (_Hazard)
-//    {
-//    case HAZARD_NONE:
-//        {
-//            cout << "No hazard triggered, adjusting weightings" << endl << endl;
-//            WeightedDifficulty -= Difficulty * 0.1f;
-//            Remainder           = Total - WeightedDifficulty;
-//            break;
-//        }
-//    case HAZARD_FIRE:
-//        {
-//            cout << "Triggering Hazard: " << _Hazard << " - Fire" << endl;
-//            cout << "Total Fire Hazards: " << TotalFireHazards << endl << endl;
-//            WeightedDifficulty = Difficulty;
-//            Remainder          = Total - WeightedDifficulty;
-//            ++TotalFireHazards;
-//            break;
-//        }
+        // Calculate the type of hazard to trigger
+        eHazardReturn = CalculateHazardTrigger(HazardInformation);
 
-//    case HAZARD_HULL_BREACH:
-//        {
-//            cout << "Triggering Hazard: " << _Hazard << " - Hull Breach" << endl;
-//            cout << "Total Hull Breach Hazards: " << TotalHullBreachHazards << endl << endl;
-//            WeightedDifficulty = Difficulty;
-//            Remainder          = Total - WeightedDifficulty;
-//            ++TotalHullBreachHazards;
-//            break;
-//        }
+        // Return
+        return (eHazardReturn);
+    }
 
-//    case HAZARD_MALFUNCTION:
-//        {
-//            cout << "Triggering Hazard: " << _Hazard << " - Malfunction" << endl;
-//            cout << "Total Malfunction Hazards: " << TotalMalfunctionHazards << endl << endl;
-//            WeightedDifficulty = Difficulty;
-//            Remainder          = Total - WeightedDifficulty;
-//            ++TotalMalfunctionHazards;
-//            break;
-//        }
-//    }
-//}
 
-//HazardType HazardUpdate()
-//{
-//    // Local Types
-//    struct HazardInfo
-//    {
-//        float      fHazardRatio;
-//        float      fHazardRatioNormalised;
-//        float      fHazardRatioFinal;
-//        int        iNumHazards;
-//        HazardType eHazardType;
-//    };
+    EHazardType CalculateHazardTrigger(List<HazardInfo> _Info)
+    {
+        // Local variables
+        List<float> fThresholds = new List<float>();
+        float fHazardRandomTriggerValue = -1.0f;
+        EHazardType eReturnHazard = EHazardType.NONE;
 
-//    // Hazard return value
-//    HazardType eHazard = HAZARD_NONE;
+        // Generate random trigger value to two decimal places
+        fHazardRandomTriggerValue = (float)(Random.value % (m_iTotal * 100) * 0.01f);
 
-//    // Generate random number
-//    const int HazardRandomValue = rand() % Total;
-//    cout << "Random Value: " << HazardRandomValue << endl;
+        // If the random trigger value is not below the first thrshold
+        if (!(fHazardRandomTriggerValue < m_fDifficultyWeighted))
+        {
+            // Set first threshold as the weighted difficulty
+            fThresholds.Add(m_fDifficultyWeighted);
 
-//    // Get number of unique hazard types
-//    // DEBUG: Default
-//    const int UniqueHazardTypes = HAZARD_MAX;
-////    cout << "Unique hazard types: " << UniqueHazardTypes << endl;
+            // For each element of the info container
+            foreach (HazardInfo Info in _Info)
+            {
+                // Add a new threshold equal to the previous threshold plus the new ratio
+                fThresholds.Add(fThresholds.Last() + Info.fRatio);
+            }
 
-//    // Threshold container
-//    float Thresholds[UniqueHazardTypes + 1];//      = new float[UniqueHazardTypes + 1];
-////    cout << "Thresholds: " << (sizeof(Thresholds) / sizeof(float)) << endl;
+            // Iterate through each threshold
+            for (int i = 0; i < fThresholds.Count; ++i)
+            {
+                // If the random trigger value is greater than or equal to the current threshold and
+                // If the random trigger value is less than the next threshold
+                if ((fHazardRandomTriggerValue >= fThresholds.ElementAt(i)) && (fHazardRandomTriggerValue < fThresholds.ElementAt(i + 1)))
+                {
+                    // Set the hazard to trigger as the current type
+                    eReturnHazard = (EHazardType)i;
 
-//    Thresholds[0] = WeightedDifficulty;
+                    // Break the loop to prevent redundant processing
+                    break;
+                }
+            }
+        }
 
-//    // Hazard info container
-//    HazardInfo * pHazardInfo = new HazardInfo[UniqueHazardTypes];
+        // Return
+        return (eReturnHazard);
+    }
 
-//    // Hazard total containers
-//    int * pHazardTotalsContainer = new int[UniqueHazardTypes];
-//    int iTotalHazards = 0;
 
-//    for (short i = 0; i < UniqueHazardTypes; ++i)
-//    {
-//        // Get the number of active hazards of the current type
-//        // DEBUG: Default
-//        pHazardTotalsContainer[i] = GetTotalHazardsOfType((HazardType)i);
+    void OrderTotals(List<HazardInfo> _Info)
+    {
+        _Info.OrderBy((item) => item.uiTotal);
+    }
 
-// //       cout << "Total hazards of type " << i << ": " << pHazardTotalsContainer[i] << endl;
 
-//        iTotalHazards += pHazardTotalsContainer[i];
-//    }
+    void OrderRatios(List<float> _Info)
+    {
+        _Info.OrderByDescending((item) => item);
+    }
 
-////    cout << "Total hazards: " << iTotalHazards << endl;
 
-// //   cout << endl << endl;
-//    for (int i = 0; i < UniqueHazardTypes; ++i)
-//    {
-//        // Set the current hazard's type
-//        pHazardInfo[i].eHazardType  = (HazardType)i;
-// //       cout << "Current hazard type: " << (HazardType)i << endl;
+    void OrderMerged(List<HazardInfo> _Info)
+    {
+        _Info.OrderBy((item) => (int)item.eType);
+    }
 
-//        // Get the number of active hazards of the current type
-//        // DEBUG: Default
-//        int iTotalHazardsOfThisType = pHazardTotalsContainer[i];
-//        cout << "Total hazards of this type: " << iTotalHazardsOfThisType << endl;
 
-//        // Determine the ratio of this hazard type to the total number of hazards
-//        pHazardInfo[i].fHazardRatio = ((float)pHazardTotalsContainer[i]  / (float)iTotalHazards) * 100.0f;
-//        cout << "Current hazard ratio: " << pHazardInfo[i].fHazardRatio << endl;
+    void MergeRatiosWithTotals(List<HazardInfo> _Result, List<HazardInfo> _Totals, List<float> _Ratios)
+    {
+        // Clear the result container
+        _Result.Clear();
 
-//        // Normalise the ratio to within current range
-//        pHazardInfo[i].fHazardRatioNormalised = CalculateScaledValue(pHazardInfo[i].fHazardRatio, 0.0f, Remainder);
-//        cout << "Normalized current hazard ratio: " << pHazardInfo[i].fHazardRatioNormalised << endl;
+        // If both containers contain equal numbers of elements
+        if (_Totals.Count == _Ratios.Count)
+        {
+            // For each element in both lists
+            for (int i = 0; i < _Totals.Count; ++i)
+            {
+                // Merge the two sets of information intoa  single object
+                HazardInfo Info;
+                Info.eType   = _Totals.ElementAt(i).eType;
+                Info.uiTotal = _Totals.ElementAt(i).uiTotal;
+                Info.fRatio  = _Ratios.ElementAt(i);
 
-//        // Set next threshold
-//        // Note: First threshold is set by difficulty, not hazards
-////        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioNormalised;
-//    //    cout << "Threshold: " << Thresholds[i + 1] << endl;
-//    }
+                // Add the merged object into the result list
+                _Result.Add(Info);
+            }
+        }
 
-//    for (int i = 0; i < UniqueHazardTypes / 2; ++i)
-//    {
-//        int mod2 = UniqueHazardTypes - i - 1;
+        else
+        {
+            // Report error
+            Debug.LogError("Total and Ratio count is not equal");
+        }
+    }
 
-//        pHazardInfo[i].fHazardRatioFinal = pHazardInfo[mod2].fHazardRatioNormalised;
-//        pHazardInfo[mod2].fHazardRatioFinal = pHazardInfo[i].fHazardRatioNormalised;
-//    }
 
-//    for (int i = 0; i < UniqueHazardTypes; ++i)
-//    {
-//        cout << "Final ratio " << i << ": " << pHazardInfo[i].fHazardRatioFinal << endl;
-//        Thresholds[i + 1] = Thresholds[i] + pHazardInfo[i].fHazardRatioFinal;
-//    }
+    void TriggerHazardOfType(EHazardType _eType)
+    {
+        // Switch on the hazard parameter
+        switch (_eType)
+        {
+            // Trigger nothing
+            case EHazardType.NONE:
+                {
+                    // Note: This makes hazards more likely to trigger each
+                    //       time the timer expires and no hazard is triggered
 
-////    cout << endl << endl;
-//    for (short i = 0; i < UniqueHazardTypes + 1; ++i)
-//    {
-//        cout << "Threshold " << i << ": " << Thresholds[i] << endl;
-//    }
+                    // Increase the difficulty modifier by 10%
+                    m_fDifficultyWeighted -= m_fDifficulty * 0.1f;
 
-//    for (int i = 0; i < UniqueHazardTypes; ++i)
-//    {
-//        if ((HazardRandomValue >= Thresholds[i]) && (HazardRandomValue < Thresholds[i + 1]))
-//        {
-//            eHazard = (HazardType)(i);
-//        }
-//    }
+                    // Break
+                    break;
+                }
 
-//    return (eHazard);
-//}
+            // Trigger fire
+            case EHazardType.FIRE:
+                {
+                    // Trigger a fire
+                    ++m_iTotalHazardsFire;
 
-//int GetTotalHazardsOfType(HazardType _eType)
-//{
-//    int iReturn = 0;
+                    // Reset the weighted difficulty
+                    m_fDifficultyWeighted = m_fDifficulty;
 
-//    switch (_eType)
-//    {
-//    case HAZARD_FIRE:
-//        {
-//            iReturn = TotalFireHazards;
-//            break;
-//        }
+                    // Break
+                    break;
+                }
 
-//    case HAZARD_HULL_BREACH:
-//        {
-//            iReturn = TotalHullBreachHazards;
-//            break;
-//        }
+            // Trigger hull breach
+            case EHazardType.HULL_BREACH:
+                {
+                    // Trigger a hull breach
+                    ++m_iTotalHazardsHullBreach;
 
-//    case HAZARD_MALFUNCTION:
-//        {
-//            iReturn = TotalMalfunctionHazards;
-//            break;
-//        }
-//    }
+                    // Reset the weighted difficulty
+                    m_fDifficultyWeighted = m_fDifficulty;
 
-//    return (iReturn);
-//}
+                    // Break
+                    break;
+                }
 
-//float CalculateScaledValue(float _fX, float _fNewMin, float _fNewMax, float _fOldMin, float _fOldMax)
-//{
-//    // Temporary return variable
-//    float fReturn = 0.0f;
+            // Trigger malfunction
+            case EHazardType.MALFUNCTION:
+                {
+                    // Trigger a malfunction
+                    ++m_iTotalHazardsMalfunction;
 
-//    // Scale _fX to fit within the new range
-//    fReturn = ((((_fX - _fOldMin) * (_fNewMax - _fNewMin)) / (_fOldMax - _fOldMin)) + _fNewMin);
+                    // Reset the weighted difficulty
+                    m_fDifficultyWeighted = m_fDifficulty;
 
-//    // Return
-//    return (fReturn);
-//}
+                    // Break
+                    break;
+                }
 
-    private float CalculateScaledValue(float _fX,
-                                       float _fNewMin = 0.0f,
-                                       float _fNewMax = 100.0f,
-                                       float _fOldMin = 0.0f,
-                                       float _fOldMax = 100.0f)
+            // Default
+            default:
+                {
+                    // Report error
+                    Debug.LogError("Invalid hazard type");
+
+                    // Break
+                    break;
+                }
+        }
+
+        // Update the remainder to include any changes
+        m_fRemainder = m_iTotal - m_fDifficultyWeighted;
+
+        // Update the total number of hazards
+        m_iTotalHazards = m_iTotalHazardsFire + m_iTotalHazardsHullBreach + m_iTotalHazardsMalfunction;
+    }
+
+
+    int GetTotalHazardsOfType(EHazardType _eType)
+    {
+        // Temporary return variable
+        int iReturn = 0;
+
+        // Switch on the hazard parameter
+        switch (_eType)
+        {
+            // Fire
+            case EHazardType.FIRE:
+                {
+                    // Set return value
+                    iReturn = m_iTotalHazardsFire;
+
+                    // Break
+                    break;
+                }
+
+            // Hull Breach
+            case EHazardType.HULL_BREACH:
+                {
+                    // Set return value
+                    iReturn = m_iTotalHazardsHullBreach;
+
+                    // Break
+                    break;
+                }
+
+            // Malfunction
+            case EHazardType.MALFUNCTION:
+                {
+                    // Set return value
+                    iReturn = m_iTotalHazardsMalfunction;
+
+                    // Break
+                    break;
+                }
+
+            // Default
+            default:
+                {
+                    // Report error
+                    Debug.LogError("Invalid hazard type");
+
+                    // Break
+                    break;
+                }
+        }
+
+        // Return
+        return (iReturn);
+    }
+
+
+    float CalculateScaledValue(float _fValue, float _fNewMin, float _fNewMax, float _fOldMin, float _fOldMax)
     {
         // Temporary return variable
         float fReturn = 0.0f;
 
-        // Scale _fX to fit within new range
-        fReturn = ((((_fX - _fOldMin) * (_fNewMax - _fNewMin)) / (_fOldMax - _fOldMin)) + _fNewMin);
+        // Scale _fValue to fit within the new range
+        fReturn = ((((_fValue - _fOldMin) * (_fNewMax - _fNewMin)) / (_fOldMax - _fOldMin)) + _fNewMin);
 
         // Return
         return (fReturn);
     }
 
 
-    [AServerOnly]
-    public void DebugUpdateDebugModifier(float _fNewValue)
-    {
-        // Update the debug spawning modifier
-        m_fModifierDebug = _fNewValue;
-    }
+// Unused Functions
+    void Awake() { }
+    void OnDestroy() { }
 
-
-    [AServerOnly]
-    public void DebugTriggerHazard()
-    {
-        // Set the hazard timer to the timer threshold
-        m_fTimerHazard = m_fTimerHazardThreshold;
-    }
-
-
-    // Unused methods
-    public void OnDestroy(){}
 
 // Member Fields
-    // Algorithm modifiers
-    public float m_fModifierDebug         = 0.0f;
-    public float m_fModifierFires         = 0.0f;
-    public float m_fModifierModules       = 0.0f;
-    public float m_fModifierAsteroids     = 0.0f;
-    public float m_fModifierDifficulty    = 0.0f;
+    int m_iTotal;
+    float m_fDifficulty;
+    float m_fDifficultyWeighted;
+    float m_fRemainder;
 
-    // Timers
-    private float m_fTimerHazard          = 0.0f;
-    private float m_fTimerHazardThreshold = 0.0f;
+    float m_fHazardTriggerTimer;
+    float m_fHazardTriggerTimerThreshold;
 
-    // Data containers
-    private byte m_HazardTotalActive      = 0;
-
-    // Hazard containers
-    // Asteroid container/equivilent
-    // Fire container/equivilent
-    // Module container/equivilent
-};
+    int m_iTotalHazardsFire;
+    int m_iTotalHazardsHullBreach;
+    int m_iTotalHazardsMalfunction;
+    int m_iTotalHazards;
+}
