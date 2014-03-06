@@ -129,6 +129,17 @@ public class CGameCameras : MonoBehaviour
 		}
 	}
 
+	public static void SetMainCameraParent(GameObject _parent)
+	{
+		s_MainCamera.transform.parent = _parent.transform;
+	}
+
+	public static void ResetCamera()
+	{
+		s_MainCamera.transform.localRotation = Quaternion.identity;
+		s_MainCamera.transform.localPosition = new Vector3 (0, 0, 0);
+	}
+
 	public static void SetupCameras()
 	{
 		// If wanting to use oculus, check if the device is intialised

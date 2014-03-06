@@ -129,7 +129,6 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 				if (m_fShootTimer > m_fShootInterval)
 				{
 					InvokeRpcAll("ExecuteShootEffect");
-
 					m_fShootTimer -= m_fShootInterval;
 				}
 			}
@@ -141,7 +140,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	void ExecuteShootEffect()
 	{
 		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Ak47/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
-		cBullet.rigidbody.AddForce(cBullet.transform.forward * 40.0f + rigidbody.velocity, ForceMode.VelocityChange);
+		cBullet.rigidbody.velocity = cBullet.transform.forward * 40.0f;
 
 		GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_BulletFireSoundIndex);
 	}
