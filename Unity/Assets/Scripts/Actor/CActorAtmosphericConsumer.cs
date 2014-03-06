@@ -71,8 +71,11 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 
     public void OnDestroy()
     {
-        m_cRegisteredFacilityObject.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
-        m_bRegistered = false;
+		if(CNetwork.IsServer && m_cRegisteredFacilityObject != null)
+		{
+	        m_cRegisteredFacilityObject.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
+	        m_bRegistered = false;
+		}
     }
 
 	[AServerOnly]

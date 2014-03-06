@@ -89,7 +89,7 @@ GameObject:
   - 114: {fileID: 11400028}
   - 114: {fileID: 11400030}
   m_Layer: 9
-  m_Name: Button_Unlock
+  m_Name: Button_Close
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,7 +126,7 @@ GameObject:
   - 114: {fileID: 11400052}
   - 114: {fileID: 11400054}
   m_Layer: 9
-  m_Name: Button_Lock
+  m_Name: Button_Open
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -256,7 +256,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -90, y: 0, z: 0}
+  m_LocalPosition: {x: -6, y: -58, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400020}
@@ -268,7 +268,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 90, y: 0, z: 0}
+  m_LocalPosition: {x: -4.19794512, y: 0, z: 0}
   m_LocalScale: {x: 1.00005996, y: 1.00005996, z: 1.00005996}
   m_Children:
   - {fileID: 400030}
@@ -422,7 +422,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ae0e8571f4e20041906cdd205200210, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cLabelWarning: {fileID: 0}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -629,7 +628,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 556, y: 300, z: 0}
+  m_ViewPortPos: {x: 507, y: 303, z: 0}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -696,8 +695,8 @@ MonoBehaviour:
   disabledColor: {r: .5, g: .5, b: .5, a: 1}
   dragHighlight: 0
   onClick:
-  - mTarget: {fileID: 0}
-    mMethodName: OnEventOpenButtonClick
+  - mTarget: {fileID: 11400000}
+    mMethodName: OnClickClose
     oneShot: 0
 --- !u!114 &11400026
 MonoBehaviour:
@@ -807,7 +806,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: Lock
+  mText: Close
   mFontSize: 10
   mFontStyle: 0
   mEncoding: 1
@@ -894,8 +893,8 @@ MonoBehaviour:
   disabledColor: {r: .5, g: .5, b: .5, a: 1}
   dragHighlight: 0
   onClick:
-  - mTarget: {fileID: 0}
-    mMethodName: OnEventCloseButtonClick
+  - mTarget: {fileID: 11400000}
+    mMethodName: OnClickOpen
     oneShot: 0
 --- !u!114 &11400050
 MonoBehaviour:
@@ -1005,7 +1004,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: Unlock
+  mText: Open
   mFontSize: 10
   mFontStyle: 0
   mEncoding: 1

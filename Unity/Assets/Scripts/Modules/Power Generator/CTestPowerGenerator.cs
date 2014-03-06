@@ -51,7 +51,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		CAudioCue audioCue = GetComponent<CAudioCue>();
 		if (audioCue == null)
 			audioCue = gameObject.AddComponent<CAudioCue>();
-		m_AmbientHumSoundIndex = audioCue.AddSound("Audio/PowerGeneratorAmbientHum", 0.0f, 0.0f, true);
+		//m_AmbientHumSoundIndex = audioCue.AddSound("Audio/PowerGeneratorAmbientHum", 0.0f, 0.0f, true);
 	}
 
 	public void Start()
@@ -84,7 +84,7 @@ public class CTestPowerGenerator: MonoBehaviour
 
 		// Begin playing the sound.
 		// Todo: Once individual sounds can be disabled, this must be moved to where the power generator turns on and off.
-		GetComponent<CAudioCue>().Play(transform, 1.0f, true, m_AmbientHumSoundIndex);
+		GetComponent<CAudioCue>().Play(transform, 0.25f, true, 0);
 	}
 
 	private void HandleCalibrationHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
@@ -100,6 +100,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.DeactivatePowerGeneration();
+            GetComponent<CAudioCue>().StopAllSound();
 		}
 	}
 
@@ -108,6 +109,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			m_PowerGenerator.ActivatePowerGeneration();
+            GetComponent<CAudioCue>().Play(transform, 0.25f, true, 0);
 		}
 	}
 }

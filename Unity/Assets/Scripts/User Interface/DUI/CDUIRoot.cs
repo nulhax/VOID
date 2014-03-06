@@ -42,6 +42,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		Engine,
         AirlockInternal,
         FacilityDoor,
+		FacilityControl,
 
 		MAX
 	}

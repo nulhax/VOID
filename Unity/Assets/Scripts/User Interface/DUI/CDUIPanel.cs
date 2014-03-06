@@ -65,9 +65,6 @@ public class CDUIPanel : CNetworkMonoBehaviour
 			pf.EventFadeInFinished += OnTransitionInFinish;
 			pf.EventFadeOutFinished += OnTransitionOutFinish;
 		}
-
-		// Disable self, Root2D will handle us
-		gameObject.SetActive(false);
 	}
 
 	public void TransitionOut()

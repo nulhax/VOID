@@ -334,7 +334,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
 		{
 			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
-			GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
+			//GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
 		}
 	}
 
@@ -344,8 +344,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (_eHealthCurrentState == _eHealthPreviousState) Debug.LogError("CPlayerHealth→OnHealthStateChange is being called despite no change!");
 
 		// Play ooies.
-		if (_eHealthCurrentState == HealthState.DOWNED)
-			GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDeathSoundIndex);
+        if (_eHealthCurrentState == HealthState.DOWNED)
+        {
+            //GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDeathSoundIndex);
+        }
 	}
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)

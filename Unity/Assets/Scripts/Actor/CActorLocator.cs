@@ -16,6 +16,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -71,4 +72,33 @@ public class CActorLocator : MonoBehaviour
 		if(EventExitedFacility != null)
 			EventExitedFacility(_Facility);
 	}
+
+
+    void OnGUI()
+    {
+        if (gameObject == CGamePlayers.SelfActor)
+        {
+            string sFacilityText = "";
+            GameObject cCurrentFacilityObject = GetComponent<CActorLocator>().CurrentFacility;
+
+            if (cCurrentFacilityObject != null)
+            {
+                sFacilityText += "Atmosphere: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Quantity, 0);
+                sFacilityText += "/" + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Volume, 0) + "\n";
+                sFacilityText += "Atmosphere: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().QuantityPercent, 1) + "%\n";
+
+                sFacilityText += "Refilling: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsRefillingEnabled ? "True" : "False") + "\n";
+                sFacilityText += "Controlled Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsDepressurizing ? "True" : "False") + "\n";
+                sFacilityText += "Explosive Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsExplosiveDepressurizing ? "True" : "False") + "\n";
+
+                sFacilityText += "Power Active: " + (cCurrentFacilityObject.GetComponent<CFacilityPower>().IsPowerActive ? "True" : "False");
+            }
+
+
+            GUI.Box(new Rect(10, Screen.height - 220, 240, 120),
+                    "[Facility]\n" +
+                    sFacilityText);
+        }
+    }
+
 }

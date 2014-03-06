@@ -544,7 +544,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0c08df68316a2df4a8b6d7fb4622dec7, type: 3}
   m_barLoopList: 00
   m_bContinuousEvent: 0
-  m_fPlayFrequency: 1
+  m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!198 &19800000
 ParticleSystem:

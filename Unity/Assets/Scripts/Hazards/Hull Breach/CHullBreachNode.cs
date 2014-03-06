@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(CActorHealth))]
 [RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CHullBreachNode : MonoBehaviour
 {
@@ -22,6 +23,11 @@ public class CHullBreachNode : MonoBehaviour
 
 	void Awake()
 	{
+		// Remember the good mesh if none is defined but one is attached to this gameobject.
+		Mesh mf = GetComponent<MeshFilter>().sharedMesh;
+		if (mf != null && goodMesh == null)
+			goodMesh = mf;
+
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate = 100.0f;
 
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
@@ -86,6 +92,7 @@ public class CHullBreachNode : MonoBehaviour
 		switch (currState)
 		{
 			case 0:	// Hull breach threshold.
+				renderer.material.SetColor("_Color", Color.white);
 				if (!breached)	// If the hull was not breached before passing the breach threshold...
 				{
 					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
@@ -120,7 +127,13 @@ public class CHullBreachNode : MonoBehaviour
 				}
 				break;
 
+			case 1:	// Hull visual (but superficial) damage threshold met.
+				if (prevState == 2)
+					renderer.material.SetColor("_Color", Color.red);
+				break;
+
 			case 2:	// Hull fix threshold.
+				renderer.material.SetColor("_Color", Color.white);
 				if (breached)	// If the hull was breached before passing the fix threshold...
 				{
 					GetComponent<CAudioCue>().StopAllSound();
