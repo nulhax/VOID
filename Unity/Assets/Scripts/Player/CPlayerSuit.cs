@@ -110,7 +110,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
             }
             else
             {
-				if(currentFacility.GetComponent<CFacilityAtmosphere>().AtmosphereQuantityPercentage < 25.0f)
+				if(currentFacility.GetComponent<CFacilityAtmosphere>().QuantityPercent < 25.0f)
                 {
 					m_AtmosphereConsumer.SetAtmosphereConsumption(false);
                     m_EnviromentalOxygen.Set(false);

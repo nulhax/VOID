@@ -58,37 +58,33 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-        m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(true);
+        m_cHullExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(false);
+        m_cFacilityExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(true);
 
         // Open airlock
         if (CNetwork.IsServer)
         {
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenAirlock += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
-                m_bStates.Set((byte)(m_bStates.Get() | (1 << (byte)EStates.Decompressing)));
-                m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-                m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(false);
-
-                foreach (GameObject cAlarmObject in gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning))
-                {
-                    cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
-                }
+                m_cFacilityExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(true);
             };
 
             // Close airlock
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseAirlock += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
-                m_bStates.Set((byte)(m_bStates.Get() & ~(1 << (byte)EStates.Decompressing)));
-                m_cDoorExternal.GetComponent<CDoorBehaviour>().SetOpened(false);
-                m_cDoorFacility.GetComponent<CDoorBehaviour>().SetOpened(true);
+                m_cFacilityExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(false);
+            };
 
-                foreach (GameObject cAlarmObject in gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning))
-                {
-                    cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
-                }
+            // Open hull airlock
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            {
+                m_cHullExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(true);
+            };
 
-                //gameObject.GetComponent<CFacilityAtmosphere>().
+            // Close hull airlock
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            {
+                m_cHullExpansionPortBehaviour.AttachedDoorBehaviour.SetOpened(false);
             };
         }
 
@@ -99,11 +95,13 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
+        // Empty
 	}
 
 
 	void Update()
 	{
+        // Empty
 	}
 
 
@@ -216,16 +214,14 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 // Member Fields
 
-
-    public GameObject m_cDoorExternal = null;
-    public GameObject m_cDoorFacility = null;
+    public CExpansionPortBehaviour m_cFacilityExpansionPortBehaviour = null;
+    public CExpansionPortBehaviour m_cHullExpansionPortBehaviour = null;
 
     public GameObject m_cDuiInternal = null;
     public GameObject m_cDuiFacility = null;
     public GameObject m_cDuiExternal = null;
 
     public GameObject[] m_caOxygenParticalSprayers = null;
-
 
     CNetworkVar<byte> m_bStates = null;
 

@@ -20435,7 +20435,7 @@ GameObject:
   - 114: {fileID: 11400090}
   - 114: {fileID: 11400088}
   m_Layer: 0
-  m_Name: Bridge
+  m_Name: Bridge 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36025,7 +36025,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 102356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.0865362585, y: 0, z: .0865362361}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: .100000001, z: 3}
   m_Children: []
   m_Father: {fileID: 402358}

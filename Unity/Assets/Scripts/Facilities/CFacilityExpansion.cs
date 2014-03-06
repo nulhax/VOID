@@ -35,13 +35,13 @@ public class CFacilityExpansion : MonoBehaviour
 
     public int ExpansionPortCount
     {
-        get { return (m_aExpansionPorts.Length); }
+        get { return (m_caExpansionPorts.Length); }
     }
 
 
     public GameObject[] ExpansionPorts
 	{
-        get { return (m_aExpansionPorts); }
+        get { return (m_caExpansionPorts); }
 	}
 
 
@@ -50,7 +50,12 @@ public class CFacilityExpansion : MonoBehaviour
 
     public GameObject GetExpansionPort(uint _uiExpansionPortId)
     {
-        return (m_aExpansionPorts[_uiExpansionPortId]);
+        if (m_caExpansionPorts[_uiExpansionPortId] == null)
+        {
+            return (null);
+        }
+
+        return (m_caExpansionPorts[_uiExpansionPortId]);
     }
 
 
@@ -60,11 +65,17 @@ public class CFacilityExpansion : MonoBehaviour
     }
 
 
+    void Start()
+    {
+        // Empty
+    }
+
+
 	void DebugAddPortNames()
 	{
         uint uiCount = 0;
 
-        foreach (GameObject cExpansionPort in m_aExpansionPorts)
+        foreach (GameObject cExpansionPort in m_caExpansionPorts)
 		{
 			// Create the text field object
             GameObject TextField = new GameObject(cExpansionPort.name + (uiCount++).ToString());
@@ -93,7 +104,7 @@ public class CFacilityExpansion : MonoBehaviour
 // Member Fields
 
 
-    public GameObject[] m_aExpansionPorts = null;
+    public GameObject[] m_caExpansionPorts = null;
 
 
 };

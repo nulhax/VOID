@@ -60,8 +60,8 @@ public class CFireHazard : MonoBehaviour
 			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
 
 			float thresholdPercentage = 0.25f;
-			if(fa.AtmosphereQuantityPercentage < thresholdPercentage)
-                ah.health += (1.0f / (fa.AtmosphereQuantityPercentage / thresholdPercentage)) * Time.deltaTime;
+			if(fa.QuantityPercent < thresholdPercentage)
+                ah.health += (1.0f / (fa.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
 		}
 	}
 

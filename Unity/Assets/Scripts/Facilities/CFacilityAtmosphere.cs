@@ -32,40 +32,69 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Properties
 	
 
-    public float AtmosphereQuantity
+    public float Quantity
     {
         get { return (m_fQuantity.Get()); }
     }
 
 
-    public float AtmosphereQuantityPercentage
+    public float QuantityPercent
     {
-		get { return ((AtmosphereQuantity / m_fVolume) * 100.0f); }
+		get { return (Quantity / m_fVolume * 100.0f); }
     }
 
 
-	public float AtmosphereVolume
+    public float QuantityRatio
+    {
+        get { return (Quantity / m_fVolume); }
+    }
+
+
+	public float Volume
 	{
 		get { return (m_fVolume); } 
 	}
 
 
-	public float AtmosphereConsumeRate
+	public bool IsRefillingRequired
 	{
-        get { return (m_fConsumptionRate); }
+        get
+        {
+            return (IsRefillingEnabled &&
+                    QuantityRatio != 1.0f); 
+        } 
 	}
 
 
-	public bool IsAtmosphereRefillingRequired
-	{
-        get { return (IsAtmosphereRefillingEnabled &&
-                      AtmosphereQuantityPercentage != 1.0f); } 
-	}
-
-
-    public bool IsAtmosphereRefillingEnabled
+    public bool IsRefillingEnabled
     {
-        get { return (m_bRefillingEnabled); }
+        get
+        { 
+            return (!IsDepressurizing &&
+                    !IsExplosiveDepressurizing &&
+                     m_bRefillingEnabled);
+        }
+    }
+
+
+    [AServerOnly]
+    public float ConsumptionRate
+    {
+        get { return (m_fConsumptionRate); }
+    }
+
+
+    [AServerOnly]
+    public bool IsDepressurizing
+    {
+        get { return (m_bControlledDepressurizing); }
+    }
+
+
+    [AServerOnly]
+    public bool IsExplosiveDepressurizing
+    {
+        get { return (m_bExplosiveDepressurizing); }
     }
 
 
@@ -74,24 +103,67 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, Volume / 2);
     }
 
 
-    public void IncrementQuantity(float _fQuantity)
+    [AServerOnly]
+    public void SetQuanity(float _fAmount)
     {
-        float fNewQuanity = m_fQuantity.Get() + _fQuantity;
+        if (_fAmount < 0.0f)
+        {
+            _fAmount = 0.0f;
+        }
+        else if (_fAmount > m_fVolume)
+        {
+            _fAmount = m_fVolume;
+        }
+
+        m_fQuantity.Set(_fAmount);
+    }
+
+
+    [AServerOnly]
+    public float ChangeQuantityByAmount(float _fAmount)
+    {
+        float fNewQuanity = m_fQuantity.Get() + _fAmount;
+        float fUnusedQuanity = 0.0f;
 
         if (fNewQuanity < 0.0f)
         {
+            fUnusedQuanity = -fNewQuanity;
             fNewQuanity = 0.0f;
         }
         else if (fNewQuanity > m_fVolume)
         {
+            fUnusedQuanity = fNewQuanity - m_fVolume;
             fNewQuanity = m_fVolume;
         }
 
         m_fQuantity.Set(fNewQuanity);
+
+        return (fUnusedQuanity);
+    }
+
+
+    [AServerOnly]
+    public void SetRefillingEnabled(bool _bEnabled)
+    {
+        m_bRefillingEnabled = _bEnabled;
+    }
+
+
+    [AServerOnly]
+    public void SetDepressurizingEnabled(bool _bEnabled)
+    {
+        m_bControlledDepressurizing = _bEnabled;
+    }
+
+
+    [AServerOnly]
+    public void SetExplosiveDepressurizingEnabled(bool _bEnabled)
+    {
+        m_bExplosiveDepressurizing = _bEnabled;
     }
 
 
@@ -119,18 +191,27 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            // Debug: Atmosphere starts at half the total volume
-            m_fQuantity.Set(AtmosphereVolume / 2);
+            // Subscribe to ship atmosphere pre-update
+            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessControlledDecompression;
+            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessExplosiveDecompression;
+            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessConsumption;
+            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessNeighbourTransfer;
 
-            GetComponent<CFacilityHull>().EventBreached += () =>
-            {
-                m_bExplosiveDepressurizing = true;
-            };
+            // Subscribe to hull events
+            GetComponent<CFacilityHull>().EventBreached += OnHullEvent;
+            GetComponent<CFacilityHull>().EventBreachFixed += OnHullEvent;
 
-            GetComponent<CFacilityHull>().EventBreachFixed += () =>
+            // Subscriber to expansion ports door events
+            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
             {
-                m_bExplosiveDepressurizing = false;
-            };
+                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+
+                if (cExpansionPortBehaviour.AttachedDoor != null)
+                {
+                    cExpansionPortBehaviour.AttachedDoorBehaviour.EventOpenStart += OnDoorEvent;
+                    cExpansionPortBehaviour.AttachedDoorBehaviour.EventClosed += OnDoorEvent;
+                }
+            }
         }
     }
 
@@ -140,63 +221,212 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Remove consumers that are now null
-			m_aConsumers.RemoveAll((item) => item == null);
+            m_aConsumers.RemoveAll((_cConsumer) => _cConsumer == null);
 
-			UpdateConsumptionRate();
-
-            // Turn on warning alarms
-            if (!m_bAlarmsActive &&
-                AtmosphereQuantityPercentage < 25.0f)
-            {
-                gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
-                {
-                    _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
-                });
-            }
-            
-            // Turn off alarms
-            else if (m_bAlarmsActive &&
-                     AtmosphereQuantityPercentage > 25.0f)
-            {
-                gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
-                {
-                    _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
-                });
-
-                m_bAlarmsActive = false;
-            }
-
-            // Compute explosive decompression
-            if (m_bExplosiveDepressurizing)
-            {
-                if (m_fQuantity.Get() != 0.0f)
-                {
-                    IncrementQuantity(-m_fVolume * k_fExplosiveDecompressionRatio * Time.deltaTime);
-                }
-            }
+            UpdateAlarms();
 		}
 	}
 
 
-	[AServerOnly]
-	void UpdateConsumptionRate()
-	{
-		// Calulate the combined consumption rate within the facility
-		float fConsumptionRate = 0.0f;
+    [AServerOnly]
+    void UpdateAlarms()
+    {
+        // Turn on warning alarms
+        if (!m_bAlarmsActive &&
+            QuantityPercent < 25.0f)
+        {
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
+            });
 
-		m_aConsumers.ForEach((GameObject _cConsumer) =>
-		{
+            m_bAlarmsActive = true;
+        }
+
+        // Turn off alarms
+        else if (m_bAlarmsActive &&
+                 QuantityPercent > 25.0f)
+        {
+            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
+            {
+                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
+            });
+
+            m_bAlarmsActive = false;
+        }
+    }
+
+
+    [AServerOnly]
+    void ProcessControlledDecompression()
+    {
+        if (IsDepressurizing)
+        {
+            if (m_fQuantity.Get() != 0.0f)
+            {
+                ChangeQuantityByAmount(-m_fControlledDecompressionRate * Time.deltaTime);
+            }
+        }
+    }
+
+
+    [AServerOnly]
+    void ProcessExplosiveDecompression()
+    {
+        if (IsExplosiveDepressurizing)
+        {
+            if (m_fQuantity.Get() != 0.0f)
+            {
+                ChangeQuantityByAmount(-m_fVolume * k_fExplosiveDecompressionRatio * Time.deltaTime);
+            }
+        }
+    }
+
+
+    [AServerOnly]
+    void ProcessConsumption()
+    {
+        // Calulate the combined consumption rate within the facility
+        float fConsumptionRate = 0.0f;
+
+        m_aConsumers.ForEach((GameObject _cConsumer) =>
+        {
             CActorAtmosphericConsumer cActorAtmosphereConsumer = _cConsumer.GetComponent<CActorAtmosphericConsumer>();
 
             if (cActorAtmosphereConsumer.IsConsumingAtmosphere)
             {
                 fConsumptionRate += cActorAtmosphereConsumer.AtmosphericConsumptionRate;
             }
-		});
+        });
 
-		// Set the consumption rate
-		m_fConsumptionRate = fConsumptionRate;
-	}
+        ChangeQuantityByAmount(m_fConsumptionRate * Time.deltaTime);
+
+        // Save consumption rate
+        m_fConsumptionRate = fConsumptionRate;
+    }
+
+
+    [AServerOnly]
+    void ProcessNeighbourTransfer()
+    {
+        foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
+        {
+            CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+
+            // Check door is open on this expansion port
+            if (cExpansionPortBehaviour.AttachedDoor.GetComponent<CDoorBehaviour>().IsOpened)
+            {
+                GameObject cNeighbourFacilityObject = cExpansionPortBehaviour.AttachedFacility;
+
+                if (cNeighbourFacilityObject != null)
+                {
+                    CFacilityAtmosphere cNeighbourFacilityAtmosphere = cNeighbourFacilityObject.GetComponent<CFacilityAtmosphere>();
+
+                    // Check this facility atmosphere pressure is higher then nighbour facility
+                    if (cNeighbourFacilityAtmosphere.QuantityRatio < QuantityRatio)
+                    {
+                        // Transfer atmosphere to neighbour facility
+                        float fRatioDifference = QuantityRatio - cNeighbourFacilityAtmosphere.QuantityRatio;
+                        float fDeltaTransfer = 500.0f * fRatioDifference * Time.deltaTime;
+
+                        if (fRatioDifference > 0.01f)
+                        {
+                            //Debug.LogError(fRatioDifference);
+                            cNeighbourFacilityAtmosphere.ChangeQuantityByAmount(fDeltaTransfer);
+                            ChangeQuantityByAmount(-fDeltaTransfer);
+                        }
+                        else
+                        {
+                            // Just set it to my percent
+                            //cNeighbourFacilityAtmosphere.SetQuanity(cNeighbourFacilityAtmosphere.Volume * QuantityRatio);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    [AServerOnly]
+    void CheckExplosiveDecompression()
+    {
+        bool bExposiveDecompressing = false;
+
+        if (GetComponent<CFacilityHull>().IsBreached)
+        {
+            bExposiveDecompressing = true;
+        }
+        else
+        {
+            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
+            {
+                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+
+                // Check door is open on this expansion port
+                if (cExpansionPortBehaviour.AttachedDoor.GetComponent<CDoorBehaviour>().IsOpened)
+                {
+                    GameObject cAttachedFacilityObject = cExpansionPortBehaviour.AttachedFacility;
+
+                    // Check there is no a neighbouring facility and the door is open
+                    if (cAttachedFacilityObject == null)
+                    {
+                        bExposiveDecompressing = true;
+                    }
+                }
+            }
+        }
+
+        if (bExposiveDecompressing &&
+            !IsExplosiveDepressurizing)
+        {
+            Debug.Log(gameObject.name + " explosive depressurizing enabled");
+        }
+
+        SetExplosiveDepressurizingEnabled(bExposiveDecompressing);
+    }
+
+
+    [AServerOnly]
+    void OnDoorEvent(CDoorBehaviour _cDoorBehaviour, CDoorBehaviour.EEventType _eEventType)
+    {
+        switch (_eEventType)
+        {
+            case CDoorBehaviour.EEventType.OpenStart:
+                {
+                    CheckExplosiveDecompression();
+                }
+                break;
+
+            case CDoorBehaviour.EEventType.Closed:
+                {
+                    CheckExplosiveDecompression();
+                }
+                break;
+
+            default:
+                Debug.LogError("Unknown door event. " + _eEventType);
+                break;
+        }
+    }
+
+
+    void OnHullEvent(CFacilityHull.EEventType _eEventType)
+    {
+        switch (_eEventType)
+        {
+            case CFacilityHull.EEventType.Breached:
+                CheckExplosiveDecompression();
+                break;
+
+            case CFacilityHull.EEventType.BreachFixed:
+                CheckExplosiveDecompression();
+                break;
+
+            default:
+                Debug.LogError("Unknown facility hull event. " + _eEventType);
+                break;
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cSynedVar)
@@ -217,7 +447,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     bool m_bAlarmsActive = false;
 
 
-    const float k_fExplosiveDecompressionRatio = 0.1f;
+    const float m_fControlledDecompressionRate = 50;
+    const float k_fExplosiveDecompressionRatio = 0.30f;
 
 
 // Server Member Fields
@@ -226,7 +457,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     float m_fConsumptionRate = 0.0f;
 
     bool m_bRefillingEnabled = true;
-    bool m_bDepressurizing = false;
+    bool m_bControlledDepressurizing = false;
     bool m_bExplosiveDepressurizing = false;
 
 
