@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: ShieldMat
-  m_Shader: {fileID: 6, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 4800000, guid: 6b69226c22bf545a2baf68fc60f7066d, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -17,14 +17,14 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _BumpMap
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -43,14 +43,28 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Illum
+          name: _SpecMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _SpecMap
+          name: _ShieldTexture
+        second:
+          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 1, y: 1}
+      data:
+        first:
+          name: _ShieldTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
+          m_Scale: {x: 2, y: 2}
+          m_Offset: {x: 4, y: 4}
+      data:
+        first:
+          name: _Illum
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -66,7 +80,7 @@ Material:
         first:
           name: _ParallaxMap
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -83,19 +97,26 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Mask
+        second:
+          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
-          name: _Shininess
-        second: .234835133
+          name: _Cutoff
+        second: .5
       data:
         first:
-          name: _InvFade
-        second: 1
+          name: _Shininess
+        second: .00999999978
       data:
         first:
           name: _Alpha
-        second: .00999999978
+        second: 1
       data:
         first:
           name: _EmissionPow
@@ -106,20 +127,40 @@ Material:
         second: 1
       data:
         first:
-          name: _EmissionLM
-        second: 0
-      data:
-        first:
           name: _Glossiness
         second: 1
       data:
         first:
+          name: _InvFade
+        second: 1
+      data:
+        first:
+          name: _RimPower
+        second: .821428597
+      data:
+        first:
+          name: _AlphaRimPower
+        second: 3.21428561
+      data:
+        first:
+          name: _TimeSpeed
+        second: 0
+      data:
+        first:
           name: _Range1
-        second: .887499988
+        second: .100000001
       data:
         first:
           name: _Range2
-        second: 11.1071424
+        second: 32.3214264
+      data:
+        first:
+          name: _Offset
+        second: .375
+      data:
+        first:
+          name: _EmissionLM
+        second: 0
       data:
         first:
           name: _EmissivePower
@@ -130,17 +171,17 @@ Material:
         second: .0199999996
       data:
         first:
-          name: _Offset
-        second: 0
-      data:
-        first:
           name: _SquashAmount
         second: 1
+      data:
+        first:
+          name: _Focus
+        second: -100
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: .0948853642, g: .828621924, b: .860294104, a: 1}
+        second: {r: .310878009, g: .380943418, b: .845588207, a: 1}
       data:
         first:
           name: _SpecColor
@@ -151,12 +192,20 @@ Material:
         second: {r: .171929047, g: .779411793, b: .377216399, a: 1}
       data:
         first:
+          name: _Specular
+        second: {r: 0, g: 0, b: 0, a: 0}
+      data:
+        first:
           name: _TintColor
         second: {r: .5, g: .5, b: .5, a: .5}
       data:
         first:
           name: _Tint
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _RimColor
+        second: {r: .0817474276, g: .0848347396, b: .529411793, a: 1}
       data:
         first:
           name: _Scale

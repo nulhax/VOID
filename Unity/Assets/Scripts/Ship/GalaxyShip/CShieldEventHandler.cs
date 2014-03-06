@@ -27,11 +27,13 @@ public class CShieldEventHandler : MonoBehaviour {
 	// Ship Shield Damage
 	public delegate void NotifyShieldDamage(Collider _Collider);
 	public event NotifyShieldDamage EventShieldDamage;
+	public event NotifyShieldDamage EventAnimateShield;
 
 	// Shield Recharge
 	public delegate void NotifyShieldRecharge();
 	public event NotifyShieldRecharge EventShieldRecharge;
 
+	// Spawn Shield Damage Animation
 
 	// Member Properties
 	
@@ -42,24 +44,33 @@ public class CShieldEventHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-	
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		if(EventShieldRecharge != null)
+		{
 			EventShieldRecharge();
+		}
 	}
 
 	void OnTriggerEnter(Collider _Collider)
 	{
 		if(EventShieldCollider != null)
+		{
 			EventShieldCollider(_Collider);
+		}
 		
 		if(EventShieldDamage != null)
+		{
 			EventShieldDamage(_Collider);
+		}
+
+		if(EventAnimateShield != null)
+		{
+			EventAnimateShield(_Collider);
+		}
 	}
-
-
+	
 }
