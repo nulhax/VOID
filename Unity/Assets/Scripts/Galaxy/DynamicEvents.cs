@@ -5,7 +5,7 @@ public class DynamicEvent_RogueAsteroid
 {
     public DynamicEvent_RogueAsteroid()
     {
-        DungeonMaster.instance.AddDynamicEvent(new DungeonMaster.DynamicEvent(2.0f, Behaviour));
+        DungeonMaster.instance.AddDynamicEvent(new DungeonMaster.DynamicEvent(60.0f, Behaviour));
     }
 
     public static void Behaviour()
@@ -21,8 +21,8 @@ public class DynamicEvent_RogueAsteroid
                 parentAbsoluteCell, // Parent cell.
                 asteroidPosition,   // Position relative to parent.
                 Random.rotationUniform, // Rotation.
-                (CGameShips.GalaxyShip.transform.position - asteroidPosition).normalized * 100.0f,  // Linear velocity.
-                Random.onUnitSphere * 50.0f,    // Angular velocity.
+                (CGameShips.GalaxyShip.transform.position - asteroidPosition).normalized * 50.0f,  // Linear velocity.
+                Random.onUnitSphere * 0.1f,    // Angular velocity.
                 true,   // Has networked entity script.
                 true)); // Has rigid body.
         } while (created != true && --uiTriesToPlaceRogueAsteroid > 0);

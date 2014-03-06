@@ -123,7 +123,7 @@ public class UIDragDropItem : MonoBehaviour
 	void OnDrag (Vector2 delta)
 	{
 		if (!enabled || mTouchID != UICamera.currentTouchID) return;
-		OnDragDropMove((Vector3)delta * mRoot.pixelSizeAdjustment);
+		OnDragDropMove((Vector3)delta /** mRoot.pixelSizeAdjustment*/);
 	}
 
 	/// <summary>

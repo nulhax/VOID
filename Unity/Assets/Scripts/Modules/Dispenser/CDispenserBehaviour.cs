@@ -75,6 +75,8 @@ public class CDispenserBehaviour : MonoBehaviour
         // Create a new object
 		GameObject NewTool = CNetwork.Factory.CreateObject(CToolInterface.GetPrefabType(_ToolType));
 
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
+
         // Set the tool's position
 		NewTool.GetComponent<CNetworkView>().SetPosition(m_ToolSpawnLocation.position);
 		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_ToolSpawnLocation.eulerAngles);

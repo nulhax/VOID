@@ -26,7 +26,24 @@ public class CDuiFacilityDoorBehaviour : MonoBehaviour
 // Member Types
 
 
+    public enum EButton
+    {
+        INVLAID,
+
+        OpenDoor,
+        CloseDoor,
+
+        MAX
+    };
+
+
 // Member Delegates & Events
+
+
+    public delegate void NotifyButtonPressed(EButton _eButton);
+
+    public event NotifyButtonPressed EventClickOpenDoor;
+    public event NotifyButtonPressed EventClickCloseDoor;
 
 
 // Member Properties
@@ -35,26 +52,20 @@ public class CDuiFacilityDoorBehaviour : MonoBehaviour
 // Member Methods
 
 
-    public void SetDoorObject(GameObject _cDoorObject)
-    {
-        m_cDoorObject = _cDoorObject;
-    }
-
-
-    public void OnEventOpenButtonClick()
+    public void OnClickOpen()
     {
         if (CNetwork.IsServer)
         {
-            m_cDoorObject.GetComponent<CDoorBehaviour>().SetOpened(true);
+            if (EventClickOpenDoor != null) EventClickOpenDoor(EButton.OpenDoor);
         }
     }
 
 
-    public void OnEventCloseButtonClick()
+    public void OnClickClose()
     {
         if (CNetwork.IsServer)
         {
-            m_cDoorObject.GetComponent<CDoorBehaviour>().SetOpened(false);
+            if (EventClickCloseDoor != null) EventClickCloseDoor(EButton.CloseDoor);
         }
     }
 
@@ -75,13 +86,6 @@ public class CDuiFacilityDoorBehaviour : MonoBehaviour
 
 
 // Member Fields
-
-
-    public UILabel m_cLabelWarning = null;
-
-
-    GameObject m_cDoorObject = null;
-
 
 
 };

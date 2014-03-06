@@ -146,7 +146,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		}
 		else
 		{
-			Debug.LogError(gameObject.name + " Could not find module to register to");
+			Debug.LogError(name + " has CComponentInterface, but could not find CModuleInterface in parent GameObjects.");
 		}
 
         if (EventHealthChange != null)

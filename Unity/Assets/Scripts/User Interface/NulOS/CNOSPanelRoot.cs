@@ -32,6 +32,7 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 	// Member Fields
 	public UIPanel m_SmallWidgetContainer = null;
 	public UIPanel m_MainWidgetContainer = null;
+
 	public List<CNOSWidget.EType> m_DefaultMenuWidgetNodes = null;
 
 	private UIGrid m_SmallWidgetGrid = null;
@@ -63,7 +64,7 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 
 		if(CNetwork.IsServer)
 		{
-			// Initialise the default nodes
+			// Initialise the default widgets
 			foreach(CNOSWidget.EType type in m_DefaultMenuWidgetNodes)
 			{
 				CreateWidget(type);
@@ -78,26 +79,26 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 		GameObject widget = CNetwork.Factory.CreateObject(CNOSWidget.GetPrefabType(_WidgetType));
 		CNetworkView widgetNV = widget.GetComponent<CNetworkView>();
 
-		// Parent to grid
+		// Parent to grid initially
 		widgetNV.SetParent(m_SmallWidgetGrid.GetComponent<CNetworkView>().ViewId);
 	}
 
-	public void RegisterWidget(GameObject _Widget)
+	public void RegisterWidget(CNOSWidget _Widget)
 	{
 		// Add the widget
-		m_Widgets.Add(_Widget);
+		m_Widgets.Add(_Widget.gameObject);
 
 		// Sort the depth
 		SortWidgetDepth();
 	}
 
-	public void FocusWidget(GameObject _Widget)
+	public void FocusWidget(CNOSWidget _Widget)
 	{
 		// Remove the widget in the list
-		m_Widgets.Remove(_Widget);
+		m_Widgets.Remove(_Widget.gameObject);
 
 		// Add the widget to the back
-		m_Widgets.Add(_Widget);
+		m_Widgets.Add(_Widget.gameObject);
 
 		// Sort the depth
 		SortWidgetDepth();
@@ -109,19 +110,8 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 		int depth = 0;
 		foreach(GameObject widget in m_Widgets)
 		{
-			CNOSWidget nosWidget = widget.GetComponent<CNOSWidget>();
-
-			if(nosWidget.IsMainWidgetActive)
-			{
-				// Set the depth of the UI panel
-				UIPanel mainPanel = nosWidget.m_MainWidget.GetComponent<UIPanel>();
-
-				// Adjust the depth of children panels
-				depth = NGUITools.SetPanelsDepthNested(mainPanel.gameObject, ++depth);
-			}
+			// Adjust the depth of children panels
+			depth = NGUITools.SetPanelsDepthNested(widget, ++depth);
 		}
-
-		// Make sure the widget menu panel is always ontop
-		NGUITools.SetPanelsDepthNested(m_SmallWidgetContainer.gameObject, ++depth);
 	}
 }

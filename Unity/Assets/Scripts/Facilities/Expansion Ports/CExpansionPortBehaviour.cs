@@ -39,6 +39,13 @@ public class CExpansionPortBehaviour : MonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void HandleFacilityCreate(GameObject _cFacilityObject);
+    public event HandleFacilityCreate EventFacilityCreate;
+
+
+    public delegate void HandleFacilityDestroy();
+
+
 // Member Properties
 	
 	
@@ -60,25 +67,114 @@ public class CExpansionPortBehaviour : MonoBehaviour
 	}
 
 
-    public GameObject AttachedExpansionPortObject
+    public GameObject AttachedFacility
     {
-        get { return (m_cAttachedExpansionPortObject); }
+        get 
+        {
+            if (m_cAttachedExpansionPort == null)
+            {
+                return (null);
+            }
+
+            return (m_cAttachedExpansionPort.transform.parent.gameObject); 
+        }
+    }
+
+
+    public GameObject AttachedExpansionPort
+    {
+        get
+        {
+            return (m_cAttachedExpansionPort);
+        }
+    }
+
+
+    public CExpansionPortBehaviour AttachedExpansionPortBehaviour
+    {
+        get
+        {
+            if (m_cAttachedExpansionPort == null)
+            {
+                return (null);
+            }
+
+            return (m_cAttachedExpansionPort.GetComponent<CExpansionPortBehaviour>());
+        }
+    }
+
+
+    public GameObject AttachedDoor
+    {
+        get 
+        {
+            if (m_cDoor != null)
+            {
+                return (m_cDoor);
+            }
+            else if (AttachedExpansionPort != null &&
+                     AttachedExpansionPortBehaviour.AttachedDoor != null)
+            {
+                return (AttachedExpansionPortBehaviour.AttachedDoor);
+            }
+
+            return (null); 
+        }
+    }
+
+
+    public CDoorBehaviour AttachedDoorBehaviour
+    {
+        get
+        {
+            if (AttachedDoor != null)
+            {
+                return (AttachedDoor.GetComponent<CDoorBehaviour>());
+            }
+            else if (AttachedExpansionPort != null &&
+                     AttachedExpansionPortBehaviour.AttachedDoor != null)
+            {
+                return (AttachedExpansionPortBehaviour.AttachedDoorBehaviour);
+            }
+
+            return (null);
+        }
+    }
+
+
+    public GameObject AttachedDuiDoorControl
+    {
+        get
+        {
+            if (m_cDuiDoorControl != null)
+            {
+                return (m_cDuiDoorControl);
+            }
+            else if (AttachedExpansionPort != null &&
+                     AttachedExpansionPortBehaviour.AttachedDuiDoorControl != null)
+            {
+                return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl);
+            }
+
+            return (null);
+        }
     }
 	
 
 	public bool IsAttached
 	{
-        get { return (m_cAttachedExpansionPortObject != null); }
+        get { return (m_cAttachedExpansionPort != null); }
 	}
 
 
 // Member Functions
 
 
+    [AServerOnly]
 	public void AttachTo(GameObject _cExpansionPortObject)
 	{
         // Remember who I am attached to
-        m_cAttachedExpansionPortObject = _cExpansionPortObject;
+        m_cAttachedExpansionPort = _cExpansionPortObject;
 
         CExpansionPortBehaviour cExpansionPortBehaviour = _cExpansionPortObject.GetComponent<CExpansionPortBehaviour>();
 
@@ -92,6 +188,9 @@ public class CExpansionPortBehaviour : MonoBehaviour
         // Sync position & rotation
         transform.parent.GetComponent<CNetworkView>().SyncTransformPosition();
         transform.parent.GetComponent<CNetworkView>().SyncTransformRotation();
+
+        // Register myself as the second door parent
+        //AttachedDoorBehaviour.RegisterParentExpansionPort(this, 1);
 	}
 
 
@@ -109,7 +208,9 @@ public class CExpansionPortBehaviour : MonoBehaviour
         cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId).GetComponent<CExpansionPortBehaviour>().AttachTo(gameObject);
 
         // Remmeber who I am currently connected to
-        m_cAttachedExpansionPortObject = cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId);
+        m_cAttachedExpansionPort = cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId);
+
+        if (EventFacilityCreate != null) EventFacilityCreate(cCreatedFacilityObject);
 
         return (cCreatedFacilityObject);
     }
@@ -117,7 +218,11 @@ public class CExpansionPortBehaviour : MonoBehaviour
 
     void Start()
     {
-        // Empty
+        // Register myself as the first door parent
+        if (AttachedDoor != null)
+        {
+            AttachedDoorBehaviour.RegisterParentExpansionPort(this, 0);
+        }
     }
 
 
@@ -150,10 +255,11 @@ public class CExpansionPortBehaviour : MonoBehaviour
 // Members
 
 
-    public GameObject m_cDoorObject = null;
+    public GameObject m_cDoor = null;
+    public GameObject m_cDuiDoorControl = null;
 
-    GameObject m_cAttachedExpansionPortObject = null;
-	
+    GameObject m_cAttachedExpansionPort = null;
+
 	uint m_uiPortId = 0;
 
 

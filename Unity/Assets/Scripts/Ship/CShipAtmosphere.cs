@@ -30,6 +30,14 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void HandleAtmospherePreUpdate();
+    public event HandleAtmospherePreUpdate EventAtmospherePreUpdate;
+
+
+    public delegate void HandleAtmospherePostUpdate();
+    public event HandleAtmospherePostUpdate EventAtmospherePostUpdate;
+
+
 // Member Properties
 
 
@@ -52,27 +60,21 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
     {
         if (CNetwork.IsServer)
         {
+            // Notify observers
+            if (EventAtmospherePreUpdate != null) EventAtmospherePreUpdate();
+
             // Create list of facilities that require refilling
-            // Calculate total consumption rate
             List<GameObject> aRefillingFacilities = new List<GameObject>();
-            float fTotalConsumptionRate = 0.0f;
 
-            Dictionary<CFacilityInterface.EType, List<GameObject>> mFacilities = CFacilityInterface.GetAllFacilities();
-
-            foreach (KeyValuePair<CFacilityInterface.EType, List<GameObject>> tEntry in mFacilities)
+            foreach (KeyValuePair<CFacilityInterface.EType, List<GameObject>> tEntry in CFacilityInterface.GetAllFacilities())
             {
                 tEntry.Value.ForEach((GameObject cFacilityObject) =>
                 {
                     CFacilityAtmosphere cFacilityAtmosphere = cFacilityObject.GetComponent<CFacilityAtmosphere>();
 
-                    if (cFacilityAtmosphere.IsAtmosphereRefillingRequired)
+                    if (cFacilityAtmosphere.IsRefillingRequired)
                     {
                         aRefillingFacilities.Add(cFacilityObject);
-                    }
-
-                    if (cFacilityAtmosphere.IsAtmosphereRefillingEnabled)
-                    {
-                        fTotalConsumptionRate += cFacilityAtmosphere.AtmosphereConsumeRate;
                     }
                 });
             }
@@ -87,17 +89,27 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
             });
 
             // Calculate delta atmosphere
-            float fDeltaGeneration = (fTotalGeneration * Time.deltaTime) + (fTotalConsumptionRate * Time.deltaTime);
+            float fDeltaGeneration = fTotalGeneration * Time.deltaTime;
 
             if (aRefillingFacilities.Count > 0)
             {
+                // TODO: Make facilities use the unused atmosphere
                 float fDeltaFacilityGeneration = fDeltaGeneration / aRefillingFacilities.Count;
+                float fUnusedAtmosphere = 0.0f;
 
                 aRefillingFacilities.ForEach((GameObject _cRefillingFacility) =>
                 {
-                    _cRefillingFacility.GetComponent<CFacilityAtmosphere>().IncrementQuantity(fDeltaFacilityGeneration);
+                    // Cap max generation to 5%
+                    if (fDeltaFacilityGeneration > _cRefillingFacility.GetComponent<CFacilityAtmosphere>().Volume * 0.05f * Time.deltaTime)
+                    {
+                        fDeltaFacilityGeneration = _cRefillingFacility.GetComponent<CFacilityAtmosphere>().Volume * 0.05f * Time.deltaTime;
+                    }
+
+                    fUnusedAtmosphere += _cRefillingFacility.GetComponent<CFacilityAtmosphere>().ChangeQuantityByAmount(fDeltaFacilityGeneration);
                 });
             }
+
+            if (EventAtmospherePostUpdate != null) EventAtmospherePostUpdate();
         }
     }
 

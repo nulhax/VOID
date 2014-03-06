@@ -794,47 +794,16 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	void UpdateGalaxyAesthetic(SCellPos absoluteCell)
 	{
+		Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
+		Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
+		Shader.SetGlobalFloat("void_FogDensity", 0.01f);
+
 		// Skybox.
 		Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Stars]);
 
 		if (RenderSettings.skybox == null)
 			RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));
 		RenderSettings.skybox.SetVector("_Tint", Color.grey);
-
-		Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
-		Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
-		Shader.SetGlobalFloat("void_FogDensity", 0.01f);
-
-		// Calculate perspective warp.
-		Camera camera = Camera.current;
-		if (camera)
-		{
-			float CAMERA_NEAR = camera.nearClipPlane;
-			float CAMERA_FAR = camera.farClipPlane;
-			float CAMERA_FOV = camera.fieldOfView;
-			float CAMERA_ASPECT_RATIO = camera.aspect;
-
-			float fovWHalf = CAMERA_FOV * 0.5f;
-
-			Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
-			Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
-
-			Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
-			float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;
-
-			topLeft.Normalize();
-			topLeft *= CAMERA_SCALE;
-
-			Vector3 topRight = (camera.transform.forward * CAMERA_NEAR + toRight + toTop).normalized * CAMERA_SCALE;
-			Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
-			Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
-
-			Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
-			Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
-			Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
-			Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
-			Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
-		}
 	}
 
 	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }

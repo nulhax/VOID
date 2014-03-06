@@ -40,14 +40,14 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 	void OnBreak(CComponentInterface _Sender)
 	{
 		// TODO: swap between fixed to broken
-		
+        gameObject.GetComponent<CAudioCue>().Play(0.4f, true, 0);
 	}
 	
 	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered
 	void OnFix(CComponentInterface _Sender)
 	{
 		//TODO swap between broken to fixed
-		
+        gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 	
 	void OnHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth)
@@ -55,8 +55,8 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 		m_CurrentHealth = _SenderHealth.health;
 		m_PreviousHealth = _SenderHealth.health_previous;
 		float maxHealth = _SenderHealth.health_initial;
-		
-		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / maxHealth);
+
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.magenta, m_CurrentHealth / maxHealth);
 		
 	}
 	
@@ -69,7 +69,7 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 				m_RepairPositions.Add(child);
 		}
 
-        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.magenta, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
 
 		// Register events created in the inherited class CComponentInterface
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;

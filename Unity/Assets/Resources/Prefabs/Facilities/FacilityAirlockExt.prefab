@@ -94,7 +94,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 7bb5b90abd1deec45a062ec2d9f5ebd5, type: 3}
 --- !u!64 &6400002
 MeshCollider:
@@ -107,7 +107,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 7bb5b90abd1deec45a062ec2d9f5ebd5, type: 3}
 --- !u!114 &11400000
 MonoBehaviour:

@@ -27,15 +27,20 @@ public class CFacilityHull : CNetworkMonoBehaviour
 // Member Types
 
 
+    public enum EEventType
+    {
+        Breached,
+        BreachFixed
+    }
+
+
 // Member Delegates & Events
 	
 
-	public delegate void NotifyBreached();
-	public event NotifyBreached EventBreached;
+	public delegate void NotifyEvent(EEventType _eEventType);
 
-
-    public delegate void NotifyBreachFixed();
-    public event NotifyBreachFixed EventBreachFixed;
+	public event NotifyEvent EventBreached;
+    public event NotifyEvent EventBreachFixed;
 
 
 // Member Properties
@@ -74,7 +79,7 @@ public class CFacilityHull : CNetworkMonoBehaviour
 	void Start()
 	{
         // Turn on alarms
-        EventBreached += () =>
+        EventBreached += (EEventType _eEventType) =>
         {
             gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
             {
@@ -83,7 +88,7 @@ public class CFacilityHull : CNetworkMonoBehaviour
         };
 
         // Turn off alarms
-        EventBreachFixed += () =>
+        EventBreachFixed += (EEventType _eEventType) =>
         {
             gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
             {
@@ -115,11 +120,11 @@ public class CFacilityHull : CNetworkMonoBehaviour
         {
             if (m_bBreached.Get())
             {
-                if (EventBreached != null) EventBreached();
+                if (EventBreached != null) EventBreached(EEventType.Breached);
             }
             else
             {
-                if (EventBreachFixed != null) EventBreachFixed();
+                if (EventBreachFixed != null) EventBreachFixed(EEventType.BreachFixed);
             }
         }
     }
