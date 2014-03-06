@@ -29,21 +29,14 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ShieldTexture
-        second:
-          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 1, y: 1}
-      data:
-        first:
-          name: _ShieldTex2
-        second:
-          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
-          m_Scale: {x: 2, y: 2}
-          m_Offset: {x: 4, y: 4}
-      data:
-        first:
           name: _Diffuse
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -57,11 +50,18 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Normal
+          name: _ShieldTexture
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 7d2e759c620809744be75d530776f2d9, type: 3}
           m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
+          m_Offset: {x: 1, y: 1}
+      data:
+        first:
+          name: _ShieldTex2
+        second:
+          m_Texture: {fileID: 2800000, guid: 4c252999a9bbec142b5fa083db95caee, type: 3}
+          m_Scale: {x: 2, y: 2}
+          m_Offset: {x: 4, y: 4}
       data:
         first:
           name: _Illum
@@ -111,16 +111,32 @@ Material:
         second: .5
       data:
         first:
-          name: _InvFade
-        second: 1
-      data:
-        first:
           name: _Shininess
         second: .00999999978
       data:
         first:
+          name: _Alpha
+        second: 1
+      data:
+        first:
+          name: _EmissionPow
+        second: 1
+      data:
+        first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
+          name: _Glossiness
+        second: 1
+      data:
+        first:
+          name: _InvFade
+        second: 1
+      data:
+        first:
           name: _RimPower
-        second: .5
+        second: .821428597
       data:
         first:
           name: _AlphaRimPower
@@ -129,14 +145,6 @@ Material:
         first:
           name: _TimeSpeed
         second: 0
-      data:
-        first:
-          name: _EmissionPow
-        second: 1
-      data:
-        first:
-          name: _Alpha
-        second: 1
       data:
         first:
           name: _Range1
@@ -149,14 +157,6 @@ Material:
         first:
           name: _Offset
         second: .375
-      data:
-        first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
-          name: _Glossiness
-        second: 1
       data:
         first:
           name: _EmissionLM
@@ -192,8 +192,8 @@ Material:
         second: {r: .171929047, g: .779411793, b: .377216399, a: 1}
       data:
         first:
-          name: _RimColor
-        second: {r: .0817474276, g: .0848347396, b: .529411793, a: 1}
+          name: _Specular
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
           name: _TintColor
@@ -204,8 +204,8 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _Specular
-        second: {r: 0, g: 0, b: 0, a: 0}
+          name: _RimColor
+        second: {r: .0817474276, g: .0848347396, b: .529411793, a: 1}
       data:
         first:
           name: _Scale

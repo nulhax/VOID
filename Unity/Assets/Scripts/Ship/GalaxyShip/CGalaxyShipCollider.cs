@@ -57,7 +57,7 @@ public class CGalaxyShipCollider : MonoBehaviour
 		m_CompoundCollider.transform.rotation = Quaternion.identity;
 		
 		// Create a cube
-		GameObject newSphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		GameObject newSphere = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 		MeshFilter mf = newSphere.GetComponent<MeshFilter>();
 		
 		// Get the mesh filters of the colliders
