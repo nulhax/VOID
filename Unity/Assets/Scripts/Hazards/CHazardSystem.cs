@@ -74,7 +74,7 @@ public class CHazardSystem : MonoBehaviour
         m_iTotalHazards                = 0;
         
         m_fHazardTriggerTimer          = 0.0f;
-        m_fHazardTriggerTimerThreshold = 1.0f;
+        m_fHazardTriggerTimerThreshold = 60.0f;
     }
 
 
