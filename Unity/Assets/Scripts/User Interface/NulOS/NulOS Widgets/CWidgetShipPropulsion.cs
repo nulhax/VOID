@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
+[RequireComponent(typeof(CNOSWidget))]
 public class CWidgetShipPropulsion : MonoBehaviour 
 {
 	// Member Types
@@ -30,10 +30,6 @@ public class CWidgetShipPropulsion : MonoBehaviour
 	
 	
 	// Member Fields
-	public UISprite m_PropulsionNegative = null;
-	public UISprite m_PropulsionPositive = null;
-	public UISprite m_PropulsionIdle = null;
-	
 	public UIProgressBar m_PropulsionBar = null;
 	public UILabel m_PropulsionRate = null;
 	
@@ -78,26 +74,26 @@ public class CWidgetShipPropulsion : MonoBehaviour
 		m_PropulsionRate.color = CDUIUtilites.LerpColor(value);
 		m_PropulsionRate.text = Mathf.RoundToInt(shipGeneration) + " / " + Mathf.RoundToInt(shipGenerationPotential);
 		
-		// Update the positive/negative report
-		if(value < m_LastPropulsionValue)
-		{
-			m_PropulsionNegative.enabled = true;
-			m_PropulsionPositive.enabled = false;
-			m_PropulsionIdle.enabled = false;
-		}
-		else if(value > m_LastPropulsionValue)
-		{
-			m_PropulsionNegative.enabled = false;
-			m_PropulsionPositive.enabled = true;
-			m_PropulsionIdle.enabled = false;
-		}
-		else
-		{
-			m_PropulsionNegative.enabled = false;
-			m_PropulsionPositive.enabled = false;
-			m_PropulsionIdle.enabled = true;
-			m_PropulsionIdle.color = CDUIUtilites.LerpColor(value);
-		}
+//		// Update the positive/negative report
+//		if(value < m_LastPropulsionValue)
+//		{
+//			m_PropulsionNegative.enabled = true;
+//			m_PropulsionPositive.enabled = false;
+//			m_PropulsionIdle.enabled = false;
+//		}
+//		else if(value > m_LastPropulsionValue)
+//		{
+//			m_PropulsionNegative.enabled = false;
+//			m_PropulsionPositive.enabled = true;
+//			m_PropulsionIdle.enabled = false;
+//		}
+//		else
+//		{
+//			m_PropulsionNegative.enabled = false;
+//			m_PropulsionPositive.enabled = false;
+//			m_PropulsionIdle.enabled = true;
+//			m_PropulsionIdle.color = CDUIUtilites.LerpColor(value);
+//		}
 		
 		m_LastPropulsionValue = value;
 	}

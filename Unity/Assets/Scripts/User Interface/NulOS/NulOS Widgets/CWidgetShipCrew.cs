@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -20,8 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
-public class CDUIShipPlayersRoot : MonoBehaviour 
+[RequireComponent(typeof(CNOSWidget))]
+public class CWidgetShipCrew : MonoBehaviour 
 {
 	// Member Types
 	
@@ -96,8 +96,9 @@ public class CDUIShipPlayersRoot : MonoBehaviour
 
 		// Update the player name
 		string playerName = CGamePlayers.GetPlayerName(_PlayerId);
-		UILabel nameLabel = listItem.GetComponentInChildren<UILabel>();
-		nameLabel.text = playerName;
+		UILabel nameLabel = listItem.transform.FindChild("Name").GetComponent<UILabel>();
+		if(!string.IsNullOrEmpty(playerName))
+			nameLabel.text = playerName;
 
 		// Reorganize the list
 		m_PlayersGridList.Reposition();

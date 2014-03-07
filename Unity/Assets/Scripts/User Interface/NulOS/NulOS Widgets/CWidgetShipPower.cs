@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -20,8 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
-public class CDUIShipPowerRoot : MonoBehaviour 
+[RequireComponent(typeof(CNOSWidget))]
+public class CWidgetShipPower : MonoBehaviour 
 {
 	// Member Types
 	
@@ -30,16 +30,8 @@ public class CDUIShipPowerRoot : MonoBehaviour
 	
 	
 	// Member Fields
-	public UISprite m_GenerationNegative = null;
-	public UISprite m_GenerationPositive = null;
-	public UISprite m_GenerationIdle = null;
-
 	public UIProgressBar m_GenerationBar = null;
 	public UILabel m_GenerationRate = null;
-	
-	public UISprite m_ChargeNegative = null;
-	public UISprite m_ChargePositive = null;
-	public UISprite m_ChargeIdle = null;
 
 	public UIProgressBar m_ChargeBar = null;
 	public UILabel m_ChargeRate = null;
@@ -89,26 +81,26 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		m_GenerationRate.color = CDUIUtilites.LerpColor(value);
 		m_GenerationRate.text = Mathf.RoundToInt(shipGeneration) + " / " + Mathf.RoundToInt(shipGenerationPotential);
 
-		// Update the positive/negative report
-		if(value < m_LastGenerationValue)
-		{
-			m_GenerationNegative.enabled = true;
-			m_GenerationPositive.enabled = false;
-			m_GenerationIdle.enabled = false;
-		}
-		else if(value > m_LastGenerationValue)
-		{
-			m_GenerationNegative.enabled = false;
-			m_GenerationPositive.enabled = true;
-			m_GenerationIdle.enabled = false;
-		}
-		else
-		{
-			m_GenerationNegative.enabled = false;
-			m_GenerationPositive.enabled = false;
-			m_GenerationIdle.enabled = true;
-			m_GenerationIdle.color = CDUIUtilites.LerpColor(value);
-		}
+//		// Update the positive/negative report
+//		if(value < m_LastGenerationValue)
+//		{
+//			m_GenerationNegative.enabled = true;
+//			m_GenerationPositive.enabled = false;
+//			m_GenerationIdle.enabled = false;
+//		}
+//		else if(value > m_LastGenerationValue)
+//		{
+//			m_GenerationNegative.enabled = false;
+//			m_GenerationPositive.enabled = true;
+//			m_GenerationIdle.enabled = false;
+//		}
+//		else
+//		{
+//			m_GenerationNegative.enabled = false;
+//			m_GenerationPositive.enabled = false;
+//			m_GenerationIdle.enabled = true;
+//			m_GenerationIdle.color = CDUIUtilites.LerpColor(value);
+//		}
 
 		m_LastGenerationValue = value;
 	}
@@ -132,26 +124,26 @@ public class CDUIShipPowerRoot : MonoBehaviour
 		m_ChargeRate.color = CDUIUtilites.LerpColor(value);
 		m_ChargeRate.text = Mathf.RoundToInt(shipCharge) + " / " + Mathf.RoundToInt(shipChargeCapacity);
 		
-		// Update the positive/negative report
-		if(value < m_LastChargeValue)
-		{
-			m_ChargeNegative.enabled = true;
-			m_ChargePositive.enabled = false;
-			m_ChargeIdle.enabled = false;
-		}
-		else if(value > m_LastChargeValue)
-		{
-			m_ChargeNegative.enabled = false;
-			m_ChargePositive.enabled = true;
-			m_ChargeIdle.enabled = false;
-		}
-		else
-		{
-			m_ChargeNegative.enabled = false;
-			m_ChargePositive.enabled = false;
-			m_ChargeIdle.enabled = true;
-			m_ChargeIdle.color = CDUIUtilites.LerpColor(value);
-		}
+//		// Update the positive/negative report
+//		if(value < m_LastChargeValue)
+//		{
+//			m_ChargeNegative.enabled = true;
+//			m_ChargePositive.enabled = false;
+//			m_ChargeIdle.enabled = false;
+//		}
+//		else if(value > m_LastChargeValue)
+//		{
+//			m_ChargeNegative.enabled = false;
+//			m_ChargePositive.enabled = true;
+//			m_ChargeIdle.enabled = false;
+//		}
+//		else
+//		{
+//			m_ChargeNegative.enabled = false;
+//			m_ChargePositive.enabled = false;
+//			m_ChargeIdle.enabled = true;
+//			m_ChargeIdle.color = CDUIUtilites.LerpColor(value);
+//		}
 
 		m_LastChargeValue = value;
 	}

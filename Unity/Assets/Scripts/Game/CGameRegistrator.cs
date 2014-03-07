@@ -138,6 +138,9 @@ public class CGameRegistrator : MonoBehaviour
 		// NulOS Widgets
 		NOSWFacilityControl		= 1200,
 		NOSWShipPropulsion,
+		NOSWShipPower,
+		NOSWShipNanites,
+		NOSWShipCrew,
 
 		// Other
 		LaserTurretProjectile	= 1300,
@@ -288,8 +291,11 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelWide,				"User Interface/NulOS/NOSPanelWide");
 
 		// NulOS Widgets
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipPropulsion,			"User Interface/NulOS/Widgets/NOSWShipPropulsion");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWFacilityControl,			"User Interface/NulOS/Widgets/NOSWFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWFacilityControl,			"User Interface/NulOS/Widgets/WidgetFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipPropulsion,			"User Interface/NulOS/Widgets/WidgetShipPropulsion");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipPower,				"User Interface/NulOS/Widgets/WidgetShipPower");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipNanites,				"User Interface/NulOS/Widgets/WidgetShipNanites");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/Other/Laser Turret Projectile");
@@ -418,8 +424,11 @@ public class CGameRegistrator : MonoBehaviour
 
 	void RegisterNulOSWidgets()
 	{
-		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipPropulsion 	, ENetworkPrefab.NOSWShipPropulsion);
 		CNOSWidget.RegisterPrefab(CNOSWidget.EType.FacilityControl 	, ENetworkPrefab.NOSWFacilityControl);
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipPropulsion 	, ENetworkPrefab.NOSWShipPropulsion);
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipPower 		, ENetworkPrefab.NOSWShipPower);
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipNanites 		, ENetworkPrefab.NOSWShipNanites);
+		CNOSWidget.RegisterPrefab(CNOSWidget.EType.ShipCrew 		, ENetworkPrefab.NOSWShipCrew);
 	}
 
 

@@ -20,8 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CNetworkView))]
-public class CDUIShipNanitesRoot : MonoBehaviour 
+[RequireComponent(typeof(CNOSWidget))]
+public class CWidgetShipNanites : MonoBehaviour 
 {
 	// Member Types
 	
@@ -30,10 +30,6 @@ public class CDUIShipNanitesRoot : MonoBehaviour
 	
 	
 	// Member Fields
-	public UISprite m_NanitesNegative = null;
-	public UISprite m_NanitesPositive = null;
-	public UISprite m_NanitesIdle = null;
-	
 	public UIProgressBar m_NanitesBar = null;
 	public UILabel m_NanitesRate = null;
 	
@@ -73,26 +69,26 @@ public class CDUIShipNanitesRoot : MonoBehaviour
 		m_NanitesRate.color = CDUIUtilites.LerpColor(value);
 		m_NanitesRate.text = shipNanites + " / " + shipNanitesPotential;
 		
-		// Update the positive/negative report
-		if(value < m_LastNanitesValue)
-		{
-			m_NanitesNegative.enabled = true;
-			m_NanitesPositive.enabled = false;
-			m_NanitesIdle.enabled = false;
-		}
-		else if(value > m_LastNanitesValue)
-		{
-			m_NanitesNegative.enabled = false;
-			m_NanitesPositive.enabled = true;
-			m_NanitesIdle.enabled = false;
-		}
-		else
-		{
-			m_NanitesNegative.enabled = false;
-			m_NanitesPositive.enabled = false;
-			m_NanitesIdle.enabled = true;
-			m_NanitesIdle.color = CDUIUtilites.LerpColor(value);
-		}
+//		// Update the positive/negative report
+//		if(value < m_LastNanitesValue)
+//		{
+//			m_NanitesNegative.enabled = true;
+//			m_NanitesPositive.enabled = false;
+//			m_NanitesIdle.enabled = false;
+//		}
+//		else if(value > m_LastNanitesValue)
+//		{
+//			m_NanitesNegative.enabled = false;
+//			m_NanitesPositive.enabled = true;
+//			m_NanitesIdle.enabled = false;
+//		}
+//		else
+//		{
+//			m_NanitesNegative.enabled = false;
+//			m_NanitesPositive.enabled = false;
+//			m_NanitesIdle.enabled = true;
+//			m_NanitesIdle.color = CDUIUtilites.LerpColor(value);
+//		}
 		
 		m_LastNanitesValue = value;
 	}

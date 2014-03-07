@@ -240,7 +240,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -515, y: 260, z: 0}
+  m_LocalPosition: {x: -675, y: 350, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400000}
@@ -252,7 +252,7 @@ Transform:
   m_GameObject: {fileID: 100024}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .00277777785, y: .00277777785, z: .00277777785}
+  m_LocalScale: {x: .00222222228, y: .00222222228, z: .00222222228}
   m_Children:
   - {fileID: 400030}
   - {fileID: 400004}
@@ -376,7 +376,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1030, y: 720, z: 0}
+  m_Size: {x: 1350, y: 900, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -402,7 +402,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SmallWidgetContainer: {fileID: 11400010}
   m_MainWidgetContainer: {fileID: 11400040}
-  m_DefaultMenuWidgetNodes: 640000006400000064000000
+  m_DefaultMenuWidgetNodes: 6400000001000000020000000300000004000000
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,12 +456,12 @@ MonoBehaviour:
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 1
   mWidth: 150
-  mHeight: 520
+  mHeight: 700
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: .288461536
+  aspectRatio: .170454547
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -499,7 +499,7 @@ MonoBehaviour:
   startingRenderQueue: 3002
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: -515, y: 0, z: 250, w: 720}
+  mClipRange: {x: -675, y: 0, z: 250, w: 900}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 0
 --- !u!114 &11400012
@@ -531,13 +531,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 1030
-  mHeight: 720
+  mWidth: 1350
+  mHeight: 900
   mDepth: 0
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.43055558
+  aspectRatio: 1.54629624
 --- !u!114 &11400018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -567,8 +567,8 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: .494117647}
   mPivot: 4
-  mWidth: 1280
-  mHeight: 720
+  mWidth: 1600
+  mHeight: 900
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
@@ -626,8 +626,8 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .0513624623, g: .0702496693, b: .139705896, a: 1}
   mPivot: 4
-  mWidth: 1280
-  mHeight: 720
+  mWidth: 1600
+  mHeight: 900
   mDepth: 0
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
@@ -682,7 +682,7 @@ MonoBehaviour:
   startingRenderQueue: 3000
   mAlpha: 1
   mClipping: 3
-  mClipRange: {x: 0, y: 0, z: 1280, w: 720}
+  mClipRange: {x: 0, y: 0, z: 1600, w: 900}
   mClipSoftness: {x: 160, y: 90}
   mDepth: -2
 --- !u!114 &11400026
@@ -716,7 +716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scalingStyle: 1
-  manualHeight: 720
+  manualHeight: 900
   minimumHeight: 320
   maximumHeight: 1536
 --- !u!114 &11400036
@@ -782,7 +782,7 @@ MonoBehaviour:
   startingRenderQueue: 3002
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: 125, y: 0, z: 1030, w: 720}
+  mClipRange: {x: 125, y: 0, z: 1350, w: 900}
   mClipSoftness: {x: 160, y: 90}
   mDepth: -1
 --- !u!114 &11400042
@@ -821,7 +821,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 1802, y: 440, z: 0}
+  m_ViewPortPos: {x: 632, y: 374, z: 0}
 --- !u!114 &11400046
 MonoBehaviour:
   m_ObjectHideFlags: 1

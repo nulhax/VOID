@@ -29,6 +29,9 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		INVALID,
 
 		ShipPropulsion = 1,
+		ShipPower,
+		ShipNanites,
+		ShipCrew,
 
 		FacilityControl = 100,
 	}
@@ -79,6 +82,14 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		transform.localPosition = Vector3.zero;
 		transform.localRotation = Quaternion.identity;
 		transform.localScale = Vector3.one;
+
+		// Also for the widgets
+		m_MainWidget.transform.localPosition = Vector3.zero;
+		m_MainWidget.transform.localRotation = Quaternion.identity;
+		m_MainWidget.transform.localScale = Vector3.one;
+		m_SmallWidget.transform.localPosition = Vector3.zero;
+		m_SmallWidget.transform.localRotation = Quaternion.identity;
+		m_SmallWidget.transform.localScale = Vector3.one;
 	
 		// Find the panel root and register self to it
 		m_NOSPanelRoot = CUtility.FindInParents<CNOSPanelRoot>(gameObject);
@@ -97,6 +108,11 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		}
 	}
 
+	public void Focus()
+	{
+		m_NOSPanelRoot.FocusWidget(this);
+	}
+
 	public void ShowMainWidget(bool _DragDropEvent)
 	{
 		m_MainWidgetActive = true;
@@ -105,12 +121,18 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		// Set the anchors of the panel to the main widget
 		m_WidgetPanel.SetAnchor(m_MainWidget.gameObject, 0, 0, 0, 0);
 		
-		// Play the small tweener in reverse
-		UITweener tweenSmall = m_SmallWidget.GetComponent<UITweener>();
-		tweenSmall.PlayReverse();
+		// Play the scale tweener for the small widget
+		TweenScale tween = TweenScale.Begin(m_SmallWidget.gameObject, 0.2f, Vector3.zero);
+		EventDelegate.Set(tween.onFinished, OnSmallWidgetTweenFinish);
 
 		// Focus this widget
 		m_NOSPanelRoot.FocusWidget(this);
+
+		// Update parent of the widget
+		transform.parent = m_NOSPanelRoot.m_MainWidgetContainer.cachedTransform;
+		
+		// Notify the widgets that the parent has changed
+		NGUITools.MarkParentAsChanged(gameObject);
 
 		// Respoition small widget grid
 		m_NOSPanelRoot.SmallWidgetGrid.repositionNow = true;
@@ -124,9 +146,9 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		// Set the anchors of the panel to the small widget
 		m_WidgetPanel.SetAnchor(m_SmallWidget.gameObject, 0, 0, 0, 0);
 
-		// Play the main tweener in reverse
-		UITweener tweenMain = m_MainWidget.GetComponent<UITweener>();
-		tweenMain.PlayReverse();
+		// Play the scale tweener for the main widget
+		TweenScale tween = TweenScale.Begin(m_MainWidget.gameObject, 0.2f, Vector3.zero);
+		EventDelegate.Set(tween.onFinished, OnMainWidgetTweenFinish);
 
 		// Respoition small widget grid
 		m_NOSPanelRoot.SmallWidgetGrid.repositionNow = true;
@@ -182,10 +204,12 @@ public class CNOSWidget : CNetworkMonoBehaviour
 			m_SmallWidget.transform.localPosition = Vector3.zero;
 			m_SmallWidget.gameObject.SetActive(false);
 
-			// Play the main tweener forwards and activate
+			// Enable the main widget
 			m_MainWidget.gameObject.SetActive(true);
-			UITweener tweenMain = m_MainWidget.GetComponent<UITweener>();
-			tweenMain.PlayForward();
+
+			// Play the scale tweener for the main widget
+			TweenScale tween = TweenScale.Begin(m_MainWidget.gameObject, 0.2f, Vector3.one);
+			EventDelegate.Set(tween.onFinished, OnMainWidgetTweenFinish);
 		}
 	}
 
@@ -205,10 +229,12 @@ public class CNOSWidget : CNetworkMonoBehaviour
 			// Mark the parent as changed
 			NGUITools.MarkParentAsChanged(gameObject);
 
-			// Play the small tweener forwards and activate
+			// Enable the small widget
 			m_SmallWidget.gameObject.SetActive(true);
-			UITweener tweenSmall = m_SmallWidget.GetComponent<UITweener>();
-			tweenSmall.PlayForward();
+
+			// Play the scale tweener for the small widget
+			TweenScale tween = TweenScale.Begin(m_SmallWidget.gameObject, 0.2f, Vector3.one);
+			EventDelegate.Set(tween.onFinished, OnSmallWidgetTweenFinish);
 		}
 		else
 		{

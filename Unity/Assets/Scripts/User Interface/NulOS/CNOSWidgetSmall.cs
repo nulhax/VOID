@@ -31,7 +31,6 @@ public class CNOSWidgetSmall : UIDragDropItem
 	
 	// Member Fields
 	private CNOSWidget m_Widget = null;
-	private CNOSPanelRoot m_PanelRoot = null;
 
 	
 	// Member Properties
@@ -41,7 +40,6 @@ public class CNOSWidgetSmall : UIDragDropItem
 	protected override void Start()
 	{
 		m_Widget = CUtility.FindInParents<CNOSWidget>(gameObject);
-		m_PanelRoot = CUtility.FindInParents<CNOSPanelRoot>(gameObject);
 
 		base.Start();
 	}
@@ -49,7 +47,7 @@ public class CNOSWidgetSmall : UIDragDropItem
 	protected override void OnDragDropStart()
 	{
 		// Focus this widget
-		m_PanelRoot.FocusWidget(m_Widget);
+		m_Widget.Focus();
 
 		base.OnDragDropStart();
 	}
@@ -68,12 +66,6 @@ public class CNOSWidgetSmall : UIDragDropItem
 
 	private void OnDoubleClick()
 	{
-		// Update parent of the widget
-		m_Widget.transform.parent = m_PanelRoot.m_MainWidgetContainer.cachedTransform;
-
-		// Notify the widgets that the parent has changed
-		NGUITools.MarkParentAsChanged(gameObject);
-
 		// Show the main widget
 		m_Widget.ShowMainWidget(false);
 	}
