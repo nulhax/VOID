@@ -39,7 +39,72 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: 2608345a557db8f4796f46c1fb54ae83, type: 2}
-  mSprites: []
+  mSprites:
+  - name: cinemagram-icon
+    x: 193
+    y: 559
+    width: 192
+    height: 232
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 32
+    paddingRight: 32
+    paddingTop: 12
+    paddingBottom: 12
+  - name: kuler-icon
+    x: 0
+    y: 559
+    width: 192
+    height: 232
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 32
+    paddingRight: 32
+    paddingTop: 12
+    paddingBottom: 12
+  - name: messenger-icon
+    x: 0
+    y: 792
+    width: 192
+    height: 232
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 32
+    paddingRight: 32
+    paddingTop: 12
+    paddingBottom: 12
+  - name: myspace-icon
+    x: 0
+    y: 326
+    width: 192
+    height: 232
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 32
+    paddingRight: 32
+    paddingTop: 12
+    paddingBottom: 12
+  - name: settings-icon
+    x: 193
+    y: 792
+    width: 192
+    height: 232
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 32
+    paddingRight: 32
+    paddingTop: 12
+    paddingBottom: 12
   mPixelSize: 1
   mReplacement: {fileID: 0}
   mCoordinates: 0

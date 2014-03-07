@@ -41,6 +41,9 @@ public class CNOSWidgetSmall : UIDragDropItem
 	{
 		m_Widget = CUtility.FindInParents<CNOSWidget>(gameObject);
 
+		if(m_Target == null)
+			m_Target = m_Widget.transform;
+
 		base.Start();
 	}
 
