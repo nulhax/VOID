@@ -12,17 +12,16 @@ _Alpha("Alpha", Range(0,1) ) = 0.95
 	{
 		Tags
 		{
-"Queue"="Transparent"
+"Queue"="Geometry"
 "IgnoreProjector"="True"
-"RenderType"="Transparent"
+"RenderType"="Opaque"
 
 		}
 
 		
 Cull Back
-ZWrite Off 
+ZWrite On 
 ColorMask RGB
-Blend SrcAlpha OneMinusSrcAlpha
 Fog{
 }
 

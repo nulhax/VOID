@@ -33,13 +33,40 @@ LevelGameManager:
 LightmapSettings:
   m_ObjectHideFlags: 0
   m_LightProbes: {fileID: 0}
-  m_Lightmaps: []
+  m_Lightmaps:
+  - m_Lightmap: {fileID: 2800000, guid: 1c9837c3191807a40a08576d2b89d858, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: ae8207f4b09f381408fb56e3c49f6217,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: c39557c2a5b44f7428d8eabaa74abb44, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 9379f7fd51d0ad44b9a714fa993c450d,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: fd64ce42be0fa464f9767a2038b64d4f, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 937d1b6494e73644488cfd6ef01460ce,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: d6b45ad2cb475814f95b6b03be42135b, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 1fd6075c8a3ab044a8c9cfd780c0ea59,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: 03b9a21f2323a5a478978834ee73ea9e, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: b9b36b16ecab622458bb99ba317ce95b,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: 1b3975f2f5aeb3d45abec8b147c36c10, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 340ce5575961fab449013bcf247bdf97,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: a27e8cd7e10afb2449d4870db88c2fca, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 02690a19e06b9364e9234b06ad130dae,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: 311bc2b9e2d619b4e80361aca37b61ba, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: 7d4a041c0a283024683dbeca504f4d83,
+      type: 3}
+  - m_Lightmap: {fileID: 2800000, guid: 596318a4f8a48cc4889fe9c9f9f2798c, type: 3}
+    m_IndirectLightmap: {fileID: 2800000, guid: ee42e57583e041247bf716263d7fb380,
+      type: 3}
   m_LightmapsMode: 1
   m_BakedColorSpace: 0
   m_UseDualLightmapsInForward: 0
   m_LightmapEditorSettings:
     m_Resolution: 50
-    m_LastUsedResolution: 0
+    m_LastUsedResolution: 50
     m_TextureWidth: 1024
     m_TextureHeight: 1024
     m_BounceBoost: 1

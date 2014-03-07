@@ -1244,8 +1244,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate:
   - {fileID: 100030}
-  deactivate:
-  - {fileID: 100008}
+  deactivate: []
   target: {fileID: 0}
   inverse: 0
 --- !u!114 &11400010
@@ -1416,7 +1415,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446d504799d99174383957fca80713c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  group: 0
+  group: 1
   activeSprite: {fileID: 0}
   activeAnimation: {fileID: 0}
   startsActive: 1
@@ -1445,8 +1444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   activate:
   - {fileID: 100008}
-  deactivate:
-  - {fileID: 100030}
+  deactivate: []
   target: {fileID: 0}
   inverse: 0
 --- !u!114 &11400024
@@ -1460,7 +1458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 446d504799d99174383957fca80713c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  group: 0
+  group: 1
   activeSprite: {fileID: 0}
   activeAnimation: {fileID: 0}
   startsActive: 0

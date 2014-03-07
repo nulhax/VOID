@@ -38,6 +38,7 @@ public class CWidgetFacilityControl : MonoBehaviour
 	
 	private bool m_Registered = false;
 
+	private static int m_ToggleGroupCount = 0;
 
 	// Member Properties
 	
@@ -50,6 +51,15 @@ public class CWidgetFacilityControl : MonoBehaviour
 		m_CachedFacilityPower = _Facility.GetComponent<CFacilityPower>();
 
 		m_Registered = true;
+	}
+
+	private void Awake()
+	{
+		m_ToggleGroupCount += 1;
+		foreach(UIToggle tog in GetComponent<CNOSWidget>().m_MainWidget.GetComponentsInChildren<UIToggle>())
+		{
+			tog.group = m_ToggleGroupCount;
+		}
 	}
 	
 	private void Update()

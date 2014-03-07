@@ -84,7 +84,7 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: .617647052, g: .617647052, b: .617647052, a: 1}
+        second: {r: .220588207, g: .220588207, b: .220588207, a: 1}
       data:
         first:
           name: _SpecColor
@@ -93,10 +93,6 @@ Material:
         first:
           name: _Emission
         second: {r: 0, g: 0, b: 0, a: 0}
-      data:
-        first:
-          name: _EmissiveColor
-        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorR
@@ -117,3 +113,7 @@ Material:
         first:
           name: _ReflectColor
         second: {r: 1, g: 1, b: 1, a: .490196079}
+      data:
+        first:
+          name: _EmissiveColor
+        second: {r: 0, g: 0, b: 0, a: 1}

@@ -111,6 +111,9 @@ public class CNOSWidget : CNetworkMonoBehaviour
 
 		// Focus this widget
 		m_NOSPanelRoot.FocusWidget(this);
+
+		// Respoition small widget grid
+		m_NOSPanelRoot.SmallWidgetGrid.repositionNow = true;
 	}
 
 	public void HideMainWidget()
@@ -124,6 +127,9 @@ public class CNOSWidget : CNetworkMonoBehaviour
 		// Play the main tweener in reverse
 		UITweener tweenMain = m_MainWidget.GetComponent<UITweener>();
 		tweenMain.PlayReverse();
+
+		// Respoition small widget grid
+		m_NOSPanelRoot.SmallWidgetGrid.repositionNow = true;
 
 		if(m_MainWidgetMaximised)
 		{

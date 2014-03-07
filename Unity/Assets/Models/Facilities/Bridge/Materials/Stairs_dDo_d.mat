@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Stairs_dDo_d
-  m_Shader: {fileID: 4800000, guid: d9d6021d120578345a373dbe9a10f119, type: 3}
+  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -38,7 +38,21 @@ Material:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 2800000, guid: 1a5639ebda31af842a71ce106e916d29, type: 3}
+          m_Texture: {fileID: 2800000, guid: e970c37c964917b45907cbeb59e9083e, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 2800000, guid: cd9d1760ef276d04dbe922212c78c57e, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -52,6 +66,22 @@ Material:
       data:
         first:
           name: _SpecPower
+        second: 3
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
         second: 1
       data:
         first:
@@ -62,3 +92,27 @@ Material:
         first:
           name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}
