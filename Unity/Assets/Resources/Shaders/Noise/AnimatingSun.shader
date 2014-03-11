@@ -34,9 +34,6 @@
 			
 		struct Input 
 		{
-			float3 worldRefl;
-			float3 worldNormal;
-			float3 viewDir;
 			float3 noise;
 		};
 
