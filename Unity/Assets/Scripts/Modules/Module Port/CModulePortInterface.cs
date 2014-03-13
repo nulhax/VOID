@@ -134,7 +134,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 		if(m_CubemapCam == null)
 		{
-			GameObject tempCam = new GameObject();
+			GameObject tempCam = new GameObject("Cubemap Renderer");
 			tempCam.transform.parent = transform;
 			tempCam.transform.localPosition = Vector3.up * 1.5f;
 			tempCam.transform.localRotation = Quaternion.identity;

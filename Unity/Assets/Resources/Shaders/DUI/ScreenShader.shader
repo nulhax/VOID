@@ -2,7 +2,7 @@ Shader "ScreenShader"
 {
 	Properties 
 	{
-_MainTex("Base (RGB) Gloss (A)", 2D) = "white" {}
+_MainTex("Base (RGB) Gloss (A)", 2D) = "black" {}
 _EmissionPow("Emmision Power", Range(0,10) ) = 1.0
 _Alpha("Alpha", Range(0,1) ) = 0.95
 

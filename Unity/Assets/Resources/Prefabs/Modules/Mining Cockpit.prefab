@@ -329,7 +329,7 @@ Transform:
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
   m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_LocalScale: {x: 1.25302911, y: .5, z: 2}
   m_Children: []
   m_Father: {fileID: 400010}
 --- !u!4 &400006
@@ -486,7 +486,7 @@ Transform:
   m_GameObject: {fileID: 100038}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
   m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_LocalScale: {x: 1.25302911, y: .5, z: 2}
   m_Children:
   - {fileID: 400002}
   m_Father: {fileID: 400010}
@@ -1055,6 +1055,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1123,6 +1124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1278,6 +1280,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400042
 MonoBehaviour:
   m_ObjectHideFlags: 1

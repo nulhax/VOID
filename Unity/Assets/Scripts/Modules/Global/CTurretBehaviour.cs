@@ -71,6 +71,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	
 	public GameObject m_ShipCamera = null;
 	public GameObject m_GalaxyCamera = null;
+	public GameObject m_BackgroundCamera = null;
 	public GameObject m_cBarrel = null;
 
 
@@ -163,12 +164,16 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		// Disable the cameras to begin with
 		m_ShipCamera.camera.enabled = false;
 		m_GalaxyCamera.camera.enabled = false;
+		m_BackgroundCamera.camera.enabled = false;
 
 		// Create the rendertexture
 		m_CameraRenderTexture = new RenderTexture(2500, 1000, 16);
 		m_CameraRenderTexture.Create();
+
+		// Attach the rt to the cameras
 		m_ShipCamera.camera.targetTexture = m_CameraRenderTexture;
 		m_GalaxyCamera.camera.targetTexture = m_CameraRenderTexture;
+		m_BackgroundCamera.camera.targetTexture = m_CameraRenderTexture;
 	}
 	
 	
@@ -289,12 +294,14 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 				// Enable the cameras
 				m_ShipCamera.camera.enabled = true;
 				m_GalaxyCamera.camera.enabled = true;
+				m_BackgroundCamera.camera.enabled = true;
 			}
 			else
 			{
 				// Disable the cameras
 				m_ShipCamera.camera.enabled = false;
 				m_GalaxyCamera.camera.enabled = false;
+				m_BackgroundCamera.camera.enabled = false;
 			}
 
 			if (EventControllerChange != null)
