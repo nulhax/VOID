@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Nebulae
-  m_Shader: {fileID: 4800000, guid: 8a5675cb4e7fe124c87f76038fc3b877, type: 3}
+  m_Name: NebulaeFBM
+  m_Shader: {fileID: 4800000, guid: dfc636c0ffc2aae4ba46ff7b472e71a5, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -17,13 +17,32 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 91023a211e695f942b166d753d64744a, type: 3}
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ColorGradient
+        second:
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
-          name: _ScaleFactor
+          name: _Frequency
+        second: .100000001
+      data:
+        first:
+          name: _Lacunarity
+        second: 2
+      data:
+        first:
+          name: _Persistence
+        second: .5
+      data:
+        first:
+          name: _InvFade
         second: 1
     m_Colors:
       data:
@@ -32,17 +51,13 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _Color1
-        second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _Color2
+          name: _ColorGradient
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _Offset
-        second: {r: 0, g: 0, b: 0, a: .5}
+        second: {r: 0, g: 0, b: 0, a: 0}
       data:
         first:
-          name: _NoiseParams
-        second: {r: 0, g: .5, b: -.5, a: .699999988}
+          name: _TintColor
+        second: {r: .5, g: .5, b: .5, a: .5}

@@ -189,7 +189,7 @@ public class CGameCameras : MonoBehaviour
 			s_BackgroundCamera.camera.depth = -1;
 
 			// Debug: Create a nebulae sphere
-			GameObject.Instantiate(Resources.Load("Prefabs/Galaxy/NebulaePlaceholder"));
+			//GameObject.Instantiate(Resources.Load("Prefabs/Galaxy/NebulaePlaceholder"));
 		}
 
 		// Move the camera to the head location
@@ -269,14 +269,17 @@ public class CGameCameras : MonoBehaviour
 		if(s_IsObserverInsideShip)
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);
+
+			// Update the background camera rotation
+			s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
 		}
 		else
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
-		}
 
-		// Update the background camera rotation
-		s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
+			// Update the background camera rotation
+			s_BackgroundCamera.transform.rotation = s_MainCamera.transform.rotation;
+		}
 
 		if(CGameCameras.IsOculusRiftActive)
 		{
