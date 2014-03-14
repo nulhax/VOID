@@ -1,4 +1,4 @@
-Shader "VOID/DiffuseSpecNormalEmis"
+Shader "VOID/Diffuse Spec Normal Emis"
 {
 	Properties 
 	{

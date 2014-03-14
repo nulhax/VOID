@@ -1,4 +1,4 @@
-﻿Shader "VOID/NebulaeTurbulance" 
+﻿Shader "VOID/Nebulae (Turbulance)" 
 {
 	Properties
 	{
@@ -15,7 +15,10 @@
 		Blend SrcAlpha One
 		AlphaTest Greater .01
 		ColorMask RGB
-		Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
+		Cull Off 
+		Lighting Off 
+		ZWrite Off 
+		Fog { Color (0,0,0,0) }
 	
 	    Pass 
 	    {
@@ -39,7 +42,7 @@
 			{
 			    float4 pos : SV_POSITION;
 			    float2 uv : TEXCOORD0;
-			    float4 uv3d : TEXCOORD1;
+			    float4 worldPos : TEXCOORD1;
 			};
 			
 			v2f vert (appdata_base v)
@@ -47,7 +50,7 @@
 			    v2f o;
 			    o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 			    o.uv = v.texcoord.xy;
-			    o.uv3d = mul(_Object2World, v.vertex) + _Offset;
+			    o.worldPos = mul(_Object2World, v.vertex) + _Offset;
 			    return o;
 			}
 		
@@ -108,7 +111,7 @@
 		
 			half4 frag (v2f i) : COLOR
 			{
-				float n = turbulence(i.uv3d.xyz, 6);
+				float n = turbulence(i.worldPos.xyz, 6);
 
 				half4 col = tex2D(_ColorGradient, float2(n, 0));
 

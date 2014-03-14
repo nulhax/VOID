@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: polySurface6Mat
-  m_Shader: {fileID: 4800000, guid: c319621957834fa4981136da06d4ab7e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 55c961d545192924f8f67c40bb6cda32, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -18,6 +18,13 @@ Material:
           name: _MainTex
         second:
           m_Texture: {fileID: 2800000, guid: 16495c27a6f84e3479cd33a855c12764, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BumpMap
+        second:
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -69,15 +76,47 @@ Material:
           m_Texture: {fileID: 2800000, guid: b19ada59b4801744c9804338510685cf, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-    m_Floats:
       data:
         first:
-          name: _SpecPower
-        second: -.0199999996
+          name: _ShieldTexture
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _ShieldTex2
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
       data:
         first:
           name: _Shininess
         second: .699999988
+      data:
+        first:
+          name: _Amount
+        second: .446428567
+      data:
+        first:
+          name: _SpecPower
+        second: -.0199999996
       data:
         first:
           name: _Alpha
@@ -102,6 +141,54 @@ Material:
         first:
           name: _AtmosFalloff
         second: 3
+      data:
+        first:
+          name: _NoiseFreq
+        second: 100
+      data:
+        first:
+          name: _FadeDist
+        second: .200000003
+      data:
+        first:
+          name: _MinHeight
+        second: -.200000003
+      data:
+        first:
+          name: _MaxHeight
+        second: 2
+      data:
+        first:
+          name: _NoiseSpeed
+        second: 1
+      data:
+        first:
+          name: _RimPower
+        second: .5
+      data:
+        first:
+          name: _AlphaRimPower
+        second: 0
+      data:
+        first:
+          name: _TimeSpeed
+        second: 0
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
     m_Colors:
       data:
         first:
@@ -117,6 +204,14 @@ Material:
         second: {r: 0, g: .751724005, b: 1, a: 0}
       data:
         first:
+          name: _MinPos
+        second: {r: 0, g: -.200000003, b: 0, a: 0}
+      data:
+        first:
+          name: _MaxPos
+        second: {r: 0, g: 2.0999999, b: 0, a: 0}
+      data:
+        first:
           name: _Tint
         second: {r: .477941155, g: .870385349, b: 1, a: 1}
       data:
@@ -127,3 +222,31 @@ Material:
         first:
           name: _AtmosFar
         second: {r: .455780804, g: .518703878, b: .98507458, a: 1}
+      data:
+        first:
+          name: _RimColor
+        second: {r: 1, g: .734265924, b: 0, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}
