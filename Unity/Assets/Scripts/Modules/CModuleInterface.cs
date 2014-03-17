@@ -267,7 +267,6 @@ public class CModuleInterface : MonoBehaviour
 		}
 	}
 
-
 	void OnDestroy()
 	{
 		// Remove self from global list of modules

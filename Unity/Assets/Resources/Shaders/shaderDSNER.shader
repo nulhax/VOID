@@ -144,11 +144,9 @@
 			o.Gloss = Multiply0;
 			o.Normal = normalize(o.Normal);
 			
-			float3 worldRefl = WorldReflectionVector (IN, o.Normal);
-			float4 reflcol = texCUBE(_Cube, worldRefl);
+			float4 reflcol = texCUBE(_Cube, IN.worldRefl);
 			reflcol *= Multiply0;
 			o.Emission += reflcol.rgb * _ReflectColor.rgb;
-			//o.Alpha = reflcol.a * _ReflectColor.a;
 		}
 		ENDCG
 	}

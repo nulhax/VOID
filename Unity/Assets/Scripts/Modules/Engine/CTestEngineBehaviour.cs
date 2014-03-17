@@ -115,7 +115,8 @@ public class CTestEngineBehaviour: MonoBehaviour
 
 	private void Update()
 	{
-		UpdateAnimation();
+		if(GetComponent<CModulePrecipitation>().IsModuleBuilt)
+			UpdateAnimation();
 	}
 
 	private void UpdateAnimation()

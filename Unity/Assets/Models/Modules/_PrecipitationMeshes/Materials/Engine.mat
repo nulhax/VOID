@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Engine
+  m_Shader: {fileID: 4800000, guid: 55c961d545192924f8f67c40bb6cda32, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: 73b45c33543dcbf4997d6cea26fe751f, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: de1be6ea414084b44a39f83f31b511e8, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 2800000, guid: 9b77d25e6aca3224d8d82f228f48b21f, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Cube
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _Amount
+        second: 0
+      data:
+        first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
+          name: _NoiseFreq
+        second: 5
+      data:
+        first:
+          name: _FadeDist
+        second: 2
+      data:
+        first:
+          name: _MinHeight
+        second: 0
+      data:
+        first:
+          name: _MaxHeight
+        second: 3
+      data:
+        first:
+          name: _NoiseSpeed
+        second: .25
+    m_Colors:
+      data:
+        first:
+          name: _ReflectColor
+        second: {r: .5, g: .5, b: .5, a: .5}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}
