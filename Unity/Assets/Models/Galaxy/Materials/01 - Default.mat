@@ -57,19 +57,23 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Cube
+          name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ParallaxMap
+          name: _Cube
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
+      data:
+        first:
+          name: _Shininess
+        second: 1
       data:
         first:
           name: _SpecPower
@@ -92,10 +96,6 @@ Material:
         second: 1
       data:
         first:
-          name: _Shininess
-        second: 1
-      data:
-        first:
           name: _Parallax
         second: .0199999996
     m_Colors:
@@ -103,6 +103,18 @@ Material:
         first:
           name: _Color
         second: {r: .220588207, g: .199111059, b: .171929047, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: .25, g: .25, b: .25, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: .588235259, g: .506055355, b: .562164366, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: .404411793, g: .404411793, b: .404411793, a: 1}
       data:
         first:
           name: _EmissiveColorR
@@ -119,18 +131,6 @@ Material:
         first:
           name: _EmissiveColorA
         second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _SpecColor
-        second: {r: .25, g: .25, b: .25, a: 1}
-      data:
-        first:
-          name: _DiffuseCol
-        second: {r: .323529422, g: .262629747, b: .17128028, a: 1}
-      data:
-        first:
-          name: _SpecCol
-        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _ReflectColor

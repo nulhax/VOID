@@ -6755,9 +6755,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bCanBeInstantiatedAtRuntime: 1
-  m_iHierarchicalPrefabVersionNumber: 15
+  m_iHierarchicalPrefabVersionNumber: 16
   m_rPrefabObject: {fileID: 100100000}
-  m_rCompiledHierarchicalPrefab: {fileID: 100256, guid: 550b40df780167a439cd5ca33f9a855c,
+  m_rCompiledHierarchicalPrefab: {fileID: 100256, guid: 2e4c0a95253780740936058af3438e6c,
     type: 2}
   m_bSceneInstance: 0
 --- !u!114 &11400114

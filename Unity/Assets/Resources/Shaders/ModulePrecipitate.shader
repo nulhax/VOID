@@ -2,12 +2,15 @@
 {
 	Properties
 	{
-		_Diffuse("Diffuse", 2D) = "gray" {}
+		_Diffuse("Diffuse", 2D) = "white" {}
 		_Normal("Normal", 2D) = "blue" {}
 		_Specular("Specular", 2D) = "black" {}
 		_SpecPower("SpecPower", Float) = 1
 		_DiffuseCol("DiffuseCol", Color) = (1,1,1,1)
 		_SpecCol("SpecCol", Color) = (1,1,1,1)
+		_Saturation("Saturation", Float) = 0.5
+		_Brightness("Brightness", Float) = 4.0
+		_Tint("Holographic Tint (Alpha)", Color) = (0.4,0.7,1,0.7)
 		_MinHeight("Minimum Position", Float) = 0
 		_MaxHeight("Maximum Position", Float) = 1
 		_Amount("Amount Complete", Range(0.0,1.0)) = 0.0
@@ -30,7 +33,6 @@
 		CGPROGRAM
 			#pragma surface surf BlinnPhong vertex:vert
 			#pragma target 3.0
-			#pragma glsl
 			#include "UnityCG.cginc"
 			
 			sampler2D _Diffuse;
@@ -87,6 +89,10 @@
 			#include "UnityCG.cginc"
 			#include "Noise/SimplexNoise.cginc"
 			
+			sampler2D _Diffuse;
+			float _Saturation;
+			float _Brightness;
+			float4 _Tint;
 			float _MinHeight;
 			float _MaxHeight;
 			float _Amount;
@@ -96,6 +102,7 @@
 			
 			struct Input 
 			{
+				float2 uv_Diffuse;
 				float3 vp;
 			};
 			
@@ -108,9 +115,19 @@
 			void surf(Input IN, inout SurfaceOutput o)
 			{											
 				float alpha = 0.0;
+				float4 col = tex2D(_Diffuse, IN.uv_Diffuse.xy);
+				
+				// Greyscale intensitity constant
+				float3 gsik = dot(float3(0.3, 0.59, 0.11), col.rgb);	
+				
+				// Saturate color and add tint
+				col.rgb = _Saturation * gsik + col.rgb * (1.0 - _Saturation);
+				col = saturate(col * _Brightness);
+				col.rgb = col.rgb * _Tint.rgb;
 				
 				float ih = lerp(_MinHeight, _MaxHeight, _Amount);
 				float ch = IN.vp.y - ih + (_FadeDist * (1.0 - _Amount));
+				float lowerFadeDist = _FadeDist * 0.3;
 				if(sign(ch) == 1.0)
 				{
 					if(ch < _FadeDist)
@@ -127,15 +144,31 @@
 					
 						float falloff = ch/_FadeDist;
 						alpha = (1.0f - falloff + sum) * (1.0f - falloff);
-						o.Emission = float4(1);
+						col.rgb = lerp(col.rgb, float3(1), alpha);
 					}
-					else
+
+					if(alpha < _Tint.a)
+						alpha = _Tint.a;
+				}
+				else if(-ch < lowerFadeDist)
+				{
+					float4 np = float4(IN.vp, _Time.y * _NoiseSpeed);
+					float freq = _NoiseFreq, amp = 0.5;
+					float sum = 0;	
+					for(int i = 0; i < 2; i++) 
 					{
-						alpha = 0.0;
+						sum += abs(snoise(np * freq)) * amp;
+						freq *= 3.0;
+						amp *= 0.33;
 					}
+				
+					float falloff = -ch/lowerFadeDist;
+					alpha = (1.0 - falloff + sum) * (1.0f - falloff);
+					col.rgb = float3(1);
 				}
 				
 				o.Alpha = alpha;
+				o.Emission = col.rgb;
 			}
 		ENDCG
 	}

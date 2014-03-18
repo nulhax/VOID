@@ -178,7 +178,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	private void AttatchRenderTexture(Material _ScreenMaterial)
 	{
 		// Set the render text onto the material of the screen
-		_ScreenMaterial.SetTexture("_MainTex", m_RenderTex); 
+		_ScreenMaterial.SetTexture("_UI", m_RenderTex); 
 	}
 	
 	private void SetupRenderTexture()
