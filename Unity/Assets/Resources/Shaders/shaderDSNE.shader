@@ -2,7 +2,7 @@ Shader "VOID/Diffuse Spec Normal Emis"
 {
 	Properties 
 	{
-		_Diffuse("Diffuse", 2D) = "gray" {}
+		_Diffuse("Diffuse", 2D) = "white" {}
 		_Normal("Normal", 2D) = "blue" {}
 		_Specular("Specular", 2D) = "black" {}
 		_Emissive("Emissive", 2D) = "black" {}
@@ -23,9 +23,9 @@ Shader "VOID/Diffuse Spec Normal Emis"
 	{
 		Tags
 		{
-			"Queue"="Geometry"
-			"IgnoreProjector"="False"
 			"RenderType"="Opaque"
+			"IgnoreProjector"="False"
+			"Queue"="Geometry"
 		}
 
 		Cull Back
