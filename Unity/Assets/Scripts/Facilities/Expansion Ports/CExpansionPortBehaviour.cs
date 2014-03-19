@@ -108,7 +108,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
                 return (m_cDoor);
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.Door != null)
+                     AttachedExpansionPortBehaviour.m_cDoor != null)
             {
                 return (AttachedExpansionPortBehaviour.Door);
             }
@@ -127,7 +127,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
                 return (Door.GetComponent<CDoorBehaviour>());
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.Door != null)
+                     AttachedExpansionPortBehaviour.m_cDoor != null)
             {
                 return (AttachedExpansionPortBehaviour.DoorBehaviour);
             }
@@ -146,7 +146,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
                 return (m_cDuiDoorControl1);
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.AttachedDuiDoorControl1 != null)
+                     AttachedExpansionPortBehaviour.m_cDuiDoorControl1 != null)
             {
                 return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl1);
             }
@@ -165,7 +165,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
                 return (m_cDuiDoorControl2);
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.AttachedDuiDoorControl2 != null)
+                     AttachedExpansionPortBehaviour.m_cDuiDoorControl2 != null)
             {
                 return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl2);
             }
@@ -252,16 +252,16 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
         {
             DoorBehaviour.RegisterParentExpansionPort(this);
 
-            if (AttachedDuiDoorControl1 != null)
+            if (m_cDuiDoorControl1 != null)
             {
-                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
-                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
             }
 
-            if (AttachedDuiDoorControl2 != null)
+            if (m_cDuiDoorControl2 != null)
             {
-                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
-                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
             }
         }
     }
@@ -306,6 +306,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
         switch (_eButton)
         {
             case CDuiDoorControlBehaviour.EButton.OpenDoor:
+                Debug.LogError(gameObject.name + " expansion port opening door: " + Door.name);
                 DoorBehaviour.SetOpened(true);
                 break;
 
