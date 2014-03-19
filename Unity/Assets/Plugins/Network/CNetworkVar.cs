@@ -43,6 +43,11 @@ public class CNetworkVar<TYPE> : INetworkVar
 		set {Set(value);}
 	}
 
+	public TYPE PreviousValue
+	{
+		get {return(GetPrevious());}
+	}
+
 
 // Member Functions
 

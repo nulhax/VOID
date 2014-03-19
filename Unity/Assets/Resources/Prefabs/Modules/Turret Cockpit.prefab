@@ -1831,7 +1831,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PrecipitativeMesh: {fileID: 100000, guid: 99f209b7c7c7621499a8a3c71ce3f222, type: 2}
-  m_BuildTime: 20
+  m_BuildTime: 1
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
