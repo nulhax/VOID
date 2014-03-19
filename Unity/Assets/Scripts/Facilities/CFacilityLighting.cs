@@ -59,12 +59,16 @@ public class CFacilityLighting : MonoBehaviour
 		switch (m_LightingState) 
 		{
 		case ELightingState.NoPower:
+                if (m_NormalLights != null)
 			m_NormalLights.SetActive(false);
+                if (m_NoPowerLights != null)
 			m_NoPowerLights.SetActive(true);
 			break;
 
 		case ELightingState.Normal:
+            if (m_NormalLights != null)
 			m_NormalLights.SetActive(true);
+            if (m_NoPowerLights != null)
 			m_NoPowerLights.SetActive(false);
 			break;
 

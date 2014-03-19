@@ -115,7 +115,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     {
         if (!m_mAccessories.ContainsKey(_eAccessoryType))
         {
-            return (null);
+            return (new List<GameObject>());
         }
 
         return (m_mAccessories[_eAccessoryType]);
@@ -126,7 +126,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     {
         if (!m_mModules.ContainsKey(_eModuleType))
         {
-            return (null);
+            return (new List<GameObject>());
         }
 
         return (m_mModules[_eModuleType]);

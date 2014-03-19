@@ -7594,7 +7594,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cDoor: {fileID: 100016}
-  m_cDuiDoorControl: {fileID: 102288}
+  m_cDuiDoorControl1: {fileID: 102288}
+  m_cDuiDoorControl2: {fileID: 0}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
