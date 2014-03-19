@@ -71,5 +71,7 @@ public class CMeshCombinerWizard : ScriptableWizard
 		AssetDatabase.CreateAsset(mesh, "Assets/Models/_Combined/" + mesh.name + ".asset");
 
 		m_FacilityObject.transform.position = oldPos;
+
+		AssetDatabase.SaveAssets();
 	}
 }

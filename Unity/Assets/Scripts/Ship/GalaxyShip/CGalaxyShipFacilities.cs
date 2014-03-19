@@ -20,48 +20,36 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CGalaxyShipCollider : MonoBehaviour 
+public class CGalaxyShipFacilities : MonoBehaviour 
 {
 	// Member Types
 	
 	
 	// Member Fields
-	public GameObject m_CompoundCollider = null;
 	
 	
 	// Member Properies
 	
 	
 	// Member Methods
-	public void Start()
-	{
-
-	}
-	
-	public void AttachNewCollider(string _ColliderPrefab, Vector3 _RelativePos, Quaternion _RelativeRot)
-	{
-		GameObject newCollider = (GameObject)GameObject.Instantiate(Resources.Load(_ColliderPrefab, typeof(GameObject)));
-		if(newCollider == null)
-		{
-			Debug.LogError("Collider prefab didn't exist! " + _ColliderPrefab);
-		}
-		
-		newCollider.transform.parent = m_CompoundCollider.transform;
-		newCollider.transform.localPosition = _RelativePos;
-		newCollider.transform.localRotation = _RelativeRot;
+	public void AttachNewFacility(GameObject _FacilityExterior, Vector3 _RelativePos, Quaternion _RelativeRot)
+	{	
+		_FacilityExterior.transform.parent = transform;
+		_FacilityExterior.transform.localPosition = _RelativePos;
+		_FacilityExterior.transform.localRotation = _RelativeRot;
 		
 		// Move the collider to identity transform
-		Vector3 oldPos = m_CompoundCollider.transform.position;
-		Quaternion oldRot = m_CompoundCollider.transform.rotation;
-		m_CompoundCollider.transform.position = Vector3.zero;
-		m_CompoundCollider.transform.rotation = Quaternion.identity;
+		Vector3 oldPos = transform.position;
+		Quaternion oldRot = transform.rotation;
+		transform.position = Vector3.zero;
+		transform.rotation = Quaternion.identity;
 		
 		// Create a cube
 		GameObject newSphere = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
 		MeshFilter mf = newSphere.GetComponent<MeshFilter>();
 		
 		// Get the mesh filters of the colliders
-		MeshFilter[] meshFilters = m_CompoundCollider.GetComponentsInChildren<MeshFilter>();
+		MeshFilter[] meshFilters = gameObject.GetComponentsInChildren<MeshFilter>();
 		List<CombineInstance> combines = new List<CombineInstance>();
         for(int i = 0; i < meshFilters.Length; ++i) 
 		{
@@ -95,7 +83,7 @@ public class CGalaxyShipCollider : MonoBehaviour
 		gameObject.GetComponent<CGalaxyShipShield>().UpdateShieldBounds(mesh);
 		
 		// Move back to old transform
-		m_CompoundCollider.transform.position = oldPos;
-		m_CompoundCollider.transform.rotation = oldRot;
+		transform.position = oldPos;
+		transform.rotation = oldRot;
 	}
 }
