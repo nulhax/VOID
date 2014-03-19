@@ -33,6 +33,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
 	private CDUIRoot m_CachedDUIRoot = null;
 
+	private bool m_ScreenVisible = false;
 	private CNetworkViewId m_CurrentPlayer = null;
 	private bool m_bHovering = false;
 
@@ -106,13 +107,41 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		}
 	}
 
+	static int count = 0;
+	bool update = true;
+
     void Update()
     {
+		// Render the UI if the screen is in view
+		if(m_ScreenObject.renderer.isVisible && !m_ScreenVisible)
+		{
+			m_ScreenVisible = true;
+			m_CachedDUIRoot.SetCamerasRenderingState(m_ScreenVisible);
+		}
+		// Else stop rendering completely
+		else if(!m_ScreenObject.renderer.isVisible && m_ScreenVisible)
+		{
+			m_ScreenVisible = false;
+			m_CachedDUIRoot.SetCamerasRenderingState(m_ScreenVisible);
+		}
+
+		// Update the position on screen for the DUI
         if(m_bHovering)
         {
 			m_CachedDUIRoot.UpdateCameraViewportPositions(m_CurrentPlayer.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
         }
+
+		if(!update) update = true;
     }
+
+	void LateUpdate()
+	{
+		if(update)
+		{
+			//Debug.Log(count);
+			update = false;
+		}
+	}
 
 	[AClientOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)

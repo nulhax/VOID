@@ -156,11 +156,17 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
+	public void SetCamerasRenderingState(bool _Render)
+	{
+		if(m_DUICamera2D != null)
+			m_DUICamera2D.camera.enabled = _Render;
+		
+		if(m_DUICamera3D != null)
+			m_DUICamera3D.camera.enabled = _Render;
+	}
+
 	public void UpdateCameraViewportPositions(Vector2 _screenTexCoord)
 	{
-		UICamera current = DUICamera2D.GetComponent<UICamera>();
-		current.enabled = true;
-
 		Vector3 viewPortPos = DUICameraViewportPos(_screenTexCoord);
 
 		if(m_Cached2DCamera != null) 
