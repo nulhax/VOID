@@ -189,7 +189,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
         // Do the raycast against all objects in path
-        RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, m_fRayRange).OrderBy(_cRay => _cRay.distance).ToArray();
+		RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, m_fRayRange, cPlayerHead.layer).OrderBy(_cRay => _cRay.distance).ToArray();
 
 		// Check each one for an interactable objectg
         foreach (RaycastHit cRaycastHit in cRaycastHits)

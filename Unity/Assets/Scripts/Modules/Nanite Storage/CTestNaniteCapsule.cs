@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -66,7 +66,7 @@ public class CTestNaniteCapsule: MonoBehaviour
 		m_CalibratorComp.EventComponentFix += HandleComponentStateChange;
 		
 		// Get the DUI of the power generator
-		m_DUINaniteCapsule = m_DUIConsole.DUI.GetComponent<CDUINaniteCapsuleRoot>();
+		m_DUINaniteCapsule = m_DUIConsole.DUIRoot.GetComponent<CDUINaniteCapsuleRoot>();
 		m_DUINaniteCapsule.RegisterNaniteCapsule(gameObject);
 
 		if(CNetwork.IsServer)

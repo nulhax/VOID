@@ -64,25 +64,25 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
         // Open airlock
         if (CNetwork.IsServer)
         {
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
             };
 
             // Close airlock
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
             };
 
             // Open hull airlock
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
             };
 
             // Close hull airlock
-            m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
+            m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().EventCloseHullDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
             };
@@ -155,7 +155,7 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
                         cSpayer.GetComponent<ParticleSystem>().Play();
                     }
 
-                    m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().SetStatusText("Decompressing");
+                    m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().SetStatusText("Decompressing");
                 }
                 break;
 
@@ -192,7 +192,7 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
                         cSpayer.GetComponent<ParticleSystem>().Stop();
                     }
 
-                    m_cDuiInternal.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiAirlockInternalBehaviour>().SetStatusText("Decompressed");
+                    m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().SetStatusText("Decompressed");
                 }
                 break;
 

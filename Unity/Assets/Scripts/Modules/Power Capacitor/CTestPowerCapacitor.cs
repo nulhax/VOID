@@ -66,7 +66,7 @@ public class CTestPowerCapacitor: MonoBehaviour
 		m_Circuitry2.EventComponentFix += HandleCircuitryStateChange;
 
 		// Get the DUI of the power generator
-		m_DUIPowerCapacitor = m_DUIConsole.DUI.GetComponent<CDUIPowerCapacitorRoot>();
+		m_DUIPowerCapacitor = m_DUIConsole.DUIRoot.GetComponent<CDUIPowerCapacitorRoot>();
 		m_DUIPowerCapacitor.RegisterPowerCapacitor(gameObject);
 
         //begin the initial ambient sound
