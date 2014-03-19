@@ -35,13 +35,11 @@ public class CCockpit : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 
-
-	[AServerOnly]
+	
 	public delegate void HandlePlayerEnter(ulong _ulPlayerId);
 	public event HandlePlayerEnter EventPlayerEnter;
 
-
-	[AServerOnly]
+	
 	public delegate void HandlePlayerLeave(ulong _ulPlayerId);
 	public event HandlePlayerLeave EventPlayerLeave;
 
@@ -96,8 +94,23 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		if (_cSynedVar == m_cMountedPlayerId)
 		{
-			if (m_cMountedPlayerId.Get() == CNetwork.PlayerId)
+			if(m_cMountedPlayerId.Value == 0)
 			{
+				// Notify player left
+				if(EventPlayerLeave != null)
+					EventPlayerLeave(m_cMountedPlayerId.PreviousValue);
+			}
+			else
+			{
+				// Notify player enter
+				if(EventPlayerEnter != null)
+					EventPlayerEnter(m_cMountedPlayerId.Value);
+			}
+
+			// If mounted player is self
+			if (m_cMountedPlayerId.Value == CNetwork.PlayerId)
+			{
+				// Disable inputs
 				CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
 
@@ -107,16 +120,15 @@ public class CCockpit : CNetworkMonoBehaviour
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.x);
 			}
 
-			// Unlock player movement locally
-			if (m_cMountedPlayerId.GetPrevious() == CNetwork.PlayerId)
+			if (m_cMountedPlayerId.PreviousValue == CNetwork.PlayerId)
 			{
-				// Ensure self actor exists
-				// - Players can leave the game while in the cockpits and their actors wont exist at this stage
 				if (CGamePlayers.SelfActor != null)
 				{
+					// Reenable intputs
 					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ReenableInput(this);
 
+					// Use old head rotation
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(m_EnterHeadXRot);
 				}
 			}
@@ -309,11 +321,6 @@ public class CCockpit : CNetworkMonoBehaviour
 			}
 
 			m_cMountedPlayerId.Set(0);
-			
-			// Notify observers
-			if (EventPlayerLeave != null) EventPlayerLeave(m_cMountedPlayerId.GetPrevious());
-
-			//Debug.Log(string.Format("Player ({0}) left cockpit", _ulPlayerId));
 		}
 	}
 

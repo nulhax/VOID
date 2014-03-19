@@ -1959,7 +1959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PrecipitativeMesh: {fileID: 100000, guid: c61d3d496e74438448de34d7a0b98dcc, type: 2}
-  m_BuildTime: 20
+  m_BuildTime: 1
 --- !u!114 &11400044
 MonoBehaviour:
   m_ObjectHideFlags: 1

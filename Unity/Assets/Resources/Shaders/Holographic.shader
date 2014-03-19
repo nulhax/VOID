@@ -12,9 +12,9 @@
 	{
 		Tags 
 		{ 
-			"RenderType" = "Transparent" 
-			"IgnoreProjector"="True"
-			"RenderQueue" = "Transparent" 
+			//"RenderType" = "Transparent" 
+			//"IgnoreProjector"="True"
+			//"RenderQueue" = "Transparent" 
 		}
 		
 		LOD 200

@@ -72,7 +72,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
         m_cCockpitBehaviour = GetComponent<CCockpit>();
 
-        m_cCockpitBehaviour.EventPlayerLeave += OnEventCockpitUnmount;
+		m_cCockpitBehaviour.EventPlayerEnter += OnCockpitMount;
+       	m_cCockpitBehaviour.EventPlayerLeave += OnCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);
@@ -91,23 +92,6 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	void OnDestroy()
 	{
 	}
-
-
-	void Update()
-	{
-        if (CNetwork.IsServer &&
-            m_cCockpitBehaviour.IsMounted)
-        {
-            UpdateInput();
-        }
-	}
-
-
-    [AServerOnly]
-    void UpdateInput()
-    {
-        
-    }
 
 
     [AServerOnly]
@@ -225,18 +209,31 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     }
 
 
-    [AServerOnly]
-    void OnEventCockpitUnmount(ulong _ulPlayerId)
+	void OnCockpitMount(ulong _ulPlayerId)
+	{
+		if(CNetwork.PlayerId == _ulPlayerId)
+		{
+			CGameCameras.MainCamera.camera.SetReplacementShader(Shader.Find("VOID/Holographic"), null);
+		}
+	}
+	
+    void OnCockpitUnmount(ulong _ulPlayerId)
     {
-        CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
-
-        for (CGalaxyShipMotor.EThrusters i = 0; i < CGalaxyShipMotor.EThrusters.MAX; ++i)
-        {
-            cGalaxyShipMotor.SetThrusterEnabled(i, 0.0f);
-        }
+		if(CNetwork.IsServer)
+		{
+			// Disable the thrusters
+	        CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
+	        for (CGalaxyShipMotor.EThrusters i = 0; i < CGalaxyShipMotor.EThrusters.MAX; ++i)
+	        {
+	            cGalaxyShipMotor.SetThrusterEnabled(i, 0.0f);
+	        }
+		}
+		if(CNetwork.PlayerId == _ulPlayerId)
+		{
+			CGameCameras.MainCamera.camera.ResetReplacementShader();
+		}
     }
-
-
+	
 
     void OnGUI()
     {
