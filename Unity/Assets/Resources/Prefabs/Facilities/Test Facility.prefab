@@ -2061,8 +2061,8 @@ Transform:
   m_LocalPosition: {x: 10, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400168}
-  - {fileID: 400156}
+  - {fileID: 400162}
+  - {fileID: 400172}
   - {fileID: 400126}
   - {fileID: 400128}
   m_Father: {fileID: 400122}
@@ -2230,8 +2230,8 @@ Transform:
   m_LocalPosition: {x: -10, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400172}
-  - {fileID: 400162}
+  - {fileID: 400156}
+  - {fileID: 400168}
   - {fileID: 400124}
   - {fileID: 400154}
   m_Father: {fileID: 400122}
@@ -2565,12 +2565,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100156}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: -.0336931683, y: 1.38527799, z: -1.6542635}
+  m_LocalRotation: {x: 0, y: -8.74227766e-08, z: 0, w: -1}
+  m_LocalPosition: {x: 20.0336933, y: 1.59493208, z: 1.6542635}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400158}
-  m_Father: {fileID: 400074}
+  m_Father: {fileID: 400104}
 --- !u!4 &400158
 Transform:
   m_ObjectHideFlags: 1
@@ -2599,24 +2599,24 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100162}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: -.0196285248, y: 1.38527799, z: -1.53902876}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 20.0196285, y: 1.59493208, z: 1.53903055}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400160}
-  m_Father: {fileID: 400104}
+  m_Father: {fileID: 400074}
 --- !u!4 &400168
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100168}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .896087527, y: 1.38527799, z: 1.55699039}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
+  m_LocalPosition: {x: 19.1039124, y: 1.59493208, z: -1.55699027}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400170}
-  m_Father: {fileID: 400074}
+  m_Father: {fileID: 400104}
 --- !u!4 &400170
 Transform:
   m_ObjectHideFlags: 1
@@ -2634,12 +2634,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100172}
-  m_LocalRotation: {x: 0, y: -0, z: 0, w: 1}
-  m_LocalPosition: {x: .89262104, y: 1.38527763, z: 1.57577443}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: -4.37113883e-08}
+  m_LocalPosition: {x: 19.1073799, y: 1.59493172, z: -1.57577276}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400174}
-  m_Father: {fileID: 400104}
+  m_Father: {fileID: 400074}
 --- !u!4 &400174
 Transform:
   m_ObjectHideFlags: 1
@@ -6203,8 +6203,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cDoor: {fileID: 100154}
-  m_cDuiDoorControl1: {fileID: 0}
-  m_cDuiDoorControl2: {fileID: 0}
+  m_cDuiDoorControl1: {fileID: 100156}
+  m_cDuiDoorControl2: {fileID: 100168}
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6242,8 +6242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cDoor: {fileID: 100128}
-  m_cDuiDoorControl1: {fileID: 0}
-  m_cDuiDoorControl2: {fileID: 0}
+  m_cDuiDoorControl1: {fileID: 100162}
+  m_cDuiDoorControl2: {fileID: 100172}
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6277,7 +6277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55de9d5103eb6dd419e4f88f61b018db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fFlowVolume: 100
+  m_fFlowVolume: 500
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6314,7 +6314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55de9d5103eb6dd419e4f88f61b018db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fFlowVolume: 100
+  m_fFlowVolume: 500
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
