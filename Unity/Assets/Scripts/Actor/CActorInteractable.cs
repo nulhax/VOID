@@ -20,7 +20,6 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorNetworkSyncronized))]
 public class CActorInteractable : CNetworkMonoBehaviour 
 {
 

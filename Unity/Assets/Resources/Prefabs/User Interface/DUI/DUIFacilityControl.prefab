@@ -3233,10 +3233,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66910d962635eb1488abffe8d6d85156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransitionIn: 0
-  m_TransitionOut: 0
-  m_TransitionInTime: 0
-  m_TransitionOutTime: 0
+  m_Transition: 1
+  m_TransitionTime: 1
 --- !u!114 &11400108
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3259,10 +3257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66910d962635eb1488abffe8d6d85156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransitionIn: 0
-  m_TransitionOut: 0
-  m_TransitionInTime: 0
-  m_TransitionOutTime: 0
+  m_Transition: 1
+  m_TransitionTime: 1
 --- !u!114 &11400112
 MonoBehaviour:
   m_ObjectHideFlags: 1

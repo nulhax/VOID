@@ -25,6 +25,7 @@ using System;
 [RequireComponent(typeof(CFacilityExpansion))]
 [RequireComponent(typeof(CFacilityGravity))]
 [RequireComponent(typeof(CFacilityHull))]
+[RequireComponent(typeof(CFacilityLighting))]
 [RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityPower))]
 [RequireComponent(typeof(CNetworkView))]
@@ -44,6 +45,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		HallwayTSection,
 		HallwayXSection,
         Airlock,
+        Test,
 
 		MAX,
 	}

@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -126,7 +127,7 @@ public class CModuleInterface : MonoBehaviour
     {
         if (!m_mAttachedComponents.ContainsKey(_eAccessoryType))
         {
-            return (null);
+			return (new List<GameObject>());
         }
 
         return (m_mAttachedComponents[_eAccessoryType]);
@@ -154,7 +155,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesByType.ContainsKey(_eModuleType))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 
 		return (s_mModulesByType[_eModuleType]);
@@ -165,7 +166,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesByCategory.ContainsKey(_eModuleCategory))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 		
 		return (s_mModulesByCategory[_eModuleCategory]);
@@ -176,7 +177,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesBySize.ContainsKey(_eModuleSize))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 		
 		return (s_mModulesBySize[_eModuleSize]);
@@ -280,6 +281,51 @@ public class CModuleInterface : MonoBehaviour
 	void Update()
 	{
 		// Empty
+	}
+
+
+	[ContextMenu("Create Module Extras (Editor only)")]
+	void CreatePrecipitationObject()
+	{
+		Vector3 oldPos = transform.position;
+		transform.position = Vector3.zero;
+		
+		GameObject combinationMesh = new GameObject("_CombinationObject");
+		combinationMesh.transform.localPosition = Vector3.zero;
+		combinationMesh.transform.localRotation = Quaternion.identity;
+		
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		
+		for(int i = 0; i < meshFilters.Length; ++i) 
+		{
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+		}
+		
+		Mesh mesh = new Mesh();
+		mesh.CombineMeshes(combine);
+		
+		// Add the mesh renderer and filter to the prefab
+		MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
+		MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
+		
+		// Save the mesh
+		AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
+		mf.sharedMesh = mesh;
+		
+		// Save the precipitation mat
+		Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
+		AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+		
+		// Use this material and save an instance of the prefab
+		mr.sharedMaterial = precipitateMat;
+		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		
+		// Save assets and reposition original
+		AssetDatabase.SaveAssets();
+		transform.position = oldPos;
+		DestroyImmediate(combinationMesh);
 	}
 
 

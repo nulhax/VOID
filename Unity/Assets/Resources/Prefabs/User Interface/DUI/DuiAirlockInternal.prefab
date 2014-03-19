@@ -1268,7 +1268,7 @@ MonoBehaviour:
   m_DUICamera2D: {fileID: 100004}
   m_DUICamera3D: {fileID: 0}
   m_DUIType: 13
-  m_AspectRatio: 0
+  m_AspectRatio: 1
 --- !u!114 &11400030
 MonoBehaviour:
   m_ObjectHideFlags: 1

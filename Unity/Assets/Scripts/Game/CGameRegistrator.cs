@@ -57,6 +57,7 @@ public class CGameRegistrator : MonoBehaviour
         HallwayCorner,
         HallwayTSection,
         HallwayXSection,
+        FacilityTest,
 
 		// Facility Miniature
 		MiniFacilityBridge		= 400, 
@@ -208,12 +209,13 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.EnemyShip, "Enemy Ship/Enemy Ship");
 		
 		// Facilities
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,               "Facilities/Bridge/Bridge");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityAirlock,              "Facilities/FacilityAirlock");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayStraight,              "Facilities/Hallways/HallwayStraight");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayCorner,                "Facilities/Hallways/HallwayCorner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayTSection,              "Facilities/Hallways/HallwayTSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayXSection,              "Facilities/Hallways/HallwayXSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,              "Facilities/Bridge/Bridge");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityAirlock,             "Facilities/FacilityAirlock");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayStraight,             "Facilities/Hallways/HallwayStraight");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayCorner,               "Facilities/Hallways/HallwayCorner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayTSection,             "Facilities/Hallways/HallwayTSection");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayXSection,             "Facilities/Hallways/HallwayXSection");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityTest,                "Facilities/Test Facility");
 
 		// Facilities Mini
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");
@@ -351,6 +353,7 @@ public class CGameRegistrator : MonoBehaviour
 		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayXSection           , CGameRegistrator.ENetworkPrefab.MiniHallwayXSection);
 
         CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Airlock                          , CGameRegistrator.ENetworkPrefab.FacilityAirlock);
+        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Test                             , CGameRegistrator.ENetworkPrefab.FacilityTest);
     }
 
 

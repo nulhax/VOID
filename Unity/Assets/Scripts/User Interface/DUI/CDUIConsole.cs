@@ -19,6 +19,7 @@ using System.Collections;
 /* Implementation */
 
 
+[RequireComponent(typeof(CNetworkView))]
 [RequireComponent(typeof(CActorInteractable))]
 public class CDUIConsole : CNetworkMonoBehaviour 
 {

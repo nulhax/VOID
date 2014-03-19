@@ -31,7 +31,7 @@ public class CModulePrecipitation : MonoBehaviour
 
 
 	// Member Fields
-	public GameObject m_PrecipitationMesh = null;
+	public GameObject m_PrecipitativeMesh = null;
 	public float m_BuildTime = 20.0f;
 
 	private float m_Timer = 0.0f;
@@ -40,7 +40,7 @@ public class CModulePrecipitation : MonoBehaviour
 	// Member Properties
 	public bool IsModuleBuilt
 	{
-		get { return(m_PrecipitationMesh == null); }
+		get { return(m_PrecipitativeMesh == null); }
 	}
 
 	
@@ -50,9 +50,14 @@ public class CModulePrecipitation : MonoBehaviour
 		// Disable all children except for the precipitation mesh
 		foreach(Transform child in transform)
 		{
-			if(child.gameObject != m_PrecipitationMesh)
-				child.gameObject.SetActive(false);
+			child.gameObject.SetActive(false);
 		}
+
+		// Create the module precipitation object
+		m_PrecipitativeMesh = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
+		m_PrecipitativeMesh.transform.parent = transform;
+		m_PrecipitativeMesh.transform.localPosition = Vector3.zero;
+		m_PrecipitativeMesh.transform.localRotation = Quaternion.identity;
 	}
 	
 	void Update()
@@ -62,48 +67,13 @@ public class CModulePrecipitation : MonoBehaviour
 			m_Timer += Time.deltaTime;
 			m_Timer = Mathf.Clamp(m_Timer, 0.0f, m_BuildTime);
 
-			m_PrecipitationMesh.renderer.material.SetFloat("_Amount", m_Timer/m_BuildTime);
+			m_PrecipitativeMesh.renderer.material.SetFloat("_Amount", m_Timer/m_BuildTime);
 		}
 		else
 		{
 			OnPrecipitationFinish();
 		}
 	}
-
-	[ContextMenu("Create Precipitation Object")]
-	void CreatePrecipitationObject()
-	{
-		Vector3 oldPos = transform.position;
-		transform.position = Vector3.zero;
-		
-		m_PrecipitationMesh = new GameObject("_PrecipitaionObject");
-		m_PrecipitationMesh.transform.parent = transform;
-		m_PrecipitationMesh.transform.localPosition = Vector3.zero;
-		m_PrecipitationMesh.transform.localRotation = Quaternion.identity;
-		
-		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-		
-		for(int i = 0; i < meshFilters.Length; ++i) 
-		{
-			combine[i].mesh = meshFilters[i].sharedMesh;
-			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-		}
-		
-		MeshFilter mf = m_PrecipitationMesh.AddComponent<MeshFilter>();
-		mf.sharedMesh = new Mesh();
-		mf.sharedMesh.CombineMeshes(combine);
-		
-		MeshRenderer mr = m_PrecipitationMesh.AddComponent<MeshRenderer>();
-		mr.sharedMaterial = new Material(Shader.Find("VOID/Module Precipitate"));
-		
-		AssetDatabase.CreateAsset(mf.sharedMesh, "Assets/Models/Modules/_PrecipitationMeshes/" + gameObject.name + ".asset");
-		AssetDatabase.CreateAsset(mr.sharedMaterial, "Assets/Models/Modules/_PrecipitationMeshes/Materials/" + gameObject.name + ".mat");
-		AssetDatabase.SaveAssets();
-		
-		transform.position = oldPos;
-	}
-	
 	
 	void OnPrecipitationFinish()
 	{
@@ -114,7 +84,7 @@ public class CModulePrecipitation : MonoBehaviour
 		}
 
 		// Destroy the precipitation mesh
-		Destroy(m_PrecipitationMesh);
-		m_PrecipitationMesh = null;
+		Destroy(m_PrecipitativeMesh);
+		m_PrecipitativeMesh = null;
 	}
 };
