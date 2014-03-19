@@ -213,13 +213,13 @@ public class CFacilityInterface : CNetworkMonoBehaviour
             CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(gameObject);
 
             // Unregister facility
-            ThisNetworkView.EventPreDestory += () =>
+            SelfNetworkView.EventPreDestory += () =>
             {
                 CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(gameObject);
             };
 
             // Parent self to ship
-            ThisNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
+            SelfNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
         }
 
 		// Attach the collider for the facility to the galaxy ship

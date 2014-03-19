@@ -123,7 +123,8 @@ public class CGameCameras : MonoBehaviour
 	{
 		// Make sure the client has the most up to date information
 		if(!CNetwork.Connection.IsDownloadingInitialGameData &&
-		   CNetwork.Connection.IsConnected)
+		   CNetwork.Connection.IsConnected &&
+            s_MainCamera != null)
 		{
 			// Update the transforms of the cameras
 			UpdateCameraTransforms();

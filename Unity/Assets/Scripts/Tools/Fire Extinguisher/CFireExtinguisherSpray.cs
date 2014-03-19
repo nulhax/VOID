@@ -144,7 +144,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
 
 

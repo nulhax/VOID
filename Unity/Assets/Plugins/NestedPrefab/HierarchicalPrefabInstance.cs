@@ -156,7 +156,7 @@ public class HierarchicalPrefabInstance : MonoBehaviour
 		{
 			if(m_bSceneInstance == false)
 			{
-				Debug.LogWarning("Warning : Using GameObject.Instantiate on hierarchical prefabs at runtime won't work on a build player! Use HierarchicalPrefabUtility.Instantiate instead.");
+				Debug.LogWarning("Warning : Using GameObject.Instantiate on hierarchical prefabs at runtime won't work on a build player! Use HierarchicalPrefabUtility.Instantiate instead." + gameObject.name);
 				if(CanBeInstantiatedAtRuntime == false || m_rCompiledHierarchicalPrefab == null)
 				{
 					Debug.LogWarning("And remember to check the 'Can Be Instantiated' box, then compile the last version of the hierarchical prefab.");

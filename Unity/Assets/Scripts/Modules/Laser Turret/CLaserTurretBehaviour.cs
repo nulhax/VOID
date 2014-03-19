@@ -121,7 +121,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			if (m_fClientFireTimer > m_fClientFireInterval)
 			{
 				// Write fire lasers action
-				s_cSerializeStream.Write(ThisNetworkView.ViewId);
+				s_cSerializeStream.Write(SelfNetworkView.ViewId);
 				s_cSerializeStream.Write((byte)ENetworkAction.FireLasers);
 				
 				m_fClientFireTimer = 0.0f;

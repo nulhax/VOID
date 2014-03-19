@@ -142,7 +142,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.DrillEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
 
 

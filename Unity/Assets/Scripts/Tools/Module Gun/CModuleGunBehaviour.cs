@@ -98,7 +98,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.OpenDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
@@ -107,7 +107,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.CloseDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
