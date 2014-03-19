@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -74,7 +74,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_MechanicalComponent2.EventHealthChange += HandleMechanicalHealthChange;
 
 		// Get the DUI of the power generator
-		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
+		m_DUIPropulsionRoot = m_DUIConsole.DUIRoot.GetComponent<CDUIPropulsionEngineRoot>();
 		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
 
 		if(CNetwork.IsServer)

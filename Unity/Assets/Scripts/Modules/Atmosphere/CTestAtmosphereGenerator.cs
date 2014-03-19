@@ -69,7 +69,7 @@ public class CTestAtmosphereGenerator: MonoBehaviour
 		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
 
 		// Get the DUI of the power generator
-		m_DUIAtmosphereGeneration = m_DUIConsole.DUI.GetComponent<CDUIAtmosphereGeneratorRoot>();
+		m_DUIAtmosphereGeneration = m_DUIConsole.DUIRoot.GetComponent<CDUIAtmosphereGeneratorRoot>();
 		m_DUIAtmosphereGeneration.RegisterAtmosphereGenerator(gameObject);
 
 		if(CNetwork.IsServer)

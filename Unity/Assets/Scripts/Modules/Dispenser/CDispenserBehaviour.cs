@@ -47,7 +47,7 @@ public class CDispenserBehaviour : MonoBehaviour
 	public void Start()
     {
 		// Get the DUI of the dispenser
-		m_DUIDispenser = m_DUIConsole.DUI.GetComponent<CDUIDispenserRoot>();
+		m_DUIDispenser = m_DUIConsole.DUIRoot.GetComponent<CDUIDispenserRoot>();
 
 		// Register the event for building a tool
 		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;

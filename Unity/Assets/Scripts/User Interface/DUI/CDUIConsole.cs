@@ -31,26 +31,19 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
 	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
+	private CDUIRoot m_CachedDUIRoot = null;
 
+	private CNetworkViewId m_CurrentPlayer = null;
+	private bool m_bHovering = false;
 
-    CNetworkViewId m_cHoveringPlayerViewId = null;
-    bool m_bHoveringOn = false;
 	
     // Member Properties
-	public CNetworkViewId DUIViewId
-	{ 
-		get { return(m_DUIViewId.Get()); } 
-
-		[AServerOnly]
-		set { m_DUIViewId.Set(value); }
-	}
-
 	public GameObject ConsoleScreen
 	{
 		get { return(m_ScreenObject); } 
 	}
 
-	public GameObject DUI
+	public GameObject DUIRoot
 	{
 		get
 		{
@@ -60,7 +53,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 				CreateUserInterface();
 			}
 
-			return(DUIViewId.GameObject);
+			return(m_DUIViewId.Value.GameObject);
 		}
 	}
 	
@@ -89,6 +82,9 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		{
 			CreateUserInterface();
 		}
+
+		// Cache the duiroot
+		m_CachedDUIRoot = DUIRoot.GetComponent<CDUIRoot>();
 	}
 
 	[AServerOnly]
@@ -102,7 +98,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 			// Set the view ids
 			CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
 			dr.ConsoleViewId = ViewId;
-			DUIViewId = dr.ViewId;
+			m_DUIViewId.Value = dr.ViewId;
 		}
 		else
 		{
@@ -112,16 +108,16 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
     void Update()
     {
-        if (m_bHoveringOn)
+        if(m_bHovering)
         {
-            DUI.GetComponent<CDUIRoot>().UpdateCameraViewportPositions(m_cHoveringPlayerViewId.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
+			m_CachedDUIRoot.UpdateCameraViewportPositions(m_CurrentPlayer.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
         }
     }
 
 	[AClientOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
 	{
-        m_bHoveringOn = _bHover;
-        m_cHoveringPlayerViewId = _cPlayerActorViewId;
+		m_CurrentPlayer = _cPlayerActorViewId;
+        m_bHovering = _bHover;
 	}
 }

@@ -254,14 +254,14 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
             if (AttachedDuiDoorControl1 != null)
             {
-                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
-                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
             }
 
             if (AttachedDuiDoorControl2 != null)
             {
-                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
-                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
             }
         }
     }
