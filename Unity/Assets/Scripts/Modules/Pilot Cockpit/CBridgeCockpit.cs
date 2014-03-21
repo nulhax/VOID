@@ -213,7 +213,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
 		if(CNetwork.PlayerId == _ulPlayerId)
 		{
-			//CGameCameras.MainCamera.camera.SetReplacementShader(Shader.Find("VOID/Pilot Shader Replacement"), "");
+			CGameCameras.MainCamera.camera.SetReplacementShader(Shader.Find("VOID/PilotDefaultReplacement"), "RenderType");
 		}
 	}
 	

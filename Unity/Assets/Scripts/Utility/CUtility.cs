@@ -144,6 +144,33 @@ public class CUtility
 		return (T)comp;
 	}
 
+	static public Mesh CreateCombinedMesh(GameObject _GameObject)
+	{
+		Vector3 oldPos = _GameObject.transform.position;
+		Quaternion oldRot = _GameObject.transform.rotation;
+
+		_GameObject.transform.position = Vector3.zero;
+		_GameObject.transform.rotation = Quaternion.identity;
+
+		MeshFilter[] meshFilters = _GameObject.GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		
+		for(int i = 0; i < meshFilters.Length; ++i) 
+		{
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+		}
+		
+		Mesh mesh = new Mesh();
+		mesh.name = _GameObject.name + "_Combined";
+		mesh.CombineMeshes(combine);
+
+		_GameObject.transform.position = oldPos;
+		_GameObject.transform.rotation = oldRot;
+
+		return(mesh);
+	}
+
 	static public void DestroyAllNonRenderingComponents(GameObject _GameObject)
 	{
 		// Get all the monobehaviours that exsist on the prefab, reverse the order to delete dependant components first

@@ -71,7 +71,9 @@ public class DungeonMaster : MonoBehaviour
 
 	void Update()
 	{
-		//return; // <- Fuck you
+		if(!CNetwork.IsServer)
+			return;
+
 		// Update coinage.
 		mfPengar += Time.deltaTime * difficulty;
 

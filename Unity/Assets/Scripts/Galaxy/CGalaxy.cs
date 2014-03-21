@@ -253,7 +253,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 			for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 				mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-			gameObject.AddComponent<DungeonMaster>();
 			new DynamicEvent_RogueAsteroid();
 			new DifficultyModifier_DifficultyChoice();
 			gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();

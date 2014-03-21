@@ -51,6 +51,41 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
+	
+	public float AngularAcceleration
+	{
+		get { return(m_fAngularAcceleration); }
+	}
+
+	public float AngularMaxSpeed
+	{
+		get { return(m_fAngularMaxSpeed); }
+	}
+
+	public float AngularVelocityDamp
+	{
+		get { return(m_fAngularVelocityDamp); }
+	}
+
+	public float AngularHandbreakpower
+	{
+		get { return(m_fAngularHandbreakpower); }
+	}
+
+	public float DirectionalMaxSpeed
+	{
+		get { return(m_fDirectionalMaxSpeed); }
+	}
+
+	public float DirectionalAcceleration
+	{
+		get { return(m_fDirectionalAcceleration); }
+	}
+
+	public float DirectionalHandbreakPower
+	{
+		get { return(m_fDirectionalHandbreakPower); }
+	}
 
 
 // Member Methods

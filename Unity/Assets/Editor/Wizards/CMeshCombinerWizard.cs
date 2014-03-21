@@ -39,25 +39,11 @@ public class CMeshCombinerWizard : ScriptableWizard
 
 	void OnWizardCreate() 
 	{
-		Vector3 oldPos = m_FacilityObject.transform.position;
-		m_FacilityObject.transform.position = Vector3.zero;
-		
 		GameObject combinationMesh = new GameObject(m_FacilityObject.name + "_Combined");
 		combinationMesh.transform.localPosition = Vector3.zero;
 		combinationMesh.transform.localRotation = Quaternion.identity;
-		
-		MeshFilter[] meshFilters = m_FacilityObject.GetComponentsInChildren<MeshFilter>();
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
-		
-		for(int i = 0; i < meshFilters.Length; ++i) 
-		{
-			combine[i].mesh = meshFilters[i].sharedMesh;
-			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
-		}
-		
-		Mesh mesh = new Mesh();
-		mesh.name = m_FacilityObject.name + "_Combined";
-		mesh.CombineMeshes(combine);
+
+		Mesh mesh = CUtility.CreateCombinedMesh(m_FacilityObject);
 		
 		// Add the mesh renderer
 		MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
@@ -69,9 +55,6 @@ public class CMeshCombinerWizard : ScriptableWizard
 
 		// Save the mesh into the file path
 		AssetDatabase.CreateAsset(mesh, "Assets/Models/_Combined/" + mesh.name + ".asset");
-
-		m_FacilityObject.transform.position = oldPos;
-
 		AssetDatabase.SaveAssets();
 	}
 }
