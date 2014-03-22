@@ -51,6 +51,20 @@ public class CUtility
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
     // Member Methods
+	static public GameObject CreateNewGameObject(Transform _Parent, string _Name)
+	{
+		GameObject go = new GameObject(_Name);
+
+		if(_Parent != null)
+			go.transform.parent = _Parent;
+
+		go.transform.localPosition = Vector3.zero;
+		go.transform.localRotation = Quaternion.identity;
+		go.transform.localScale = Vector3.one;
+
+		return(go);
+	}
+
 	static public void SetLayerRecursively(GameObject _Obj, int _Layer)
 	{
 		_Obj.layer = _Layer;

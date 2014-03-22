@@ -162,7 +162,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				}
 				
 				// Sync if scale is not default
-				if (tEntry.Value.cGameObject.transform.localScale != Vector3.zero)
+				if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
 				{
 					// Sync object's scale
 					cSelfView.SyncTransformScale();

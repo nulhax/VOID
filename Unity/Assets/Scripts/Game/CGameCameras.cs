@@ -172,9 +172,6 @@ public class CGameCameras : MonoBehaviour
 			s_MainCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/Camera"));
 			s_MainCamera.name = "Camera_Main";
 
-			// Set the main camera parented to the players head
-			s_MainCamera.transform.parent = CGamePlayers.SelfActorHead.transform;
-
 			// Instantiate the projected camera (copy from head camera)
 			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
 			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
@@ -196,12 +193,21 @@ public class CGameCameras : MonoBehaviour
 		// Move the camera to the head location
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
-		
+
 		// Set the defult view perspective
-		SetPlayersViewPerspective(true);
+		SetObserverSpace(true);
+		SetObserverPerspective(CGamePlayers.SelfActorHead);
+	}
+
+	public static void SetObserverPerspective(GameObject _LookingFrom)
+	{
+		// Parent the camera to the looking from object
+		s_MainCamera.transform.parent = _LookingFrom.transform;
+		s_MainCamera.transform.localPosition = Vector3.zero;
+		s_MainCamera.transform.localRotation = Quaternion.identity;
 	}
 	
-	public static void SetPlayersViewPerspective(bool _IsInsideShip)
+	public static void SetObserverSpace(bool _IsInsideShip)
 	{
 		s_IsObserverInsideShip = _IsInsideShip;
 

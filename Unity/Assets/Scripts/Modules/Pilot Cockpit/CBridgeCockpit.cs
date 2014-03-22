@@ -94,65 +94,78 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 
 
-    [AServerOnly]
-    void OnEventAxisControlShip(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
-    {
-        if (_ulPlayerId != 0 &&
-            _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
-        {
-            CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
+	[AClientOnly]
+	void OnEventAxisControlCamera(CUserInput.EAxis _eAxis, float _fValue)
+	{
+		CGalaxyShipCamera galaxyShipCamera = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>();
 
-            switch (_eAxis)
-            {
-                case CUserInput.EAxis.MouseX:
-                    if (_fValue == 0.0f)
-                    {
-                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
-                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
-                    }
-                    else
-                    {
-                        if (_fValue > 0.0f)
-                        {
-                            // / Screen.width
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 15, 0.0f, 1.0f));
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
+		switch (_eAxis)
+		{
+		case CUserInput.EAxis.MouseScroll:
+			galaxyShipCamera.AdjustZoom(_fValue);
+			break;
+		}
+	}
+		
+	[AServerOnly]
+	void OnEventAxisControlShip(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+	{
+		if (_ulPlayerId != 0 &&
+		    _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
+		{
+			CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
+			
+			switch (_eAxis)
+			{
+			case CUserInput.EAxis.MouseX:
+				if (_fValue == 0.0f)
+				{
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
+	            }
+	            else
+	            {
+	                if (_fValue > 0.0f)
+	                {
+	                    // / Screen.width
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 15, 0.0f, 1.0f));
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
 
-                        }
-                        else
-                        {
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 15 * -1.0f, 0.0f, 1.0f));
-                        }
-                    }
-                    break;
+	                }
+	                else
+	                {
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 15 * -1.0f, 0.0f, 1.0f));
+	                }
+	            }
+	            break;
 
-                case CUserInput.EAxis.MouseY:
-                    if (_fValue == 0.0f)
-                    {
-                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
-                        cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
-                    }
-                    else
-                    {
-                        if (_fValue > 0.0f)
-                        {
-                            // / Screen.width
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, Mathf.Clamp(_fValue / 20, 0.0f, 1.0f));
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
+	        case CUserInput.EAxis.MouseY:
+	            if (_fValue == 0.0f)
+	            {
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
+	            }
+	            else
+	            {
+	                if (_fValue > 0.0f)
+	                {
+	                    // / Screen.width
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, Mathf.Clamp(_fValue / 20, 0.0f, 1.0f));
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, 0.0f);
 
-                        }
-                        else
-                        {
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
-                            cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, Mathf.Clamp(_fValue / 20 * -1.0f, 0.0f, 1.0f));
-                        }
-                    }
-                    break;
+	                }
+	                else
+	                {
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchUp, 0.0f);
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.PitchDown, Mathf.Clamp(_fValue / 20 * -1.0f, 0.0f, 1.0f));
+	                }
+	            }
+	            break;
 
-                default:
-                    Debug.LogError("Unknown input");
-                    break;
+	        default:
+	            Debug.LogError("Unknown input");
+	            break;
             }
         }
     }
@@ -213,7 +226,14 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
 		if(CNetwork.PlayerId == _ulPlayerId)
 		{
-			CGameCameras.MainCamera.camera.SetReplacementShader(Shader.Find("VOID/PilotDefaultReplacement"), "RenderType");
+			CGameCameras.SetObserverSpace(false);
+			CGameCameras.SetObserverPerspective(CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>().PilotCameraPosition);
+
+			CGameHUD.SetHUDState(false);
+
+			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
+			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);
+			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseScroll, OnEventAxisControlCamera);
 		}
 	}
 	
@@ -230,7 +250,14 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 		}
 		if(CNetwork.PlayerId == _ulPlayerId)
 		{
-			CGameCameras.MainCamera.camera.ResetReplacementShader();
+			CGameCameras.SetObserverSpace(true);
+			CGameCameras.SetObserverPerspective(CGamePlayers.SelfActorHead);
+
+			CGameHUD.SetHUDState(true);
+
+			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
+			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);
+			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseScroll, OnEventAxisControlCamera);
 		}
     }
 	

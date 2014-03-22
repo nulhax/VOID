@@ -13,7 +13,6 @@
 
 // Namespaces
 using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -284,6 +283,7 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
+#if UNITY_EDITOR
 	[ContextMenu("Create Module Extras (Editor only)")]
 	void CreatePrecipitationObject()
 	{
@@ -311,23 +311,23 @@ public class CModuleInterface : MonoBehaviour
 		MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
 		
 		// Save the mesh
-		AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
+		UnityEditor.AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
 		mf.sharedMesh = mesh;
 		
 		// Save the precipitation mat
 		Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
-		AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+		UnityEditor.AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
 		
 		// Use this material and save an instance of the prefab
 		mr.sharedMaterial = precipitateMat;
-		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		UnityEditor.PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
 		
 		// Save assets and reposition original
-		AssetDatabase.SaveAssets();
+		UnityEditor.AssetDatabase.SaveAssets();
 		transform.position = oldPos;
 		DestroyImmediate(combinationMesh);
 	}
-
+#endif
 
 // Member Fields
 
