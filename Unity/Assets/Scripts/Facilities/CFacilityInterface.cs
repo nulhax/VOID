@@ -271,6 +271,9 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	void ConfigureFacility()
 	{
+		if(m_CombinedMesh == null)
+			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
+
 		MeshCollider mc = null;
 
 		// Create the triggers/colliders

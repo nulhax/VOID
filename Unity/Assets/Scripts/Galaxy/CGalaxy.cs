@@ -875,7 +875,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
+			                                    Vector3.one * Random.Range(5.0f, 10.0f), // Scale
 												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
 			                                    Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 												true,   // Has NetworkedEntity script.
@@ -902,7 +902,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 													absoluteCell,   // Parent cell.
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
-				                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
+				                                    Vector3.one * Random.Range(2.0f, 8.0f), // Scale
 				                                    Vector3.zero, //linearClusterVelocity, // Linear velocity.
 													Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 													true,   // Has NetworkedEntity script.
@@ -928,7 +928,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
+			                                    Vector3.one, // Scale
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
 												true,   // Has NetworkedEntity script.

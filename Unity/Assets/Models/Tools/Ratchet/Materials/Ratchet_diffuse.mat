@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Ratchet_diffuse
-  m_Shader: {fileID: 4800000, guid: d9d6021d120578345a373dbe9a10f119, type: 3}
+  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -29,6 +29,13 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: 2da20af669edad24a952cf6a1c4427ff, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _SpecMap
         second:
           m_Texture: {fileID: 2800000, guid: 8b30215f52754924eb1b7eea87b80bb1, type: 3}
@@ -36,9 +43,16 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Normal
+          name: _Specular
         second:
-          m_Texture: {fileID: 2800000, guid: 2da20af669edad24a952cf6a1c4427ff, type: 3}
+          m_Texture: {fileID: 2800000, guid: 8b30215f52754924eb1b7eea87b80bb1, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 2800000, guid: b5584d951402c4544bae092d0dba1944, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
@@ -50,8 +64,48 @@ Material:
         first:
           name: _Glossiness
         second: 1
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
     m_Colors:
       data:
         first:
           name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: 1, b: .668965578, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}

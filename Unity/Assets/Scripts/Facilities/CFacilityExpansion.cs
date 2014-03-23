@@ -63,7 +63,7 @@ public class CFacilityExpansion : MonoBehaviour
 
     void Awake()
     {
-        DebugAddPortNames();
+        //DebugAddPortNames();
     }
 
 
