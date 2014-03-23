@@ -50,6 +50,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400072}
+  - 64: {fileID: 6400012}
   m_Layer: 0
   m_Name: Turret Cockpit
   m_TagString: Untagged
@@ -1055,6 +1056,19 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: bf731be0f8f7e904d9088fc42143ce77, type: 3}
+--- !u!64 &6400012
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 1
+  m_Mesh: {fileID: 4300000, guid: 70446e5b65648f74d94ad2a18cfa5167, type: 2}
 --- !u!82 &8200000
 AudioSource:
   m_ObjectHideFlags: 1
@@ -1372,6 +1386,7 @@ MonoBehaviour:
   m_ModuleSize: 2
   m_Internal: 1
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1831,7 +1846,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PrecipitativeMesh: {fileID: 100000, guid: 99f209b7c7c7621499a8a3c71ce3f222, type: 2}
-  m_BuildTime: 1
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

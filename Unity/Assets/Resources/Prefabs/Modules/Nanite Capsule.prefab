@@ -55,6 +55,8 @@ GameObject:
   - 114: {fileID: 11400058}
   - 114: {fileID: 11400034}
   - 114: {fileID: 11400002}
+  - 64: {fileID: 6400006}
+  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: Nanite Capsule
   m_TagString: Untagged
@@ -3499,6 +3501,19 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 0
   m_Mesh: {fileID: 4300000, guid: d55292b4fe691e74a9e33adcd1c65b37, type: 3}
+--- !u!64 &6400006
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: 9d05e18cbd91cae44b5622bbfab7403e, type: 2}
 --- !u!82 &8200000
 AudioSource:
   m_ObjectHideFlags: 1
@@ -3652,7 +3667,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PrecipitativeMesh: {fileID: 100000, guid: 347bc38845a841c409b2e6d42bfa290a, type: 2}
-  m_BuildTime: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3682,6 +3696,7 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 1
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3874,6 +3889,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PowerConsumptionRate: 5
   m_ConsumingPower: 1
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1

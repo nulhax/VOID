@@ -67,6 +67,7 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400042}
   - 114: {fileID: 11400012}
+  - 64: {fileID: 6400008}
   m_Layer: 0
   m_Name: Pilot Cockpit
   m_TagString: Untagged
@@ -694,6 +695,19 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 0
   m_Mesh: {fileID: 4300006, guid: 9d03c9c75258a42458e472569c167182, type: 3}
+--- !u!64 &6400008
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100006}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 1
+  m_Mesh: {fileID: 4300000, guid: a636857a4c8c9954394c7ba0a610b61f, type: 2}
 --- !u!65 &6500000
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -869,6 +883,7 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 1
   m_Buildable: 0
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -881,7 +896,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PrecipitativeMesh: {fileID: 100000, guid: 1126085289d990e4daa88c109ee6ce89, type: 2}
-  m_BuildTime: 1
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
