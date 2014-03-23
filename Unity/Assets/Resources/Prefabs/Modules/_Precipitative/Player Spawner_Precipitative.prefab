@@ -11,6 +11,7 @@ GameObject:
   - 23: {fileID: 2300000}
   - 33: {fileID: 3300000}
   - 64: {fileID: 6400000}
+  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: Player Spawner_Precipitative
   m_TagString: Untagged
@@ -99,6 +100,19 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 431316ed071db934395c7b587a408f64, type: 2}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90260b50d9c519f4599fb9fbb8ebd744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
+  m_ToolTipPosition: {fileID: 0}
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1

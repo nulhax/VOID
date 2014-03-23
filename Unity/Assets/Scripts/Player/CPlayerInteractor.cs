@@ -225,6 +225,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
         }
 
+		if (cNewTargetActorObject != null)
+		{
+			m_cTargetRaycastHit = cTargetRaycastHit;
+		}
+
         if (cNewTargetActorObject != m_cTargetActorObject)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.UpdateTarget);
@@ -260,11 +265,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
             // Notify observers about target change
             if (EventTargetChange != null) EventTargetChange(m_cOldTargetActorObject, m_cTargetActorObject, m_cTargetRaycastHit);
-        }
-
-        if (m_cTargetActorObject != null)
-        {
-            m_cTargetRaycastHit = cTargetRaycastHit;
         }
     }
 

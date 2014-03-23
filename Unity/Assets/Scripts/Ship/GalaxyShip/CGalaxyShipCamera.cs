@@ -58,12 +58,28 @@ public class CGalaxyShipCamera : MonoBehaviour
 		m_Distance = m_InitialZoom;
 	}
 
+	public void LateUpdate()
+	{
+		if(!CNetwork.IsServer)
+		{
+			UpdateInterpolation();
+		}
+	}
+
 	public void FixedUpdate()
+	{
+		if(CNetwork.IsServer)
+		{
+			UpdateInterpolation();
+		}
+	}
+
+	private void UpdateInterpolation()
 	{
 		// Smooth lookat interpolation
 		Quaternion look = m_CachedGalaxyShip.rotation;
 		m_CachedCamera.rotation = Quaternion.Lerp(m_CachedCamera.rotation, look, Time.deltaTime * m_RotationDampening);		
-
+		
 		// Smooth follow interpolation
 		Vector3 offset = m_CachedGalaxyShip.up * m_CurrentShipBounds.extents.y + -m_CachedGalaxyShip.forward * (m_CurrentShipBounds.extents.z + m_Distance);
 		Vector3 dest = (m_CachedGalaxyShip.position + m_CurrentShipBounds.center) + offset;

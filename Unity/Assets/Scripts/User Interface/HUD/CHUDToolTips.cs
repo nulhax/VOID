@@ -46,41 +46,23 @@ public class CHUDToolTips : MonoBehaviour
 	private void OnTargetChange(GameObject _cOldTargetObject,  GameObject _CNewTargetObject, RaycastHit _cRaycastHit)
 	{
 		bool destoryActiveTooltip = false;
+		bool createNewTooltip = false;
 
-		if(_CNewTargetObject == null)
+		if(_CNewTargetObject != null && _cRaycastHit.collider != null)
 		{
+			// Check if the target has a tooltip component
+			GameObject colliderGameObject = _cRaycastHit.collider.gameObject;
+			CActorToolTip att = colliderGameObject.GetComponent<CActorToolTip>();
+			if(att != null && att.m_ToolTipPrefab != null)
+			{
+				createNewTooltip = true;
+			}
+
 			destoryActiveTooltip = true;
 		}
 		else
 		{
-			// Check if the target has a tooltip component
-			CActorToolTip att = _CNewTargetObject.GetComponent<CActorToolTip>();
-
-			if(att != null)
-			{
-				if(att.m_ToolTipPrefab != null)
-				{
-					// Instantiate the tooltip
-					GameObject newTooltip = (GameObject)GameObject.Instantiate(att.m_ToolTipPrefab);
-					newTooltip.transform.parent = m_ActiveToolTip.transform;
-					newTooltip.transform.localPosition = Vector3.zero;
-					newTooltip.transform.localRotation = Quaternion.identity;
-					newTooltip.transform.localScale = Vector3.one;
-
-					// Activate the tooltip
-					m_ActiveToolTip.gameObject.SetActive(true);
-					m_ActiveToolTip.Target = att.m_ToolTipPosition != null ? att.m_ToolTipPosition : _CNewTargetObject.transform;
-					m_ActiveToolTip.m_ToolTip = newTooltip;
-				}
-				else
-				{
-					destoryActiveTooltip = true;
-				}
-			}
-			else
-			{
-				destoryActiveTooltip = true;
-			}
+			destoryActiveTooltip = true;
 		}
 
 		if(destoryActiveTooltip)
@@ -94,6 +76,24 @@ public class CHUDToolTips : MonoBehaviour
 			
 			// Disable the tooltip
 			m_ActiveToolTip.gameObject.SetActive(false);
+		}
+
+		if(createNewTooltip)
+		{
+			GameObject colliderGameObject = _cRaycastHit.collider.gameObject;
+			CActorToolTip att = colliderGameObject.GetComponent<CActorToolTip>();
+
+			// Instantiate the tooltip
+			GameObject newTooltip = (GameObject)GameObject.Instantiate(att.m_ToolTipPrefab);
+			newTooltip.transform.parent = m_ActiveToolTip.transform;
+			newTooltip.transform.localPosition = Vector3.zero;
+			newTooltip.transform.localRotation = Quaternion.identity;
+			newTooltip.transform.localScale = Vector3.one;
+			
+			// Activate the tooltip
+			m_ActiveToolTip.gameObject.SetActive(true);
+			m_ActiveToolTip.Target = att.m_ToolTipPosition != null ? att.m_ToolTipPosition : colliderGameObject.transform;
+			m_ActiveToolTip.m_ToolTip = newTooltip;
 		}
 	}
 }
