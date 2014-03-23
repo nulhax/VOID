@@ -74,7 +74,7 @@ public class CHazardSystem : MonoBehaviour
         m_iTotalHazards                = 0;
         
         m_fHazardTriggerTimer          = 0.0f;
-        m_fHazardTriggerTimerThreshold = 60.0f;
+        m_fHazardTriggerTimerThreshold = 5.0f;
     }
 
 
@@ -296,7 +296,7 @@ public class CHazardSystem : MonoBehaviour
                     // Note: This makes hazards more likely to trigger each
                     //       time the timer expires and no hazard is triggered
 
-                   // Debug.Log("Hazard Triggered: None");
+                    // Debug.Log("Hazard Triggered: None");
 
                     // Increase the difficulty modifier by 10%
                     m_fDifficultyWeighted -= m_fDifficulty * 0.1f;
@@ -308,16 +308,19 @@ public class CHazardSystem : MonoBehaviour
             // Trigger fire
             case EHazardType.FIRE:
                 {
-                    // Trigger a fire
-                    CFireHazard[] shipFireNodes = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
-                    m_iTotalHazardsFire = shipFireNodes.Length;
-
-                    int i = (int)(Random.value * 100.0f) % m_iTotalHazardsFire;
-                    shipFireNodes[i].GetComponent<CActorHealth>().health = 0;
+                //    // Trigger a fire
+                //    CFireHazard[] shipFireNodes = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
+                //    m_iTotalHazardsFire = shipFireNodes.Length;
+                //
+                //    if (shipFireNodes.Length != 0)
+                //    {
+                //        int i = (int)(Random.value * 100.0f) % shipFireNodes.Length;
+                //        shipFireNodes[i].GetComponent<CActorHealth>().health = 0;
+                //    }
 
                     // TODO: Optimise
 
-                    Debug.Log("Hazard Triggered: Fire");
+                  //  Debug.Log("Hazard Triggered: Fire");
 
                     // Reset the weighted difficulty
                     m_fDifficultyWeighted = m_fDifficulty;
