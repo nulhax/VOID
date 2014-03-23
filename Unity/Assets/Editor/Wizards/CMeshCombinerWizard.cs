@@ -44,7 +44,8 @@ public class CMeshCombinerWizard : ScriptableWizard
 		combinationMesh.transform.localRotation = Quaternion.identity;
 
 		Mesh mesh = CUtility.CreateCombinedMesh(m_FacilityObject);
-		
+		mesh.Optimize();
+
 		// Add the mesh renderer
 		MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
 		mr.sharedMaterial = new Material(Shader.Find("Diffuse"));

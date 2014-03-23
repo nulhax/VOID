@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 23: {fileID: 2300000}
   - 33: {fileID: 3300000}
+  - 64: {fileID: 6400000}
   m_Layer: 0
   m_Name: Dispenser_Precipitative
   m_TagString: Untagged
@@ -84,6 +85,19 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
+  m_Mesh: {fileID: 4300000, guid: 92125b2901adc5147bd656714651db80, type: 2}
+--- !u!64 &6400000
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_SmoothSphereCollisions: 0
+  m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: 92125b2901adc5147bd656714651db80, type: 2}
 --- !u!198 &19800000
 ParticleSystem:

@@ -54,7 +54,6 @@ GameObject:
   - 82: {fileID: 8200004}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400060}
-  - 64: {fileID: 6400006}
   - 114: {fileID: 11400062}
   m_Layer: 0
   m_Name: Dispenser
@@ -705,19 +704,6 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!64 &6400006
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 92125b2901adc5147bd656714651db80, type: 2}
 --- !u!65 &6500000
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -1033,7 +1019,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1174,7 +1159,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1270,7 +1254,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1483,7 +1466,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
