@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -18,33 +18,33 @@ using System.Collections;
 [RequireComponent(typeof(Collider))]
 public class CFireHazard : MonoBehaviour
 {
-	//private static System.Collections.Generic.List<CFireHazard> s_AllFires = new System.Collections.Generic.List<CFireHazard>();
-
-	//public float spreadRadius = 3.0f;
-
-	//public float timeBetweenSpreadProcess = 1.0f;
-	//private float timeUntilNextSpreadProcess = 0.0f;
+	//private System.Collections.Generic.List<GameObject> m_ThingsToBurn = new System.Collections.Generic.List<GameObject>();
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
-
+	private int audioClipIndex = -1;
+	
 	void Awake()
 	{
+		if (particleSystem == null)
+			Debug.LogError("FIX FIRE ON " + transform.parent.name);
 
+		// Add components at runtime instead of updating all the prefabs.
+		{
+			// CAudioCue
+			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+			audioClipIndex = audioCue.AddSound("Audio/Fire/Fire", 0.0f, 0.0f, true);
+		}
 	}
 
 	void Start()
 	{
-		//s_AllFires.Add(this);
-
 		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
 	}
 
 	void OnDestroy()
 	{
-		//s_AllFires.Remove(this);
-
 		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
@@ -54,51 +54,36 @@ public class CFireHazard : MonoBehaviour
 	{
 		if(CNetwork.IsServer && burning)
 		{
-			//timeUntilNextSpreadProcess -= Time.deltaTime;
-			//while(timeUntilNextSpreadProcess <= 0.0f)
-			//{
-			//    timeUntilNextSpreadProcess += timeBetweenSpreadProcess;
-
-			//    // Drain health of all fires within range, including one's self (which is included in the list of neighbours).
-			//    foreach(CFireHazard fireHazard in s_AllFires)
-			//        if((fireHazard.transform.position - transform.position).sqrMagnitude - (spreadRadius * spreadRadius + fireHazard.spreadRadius * fireHazard.spreadRadius) <= 0.0f)
-			//            fireHazard.GetComponent<CActorHealth>().health -= timeBetweenSpreadProcess;
-			//}
-
-			CFacilityAtmosphere fa = GetComponent<CActorLocator>().LastEnteredFacility.GetComponent<CFacilityAtmosphere>();
+			CFacilityAtmosphere fa = GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityAtmosphere>();
 			CActorHealth ah = GetComponent<CActorHealth>();
 
+			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
+
 			float thresholdPercentage = 0.25f;
-			if(fa.AtmospherePercentage < thresholdPercentage)
-				ah.health += (1.0f / (fa.AtmospherePercentage / thresholdPercentage)) * Time.deltaTime;
+			if(fa.QuantityPercent < thresholdPercentage)
+                ah.health += (1.0f / (fa.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
 		}
 	}
 
-	static void OnSetState(GameObject gameObject, byte prevState, byte currState)
+	void OnSetState(byte prevState, byte currState)
 	{
 		switch (currState)
 		{
 			case 0:	// Begin fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = true;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Play();
-
-					gameObject.GetComponent<CFireHazard>().burning_internal = true;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
+					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
+					particleSystem.Play();
+					GetComponent<CFireHazard>().burning_internal = true;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 				}
 				break;
 
 			case 2:	// End fire.
 				{
-					//gameObject.GetComponent<Collider>().enabled = false;
-					ParticleSystem[] particleSystems = gameObject.GetComponentsInChildren<ParticleSystem>();
-					foreach (ParticleSystem particleSystem in particleSystems)
-						particleSystem.Stop();
-
-					gameObject.GetComponent<CFireHazard>().burning_internal = false;
-					gameObject.GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
+					GetComponent<CAudioCue>().StopAllSound();
+					particleSystem.Stop();
+					GetComponent<CFireHazard>().burning_internal = false;
+					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 				}
 				break;
 		}
@@ -109,6 +94,17 @@ public class CFireHazard : MonoBehaviour
 		CActorHealth ah = GetComponent<CActorHealth>();
 		ah.health = ah.health_max;
 	}
+
+	//[AServerOnly]
+	//void OnTriggerEnter(Collider other)
+	//{
+	//    CActorHealth ah = other.GetComponent<CActorHealth>();
+	//    if (ah != null)
+	//        if (ah.flammable)
+	//            m_ThingsToBurn.Add(other.gameObject);
+
+
+	//}
 
 	[AServerOnly]
 	void OnTriggerStay(Collider collider)
@@ -130,6 +126,17 @@ public class CFireHazard : MonoBehaviour
 						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
 				}
 			}
+		}
+	}
+
+	void OnParticleCollision(GameObject other)
+	{
+		if (CNetwork.IsServer)
+		{
+			CActorHealth otherHealth = other.GetComponent<CActorHealth>();
+			if (otherHealth != null)
+				if (otherHealth.flammable)
+					otherHealth.health -= 10.0f;
 		}
 	}
 }

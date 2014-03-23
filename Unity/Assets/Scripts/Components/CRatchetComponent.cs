@@ -40,14 +40,14 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 	void OnBreak(CComponentInterface _Sender)
 	{
 		// TODO: swap between fixed to broken
-
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
 	}
 
 	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered
 	void OnFix(CComponentInterface _Sender)
 	{
 		//TODO swap between broken to fixed
-
+        gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 
 	void OnHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth)
@@ -55,8 +55,8 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 		m_CurrentHealth = _SenderHealth.health;
 		m_PreviousHealth = _SenderHealth.health_previous;
 		float maxHealth = _SenderHealth.health_initial;
-		
-		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / maxHealth);
+
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.cyan, m_CurrentHealth / maxHealth);
 	}
 
 	void Start()
@@ -68,7 +68,7 @@ public class CRatchetComponent : CNetworkMonoBehaviour
 				m_RepairPositions.Add(child);
 		}
 
-        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.cyan, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
 
 		// Register events created in the inherited class CComponentInterface
 		// This will call onbreak or onfix when the even is triggered.

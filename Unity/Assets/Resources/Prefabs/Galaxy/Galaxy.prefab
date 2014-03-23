@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400002}
+  - 114: {fileID: 11400004}
   m_Layer: 11
   m_Name: Galaxy
   m_TagString: Untagged
@@ -51,12 +52,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mfTimeBetweenUpdateCellLoadUnloadQueues: .150000006
-  mfTimeBetweenCellLoads: .0250000004
-  mfTimeBetweenCellUnloads: .0250000004
+  mfTimeBetweenCellLoads: .100000001
+  mfTimeBetweenCellUnloads: .100000001
   mfTimeBetweenUpdateGubbinUnloadQueue: .150000006
   mfTimeBetweenGubbinLoads: .0250000004
   mfTimeBetweenGubbinUnloads: .0250000004
   mfTimeBetweenShiftTests: .5
+--- !u!114 &11400004
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41179ce667bd164469005ccaf8c694e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

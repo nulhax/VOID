@@ -51,6 +51,20 @@ public class CUtility
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
     // Member Methods
+	static public GameObject CreateNewGameObject(Transform _Parent, string _Name)
+	{
+		GameObject go = new GameObject(_Name);
+
+		if(_Parent != null)
+			go.transform.parent = _Parent;
+
+		go.transform.localPosition = Vector3.zero;
+		go.transform.localRotation = Quaternion.identity;
+		go.transform.localScale = Vector3.one;
+
+		return(go);
+	}
+
 	static public void SetLayerRecursively(GameObject _Obj, int _Layer)
 	{
 		_Obj.layer = _Layer;
@@ -142,6 +156,33 @@ public class CUtility
 		}
 
 		return (T)comp;
+	}
+
+	static public Mesh CreateCombinedMesh(GameObject _GameObject)
+	{
+		Vector3 oldPos = _GameObject.transform.position;
+		Quaternion oldRot = _GameObject.transform.rotation;
+
+		_GameObject.transform.position = Vector3.zero;
+		_GameObject.transform.rotation = Quaternion.identity;
+
+		MeshFilter[] meshFilters = _GameObject.GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		
+		for(int i = 0; i < meshFilters.Length; ++i) 
+		{
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+		}
+		
+		Mesh mesh = new Mesh();
+		mesh.name = _GameObject.name + "_Combined";
+		mesh.CombineMeshes(combine);
+
+		_GameObject.transform.position = oldPos;
+		_GameObject.transform.rotation = oldRot;
+
+		return(mesh);
 	}
 
 	static public void DestroyAllNonRenderingComponents(GameObject _GameObject)

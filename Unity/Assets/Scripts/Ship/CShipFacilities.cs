@@ -37,118 +37,84 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Properties
+
+
 	[AServerOnly]
 	public List<GameObject> Facilities
 	{
-		get { return (new List<GameObject>(m_mFacilities.Values)); }
+		get { return (new List<GameObject>(m_mFacilityObjects.Values)); }
 	}
+
 
 // Member Methods
 
 
-	public void Start()
-	{
-		
-	}
+    [AServerOnly]
+    public void RegisterFacility(GameObject _cFacilityObject)
+    {
+        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
+
+        // Generate id for facility
+        uint uiFacilityId = ++ m_uiFacilityIdCount;
+
+        // Give facility an id
+        cFacilityInterface.FacilityId = uiFacilityId;
+
+        // Add facility to dictionaries
+        m_mFacilityObjects.Add(uiFacilityId, _cFacilityObject);
+
+        if (!m_mFacilityTypes.ContainsKey(cFacilityInterface.FacilityType))
+        {
+            m_mFacilityTypes.Add(cFacilityInterface.FacilityType, new List<GameObject>());
+        }
+
+        m_mFacilityTypes[cFacilityInterface.FacilityType].Add(_cFacilityObject);
+
+        // Notify observers
+        if (EventOnFaciltiyCreate != null) EventOnFaciltiyCreate(_cFacilityObject);
+    }
 
 
     [AServerOnly]
-	public GameObject CreateFacility(CFacilityInterface.EType _eType, uint _uiFacilityId = uint.MaxValue, uint _uiExpansionPortId = uint.MaxValue, uint _uiAttachToId = uint.MaxValue)
-	{
-		CExpansionPortInterface cExpansionPort = null;
-		
-		if (_uiExpansionPortId != uint.MaxValue &&
-			_uiAttachToId != uint.MaxValue)
-		{
-			cExpansionPort = m_mFacilities[_uiFacilityId].GetComponent<CFacilityExpansion>().GetExpansionPort(_uiExpansionPortId).GetComponent<CExpansionPortInterface>();
-			
-			if(cExpansionPort.HasAttachedFacility == true)
-			{
-				Debug.LogWarning("Failed to create new room. Port is already in use.");
-				return(null);
-			}
-		}
-		
-		// Generate facility identifier
-		uint uiFacilityId = m_uiFacilityIdCount;
-		
-		// Retrieve the facility prefab
-		CGameRegistrator.ENetworkPrefab eRegisteredPrefab = CFacilityInterface.GetPrefabType(_eType);
+    public void UnregisterFacility(GameObject _cFacilityObject)
+    {
+        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
 
-		// Create facility
-		GameObject cNewFacilityObject = CNetwork.Factory.CreateObject(eRegisteredPrefab);
-		
-		// Set facility properties
-		CFacilityInterface cFacilityInterface = cNewFacilityObject.GetComponent<CFacilityInterface>();
-		cFacilityInterface.FacilityId = uiFacilityId;
-		cFacilityInterface.FacilityType = _eType;
-		m_uiFacilityIdCount++;
-		
-		// Set facility parent
-		cNewFacilityObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
+        // Remove facility from dictionaries
+        m_mFacilityObjects.Remove(cFacilityInterface.FacilityId);
+        m_mFacilityTypes[cFacilityInterface.FacilityType].Remove(_cFacilityObject);
 
-		// Attach facility expansion port to parent expansion port
-		if (cExpansionPort != null)
-		{
-			cExpansionPort.Attach(_uiAttachToId, cNewFacilityObject);
-		}
-
-		// Initialise the facility expansion ports
-		cNewFacilityObject.GetComponent<CFacilityExpansion>().InitialiseExpansionPorts();
-		
-		// Sync position & rotation
-		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformPosition();
-		cNewFacilityObject.GetComponent<CNetworkView>().SyncTransformRotation();
-
-		// Server adds the facility instantaniously
-		AddNewlyCreatedFacility(cNewFacilityObject, uiFacilityId, _eType);
-
-		// Notify facility creation observers
-		if (EventOnFaciltiyCreate != null)
-		{
-			EventOnFaciltiyCreate(cNewFacilityObject);
-		}
-
-		return (cNewFacilityObject);
-	}
-
-	public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
-	{
-		// Index facility against its Facility Id
-		m_mFacilities.Add(_FacilityId, _Facility);
-		
-		// Index facility against its Facility Type
-		if (!m_mFacilityObjects.ContainsKey(_FacilityType))
-		{
-			m_mFacilityObjects.Add(_FacilityType, new List<GameObject>());
-		}
-		
-		m_mFacilityObjects[_FacilityType].Add(_Facility);
-	}
+        // Notify observers
+        if (EventOnFaciltiyDestroy != null) EventOnFaciltiyDestroy(_cFacilityObject);
+    }
 
 
-    [AServerOnly]
-	public void DestroyFacility(GameObject _Facility)
-	{
-		if (EventOnFaciltiyDestroy != null)
-		{
-			EventOnFaciltiyDestroy(_Facility);
-		}
-		
-		Debug.Log("DestroyFacility(" + _Facility.ToString() + "); was called, but the function is empty so nothing happened. Durp.");
-	}
+    [AClientOnly]
+    public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
+    {
+        // Index facility against its Facility Id
+        m_mFacilityObjects.Add(_FacilityId, _Facility);
+
+        // Index facility against its Facility Type
+        if (!m_mFacilityTypes.ContainsKey(_FacilityType))
+        {
+            m_mFacilityTypes.Add(_FacilityType, new List<GameObject>());
+        }
+
+        m_mFacilityTypes[_FacilityType].Add(_Facility);
+    }
 
 
     [AServerOnly]
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
-        if (_uiFacilityId >= m_mFacilities.Count)
+        if (_uiFacilityId >= m_mFacilityObjects.Count)
         {
             return (null);
         }
         else
         {
-            return (m_mFacilities[_uiFacilityId]);
+            return (m_mFacilityObjects[_uiFacilityId]);
         }
 	}
 
@@ -156,15 +122,21 @@ public class CShipFacilities : MonoBehaviour
     [AServerOnly]
 	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
 	{
-        if (m_mFacilityObjects.ContainsKey(_eType))
+        if (m_mFacilityTypes.ContainsKey(_eType))
         {
-            return (m_mFacilityObjects[_eType]);
+            return (m_mFacilityTypes[_eType]);
         }
         else
         {
             return (null);
         }
 	}
+
+
+    void Start()
+    {
+        // Empty
+    }
 
 
 	// Member Fields
@@ -173,8 +145,8 @@ public class CShipFacilities : MonoBehaviour
 	uint m_uiFacilityIdCount = 0;
 
 
-	Dictionary<uint, GameObject> m_mFacilities = new Dictionary<uint, GameObject>();
-	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityObjects = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
+	Dictionary<uint, GameObject> m_mFacilityObjects = new Dictionary<uint, GameObject>();
+	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
 
 
 };

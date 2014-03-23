@@ -101,6 +101,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
+
     void Update()
     {
         if (CNetwork.IsServer)
@@ -125,8 +126,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     [AClientOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
-        m_bActive.Set(true);
-        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
+        //m_bActive.Set(true);
         if (_bActive)
         {
             s_cSerializeStream.Write((byte)ENetworkAction.SprayStart);
@@ -136,9 +136,24 @@ public class CMedicalSpray : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.SprayEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
 
+
+    [AServerOnly]
+    public void OnUseStart(GameObject _cInteractableObject)
+    {
+        m_bActive.Set(true);
+        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
+        Debug.Log("OnUseStart");
+    }
+
+    [AServerOnly]
+    public void OnUseEnd(GameObject _cInteractableObject)
+    {
+        m_bActive.Set(false);
+        gameObject.GetComponent<CAudioCue>().StopAllSound();
+    }
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

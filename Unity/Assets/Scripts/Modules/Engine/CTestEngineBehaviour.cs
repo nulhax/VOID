@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -45,15 +45,26 @@ public class CTestEngineBehaviour: MonoBehaviour
 	private float m_VarianceTimer1 = 0.0f;
 	private float m_VarianceTimer2 = 0.0f;
 	private float m_VarianceTimer3 = 0.0f;
-
+	
 	private CPropulsionGeneratorBehaviour m_PropulsionGenerator = null;
 	private CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
+	private int m_AmbientHumSoundIndex = -1;
+
 
 	// Member Properties
-	
-	
+
+
 	// Member Methods
+
+	void Awake()
+	{
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+		//m_AmbientHumSoundIndex = audioCue.AddSound("Audio/SmallEngineAmbientHum", 0.0f, 0.0f, true);
+	}
+
 	public void Start()
 	{
 		m_PropulsionGenerator = gameObject.GetComponent<CPropulsionGeneratorBehaviour>();
@@ -63,7 +74,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_MechanicalComponent2.EventHealthChange += HandleMechanicalHealthChange;
 
 		// Get the DUI of the power generator
-		m_DUIPropulsionRoot = m_DUIConsole.DUI.GetComponent<CDUIPropulsionEngineRoot>();
+		m_DUIPropulsionRoot = m_DUIConsole.DUIRoot.GetComponent<CDUIPropulsionEngineRoot>();
 		m_DUIPropulsionRoot.RegisterPropulsionEngine(gameObject);
 
 		if(CNetwork.IsServer)
@@ -72,6 +83,16 @@ public class CTestEngineBehaviour: MonoBehaviour
 			m_PropulsionGenerator.PropulsionForce = m_MaxPropulsion;
 			m_PropulsionGenerator.PropulsionPotential = m_MaxPropulsion;
 		}
+
+		// Set the cubemap for the children
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
+		}
+
+		// Begin playing the sound.
+		// Todo: Once individual sounds can be disabled, this must be moved to where the engine turns on and off.
+		GetComponent<CAudioCue>().Play(0.15f, true, 0);
 	}
 
 	private void HandleMechanicalHealthChange(CComponentInterface _Component, CActorHealth _ComponentHealth)
@@ -94,7 +115,8 @@ public class CTestEngineBehaviour: MonoBehaviour
 
 	private void Update()
 	{
-		UpdateAnimation();
+		if(GetComponent<CModulePrecipitation>().IsModuleBuilt)
+			UpdateAnimation();
 	}
 
 	private void UpdateAnimation()
@@ -119,5 +141,13 @@ public class CTestEngineBehaviour: MonoBehaviour
 		angle = currentSpeed * 2.0f * Time.deltaTime;
 		axis = new Vector3(Mathf.Sin(m_VarianceTimer1), -Mathf.Cos(m_VarianceTimer1), 0.0f).normalized;
 		m_InnerRing.transform.Rotate(axis, angle);
+
+        gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 15.0f);
+
+        // Commented out by Nathan to prevent spamming other people's screens.
+        // Please remember to remove these sorts of debugging tools before you push to develop.
+        // Just makes it easier for everyone else to see what we're working on.
+        // Thanks. ^.^
+        //Debug.Log(gameObject.GetComponentInChildren<Light>().intensity);
 	}
 }

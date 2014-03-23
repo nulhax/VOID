@@ -94,12 +94,15 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	public void DestoryObject(GameObject _cObject)
 	{
-		if (_cObject.GetComponent<CNetworkView>() == null)
-		{
-			Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
-		}
+        if (_cObject != null)
+        {
+            if (_cObject.GetComponent<CNetworkView>() == null)
+            {
+                Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
+            }
 
-		DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+            DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+        }
 	}
 
 
@@ -159,7 +162,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				}
 				
 				// Sync if scale is not default
-				if (tEntry.Value.cGameObject.transform.localScale != Vector3.zero)
+				if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
 				{
 					// Sync object's scale
 					cSelfView.SyncTransformScale();
@@ -251,6 +254,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
             Debug.LogError(string.Format("Prefab could not be found. PrefabId({0}) PrefabName({1})", _usPrefabId, sPrefabName));
         }
 
+		//cNewgameObject = HierarchicalPrefabUtility.Instantiate(cNewgameObject);
         cNewgameObject = GameObject.Instantiate(cNewgameObject) as GameObject;
 
 		// Extract network view component from created object

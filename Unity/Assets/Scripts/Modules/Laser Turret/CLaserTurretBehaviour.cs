@@ -121,7 +121,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			if (m_fClientFireTimer > m_fClientFireInterval)
 			{
 				// Write fire lasers action
-				s_cSerializeStream.Write(ThisNetworkView.ViewId);
+				s_cSerializeStream.Write(SelfNetworkView.ViewId);
 				s_cSerializeStream.Write((byte)ENetworkAction.FireLasers);
 				
 				m_fClientFireTimer = 0.0f;
@@ -137,8 +137,8 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
         {
 		    if (m_fServerFireTimer > m_fServerFireInterval)
 		    {
-			    Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLasterNodes[m_iLaserNodeIndex].transform.position);
-			    Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLasterNodes[m_iLaserNodeIndex].transform.rotation);
+			    Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLaserNodes[m_iLaserNodeIndex].transform.position);
+			    Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLaserNodes[m_iLaserNodeIndex].transform.rotation);
 			
 			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
 			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
@@ -147,7 +147,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 				InvokeRpcAll("StartMuzzleFlash", m_iLaserNodeIndex);
 
 			    ++m_iLaserNodeIndex;
-			    m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLasterNodes.Length) ? 0 : m_iLaserNodeIndex;
+			    m_iLaserNodeIndex = (m_iLaserNodeIndex >= m_aLaserNodes.Length) ? 0 : m_iLaserNodeIndex;
 			
 			    m_fServerFireTimer = 0.0f;
 		    }
@@ -195,10 +195,10 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	{
 		float timer = 0.0f;
 		float flashTime = m_fClientFireInterval;
-		float origIntensity = m_aLasterNodes[_iLaserIndex].light.intensity;
+		float origIntensity = m_aLaserNodes[_iLaserIndex].light.intensity;
 
 		bool light = true;
-		m_aLasterNodes[_iLaserIndex].light.enabled = true;
+		m_aLaserNodes[_iLaserIndex].light.enabled = true;
 		while(light)
 		{
 			timer += Time.deltaTime;
@@ -208,18 +208,18 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 				light = false;
 			}
 
-			m_aLasterNodes[_iLaserIndex].light.intensity = origIntensity * (1.0f - (timer/flashTime));
+			m_aLaserNodes[_iLaserIndex].light.intensity = origIntensity * (1.0f - (timer/flashTime));
 			yield return null;
 		}
-		m_aLasterNodes[_iLaserIndex].light.intensity = origIntensity;
-		m_aLasterNodes[_iLaserIndex].light.enabled = false;
+		m_aLaserNodes[_iLaserIndex].light.intensity = origIntensity;
+		m_aLaserNodes[_iLaserIndex].light.enabled = false;
 	}
 
 
 // Member Fields
 
-
-	public GameObject[] m_aLasterNodes = null;
+	
+	public GameObject[] m_aLaserNodes = null;
 
 
 	float m_fClientFireTimer	= 0.0f;

@@ -71,21 +71,23 @@ public class DungeonMaster : MonoBehaviour
 
 	void Update()
 	{
-		//return; // <- Fuck you
-		//// Update coinage.
-		//mfPengar += Time.deltaTime * difficulty;
+		if(!CNetwork.IsServer)
+			return;
 
-		//// Decide what to do.
-		//foreach (DynamicEvent dynamicEvent in mDynamicEvents)
-		//{
-		//    if (mfPengar >= dynamicEvent.cost)
-		//    {
-		//        mfPengar -= dynamicEvent.cost;
+		// Update coinage.
+		mfPengar += Time.deltaTime * difficulty;
 
-		//        dynamicEvent.behaviour();
-		//        dynamicEvent.timeEventLastOccurred = Time.fixedTime;
-		//    }
-		//}
+		// Decide what to do.
+		foreach (DynamicEvent dynamicEvent in mDynamicEvents)
+		{
+			if (mfPengar >= dynamicEvent.cost)
+			{
+				mfPengar -= dynamicEvent.cost;
+
+				dynamicEvent.behaviour();
+				dynamicEvent.timeEventLastOccurred = Time.fixedTime;
+			}
+		}
 	}
 
 	public void AddDynamicEvent(DynamicEvent dynamicEvent)
@@ -131,13 +133,13 @@ public class DungeonMaster : MonoBehaviour
 		mbDifficultyNeedsUpdating = false;
 	}
 
-	void OnGUI()
-	{
-		GUIStyle style = new GUIStyle();
-		style.alignment = TextAnchor.MiddleRight;
-		style.fontStyle = FontStyle.Bold;
-		float boxWidth = 0.1f;
-		float boxHeight = 0.06f;
-		//GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
-	}
+	//void OnGUI()
+	//{
+	//    GUIStyle style = new GUIStyle();
+	//    style.alignment = TextAnchor.MiddleRight;
+	//    style.fontStyle = FontStyle.Bold;
+	//    float boxWidth = 0.1f;
+	//    float boxHeight = 0.06f;
+	//    GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
+	//}
 }

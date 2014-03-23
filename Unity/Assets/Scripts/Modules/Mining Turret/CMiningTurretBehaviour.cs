@@ -122,8 +122,11 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	{
 		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 
-		m_cFractureLaserObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
-		m_cExtractorBeamObject = GameObject.Instantiate(Resources.Load("Prefabs/Modules/Resources/Mining Turret/MiningLaser")) as GameObject;
+		if(m_MiningLaserPrefab == null)
+			Debug.LogError("MiningLaser prefab has not been assigned!");
+
+		m_cFractureLaserObject = GameObject.Instantiate(m_MiningLaserPrefab) as GameObject;
+		m_cExtractorBeamObject = GameObject.Instantiate(m_MiningLaserPrefab) as GameObject;
         m_cFractureLaserObject.GetComponentInChildren<Renderer>().material.color = Color.red;
         m_cExtractorBeamObject.GetComponentInChildren<Renderer>().material.color = Color.blue;
 		m_cFractureLaserObject.GetComponentInChildren<Light>().color = new Color(1.0f, 0.5f, 0.5f, 1.0f);
@@ -201,7 +204,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 				}
                 else
                 {
-                    CMinerals cMinerals = cHitObject.GetComponent<CMinerals>();
+                    CMineralsBehaviour cMinerals = cHitObject.GetComponent<CMineralsBehaviour>();
 
                     if (cMinerals != null &&
                         m_bExtracterBeamButtonDown)
@@ -291,7 +294,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
 
         if (_bDown)
         {
@@ -307,7 +310,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
 
         if (_bDown)
         {
@@ -367,6 +370,9 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 
 // Member Fields
+
+
+	public GameObject m_MiningLaserPrefab = null;
 
 
 	CNetworkVar<CNetworkViewId> m_cTargetAsteroidViewId = null;

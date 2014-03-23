@@ -13,6 +13,9 @@
 
 // Namespaces
 using UnityEngine;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,7 +24,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CModuleInterface : MonoBehaviour
+public class CModuleInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -107,6 +110,12 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
+    public bool IsBuilt
+    {
+        get { return (m_bBuilt.Get()); }
+    }
+
+
 	public bool IsBuildable
 	{
 		get { return(m_Buildable); }
@@ -122,11 +131,17 @@ public class CModuleInterface : MonoBehaviour
 // Member Methods
 
 
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_bBuilt = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+    }
+
+
     public List<GameObject> FindAttachedComponentsByType(CComponentInterface.EType _eAccessoryType)
     {
         if (!m_mAttachedComponents.ContainsKey(_eAccessoryType))
         {
-            return (null);
+			return (new List<GameObject>());
         }
 
         return (m_mAttachedComponents[_eAccessoryType]);
@@ -144,6 +159,19 @@ public class CModuleInterface : MonoBehaviour
     }
 
 
+    public void IncrementBuiltRatio(float _fRatio)
+    {
+        // Incrmeent and cap
+        m_fBuiltRatio += _fRatio;
+        m_fBuiltRatio = Mathf.Clamp(m_fBuiltRatio, 0.0f, 1.0f);
+
+        // Set built
+        m_bBuilt.Set(m_fBuiltRatio == 1.0f);
+
+        GetComponent<CModulePrecipitation>().SetBuiltRatio(m_fBuiltRatio);
+    }
+
+
 	public static List<GameObject> GetAllModules()
 	{
 		return (s_mModules);
@@ -154,7 +182,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesByType.ContainsKey(_eModuleType))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 
 		return (s_mModulesByType[_eModuleType]);
@@ -165,7 +193,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesByCategory.ContainsKey(_eModuleCategory))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 		
 		return (s_mModulesByCategory[_eModuleCategory]);
@@ -176,7 +204,7 @@ public class CModuleInterface : MonoBehaviour
 	{
 		if (!s_mModulesBySize.ContainsKey(_eModuleSize))
 		{
-			return (null);
+			return (new List<GameObject>());
 		}
 		
 		return (s_mModulesBySize[_eModuleSize]);
@@ -284,7 +312,60 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        // Empty
+    }
+
+#if UNITY_EDITOR
+	[ContextMenu("Create Module Extras (Editor only)")]
+	void CreatePrecipitationObject()
+	{
+		Vector3 oldPos = transform.position;
+		transform.position = Vector3.zero;
+		
+		GameObject combinationMesh = new GameObject("_CombinationObject");
+		combinationMesh.transform.localPosition = Vector3.zero;
+		combinationMesh.transform.localRotation = Quaternion.identity;
+		
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		
+		for(int i = 0; i < meshFilters.Length; ++i) 
+		{
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+		}
+		
+		Mesh mesh = new Mesh();
+		mesh.CombineMeshes(combine);
+		
+		// Add the mesh renderer and filter to the prefab
+		MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
+		MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
+		
+		// Save the mesh
+		AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
+		mf.sharedMesh = mesh;
+		
+		// Save the precipitation mat
+		Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
+		AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+		
+		// Use this material and save an instance of the prefab
+		mr.sharedMaterial = precipitateMat;
+		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		
+		// Save assets and reposition original
+		AssetDatabase.SaveAssets();
+		transform.position = oldPos;
+		DestroyImmediate(combinationMesh);
+	}
+#endif
+
+
 // Member Fields
+
 
 	public EType m_ModuleType = EType.INVALID;
 	public ECategory m_ModuleCategory = ECategory.INVALID;
@@ -293,18 +374,30 @@ public class CModuleInterface : MonoBehaviour
 	public bool m_Buildable = true;
 
 
+    CNetworkVar<bool> m_bBuilt = null;
+
+
     GameObject m_cParentFacility = null;
 
 
     Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
 
 
-	static List<GameObject> s_mModules = new List<GameObject>();
-	static Dictionary<EType, List<GameObject>> s_mModulesByType = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory = new Dictionary<ECategory, List<GameObject>>();
-	static Dictionary<ESize, List<GameObject>> s_mModulesBySize = new Dictionary<ESize, List<GameObject>>();
+	static List<GameObject> s_mModules                                                  = new List<GameObject>();
+	static Dictionary<EType,     List<GameObject>> s_mModulesByType                     = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory                 = new Dictionary<ECategory, List<GameObject>>();
+	static Dictionary<ESize,     List<GameObject>> s_mModulesBySize                     = new Dictionary<ESize, List<GameObject>>();
+    static Dictionary<EType,     CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs  = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-    static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+
+// Server Member Fields
+
+
+    public float m_fNanitesCost = 100.124f;
+
+
+    float m_fBuildSpeedRatio = 1.0f;    // 1.0f = 100% of tool speed
+    float m_fBuiltRatio = 0.0f;         // 0.0f (0%) => 1.0f (100%)
 
 
 };

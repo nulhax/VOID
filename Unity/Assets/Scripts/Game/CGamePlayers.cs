@@ -71,6 +71,21 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+	public static GameObject SelfActorHead
+	{
+		get 
+		{ 
+			GameObject playerActorHead = null;
+			
+			if(SelfActorViewId != null)
+			{
+				playerActorHead = CNetwork.Factory.FindObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
+			}
+			
+			return(playerActorHead); 
+		}
+	}
+
 	public static CNetworkViewId SelfActorViewId
 	{
 		get 
@@ -260,7 +275,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-			List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			    List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+                if (aPlayerSpawners == null ||
+                    aPlayerSpawners.Count == 0)
+                {
+                    break;
+                }
 				
 				foreach (GameObject cPlayerSpawner in aPlayerSpawners)
 				{
@@ -281,7 +302,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
-                        //cPlayerActor.GetComponent<CPlayerHealth>().EventDeath += RespawnPlayer;
+                        cPlayerActor.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += RespawnPlayer;
 						
 						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
@@ -291,32 +312,37 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
-    void RespawnPlayer(GameObject _SourcePlayer)
+    void RespawnPlayer(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
     {
-        // Save a list of currently constructed spawners
-        List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
-
-        // iterate through every spawner
-        foreach (GameObject cPlayerSpawner in aPlayerSpawners)
+        // If the previous health state was DEAD
+        // And current health state is ALIVE
+        if (_eHealthCurrentState == CPlayerHealth.HealthState.DEAD)
         {
-            // If the spawner is not blocked
-            if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+            // Save a list of currently constructed spawners
+            List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+
+            // Iterate through every spawner
+            foreach (GameObject cPlayerSpawner in aPlayerSpawners)
             {
-                // "Board" the ship
-                // Note: Does nothing unless the player 'dies' outside the ship
-                _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();
+                // If the spawner is not blocked
+                if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
+                {
+                    // "Board" the ship
+                    // Note: Does nothing unless the player 'dies' outside the ship
+                    _SourcePlayer.GetComponent<CActorBoardable>().BoardActor();
 
-                // Set the player's position and rotation based upon the spawner's position and rotation
-                _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
-				_SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
+                    // Set the player's position and rotation based upon the spawner's position and rotation
+                    _SourcePlayer.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
+                    _SourcePlayer.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 
-                // Heal the player to full health
-                _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(100.0f);
+                    // Heal the player to max health
+                    _SourcePlayer.GetComponent<CPlayerHealth>().ApplyHeal(_SourcePlayer.GetComponent<CPlayerHealth>().MaxHealth);
 
-                // TODO: Reset other variables such as suit atmosphere and equipped tools
+                    // TODO: Reset other variables such as suit atmosphere and equipped tools
 
-                // Break foreach loop
-                break;
+                    // Break loop
+                    break;
+                }
             }
         }
     }
@@ -337,11 +363,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
-        CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
+		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
+        CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolNanitePistol);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.BlackMatterCell);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.FuelCell);
 		//CNetwork.Factory.CreateObject(CGameResourceLoader.ENetworkRegisteredPrefab.PlasmaCell);
@@ -351,7 +377,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 
 		//Place module gun
-		GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
+		//GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
 		//tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
 		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));

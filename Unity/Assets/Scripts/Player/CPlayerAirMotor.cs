@@ -43,11 +43,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		StrafeRight	= 1 << 5,
 		RollLeft	= 1 << 6,
 		RollRight	= 1 << 7,
-		YawLeft		= 1 << 8,
-		YawRight	= 1 << 9,
-		PitchUp		= 1 << 10,
-		PitchDown	= 1 << 11,
-		Turbo		= 1 << 12,
+		Turbo		= 1 << 8,
 	}
 
 
@@ -116,19 +112,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				}
 
 				// Debug fix: make the head body realign instantly
-				Quaternion headRot = GetComponent<CPlayerHead>().ActorHead.transform.rotation;
+				Quaternion headRot = GetComponent<CPlayerHead>().Head.transform.rotation;
 				transform.rotation = headRot;
-				GetComponent<CPlayerHead>().ActorHead.transform.rotation = headRot;
-
-//				// Start realigning the head
-//				m_RealignBodyWithHead = true;
-//				
-//				// Set the values to use for realigment
-//				Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-//				m_RealignFromRotation = transform.rotation;
-//				m_RealignToRotation = actorHead.rotation;
-//				m_RealignHeadTimer = 0.0f;
-//				m_RealignHeadTime = 0.0f;
+				GetComponent<CPlayerHead>().Head.transform.rotation = headRot;
 			}
 			else
 			{
@@ -151,6 +137,10 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		// Register the entering/exiting gravity zones
 		gameObject.GetComponent<CActorGravity>().EventEnteredGravityZone += OnPlayerEnterGravityZone;
 		gameObject.GetComponent<CActorGravity>().EventExitedGravityZone += OnPlayerLeaveGravityZone;
+
+		// Register input changes from the mouse
+		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, HandleAxisChange);
+		CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, HandleAxisChange);
 	}
 
 
@@ -159,6 +149,26 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		// Unregister the entering/exiting gravity zones
 		gameObject.GetComponent<CActorGravity>().EventEnteredGravityZone -= OnPlayerEnterGravityZone;
 		gameObject.GetComponent<CActorGravity>().EventExitedGravityZone -= OnPlayerLeaveGravityZone;
+
+		// Unegister input changes from the mouse
+		CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseX, HandleAxisChange);
+		CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseY, HandleAxisChange);
+	}
+
+
+	private void HandleAxisChange(CUserInput.EAxis _Axis, ulong _PlayerId, float _Value)
+	{
+		if(_PlayerId == CGamePlayers.GetPlayerActorsPlayerId(gameObject))
+		{
+			if(_Axis == CUserInput.EAxis.MouseX)
+			{
+				m_MouseRotations.x = _Value;
+			}
+			else if(_Axis == CUserInput.EAxis.MouseY)
+			{
+				m_MouseRotations.y = _Value;
+			}
+		}
 	}
 
 
@@ -213,32 +223,6 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 				}
 			}
 		}
-
-		if(m_RealignBodyWithHead)
-		{
-//			Transform actorHead = GetComponent<CPlayerHead>().ActorHead.transform;
-//
-//			m_RealignHeadTimer += Time.deltaTime;
-//			if(m_RealignHeadTimer > m_RealignHeadTime)
-//			{
-//				m_RealignHeadTimer = m_RealignHeadTime;
-//				m_RealignBodyWithHead = false;
-//			}
-//
-//			if(CNetwork.IsServer)
-//			{
-//				// Set the lerped rotation of the body
-//				transform.rotation = Quaternion.Slerp(m_RealignFromRotation, m_RealignToRotation, m_RealignHeadTimer/m_RealignHeadTime);
-//			}
-//
-//			// Set the rotation to the realignment rotation
-//			actorHead.rotation = m_RealignToRotation;
-//
-//			if(!m_RealignBodyWithHead)
-//			{
-//				GetComponent<CPlayerHead>().SetHeadRotations(0.0f);
-//			}
-		}
 	}
 
 
@@ -262,13 +246,9 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeLeft)	? (uint)EInputState.StrafeLeft	: 0;
         m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeRight)  ? (uint)EInputState.StrafeRight : 0;
 		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_Up)			    ? (uint)EInputState.FlyUp		: 0;
-        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_Down)            ? (uint)EInputState.Down : 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_Down)            ? (uint)EInputState.Down 		: 0;
 		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_RollLeft)        ? (uint)EInputState.RollLeft    : 0;
-        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_RollRight)       ? (uint)EInputState.RollRight : 0;
-		m_usMovementStates |= CUserInput.MouseMovementX < 0.0f    					            ? (uint)EInputState.YawLeft    	: 0;
-        m_usMovementStates |= CUserInput.MouseMovementX > 0.0f                                  ? (uint)EInputState.YawRight    : 0;
-        m_usMovementStates |= CUserInput.MouseMovementY < 0.0f                                  ? (uint)EInputState.PitchUp     : 0;
-        m_usMovementStates |= CUserInput.MouseMovementY > 0.0f                                  ? (uint)EInputState.PitchDown   : 0;
+        m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveFly_RollRight)       ? (uint)EInputState.RollRight 	: 0;
 		m_usMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Move_Turbo)  		    ? (uint)EInputState.Turbo     	: 0;
 	
 		s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
@@ -293,10 +273,8 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 		// Rotation
 		Vector3 deltaRotationAcceleration = new Vector3();
-		deltaRotationAcceleration.x -= ((m_usMovementStates & (uint)EInputState.PitchUp)  	> 0) ? 1.0f : 0.0f;
-		deltaRotationAcceleration.x += ((m_usMovementStates & (uint)EInputState.PitchDown) 	> 0) ? 1.0f : 0.0f;
-		deltaRotationAcceleration.y -= ((m_usMovementStates & (uint)EInputState.YawLeft)  	> 0) ? 1.0f : 0.0f;
-		deltaRotationAcceleration.y += ((m_usMovementStates & (uint)EInputState.YawRight) 	> 0) ? 1.0f : 0.0f;
+		deltaRotationAcceleration.x = m_MouseRotations.y;
+		deltaRotationAcceleration.y = m_MouseRotations.x;
 		deltaRotationAcceleration.z -= ((m_usMovementStates & (uint)EInputState.RollLeft)  	> 0) ? 1.0f : 0.0f;
 		deltaRotationAcceleration.z += ((m_usMovementStates & (uint)EInputState.RollRight) 	> 0) ? 1.0f : 0.0f;
 
@@ -358,8 +336,10 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 	private float m_fTurboAcceleration = 50.0f;
 	private float m_fMovementAcceleration = 10.0f;
 
-	private float m_fRotationAccelerationX = 1.0f;
-	private float m_fRotationAccelerationY = 2.0f;
+	private Vector2 m_MouseRotations = Vector2.zero;
+
+	private float m_fRotationAccelerationX = 0.5f;
+	private float m_fRotationAccelerationY = 0.5f;
 	private float m_fRotationAccelerationZ = 1.0f;
 	
 	private uint m_usMovementStates = 0;

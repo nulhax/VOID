@@ -485,6 +485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -543,7 +544,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 0c08df68316a2df4a8b6d7fb4622dec7, type: 3}
   m_barLoopList: 00
   m_bContinuousEvent: 0
-  m_fPlayFrequency: 1
+  m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!198 &19800000
 ParticleSystem:

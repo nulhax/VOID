@@ -125,7 +125,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	void Awake()
 	{
 		// Register health change from the CActorHealth
-		gameObject.GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
+		GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
 	}
 
 
@@ -146,7 +146,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 		}
 		else
 		{
-			Debug.LogError("Could not find module to register to");
+			Debug.LogError(name + " has CComponentInterface, but could not find CModuleInterface in parent GameObjects.");
 		}
 
         if (EventHealthChange != null)
@@ -156,7 +156,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	}
 
 
-	private void OnHealthChange(GameObject _Sender, float _PreviousHealth, float _CurrentHealth)
+	private void OnHealthChange(/*GameObject _Sender, */float _PreviousHealth, float _CurrentHealth)
 	{
         if (EventHealthChange != null)
         {
@@ -169,7 +169,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 			{
 				m_bIsFunctional.Set(false);
 			}
-			else if(_CurrentHealth == _Sender.GetComponent<CActorHealth>().health_max)
+			else if(_CurrentHealth == /*_Sender.*/GetComponent<CActorHealth>().health_max)
 			{
 				m_bIsFunctional.Set(true);
 			}

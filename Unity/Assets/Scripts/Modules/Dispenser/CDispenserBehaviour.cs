@@ -47,7 +47,7 @@ public class CDispenserBehaviour : MonoBehaviour
 	public void Start()
     {
 		// Get the DUI of the dispenser
-		m_DUIDispenser = m_DUIConsole.DUI.GetComponent<CDUIDispenserRoot>();
+		m_DUIDispenser = m_DUIConsole.DUIRoot.GetComponent<CDUIDispenserRoot>();
 
 		// Register the event for building a tool
 		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
@@ -74,6 +74,8 @@ public class CDispenserBehaviour : MonoBehaviour
     {
         // Create a new object
 		GameObject NewTool = CNetwork.Factory.CreateObject(CToolInterface.GetPrefabType(_ToolType));
+
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
 
         // Set the tool's position
 		NewTool.GetComponent<CNetworkView>().SetPosition(m_ToolSpawnLocation.position);

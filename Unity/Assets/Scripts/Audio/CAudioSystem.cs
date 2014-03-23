@@ -71,7 +71,7 @@ public class CAudioSystem : MonoBehaviour
 	{
 		s_cInstance = this;
 		
-        Debug.Log("AudioManager Initialising");
+        //Debug.Log("AudioManager Initialising");
        		
 		s_activeAudio = new List<ClipInfo>();
 		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));

@@ -30,7 +30,9 @@ public class CHUDHealth : MonoBehaviour
 	
 	
 	// Member Fields
-	public TweenAlpha m_HealthOverlayTween = null;
+	public GameObject m_HealthOverlay = null;
+
+	private TweenAlpha m_HealthOverlayTween = null;
 
 
 	// Member Properties
@@ -39,30 +41,38 @@ public class CHUDHealth : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
+		// Cache the health tween
+		m_HealthOverlayTween = m_HealthOverlay.GetComponent<TweenAlpha>();
 
+		// Set the health amcors as screen size
+		UISprite sprite = m_HealthOverlay.GetComponent<UISprite>();
+		sprite.leftAnchor.absolute = -Screen.width / 2;
+		sprite.rightAnchor.absolute = Screen.width / 2;
+		sprite.bottomAnchor.absolute = -Screen.height / 2;
+		sprite.topAnchor.absolute = Screen.height / 2;
 	}
 	
 	public void Update()
 	{
-		UpdateOverlay();
+		if(CGamePlayers.SelfActor != null)
+		{
+			UpdateOverlay();
+		}
 	}
 	
 	private void UpdateOverlay()
 	{
-		if (CNetwork.IsConnectedToServer) 
-		{
-			// Get the player oxygen supplu
-			float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth> ().HitPoints;
-			float maxHealth = CGamePlayers.SelfActor.GetComponent<CPlayerHealth> ().k_fMaxHealth;
+		// Get the player oxygen supplu
+		float health = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().Health;
+        float maxHealth = CGamePlayers.SelfActor.GetComponent<CPlayerHealth>().MaxHealth;
+		
+		// Calculate the value ratio
+		float value = 1.0f - health/maxHealth;
+		float alphaTweenRange = value * 0.5f;
 
-			// Calculate the value ratio
-			float value = 1.0f - health / maxHealth;
-			float alphaTweenRange = value * 0.5f;
-
-			// Update the bar
-			m_HealthOverlayTween.to = value;
-			m_HealthOverlayTween.from = value - alphaTweenRange;
-			m_HealthOverlayTween.duration = 0.5f;
-		}
+		// Update the bar
+		m_HealthOverlayTween.to = value;
+		m_HealthOverlayTween.from = value - alphaTweenRange;
+		m_HealthOverlayTween.duration = 0.5f;
 	}
 }

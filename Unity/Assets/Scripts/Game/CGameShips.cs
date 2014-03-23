@@ -110,7 +110,15 @@ public class CGameShips : CNetworkMonoBehaviour
 
 		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 
-		cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Bridge);
+        GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Bridge));
+        cBirdgeObject.GetComponent<CFacilityExpansion>().GetExpansionPort(0).GetComponent<CExpansionPortBehaviour>().CreateFacility(CFacilityInterface.EType.Airlock, 0);
+
+
+        //cBirdgeObject.GetComponent<CFacilityExpansion>().GetExpansionPort(0).GetComponent<CExpansionPortBehaviour>().CreateFacility(CFacilityInterface.EType.Test, 0);
+
+
+		//cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Bridge);
+        //cShipObject.GetComponent<CShipFacilities>().CreateFacility(CFacilityInterface.EType.Airlock, cBirdgeObject.GetComponent<CFacilityInterface>().FacilityId, 0, 0);
 	}
 
 

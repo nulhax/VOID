@@ -56,7 +56,7 @@ public class OVRCameraControllerEditor : Editor
 			
 			m_Component.VerticalFOV         = EditorGUILayout.FloatField("Vertical FOV", m_Component.VerticalFOV);
 			m_Component.IPD         		= EditorGUILayout.FloatField("IPD", m_Component.IPD);
-			
+
 			OVREditorGUIUtility.Separator();
 			
 			m_Component.CameraRootPosition  = EditorGUILayout.Vector3Field("Camera Root Position", m_Component.CameraRootPosition);
@@ -73,7 +73,7 @@ public class OVRCameraControllerEditor : Editor
 																		m_Component.FollowOrientation,
 																		typeof(Transform), true) as Transform;
 			m_Component.TrackerRotatesY 	= EditorGUILayout.Toggle("Tracker Rotates Y", m_Component.TrackerRotatesY);
-			
+
 			OVREditorGUIUtility.Separator();	
 
 			// Remove Portrait Mode from Inspector window for now

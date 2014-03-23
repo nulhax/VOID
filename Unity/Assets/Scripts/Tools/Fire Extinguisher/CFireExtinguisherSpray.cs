@@ -105,20 +105,18 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			if (m_bActive.Get())
+			if (m_bActive.Value)
 			{
-				RaycastHit _rh;
-				Ray ray = new Ray(m_cSprayParticalSystem.gameObject.transform.position, m_cSprayParticalSystem.gameObject.transform.forward);
+				Collider[] colliders = Physics.OverlapSphere(m_cSprayParticalSystem.transform.position + m_cSprayParticalSystem.transform.forward * 2.0f, 2.0f);
 
-				if (Physics.Raycast(ray, out _rh, 2.0f))
+				foreach(Collider collider in colliders)
 				{
-					CFireHazard_Old oldFireType = _rh.collider.gameObject.GetComponent<CFireHazard_Old>();
-					if (oldFireType != null)
-						oldFireType.Health -= 80.0f * Time.deltaTime;
-
-					CFireHazard fire = _rh.collider.gameObject.GetComponent<CFireHazard>();
+					CFireHazard fire = collider.gameObject.GetComponent<CFireHazard>();
 					if (fire != null)
+					{
 						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
+						break;
+					}
 				}
 			}
 		}
@@ -132,6 +130,8 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
         gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
         Debug.Log("OnUseStart");
 	}
+
+
     [AClientOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
@@ -144,8 +144,9 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.ExtinguishFireEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
+
 
 	[AServerOnly]
 	public void OnUseEnd(GameObject _cInteractableObject)
@@ -153,6 +154,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 		m_bActive.Set(false);
         gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

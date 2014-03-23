@@ -43,7 +43,7 @@ public class CDUIPanelFader : MonoBehaviour
 	// Member Properties
 	public float CurrentAlpha
 	{
-		get { return(m_FadeTimer/m_FadeTime); }
+		get { return(m_FadeTimer/m_FadeTime ); }
 	}
 
 	
@@ -71,45 +71,59 @@ public class CDUIPanelFader : MonoBehaviour
 			m_FadeTimer = 0.0f;
 		}
 
-		UpdatePanelAlpha();
+		UpdatePanelAlpha(CurrentAlpha);
+	}
 
-		if(CurrentAlpha == 0.0f)
+	public void FadeIn(float _FadeTime)
+	{
+		if(_FadeTime == 0.0f)
+		{
+			UpdatePanelAlpha(1.0f);
+			return;
+		}
+
+		m_FadingIn = true;
+		m_FadeTime = _FadeTime;
+		m_FadeTimer = 0.0f;
+
+		if(m_FadingOut)
+			m_FadingOut = false;
+	}
+
+	public void FadeOut(float _FadeTime)
+	{
+		if(_FadeTime == 0.0f)
+		{
+			UpdatePanelAlpha(0.0f);
+			return;
+		}
+
+		m_FadingOut = true;
+		m_FadeTime = _FadeTime;
+		m_FadeTimer = m_FadeTime;
+
+		if(m_FadingIn)
+			m_FadingIn = false;
+	}
+
+	private void UpdatePanelAlpha(float _Alpha)
+	{
+		// Set the panel alpha
+		gameObject.GetComponent<UIPanel>().alpha = _Alpha;
+
+		if(_Alpha == 0.0f)
 		{
 			m_FadingOut = false;
 
 			if(EventFadeOutFinished != null)
 				EventFadeOutFinished();
 		}
-		else if(CurrentAlpha == 1.0f)
+		else if(_Alpha == 1.0f)
 		{
 			m_FadingIn = false;
-
+			
 			if(EventFadeInFinished != null)
 				EventFadeInFinished();
 		}
-	}
-
-	public void FadeIn(float _FadeTime)
-	{
-		m_FadingIn = true;
-		m_FadeTime = _FadeTime;
-		m_FadeTimer = 0.0f;
-
-		UpdatePanelAlpha();
-	}
-
-	public void FadeOut(float _FadeTime)
-	{
-		m_FadingOut = true;
-		m_FadeTime = _FadeTime;
-		m_FadeTimer = m_FadeTime;
-
-		UpdatePanelAlpha();
-	}
-
-	private void UpdatePanelAlpha()
-	{
-		// Set the panel alpha
-		gameObject.GetComponent<UIPanel>().alpha = CurrentAlpha;
 	}
 }

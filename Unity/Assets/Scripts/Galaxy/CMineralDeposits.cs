@@ -68,7 +68,6 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 	{
 
 		float fRayLength = 500.0f;
-		Vector3 vRayDirection = Random.onUnitSphere;
 
         /*
         RaycastHit[] cRaycastHits = Physics.RaycastAll(transform.position, Random.insideUnitSphere, 300);
@@ -95,6 +94,7 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
         for (int i = 0; i < iRandom; ++i)
         {
+			Vector3 vRayDirection = Random.onUnitSphere;
             RaycastHit cRaycastHit;
             Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
 
@@ -102,9 +102,10 @@ public class CMineralDeposits : CNetworkMonoBehaviour
             if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
             {
                 GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
+				cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
                 cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
-                cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-                cCrystal.GetComponent<CNetworkView>().SetEulerAngles(vRayDirection);
+				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * Random.Range(3.0f, 6.0f));
+				cCrystal.GetComponent<CNetworkView>().SetRotation(Quaternion.LookRotation(vRayDirection) * Quaternion.AngleAxis(90.0f, Vector3.right));
 
                 m_aDeposits.Add(cCrystal);
             }

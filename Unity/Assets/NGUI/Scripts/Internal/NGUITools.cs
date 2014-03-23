@@ -502,6 +502,26 @@ static public class NGUITools
 	}
 
 	/// <summary>
+	/// Adjust the panels' depth by the specified value.
+	/// Returns the largest depth of any of the children panels
+	/// </summary>
+
+	static public int SetPanelsDepthNested(GameObject go, int depth)
+	{
+		UIPanel[] panels = go.GetComponentsInChildren<UIPanel>(true);
+
+		for (int i = 0; i < panels.Length; ++i)
+		{
+			UIPanel p = panels[i];
+#if UNITY_EDITOR
+			RegisterUndo(p, "Depth Change");
+#endif
+			p.depth = depth++;
+		}
+		return depth;
+	}
+
+	/// <summary>
 	/// Bring all of the widgets on the specified object forward.
 	/// </summary>
 

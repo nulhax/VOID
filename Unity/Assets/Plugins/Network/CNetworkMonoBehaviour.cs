@@ -28,9 +28,11 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 
 
 // Member Properties
+
+
 	public CNetworkViewId ViewId
 	{
-		get { return(ThisNetworkView.ViewId); }
+		get { return(SelfNetworkView.ViewId); }
 	}
 
 
@@ -44,19 +46,25 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 
     public void InvokeRpc(ulong _ulPlayerId, string _sMethodName, params object[] _caParameters)
     {
-        ThisNetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
+        SelfNetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
     }
 
 
     public void InvokeRpcAll(string _sMethodName, params object[] _caParameters)
     {
-        ThisNetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
+        SelfNetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
     }
 
 
-    public CNetworkView ThisNetworkView
+    public CNetworkView SelfNetworkView
     {
         get { return (gameObject.GetComponent<CNetworkView>()); }
+    }
+
+
+    public CNetworkViewId SelfNetworkViewId
+    {
+        get { return (SelfNetworkView.ViewId); }
     }
 
 

@@ -40,8 +40,18 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		ShipResources,
 		NaniteCapsule,
 		Engine,
+        AirlockInternal,
+        FacilityDoor,
+		FacilityControl,
+		NOSPanelWide,
 
 		MAX
+	}
+
+	public enum EAspectRatio
+	{
+		Standard,
+		Widescreen,
 	}
 
 	// Member Delegates & Events
@@ -51,7 +61,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	public GameObject m_DUICamera2D = null;
 	public GameObject m_DUICamera3D = null;
 	public EType m_DUIType = EType.INVALID;
-	public Vector2 m_RenderTexSize = Vector2.zero;
+	public EAspectRatio m_AspectRatio = EAspectRatio.Standard;
 
     private RenderTexture m_RenderTex = null; 
 	private CNetworkVar<CNetworkViewId> m_ConsoleViewId = null;
@@ -114,20 +124,20 @@ public class CDUIRoot : CNetworkMonoBehaviour
 			gameObject.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
 			gameObject.GetComponent<CNetworkView>().SetEulerAngles(Quaternion.identity.eulerAngles);
 
-			if(m_DUICamera3D != null)
-			{
-				m_Cached3DCamera = m_DUICamera3D.GetComponent<UICamera>();
-				m_Cached3DCamera.m_IsDUI = true;
-			}
-			
-			if(m_DUICamera2D != null)
-			{
-				m_Cached2DCamera = m_DUICamera2D.GetComponent<UICamera>();
-				m_Cached2DCamera.m_IsDUI = true;
-			}
-
 			// Increment the offset
 			s_UIOffset += 10.0f;
+		}
+
+		if(m_DUICamera3D != null)
+		{
+			m_Cached3DCamera = m_DUICamera3D.GetComponent<UICamera>();
+			m_Cached3DCamera.m_IsDUI = true;
+		}
+		
+		if(m_DUICamera2D != null)
+		{
+			m_Cached2DCamera = m_DUICamera2D.GetComponent<UICamera>();
+			m_Cached2DCamera.m_IsDUI = true;
 		}
 	}
 
@@ -146,11 +156,17 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 	}
 
+	public void SetCamerasRenderingState(bool _Render)
+	{
+//		if(m_DUICamera2D != null)
+//			m_DUICamera2D.camera.enabled = _Render;
+//		
+//		if(m_DUICamera3D != null)
+//			m_DUICamera3D.camera.enabled = _Render;
+	}
+
 	public void UpdateCameraViewportPositions(Vector2 _screenTexCoord)
 	{
-		UICamera current = DUICamera2D.GetComponent<UICamera>();
-		current.enabled = true;
-
 		Vector3 viewPortPos = DUICameraViewportPos(_screenTexCoord);
 
 		if(m_Cached2DCamera != null) 
@@ -168,13 +184,24 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	private void AttatchRenderTexture(Material _ScreenMaterial)
 	{
 		// Set the render text onto the material of the screen
-		_ScreenMaterial.SetTexture("_MainTex", m_RenderTex); 
+		_ScreenMaterial.SetTexture("_UI", m_RenderTex); 
 	}
 	
 	private void SetupRenderTexture()
 	{	
-		int width = (int)m_RenderTexSize.x;
-		int height = (int)m_RenderTexSize.y;
+		int width = 0;
+		int height = 0;
+
+		if(m_AspectRatio == EAspectRatio.Standard)
+		{
+			width = 1280;
+			height = 1024;
+		}
+		else if(m_AspectRatio == EAspectRatio.Widescreen)
+		{
+			width = 1280;
+			height = 720;
+		}
 		
 		// Create a new render texture
 		m_RenderTex = new RenderTexture(width, height, 16);
@@ -184,17 +211,19 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	
 	private void SetupUICameras()
 	{
+		UpdateCameraAspect();
+
 		if(m_DUICamera2D != null)
 		{
 			m_DUICamera2D.camera.targetTexture = m_RenderTex;
-			//m_DUICamera2D.camera.enabled = false;
 		}
 
 		if(m_DUICamera3D != null)
 		{
 			m_DUICamera3D.camera.targetTexture = m_RenderTex;
-			//m_DUICamera3D.camera.enabled = false;
 		}
+
+
 	}
 	
 	private Vector3 DUICameraViewportPos(Vector2 _screenTexCoord)
@@ -223,5 +252,31 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		}
 		
 		return (s_RegisteredPrefabs[_DUIType]);
+	}
+
+	[ContextMenu("Update Camera Aspect")]
+	public void UpdateCameraAspect()
+	{
+		// Get the aspect ratio
+		float rtAspect = 0.0f;
+		if(m_AspectRatio == EAspectRatio.Standard)
+		{
+			rtAspect = 1.333f;
+		}
+		else if(m_AspectRatio == EAspectRatio.Widescreen)
+		{
+			rtAspect = 16.0f / 9.0f;
+		}
+
+		// Apply this ratio to the cameras
+		if(m_DUICamera2D != null)
+		{
+			m_DUICamera2D.camera.aspect = rtAspect;
+		}
+
+		if(m_DUICamera3D != null)
+		{
+			m_DUICamera3D.camera.aspect = rtAspect;
+		}
 	}
 }

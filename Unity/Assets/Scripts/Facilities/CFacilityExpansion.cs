@@ -24,50 +24,64 @@ using System;
 public class CFacilityExpansion : MonoBehaviour
 {
 	
-	// Member Types
+// Member Types
 	
 	
-	// Member Delegates & Events
+// Member Delegates & Events
 	
 	
-	// Member Fields
-	private Dictionary<uint, GameObject> m_ExpansionPorts = new Dictionary<uint, GameObject>();
-	
-	
-	// Member Properties
-	public List<GameObject> ExpansionPorts
+// Member Properties
+
+
+    public int ExpansionPortCount
+    {
+        get { return (m_caExpansionPorts.Length); }
+    }
+
+
+    public GameObject[] ExpansionPorts
 	{
-		get { return(new List<GameObject>(m_ExpansionPorts.Values)); }
+        get { return (m_caExpansionPorts); }
 	}
 
-	// Member Methods
-	public void Awake()
-	{	
-		DebugAddPortNames();
-	}
 
-	public GameObject GetExpansionPort(uint _ExpansionPortId)
-	{
-		return(m_ExpansionPorts[_ExpansionPortId]);
-	}
+// Member Methods
 
-	public void InitialiseExpansionPorts()
-	{
-		uint counter = 0;
-		foreach(CExpansionPortInterface port in gameObject.GetComponentsInChildren<CExpansionPortInterface>())
-		{
-			m_ExpansionPorts.Add(counter++, port.gameObject);
-			port.ExpansionPortId = counter;
-		}
-	}
 
-	private void DebugAddPortNames()
+    public GameObject GetExpansionPort(int _iExpansionPortId)
+    {
+        if (_iExpansionPortId >= ExpansionPortCount)
+        {
+            Debug.LogError(string.Format("Expansion port ({0}) does not exist in facility ({1})", _iExpansionPortId, gameObject.name));
+
+            return (null);
+        }
+
+        return (m_caExpansionPorts[_iExpansionPortId]);
+    }
+
+
+    void Awake()
+    {
+        //DebugAddPortNames();
+    }
+
+
+    void Start()
+    {
+        // Empty
+    }
+
+
+	void DebugAddPortNames()
 	{
-		foreach(uint portId in m_ExpansionPorts.Keys)
+        uint uiCount = 0;
+
+        foreach (GameObject cExpansionPort in m_caExpansionPorts)
 		{
 			// Create the text field object
-			GameObject TextField = new GameObject(m_ExpansionPorts[portId].name + portId.ToString());
-			TextField.transform.parent = m_ExpansionPorts[portId].transform;
+            GameObject TextField = new GameObject(cExpansionPort.name + (uiCount++).ToString());
+            TextField.transform.parent = cExpansionPort.transform;
 			TextField.transform.localPosition = Vector3.zero;
 			TextField.transform.localRotation = Quaternion.identity;
 			
@@ -87,4 +101,12 @@ public class CFacilityExpansion : MonoBehaviour
 			textMesh.text = TextField.name;
 		}
 	}
+
+
+// Member Fields
+
+
+    public GameObject[] m_caExpansionPorts = null;
+
+
 };

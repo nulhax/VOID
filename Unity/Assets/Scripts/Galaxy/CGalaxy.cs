@@ -63,18 +63,20 @@ public class CGalaxy : CNetworkMonoBehaviour
 		public SCellPos mParentAbsoluteCell;
 		public Vector3 mPosition;
 		public Quaternion mRotation;
+		public Vector3 mScale;
 		public Vector3 mLinearVelocity;
 		public Vector3 mAngularVelocity;
 
 		public bool mHasNetworkedEntityScript;
 		public bool mHasRigidBody;
 
-		public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
+		public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, Vector3 position, Quaternion rotation, Vector3 scale, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
 		{
 			mPrefabID = prefabID;
 			mParentAbsoluteCell = parentAbsoluteCell;
 			mPosition = position;
 			mRotation = rotation;
+			mScale = scale;
 			mLinearVelocity = linearVelocity;
 			mAngularVelocity = angularVelocity;
 			mHasNetworkedEntityScript = hasNetworkedEntityScript;
@@ -253,7 +255,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 			for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 				mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-			gameObject.AddComponent<DungeonMaster>();
 			new DynamicEvent_RogueAsteroid();
 			new DifficultyModifier_DifficultyChoice();
 			gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
@@ -677,9 +678,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		NetworkedEntity networkedEntity = gubbin.mHasNetworkedEntityScript ? gubbinObject.GetComponent<NetworkedEntity>() : null;   // Get networked entity script IF it has one.
 		Rigidbody rigidBody = gubbin.mHasRigidBody ? gubbinObject.GetComponent<Rigidbody>() : null; // Get rigid body IF it has one.
 
-		float uniformScale = Random.Range(0.5f, 2.0f);
-		gubbinObject.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
-
 		// Parent object.
 		gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.
 
@@ -692,6 +690,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 		gubbinObject.transform.rotation = gubbin.mRotation; // Set rotation.
 		if (!networkedEntity || !networkedEntity.Angle)  // If the object does not have a networked entity script, or if the networked entity script does not update rotation...
 			networkView.SyncTransformRotation();// Sync the rotation through the network view.
+
+		// Scale
+		gubbinObject.transform.localScale = gubbin.mScale; // Set scale.
+		networkView.SyncTransformScale(); // Sync the scale through the network view.
 
 		// Linear velocity.
 		if (rigidBody != null/* && gubbin.mLinearVelocity != null*/)
@@ -793,47 +795,16 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	void UpdateGalaxyAesthetic(SCellPos absoluteCell)
 	{
+		Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
+		Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
+		Shader.SetGlobalFloat("void_FogDensity", 0.01f);
+
 		// Skybox.
 		Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Stars]);
 
 		if (RenderSettings.skybox == null)
 			RenderSettings.skybox = new Material(Shader.Find("VOID/MultitexturedSkybox"));
 		RenderSettings.skybox.SetVector("_Tint", Color.grey);
-
-		Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
-		Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
-		Shader.SetGlobalFloat("void_FogDensity", 0.01f);
-
-		// Calculate perspective warp.
-		Camera camera = Camera.current;
-		if (camera)
-		{
-			float CAMERA_NEAR = camera.nearClipPlane;
-			float CAMERA_FAR = camera.farClipPlane;
-			float CAMERA_FOV = camera.fieldOfView;
-			float CAMERA_ASPECT_RATIO = camera.aspect;
-
-			float fovWHalf = CAMERA_FOV * 0.5f;
-
-			Vector3 toTop = camera.transform.up * CAMERA_NEAR * Mathf.Tan(fovWHalf * Mathf.Deg2Rad);
-			Vector3 toRight = toTop * CAMERA_ASPECT_RATIO;
-
-			Vector3 topLeft = camera.transform.forward * CAMERA_NEAR - toRight + toTop;
-			float CAMERA_SCALE = topLeft.magnitude * CAMERA_FAR / CAMERA_NEAR;
-
-			topLeft.Normalize();
-			topLeft *= CAMERA_SCALE;
-
-			Vector3 topRight = (camera.transform.forward * CAMERA_NEAR + toRight + toTop).normalized * CAMERA_SCALE;
-			Vector3 bottomRight = (camera.transform.forward * CAMERA_NEAR + toRight - toTop).normalized * CAMERA_SCALE;
-			Vector3 bottomLeft = (camera.transform.forward * CAMERA_NEAR - toRight - toTop).normalized * CAMERA_SCALE;
-
-			Shader.SetGlobalVector("void_FrustumCornerTopLeft", topLeft);
-			Shader.SetGlobalVector("void_FrustumCornerTopRight", topRight);
-			Shader.SetGlobalVector("void_FrustumCornerBottomRight", bottomRight);
-			Shader.SetGlobalVector("void_FrustumCornerBottomLeft", bottomLeft);
-			Shader.SetGlobalFloat("void_CameraScale", CAMERA_SCALE);
-		}
 	}
 
 	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
@@ -904,10 +875,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+			                                    Vector3.one * Random.Range(5.0f, 10.0f), // Scale
+												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
+			                                    Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 												true,   // Has NetworkedEntity script.
-												false    // Has a rigid body.
+												true    // Has a rigid body.
 												));
 		}
 	}
@@ -919,6 +891,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 		uint uiNumAsteroidClusters = AsteroidClusterCount(absoluteCell);
 		for (uint uiCluster = 0; uiCluster < uiNumAsteroidClusters; ++uiCluster)
 		{
+			Vector3 linearClusterVelocity = Random.onUnitSphere * Random.Range(0.0f, 75.0f);
+
 			uint uiNumAsteroidsInCluster = (uint)Random.Range(6, 21);
 			for (uint uiAsteroid = 0; uiAsteroid < uiNumAsteroidsInCluster; ++uiAsteroid)
 			{
@@ -928,8 +902,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 													absoluteCell,   // Parent cell.
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
-													Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-													Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+				                                    Vector3.one * Random.Range(2.0f, 8.0f), // Scale
+				                                    Vector3.zero, //linearClusterVelocity, // Linear velocity.
+													Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
 													));
@@ -953,6 +928,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
+			                                    Vector3.one, // Scale
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
 												true,   // Has NetworkedEntity script.

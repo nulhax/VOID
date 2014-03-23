@@ -20,7 +20,6 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorNetworkSyncronized))]
 public class CActorInteractable : CNetworkMonoBehaviour 
 {
 
@@ -35,7 +34,10 @@ public class CActorInteractable : CNetworkMonoBehaviour
     public event NotifyInputInteraction EventPrimary;
     public event NotifyInputInteraction EventSecondary;
     public event NotifyInputInteraction EventUse;
-	
+
+
+// Member Fields
+
 	
 // Member Properties
 
@@ -85,10 +87,6 @@ public class CActorInteractable : CNetworkMonoBehaviour
 			break;
 		}
 	}
-
-
-// Member Fields
-
 
 }
 

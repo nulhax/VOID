@@ -42,6 +42,8 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 // Member Properties
 
+	private int m_BulletFireSoundIndex = -1;
+
 
 // Member Methods
 
@@ -94,6 +96,14 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
     }
 
 
+	void Awake()
+	{
+		CAudioCue audioCue = GetComponent<CAudioCue>();
+		if (audioCue == null)
+			audioCue = gameObject.AddComponent<CAudioCue>();
+		m_BulletFireSoundIndex = audioCue.AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
+	}
+
 	void Start()
 	{
 		m_cNossle = transform.FindChild("Nossle").gameObject;
@@ -132,6 +142,8 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	{
 		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Ak47/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
 		cBullet.rigidbody.AddForce(cBullet.transform.forward * 40.0f + rigidbody.velocity, ForceMode.VelocityChange);
+
+		GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_BulletFireSoundIndex);
 	}
 
 
@@ -147,7 +159,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.ShootEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
 	}
 
 

@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -98,7 +98,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.OpenDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
@@ -107,7 +107,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.CloseDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
@@ -115,7 +115,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
 
 		// Register DUI events
-		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIModuleCreationRoot>();
+		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDUIModuleCreationRoot>();
 		m_DUIModuleCreationRoot.EventBuildModuleButtonPressed += OnDUIBuildButtonPressed;
 
 		// Configure DUI
@@ -175,7 +175,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	
 	private void ActivateDUI()
 	{
-		Transform head = m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform;
+		Transform head = m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
 
 		Vector3 toPos = head.position + (head.forward * 1.0f);
 		Quaternion toRot = Quaternion.LookRotation((toPos - head.position).normalized);
@@ -197,7 +197,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			m_DUI.transform.position = m_ActivatedPosition;
 
 			// Rotate towards head
-			Transform head = m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().ActorHead.transform;
+			Transform head = m_ToolInterface.OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
 			Quaternion toRot = Quaternion.LookRotation((m_ActivatedPosition - head.position).normalized);
 			m_DUI.transform.rotation = toRot;
 		}

@@ -35,10 +35,17 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 
 // Member Properties
+
+
 	public TYPE Value
 	{
 		get {return(Get());}
 		set {Set(value);}
+	}
+
+	public TYPE PreviousValue
+	{
+		get {return(GetPrevious());}
 	}
 
 

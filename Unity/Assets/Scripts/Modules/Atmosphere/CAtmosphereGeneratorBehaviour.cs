@@ -70,7 +70,7 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 	public void Start()
 	{
 		// Register myself as a atmosphere generator
-		CGameShips.Ship.GetComponent<CShipLifeSupportSystem>().RegisterAtmosphereGenerator(gameObject);
+		//CGameShips.Ship.GetComponent<CShipAtmosphere>().RegisterAtmosphereGenerator(gameObject);
 
 		if(CNetwork.IsServer)
 			ActivateGeneration();

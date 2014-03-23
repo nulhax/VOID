@@ -42,7 +42,9 @@ public class OVRCamera : OVRComponent
 	
 	// We will search for camera controller and set it here for access to its members
 	private OVRCameraController CameraController = null;
-	
+
+	public bool m_DontUpdateOrientation = false;
+
 	// PUBLIC MEMBERS
 	// camera position...	
 	// From root of camera to neck (translation only)
@@ -118,16 +120,14 @@ public class OVRCamera : OVRComponent
 	{
 		base.Update ();
 	}
-	
-	// OnPreCull
-	void OnPreCull()
+
+	void LateUpdate()
 	{
 		// NOTE: Setting the camera here increases latency, but ensures
 		// that all Unity sub-systems that rely on camera location before
 		// being set to render are satisfied. 
 		if(CameraController.CallInPreRender == false)
 			SetCameraOrientation();
-	
 	}
 	
 	// OnPreRender
@@ -197,25 +197,27 @@ public class OVRCamera : OVRComponent
 	// SetCameraOrientation
 	void SetCameraOrientation()
 	{
+		if(m_DontUpdateOrientation)
+			return;
+
 		Quaternion q   = Quaternion.identity;
 		Vector3    dir = Vector3.forward;		
 		
 		// Main camera has a depth of 0, so it will be rendered first
-		if(gameObject.camera.depth == 0.0f)
+		if(gameObject.name == "CameraLeft")
 		{			
 			// If desired, update parent transform y rotation here
 			// This is useful if we want to track the current location of
 			// of the head.
 			// TODO: Future support for x and z, and possibly change to a quaternion
 			// NOTE: This calculation is one frame behind 
-			if(CameraController.TrackerRotatesY == true)
-			{
-				
-				Vector3 a = gameObject.camera.transform.rotation.eulerAngles;
-				a.x = 0; 
-				a.z = 0;
-				gameObject.transform.parent.transform.eulerAngles = a;
-			}
+//			if(CameraController.TrackerRotatesY == true)
+//			{
+//				Vector3 a = gameObject.camera.transform.rotation.eulerAngles;
+//				a.x = 0; 
+//				a.z = 0;
+//				gameObject.transform.parent.transform.eulerAngles = a;
+//			}
 			/*
 			else
 			{
@@ -263,7 +265,7 @@ public class OVRCamera : OVRComponent
 		
 		// * * *
 		// Update camera rotation
-		gameObject.camera.transform.rotation = q;
+		gameObject.transform.parent.rotation = q;
 		
 		// * * *
 		// Update camera position (first add Offset to parent transform)

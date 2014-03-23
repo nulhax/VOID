@@ -29,7 +29,7 @@ public class CNetworkServer : MonoBehaviour
 // Member Constants
 
 
-	public const float k_fSendRate = 100; // 50ms
+	public const float k_fSendRate = 33; // 30ms
     public const int kiTitleMaxLength = 32;
 	public const float kfRegistrationInterval = 5.0f;
 
@@ -367,7 +367,7 @@ public class CNetworkServer : MonoBehaviour
 				cNetworkViewStream.Write(cNetworkPlayer.NetworkViewStream);
 
                 // Check stream has outbound data
-				if (cNetworkViewStream.Size >= 11)
+				if (cNetworkViewStream.ByteSize >= 11)
                 {
                     //Logger.WriteError("Sent packet to player id ({0}) system address ({1}) of size ({2}) MessageId ({3})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkViewStream.GetSize(), cNetworkViewStream.ReadByte());
 					//cNetworkViewStream.SetReadOffset(0);
@@ -484,7 +484,7 @@ public class CNetworkServer : MonoBehaviour
 		m_cServerInfo.Write(baTitlePadded);
 
 
-		m_cRnPeer.SetOfflinePingResponse(m_cServerInfo.BitStream.GetData(), (uint)m_cServerInfo.Size);
+		m_cRnPeer.SetOfflinePingResponse(m_cServerInfo.BitStream.GetData(), (uint)m_cServerInfo.ByteSize);
 	}
 
 
