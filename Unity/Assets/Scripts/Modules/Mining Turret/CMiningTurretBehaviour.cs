@@ -204,7 +204,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 				}
                 else
                 {
-                    CMinerals cMinerals = cHitObject.GetComponent<CMinerals>();
+                    CMineralsBehaviour cMinerals = cHitObject.GetComponent<CMineralsBehaviour>();
 
                     if (cMinerals != null &&
                         m_bExtracterBeamButtonDown)

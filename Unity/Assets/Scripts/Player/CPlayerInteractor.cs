@@ -312,7 +312,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 
 	public static float s_InteractionRange = 0.0f;
-    static float s_fRayRange = 20.0f;
+    static float s_fRayRange = 40.0f;
     
 
 // Server Member Fields
