@@ -148,7 +148,7 @@ MonoBehaviour:
     Provides the ship with greater storage for [00ffff]Power[-].
 
 
-    Note: [00ffff]Power[-] is neccissary in order to run all modules onboard the ship.
+    Note: [00ffff]Power[-] is necessary in order to run all modules onboard the ship.
 
 
     [ffff00]Built using the [00ffAA][i][Unnamed][/i][-] tool[-]'
