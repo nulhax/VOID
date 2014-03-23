@@ -363,7 +363,6 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
         switch (_eButton)
         {
             case CDuiDoorControlBehaviour.EButton.OpenDoor:
-                Debug.LogError(gameObject.name + " expansion port opening door: " + Door.name);
                 DoorBehaviour.SetOpened(true);
                 AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
                 AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
