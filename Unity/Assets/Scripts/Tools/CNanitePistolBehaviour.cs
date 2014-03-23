@@ -103,8 +103,6 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
                     {
                         cNanitePistolBehaviour.m_eState.Set(EState.BuildingModule);
                         cNanitePistolBehaviour.m_cTargetModule = _cStream.ReadNetworkViewId().GameObject;
-
-                        Debug.LogError("Building...");
                     }
                     break;
 
@@ -163,6 +161,16 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
 
 
         UpdateMiningLaser();
+        UpdateBuildingLaser();
+
+        if (m_eState.Get() == EState.Idle)
+        {
+            // Make particles invisible
+            if (m_cMingingHitParticles.activeSelf)
+            {
+                m_cMingingHitParticles.SetActive(false);
+            }
+        }
     }
 
 
@@ -217,6 +225,7 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
                     // Make particles visible
                     if (!m_cMingingHitParticles.activeSelf)
                     {
+                        m_cMingingHitParticles.layer = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerHead>().m_Head.layer;
                         m_cMingingHitParticles.SetActive(true);
                     }
 
@@ -224,13 +233,64 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
                     m_cMingingHitParticles.transform.position = tRaycastHit.point;
                     m_cMingingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
                 }
+
+                // Make particles invisible
+                else if (m_cMingingHitParticles.activeSelf)
+                {
+                    m_cMingingHitParticles.SetActive(false);
+                }
+            }
+
+            // Make particles invisible
+            else if (m_cMingingHitParticles.activeSelf)
+            {
+                m_cMingingHitParticles.SetActive(false);
             }
         }
+    }
 
-        // Make particles invisible
-        else if (m_cMingingHitParticles.activeSelf)
+
+    [AClientOnly]
+    void UpdateBuildingLaser()
+    {
+        if (m_bShowBuildingLaser)
         {
-            m_cMingingHitParticles.SetActive(false);
+            Transform cActorHeadTransform = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerHead>().m_Head.transform;
+
+            RaycastHit tRaycastHit = new RaycastHit();
+            Ray cRay = new Ray(cActorHeadTransform.position, cActorHeadTransform.forward);
+
+            if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
+            {
+                CModuleInterface cMinerals = tRaycastHit.collider.gameObject.transform.parent.GetComponent<CModuleInterface>();
+
+                if (cMinerals != null &&
+                    !cMinerals.IsBuilt)
+                {
+                    // Make particles visible
+                    if (!m_cMingingHitParticles.activeSelf)
+                    {
+                        m_cMingingHitParticles.layer = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerHead>().m_Head.layer;
+                        m_cMingingHitParticles.SetActive(true);
+                    }
+
+                    // Position and rotate particles
+                    m_cMingingHitParticles.transform.position = tRaycastHit.point;
+                    m_cMingingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
+                }
+
+                // Make particles invisible
+                else if (m_cMingingHitParticles.activeSelf)
+                {
+                    m_cMingingHitParticles.SetActive(false);
+                }
+            }
+
+            // Make particles invisible
+            else if (m_cMingingHitParticles.activeSelf)
+            {
+                m_cMingingHitParticles.SetActive(false);
+            }
         }
     }
 
@@ -302,6 +362,9 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
         {
             GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().EventTargetChange -= OnEventActorInteractableTargetChange;
         }
+
+        s_cSerializeStream.WriteBits(ENetworkAction.Stop, k_uiNetworkActionBitSize);
+        s_cSerializeStream.Write(SelfNetworkViewId);
     }
 
 
@@ -320,13 +383,17 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
             if (State == EState.Idle)
             {
                 m_cMingingHitParticles.SetActive(false);
+                m_bShowMiningLaser = false;
+                m_bShowBuildingLaser = false;
             }
             else if (State == EState.Mining)
             {
                 m_bShowMiningLaser = true;
+                m_bShowBuildingLaser = false;
             }
             else if (State == EState.BuildingModule)
             {
+                m_bShowMiningLaser = false;
                 m_bShowBuildingLaser = true;
             }
         }
