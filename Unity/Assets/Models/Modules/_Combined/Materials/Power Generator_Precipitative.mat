@@ -41,24 +41,24 @@ Material:
         second: 1
       data:
         first:
-          name: _Amount
+          name: _MinHeight
         second: 0
       data:
         first:
-          name: _NoiseFreq
-        second: 20
+          name: _MaxHeight
+        second: 2.5
+      data:
+        first:
+          name: _Amount
+        second: 0
       data:
         first:
           name: _FadeDist
         second: .200000003
       data:
         first:
-          name: _MinHeight
-        second: 0
-      data:
-        first:
-          name: _MaxHeight
-        second: 2.70000005
+          name: _NoiseFreq
+        second: 20
       data:
         first:
           name: _NoiseSpeed
@@ -83,4 +83,4 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .400000006, g: .699999988, b: 1, a: .101960786}
+        second: {r: .400000006, g: .699999988, b: 1, a: .105882354}

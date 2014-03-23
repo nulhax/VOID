@@ -37,20 +37,8 @@ Material:
     m_Floats:
       data:
         first:
-          name: _Amount
-        second: 0
-      data:
-        first:
           name: _SpecPower
         second: 1
-      data:
-        first:
-          name: _NoiseFreq
-        second: 10
-      data:
-        first:
-          name: _FadeDist
-        second: .300000012
       data:
         first:
           name: _MinHeight
@@ -58,11 +46,31 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 3.0999999
+        second: 3.1500001
+      data:
+        first:
+          name: _Amount
+        second: 0
+      data:
+        first:
+          name: _FadeDist
+        second: .300000012
+      data:
+        first:
+          name: _NoiseFreq
+        second: 10
       data:
         first:
           name: _NoiseSpeed
         second: .25
+      data:
+        first:
+          name: _Saturation
+        second: .5
+      data:
+        first:
+          name: _Brightness
+        second: 4
     m_Colors:
       data:
         first:
@@ -72,3 +80,7 @@ Material:
         first:
           name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _Tint
+        second: {r: .400000006, g: .699999988, b: 1, a: .105882354}

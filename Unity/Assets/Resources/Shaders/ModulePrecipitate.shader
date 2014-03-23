@@ -10,7 +10,7 @@
 		_SpecCol("SpecCol", Color) = (1,1,1,1)
 		_Saturation("Saturation", Float) = 0.5
 		_Brightness("Brightness", Float) = 4.0
-		_Tint("Holographic Tint (Alpha)", Color) = (0.4,0.7,1,0.7)
+		_Tint("Holographic Tint (Alpha)", Color) = (0.4,0.7,1,0.1)
 		_MinHeight("Minimum Position", Float) = 0
 		_MaxHeight("Maximum Position", Float) = 1
 		_Amount("Amount Complete", Range(0.0,1.0)) = 0.0
@@ -80,7 +80,7 @@
 		ENDCG
 		
 		Blend SrcAlpha OneMinusSrcAlpha
-		AlphaTest Greater 0.1
+		AlphaTest Greater 0
 		ZWrite Off 
 	
 		CGPROGRAM
