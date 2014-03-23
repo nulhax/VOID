@@ -123,7 +123,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
             }
             else
             {
-                m_PrecipitativeMesh.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
+				m_PrecipitativeObject.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
             }
         }
     }
