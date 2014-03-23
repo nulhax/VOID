@@ -115,6 +115,8 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400002}
+  - 114: {fileID: 11400030}
+  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: Mining Turret
   m_TagString: Untagged
@@ -779,6 +781,7 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 0
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -803,7 +806,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -973,6 +975,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
+--- !u!114 &11400030
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PrecipitativeMesh: {fileID: 100000, guid: 0115db43513d39444af3e7081c06ac71, type: 2}
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -984,7 +998,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400034
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -998,6 +1011,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SyncPosition: 1
   m_SyncRotation: 1
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1

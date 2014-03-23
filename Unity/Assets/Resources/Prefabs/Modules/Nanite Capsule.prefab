@@ -55,7 +55,6 @@ GameObject:
   - 114: {fileID: 11400058}
   - 114: {fileID: 11400034}
   - 114: {fileID: 11400002}
-  - 64: {fileID: 6400006}
   - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: Nanite Capsule
@@ -3501,19 +3500,6 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 0
   m_Mesh: {fileID: 4300000, guid: d55292b4fe691e74a9e33adcd1c65b37, type: 3}
---- !u!64 &6400006
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 0
-  m_Mesh: {fileID: 4300000, guid: 9d05e18cbd91cae44b5622bbfab7403e, type: 2}
 --- !u!82 &8200000
 AudioSource:
   m_ObjectHideFlags: 1
@@ -3837,7 +3823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3862,7 +3847,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3900,7 +3884,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4024,7 +4007,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400054
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -38,9 +38,6 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 // Member Fields
 
-
-	public GameObject m_ToolTipPrefab = null;
-
 	
 // Member Properties
 

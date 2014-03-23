@@ -12,7 +12,7 @@ GameObject:
   - 33: {fileID: 3300000}
   - 64: {fileID: 6400000}
   m_Layer: 0
-  m_Name: Power Capacitor_Precipitative
+  m_Name: Mining Turret_Precipitative
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 3484ef527ab198f43b16a1dba4e352dd, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -85,7 +85,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 9b8c3cff1cd66a94e8d1127d148f67b5, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 0979c7111ee93404a87886d619fcbb3a, type: 2}
 --- !u!64 &6400000
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -98,7 +98,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 9b8c3cff1cd66a94e8d1127d148f67b5, type: 2}
+  m_Mesh: {fileID: 4300000, guid: 0979c7111ee93404a87886d619fcbb3a, type: 2}
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -345,7 +345,7 @@ ParticleSystem:
     boxY: 3
     boxZ: 0
     placementMode: 2
-    m_Mesh: {fileID: 4300000, guid: 9b8c3cff1cd66a94e8d1127d148f67b5, type: 2}
+    m_Mesh: {fileID: 4300000, guid: 0979c7111ee93404a87886d619fcbb3a, type: 2}
     randomDirection: 0
   EmissionModule:
     enabled: 1
