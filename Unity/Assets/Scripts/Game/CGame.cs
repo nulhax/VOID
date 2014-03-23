@@ -74,10 +74,10 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, "DefaultName", 8);
+		//CNetwork.Server.Startup(kusServerPort, m_sServerTitle, "DefaultName", 8);
 
 		// Connect to server (Development Only)
-		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
+		//CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
     }
 	
 
