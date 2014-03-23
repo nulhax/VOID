@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -20,30 +21,61 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CModulePrecipitation : MonoBehaviour
+public class CModulePrecipitation : CNetworkMonoBehaviour
 {
 	
-	// Member Types
+// Member Types
 	
 	
-	// Member Delegates & Events
+// Member Delegates & Events
 
 
-	// Member Fields
+// Member Fields
+
+
 	public GameObject m_PrecipitativeMesh = null;
-	public float m_BuildTime = 20.0f;
-
-	private float m_Timer = 0.0f;
 
 
-	// Member Properties
+    private CNetworkVar<byte> m_BuiltRatio = null;
+
+
+// Member Properties
+
+
+    public float BuiltRatio
+    {
+        get { return (m_BuiltRatio.Get()); }
+    }
+
+
 	public bool IsModuleBuilt
 	{
 		get { return(m_PrecipitativeMesh == null); }
 	}
 
 	
-	// Member Methods
+// Member Methods
+
+
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_BuiltRatio = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
+    }
+
+
+    [AServerOnly]
+    public void SetBuiltRatio(float _fRatio)
+    {
+        if (_fRatio > 1.0f ||
+            _fRatio < 0.0f)
+        {
+            Debug.LogError("Invalid built ratio: " + _fRatio.ToString());
+        }
+
+        m_BuiltRatio.Set((byte)(_fRatio * 200.0f));
+    }
+
+
 	void Start()
 	{
 		// Disable all children except for the precipitation mesh
@@ -59,21 +91,14 @@ public class CModulePrecipitation : MonoBehaviour
 		m_PrecipitativeMesh.transform.localRotation = Quaternion.identity;
 	}
 	
+
 	void Update()
 	{
-		if(m_Timer != m_BuildTime)
-		{
-			m_Timer += Time.deltaTime;
-			m_Timer = Mathf.Clamp(m_Timer, 0.0f, m_BuildTime);
-
-			m_PrecipitativeMesh.renderer.material.SetFloat("_Amount", m_Timer/m_BuildTime);
-		}
-		else
-		{
-			OnPrecipitationFinish();
-		}
+        // Empty
 	}
 	
+
+    [AClientOnly]
 	void OnPrecipitationFinish()
 	{
 		// Enable all the children
@@ -86,4 +111,20 @@ public class CModulePrecipitation : MonoBehaviour
 		Destroy(m_PrecipitativeMesh);
 		m_PrecipitativeMesh = null;
 	}
+
+
+    void OnNetworkVarSync(INetworkVar _cSynedVar)
+    {
+        if (_cSynedVar == m_BuiltRatio)
+        {
+            if (m_BuiltRatio.Get() == 200)
+            {
+                OnPrecipitationFinish();
+            }
+            else
+            {
+                m_PrecipitativeMesh.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
+            }
+        }
+    }
 };

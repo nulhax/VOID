@@ -83,6 +83,12 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         get { return (m_cTargetActorObject); }
     }
 
+
+    public static float RayRange
+    {
+        get { return (s_fRayRange); }
+    }
+
 	
 // Member Methods
 
@@ -145,7 +151,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		s_InteractionRange = m_fRayRange;
+		s_InteractionRange = s_fRayRange;
 	}
 
 
@@ -183,15 +189,14 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     void UpdateTarget()
     {
-        GameObject cPlayerHead = CGamePlayers.SelfActorHead;
-        Ray cCameraRay = new Ray(cPlayerHead.transform.position, cPlayerHead.transform.forward);
+        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().m_Head.transform.position, gameObject.GetComponent<CPlayerHead>().m_Head.transform.forward);
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
-        // Do the raycast against all objects in path
-		RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, m_fRayRange, cPlayerHead.layer).OrderBy(_cRay => _cRay.distance).ToArray();
+        // Do the ray cast against all objects in path
+        RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer).OrderBy(_cRay => _cRay.distance).ToArray();
 
-		// Check each one for an interactable objectg
+		// Check each one for an interactable object
         foreach (RaycastHit cRaycastHit in cRaycastHits)
         {
             // Get the game object which owns this mesh
@@ -230,6 +235,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
             }
             else
             {
+                if (cNewTargetActorObject.GetComponent<CNetworkView>() == null)
+                {
+                    Debug.LogError("Actor intractable does not have a network view: " + cNewTargetActorObject.name);
+                }
+
                 s_cSerializeStream.Write(cNewTargetActorObject.GetComponent<CNetworkView>().ViewId);
             }
 
@@ -293,9 +303,6 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 // Member Fields
 
 
-    public float m_fRayRange = 5.0f;
-
-
     GameObject m_cOldTargetActorObject = null;
     GameObject m_cTargetActorObject = null;
     RaycastHit m_cTargetRaycastHit;
@@ -305,6 +312,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 
 	public static float s_InteractionRange = 0.0f;
+    static float s_fRayRange = 20.0f;
     
 
 // Server Member Fields

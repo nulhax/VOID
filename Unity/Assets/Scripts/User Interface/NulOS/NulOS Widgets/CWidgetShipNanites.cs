@@ -53,8 +53,8 @@ public class CWidgetShipNanites : MonoBehaviour
 	public void UpdateNanitesformation()
 	{
 		// Get the ship generation and generation potential
-		int shipNanites = CGameShips.Ship.GetComponent<CShipNaniteSystem>().ShipCurentNanites;
-		int shipNanitesPotential = CGameShips.Ship.GetComponent<CShipNaniteSystem>().ShipNanitesPotential;
+		float shipNanites = CGameShips.Ship.GetComponent<CShipNaniteSystem>().ShipCurentNanites;
+        float shipNanitesPotential = CGameShips.Ship.GetComponent<CShipNaniteSystem>().ShipNanitesPotential;
 		
 		// Calculate the value ratio
 		float value = (float)shipNanites/(float)shipNanitesPotential;

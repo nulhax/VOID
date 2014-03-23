@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,7 +22,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CModuleInterface : MonoBehaviour
+public class CModuleInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -107,6 +108,12 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
+    public bool IsBuilt
+    {
+        get { return (m_bBuilt.Get()); }
+    }
+
+
 	public bool IsBuildable
 	{
 		get { return(m_Buildable); }
@@ -120,6 +127,12 @@ public class CModuleInterface : MonoBehaviour
 
 
 // Member Methods
+
+
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_bBuilt = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+    }
 
 
     public List<GameObject> FindAttachedComponentsByType(CComponentInterface.EType _eAccessoryType)
@@ -141,6 +154,19 @@ public class CModuleInterface : MonoBehaviour
         }
 
         m_mAttachedComponents[_cComponentInterface.ComponentType].Add(_cComponentInterface.gameObject);
+    }
+
+
+    public void IncrementBuiltRatio(float _fRatio)
+    {
+        // Incrmeent and cap
+        m_fBuiltRatio += _fRatio;
+        m_fBuiltRatio = Mathf.Clamp(m_fBuiltRatio, 0.0f, 1.0f);
+
+        // Set built
+        m_bBuilt.Set(m_fBuiltRatio == 1.0f);
+
+        GetComponent<CModulePrecipitation>().SetBuiltRatio(m_fBuiltRatio);
     }
 
 
@@ -267,6 +293,7 @@ public class CModuleInterface : MonoBehaviour
 		}
 	}
 
+
 	void OnDestroy()
 	{
 		// Remove self from global list of modules
@@ -283,7 +310,12 @@ public class CModuleInterface : MonoBehaviour
 	}
 
 
-#if UNITY_EDITOR
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        // Empty
+    }
+
+
 	[ContextMenu("Create Module Extras (Editor only)")]
 	void CreatePrecipitationObject()
 	{
@@ -311,25 +343,26 @@ public class CModuleInterface : MonoBehaviour
 		MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
 		
 		// Save the mesh
-		UnityEditor.AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
+		AssetDatabase.CreateAsset(mesh, "Assets/Models/Modules/_Combined/" + gameObject.name + ".asset");
 		mf.sharedMesh = mesh;
 		
 		// Save the precipitation mat
 		Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
-		UnityEditor.AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+		AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Modules/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
 		
 		// Use this material and save an instance of the prefab
 		mr.sharedMaterial = precipitateMat;
-		UnityEditor.PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
 		
 		// Save assets and reposition original
-		UnityEditor.AssetDatabase.SaveAssets();
+		AssetDatabase.SaveAssets();
 		transform.position = oldPos;
 		DestroyImmediate(combinationMesh);
 	}
-#endif
+
 
 // Member Fields
+
 
 	public EType m_ModuleType = EType.INVALID;
 	public ECategory m_ModuleCategory = ECategory.INVALID;
@@ -338,18 +371,30 @@ public class CModuleInterface : MonoBehaviour
 	public bool m_Buildable = true;
 
 
+    CNetworkVar<bool> m_bBuilt = null;
+
+
     GameObject m_cParentFacility = null;
 
 
     Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
 
 
-	static List<GameObject> s_mModules = new List<GameObject>();
-	static Dictionary<EType, List<GameObject>> s_mModulesByType = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory = new Dictionary<ECategory, List<GameObject>>();
-	static Dictionary<ESize, List<GameObject>> s_mModulesBySize = new Dictionary<ESize, List<GameObject>>();
+	static List<GameObject> s_mModules                                                  = new List<GameObject>();
+	static Dictionary<EType,     List<GameObject>> s_mModulesByType                     = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory                 = new Dictionary<ECategory, List<GameObject>>();
+	static Dictionary<ESize,     List<GameObject>> s_mModulesBySize                     = new Dictionary<ESize, List<GameObject>>();
+    static Dictionary<EType,     CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs  = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-    static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+
+// Server Member Fields
+
+
+    public float m_fNanitesCost = 100.124f;
+
+
+    float m_fBuildSpeedRatio = 1.0f;    // 1.0f = 100% of tool speed
+    float m_fBuiltRatio = 0.0f;         // 0.0f (0%) => 1.0f (100%)
 
 
 };

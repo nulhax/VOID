@@ -53,6 +53,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 		HealingKit,
 		AK47,
 		MiningDrill,
+        NanitePistol,
 
 		MAX
 	}
@@ -82,10 +83,10 @@ public class CToolInterface : CNetworkMonoBehaviour
     [AServerOnly]
 	public event NotifyToolInteraction EventReload;
 
-    [AServerOnly]
+    [AClientOnly]
     public event NotifyToolInteraction EventPickedUp;
 
-    [AServerOnly]
+    [AClientOnly]
     public event NotifyToolInteraction EventDropped;
 
 
@@ -161,9 +162,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 					rigidbody.detectCollisions = false;
 				}
 
-				// Stop recieving syncronizations
+				// Stop receiving synchronizations
                 GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
 				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+
+                // Notify observers
+                if (EventPickedUp != null) EventPickedUp();
             }
             else
             {
@@ -179,9 +183,12 @@ public class CToolInterface : CNetworkMonoBehaviour
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
 
-				// Recieve syncronizations
+				// Receive synchronizations
 				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
 				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
+
+                // Notify observers
+                if (EventDropped != null) EventDropped();
             }
         }
     }
@@ -261,12 +268,6 @@ public class CToolInterface : CNetworkMonoBehaviour
 		{
             // Set owner player
 			m_ulOwnerPlayerId.Set(_ulPlayerId);
-
-            // Notify observers
-            if (EventPickedUp != null)
-            {
-                EventPickedUp();
-            }
 		}
 	}
 
@@ -281,12 +282,6 @@ public class CToolInterface : CNetworkMonoBehaviour
 		{
             // Set owning object view id
             m_ulOwnerPlayerId.Set(0);
-
-            // Notify observers
-            if (EventDropped != null)
-            {
-                EventDropped();
-            }
 		}
 	}
 

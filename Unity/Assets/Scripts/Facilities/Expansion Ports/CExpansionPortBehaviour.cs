@@ -173,6 +173,18 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
             return (null);
         }
     }
+
+
+    public GameObject CompressParticles
+    {
+        get { return (m_cCompressParticles); }
+    }
+
+
+    public GameObject DecompressParticles
+    {
+        get { return (m_cDecompressParticles); }
+    }
 	
 
 	public bool IsAttached
@@ -187,6 +199,8 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
         m_cAttachedExpansionPortViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_bCompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+        m_bDecompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 
         _cRegistrar.RegisterRpc(this, "PositionToNeighbour");
     }
@@ -275,7 +289,46 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
     void Update()
     {
-        //RenderNormals();
+        if (DoorBehaviour.IsOpened)
+        {
+            if (AttachedFacility != null)
+            {
+                float fAttachedFacilityAtmosphoereQuanityRatio = AttachedFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                float fSelfAtmosphoereQuanityRatio = m_cParentFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                float fRatioDifference = Mathf.Abs(fSelfAtmosphoereQuanityRatio - fAttachedFacilityAtmosphoereQuanityRatio);
+
+                // Attached facility has lower quantity ratio then self
+                if (fRatioDifference > 0.05f &&
+                    fAttachedFacilityAtmosphoereQuanityRatio < fSelfAtmosphoereQuanityRatio)
+                {
+                    m_bDecompressParticlesEnabled.Set(true);
+                    m_bCompressParticlesEnabled.Set(false);
+                }
+
+                // Attached facility has higher quantity ratio then self
+                else if (fRatioDifference > 0.05f && 
+                         fAttachedFacilityAtmosphoereQuanityRatio > fSelfAtmosphoereQuanityRatio)
+                {
+                    m_bDecompressParticlesEnabled.Set(false);
+                    m_bCompressParticlesEnabled.Set(true);
+                }
+                else
+                {
+                    m_bDecompressParticlesEnabled.Set(false);
+                    m_bCompressParticlesEnabled.Set(false);
+                }
+            }
+            else
+            {
+                m_bDecompressParticlesEnabled.Set(true);
+                m_bCompressParticlesEnabled.Set(false);
+            }
+        }
+        else
+        {
+            m_bDecompressParticlesEnabled.Set(false);
+            m_bCompressParticlesEnabled.Set(false);
+        }
     }
 
 
@@ -301,6 +354,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
     }
 
 
+    [AServerOnly]
     void OnDuiDoorButtonClick(CDuiDoorControlBehaviour.EButton _eButton)
     {
         switch (_eButton)
@@ -308,9 +362,13 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
             case CDuiDoorControlBehaviour.EButton.OpenDoor:
                 Debug.LogError(gameObject.name + " expansion port opening door: " + Door.name);
                 DoorBehaviour.SetOpened(true);
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
                 break;
 
             case CDuiDoorControlBehaviour.EButton.CloseDoor:
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.OpenDoor);
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.OpenDoor);
                 DoorBehaviour.SetOpened(false);
                 break;
 
@@ -325,9 +383,41 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_cAttachedExpansionPortViewId)
         {
-            if (m_cAttachedExpansionPortViewId.Get() != null)
+            if (m_cAttachedExpansionPortViewId.Get() != null &&
+                CNetwork.IsServer)
             {
-                // Empty
+                AttachedExpansionPortBehaviour.m_cParentFacility.GetComponent<CFacilityAtmosphere>().EventExplosiveDecompression += (bool _bDepressuring) =>
+                {
+                    //ProcessAirParticles();
+                };
+            }
+        }
+        else if (_cSyncedVar == m_bCompressParticlesEnabled)
+        {
+            if (m_cCompressParticles != null)
+            {
+                if (m_bCompressParticlesEnabled.Get())
+                {
+                    m_cCompressParticles.particleSystem.Play();
+                }
+                else
+                {
+                    m_cCompressParticles.particleSystem.Stop();
+                }
+            }
+        }
+        else if (_cSyncedVar == m_bDecompressParticlesEnabled)
+        {
+            if (m_cDecompressParticles != null)
+            {
+                if (m_bDecompressParticlesEnabled.Get())
+                {
+                    m_cDecompressParticles.particleSystem.Play();
+                }
+                else
+                {
+                    m_cDecompressParticles.particleSystem.Stop();
+                }
             }
         }
     }
@@ -339,10 +429,14 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
     public GameObject m_cDoor = null;
     public GameObject m_cDuiDoorControl1 = null;
     public GameObject m_cDuiDoorControl2 = null;
+    public GameObject m_cCompressParticles = null;
+    public GameObject m_cDecompressParticles = null;
 
     GameObject m_cParentFacility = null;
 
     CNetworkVar<CNetworkViewId> m_cAttachedExpansionPortViewId = null;
+    CNetworkVar<bool> m_bCompressParticlesEnabled = null;
+    CNetworkVar<bool> m_bDecompressParticlesEnabled = null;
 
 	uint m_uiPortId = 0;
 

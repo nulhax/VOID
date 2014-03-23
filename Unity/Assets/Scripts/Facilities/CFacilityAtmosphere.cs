@@ -29,6 +29,10 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void HandleExplosiveDecompression(bool _bDecompressing);
+    public event HandleExplosiveDecompression EventExplosiveDecompression;
+
+
 // Member Properties
 	
 
@@ -164,6 +168,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     public void SetExplosiveDepressurizingEnabled(bool _bEnabled)
     {
         m_bExplosiveDepressurizing = _bEnabled;
+
+        if (EventExplosiveDecompression != null) EventExplosiveDecompression(m_bExplosiveDepressurizing);
     }
 
 

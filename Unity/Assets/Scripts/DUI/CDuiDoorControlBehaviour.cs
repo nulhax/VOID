@@ -37,6 +37,14 @@ public class CDuiDoorControlBehaviour : MonoBehaviour
     };
 
 
+    public enum EPanel
+    {
+        OpenDoor,
+        CloseDoor,
+        DecompressionClosed,
+    }
+
+
 // Member Delegates & Events
 
 
@@ -70,8 +78,37 @@ public class CDuiDoorControlBehaviour : MonoBehaviour
     }
 
 
+    [AServerOnly]
+    public void SetPanel(EPanel _ePanel)
+    {
+        switch (_ePanel)
+        {
+            case EPanel.OpenDoor:
+                m_cOpenPanel.gameObject.SetActive(true);
+                m_cClosePanel.gameObject.SetActive(false);
+                break;
+
+            case EPanel.CloseDoor:
+                m_cOpenPanel.gameObject.SetActive(false);
+                m_cClosePanel.gameObject.SetActive(true);
+                break;
+
+            case EPanel.DecompressionClosed:
+                break;
+
+            default:
+                Debug.LogError("Unknown panel: " + _ePanel);
+                break;
+        }
+    }
+
+
     void Start()
     {
+        if (CNetwork.IsServer)
+        {
+            SetPanel(EPanel.OpenDoor);
+        }
     }
 
 
@@ -86,6 +123,10 @@ public class CDuiDoorControlBehaviour : MonoBehaviour
 
 
 // Member Fields
+
+
+    public UIPanel m_cOpenPanel = null;
+    public UIPanel m_cClosePanel = null;
 
 
 };
