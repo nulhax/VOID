@@ -138,11 +138,14 @@ public class CToolInterface : CNetworkMonoBehaviour
 			if (IsHeld)
             {
                 GameObject cOwnerPlayerActor = OwnerPlayerActor;
-              
+
+				//Disable collider
+				collider.enabled = false;
+
                 Transform[]children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
                 foreach(Transform child in children)
                 {
-                    if(child.name == "RightHandIndex2")
+                    if(child.name == "RightHand")
                     {
                         gameObject.transform.parent = child;
                     }
@@ -172,6 +175,9 @@ public class CToolInterface : CNetworkMonoBehaviour
             else
             {
                 gameObject.transform.parent = null;
+
+				//Enable collider
+				collider.enabled = true;
 
                 // Turn on dynamic physics
 				if(CNetwork.IsServer)
@@ -318,6 +324,5 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
-
 
 };

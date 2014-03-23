@@ -32,7 +32,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 // Member Fields
 	public GameObject m_Head = null;
+	public GameObject m_SkeletalHead = null;
 
+	float m_fRoamTolerance = 0.5f;
 
 	List<Type> m_cInputDisableQueue = new List<Type>();
 	
@@ -173,7 +175,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-	public void TransferPlayerPerspectiveToShipSpace()
+	private void TransferPlayerPerspectiveToShipSpace()
 	{
 		CGameCameras.SetObserverSpace(true);
 
@@ -188,7 +190,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
 	}
-
 
 	private void OnMouseMoveY(CUserInput.EAxis _eAxis, float _fAmount)
 	{
