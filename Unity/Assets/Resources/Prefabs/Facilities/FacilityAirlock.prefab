@@ -3821,8 +3821,8 @@ MonoBehaviour:
   m_cDoor: {fileID: 100026}
   m_cDuiDoorControl1: {fileID: 100010}
   m_cDuiDoorControl2: {fileID: 100004}
-  m_cCompressParticles: {fileID: 100006}
-  m_cDecompressParticles: {fileID: 100008}
+  m_cCompressParticles: {fileID: 100008}
+  m_cDecompressParticles: {fileID: 100006}
 --- !u!114 &11400044
 MonoBehaviour:
   m_ObjectHideFlags: 1
