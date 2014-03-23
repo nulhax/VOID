@@ -18,7 +18,12 @@ using System.Collections.Generic;
 
 
 /* Implementation */
-
+// http://www.geisswerks.com/ryan/BLOBS/blobs.html
+// http://codeartist.mx/tutorials/liquids/
+// http://wiki.unity3d.com/index.php?title=MetaBalls
+// http://unitycoder.com/blog/page/5/
+// http://unitycoder.com/upload/demos/VoxelDemos/Metaballs/
+// http://stopsecretdesign.wordpress.com/tag/unity-spaceship-shield-shader/
 public class CGalaxyShipShield : CNetworkMonoBehaviour 
 {
 	// Member Types
