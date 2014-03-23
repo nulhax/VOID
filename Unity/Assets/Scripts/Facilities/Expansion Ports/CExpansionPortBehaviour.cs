@@ -289,45 +289,48 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
     void Update()
     {
-        if (DoorBehaviour.IsOpened)
+        if (CNetwork.IsServer)
         {
-            if (AttachedFacility != null)
+            if (DoorBehaviour.IsOpened)
             {
-                float fAttachedFacilityAtmosphoereQuanityRatio = AttachedFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
-                float fSelfAtmosphoereQuanityRatio = m_cParentFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
-                float fRatioDifference = Mathf.Abs(fSelfAtmosphoereQuanityRatio - fAttachedFacilityAtmosphoereQuanityRatio);
-
-                // Attached facility has lower quantity ratio then self
-                if (fRatioDifference > 0.05f &&
-                    fAttachedFacilityAtmosphoereQuanityRatio < fSelfAtmosphoereQuanityRatio)
+                if (AttachedFacility != null)
                 {
-                    m_bDecompressParticlesEnabled.Set(true);
-                    m_bCompressParticlesEnabled.Set(false);
-                }
+                    float fAttachedFacilityAtmosphoereQuanityRatio = AttachedFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                    float fSelfAtmosphoereQuanityRatio = m_cParentFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                    float fRatioDifference = Mathf.Abs(fSelfAtmosphoereQuanityRatio - fAttachedFacilityAtmosphoereQuanityRatio);
 
-                // Attached facility has higher quantity ratio then self
-                else if (fRatioDifference > 0.05f && 
-                         fAttachedFacilityAtmosphoereQuanityRatio > fSelfAtmosphoereQuanityRatio)
-                {
-                    m_bDecompressParticlesEnabled.Set(false);
-                    m_bCompressParticlesEnabled.Set(true);
+                    // Attached facility has lower quantity ratio then self
+                    if (fRatioDifference > 0.05f &&
+                        fAttachedFacilityAtmosphoereQuanityRatio < fSelfAtmosphoereQuanityRatio)
+                    {
+                        m_bDecompressParticlesEnabled.Set(true);
+                        m_bCompressParticlesEnabled.Set(false);
+                    }
+
+                    // Attached facility has higher quantity ratio then self
+                    else if (fRatioDifference > 0.05f &&
+                             fAttachedFacilityAtmosphoereQuanityRatio > fSelfAtmosphoereQuanityRatio)
+                    {
+                        m_bDecompressParticlesEnabled.Set(false);
+                        m_bCompressParticlesEnabled.Set(true);
+                    }
+                    else
+                    {
+                        m_bDecompressParticlesEnabled.Set(false);
+                        m_bCompressParticlesEnabled.Set(false);
+                    }
                 }
                 else
                 {
-                    m_bDecompressParticlesEnabled.Set(false);
+                    m_bDecompressParticlesEnabled.Set(true);
                     m_bCompressParticlesEnabled.Set(false);
                 }
             }
             else
             {
-                m_bDecompressParticlesEnabled.Set(true);
+                m_bDecompressParticlesEnabled.Set(false);
                 m_bCompressParticlesEnabled.Set(false);
             }
-        }
-        else
-        {
-            m_bDecompressParticlesEnabled.Set(false);
-            m_bCompressParticlesEnabled.Set(false);
         }
     }
 

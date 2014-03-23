@@ -13,7 +13,9 @@
 
 // Namespaces
 using UnityEngine;
-using UnityEditor;
+#if UNITY_EDITOR
+    using UnityEditor;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 
@@ -315,7 +317,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         // Empty
     }
 
-
+#if UNITY_EDITOR
 	[ContextMenu("Create Module Extras (Editor only)")]
 	void CreatePrecipitationObject()
 	{
@@ -359,6 +361,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		transform.position = oldPos;
 		DestroyImmediate(combinationMesh);
 	}
+#endif
 
 
 // Member Fields

@@ -298,7 +298,10 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     [AClientOnly]
     void OnEventDopped()
     {
-        GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().EventTargetChange -= OnEventActorInteractableTargetChange;
+        if (GetComponent<CToolInterface>().OwnerPlayerActor != null)
+        {
+            GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().EventTargetChange -= OnEventActorInteractableTargetChange;
+        }
     }
 
 

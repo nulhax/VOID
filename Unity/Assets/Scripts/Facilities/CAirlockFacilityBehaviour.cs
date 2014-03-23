@@ -64,6 +64,7 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
         // Open airlock
         if (CNetwork.IsServer)
         {
+            /*
             m_cDuiInternal.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiAirlockInternalBehaviour>().EventOpenFacilityDoor += (CDuiAirlockInternalBehaviour.EButton _eButton) =>
             {
                 m_cFacilityExpansionPortBehaviour.DoorBehaviour.SetOpened(true);
@@ -86,6 +87,7 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
             {
                 m_cHullExpansionPortBehaviour.DoorBehaviour.SetOpened(false);
             };
+             * */
         }
 
         //m_cDuiFacility.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiFacilityDoorBehaviour>();
