@@ -194,7 +194,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 		if(m_AspectRatio == EAspectRatio.Standard)
 		{
-			width = 1024;
+			width = 1280;
 			height = 1024;
 		}
 		else if(m_AspectRatio == EAspectRatio.Widescreen)
@@ -261,7 +261,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		float rtAspect = 0.0f;
 		if(m_AspectRatio == EAspectRatio.Standard)
 		{
-			rtAspect = 1.0f;
+			rtAspect = 1.333f;
 		}
 		else if(m_AspectRatio == EAspectRatio.Widescreen)
 		{
