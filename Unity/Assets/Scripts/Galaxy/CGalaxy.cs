@@ -63,18 +63,20 @@ public class CGalaxy : CNetworkMonoBehaviour
 		public SCellPos mParentAbsoluteCell;
 		public Vector3 mPosition;
 		public Quaternion mRotation;
+		public Vector3 mScale;
 		public Vector3 mLinearVelocity;
 		public Vector3 mAngularVelocity;
 
 		public bool mHasNetworkedEntityScript;
 		public bool mHasRigidBody;
 
-		public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, Vector3 position, Quaternion rotation, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
+		public SGubbinMeta(CGameRegistrator.ENetworkPrefab prefabID, SCellPos parentAbsoluteCell, Vector3 position, Quaternion rotation, Vector3 scale, Vector3 linearVelocity, Vector3 angularVelocity, bool hasNetworkedEntityScript, bool hasRigidBody)
 		{
 			mPrefabID = prefabID;
 			mParentAbsoluteCell = parentAbsoluteCell;
 			mPosition = position;
 			mRotation = rotation;
+			mScale = scale;
 			mLinearVelocity = linearVelocity;
 			mAngularVelocity = angularVelocity;
 			mHasNetworkedEntityScript = hasNetworkedEntityScript;
@@ -676,10 +678,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		NetworkedEntity networkedEntity = gubbin.mHasNetworkedEntityScript ? gubbinObject.GetComponent<NetworkedEntity>() : null;   // Get networked entity script IF it has one.
 		Rigidbody rigidBody = gubbin.mHasRigidBody ? gubbinObject.GetComponent<Rigidbody>() : null; // Get rigid body IF it has one.
 
-		// Scale the object
-		float uniformScale = Random.Range(1.0f, 20.0f);
-		gubbinObject.transform.localScale = new Vector3(uniformScale, uniformScale, uniformScale);
-
 		// Parent object.
 		gubbinObject.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);   // Set the object's parent as the galaxy.
 
@@ -692,6 +690,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 		gubbinObject.transform.rotation = gubbin.mRotation; // Set rotation.
 		if (!networkedEntity || !networkedEntity.Angle)  // If the object does not have a networked entity script, or if the networked entity script does not update rotation...
 			networkView.SyncTransformRotation();// Sync the rotation through the network view.
+
+		// Scale
+		gubbinObject.transform.localScale = gubbin.mScale; // Set scale.
+		networkView.SyncTransformScale(); // Sync the scale through the network view.
 
 		// Linear velocity.
 		if (rigidBody != null/* && gubbin.mLinearVelocity != null*/)
@@ -873,8 +875,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-												Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
-												Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
+			                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
+												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
+			                                    Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
@@ -899,8 +902,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 													absoluteCell,   // Parent cell.
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
-				                                    linearClusterVelocity, // Linear velocity.
-													Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
+				                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
+				                                    Vector3.zero, //linearClusterVelocity, // Linear velocity.
+													Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
 													));
@@ -924,6 +928,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
+			                                    Vector3.one * Random.Range(1.0f, 5.0f), // Scale
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
 												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
 												true,   // Has NetworkedEntity script.

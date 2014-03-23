@@ -21,6 +21,7 @@ public class DynamicEvent_RogueAsteroid
                 parentAbsoluteCell, // Parent cell.
                 asteroidPosition,   // Position relative to parent.
                 Random.rotationUniform, // Rotation.
+				Vector3.one,
                 (CGameShips.GalaxyShip.transform.position - asteroidPosition).normalized * 50.0f,  // Linear velocity.
                 Random.onUnitSphere * 0.1f,    // Angular velocity.
                 true,   // Has networked entity script.
