@@ -29,18 +29,18 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	
 	// Member Fields
 	private List<GameObject> m_NaniteGenerators = new List<GameObject>();
-	private List<GameObject> m_NaniteSilos = new List<GameObject>();	
+	private List<GameObject> m_NaniteSilos = new List<GameObject>();
 
-	private int m_ShipNanitesPotential = 0;
-	private int m_ShipCurrentNanites = 0;
+    private float m_ShipNanitesPotential = 0;
+    private float m_ShipCurrentNanites = 0;
 
 	// Member Properties
-	public int ShipNanitesPotential
+	public float ShipNanitesPotential
 	{
 		get { return (m_ShipNanitesPotential); } 
 	}
-	
-	public int ShipCurentNanites
+
+    public float ShipCurentNanites
 	{
 		get { return (m_ShipCurrentNanites); } 
 	}
@@ -118,11 +118,11 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	}
 	
 	[AServerOnly]
-	public void AddNanites(int _iNanites)
+	public void AddNanites(float _fNanites)
 	{
 		int iNumSilos = m_NaniteSilos.Count;
 
-		int evenDistribution = _iNanites / iNumSilos;
+        float evenDistribution = _fNanites / iNumSilos;
 
 		foreach (GameObject silo in m_NaniteSilos) 
 		{
@@ -132,7 +132,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 			if(newNaniteAmount > siloBehaviour.NaniteCapacity)
 			{
-				int chargeAddition = siloBehaviour.AvailableNaniteCapacity;
+                float chargeAddition = siloBehaviour.AvailableNaniteCapacity;
 				siloBehaviour.StoredNanites = siloBehaviour.NaniteCapacity;
 				evenDistribution -= chargeAddition;
 			}
@@ -150,11 +150,11 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	}
 		
 	[AServerOnly]
-	public void DeductNanites(int _iNanites)
+	public void DeductNanites(float _fNanites)
 	{	
-		int iOriginalDebt = _iNanites;
+		float iOriginalDebt = _fNanites;
 
-		if (_iNanites < m_ShipCurrentNanites) 
+		if (_fNanites < m_ShipCurrentNanites) 
 		{
 			// Take nanites from non-full silos first
 			foreach (GameObject silo in m_NaniteSilos) 
@@ -163,23 +163,23 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 				if (siloBehaviour.IsStorageAvailable && siloBehaviour.StoredNanites < siloBehaviour.NaniteCapacity) 
 				{
-					if (siloBehaviour.StoredNanites > _iNanites) 
+					if (siloBehaviour.StoredNanites > _fNanites) 
 					{
-						siloBehaviour.DeductNanites (_iNanites);
-						_iNanites = 0;
+						siloBehaviour.DeductNanites (_fNanites);
+						_fNanites = 0;
 						break;
 					}
 					else 
 					{
-						int availableAmount = siloBehaviour.StoredNanites;
+                        float availableAmount = siloBehaviour.StoredNanites;
 						siloBehaviour.DeductNanites (availableAmount);
-						_iNanites -= availableAmount;
+						_fNanites -= availableAmount;
 					}
 				}
 			}
 
 			//If there is a remaining debt, start removing nanites from full silos
-			if (_iNanites > 0) 
+			if (_fNanites > 0) 
 			{						
 				foreach (GameObject silo in m_NaniteSilos) 
 				{
@@ -187,17 +187,17 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 			
 					if (siloBehaviour.IsStorageAvailable) 
 					{
-						if (siloBehaviour.StoredNanites > _iNanites) 
+						if (siloBehaviour.StoredNanites > _fNanites) 
 						{
-							siloBehaviour.DeductNanites (_iNanites);
-							_iNanites = 0;
+							siloBehaviour.DeductNanites (_fNanites);
+							_fNanites = 0;
 							break;
 						}
 						else 
 						{
-							int availableAmount = siloBehaviour.StoredNanites;
+                            float availableAmount = siloBehaviour.StoredNanites;
 							siloBehaviour.DeductNanites (availableAmount);
-							_iNanites -= availableAmount;
+							_fNanites -= availableAmount;
 						}
 					}
 				}

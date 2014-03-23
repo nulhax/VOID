@@ -114,7 +114,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
 
 				if (Physics.Raycast(ray, out _rh, 4.0f))
 				{
-                    CMinerals cMinerals = _rh.collider.gameObject.GetComponent<CMinerals>();
+                    CMineralsBehaviour cMinerals = _rh.collider.gameObject.GetComponent<CMineralsBehaviour>();
 
                     if (cMinerals != null)
                     {
@@ -142,7 +142,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.DrillEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
 
 

@@ -106,12 +106,12 @@ public class CTorchLight : CNetworkMonoBehaviour
                 if (m_bTorchLit.Get())
                 {
                     s_cSerializeStream.Write((byte)ENetworkAction.TurnOffLight);
-                    s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                    s_cSerializeStream.Write(SelfNetworkView.ViewId);
                 }
                 else
                 {
                     s_cSerializeStream.Write((byte)ENetworkAction.TurnOnLight);
-                    s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                    s_cSerializeStream.Write(SelfNetworkView.ViewId);
                 }
             }
         };
@@ -121,7 +121,7 @@ public class CTorchLight : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.ToggleColour);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 

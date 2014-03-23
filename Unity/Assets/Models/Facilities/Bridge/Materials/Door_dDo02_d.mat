@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Door_dDo02_d
-  m_Shader: {fileID: 4800000, guid: d9d6021d120578345a373dbe9a10f119, type: 3}
+  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -31,7 +31,28 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 42a261a892a77154abdc85e74cc685c4, type: 3}
+          m_Texture: {fileID: 2800000, guid: b0873b91854481f4fa16b07b61b514d3, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: df34dc556a75a2c4c98d0b63e79071df, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 2800000, guid: 43e4462463ef99844bc78a6e48b10f6e, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -41,18 +62,31 @@ Material:
           m_Texture: {fileID: 2800000, guid: b23a38d022a9404448a96a91312171d2, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+    m_Floats:
       data:
         first:
-          name: _Normal
-        second:
-          m_Texture: {fileID: 2800000, guid: a137f2dccccaa2044b218c8c39f7a974, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-    m_Floats:
+          name: _Shininess
+        second: .078125
       data:
         first:
           name: _SpecPower
         second: 3
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
       data:
         first:
           name: _Glossiness
@@ -62,3 +96,31 @@ Material:
         first:
           name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: .5, g: .5, b: .5, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}

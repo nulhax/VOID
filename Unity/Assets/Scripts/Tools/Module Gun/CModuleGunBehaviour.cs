@@ -98,7 +98,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.OpenDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
@@ -107,7 +107,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.CloseDui);
-                s_cSerializeStream.Write(ThisNetworkView.ViewId);
+                s_cSerializeStream.Write(SelfNetworkView.ViewId);
             }
         };
 
@@ -115,7 +115,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
 
 		// Register DUI events
-		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUI.GetComponent<CDUIModuleCreationRoot>();
+		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDUIModuleCreationRoot>();
 		m_DUIModuleCreationRoot.EventBuildModuleButtonPressed += OnDUIBuildButtonPressed;
 
 		// Configure DUI

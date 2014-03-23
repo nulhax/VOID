@@ -35,6 +35,7 @@ public class CGameCameras : MonoBehaviour
 
 	private static GameObject s_MainCamera = null;
 	private static GameObject s_ProjectedCamera = null;
+	private static GameObject s_BackgroundCamera = null;
 
 	private static bool s_IsObserverInsideShip = false;
 
@@ -122,7 +123,8 @@ public class CGameCameras : MonoBehaviour
 	{
 		// Make sure the client has the most up to date information
 		if(!CNetwork.Connection.IsDownloadingInitialGameData &&
-		   CNetwork.Connection.IsConnected)
+		   CNetwork.Connection.IsConnected &&
+            s_MainCamera != null)
 		{
 			// Update the transforms of the cameras
 			UpdateCameraTransforms();
@@ -170,23 +172,42 @@ public class CGameCameras : MonoBehaviour
 			s_MainCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/Camera"));
 			s_MainCamera.name = "Camera_Main";
 
-			// Set the main camera parented to the players head
-			s_MainCamera.transform.parent = CGamePlayers.SelfActorHead.transform;
-
 			// Instantiate the projected camera (copy from head camera)
 			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
 			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
+
+			// Instantiate the background camera
+			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
+			s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
+
+			// Set up the values for the bg camera
+			s_BackgroundCamera.transform.position = Vector3.zero;
+			s_BackgroundCamera.camera.clearFlags = CameraClearFlags.Skybox;
+			s_BackgroundCamera.camera.cullingMask = 1 << LayerMask.NameToLayer("Background");
+			s_BackgroundCamera.camera.depth = -1;
+
+			// Debug: Create a nebulae sphere
+			//GameObject.Instantiate(Resources.Load("Prefabs/Galaxy/NebulaePlaceholder"));
 		}
 
 		// Move the camera to the head location
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
-		
+
 		// Set the defult view perspective
-		SetPlayersViewPerspective(true);
+		SetObserverSpace(true);
+		SetObserverPerspective(CGamePlayers.SelfActorHead);
+	}
+
+	public static void SetObserverPerspective(GameObject _LookingFrom)
+	{
+		// Parent the camera to the looking from object
+		s_MainCamera.transform.parent = _LookingFrom.transform;
+		s_MainCamera.transform.localPosition = Vector3.zero;
+		s_MainCamera.transform.localRotation = Quaternion.identity;
 	}
 	
-	public static void SetPlayersViewPerspective(bool _IsInsideShip)
+	public static void SetObserverSpace(bool _IsInsideShip)
 	{
 		s_IsObserverInsideShip = _IsInsideShip;
 
@@ -227,7 +248,7 @@ public class CGameCameras : MonoBehaviour
 	private static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
-		_Camera.clearFlags = CameraClearFlags.SolidColor;
+		_Camera.clearFlags = CameraClearFlags.Depth;
 		_Camera.cullingMask = 1 << LayerMask.NameToLayer("Galaxy");
 
 		// Set the depth
@@ -240,6 +261,7 @@ public class CGameCameras : MonoBehaviour
 		_Camera.clearFlags = CameraClearFlags.Nothing;
 		_Camera.cullingMask = int.MaxValue;
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Galaxy"));
+		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Background"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 2D"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 3D"));
@@ -254,10 +276,16 @@ public class CGameCameras : MonoBehaviour
 		if(s_IsObserverInsideShip)
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);
+
+			// Update the background camera rotation
+			s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
 		}
 		else
 		{
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
+
+			// Update the background camera rotation
+			s_BackgroundCamera.transform.rotation = s_MainCamera.transform.rotation;
 		}
 
 		if(CGameCameras.IsOculusRiftActive)

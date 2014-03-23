@@ -57,12 +57,13 @@ GameObject:
   m_Component:
   - 4: {fileID: 400006}
   - 114: {fileID: 11400010}
+  - 114: {fileID: 11400000}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400002}
-  - 114: {fileID: 11400000}
   - 114: {fileID: 11400012}
+  - 114: {fileID: 11400058}
   m_Layer: 0
   m_Name: Mining Cockpit
   m_TagString: Untagged
@@ -329,7 +330,7 @@ Transform:
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
   m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_LocalScale: {x: 1.25302911, y: .5, z: 2}
   m_Children: []
   m_Father: {fileID: 400010}
 --- !u!4 &400006
@@ -486,7 +487,7 @@ Transform:
   m_GameObject: {fileID: 100038}
   m_LocalRotation: {x: -.707106829, y: 0, z: 0, w: .707106829}
   m_LocalPosition: {x: .0437534116, y: -1.08425307, z: 1.75058794}
-  m_LocalScale: {x: 1.25302911, y: 1.25302911, z: 2}
+  m_LocalScale: {x: 1.25302911, y: .5, z: 2}
   m_Children:
   - {fileID: 400002}
   m_Father: {fileID: 400010}
@@ -1012,6 +1013,7 @@ MonoBehaviour:
   m_ModuleSize: 2
   m_Internal: 1
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1414,6 +1416,18 @@ MonoBehaviour:
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
+--- !u!114 &11400058
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PrecipitativeMesh: {fileID: 100000, guid: 99f209b7c7c7621499a8a3c71ce3f222, type: 2}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

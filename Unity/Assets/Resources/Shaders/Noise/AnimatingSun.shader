@@ -34,9 +34,6 @@
 			
 		struct Input 
 		{
-			float3 worldRefl;
-			float3 worldNormal;
-			float3 viewDir;
 			float3 noise;
 		};
 
@@ -52,16 +49,19 @@
 		{
 			float3 noise = IN.noise;
 		
-			float o1 = abs(snoise(noise));
-			float o2 = abs(snoise(2.0 * noise)) / 2.0;
-			float o3 = abs(snoise(4.0 * noise)) / 4.0;
-			float o4 = abs(snoise(8.0 * noise)) / 8.0;
+			float freq = 1.0, amp = 0.5;
+			float sum = 0;	
+			for(int i = 0; i < 4; i++) 
+			{
+				sum += abs(snoise(noise * freq) * amp);
+				freq *= 2.0;
+				amp *= 0.5;
+			}
 		
-			float final = o1 + o2 + o3 + o4;
 			//final = 0.5 + 0.5 * final;
-			final += abs(sin(_Time.y + final) * 0.25);
+			sum += abs(sin(_Time.y + sum) * 0.25);
 
-			float4 c = lerp(_Color1, _Color2, final);
+			float4 c = lerp(_Color1, _Color2, sum);
 			
 			o.Emission = c;
 		}

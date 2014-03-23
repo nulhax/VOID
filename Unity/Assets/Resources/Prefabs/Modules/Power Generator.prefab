@@ -40,6 +40,8 @@ GameObject:
   - 114: {fileID: 11400024}
   - 114: {fileID: 11400058}
   - 82: {fileID: 8200004}
+  - 114: {fileID: 11400064}
+  - 114: {fileID: 11400066}
   m_Layer: 0
   m_Name: Power Generator
   m_TagString: Untagged
@@ -81,7 +83,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &100008
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -139,7 +141,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &100014
 GameObject:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -417,6 +419,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 400008}
+  - {fileID: 400006}
   - {fileID: 400020}
   - {fileID: 400000}
   - {fileID: 400046}
@@ -439,26 +443,26 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100014}
-  m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106829}
-  m_LocalPosition: {x: .0109906998, y: .600000024, z: 1.57441461}
-  m_LocalScale: {x: .5, y: .5, z: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 1.57441485, y: .600000024, z: -.0109908888}
+  m_LocalScale: {x: .500000119, y: .5, z: 1}
   m_Children:
   - {fileID: 400012}
   - {fileID: 400016}
-  m_Father: {fileID: 400046}
+  m_Father: {fileID: 400002}
 --- !u!4 &400008
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
-  m_LocalRotation: {x: 0, y: .707106829, z: 0, w: .707106829}
-  m_LocalPosition: {x: -.0108194388, y: .600000024, z: -1.57415307}
-  m_LocalScale: {x: .5, y: .5, z: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: -1.5741533, y: .600000024, z: .0108196279}
+  m_LocalScale: {x: .500000119, y: .5, z: 1}
   m_Children:
   - {fileID: 400014}
   - {fileID: 400010}
-  m_Father: {fileID: 400046}
+  m_Father: {fileID: 400002}
 --- !u!4 &400010
 Transform:
   m_ObjectHideFlags: 1
@@ -652,8 +656,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400008}
-  - {fileID: 400006}
   - {fileID: 400044}
   - {fileID: 400042}
   - {fileID: 400040}
@@ -1395,6 +1397,7 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 1
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1615,7 +1618,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1651,7 +1653,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400038
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1676,7 +1677,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400042
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1863,6 +1863,29 @@ MonoBehaviour:
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
+--- !u!114 &11400064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PrecipitativeMesh: {fileID: 100002, guid: d9d12ce5b2206f0458081489aa566143, type: 2}
+--- !u!114 &11400066
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

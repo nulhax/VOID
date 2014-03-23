@@ -254,7 +254,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void Start()
     {
-        m_ulOwnerPlayerId = CGamePlayers.GetPlayerActorsPlayerId(ThisNetworkView.ViewId);
+        m_ulOwnerPlayerId = CGamePlayers.GetPlayerActorsPlayerId(SelfNetworkView.ViewId);
 
         if (CNetwork.IsServer)
         {

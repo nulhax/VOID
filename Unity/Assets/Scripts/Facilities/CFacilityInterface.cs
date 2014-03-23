@@ -25,6 +25,7 @@ using System;
 [RequireComponent(typeof(CFacilityExpansion))]
 [RequireComponent(typeof(CFacilityGravity))]
 [RequireComponent(typeof(CFacilityHull))]
+[RequireComponent(typeof(CFacilityLighting))]
 [RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityPower))]
 [RequireComponent(typeof(CNetworkView))]
@@ -44,6 +45,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		HallwayTSection,
 		HallwayXSection,
         Airlock,
+        Test,
 
 		MAX,
 	}
@@ -57,8 +59,9 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	
 	
 	public EType m_eType = EType.INVALID;
-	public CDUIConsole m_FacilityControlPanel = null;
-	
+	public Mesh m_CombinedMesh = null;
+
+
 	CNetworkVar<uint> m_FacilityId = null;
 	
 	
@@ -113,7 +116,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     {
         if (!m_mAccessories.ContainsKey(_eAccessoryType))
         {
-            return (null);
+            return (new List<GameObject>());
         }
 
         return (m_mAccessories[_eAccessoryType]);
@@ -124,7 +127,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     {
         if (!m_mModules.ContainsKey(_eModuleType))
         {
-            return (null);
+            return (new List<GameObject>());
         }
 
         return (m_mModules[_eModuleType]);
@@ -207,30 +210,23 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        if (CNetwork.IsServer)
+        if(CNetwork.IsServer)
         {
             // Register facility
             CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(gameObject);
 
             // Unregister facility
-            ThisNetworkView.EventPreDestory += () =>
+            SelfNetworkView.EventPreDestory += () =>
             {
                 CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(gameObject);
             };
 
             // Parent self to ship
-            ThisNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
+            SelfNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
         }
 
-		// Register self for the console control panel
-		if(m_FacilityControlPanel != null)
-		{
-			m_FacilityControlPanel.DUI.GetComponent<CDUIFacilityControlPower>().RegisterFacility(gameObject);
-		}
-
-		// Attach the collider for the facility to the galaxy ship
-		CGalaxyShipCollider galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCollider>();
-		galaxyShipCollider.AttachNewCollider("Prefabs/" + CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetPrefabType(FacilityType)) + "Ext", transform.localPosition, transform.localRotation);
+		// Create facility triggers
+		ConfigureFacility();
 	
 		// Add self to the ship facilities
         if (!CNetwork.IsServer)
@@ -272,5 +268,72 @@ public class CFacilityInterface : CNetworkMonoBehaviour
         // Empty
     }
 
+
+	void ConfigureFacility()
+	{
+		if(m_CombinedMesh == null)
+			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
+
+		MeshCollider mc = null;
+
+		// Create the triggers/colliders
+		GameObject internalTrigger = new GameObject("_InteriorTrigger");
+		GameObject collider = new GameObject("_Collider");
+		GameObject exitTrigger = new GameObject("_ExitTrigger");
+		GameObject entryTrigger = new GameObject("_ExitTrigger");
+
+		// Create the exterior version of the facility
+		GameObject extFacility = new GameObject("_" + gameObject.name + "Ext");
+
+		// Child the exit trigger and interior trigger to the facility
+		exitTrigger.transform.parent = transform;
+		exitTrigger.transform.localPosition = Vector3.zero;
+		exitTrigger.transform.localRotation = Quaternion.identity;
+		internalTrigger.transform.parent = transform;
+		internalTrigger.transform.localPosition = Vector3.zero;
+		internalTrigger.transform.localRotation = Quaternion.identity;
+
+		// Child the entry trigger and collider to the exterior facility
+		entryTrigger.transform.parent = extFacility.transform;
+		entryTrigger.transform.localPosition = Vector3.zero;
+		entryTrigger.transform.localRotation = Quaternion.identity;
+		collider.transform.parent = extFacility.transform;
+		collider.transform.localPosition = Vector3.zero;
+		collider.transform.localRotation = Quaternion.identity;
+
+		// Set the exterior facility on the galaxy layer
+		CUtility.SetLayerRecursively(extFacility, LayerMask.NameToLayer("Galaxy"));
+
+		// Configure the internal trigger
+		internalTrigger.AddComponent<CInteriorTrigger>();
+		mc = internalTrigger.AddComponent<MeshCollider>();
+		mc.sharedMesh = m_CombinedMesh;
+		mc.convex = true;
+		mc.isTrigger = true;
+
+		// Configure the exit trigger
+		exitTrigger.transform.localScale = Vector3.one * 1.02f;
+		exitTrigger.AddComponent<CExitTrigger>();
+		mc = exitTrigger.AddComponent<MeshCollider>();
+		mc.sharedMesh = m_CombinedMesh;
+		mc.convex = true;
+		mc.isTrigger = true;
+
+		// Configure the entry trigger
+		entryTrigger.transform.localScale = Vector3.one * 1.02f;
+		entryTrigger.AddComponent<CEntryTrigger>();
+		mc = entryTrigger.AddComponent<MeshCollider>();
+		mc.sharedMesh = m_CombinedMesh;
+		mc.convex = true;
+		mc.isTrigger = true;
+
+		// Configure the collider trigger
+		mc = collider.AddComponent<MeshCollider>();
+		mc.sharedMesh = m_CombinedMesh;
+
+		// Attach the exterior to the facility to the galaxy ship
+		CGalaxyShipFacilities galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>();
+		galaxyShipCollider.AttachNewFacility(extFacility, transform.localPosition, transform.localRotation);
+	}
 
 };

@@ -20,7 +20,6 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CActorNetworkSyncronized))]
 public class CActorInteractable : CNetworkMonoBehaviour 
 {
 
@@ -38,9 +37,6 @@ public class CActorInteractable : CNetworkMonoBehaviour
 
 
 // Member Fields
-
-
-	public GameObject m_ToolTipPrefab = null;
 
 	
 // Member Properties

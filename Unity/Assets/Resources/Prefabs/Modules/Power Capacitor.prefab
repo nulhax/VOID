@@ -31,6 +31,8 @@ GameObject:
   - 114: {fileID: 11400024}
   - 114: {fileID: 11400058}
   - 82: {fileID: 8200004}
+  - 114: {fileID: 11400064}
+  - 114: {fileID: 11400066}
   m_Layer: 0
   m_Name: Power Capacitor
   m_TagString: Untagged
@@ -5139,6 +5141,7 @@ MonoBehaviour:
   m_ModuleSize: 1
   m_Internal: 1
   m_Buildable: 1
+  m_fNanitesCost: 100.124001
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5604,6 +5607,29 @@ MonoBehaviour:
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
+--- !u!114 &11400064
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PrecipitativeMesh: {fileID: 100000, guid: 1c0c1db5e1f262844ba0afd9b5f14a9c, type: 2}
+--- !u!114 &11400066
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

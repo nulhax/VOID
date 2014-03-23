@@ -59,7 +59,12 @@ public class CGameHUD : MonoBehaviour
 	{	
 		s_Instance = this;
 	}
-	
+
+	public static void SetHUDState(bool _State)
+	{
+		s_Instance.m_HUD3D.gameObject.SetActive(_State);
+	}
+
 	public static void SetupHUD()
 	{
 		// Instantiate the 3D HUD

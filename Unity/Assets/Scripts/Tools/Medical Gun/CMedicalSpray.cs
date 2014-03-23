@@ -136,7 +136,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.SprayEnd);
         }
 
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
     }
 
 

@@ -1,4 +1,4 @@
-﻿Shader "VOID/DiffuseSpecNormalEmisReflect"
+﻿Shader "VOID/Diffuse Spec Normal Emis Reflect"
 {
 	Properties 
 	{
@@ -134,7 +134,7 @@
 			float4 Master0_5_NoInput = float4(1,1,1,1);
 			float4 Master0_7_NoInput = float4(0,0,0,0);
 			float4 Master0_6_NoInput = float4(1,1,1,1);
-			o.Albedo = Tex2D0;
+			o.Albedo = Tex2D0.xyz;
 			o.Emission = Tex2D2.r * _EmissiveColorR * _EmissiveColorR.a * _EmissivePowerR + 
 						 Tex2D2.g * _EmissiveColorG * _EmissiveColorG.a * _EmissivePowerG + 
 						 Tex2D2.b * _EmissiveColorB * _EmissiveColorB.a * _EmissivePowerB + 
@@ -144,11 +144,9 @@
 			o.Gloss = Multiply0;
 			o.Normal = normalize(o.Normal);
 			
-			float3 worldRefl = WorldReflectionVector (IN, o.Normal);
-			float4 reflcol = texCUBE(_Cube, worldRefl);
+			float4 reflcol = texCUBE(_Cube, IN.worldRefl);
 			reflcol *= Multiply0;
 			o.Emission += reflcol.rgb * _ReflectColor.rgb;
-			//o.Alpha = reflcol.a * _ReflectColor.a;
 		}
 		ENDCG
 	}

@@ -35,40 +35,40 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 
 
 	// Member Fields
-	private CNetworkVar<int> m_iStoredNanites = null;
-	private CNetworkVar<int> m_iNaniteCapacity = null;
+	private CNetworkVar<float> m_fStoredNanites = null;
+	private CNetworkVar<float> m_fNaniteCapacity = null;
 	private CNetworkVar<bool> m_bNanitesAvailable = null;
 
 
 	// Member Properties
-	public int StoredNanites
+	public float StoredNanites
 	{ 
-		get { return (m_iStoredNanites.Get()); }
+		get { return (m_fStoredNanites.Get()); }
 		
 		[AServerOnly]
-		set { m_iStoredNanites.Set(value); }
+		set { m_fStoredNanites.Set(value); }
 	}
 
-	public int NaniteCapacity
+	public float NaniteCapacity
 	{ 
-		get { return (m_iNaniteCapacity.Get()); }
+		get { return (m_fNaniteCapacity.Get()); }
 		
 		[AServerOnly]
 		set
 		{ 
-			m_iNaniteCapacity.Set(value); 
+			m_fNaniteCapacity.Set(value); 
 
 			if(value < StoredNanites)
 				StoredNanites = value;
 		}
 	}
 	
-	public int AvailableNaniteCapacity
+	public float AvailableNaniteCapacity
 	{ 
-		get { return (m_iNaniteCapacity.Get() - m_iStoredNanites.Get()); }
+		get { return (m_fNaniteCapacity.Get() - m_fStoredNanites.Get()); }
 		
 		[AServerOnly]
-		set { m_iNaniteCapacity.Set(value); }
+		set { m_fNaniteCapacity.Set(value); }
 	}
 	
 	public bool IsStorageAvailable
@@ -79,19 +79,19 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	// Member Functions
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_iStoredNanites = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
-		m_iNaniteCapacity = _cRegistrar.CreateNetworkVar<int>(OnNetworkVarSync, 0);
+		m_fStoredNanites = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0);
+        m_fNaniteCapacity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0);
 		m_bNanitesAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		if(_VarInstance == m_iStoredNanites)
+		if(_VarInstance == m_fStoredNanites)
 		{
 			if(EventNaniteStorageChanged != null)
 				EventNaniteStorageChanged(this);
 		}
-		else if(_VarInstance == m_iNaniteCapacity)
+		else if(_VarInstance == m_fNaniteCapacity)
 		{
 			if(EventNaniteCapacityChanged != null)
 				EventNaniteCapacityChanged(this);
@@ -121,8 +121,8 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	public void DeductNanites(int _iNanites)
+    public void DeductNanites(float _fNanites)
 	{
-		StoredNanites = StoredNanites - _iNanites;
+        StoredNanites = StoredNanites - _fNanites;
 	}
 }

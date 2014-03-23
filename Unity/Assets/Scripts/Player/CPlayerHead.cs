@@ -110,6 +110,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 			// Register for mouse movement input
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
+
+			// Add audoio listener to head
+			m_Head.AddComponent<AudioListener>();
 		}
 	}
 
@@ -172,7 +175,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	private void TransferPlayerPerspectiveToShipSpace()
 	{
-		CGameCameras.SetPlayersViewPerspective(true);
+		CGameCameras.SetObserverSpace(true);
 
 		// Remove the galaxy observer component
 		Destroy(gameObject.GetComponent<GalaxyObserver>());
@@ -180,7 +183,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 	private void TransferPlayerPerspectiveToGalaxySpace()
 	{
-		CGameCameras.SetPlayersViewPerspective(false);
+		CGameCameras.SetObserverSpace(false);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();

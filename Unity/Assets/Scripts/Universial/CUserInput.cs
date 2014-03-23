@@ -32,6 +32,7 @@ public class CUserInput : CNetworkMonoBehaviour
 
         MouseX,
         MouseY,
+		MouseScroll,
         LeftAnalogueX,
         LeftAnalogueY,
         RightAnalogueX,
@@ -99,8 +100,10 @@ public class CUserInput : CNetworkMonoBehaviour
         public ulong ulInput;
         public float fPreviousMouseX;
         public float fPreviousMouseY;
+		public float fPreviousMouseScroll;
         public float fMouseX;
         public float fMouseY;
+		public float fMouseScroll;
     }
 
 
@@ -120,10 +123,12 @@ public class CUserInput : CNetworkMonoBehaviour
 
 	public static float SensitivityX { get; set; }
 	public static float SensitivityY { get; set; }
+	public static float SensitivityScroll { get; set; }
 
 
     public static float MouseMovementX { get { return (s_cInstance.m_fMouseMovementX); } }
     public static float MouseMovementY { get { return (s_cInstance.m_fMouseMovementY); } }
+	public static float MouseMovementScroll { get { return (s_cInstance.m_fMouseScroll); } }
 
 
 // Member Methods
@@ -253,6 +258,12 @@ public class CUserInput : CNetworkMonoBehaviour
     }
 
 
+	public static float GetMouseScroll()
+	{
+		return (s_cInstance.m_fMouseScroll);
+	}
+
+
 	public static bool IsInputDown(EInput _eInput)
 	{
 		return (Input.GetKey(s_cInstance.m_aKeyBindings[(int)_eInput]));
@@ -273,9 +284,11 @@ public class CUserInput : CNetworkMonoBehaviour
         _cStream.Write(s_cInstance.m_ulInputStates);
         _cStream.Write(s_cInstance.m_fSerializeMouseMovementX);
         _cStream.Write(s_cInstance.m_fSerializeMouseMovementY);
+		_cStream.Write(s_cInstance.m_fSerializeMouseScroll);
 
         s_cInstance.m_fSerializeMouseMovementX = 0.0f;
         s_cInstance.m_fSerializeMouseMovementY = 0.0f;
+		s_cInstance.m_fSerializeMouseScroll = 0.0f;
     }
 
 
@@ -287,8 +300,10 @@ public class CUserInput : CNetworkMonoBehaviour
         tPlayerStates.ulInput = _cStream.ReadULong();
         tPlayerStates.fPreviousMouseX = tPlayerStates.fMouseX;
         tPlayerStates.fPreviousMouseY = tPlayerStates.fMouseY;
+		tPlayerStates.fPreviousMouseScroll = tPlayerStates.fMouseScroll;
         tPlayerStates.fMouseX = _cStream.ReadFloat();
         tPlayerStates.fMouseY = _cStream.ReadFloat();
+		tPlayerStates.fMouseScroll = _cStream.ReadFloat();
 
         if (tPlayerStates.fPreviousMouseX != tPlayerStates.fMouseX)
         {
@@ -299,6 +314,11 @@ public class CUserInput : CNetworkMonoBehaviour
         {
             s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseY, _cPlayer.PlayerId, tPlayerStates.fMouseY);
         }
+
+		if (tPlayerStates.fPreviousMouseScroll != tPlayerStates.fMouseScroll)
+		{
+			s_cInstance.InvokeClientClientAxisEvent(EAxis.MouseScroll, _cPlayer.PlayerId, tPlayerStates.fMouseScroll);
+		}
         
         s_cInstance.ProcessClientEvents(_cPlayer.PlayerId, tPlayerStates);
     }
@@ -310,6 +330,7 @@ public class CUserInput : CNetworkMonoBehaviour
 
         SensitivityX = 4.0f;
         SensitivityY = 4.0f;
+		SensitivityScroll = 1.0f;
     }
 
 
@@ -366,16 +387,22 @@ public class CUserInput : CNetworkMonoBehaviour
 
         m_fPreviousMouseMovementX = m_fMouseMovementX;
         m_fPreviousMouseMovementY = m_fMouseMovementY;
+		m_fPreviousMouseScroll = m_fMouseScroll;
         m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
         m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
+		m_fMouseScroll = Input.GetAxis("Mouse ScrollWheel") * SensitivityScroll;
         m_fSerializeMouseMovementX += m_fMouseMovementX;
         m_fSerializeMouseMovementY += m_fMouseMovementY;
+		m_fSerializeMouseScroll += m_fMouseScroll;
 
         if (m_fMouseMovementX != m_fPreviousMouseMovementX)
             InvokeAxisEvent(EAxis.MouseX, m_fMouseMovementX);
 
         if (m_fMouseMovementY != m_fPreviousMouseMovementY)
             InvokeAxisEvent(EAxis.MouseY, m_fMouseMovementY);
+
+		if (m_fMouseScroll != m_fPreviousMouseScroll)
+			InvokeAxisEvent(EAxis.MouseScroll, m_fMouseScroll);
     }
 
 
@@ -495,10 +522,13 @@ public class CUserInput : CNetworkMonoBehaviour
 
     float m_fMouseMovementX = 0.0f;
     float m_fMouseMovementY = 0.0f;
+	float m_fMouseScroll = 0.0f;
     float m_fPreviousMouseMovementX = 0.0f;
     float m_fPreviousMouseMovementY = 0.0f;
+	float m_fPreviousMouseScroll = 0.0f;
     float m_fSerializeMouseMovementX = 0.0f;
     float m_fSerializeMouseMovementY = 0.0f;
+	float m_fSerializeMouseScroll = 0.0f;
 
 
 	bool m_InFocus = true;

@@ -86,7 +86,8 @@ public class CDUIPanelFader : MonoBehaviour
 		m_FadeTime = _FadeTime;
 		m_FadeTimer = 0.0f;
 
-		UpdatePanelAlpha(CurrentAlpha);
+		if(m_FadingOut)
+			m_FadingOut = false;
 	}
 
 	public void FadeOut(float _FadeTime)
@@ -101,7 +102,8 @@ public class CDUIPanelFader : MonoBehaviour
 		m_FadeTime = _FadeTime;
 		m_FadeTimer = m_FadeTime;
 
-		UpdatePanelAlpha(CurrentAlpha);
+		if(m_FadingIn)
+			m_FadingIn = false;
 	}
 
 	private void UpdatePanelAlpha(float _Alpha)

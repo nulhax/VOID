@@ -66,7 +66,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		m_CircuitryComponent.EventComponentFix += HandleCircuitryFixing;
 
 		// Get the DUI of the power generator
-		m_DUIPowerGeneration = m_DUIConsole.DUI.GetComponent<CDUIPowerGeneratorRoot>();
+		m_DUIPowerGeneration = m_DUIConsole.DUIRoot.GetComponent<CDUIPowerGeneratorRoot>();
 		m_DUIPowerGeneration.RegisterPowerGenerator(gameObject);
 
 		if(CNetwork.IsServer)

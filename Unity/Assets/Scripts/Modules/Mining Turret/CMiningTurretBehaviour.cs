@@ -204,7 +204,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 				}
                 else
                 {
-                    CMinerals cMinerals = cHitObject.GetComponent<CMinerals>();
+                    CMineralsBehaviour cMinerals = cHitObject.GetComponent<CMineralsBehaviour>();
 
                     if (cMinerals != null &&
                         m_bExtracterBeamButtonDown)
@@ -294,7 +294,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
 
         if (_bDown)
         {
@@ -310,7 +310,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[AClientOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(ThisNetworkView.ViewId);
+        s_cSerializeStream.Write(SelfNetworkView.ViewId);
 
         if (_bDown)
         {

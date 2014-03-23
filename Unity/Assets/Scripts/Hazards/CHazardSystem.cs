@@ -64,8 +64,8 @@ public class CHazardSystem : MonoBehaviour
     {
         // Set initial values for member data
         m_iTotal                       = 100;
-        m_fDifficulty                  = m_iTotal - Difficulty;
-        m_fDifficultyWeighted          = m_fDifficulty;
+        m_fDifficulty                  = m_iTotal - 75.0f;
+        m_fDifficultyWeighted          = Difficulty;
         m_fRemainder                   = m_iTotal - m_fDifficultyWeighted;
         
         m_iTotalHazardsFire            = 0;
@@ -74,7 +74,7 @@ public class CHazardSystem : MonoBehaviour
         m_iTotalHazards                = 0;
         
         m_fHazardTriggerTimer          = 0.0f;
-        m_fHazardTriggerTimerThreshold = 1000.0f;
+        m_fHazardTriggerTimerThreshold = 60.0f;
     }
 
 
@@ -100,65 +100,81 @@ public class CHazardSystem : MonoBehaviour
 
     EHazardType UpdateHazardTrigger()
     {
-        // Local variables
-        int iUniqueHazardTypes             = (int)EHazardType.MAX;
-
-        // Local containers
-        List<float> HazardRatios           = new List<float>();
-        List<HazardInfo> HazardTotals      = new List<HazardInfo>();
-        List<HazardInfo> HazardInformation = new List<HazardInfo>();
-
         // Hazard return value
         EHazardType eHazardReturn = EHazardType.NONE;
 
-        // For each hazard type
-        for (int i = 0; i < iUniqueHazardTypes; ++i)
+        // If there are no hazards
+        if (m_iTotalHazards == 0)
         {
-            // Get the number of hazards of this type
-            int iHazardsOfThisType = GetTotalHazardsOfType((EHazardType)i);
-
-            // Create a new 'hazard'
-            HazardInfo NewHazard = new HazardInfo();
-            NewHazard.eType      = (EHazardType)i;
-            NewHazard.uiTotal    = (uint)iHazardsOfThisType;
-
-            // Add the new hazard into the totals container
-            HazardTotals.Add(NewHazard);
-
-            // Calculate the ratio of this hazard to all hazards
-            // ((float)iHazardsOfThisType / (float)m_iTotalHazards)) * 100.0f
-
-            // Normalise the ratio from hazards down to fit within the remainder
-            float fNormalisedRatio = CalculateScaledValue(((float)iHazardsOfThisType / (float)m_iTotalHazards) * 100.0f,
-                                                          0.0f,
-                                                          m_fRemainder,
-                                                          0.0f,
-                                                          100.0f);
-
-            // Add the normalised ratio to the ratio list
-            HazardRatios.Add(fNormalisedRatio);
+            // Generate a random trigger value
+            eHazardReturn = (EHazardType)((Random.value * 100.0f) % (int)EHazardType.MAX);
         }
 
-        // Order the totals: SMALLEST -> LARGEST
-        OrderTotals(HazardTotals);
+        // Else
+        else
+        {
+            // Local variables
+            int iUniqueHazardTypes = (int)EHazardType.MAX;
 
-        // Order the ratios: LARGEST -> SMALLEST
-        OrderRatios(HazardRatios);
+            // Local containers
+            List<float> HazardRatios = new List<float>();
+            List<HazardInfo> HazardTotals = new List<HazardInfo>();
+            List<HazardInfo> HazardInformation = new List<HazardInfo>();        
 
-        // Merge ratios and totals
-        // [1] -> [1] <- [1]
-        // [0] -> [0] <- [0]
-        // [2] -> [2] <- [2]
-        MergeRatiosWithTotals(HazardInformation, HazardTotals, HazardRatios);
+            // For each hazard type
+            for (int i = 0; i < iUniqueHazardTypes; ++i)
+            {
+                // Get the number of hazards of this type
+                int iHazardsOfThisType = GetTotalHazardsOfType((EHazardType)i);
 
-        // Order the merged ratios and totals by their type
-        // [0]
-        // [1]
-        // [2]
-        OrderMerged(HazardInformation);
+                // Create a new 'hazard'
+                HazardInfo NewHazard = new HazardInfo();
+                NewHazard.eType = (EHazardType)i;
+                NewHazard.uiTotal = (uint)iHazardsOfThisType;
 
-        // Calculate the type of hazard to trigger
-        eHazardReturn = CalculateHazardTrigger(HazardInformation);
+                // Add the new hazard into the totals container
+                HazardTotals.Add(NewHazard);
+
+                // Calculate the ratio of this hazard to all hazards
+                // ((float)iHazardsOfThisType / (float)m_iTotalHazards)) * 100.0f
+
+                // Normalise the ratio from hazards down to fit within the remainder
+                float fNormalisedRatio = 0.0f;
+                if (m_iTotalHazards != 0)
+                {
+                    // Normalise the ratio to with the range of the remainder
+                    fNormalisedRatio = CalculateScaledValue(((float)iHazardsOfThisType / (float)m_iTotalHazards) * 100.0f,
+                                                            0.0f,
+                                                            m_fRemainder,
+                                                            0.0f,
+                                                            100.0f);
+                }
+
+                // Add the normalised ratio to the ratio list
+                HazardRatios.Add(fNormalisedRatio);
+            }
+
+            // Order the totals: SMALLEST -> LARGEST
+            HazardTotals = OrderTotals(HazardTotals);
+
+            // Order the ratios: LARGEST -> SMALLEST
+            HazardRatios = OrderRatios(HazardRatios);
+
+            // Merge ratios and totals
+            // [1] -> [1] <- [1]
+            // [0] -> [0] <- [0]
+            // [2] -> [2] <- [2]
+            MergeRatiosWithTotals(HazardInformation, HazardTotals, HazardRatios);
+
+            // Order the merged ratios and totals by their type
+            // [0]
+            // [1]
+            // [2]
+            HazardInformation = OrderMerged(HazardInformation);
+
+            // Calculate the type of hazard to trigger
+            eHazardReturn = CalculateHazardTrigger(HazardInformation);
+        }
 
         // Return
         return (eHazardReturn);
@@ -173,7 +189,7 @@ public class CHazardSystem : MonoBehaviour
         EHazardType eReturnHazard = EHazardType.NONE;
 
         // Generate random trigger value to two decimal places
-        fHazardRandomTriggerValue = (float)(Random.value % (m_iTotal * 100) * 0.01f);
+        fHazardRandomTriggerValue = (float)(Random.value * 100.0f);
 
         // If the random trigger value is not below the first thrshold
         if (!(fHazardRandomTriggerValue < m_fDifficultyWeighted))
@@ -209,21 +225,33 @@ public class CHazardSystem : MonoBehaviour
     }
 
 
-    void OrderTotals(List<HazardInfo> _Info)
+    List<HazardInfo> OrderTotals(List<HazardInfo> _Info) // SMALLEST -> LARGEST
     {
-        _Info.OrderBy((item) => item.uiTotal);
+        HazardInfo[] HazardInfoArray = new HazardInfo[_Info.Count];
+        _Info.CopyTo(HazardInfoArray);
+        _Info = HazardInfoArray.OrderBy((item) => item.uiTotal).ToList();
+
+        return (_Info);
     }
 
 
-    void OrderRatios(List<float> _Info)
+    List<float> OrderRatios(List<float> _Info) // LARGEST -> SMALLEST
     {
-        _Info.OrderByDescending((item) => item);
+        float[] FloatArray = new float[_Info.Count];
+        _Info.CopyTo(FloatArray);
+        _Info = FloatArray.OrderByDescending((item) => item).ToList();
+
+        return (_Info);
     }
 
 
-    void OrderMerged(List<HazardInfo> _Info)
+    List<HazardInfo> OrderMerged(List<HazardInfo> _Info) //  SMALLEST - LARGEST
     {
-        _Info.OrderBy((item) => (int)item.eType);
+        HazardInfo[] HazardInfoArray = new HazardInfo[_Info.Count];
+        _Info.CopyTo(HazardInfoArray);
+        _Info = HazardInfoArray.OrderBy((item) => (int)item.eType).ToList();
+
+        return (_Info);
     }
 
 
@@ -238,7 +266,7 @@ public class CHazardSystem : MonoBehaviour
             // For each element in both lists
             for (int i = 0; i < _Totals.Count; ++i)
             {
-                // Merge the two sets of information intoa  single object
+                // Merge the two sets of information into a single object
                 HazardInfo Info;
                 Info.eType   = _Totals.ElementAt(i).eType;
                 Info.uiTotal = _Totals.ElementAt(i).uiTotal;
@@ -268,6 +296,8 @@ public class CHazardSystem : MonoBehaviour
                     // Note: This makes hazards more likely to trigger each
                     //       time the timer expires and no hazard is triggered
 
+                   // Debug.Log("Hazard Triggered: None");
+
                     // Increase the difficulty modifier by 10%
                     m_fDifficultyWeighted -= m_fDifficulty * 0.1f;
 
@@ -279,7 +309,15 @@ public class CHazardSystem : MonoBehaviour
             case EHazardType.FIRE:
                 {
                     // Trigger a fire
-                    ++m_iTotalHazardsFire;
+                    CFireHazard[] shipFireNodes = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
+                    m_iTotalHazardsFire = shipFireNodes.Length;
+
+                    int i = (int)(Random.value * 100.0f) % m_iTotalHazardsFire;
+                    shipFireNodes[i].GetComponent<CActorHealth>().health = 0;
+
+                    // TODO: Optimise
+
+                    Debug.Log("Hazard Triggered: Fire");
 
                     // Reset the weighted difficulty
                     m_fDifficultyWeighted = m_fDifficulty;
@@ -294,6 +332,8 @@ public class CHazardSystem : MonoBehaviour
                     // Trigger a hull breach
                     ++m_iTotalHazardsHullBreach;
 
+                    //Debug.Log("Hazard Triggered: Hull Breach");
+
                     // Reset the weighted difficulty
                     m_fDifficultyWeighted = m_fDifficulty;
 
@@ -306,6 +346,8 @@ public class CHazardSystem : MonoBehaviour
                 {
                     // Trigger a malfunction
                     ++m_iTotalHazardsMalfunction;
+
+                    //Debug.Log("Hazard Triggered: Malfunction");
 
                     // Reset the weighted difficulty
                     m_fDifficultyWeighted = m_fDifficulty;

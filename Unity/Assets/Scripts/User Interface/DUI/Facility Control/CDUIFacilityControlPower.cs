@@ -35,7 +35,8 @@ public class CDUIFacilityControlPower : MonoBehaviour
 
 	private GameObject m_CachedFacility = null;
 	private CFacilityPower m_CachedFacilityPower = null;
-	
+
+	private bool m_Registered = false;
 	
 	// Member Properties
 	
@@ -47,14 +48,13 @@ public class CDUIFacilityControlPower : MonoBehaviour
 		m_CachedFacility = _Facility;
 		m_CachedFacilityPower = _Facility.GetComponent<CFacilityPower>();
 
-		// Update initial values
-		UpdateDUI();
+		m_Registered = true;
 	}
 
 	private void Update()
 	{
-		// Debug: Update every frame
-		UpdateDUI();
+		if(m_Registered)
+			UpdateDUI();
 	}
 	
 	private void UpdateDUI()
@@ -64,7 +64,7 @@ public class CDUIFacilityControlPower : MonoBehaviour
 
 	public void OnGravityToggle()
 	{
-		if(CNetwork.IsServer)
+		if(CNetwork.IsServer && m_Registered)
 		{
 			// Set the gravity state for the facility
 			m_CachedFacility.GetComponent<CFacilityGravity>().SetGravityEnabled(UIToggle.current.value);

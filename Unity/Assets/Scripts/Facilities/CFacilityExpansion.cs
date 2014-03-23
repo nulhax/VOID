@@ -48,20 +48,22 @@ public class CFacilityExpansion : MonoBehaviour
 // Member Methods
 
 
-    public GameObject GetExpansionPort(uint _uiExpansionPortId)
+    public GameObject GetExpansionPort(int _iExpansionPortId)
     {
-        if (m_caExpansionPorts[_uiExpansionPortId] == null)
+        if (_iExpansionPortId >= ExpansionPortCount)
         {
+            Debug.LogError(string.Format("Expansion port ({0}) does not exist in facility ({1})", _iExpansionPortId, gameObject.name));
+
             return (null);
         }
 
-        return (m_caExpansionPorts[_uiExpansionPortId]);
+        return (m_caExpansionPorts[_iExpansionPortId]);
     }
 
 
     void Awake()
     {
-        DebugAddPortNames();
+        //DebugAddPortNames();
     }
 
 

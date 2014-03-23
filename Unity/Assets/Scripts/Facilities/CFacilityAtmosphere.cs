@@ -29,6 +29,10 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void HandleExplosiveDecompression(bool _bDecompressing);
+    public event HandleExplosiveDecompression EventExplosiveDecompression;
+
+
 // Member Properties
 	
 
@@ -164,6 +168,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     public void SetExplosiveDepressurizingEnabled(bool _bEnabled)
     {
         m_bExplosiveDepressurizing = _bEnabled;
+
+        if (EventExplosiveDecompression != null) EventExplosiveDecompression(m_bExplosiveDepressurizing);
     }
 
 
@@ -206,10 +212,10 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
             {
                 CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
 
-                if (cExpansionPortBehaviour.AttachedDoor != null)
+                if (cExpansionPortBehaviour.Door != null)
                 {
-                    cExpansionPortBehaviour.AttachedDoorBehaviour.EventOpenStart += OnDoorEvent;
-                    cExpansionPortBehaviour.AttachedDoorBehaviour.EventClosed += OnDoorEvent;
+                    cExpansionPortBehaviour.DoorBehaviour.EventOpenStart += OnDoorEvent;
+                    cExpansionPortBehaviour.DoorBehaviour.EventClosed += OnDoorEvent;
                 }
             }
         }
@@ -314,7 +320,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
             CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
 
             // Check door is open on this expansion port
-            if (cExpansionPortBehaviour.AttachedDoor.GetComponent<CDoorBehaviour>().IsOpened)
+            if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
             {
                 GameObject cNeighbourFacilityObject = cExpansionPortBehaviour.AttachedFacility;
 
@@ -363,7 +369,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
                 CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
 
                 // Check door is open on this expansion port
-                if (cExpansionPortBehaviour.AttachedDoor.GetComponent<CDoorBehaviour>().IsOpened)
+                if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
                 {
                     GameObject cAttachedFacilityObject = cExpansionPortBehaviour.AttachedFacility;
 

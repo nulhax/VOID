@@ -2797,7 +2797,7 @@ MonoBehaviour:
   m_DUICamera2D: {fileID: 100070}
   m_DUICamera3D: {fileID: 100042}
   m_DUIType: 3
-  m_RenderTexSize: {x: 1900, y: 1200}
+  m_AspectRatio: 1
 --- !u!114 &11400242
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5282,10 +5282,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66910d962635eb1488abffe8d6d85156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TransitionIn: 0
-  m_TransitionOut: 0
-  m_TransitionInTime: 1
-  m_TransitionOutTime: .5
+  m_Transition: 1
+  m_TransitionTime: 1
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

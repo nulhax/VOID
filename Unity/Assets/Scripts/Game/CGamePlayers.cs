@@ -363,8 +363,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
-		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
-        //CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
+        CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolNanitePistol);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMedical);

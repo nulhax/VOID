@@ -20,20 +20,10 @@ using System.Collections.Generic;
 /* Implementation */
  
 
-public class CExpansionPortBehaviour : MonoBehaviour
+public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 {
 
 // Member Types
-
-
-    public enum EBuildState
-    {
-        state_default,
-        state_Construction,
-        state_Orientation,
-        state_unaviable,
-        state_max
-    };
 
 
 // Member Delegates & Events
@@ -71,12 +61,12 @@ public class CExpansionPortBehaviour : MonoBehaviour
     {
         get 
         {
-            if (m_cAttachedExpansionPort == null)
+            if (AttachedExpansionPort == null)
             {
                 return (null);
             }
 
-            return (m_cAttachedExpansionPort.transform.parent.gameObject); 
+            return (AttachedExpansionPort.GetComponent<CExpansionPortBehaviour>().m_cParentFacility); 
         }
     }
 
@@ -85,7 +75,12 @@ public class CExpansionPortBehaviour : MonoBehaviour
     {
         get
         {
-            return (m_cAttachedExpansionPort);
+            if (m_cAttachedExpansionPortViewId.Get() == null)
+            {
+                return (null);
+            }
+
+            return (m_cAttachedExpansionPortViewId.Get().GameObject);
         }
     }
 
@@ -94,17 +89,17 @@ public class CExpansionPortBehaviour : MonoBehaviour
     {
         get
         {
-            if (m_cAttachedExpansionPort == null)
+            if (m_cAttachedExpansionPortViewId.Get() == null)
             {
                 return (null);
             }
 
-            return (m_cAttachedExpansionPort.GetComponent<CExpansionPortBehaviour>());
+            return (AttachedExpansionPort.GetComponent<CExpansionPortBehaviour>());
         }
     }
 
 
-    public GameObject AttachedDoor
+    public GameObject Door
     {
         get 
         {
@@ -113,9 +108,9 @@ public class CExpansionPortBehaviour : MonoBehaviour
                 return (m_cDoor);
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.AttachedDoor != null)
+                     AttachedExpansionPortBehaviour.m_cDoor != null)
             {
-                return (AttachedExpansionPortBehaviour.AttachedDoor);
+                return (AttachedExpansionPortBehaviour.Door);
             }
 
             return (null); 
@@ -123,18 +118,18 @@ public class CExpansionPortBehaviour : MonoBehaviour
     }
 
 
-    public CDoorBehaviour AttachedDoorBehaviour
+    public CDoorBehaviour DoorBehaviour
     {
         get
         {
-            if (AttachedDoor != null)
+            if (Door != null)
             {
-                return (AttachedDoor.GetComponent<CDoorBehaviour>());
+                return (Door.GetComponent<CDoorBehaviour>());
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.AttachedDoor != null)
+                     AttachedExpansionPortBehaviour.m_cDoor != null)
             {
-                return (AttachedExpansionPortBehaviour.AttachedDoorBehaviour);
+                return (AttachedExpansionPortBehaviour.DoorBehaviour);
             }
 
             return (null);
@@ -142,86 +137,146 @@ public class CExpansionPortBehaviour : MonoBehaviour
     }
 
 
-    public GameObject AttachedDuiDoorControl
+    public GameObject AttachedDuiDoorControl1
     {
         get
         {
-            if (m_cDuiDoorControl != null)
+            if (m_cDuiDoorControl1 != null)
             {
-                return (m_cDuiDoorControl);
+                return (m_cDuiDoorControl1);
             }
             else if (AttachedExpansionPort != null &&
-                     AttachedExpansionPortBehaviour.AttachedDuiDoorControl != null)
+                     AttachedExpansionPortBehaviour.m_cDuiDoorControl1 != null)
             {
-                return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl);
+                return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl1);
             }
 
             return (null);
         }
+    }
+
+
+    public GameObject AttachedDuiDoorControl2
+    {
+        get
+        {
+            if (m_cDuiDoorControl2 != null)
+            {
+                return (m_cDuiDoorControl2);
+            }
+            else if (AttachedExpansionPort != null &&
+                     AttachedExpansionPortBehaviour.m_cDuiDoorControl2 != null)
+            {
+                return (AttachedExpansionPortBehaviour.AttachedDuiDoorControl2);
+            }
+
+            return (null);
+        }
+    }
+
+
+    public GameObject CompressParticles
+    {
+        get { return (m_cCompressParticles); }
+    }
+
+
+    public GameObject DecompressParticles
+    {
+        get { return (m_cDecompressParticles); }
     }
 	
 
 	public bool IsAttached
 	{
-        get { return (m_cAttachedExpansionPort != null); }
+        get { return (m_cAttachedExpansionPortViewId.Get() != null); }
 	}
 
 
 // Member Functions
 
 
-    [AServerOnly]
-	public void AttachTo(GameObject _cExpansionPortObject)
-	{
-        // Remember who I am attached to
-        m_cAttachedExpansionPort = _cExpansionPortObject;
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_cAttachedExpansionPortViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_bCompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+        m_bDecompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
 
-        CExpansionPortBehaviour cExpansionPortBehaviour = _cExpansionPortObject.GetComponent<CExpansionPortBehaviour>();
-
-        transform.parent.rotation = _cExpansionPortObject.transform.rotation * Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0.0f, 180.0f, 0.0f);
-
-        float fDistance = (transform.position - gameObject.transform.parent.position).magnitude;
-
-        Vector3 vPositionDisplacement = transform.parent.position - transform.position;
-        transform.parent.position = _cExpansionPortObject.transform.position + vPositionDisplacement;// + (_cExpansionPortObject.transform.forward * fDistance);
-
-        // Sync position & rotation
-        transform.parent.GetComponent<CNetworkView>().SyncTransformPosition();
-        transform.parent.GetComponent<CNetworkView>().SyncTransformRotation();
-
-        // Register myself as the second door parent
-        //AttachedDoorBehaviour.RegisterParentExpansionPort(this, 1);
-	}
+        _cRegistrar.RegisterRpc(this, "PositionToNeighbour");
+    }
 
 
     [AServerOnly]
-    public GameObject CreateFacility(CFacilityInterface.EType _eFacilityType, uint _uiFacilityExpansionPortId)
+    public GameObject CreateFacility(CFacilityInterface.EType _eFacilityType, int _iFacilityExpansionPortId)
     {
         // Retrieve the facility prefab
         CGameRegistrator.ENetworkPrefab eFacilityPrefab = CFacilityInterface.GetPrefabType(_eFacilityType);
 
-        // Create facility
+        // Create facility object
         GameObject cCreatedFacilityObject = CNetwork.Factory.CreateObject(eFacilityPrefab);
 
-        // Tell other expansion port to connect to me
-        CFacilityExpansion cFacilityExpansion = cCreatedFacilityObject.GetComponent<CFacilityExpansion>();
-        cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId).GetComponent<CExpansionPortBehaviour>().AttachTo(gameObject);
+        // Retrieve expansion port from created facility that will attach to me
+        GameObject cExpansionPort = cCreatedFacilityObject.GetComponent<CFacilityExpansion>().GetExpansionPort(_iFacilityExpansionPortId);
 
-        // Remmeber who I am currently connected to
-        m_cAttachedExpansionPort = cFacilityExpansion.GetExpansionPort(_uiFacilityExpansionPortId);
+        // Attach expansion ports together
+        m_cAttachedExpansionPortViewId.Set(cExpansionPort.GetComponent<CNetworkView>().ViewId);
+        AttachedExpansionPortBehaviour.m_cAttachedExpansionPortViewId.Set(SelfNetworkViewId);
 
+        // Position expansion port and facility relative to me
+        cExpansionPort.GetComponent<CExpansionPortBehaviour>().InvokeRpcAll("PositionToNeighbour");
+
+        // Notify observers
         if (EventFacilityCreate != null) EventFacilityCreate(cCreatedFacilityObject);
 
         return (cCreatedFacilityObject);
     }
 
 
+    void Awake()
+    {   
+        // Find parent facility
+        m_cParentFacility = transform.parent.gameObject;
+
+        for (int i = 0; i < 10; ++i)
+        {
+            if (i == 9)
+            {
+                Debug.LogError("Could not find facility parent");
+            }
+
+            if (m_cParentFacility.GetComponent<CFacilityInterface>() == null)
+            {
+                if (m_cParentFacility.transform.parent != null)
+                {
+                    m_cParentFacility = m_cParentFacility.transform.parent.gameObject;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+
+
     void Start()
     {
         // Register myself as the first door parent
-        if (AttachedDoor != null)
+        if (Door != null)
         {
-            AttachedDoorBehaviour.RegisterParentExpansionPort(this, 0);
+            DoorBehaviour.RegisterParentExpansionPort(this);
+
+            if (m_cDuiDoorControl1 != null)
+            {
+                m_cDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+            }
+
+            if (m_cDuiDoorControl2 != null)
+            {
+                m_cDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickOpenDoor += OnDuiDoorButtonClick;
+                m_cDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().EventClickCloseDoor += OnDuiDoorButtonClick;
+            }
         }
     }
 
@@ -234,7 +289,49 @@ public class CExpansionPortBehaviour : MonoBehaviour
 
     void Update()
     {
-        //RenderNormals();
+        if (CNetwork.IsServer)
+        {
+            if (DoorBehaviour.IsOpened)
+            {
+                if (AttachedFacility != null)
+                {
+                    float fAttachedFacilityAtmosphoereQuanityRatio = AttachedFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                    float fSelfAtmosphoereQuanityRatio = m_cParentFacility.GetComponent<CFacilityAtmosphere>().QuantityRatio;
+                    float fRatioDifference = Mathf.Abs(fSelfAtmosphoereQuanityRatio - fAttachedFacilityAtmosphoereQuanityRatio);
+
+                    // Attached facility has lower quantity ratio then self
+                    if (fRatioDifference > 0.05f &&
+                        fAttachedFacilityAtmosphoereQuanityRatio < fSelfAtmosphoereQuanityRatio)
+                    {
+                        m_bDecompressParticlesEnabled.Set(true);
+                        m_bCompressParticlesEnabled.Set(false);
+                    }
+
+                    // Attached facility has higher quantity ratio then self
+                    else if (fRatioDifference > 0.05f &&
+                             fAttachedFacilityAtmosphoereQuanityRatio > fSelfAtmosphoereQuanityRatio)
+                    {
+                        m_bDecompressParticlesEnabled.Set(false);
+                        m_bCompressParticlesEnabled.Set(true);
+                    }
+                    else
+                    {
+                        m_bDecompressParticlesEnabled.Set(false);
+                        m_bCompressParticlesEnabled.Set(false);
+                    }
+                }
+                else
+                {
+                    m_bDecompressParticlesEnabled.Set(true);
+                    m_bCompressParticlesEnabled.Set(false);
+                }
+            }
+            else
+            {
+                m_bDecompressParticlesEnabled.Set(false);
+                m_bCompressParticlesEnabled.Set(false);
+            }
+        }
     }
 
 
@@ -246,9 +343,85 @@ public class CExpansionPortBehaviour : MonoBehaviour
     }
 
 
-    void CreateDoors()
+    [ANetworkRpc]
+    void PositionToNeighbour()
     {
+        // Rotation
+        m_cParentFacility.transform.rotation = AttachedExpansionPort.transform.rotation * Quaternion.Inverse(transform.rotation) * Quaternion.Euler(0.0f, 180.0f, 0.0f);
 
+        // Position
+        float fDistance = (transform.position - m_cParentFacility.transform.position).magnitude;
+
+        Vector3 vPositionDisplacement = m_cParentFacility.transform.position - transform.position;
+        m_cParentFacility.transform.position = AttachedExpansionPort.transform.position + vPositionDisplacement;
+    }
+
+
+    [AServerOnly]
+    void OnDuiDoorButtonClick(CDuiDoorControlBehaviour.EButton _eButton)
+    {
+        switch (_eButton)
+        {
+            case CDuiDoorControlBehaviour.EButton.OpenDoor:
+                DoorBehaviour.SetOpened(true);
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.CloseDoor);
+                break;
+
+            case CDuiDoorControlBehaviour.EButton.CloseDoor:
+                AttachedDuiDoorControl1.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.OpenDoor);
+                AttachedDuiDoorControl2.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDuiDoorControlBehaviour>().SetPanel(CDuiDoorControlBehaviour.EPanel.OpenDoor);
+                DoorBehaviour.SetOpened(false);
+                break;
+
+            default:
+                Debug.LogError("Unknown button" + _eButton);
+                break;
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_cAttachedExpansionPortViewId)
+        {
+            if (m_cAttachedExpansionPortViewId.Get() != null &&
+                CNetwork.IsServer)
+            {
+                AttachedExpansionPortBehaviour.m_cParentFacility.GetComponent<CFacilityAtmosphere>().EventExplosiveDecompression += (bool _bDepressuring) =>
+                {
+                    //ProcessAirParticles();
+                };
+            }
+        }
+        else if (_cSyncedVar == m_bCompressParticlesEnabled)
+        {
+            if (m_cCompressParticles != null)
+            {
+                if (m_bCompressParticlesEnabled.Get())
+                {
+                    m_cCompressParticles.particleSystem.Play();
+                }
+                else
+                {
+                    m_cCompressParticles.particleSystem.Stop();
+                }
+            }
+        }
+        else if (_cSyncedVar == m_bDecompressParticlesEnabled)
+        {
+            if (m_cDecompressParticles != null)
+            {
+                if (m_bDecompressParticlesEnabled.Get())
+                {
+                    m_cDecompressParticles.particleSystem.Play();
+                }
+                else
+                {
+                    m_cDecompressParticles.particleSystem.Stop();
+                }
+            }
+        }
     }
 
 	
@@ -256,9 +429,16 @@ public class CExpansionPortBehaviour : MonoBehaviour
 
 
     public GameObject m_cDoor = null;
-    public GameObject m_cDuiDoorControl = null;
+    public GameObject m_cDuiDoorControl1 = null;
+    public GameObject m_cDuiDoorControl2 = null;
+    public GameObject m_cCompressParticles = null;
+    public GameObject m_cDecompressParticles = null;
 
-    GameObject m_cAttachedExpansionPort = null;
+    GameObject m_cParentFacility = null;
+
+    CNetworkVar<CNetworkViewId> m_cAttachedExpansionPortViewId = null;
+    CNetworkVar<bool> m_bCompressParticlesEnabled = null;
+    CNetworkVar<bool> m_bDecompressParticlesEnabled = null;
 
 	uint m_uiPortId = 0;
 

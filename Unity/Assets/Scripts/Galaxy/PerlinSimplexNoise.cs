@@ -98,6 +98,16 @@ public class PerlinSimplexNoise
         }
     }
 
+	public float Generate(UnityEngine.Vector2 pos)
+	{
+		return(Generate(pos.x, pos.y));
+	}
+
+	public float Generate(UnityEngine.Vector3 pos)
+	{
+		return(Generate(pos.x, pos.y, pos.z));
+	}
+
     /// <summary>
     /// 1D simplex noise
     /// </summary>

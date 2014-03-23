@@ -57,15 +57,9 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public CExpansionPortBehaviour GetParentExpansionPortBehaviour
+    public CExpansionPortBehaviour ParentExpansionPortBehaviour
     {
-        get { return (m_caParentExpansionPortBehaviours[0]); }
-    }
-
-
-    public CExpansionPortBehaviour GetNeighbourExpansionPortBehaviour
-    {
-        get { return (m_caParentExpansionPortBehaviours[1]); }
+        get { return (m_cParentExpansionPortBehaviour); }
     }
 
 
@@ -77,7 +71,7 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 
     public bool IsOpened
     {
-        get { return (m_cOpened.Get()); }
+        get { if (m_cOpened == null) Debug.LogError(gameObject.name); return (m_cOpened.Get()); }
     }
 
 
@@ -90,22 +84,16 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
     }
 
 
+    public void RegisterParentExpansionPort(CExpansionPortBehaviour _cExpansionPortBehaviour)
+    {
+        m_cParentExpansionPortBehaviour = _cExpansionPortBehaviour;
+    }
+
+
     [AServerOnly]
     public void SetOpened(bool _bOpened)
     {
         m_cOpened.Set(_bOpened);
-    }
-
-
-    public void RegisterParentExpansionPort(CExpansionPortBehaviour _cExpansionPortBehaviour, int _iParentId)
-    {
-        m_caParentExpansionPortBehaviours[_iParentId] = _cExpansionPortBehaviour;
-
-        if (_iParentId == 0)
-        {
-            GetParentExpansionPortBehaviour.AttachedDuiDoorControl.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiFacilityDoorBehaviour>().EventClickOpenDoor += OnEventDuiDoorControlClick;
-            GetParentExpansionPortBehaviour.AttachedDuiDoorControl.GetComponent<CDUIConsole>().DUI.GetComponent<CDuiFacilityDoorBehaviour>().EventClickCloseDoor += OnEventDuiDoorControlClick;
-        }
     }
 
 
@@ -152,15 +140,15 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 	}
 
 
-    void OnEventDuiDoorControlClick(CDuiFacilityDoorBehaviour.EButton _eButton)
+    void OnEventDuiDoorControlClick(CDuiDoorControlBehaviour.EButton _eButton)
     {
         switch (_eButton)
         {
-            case CDuiFacilityDoorBehaviour.EButton.OpenDoor:
+            case CDuiDoorControlBehaviour.EButton.OpenDoor:
                 SetOpened(true);
                 break;
 
-            case CDuiFacilityDoorBehaviour.EButton.CloseDoor:
+            case CDuiDoorControlBehaviour.EButton.CloseDoor:
                 SetOpened(false);
                 break;
 
@@ -192,6 +180,9 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public float m_fFlowVolume = 100.0f;
+
+
     CNetworkVar<bool> m_cOpened = null;
 
 
@@ -203,7 +194,7 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
     float m_fOpenCloseInterval  = 1.0f;
 
 
-    CExpansionPortBehaviour[] m_caParentExpansionPortBehaviours = new CExpansionPortBehaviour[2];
+    CExpansionPortBehaviour m_cParentExpansionPortBehaviour = null;
 
 
 };
