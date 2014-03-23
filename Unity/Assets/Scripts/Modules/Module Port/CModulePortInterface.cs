@@ -35,6 +35,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 	
 	public CModuleInterface.ESize m_Size = CModuleInterface.ESize.INVALID;
 	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
+	public bool m_PreplacedModuleBuilt = false;
 	public GameObject m_Positioner = null;
 	public bool m_Internal = true;
 
@@ -115,6 +116,10 @@ public class CModulePortInterface : CNetworkMonoBehaviour
             CNetwork.IsServer)
         {
             CreateModule(m_PreplacedModuleType);
+
+			// Make the module fully built already
+			if(m_PreplacedModuleBuilt)
+				m_cAttachedModuleViewId.Value.GameObject.GetComponent<CModulePrecipitation>().SetBuiltRatio(1.0f);
         }
 	}
 

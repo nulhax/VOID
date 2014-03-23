@@ -35,7 +35,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 
 	public GameObject m_PrecipitativeMesh = null;
 
-
+	private GameObject m_PrecipitativeObject = null;
     private CNetworkVar<byte> m_BuiltRatio = null;
 
 
@@ -76,7 +76,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
     }
 
 
-	void Start()
+	void Awake()
 	{
 		// Disable all children except for the precipitation mesh
 		foreach(Transform child in transform)
@@ -85,10 +85,10 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 		}
 
 		// Create the module precipitation object
-		m_PrecipitativeMesh = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
-		m_PrecipitativeMesh.transform.parent = transform;
-		m_PrecipitativeMesh.transform.localPosition = Vector3.zero;
-		m_PrecipitativeMesh.transform.localRotation = Quaternion.identity;
+		m_PrecipitativeObject = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
+		m_PrecipitativeObject.transform.parent = transform;
+		m_PrecipitativeObject.transform.localPosition = Vector3.zero;
+		m_PrecipitativeObject.transform.localRotation = Quaternion.identity;
 	}
 	
 
@@ -108,8 +108,8 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 		}
 
 		// Destroy the precipitation mesh
-		Destroy(m_PrecipitativeMesh);
-		m_PrecipitativeMesh = null;
+		Destroy(m_PrecipitativeObject);
+		m_PrecipitativeObject = null;
 	}
 
 
