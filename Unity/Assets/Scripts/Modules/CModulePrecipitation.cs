@@ -85,18 +85,18 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 			child.gameObject.SetActive(false);
 		}
 
-//		// Disable all components which are not the required
-//		foreach(MonoBehaviour comp in gameObject.GetComponents<MonoBehaviour>())
-//		{
-//				if(	comp.GetType() != typeof(CNetworkView) &&
-//					comp.GetType() != typeof(CModuleInterface) &&
-//					comp.GetType() != typeof(CModulePrecipitation) &&
-//					comp.GetType() != typeof(CActorInteractable))
-//			{
-//				m_DisabledComponents.Add(comp);
-//				comp.enabled = false;
-//			}
-//		}
+		// Disable all components which are not the required
+		foreach(MonoBehaviour comp in gameObject.GetComponents<MonoBehaviour>())
+		{
+				if(	comp.GetType() != typeof(CNetworkView) &&
+					comp.GetType() != typeof(CModuleInterface) &&
+					comp.GetType() != typeof(CModulePrecipitation) &&
+					comp.GetType() != typeof(CActorInteractable))
+			{
+				m_DisabledComponents.Add(comp);
+				comp.enabled = false;
+			}
+		}
 
 		// Create the module precipitation object
 		m_PrecipitativeObject = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);

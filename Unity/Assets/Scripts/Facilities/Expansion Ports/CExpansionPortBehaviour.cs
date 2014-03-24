@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -388,10 +388,10 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
             if (m_cAttachedExpansionPortViewId.Get() != null &&
                 CNetwork.IsServer)
             {
-                AttachedExpansionPortBehaviour.m_cParentFacility.GetComponent<CFacilityAtmosphere>().EventExplosiveDecompression += (bool _bDepressuring) =>
-                {
-                    //ProcessAirParticles();
-                };
+//                AttachedExpansionPortBehaviour.m_cParentFacility.GetComponent<CFacilityAtmosphere>().EventDecompression += (bool _bDepressuring) =>
+//                {
+//                    //ProcessAirParticles();
+//                };
             }
         }
         else if (_cSyncedVar == m_bCompressParticlesEnabled)

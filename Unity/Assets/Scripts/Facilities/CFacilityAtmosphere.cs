@@ -6,8 +6,8 @@
 //  File Name   :   CRoomAtmosphere.cs
 //  Description :   Atmosphere information for rooms
 //
-//  Author  	:  Nathan Boon
-//  Mail    	:  Nathan.BooN@gmail.com
+//  Author  	: 
+//  Mail    	: 
 //
 
 // Namespaces
@@ -29,8 +29,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public delegate void HandleExplosiveDecompression(bool _bDecompressing);
-    public event HandleExplosiveDecompression EventExplosiveDecompression;
+    public delegate void HandleDecompression(bool _bDecompressing, bool _bExplosive);
+    public event HandleDecompression EventDecompression;
 
 
 // Member Properties
@@ -161,6 +161,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     public void SetDepressurizingEnabled(bool _bEnabled)
     {
         m_bControlledDepressurizing = _bEnabled;
+
+		if (EventDecompression != null) EventDecompression(m_bControlledDepressurizing, false);
     }
 
 
@@ -169,7 +171,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     {
         m_bExplosiveDepressurizing = _bEnabled;
 
-        if (EventExplosiveDecompression != null) EventExplosiveDecompression(m_bExplosiveDepressurizing);
+        if (EventDecompression != null) EventDecompression(m_bExplosiveDepressurizing, true);
     }
 
 
@@ -228,39 +230,8 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 		{
 			// Remove consumers that are now null
             m_aConsumers.RemoveAll((_cConsumer) => _cConsumer == null);
-
-            UpdateAlarms();
 		}
 	}
-
-
-    [AServerOnly]
-    void UpdateAlarms()
-    {
-        // Turn on warning alarms
-        if (!m_bAlarmsActive &&
-            QuantityPercent < 25.0f)
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
-            {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
-            });
-
-            m_bAlarmsActive = true;
-        }
-
-        // Turn off alarms
-        else if (m_bAlarmsActive &&
-                 QuantityPercent > 25.0f)
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm_Warning).ForEach((_cAlarmObject) =>
-            {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
-            });
-
-            m_bAlarmsActive = false;
-        }
-    }
 
 
     [AServerOnly]
@@ -449,8 +420,6 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     List<GameObject> m_aConsumers = new List<GameObject>();
 
     CNetworkVar<float> m_fQuantity = null;
-
-    bool m_bAlarmsActive = false;
 
 
     const float m_fControlledDecompressionRate = 50;

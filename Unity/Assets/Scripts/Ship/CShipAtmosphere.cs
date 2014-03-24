@@ -39,8 +39,13 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
 
 
 // Member Properties
-
-
+	
+	public float ShipAtmosphereGeneration
+	{
+		get { return(m_fGlobalAtmosphereGenerationRate.Value); }
+		set { m_fGlobalAtmosphereGenerationRate.Value = value; }
+	}
+	
 	public float ShipAtmosphericQuality
 	{
 		get { return(m_fGlobalAtmosphericQuality.Get()); }
@@ -53,6 +58,7 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_fGlobalAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGlobalAtmosphereGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 
@@ -80,13 +86,14 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
             }
 
             // Calculate the total generation available 
-            List<GameObject> aAtmosphereGenerators = CModuleInterface.FindModulesByType(CModuleInterface.EType.AtmosphereGenerator);
-            float fTotalGeneration = 0.0f;
-
-            aAtmosphereGenerators.ForEach((GameObject cGeneratorObject) =>
+			float fTotalGeneration = ShipAtmosphereGeneration;
+			m_AtmosphereGenerators.ForEach((GameObject cGeneratorObject) =>
             {
                 fTotalGeneration += cGeneratorObject.GetComponent<CAtmosphereGeneratorBehaviour>().AtmosphereGenerationRate;
             });
+
+			// Set the network var
+			ShipAtmosphereGeneration = fTotalGeneration;
 
             // Calculate delta atmosphere
             float fDeltaGeneration = fTotalGeneration * Time.deltaTime;
@@ -118,6 +125,24 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
     {
         // Empty
     }
+
+	[AServerOnly]
+	public void RegisterAtmosphereGenerator(GameObject _Generator)
+	{
+		if(!m_AtmosphereGenerators.Contains(_Generator))
+		{
+			m_AtmosphereGenerators.Add(_Generator);
+		}
+	}
+	
+	[AServerOnly]
+	public void UnregisterAtmosphereGenerator(GameObject _Generator)
+	{
+		if(m_AtmosphereGenerators.Contains(_Generator))
+		{
+			m_AtmosphereGenerators.Remove(_Generator);
+		}
+	}
 
 
     /*
@@ -262,8 +287,9 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
 
 // Member Fields
 
+	private List<GameObject> m_AtmosphereGenerators = new List<GameObject>();
 
     CNetworkVar<float> m_fGlobalAtmosphericQuality = null;
-
+	CNetworkVar<float> m_fGlobalAtmosphereGenerationRate = null;
 
 }
