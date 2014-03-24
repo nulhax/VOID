@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 
@@ -35,6 +36,8 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 
 	private GameObject m_PrecipitativeObject = null;
     private CNetworkVar<byte> m_BuiltRatio = null;
+
+	private List<MonoBehaviour> m_DisabledComponents = new List<MonoBehaviour>();
 
 
 // Member Properties
@@ -82,6 +85,19 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 			child.gameObject.SetActive(false);
 		}
 
+//		// Disable all components which are not the required
+//		foreach(MonoBehaviour comp in gameObject.GetComponents<MonoBehaviour>())
+//		{
+//				if(	comp.GetType() != typeof(CNetworkView) &&
+//					comp.GetType() != typeof(CModuleInterface) &&
+//					comp.GetType() != typeof(CModulePrecipitation) &&
+//					comp.GetType() != typeof(CActorInteractable))
+//			{
+//				m_DisabledComponents.Add(comp);
+//				comp.enabled = false;
+//			}
+//		}
+
 		// Create the module precipitation object
 		m_PrecipitativeObject = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
 		m_PrecipitativeObject.transform.parent = transform;
@@ -103,6 +119,12 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 		foreach(Transform child in transform)
 		{
 			child.gameObject.SetActive(true);
+		}
+
+		// Enable disabled components
+		foreach(MonoBehaviour comp in m_DisabledComponents)
+		{
+			comp.enabled = true;
 		}
 
 		// Destroy the precipitation mesh
