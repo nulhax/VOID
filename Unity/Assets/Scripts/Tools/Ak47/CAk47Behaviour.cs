@@ -62,7 +62,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         _cStream.Write(s_cSerializeStream);
@@ -75,8 +75,8 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
     {
         while (_cStream.HasUnreadData)
         {
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-            CNetworkViewId cAk47ViewId = _cStream.ReadNetworkViewId();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
+            CNetworkViewId cAk47ViewId = _cStream.Read<CNetworkViewId>();
 
             switch (eAction)
             {
@@ -147,7 +147,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnEventPrimaryActiveChange(bool _bActive)
 	{
         if (_bActive)

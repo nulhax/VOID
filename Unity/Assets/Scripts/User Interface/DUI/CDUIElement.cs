@@ -195,42 +195,42 @@ public class CDUIElement : CNetworkMonoBehaviour
 		while(_cStream.HasUnreadData)
 		{
 			// Get the DUIElement and its network view
-			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.ReadNetworkViewId()).GetComponent<CDUIElement>();
+			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.Read<CNetworkViewId>()).GetComponent<CDUIElement>();
 
 			// Get the interaction notification
-			EElementNotificationType notification = (EElementNotificationType)_cStream.ReadByte();
+			EElementNotificationType notification = (EElementNotificationType)_cStream.Read<byte>();
 
 			// Based on the notification type, update the clients of the event
 			switch(notification) 
 			{
 			case EElementNotificationType.OnClick:
-				int click = _cStream.ReadInt();
+				int click = _cStream.Read<int>();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { click });
 				break;
 			
 			case EElementNotificationType.OnDoubleClick:
-				int dClick = _cStream.ReadInt();
+				int dClick = _cStream.Read<int>();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { dClick });
 				break;
 
 			case EElementNotificationType.OnPress:
-				bool isPressed = _cStream.ReadByte() == 1 ? true : false;
+				bool isPressed = _cStream.Read<byte>() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isPressed });
 				break;
 
 			case EElementNotificationType.OnSelect: 
-				bool isSelected = _cStream.ReadByte() == 1 ? true : false;
+				bool isSelected = _cStream.Read<byte>() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isSelected });
 				break;
 
 			case EElementNotificationType.OnHover:
-				bool isHovered = _cStream.ReadByte() == 1 ? true : false;
+				bool isHovered = _cStream.Read<byte>() == 1 ? true : false;
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { isHovered });
 				break;
 
 			case EElementNotificationType.OnDrag:
-				float deltaX = _cStream.ReadFloat();
-				float deltaY = _cStream.ReadFloat();
+				float deltaX = _cStream.Read<float>();
+				float deltaY = _cStream.Read<float>();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { deltaX, deltaY });
 				break;
 
@@ -243,7 +243,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 				break;
 
 			case EElementNotificationType.OnScroll:
-				float delta = _cStream.ReadFloat();
+				float delta = _cStream.Read<float>();
 				NotifyOnEvent(_cNetworkPlayer, duiElement, notification, new object[] { delta });
 				break;
 

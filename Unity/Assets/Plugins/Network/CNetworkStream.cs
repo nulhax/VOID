@@ -103,6 +103,12 @@ public class CNetworkStream
 	}
 
 
+    public void Write(object _cObject)
+    {
+        Write(_cObject, _cObject.GetType());
+    }
+
+
     public void Write(object _cObject, Type _cType)
     {
 		if (_cType == typeof(CNetworkViewId))
@@ -120,17 +126,26 @@ public class CNetworkStream
 		}
 		else
 		{
-	        // Serialize the parameter value
-	        byte[] baValueSerialized = Converter.ToByteArray(_cObject, _cType);
+            ABitSize[] aBitSize = _cType.GetCustomAttributes(typeof(ABitSize), false) as ABitSize[];
 
-	        // Write string length if type is string
-	        if (_cType == typeof(string))
-	        {
-	            this.Write((byte)((string)_cObject).Length);
-	        }
+            if (aBitSize.Length > 0)
+            {
+                this.WriteBits(_cObject, aBitSize[0].BitCount);
+            }
+            else
+            {
+	            // Serialize the parameter value
+	            byte[] baValueSerialized = Converter.ToByteArray(_cObject, _cType);
 
-	        // Write parameter value
-	        this.Write(baValueSerialized);
+	            // Write string length if type is string
+                if (_cType == typeof(string))
+                {
+                    this.Write((byte)((string)_cObject).Length);
+                }
+
+                // Write parameter value
+                this.Write(baValueSerialized);
+            }
 		}
     }
 
@@ -145,12 +160,6 @@ public class CNetworkStream
             Write(_caParameterValues[i], caParameters[i].ParameterType);
         }
     }
-
-
-	public void WriteString(string _sString)
-	{
-		Write(_sString, typeof(string));
-	}
 
 
 	public void Write(byte[] _baData)
@@ -170,7 +179,7 @@ public class CNetworkStream
 		Write(_baData, (uint)_iLength);
 	}
 
-
+    /*
 	public void Write(byte _bValue)
 	{
 		m_cBitStream.Write(_bValue);
@@ -185,6 +194,7 @@ public class CNetworkStream
 
 	public void Write(ushort _usValue)
 	{
+        Debug.LogError("WRITTING!!!: " + _usValue);
 		m_cBitStream.Write(_usValue);
 	}
 
@@ -217,6 +227,7 @@ public class CNetworkStream
 	{
 		m_cBitStream.Write(_fValue);
 	}
+    */
 
 
 	public void IgnoreBytes(int _iNumBytes)
@@ -243,58 +254,17 @@ public class CNetworkStream
     }
 
 
-	public CNetworkViewId ReadNetworkViewId()
-	{
-		ushort usViewId = ReadUShort();
-		byte bSubViewId = ReadByte();
-		
-		if (usViewId == ushort.MaxValue &&
-		    bSubViewId == byte.MaxValue)
-		{
-			return (null);
-		}
-		else
-		{
-			return (new CNetworkViewId(usViewId, bSubViewId));
-		}
-	}
-
-
     public object[] ReadMethodParameters(MethodInfo _tMethodInfo)
     {
         // Extract the parameters from the method
         ParameterInfo[] caParameters = _tMethodInfo.GetParameters();
 
-
         object[] caParameterValues = new object[caParameters.Length];
-
 
         for (int i = 0; i < caParameters.Length; ++i)
         {
-			if (caParameters[i].ParameterType == typeof(CNetworkViewId))
-			{
-				caParameterValues[i] = ReadType(typeof(CNetworkViewId));
-			}
-			else
-			{
-	            int iSize = Converter.GetSizeOf(caParameters[i].ParameterType);
-
-	            // Read string length if type is string
-	            if (caParameters[i].ParameterType == typeof(string))
-	            {
-	                iSize = this.ReadByte();
-	            }
-				else if (caParameters[i].ParameterType == typeof(CNetworkViewId))
-				{
-					iSize = CNetworkViewId.k_iSerializedSize;
-				}
-
-	            byte[] baSerializedValue = this.ReadBytes(iSize);
-
-	            caParameterValues[i] = Converter.ToObject(baSerializedValue, caParameters[i].ParameterType);
-			}
+            caParameterValues[i] = ReadType(caParameters[i].ParameterType);
         }
-
 
         return (caParameterValues);
     }
@@ -304,155 +274,84 @@ public class CNetworkStream
     {
 		if (_cType == typeof(CNetworkViewId))
 		{
-			return (ReadNetworkViewId());
+            ushort usViewId = Read<ushort>();
+
+            byte bSubViewId = Read<byte>();
+
+            if (usViewId == ushort.MaxValue &&
+                bSubViewId == byte.MaxValue)
+            {
+                return (null);
+            }
+            else
+            {
+                return (new CNetworkViewId(usViewId, bSubViewId));
+            }
 		}
 		else
 		{
-	        int iSize = Converter.GetSizeOf(_cType);
+            ABitSize[] aBitSize = _cType.GetCustomAttributes(typeof(ABitSize), false) as ABitSize[];
 
-	        if (_cType == typeof(string))
-	        {
-	            iSize = ReadByte();
-	        }
+            if (aBitSize.Length > 0)
+            {
+                // Convert serialized data to object
+                return (ReadBits(_cType, aBitSize[0].BitCount));
+            }
+            else
+            {
+                int iSize = Converter.GetSizeOf(_cType);
 
-			// Convert serialized data to object
-			return (Converter.ToObject(ReadBytes(iSize), _cType));
+                if (_cType == typeof(string))
+                {
+                    iSize = Read<byte>();
+                }
+
+                // Convert serialized data to object
+                return (Converter.ToObject(ReadBytes(iSize), _cType));
+            }
 		}
+    }
+
+
+    public TYPE Read<TYPE>()
+    {
+        return ((TYPE)ReadType(typeof(TYPE)));
+    }
+
+
+    public object ReadBits(Type _cType, uint _uiNumBits)
+    {
+        byte[] baData = new byte[Converter.GetSizeOf(_cType)];
+
+        m_cBitStream.ReadBits(baData, _uiNumBits);
+
+        return (Converter.ToObject(baData, _cType));
     }
 
 
     public TYPE ReadBits<TYPE>(uint _uiNumBits)
     {
-        byte[] baData = new byte[(int)Marshal.SizeOf(typeof(TYPE))];
-
-        m_cBitStream.ReadBits(baData, _uiNumBits);
-
-        return ((TYPE)Converter.ToObject(baData, typeof(TYPE)));
+        return ((TYPE)ReadBits(typeof(TYPE), _uiNumBits));
     }
-
-
-	public byte[] ReadBytes(int _iSize)
-	{
-		return (ReadBytes((uint)_iSize));
-	}
 
 
 	public byte[] ReadBytes(uint _uiSize)
 	{
 		byte[] baBytes = new byte[_uiSize];
 
-
 		if (!m_cBitStream.Read(baBytes, _uiSize))
 		{
 			Logger.WriteError("Could not read bytes");
 		}
 
-
 		return (baBytes);
 	}
 
 
-	public byte ReadByte()
-	{
-		byte bByte = 0;
-
-
-		if (!m_cBitStream.Read(out bByte))
-		{
-			Logger.WriteError("Could not read byte");
-		}
-
-
-		return (bByte);
-	}
-
-
-	public short ReadShort()
-	{
-		short sValue = 0;
-
-
-		if (!m_cBitStream.Read(out sValue))
-		{
-			Logger.WriteError("Could not read short");
-		}
-
-
-		return (sValue);
-	}
-
-
-	public ushort ReadUShort()
-	{
-		return ((ushort)ReadShort());
-	}
-
-
-	public int ReadInt()
-	{
-		int iValue = 0;
-
-
-		if (!m_cBitStream.Read(out iValue))
-		{
-			Logger.WriteError("Could not read int");
-		}
-
-		
-		return (iValue);
-	}
-
-
-	public uint ReadUInt()
-	{
-		return ((uint)ReadInt());
-	}
-
-
-	public long ReadLong()
-	{
-		long lValue = 0;
-
-
-		if (!m_cBitStream.Read(out lValue))
-		{
-			Logger.WriteError("Could not read int");
-		}
-
-
-		return (lValue);
-	}
-
-
-	public ulong ReadULong()
-	{
-		return ((ulong)ReadLong());
-	}
-	
-	
-	public float ReadFloat()
-	{
-		float fValue = 0;
-
-
-		if (!m_cBitStream.Read(out fValue))
-		{
-			Logger.WriteError("Could not read float");
-		}
-
-		
-		return (fValue);
-	}
-
-
-	public string ReadString()
-	{
-		int	iSize = this.ReadByte();
-		
-		byte[] baSerializedValue = this.ReadBytes(iSize);
-		
-		return ((string)Converter.ToObject(baSerializedValue, typeof(string)));
-	}
+    public byte[] ReadBytes(int _iSize)
+    {
+        return (ReadBytes((uint)_iSize));
+    }
 
 
 	public RakNet.BitStream BitStream

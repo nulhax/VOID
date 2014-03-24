@@ -80,7 +80,7 @@ public class CGameChat : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void ReturnKeyChanged(CUserInput.EInput _eInput, bool _b)
     {
 		// This will only be able to trigger every 0.5 seconds
@@ -156,10 +156,10 @@ public class CGameChat : CNetworkMonoBehaviour
             _cStream.Write((byte)ENetworkAction.ActionSendPlayerMessage);
 
             // Write player's name to stream
-            _cStream.WriteString(CGamePlayers.Instance.LocalPlayerName);
+            _cStream.Write(CGamePlayers.Instance.LocalPlayerName);
 
             // Write player's message to string
-            _cStream.WriteString(m_sPlayerChatInput);
+            _cStream.Write(m_sPlayerChatInput);
 
             // Clear player input
             m_sPlayerChatInput = "";
@@ -176,7 +176,7 @@ public class CGameChat : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Save the first byte as the network action
-            ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+            ENetworkAction eNetworkAction = (ENetworkAction)_cStream.Read<byte>();
 
             // Switch on the network action
             switch (eNetworkAction)
@@ -185,8 +185,8 @@ public class CGameChat : CNetworkMonoBehaviour
                 case ENetworkAction.ActionSendPlayerMessage:
                 {
                     // Read out messages into output strings
-                    string strName    = _cStream.ReadString();
-                    string strMessage = _cStream.ReadString();
+                    string strName    = _cStream.Read<string>();
+                    string strMessage = _cStream.Read<string>();
 
                     // Find all players within 'hearing' range of the source player
                     foreach (CNetworkPlayer Player in CheckPlayerDistances(_cNetworkPlayer))

@@ -21,15 +21,27 @@ using System;
 
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-public sealed class AClientOnly : Attribute
+public sealed class ABitSize : Attribute
 {
 
 // Member Types
 
 
+    public byte BitCount
+    {
+        get { return (m_bBitCount); }
+    }
+
+
 // Member Functions
     
     // public:
+
+
+    public ABitSize(byte _bNumBytes)
+    {
+        m_bBitCount = _bNumBytes;
+    }
 
 
     // protected:
@@ -44,6 +56,9 @@ public sealed class AClientOnly : Attribute
 
 
     // private:
+
+
+    byte m_bBitCount = 0;
 
 
 };

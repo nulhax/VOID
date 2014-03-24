@@ -69,24 +69,28 @@ public class CToolInterface : CNetworkMonoBehaviour
 	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
 	public delegate void NotifyToolInteraction();
 
-    [AClientOnly]
+    [ALocalOnly]
     public delegate void NotifyPrimaryActiveChange(bool _bActive);
     public event NotifyPrimaryActiveChange EventPrimaryActiveChange;
 
-    [AClientOnly]
+    [ALocalOnly]
     public delegate void NotifySecondaryActiveChange(bool _bActive);
 	public event NotifySecondaryActiveChange EventSecondaryActiveChange;
 
-    [AClientOnly]
+    [ALocalOnly]
+    public delegate void NotifyEquippedChange(bool _bEquipped);
+    public event NotifyEquippedChange EventEquippedChange;
+
+    [ALocalOnly]
 	public event NotifyObjectInteraction EventUse;
 	
     [AServerOnly]
 	public event NotifyToolInteraction EventReload;
 
-    [AClientOnly]
+    [ALocalOnly]
     public event NotifyToolInteraction EventPickedUp;
 
-    [AClientOnly]
+    [ALocalOnly]
     public event NotifyToolInteraction EventDropped;
 
 
@@ -97,6 +101,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         get { return (m_eToolType); }
     }
+    
 
     public GameObject OwnerPlayerActor
     {
@@ -122,75 +127,26 @@ public class CToolInterface : CNetworkMonoBehaviour
     }
 
 
+    [ALocalOnly]
+    public bool IsPrimaryActive
+    {
+        get { return (m_bPrimaryActive); }
+    }
+
+
+    [ALocalOnly]
+    public bool IsSeconaryActive
+    {
+        get { return (m_bSecondaryActive); }
+    }
+
+
 // Member Functions
 
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
         m_ulOwnerPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
-    }
-
-
-    public void OnNetworkVarSync(INetworkVar _cVarInstance)
-    {
-        if (_cVarInstance == m_ulOwnerPlayerId)
-        {
-			if (IsHeld)
-            {
-                GameObject cOwnerPlayerActor = OwnerPlayerActor;
-              
-                Transform[]children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
-                foreach(Transform child in children)
-                {
-                    if(child.name == "RightHandIndex2")
-                    {
-                        gameObject.transform.parent = child;
-                    }
-                }     
-
-                if(gameObject.transform.parent.gameObject == null)
-                {
-                    Debug.LogError("Could not find right hand transform of player model!");
-                }
-
-                gameObject.transform.localPosition = new Vector3(0.0f,0.0f,0.0f);
-              
-                // Turn off dynamic physics
-				if(CNetwork.IsServer)
-				{
-                	rigidbody.isKinematic = true;
-					rigidbody.detectCollisions = false;
-				}
-
-				// Stop receiving synchronizations
-                GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
-
-                // Notify observers
-                if (EventPickedUp != null) EventPickedUp();
-            }
-            else
-            {
-                gameObject.transform.parent = null;
-
-                // Turn on dynamic physics
-				if(CNetwork.IsServer)
-				{
-					rigidbody.isKinematic = false;
-					rigidbody.detectCollisions = true;
-				}
-				
-                rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
-                rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
-
-				// Receive synchronizations
-				GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
-				GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
-
-                // Notify observers
-                if (EventDropped != null) EventDropped();
-            }
-        }
     }
 
 
@@ -202,10 +158,23 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		 if (m_eToolType == EType.INVALID)
+		if (m_eToolType == EType.INVALID)
         {
             Debug.LogError(string.Format("This tool has not been given a tool type. GameObjectName({0})", gameObject.name));
         }
+
+        EventDropped += () =>
+        {
+            if (m_bPrimaryActive)
+            {
+                SetPrimaryActive(false);
+            }
+
+            if (m_bSecondaryActive)
+            {
+                SetSecondaryActive(false);
+            }
+        };
 	}
 
 
@@ -225,6 +194,16 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
+    [ALocalOnly]
+    public void SetEquipped(bool _bEquipped)
+    {
+        m_bEquipped = _bEquipped;
+
+        if (EventEquippedChange != null) EventEquippedChange(m_bEquipped);
+    }
+
+
+    [ALocalOnly]
     public void SetPrimaryActive(bool _bActive)
     {
         m_bPrimaryActive = _bActive;
@@ -233,7 +212,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public void SetSecondaryActive(bool _bActive)
     {
         m_bSecondaryActive = _bActive;
@@ -305,6 +284,69 @@ public class CToolInterface : CNetworkMonoBehaviour
     }
 
 
+    void OnNetworkVarSync(INetworkVar _cVarInstance)
+    {
+        if (_cVarInstance == m_ulOwnerPlayerId)
+        {
+            if (IsHeld)
+            {
+                GameObject cOwnerPlayerActor = OwnerPlayerActor;
+
+                Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
+                foreach (Transform child in children)
+                {
+                    if (child.name == "RightHandIndex2")
+                    {
+                        gameObject.transform.parent = child;
+                    }
+                }
+
+                if (gameObject.transform.parent.gameObject == null)
+                {
+                    Debug.LogError("Could not find right hand transform of player model!");
+                }
+
+                gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+
+                // Turn off dynamic physics
+                if (CNetwork.IsServer)
+                {
+                    rigidbody.isKinematic = true;
+                    rigidbody.detectCollisions = false;
+                }
+
+                // Stop receiving synchronizations
+                GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
+                GetComponent<CActorNetworkSyncronized>().m_SyncRotation = false;
+
+                // Notify observers
+                if (EventPickedUp != null) EventPickedUp();
+            }
+            else
+            {
+                gameObject.transform.parent = null;
+
+                // Turn on dynamic physics
+                if (CNetwork.IsServer)
+                {
+                    rigidbody.isKinematic = false;
+                    rigidbody.detectCollisions = true;
+                }
+
+                rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
+                rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
+
+                // Receive synchronizations
+                GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
+                GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
+
+                // Notify observers
+                if (EventDropped != null) EventDropped();
+            }
+        }
+    }
+
+
 // Member Fields
 
 	public EType m_eToolType = EType.INVALID;
@@ -313,6 +355,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
 
 
+    bool m_bEquipped = false;
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
 

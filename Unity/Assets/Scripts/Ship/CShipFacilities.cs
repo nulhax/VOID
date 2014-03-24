@@ -89,7 +89,7 @@ public class CShipFacilities : MonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
     {
         // Index facility against its Facility Id

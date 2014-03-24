@@ -51,7 +51,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public void OnInteractionHover(GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bHover)
     {
         CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
@@ -61,7 +61,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public void OnInteractionInput(CPlayerInteractor.EInputInteractionType _eInputInteractionEvent, GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bDown)
 	{
         CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;

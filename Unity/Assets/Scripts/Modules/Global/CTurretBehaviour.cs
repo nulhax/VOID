@@ -199,7 +199,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void UpdateRotation()
 	{
 //        if (transform.FindChild("RatchetComponent").GetComponent<CActorHealth>().health > 0)

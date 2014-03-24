@@ -370,10 +370,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293558e505aa49f4e8d31d3abe99c98e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cBuildingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
+    type: 2}
   m_cMingingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
     type: 2}
-  m_fMiningRate: 20
-  m_fMiningRange: 10
+  m_cRepairingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
+    type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -397,7 +399,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1

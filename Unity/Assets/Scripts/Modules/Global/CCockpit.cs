@@ -189,7 +189,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		_cStream.Write(s_cSerializeStream);
@@ -203,8 +203,8 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cCockpitObjectViewId = _cStream.ReadNetworkViewId();
-			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+			CNetworkViewId cCockpitObjectViewId = _cStream.Read<CNetworkViewId>();
+			ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
 			GameObject cCockpitObject = CNetwork.Factory.FindObject(cCockpitObjectViewId);
 
@@ -228,7 +228,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
     void OnInputUse(CUserInput.EInput _eInput, bool _bDown)
 	{
 		if (_bDown &&
@@ -240,7 +240,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 	
-	[AClientOnly]
+	[ALocalOnly]
     void OnEventInteractionUse(RaycastHit _tRayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)	
 	{
 		// Check there is no one in the cockpit locally
