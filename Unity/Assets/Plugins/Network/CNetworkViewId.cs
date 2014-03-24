@@ -67,8 +67,7 @@ public class CNetworkViewId
 	{
 		get 
 		{ 
-			CNetworkView nv = CNetworkView.FindUsingViewId(this);
-			return (nv != null ? nv.gameObject : null); 
+			return (CNetwork.Factory.FindObject(this)); 
 		}
 	}
 

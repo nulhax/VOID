@@ -66,13 +66,18 @@ public class DungeonMaster : MonoBehaviour
 
 	void Start()
 	{
-
+		new DynamicEvent_RogueAsteroid();
+		new DifficultyModifier_DifficultyChoice();
+		gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
+		new DifficultyModifier_ShipDamage();
+		gameObject.AddComponent<DifficultyModifier_TotalDistanceTravelled>();
+		new DifficultyModifier_TotalShipWorth();
 	}
 
 	void Update()
 	{
-		if(!CNetwork.IsServer)
-			return;
+		//if(!CNetwork.IsServer)
+		//    return;
 
 		// Update coinage.
 		mfPengar += Time.deltaTime * difficulty;

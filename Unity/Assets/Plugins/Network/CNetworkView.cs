@@ -575,7 +575,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 		{
 			if (!s_cNetworkViews.ContainsKey(_cViewId.Id))
 			{
-				Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
+				//Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
 			}
 			else
 			{
