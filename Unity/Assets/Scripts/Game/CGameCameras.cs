@@ -172,12 +172,12 @@ public class CGameCameras : MonoBehaviour
 			s_MainCamera = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/Camera"));
 			s_MainCamera.name = "Camera_Main";
 
-			// Add bloom to main camera
-
-
 			// Instantiate the projected camera (copy from head camera)
 			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
 			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
+
+			// Remove Bloom IE
+			Destroy(s_ProjectedCamera.GetComponent<Bloom>());
 
 			// Instantiate the background camera
 			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
