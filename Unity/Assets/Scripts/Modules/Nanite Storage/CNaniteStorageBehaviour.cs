@@ -104,25 +104,35 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 		
 		if(CNetwork.IsServer)
 		{
-			ActivateNaniteAvailability();
+			SetNaniteAvailability(true);
+
+			// Register power activation/deactivation events
+			//gameObject.GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActivated += OnPowerActivated;
+			//gameObject.GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerDeactivated += OnPowerDeactivated;
 		}
 	}
 	
 	[AServerOnly]
-	public void ActivateNaniteAvailability()
+	public void SetNaniteAvailability(bool _State)
 	{
-		m_bNanitesAvailable.Set(true);
-	}
-	
-	[AServerOnly]
-	public void DeactivateNaniteAvailability()
-	{
-		m_bNanitesAvailable.Set(false);
+		m_bNanitesAvailable.Set(_State);
 	}
 
 	[AServerOnly]
     public void DeductNanites(float _fNanites)
 	{
         StoredNanites = StoredNanites - _fNanites;
+	}
+
+	[AServerOnly]
+	public void OnPowerDeactivated()
+	{
+		SetNaniteAvailability(false);
+	}
+
+	[AServerOnly]
+	public void OnPowerActivated()
+	{
+		SetNaniteAvailability(true);
 	}
 }

@@ -2,7 +2,7 @@
 {
 	Properties
 	{
-		_Diffuse("Diffuse", 2D) = "white" {}
+		_Diffuse("Diffuse", 2D) = "gray" {}
 		_Normal("Normal", 2D) = "blue" {}
 		_Specular("Specular", 2D) = "black" {}
 		_SpecPower("SpecPower", Float) = 1
@@ -122,7 +122,7 @@
 				
 				// Saturate color and add tint
 				col.rgb = _Saturation * gsik + col.rgb * (1.0 - _Saturation);
-				col = saturate(col * _Brightness);
+				col = 0.5 + (col * _Brightness) * 0.5;
 				col.rgb = col.rgb * _Tint.rgb;
 				
 				float ih = lerp(_MinHeight, _MaxHeight, _Amount);
@@ -144,7 +144,7 @@
 					
 						float falloff = ch/_FadeDist;
 						alpha = (1.0f - falloff + sum) * (1.0f - falloff);
-						col.rgb = lerp(col.rgb, float3(1), alpha);
+						col.rgb = lerp(col.rgb, float3(_Brightness), alpha);
 					}
 
 					if(alpha < _Tint.a)
@@ -164,7 +164,7 @@
 				
 					float falloff = -ch/lowerFadeDist;
 					alpha = (1.0 - falloff + sum) * (1.0f - falloff);
-					col.rgb = float3(1);
+					col.rgb = float3(_Brightness);
 				}
 				
 				o.Alpha = alpha;

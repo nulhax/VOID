@@ -176,7 +176,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
         }
     }
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnEnviromentOxygenChange(bool _Breathable)
 	{
 		if(!_Breathable)

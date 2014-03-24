@@ -884,11 +884,11 @@ Camera:
   field of view: 45
   orthographic: 0
   orthographic size: 100
-  m_Depth: 5
+  m_Depth: 55
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 256
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_HDR: 0
   m_OcclusionCulling: 1

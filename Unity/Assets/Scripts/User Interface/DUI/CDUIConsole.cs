@@ -143,7 +143,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		}
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
 	{
 		m_CurrentPlayer = _cPlayerActorViewId;

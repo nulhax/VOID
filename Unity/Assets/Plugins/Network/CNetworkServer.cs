@@ -369,7 +369,7 @@ public class CNetworkServer : MonoBehaviour
                 // Check stream has outbound data
 				if (cNetworkViewStream.ByteSize >= 11)
                 {
-                    //Logger.WriteError("Sent packet to player id ({0}) system address ({1}) of size ({2}) MessageId ({3})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkViewStream.GetSize(), cNetworkViewStream.ReadByte());
+                    //Logger.WriteError("Sent packet to player id ({0}) system address ({1}) of size ({2}) MessageId ({3})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkViewStream.GetSize(), cNetworkViewStream.Read<byte>());
 					//cNetworkViewStream.SetReadOffset(0);
 
                     // Dispatch data to player

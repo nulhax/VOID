@@ -64,7 +64,7 @@ public class CHUDVisor : MonoBehaviour
 		m_VisorDown = _Down;
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
 	{
 		// Toggle between up/down visor

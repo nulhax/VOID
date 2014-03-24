@@ -52,7 +52,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         _cStream.Write(s_cSerializeStream);
@@ -63,8 +63,8 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-        CNetworkViewId cMedicalSpayViewId = _cStream.ReadNetworkViewId();
+        ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
+        CNetworkViewId cMedicalSpayViewId = _cStream.Read<CNetworkViewId>();
 
         switch (eAction)
         {
@@ -123,7 +123,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
         //m_bActive.Set(true);

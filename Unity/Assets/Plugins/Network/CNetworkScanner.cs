@@ -228,7 +228,7 @@ public class CNetworkScanner : MonoBehaviour
 		cStream.IgnoreBytes(1);
 
 		// Read time
-		uint uiTime = cStream.ReadUInt();
+		uint uiTime = cStream.Read<uint>();
 
 		// Read response data
 		byte[] baOfflinePingResponse = cStream.ReadBytes(cStream.NumUnreadBytes);

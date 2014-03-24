@@ -407,7 +407,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnGUI()
     {
         const float kBoxMargin = 10.0f;

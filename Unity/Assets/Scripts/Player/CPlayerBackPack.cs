@@ -116,7 +116,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
     }
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void OnPickupModuleRequest(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
         /*
@@ -132,7 +132,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
          * */
 	}
 	
-	[AClientOnly]
+	[ALocalOnly]
 	public void OnCellInsertRequest(CPlayerInteractor.EInputInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
 	{
         /*
@@ -159,7 +159,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		// Drop
@@ -187,13 +187,13 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 		while (_cStream.HasUnreadData)
 		{
 			// Extract action
-			ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+			ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
 			// Handle action
 			switch (eAction)
 			{
 				case ENetworkAction.PickupModule:
-					CNetworkViewId cModuleViewId = _cStream.ReadNetworkViewId();
+					CNetworkViewId cModuleViewId = _cStream.Read<CNetworkViewId>();
 					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, cModuleViewId);
 					
 					break;
@@ -203,7 +203,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 					break;
 				
 				case ENetworkAction.InsertCell:
-					CNetworkViewId cCellSlotViewId = _cStream.ReadNetworkViewId();
+					CNetworkViewId cCellSlotViewId = _cStream.Read<CNetworkViewId>();
 					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, cCellSlotViewId);
 					break;
 			}

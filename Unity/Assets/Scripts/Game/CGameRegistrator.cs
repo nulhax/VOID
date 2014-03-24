@@ -87,6 +87,7 @@ public class CGameRegistrator : MonoBehaviour
         Dispenser,
         NaniteCapsule,
         Engine,
+		Starter,
 
 		
 		// Components
@@ -244,6 +245,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Nanite Capsule");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -319,7 +321,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
 		CNetworkConnection.RegisterSerializationTarget(CLaserTurretBehaviour.SerializeOutbound      , CLaserTurretBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CMiningTurretBehaviour.SerializeOutbound     , CMiningTurretBehaviour.UnserializeInbound);
-        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeBeltState               , CPlayerBelt.UnserializeBeltState);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeOutbound               , CPlayerBelt.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound            , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterSerializationTarget(CDUISlider.SerializeSliderEvents    		    , CDUISlider.UnserializeSliderEvents);
@@ -398,6 +400,8 @@ public class CGameRegistrator : MonoBehaviour
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule        , ENetworkPrefab.NaniteCapsule);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
+
     }
 
 
@@ -475,10 +479,10 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_YawRight, KeyCode.E);
         CUserInput.SetKeyBinding(CUserInput.EInput.GalaxyShip_Turbo, KeyCode.LeftShift);// Shift
 
-        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot1, KeyCode.Alpha1);
-        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot2, KeyCode.Alpha2);
-        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot3, KeyCode.Alpha3);
-        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_SelectSlot4, KeyCode.Alpha4);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_EquipToolSlot1, KeyCode.Alpha1);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_EquipToolSlot2, KeyCode.Alpha2);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_EquipToolSlot3, KeyCode.Alpha3);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Tool_EquipToolSlot4, KeyCode.Alpha4);
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Reload, KeyCode.R);
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
