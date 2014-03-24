@@ -41,6 +41,22 @@ public class CHUDToolTips : MonoBehaviour
 	{
 		// Register to target change events
 		CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().EventTargetChange += OnTargetChange;
+
+		// Disable active tooltip
+		m_ActiveToolTip.gameObject.SetActive(false);
+	}
+
+	private void Update()
+	{
+		// Update the scale of the current tooltip
+		if(m_ActiveToolTip.gameObject.activeSelf)
+		{
+			float maxRange = CPlayerInteractor.s_InteractionRange;
+			float distance = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().TargetRaycastHit.distance;
+
+			Vector3 newScale = Vector3.one * (1.0f - (distance / maxRange));
+			m_ActiveToolTip.m_ToolTip.transform.localScale = newScale;
+		}
 	}
 	
 	private void OnTargetChange(GameObject _cOldTargetObject,  GameObject _CNewTargetObject, RaycastHit _cRaycastHit)

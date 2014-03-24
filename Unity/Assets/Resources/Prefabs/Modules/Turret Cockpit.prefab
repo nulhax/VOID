@@ -1371,7 +1371,7 @@ MonoBehaviour:
   m_ModuleSize: 2
   m_Internal: 1
   m_Buildable: 1
-  m_fNanitesCost: 100.124001
+  m_fNanitesCost: 20
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
