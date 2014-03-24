@@ -114,14 +114,14 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
         gameObject.GetComponent<CThirdPersonAnimController>().DisableAnimation();
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
@@ -147,21 +147,21 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 // Retrieve player actor motor  
                 CPlayerGroundMotor cPlayerActorMotor = cPlayerActor.GetComponent<CPlayerGroundMotor>();
 
-                ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+                ENetworkAction eNetworkAction = (ENetworkAction)_cStream.Read<byte>();
 
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.UpdateStates:
                         {
-                            cPlayerActorMotor.m_uiMovementStates = _cStream.ReadByte();
+                            cPlayerActorMotor.m_uiMovementStates = _cStream.Read<byte>();
 
                             if (cPlayerActor != CGamePlayers.SelfActor)
                             {
-                                cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.ReadFloat(), 0.0f);
+                                cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.Read<float>(), 0.0f);
                             }
                             else
                             {
-                                _cStream.ReadFloat();
+                                _cStream.Read<float>();
                             }
 
                             cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);

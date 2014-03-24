@@ -62,7 +62,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
 
     }
 
-    [AClientOnly]
+    [ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
     {
 		_cStream.Write(s_cSerializeStream);
@@ -75,8 +75,8 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     {
         while (_cStream.HasUnreadData)
         {
-            CNetworkViewId oxygenRefillViewId = _cStream.ReadNetworkViewId();
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            CNetworkViewId oxygenRefillViewId = _cStream.Read<CNetworkViewId>();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
             GameObject cOxygenRefillerObject = oxygenRefillViewId.GameObject;
 
@@ -91,7 +91,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
         }
     }
 
-    [AClientOnly]
+    [ALocalOnly]
     private void OnPlayerUse(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)
     {
         // TODO: if broken do not call this section

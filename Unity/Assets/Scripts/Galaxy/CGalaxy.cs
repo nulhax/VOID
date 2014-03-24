@@ -122,27 +122,27 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
-	private SCellPos mCentreCell = new SCellPos(0, 0, 0);    // All cells are offset by this cell.
+	private SCellPos mCentreCell = new SCellPos(0, 0, 0);	// All cells are offset by this cell.
 	protected CNetworkVar<int> mCentreCellX;
 	protected CNetworkVar<int> mCentreCellY;
 	protected CNetworkVar<int> mCentreCellZ;
 	public SCellPos centreCell { get { return mCentreCell; } }
 
-	private List<GalaxyShiftable> mShiftableEntities = new List<GalaxyShiftable>();    // When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
-	private List<CRegisteredObserver> mObservers = new List<CRegisteredObserver>(); // Cells are loaded and unloaded based on proximity to observers.
-	private List<CRegisteredGubbin> mGubbins;    // Gubbins ("space things") are unloaded based on proximity to cells.
+	private List<GalaxyShiftable> mShiftableEntities = new List<GalaxyShiftable>();	// When everything moves too far in any direction, the transforms of these registered GameObjects are shifted back.
+	private List<CRegisteredObserver> mObservers = new List<CRegisteredObserver>();	// Cells are loaded and unloaded based on proximity to observers.
+	private List<CRegisteredGubbin> mGubbins;	// Gubbins ("space things") are unloaded based on proximity to cells.
 	private List<SGubbinMeta> mGubbinsToLoad;
 	private List<CRegisteredGubbin> mGubbinsToUnload;
 	private Dictionary<SCellPos, CCellContent> mCells;
 	private List<SCellPos> mCellsToLoad;
 	private List<SCellPos> mCellsToUnload;
 
-	private float mfGalaxySize = 1391000000.0f; // (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
+	private float mfGalaxySize = 1391000000.0f;	// (1.3 million kilometres) In metres cubed. Floats can increment up to 16777220.0f (16.7 million).
 	protected CNetworkVar<float> mGalaxySize;
 	public float galaxySize { get { return mfGalaxySize; } }
 	public float galaxyRadius { get { return galaxySize * 0.5f; } }
 
-	private uint muiNumCellSubsets = 20; // Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
+	private uint muiNumCellSubsets = 20;	// Zero is just the one cell. Also, this is equivalent to the number of bits per axis required to acknowledge each cell (<= 2 for 1 byte, <= 5 for 2 bytes, <= 10 for 4 bytes, <= 21 for 8 bytes).
 	protected CNetworkVar<uint> mNumCellSubsets;
 	public uint numCellSubsets { get { return muiNumCellSubsets; } }
 
@@ -177,6 +177,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public float cellRadius { get { return mfGalaxySize / (numCellsInRow * 2u); } }
 	public ulong numCells { get { /*return (uint)Mathf.Pow(8, muiNumCellSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ul *= 8u; return ul; } }
 	public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
+
+	public bool initialiseDungeonMaster = true;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Functions:
@@ -255,12 +257,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 			for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 				mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-			new DynamicEvent_RogueAsteroid();
-			new DifficultyModifier_DifficultyChoice();
-			gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
-			new DifficultyModifier_ShipDamage();
-			gameObject.AddComponent<DifficultyModifier_TotalDistanceTravelled>();
-			new DifficultyModifier_TotalShipWorth();
+			if(initialiseDungeonMaster)
+				gameObject.AddComponent<DungeonMaster>();
 		}
 	}
 
@@ -807,7 +805,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 		RenderSettings.skybox.SetVector("_Tint", Color.grey);
 	}
 
-	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
+	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.CeilToInt(1 * SampleNoise_SparseAsteroid(absoluteCell)); }
+	//public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
 	public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * SampleNoise_AsteroidCluster(absoluteCell)); }
 	public float DebrisDensity(SCellPos absoluteCell) { return SampleNoise_DebrisDensity(absoluteCell); }
 	public float FogDensity(SCellPos absoluteCell) { return SampleNoise_FogDensity(absoluteCell); }
@@ -816,8 +815,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public float SampleNoise_SparseAsteroid(SCellPos absoluteCell)
 	{
-		float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);
-		float start = 0.5f, end = 0.9f;
+		float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.SparseAsteroidCount);
+		float start = 0.0f, end = 1.0f;
+		//float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);
+		//float start = 0.5f, end = 0.9f;
 		sample = (sample - start) / (end - start);
 		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
 	}

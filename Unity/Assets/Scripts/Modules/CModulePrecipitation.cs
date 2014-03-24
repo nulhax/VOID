@@ -112,7 +112,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 	}
 	
 
-    [AClientOnly]
+    [ALocalOnly]
 	void OnPrecipitationFinish()
 	{
 		// Enable all the children

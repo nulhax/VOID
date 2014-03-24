@@ -37,8 +37,8 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 	void Start () 
 	{
 		//gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += OnPlayerInteraction;
-		gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
-        gameObject.GetComponent<CPlayerBelt>().EventToolDropped += OnToolDrop;   
+		//gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
+        //gameObject.GetComponent<CPlayerBelt>().EventToolDropped += OnToolDrop;   
 	}
 	
 	// Update is called once per frame

@@ -75,7 +75,7 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
         }
     }
     
-    [AClientOnly]
+    [ALocalOnly]
     public static void Serialize(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -90,17 +90,17 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Extract action
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
             
             switch (eAction)
             {
                 case ENetworkAction.SetRepairState:
                 {
                     //Figure out which ratchet sent it's new state
-                    CFluidToolBehaviour FluidTool = _cStream.ReadNetworkViewId().GameObject.GetComponent<CFluidToolBehaviour>();
+                    CFluidToolBehaviour FluidTool = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CFluidToolBehaviour>();
                     
-                    FluidTool.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
-                    FluidTool.m_eRepairState = (ERepairState)_cStream.ReadByte();
+                    FluidTool.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
+                    FluidTool.m_eRepairState = (ERepairState)_cStream.Read<byte>();
                     
                     break;
                 }

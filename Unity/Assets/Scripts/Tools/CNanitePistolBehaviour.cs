@@ -77,7 +77,7 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -95,32 +95,38 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
             ENetworkAction eAction = (ENetworkAction)_cStream.ReadBits<byte>(k_uiNetworkActionBitSize);
 
             // Extract sending nanite pistol behaviour
-            CNanitePistolBehaviour cNanitePistolBehaviour = _cStream.ReadNetworkViewId().GameObject.GetComponent<CNanitePistolBehaviour>();
+            CNanitePistolBehaviour cNanitePistolBehaviour = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CNanitePistolBehaviour>();
 
             switch (eAction)
             {
                 case ENetworkAction.BuildModule:
                     {
+                        Debug.LogError("Build modules start");
+
                         cNanitePistolBehaviour.m_eState.Set(EState.BuildingModule);
-                        cNanitePistolBehaviour.m_cTargetModule = _cStream.ReadNetworkViewId().GameObject;
-                    }
-                    break;
-
-                case ENetworkAction.RequireHullBreach:
-                    {
-
+                        cNanitePistolBehaviour.m_cTargetModule = _cStream.Read<CNetworkViewId>().GameObject;
                     }
                     break;
 
                 case ENetworkAction.MineMinerals:
                     {
+                        Debug.LogError("Mine minerals start");
+
                         cNanitePistolBehaviour.m_eState.Set(EState.Mining);
-                        cNanitePistolBehaviour.m_cTargetMinerals = _cStream.ReadNetworkViewId().GameObject;
+                        cNanitePistolBehaviour.m_cTargetMinerals = _cStream.Read<CNetworkViewId>().GameObject;
+                    }
+                    break;
+
+                case ENetworkAction.RequireHullBreach:
+                    {
+                        Debug.LogError("Reparing hull breach start");
                     }
                     break;
 
                 case ENetworkAction.Stop:
                     {
+                        //Debug.LogError("Stop state: " + cNanitePistolBehaviour.State);
+
                         cNanitePistolBehaviour.m_eState.Set(EState.Idle);
                     }
                     break;
@@ -133,22 +139,32 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
+    void Awake()
+    {
+        m_cToolInterface = GetComponent<CToolInterface>();
+    }
+
+
     void Start()
     {
         GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryChange;
         GetComponent<CToolInterface>().EventPickedUp += OnEventPickedUp;
         GetComponent<CToolInterface>().EventDropped += OnEventDopped;
 
+        m_cBuildingHitParticles = GameObject.Instantiate(m_cMingingHitParticles) as GameObject;
+        m_cBuildingHitParticles.SetActive(false);
+
         m_cMingingHitParticles = GameObject.Instantiate(m_cMingingHitParticles) as GameObject;
         m_cMingingHitParticles.SetActive(false);
+
+        m_cRepairingHitParticles = GameObject.Instantiate(m_cMingingHitParticles) as GameObject;
+        m_cRepairingHitParticles.SetActive(false);
     }
 
 
     void OnDestroy()
     {
-        GetComponent<CToolInterface>().EventPrimaryActiveChange -= OnEventPrimaryChange;
-        GetComponent<CToolInterface>().EventPickedUp -= OnEventPickedUp;
-        GetComponent<CToolInterface>().EventDropped -= OnEventDopped;
+        // Empty
     }
 
 
@@ -158,7 +174,6 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
         {
             UpdateState();
         }
-
 
         UpdateMiningLaser();
         UpdateBuildingLaser();
@@ -206,7 +221,54 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
+    void UpdateStates()
+    {
+        if (m_cToolInterface.IsPrimaryActive)
+        {
+            CPlayerInteractor cPlayerInteractor = m_cToolInterface.OwnerPlayerActor.GetComponent<CPlayerInteractor>();
+
+            GameObject cTargetActorObject = cPlayerInteractor.TargetActorObject;
+            RaycastHit cTargetRaycastHit = cPlayerInteractor.TargetRaycastHit;
+
+            if (cTargetActorObject != null)
+            {
+                // Start building
+                if (cTargetActorObject.GetComponent<CModuleInterface>() != null &&
+                    !cTargetActorObject.GetComponent<CModuleInterface>().IsBuilt &&
+                     cTargetRaycastHit.distance < k_fBuildingRange)
+                {
+                    m_cTargetModule = cTargetActorObject;
+
+                    s_cSerializeStream.WriteBits((byte)ENetworkAction.BuildModule, k_uiNetworkActionBitSize);
+                    s_cSerializeStream.Write(SelfNetworkViewId);
+                    s_cSerializeStream.Write(cTargetActorObject.GetComponent<CNetworkView>().ViewId);
+                }
+
+                // Start mining
+                else if (cTargetActorObject.GetComponent<CMineralsBehaviour>() != null &&
+                         cTargetRaycastHit.distance < k_fMiningRange)
+                {
+                    m_cTargetMinerals = cTargetActorObject;
+
+                    s_cSerializeStream.WriteBits((byte)ENetworkAction.MineMinerals, k_uiNetworkActionBitSize);
+                    s_cSerializeStream.Write(SelfNetworkViewId);
+                    s_cSerializeStream.Write(m_cTargetMinerals.GetComponent<CNetworkView>().ViewId);
+
+                    // Subscribe to deplete event
+                    m_cTargetMinerals.GetComponent<CMineralsBehaviour>().EventDeplete += OnEventMineralsDeplete;
+                }
+            }
+        }
+        else if (State != EState.Idle)
+        {
+            s_cSerializeStream.WriteBits(ENetworkAction.Stop, k_uiNetworkActionBitSize);
+            s_cSerializeStream.Write(SelfNetworkViewId);
+        }
+    }
+
+
+    [ALocalOnly]
     void UpdateMiningLaser()
     {
         if (m_bShowMiningLaser)
@@ -250,7 +312,7 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void UpdateBuildingLaser()
     {
         if (m_bShowBuildingLaser)
@@ -295,52 +357,14 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventPrimaryChange(bool _bDown)
     {
-        if (_bDown)
-        {
-            GameObject cTargetActorObject = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetActorObject;
-            RaycastHit cTargetRaycastHit = GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().TargetRaycastHit;
 
-            if (cTargetActorObject != null)
-            {
-                // Start building
-                if ( cTargetActorObject.GetComponent<CModuleInterface>() != null &&
-                    !cTargetActorObject.GetComponent<CModuleInterface>().IsBuilt &&
-                     cTargetRaycastHit.distance < k_fBuildingRange)
-                {
-                    m_cTargetModule = cTargetActorObject;
-
-                    s_cSerializeStream.WriteBits((byte)ENetworkAction.BuildModule, k_uiNetworkActionBitSize);
-                    s_cSerializeStream.Write(SelfNetworkViewId);
-                    s_cSerializeStream.Write(cTargetActorObject.GetComponent<CNetworkView>().ViewId);
-                }
-
-                // Start mining
-                else if (cTargetActorObject.GetComponent<CMineralsBehaviour>() != null &&
-                         cTargetRaycastHit.distance < k_fMiningRange)
-                {
-                    m_cTargetMinerals = cTargetActorObject;
-
-                    s_cSerializeStream.WriteBits((byte)ENetworkAction.MineMinerals, k_uiNetworkActionBitSize);
-                    s_cSerializeStream.Write(SelfNetworkViewId);
-                    s_cSerializeStream.Write(m_cTargetMinerals.GetComponent<CNetworkView>().ViewId);
-
-                    // Subscribe to deplete event
-                    m_cTargetMinerals.GetComponent<CMineralsBehaviour>().EventDeplete += OnEventMineralsDeplete;
-                }
-            }
-        }
-        else if (State != EState.Idle)
-        {
-            s_cSerializeStream.WriteBits(ENetworkAction.Stop, k_uiNetworkActionBitSize);
-            s_cSerializeStream.Write(SelfNetworkViewId);
-        }
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventMineralsDeplete(GameObject _cMinerals)
     {
         s_cSerializeStream.WriteBits(ENetworkAction.Stop, k_uiNetworkActionBitSize);
@@ -348,14 +372,14 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventPickedUp()
     {
         GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerInteractor>().EventTargetChange += OnEventActorInteractableTargetChange;
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventDopped()
     {
         if (GetComponent<CToolInterface>().OwnerPlayerActor != null)
@@ -368,7 +392,7 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventActorInteractableTargetChange(GameObject _cOldTargetObject, GameObject _CNewTargetObject, RaycastHit _cRaycastHit)
     {
         s_cSerializeStream.WriteBits(ENetworkAction.Stop, k_uiNetworkActionBitSize);
@@ -403,24 +427,33 @@ public class CNanitePistolBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fBuildRatioPower = 0.05f; // 5%/Sec
-    const float k_fMiningRate = 5.0f;
-    const float k_fMiningRange = 40.0f;
-    const float k_fBuildingRange = 3.0f;
+    const float k_fBuildRatioPower  = 0.05f; // 5% per sec
+    const float k_fMiningRate       = 5.0f;
+    const float k_fMiningRange      = 10.0f;
+    const float k_fBuildingRange    = 3.0f;
 
 
-    public GameObject m_cMingingHitParticles = null;
+    public GameObject m_cBuildingHitParticles   = null;
+    public GameObject m_cMingingHitParticles    = null;
+    public GameObject m_cRepairingHitParticles  = null;
 
 
     CNetworkVar<EState> m_eState = null;
 
 
-    GameObject m_cTargetModule = null;
-    GameObject m_cTargetMinerals = null;
+    CToolInterface m_cToolInterface = null;
 
 
-    bool m_bShowMiningLaser = false;
-    bool m_bShowBuildingLaser = false;
+    GameObject m_cTargetModule      = null;
+    GameObject m_cTargetMinerals    = null;
+    GameObject m_cTargetHullBreach  = null;
+
+
+    bool m_bShowBuildingLaser   = false;
+    bool m_bShowMiningLaser     = false;
+    bool m_bShowReparingLaser   = false;
+
+
     bool m_bSubscribedToMineralsEvent = false;
 
 

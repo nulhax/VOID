@@ -199,7 +199,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		}
 		else
 		{
-			Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.ChildId);
+			//Logger.WriteErrorOn(cGameObject == null, "Could not find network object with ViewId({0}) SubViewId({1})", _cNetworkViewId.Id, _cNetworkViewId.ChildId);
 		}
 
 		return (cGameObject);

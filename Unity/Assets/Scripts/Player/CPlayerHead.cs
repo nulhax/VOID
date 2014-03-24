@@ -124,21 +124,21 @@ public class CPlayerHead : CNetworkMonoBehaviour
         CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void SetHeadRotations(float _LocalEulerX)
 	{
 		m_LocalXRotation = _LocalEulerX;
@@ -167,7 +167,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		CPlayerHead cMyActorHead = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerHead>();
 
 		// Write my head's x-rotation
-		float fRotationX = _cStream.ReadFloat();
+		float fRotationX = _cStream.Read<float>();
 
 		cMyActorHead.m_fHeadEulerX.Set(fRotationX);
 	}

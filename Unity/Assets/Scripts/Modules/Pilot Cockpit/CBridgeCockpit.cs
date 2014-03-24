@@ -94,7 +94,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnEventAxisControlCamera(CUserInput.EAxis _eAxis, float _fValue)
 	{
 		CGalaxyShipCamera galaxyShipCamera = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>();

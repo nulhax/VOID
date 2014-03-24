@@ -70,7 +70,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
 		_cStream.Write(s_cSerializeStream);
@@ -83,13 +83,13 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
+			CNetworkViewId cTurretViewId = _cStream.Read<CNetworkViewId>();
 			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
 
 			if (cTurretObject != null)
 			{
 				CMiningTurretBehaviour cMiningTurretBehaviour = cTurretObject.GetComponent<CMiningTurretBehaviour>();		
-				ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+				ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
 				switch (eAction)
 				{
@@ -226,7 +226,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
 	void UpdateFractureLaserProjectile()
 	{
         if (IsLaserVisible)
@@ -249,7 +249,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void UpdateExtractorBeamProjectile()
     {
         if (IsExtractorBeamVisible)
@@ -272,7 +272,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
     }
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnTurretControllerChange(ulong _ulPreviousPlayerId, ulong _ulNewPlayerId)
 	{
 		if (_ulNewPlayerId == CNetwork.PlayerId)
@@ -291,7 +291,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
         s_cSerializeStream.Write(SelfNetworkView.ViewId);
@@ -307,7 +307,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
         s_cSerializeStream.Write(SelfNetworkView.ViewId);
