@@ -330,6 +330,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		// Configure the collider trigger
 		mc = collider.AddComponent<MeshCollider>();
 		mc.sharedMesh = m_CombinedMesh;
+		mc.convex = true;
 
 		// Attach the exterior to the facility to the galaxy ship
 		CGalaxyShipFacilities galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>();
