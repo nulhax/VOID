@@ -164,7 +164,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(m_bSerializeName)
 		{
 			_cStream.Write((byte)ENetworkAction.ActionSendPlayerName);
-			_cStream.WriteString(CGamePlayers.s_cInstance.m_sPlayerName);
+            _cStream.Write(CGamePlayers.s_cInstance.m_sPlayerName);
 								
 			CGamePlayers.m_bSerializeName = false;
 		}
@@ -173,13 +173,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	
 	public static void UnserializeData(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-		ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+		ENetworkAction eNetworkAction = (ENetworkAction)_cStream.Read<byte>();
 		
 		switch (eNetworkAction)
 		{
 			case ENetworkAction.ActionSendPlayerName:
 			{
-				string sPlayerName = _cStream.ReadString();
+				string sPlayerName = _cStream.Read<string>();
 
 				//Send all dictionary entries to new player
 				foreach (KeyValuePair<ulong, string> entry in CGamePlayers.s_cInstance.m_mPlayersNames) 

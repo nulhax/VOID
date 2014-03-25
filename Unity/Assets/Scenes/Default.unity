@@ -1051,7 +1051,12 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 2300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_RootGameObject: {fileID: 1432749547}
   m_IsPrefabParent: 0
@@ -1634,7 +1639,6 @@ GameObject:
   - 114: {fileID: 1432749554}
   - 114: {fileID: 1432749555}
   - 114: {fileID: 1432749556}
-  - 114: {fileID: 1432749562}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -1649,7 +1653,7 @@ Renderer:
     type: 2}
   m_PrefabInternal: {fileID: 996471907}
   m_GameObject: {fileID: 1432749547}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_LightmapIndex: 255
@@ -1819,19 +1823,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e8ffc7a7b368e54c877ffddf49bef5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1432749562
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
-    type: 2}
-  m_PrefabInternal: {fileID: 996471907}
-  m_GameObject: {fileID: 1432749547}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inheritMeshFromParent: 0
 --- !u!1001 &1527999934
 Prefab:
   m_ObjectHideFlags: 0

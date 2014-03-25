@@ -76,28 +76,6 @@ public class CFacilityHull : CNetworkMonoBehaviour
     }
 
 
-	void Start()
-	{
-        // Turn on alarms
-        EventBreached += (EEventType _eEventType) =>
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
-            {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(true);
-            });
-        };
-
-        // Turn off alarms
-        EventBreachFixed += (EEventType _eEventType) =>
-        {
-            gameObject.GetComponent<CFacilityInterface>().FindAccessoriesByType(CAccessoryInterface.EType.Alarm).ForEach((_cAlarmObject) =>
-            {
-                _cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(false);
-            });
-        };
-	}
-
-
 	void OnDestroy()
 	{
         // Empty

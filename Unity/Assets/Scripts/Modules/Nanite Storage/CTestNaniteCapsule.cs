@@ -88,12 +88,12 @@ public class CTestNaniteCapsule: MonoBehaviour
 			// Deactive the charge availablity
 			if(numWorkingComponents == 0)
 			{
-				m_NaniteStorage.DeactivateNaniteAvailability();
+				m_NaniteStorage.SetNaniteAvailability(false);
 			}
 			else
 			{
 				if(!m_NaniteStorage.IsStorageAvailable)
-					m_NaniteStorage.ActivateNaniteAvailability();
+					m_NaniteStorage.SetNaniteAvailability(true);
 			}
 		}
 	}

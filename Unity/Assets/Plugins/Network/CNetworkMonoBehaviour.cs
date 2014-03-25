@@ -56,6 +56,15 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     }
 
 
+    public void InvokeRpcThisAll(params object[] _caParameters)
+    {
+        System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
+        System.Diagnostics.StackFrame sf = st.GetFrame(1);
+        System.Reflection.MethodBase currentMethodName = sf.GetMethod();
+        Debug.LogError("Method name: " + currentMethodName.Name);
+    }
+
+
     public CNetworkView SelfNetworkView
     {
         get { return (gameObject.GetComponent<CNetworkView>()); }

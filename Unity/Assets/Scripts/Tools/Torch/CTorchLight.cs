@@ -54,7 +54,7 @@ public class CTorchLight : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         _cStream.Write(s_cSerializeStream);
@@ -67,8 +67,8 @@ public class CTorchLight : CNetworkMonoBehaviour
     {
         while (_cStream.HasUnreadData)
         {
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-            CNetworkViewId cModuleGunViewId = _cStream.ReadNetworkViewId();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
+            CNetworkViewId cModuleGunViewId = _cStream.Read<CNetworkViewId>();
 
             GameObject cModuleGunObject = cModuleGunViewId.GameObject;
             CToolInterface cToolInterface = cModuleGunObject.GetComponent<CToolInterface>();

@@ -52,7 +52,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         _cStream.Write(s_cSerializeStream);
@@ -63,8 +63,8 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-        CNetworkViewId cFireExtinguisherViewId = _cStream.ReadNetworkViewId();
+        ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
+        CNetworkViewId cFireExtinguisherViewId = _cStream.Read<CNetworkViewId>();
 
         switch (eAction)
         {
@@ -132,7 +132,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnEventPrimaryActiveChange(bool _bActive)
     {
         if (_bActive)

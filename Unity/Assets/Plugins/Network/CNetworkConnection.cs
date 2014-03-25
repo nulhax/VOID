@@ -284,7 +284,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 		cStream.IgnoreBytes(1);
 
 		// Retrieve latency
-		ulong ulLatency = RakNet.RakNet.GetTime() - cStream.ReadULong();
+		ulong ulLatency = RakNet.RakNet.GetTime() - cStream.Read<ulong>();
 
         // Ignmore serialized data packet id
 		cStream.IgnoreBytes(1);
@@ -294,7 +294,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
                cStream.NumUnreadBits > 18)
 		{
 			// Extract the target identifier
-			byte bTargetIdentifier = cStream.ReadByte();
+			byte bTargetIdentifier = cStream.Read<byte>();
 
 			// Extract the size of the data
             ushort usBitSize = cStream.ReadBits<ushort>(10);
@@ -559,7 +559,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 			cStream.IgnoreBytes(1);
 			
 			// Retrieve latency
-			ulong ulLatency = RakNet.RakNet.GetTime() - cStream.ReadULong();
+			ulong ulLatency = RakNet.RakNet.GetTime() - cStream.Read<ulong>();
 			// Ignore EPacketId.NetworkView identifier
 			cStream.IgnoreBytes(1);
 			

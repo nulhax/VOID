@@ -149,7 +149,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		{			
 			CPlayerIKController cPlayerIKController = cPlayerActor.GetComponent<CPlayerIKController>();
 			
-			ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+			ENetworkAction eNetworkAction = (ENetworkAction)_cStream.Read<byte>();
 			
 			switch (eNetworkAction)
 			{
@@ -158,15 +158,15 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				Vector3 pos = new Vector3();
 				Vector3 rot = new Vector3();
 
-				pos.x = _cStream.ReadFloat();
-				pos.y = _cStream.ReadFloat();
-				pos.z = _cStream.ReadFloat();
+				pos.x = _cStream.Read<float>();
+				pos.y = _cStream.Read<float>();
+				pos.z = _cStream.Read<float>();
 
 				cPlayerIKController.m_RightHandTarget.position = pos;
 
-				rot.x = _cStream.ReadFloat();
-				rot.y = _cStream.ReadFloat();
-				rot.z = _cStream.ReadFloat();	
+				rot.x = _cStream.Read<float>();
+				rot.y = _cStream.Read<float>();
+				rot.z = _cStream.Read<float>();	
 
 				cPlayerIKController.m_RightHandTarget.rotation = Quaternion.Euler(rot);
 				
@@ -180,15 +180,15 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 				Vector3 pos = new Vector3();
 				Vector3 rot = new Vector3();
 				
-				pos.x = _cStream.ReadFloat();
-				pos.y = _cStream.ReadFloat();
-				pos.z = _cStream.ReadFloat();
+				pos.x = _cStream.Read<float>();
+				pos.y = _cStream.Read<float>();
+				pos.z = _cStream.Read<float>();
 				
 				cPlayerIKController.m_LeftHandTarget.position = pos;
 				
-				rot.x = _cStream.ReadFloat();
-				rot.y = _cStream.ReadFloat();
-				rot.z = _cStream.ReadFloat();	
+				rot.x = _cStream.Read<float>();
+				rot.y = _cStream.Read<float>();
+				rot.z = _cStream.Read<float>();	
 				
 				cPlayerIKController.m_LeftHandTarget.rotation = Quaternion.Euler(rot);
 				

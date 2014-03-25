@@ -124,7 +124,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		}
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnRecievedMicrophoneAudio(CNetworkStream _cAudioDataStream)
 	{
 		s_framesToDecode.Enqueue(_cAudioDataStream);
@@ -271,11 +271,11 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		CNetworkStream _cAudioDataStream = (CNetworkStream)_rawData; 
 		
 		//Pull relevant information out of the network stream.		
-		int iFrequency = _cAudioDataStream.ReadInt();
-		int iNumSamples = _cAudioDataStream.ReadInt();
-		int iNumEncodedBytes = _cAudioDataStream.ReadInt();
+		int iFrequency = _cAudioDataStream.Read<int>();
+		int iNumSamples = _cAudioDataStream.Read<int>();
+		int iNumEncodedBytes = _cAudioDataStream.Read<int>();
 		byte[] baEncodedData = _cAudioDataStream.ReadBytes(iNumEncodedBytes);
-		CNetworkViewId cSenderViewID = 	_cAudioDataStream.ReadNetworkViewId();	
+		CNetworkViewId cSenderViewID = 	_cAudioDataStream.Read<CNetworkViewId>();	
 		
 		// Decode
 		short[] saDecodedFrames = new short[iNumSamples];
