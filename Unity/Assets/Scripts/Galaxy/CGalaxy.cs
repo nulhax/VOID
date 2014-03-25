@@ -29,6 +29,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		public static SCellPos operator +(SCellPos lhs, SCellPos rhs) { return new SCellPos(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 		public static SCellPos operator -(SCellPos lhs, SCellPos rhs) { return new SCellPos(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
+
+		public override string ToString() { return '(' + x.ToString() + ", " + y.ToString() + ", " + z.ToString() + ')'; }
 	}
 
 	class CCellContent
@@ -212,36 +214,36 @@ public class CGalaxy : CNetworkMonoBehaviour
 		RenderSettings.skybox = null;
 
 		// Load skyboxes.
-        string[] skyboxFaces = new string[6];
-        skyboxFaces[0] = "Left";
-        skyboxFaces[1] = "Right";
-        skyboxFaces[2] = "Down";
-        skyboxFaces[3] = "Up";
-        skyboxFaces[4] = "Front";
-        skyboxFaces[5] = "Back";
+		string[] skyboxFaces = new string[6];
+		skyboxFaces[0] = "Left";
+		skyboxFaces[1] = "Right";
+		skyboxFaces[2] = "Down";
+		skyboxFaces[3] = "Up";
+		skyboxFaces[4] = "Front";
+		skyboxFaces[5] = "Back";
 
-        for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        {
-            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
-            {
-                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
-                if (!mSkyboxes[uiSkybox])
-                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
-                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
-                Resources.UnloadAsset(skyboxFace);
-            }
+		for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+		{
+			for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
+			{
+				Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
+				if (!mSkyboxes[uiSkybox])
+					mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
+				mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
+				Resources.UnloadAsset(skyboxFace);
+			}
 
-            mSkyboxes[uiSkybox].Apply(false, true);
-        }
+			mSkyboxes[uiSkybox].Apply(false, true);
+		}
 
-        //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
+		//for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+		//    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
 
 		UpdateGalaxyAesthetic(mCentreCell);
 
 		// Statistical data sometimes helps spot errors.
-        // Commented out by Nathan to avoid extranious logging details.
-        // Feel free to uncomment when required for debugging purposes.
+		// Commented out by Nathan to avoid extranious logging details.
+		// Feel free to uncomment when required for debugging purposes.
 		//Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
 
 		if (CNetwork.IsServer)
@@ -257,7 +259,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 			for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 				mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
 
-			if(initialiseDungeonMaster)
+			if (initialiseDungeonMaster)
 				gameObject.AddComponent<DungeonMaster>();
 		}
 	}
@@ -543,10 +545,14 @@ public class CGalaxy : CNetworkMonoBehaviour
 	private Vector3 CalculateAverageObserverPosition()
 	{
 		Vector3 result = new Vector3();
-		foreach (CRegisteredObserver observer in mObservers)
-			result += observer.mEntity.transform.position;
+		if (mObservers.Count > 0)
+		{
+			foreach (CRegisteredObserver observer in mObservers)
+				result += observer.mEntity.transform.position;
+			result /= mObservers.Count;
+		}
 
-		return result / mObservers.Count;
+		return result;
 	}
 
 	public void SyncNoiseSeed(INetworkVar sender)
@@ -737,12 +743,12 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)
 	{
-        return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
+		return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 	}
 
 	public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
 	{
-        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+		return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
 	}
 
 	public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
@@ -751,7 +757,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
+		return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 	}
 
 	public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
@@ -769,7 +775,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
+		return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
 	}
 
 	public SCellPos AbsolutePointToRelativeCell(Vector3 absolutePoint)
@@ -778,7 +784,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		absolutePoint.y += cellRadius;
 		absolutePoint.z += cellRadius;
 		absolutePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
+		return new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
 	}
 
 	public Vector3 RelativePointToAbsolutePoint(Vector3 relativePoint) { return relativePoint + AbsoluteCellToAbsolutePoint(mCentreCell); }
@@ -788,7 +794,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 	{
 		Vector3 cellCentrePos = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 		float cellBoundingSphereRadius = cellDiameter * 0.86602540378443864676372317075294f;
-        return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
+		return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
 	}
 
 	void UpdateGalaxyAesthetic(SCellPos absoluteCell)
@@ -876,9 +882,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one * Random.Range(5.0f, 10.0f), // Scale
+												Vector3.one * Random.Range(5.0f, 10.0f), // Scale
 												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
-			                                    Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
+												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
@@ -903,8 +909,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 													absoluteCell,   // Parent cell.
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
-				                                    Vector3.one * Random.Range(2.0f, 8.0f), // Scale
-				                                    Vector3.zero, //linearClusterVelocity, // Linear velocity.
+													Vector3.one * Random.Range(2.0f, 8.0f), // Scale
+													Vector3.zero, //linearClusterVelocity, // Linear velocity.
 													Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
@@ -925,13 +931,13 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		for (uint ui = 0; ui < uiNumEnemyShips; ++ui)
 		{
-			mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,    // Enemy ship prefab.
+			mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,	// Enemy ship prefab.
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one, // Scale
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+												Vector3.one, // Scale
+												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,	// Linear velocity.
+												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/,	// Angular velocity.
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
