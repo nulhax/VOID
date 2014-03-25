@@ -59,23 +59,23 @@ Material:
       data:
         first:
           name: _SpecPower
-        second: 1
+        second: 2.19000006
       data:
         first:
           name: _EmissivePowerR
-        second: 1
+        second: 1.44642854
       data:
         first:
           name: _EmissivePowerG
-        second: 1
+        second: 1.71428585
       data:
         first:
           name: _EmissivePowerB
-        second: 1
+        second: 5
       data:
         first:
           name: _EmissivePowerA
-        second: 1
+        second: 0
     m_Colors:
       data:
         first:
