@@ -66,11 +66,19 @@ Material:
       data:
         first:
           name: _NoiseFreq
-        second: 10
+        second: 5
       data:
         first:
           name: _NoiseSpeed
-        second: .25
+        second: .0199999996
+      data:
+        first:
+          name: _FadeDistRatio
+        second: .342500001
+      data:
+        first:
+          name: _GlowIntensity
+        second: 4
     m_Colors:
       data:
         first:
