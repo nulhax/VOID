@@ -74,13 +74,13 @@ Material:
     m_Colors:
       data:
         first:
+          name: _Tint
+        second: {r: .375, g: .741379321, b: 1, a: .196078435}
+      data:
+        first:
           name: _DiffuseCol
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Tint
-        second: {r: .375, g: .741379321, b: 1, a: .196078435}

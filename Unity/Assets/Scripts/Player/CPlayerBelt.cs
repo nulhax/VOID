@@ -333,30 +333,13 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    [ALocalOnly]
+    void SelectLocalTool(byte _bSlotId)
     {
-        // Picking up and dropping tool
-        for (uint i = 0; i < k_uiMaxNumTools; ++i)
+        if (GetTool(_bSlotId) != null)
         {
-            if (m_acToolsViewId[i] == _cSyncedVar)
-            {
-                CNetworkVar<CNetworkViewId> cToolViewId = m_acToolsViewId[i];
-
-                if (cToolViewId == null)
-                {
-                    if (EventToolDropped != null) EventToolDropped(cToolViewId.GetPrevious().GameObject);
-                }
-                else
-                {
-                    if (EventToolPickedup != null) EventToolPickedup(cToolViewId.GetPrevious().GameObject);
-                }
-            }
-        }
-
-        // Changing tool
-        if (_cSyncedVar == m_bActiveToolId)
-        {
-            if (EventEquipedToolChanged != null) EventEquipedToolChanged(ActiveTool);
+            s_cSerializeStream.Write(ENetworkAction.EquipTool);
+            s_cSerializeStream.Write(_bSlotId);
         }
     }
 
@@ -469,19 +452,19 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 break;
 
             case CUserInput.EInput.Tool_EquipToolSlot1:
-                SelectTool(0);
+                SelectLocalTool(0);
                 break;
 
             case CUserInput.EInput.Tool_EquipToolSlot2:
-                SelectTool(1);
+                SelectLocalTool(1);
                 break;
 
             case CUserInput.EInput.Tool_EquipToolSlot3:
-                SelectTool(2);
+                SelectLocalTool(2);
                 break;
 
             case CUserInput.EInput.Tool_EquipToolSlot4:
-                SelectTool(3);
+                SelectLocalTool(3);
                 break;
 
             default:
@@ -491,13 +474,40 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    [ALocalOnly]
-    void SelectTool(byte _bSlotId)
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        if (GetTool(_bSlotId) != null)
+        // Picking up and dropping tool
+        for (uint i = 0; i < k_uiMaxNumTools; ++i)
         {
-            s_cSerializeStream.Write(ENetworkAction.EquipTool);
-            s_cSerializeStream.Write(_bSlotId);
+            if (m_acToolsViewId[i] == _cSyncedVar)
+            {
+                CNetworkVar<CNetworkViewId> cToolViewId = m_acToolsViewId[i];
+
+                if (cToolViewId == null)
+                {
+                    if (EventToolDropped != null) EventToolDropped(cToolViewId.GetPrevious().GameObject);
+                }
+                else
+                {
+                    if (EventToolPickedup != null) EventToolPickedup(cToolViewId.GetPrevious().GameObject);
+                }
+            }
+        }
+
+        // Changing tool
+        if (_cSyncedVar == m_bActiveToolId)
+        {
+            if (GetTool(m_bActiveToolId.GetPrevious()) != null)
+            {
+                GetTool(m_bActiveToolId.GetPrevious()).GetComponent<CToolInterface>().SetEquipped(false);
+            }
+
+            if (GetTool(m_bActiveToolId.Get()) != null)
+            {
+                GetTool(m_bActiveToolId.Get()).GetComponent<CToolInterface>().SetEquipped(true);
+            }
+
+            if (EventEquipedToolChanged != null) EventEquipedToolChanged(ActiveTool);
         }
     }
 

@@ -128,6 +128,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
                     if (cNewTargetViewId != null)
                     {
                         cPlayerInteractor.m_cTargetActorObject = cNewTargetViewId.GameObject;
+
                         if (cPlayerInteractor.EventServerTargetChange != null) cPlayerInteractor.EventServerTargetChange(cPlayerInteractor.m_cTargetActorObject);
 
                        // Debug.LogError("Found new target: " + cPlayerInteractor.m_cTargetActorObject);

@@ -73,7 +73,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
                 m_fQuantity.Set(0.0f);
                 m_bDepleted = true;
 
-                if (EventDeplete != null) EventDeplete(gameObject);
+                
 
                 CNetwork.Factory.DestoryObject(gameObject);
             }
@@ -104,6 +104,10 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_fQuantity)
 		{
+            if (m_fQuantity.Get() <= 0.0f)
+            {
+                if (EventDeplete != null) EventDeplete(gameObject);
+            }
 			//gameObject.GetComponentInChildren<Renderer>.material.SetColor("_Color", new Color(1.0f - Quantity, 1.0f - Quantity, 1.0f));
 		}
 	}
