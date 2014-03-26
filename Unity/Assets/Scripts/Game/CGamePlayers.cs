@@ -34,10 +34,17 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 // Member Delegates & Events
+
 	public delegate void NotifyPlayerActivity(ulong _PlayerId);
 
 	public event NotifyPlayerActivity EventPlayerJoin;
 	public event NotifyPlayerActivity EventPlayerLeave;
+
+    public delegate void NotifyPlayerActorRegister(ulong _ulPlayerId, GameObject _cPlayerActor);
+    public delegate void NotifyPlayerActorUnregister(ulong _ulPlayerId);
+
+    public event NotifyPlayerActorRegister EventActorRegister;
+    public event NotifyPlayerActorUnregister EventActorUnregister;
 
 // Member Properties
 	public string LocalPlayerName
@@ -129,8 +136,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
         _cRegistrar.RegisterRpc(this, "RegisterPlayerName");
         _cRegistrar.RegisterRpc(this, "UnregisterPlayerName");
-        _cRegistrar.RegisterRpc(this, "RegisterPlayerActor");
-        _cRegistrar.RegisterRpc(this, "UnregisterPlayerActor");
+        _cRegistrar.RegisterRpc(this, "RemoteRegisterPlayerActor");
+        _cRegistrar.RegisterRpc(this, "RemoteUnregisterPlayerActor");
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
@@ -300,7 +307,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
 						
 						// Sync player actor view id with everyone
-						InvokeRpcAll("RegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
+						InvokeRpcAll("RemoteRegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
                         cPlayerActor.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += RespawnPlayer;
 						
@@ -358,7 +365,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			// Sync current players actor view ids with new player
 			foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActors)
 			{
-				InvokeRpc(_cPlayer.PlayerId, "RegisterPlayerActor", tEntry.Key, tEntry.Value);
+                InvokeRpc(_cPlayer.PlayerId, "RemoteRegisterPlayerActor", tEntry.Key, tEntry.Value);
 			}
 		}
 		
@@ -402,7 +409,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			CNetwork.Factory.DestoryObject(cPlayerActorNetworkViewId);
 			
 			// Sync unregister player actor view id with everyone
-			InvokeRpcAll("UnregisterPlayerActor", _cPlayer.PlayerId);
+			InvokeRpcAll("RemoteUnregisterPlayerActor", _cPlayer.PlayerId);
 
 			//Remove player from dictionary of player names
 			InvokeRpcAll("UnregisterPlayerName", _cPlayer.PlayerId);
@@ -465,20 +472,24 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 	[ANetworkRpc]
-	void RegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
+	void RemoteRegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
 	{
 		m_mPlayersActors.Add(_ulPlayerId, _cPlayerActorId);
 		m_mPlayerActorsPlayers.Add(_cPlayerActorId, _ulPlayerId);
+
+        if (EventActorRegister != null) EventActorRegister(_ulPlayerId, _cPlayerActorId.GameObject);
 	}
 	
 	
 	[ANetworkRpc]
-	void UnregisterPlayerActor(ulong _ulPlayerId)
+	void RemoteUnregisterPlayerActor(ulong _ulPlayerId)
 	{
 		m_mPlayerActorsPlayers.Remove(m_mPlayersActors[_ulPlayerId]);
 		m_mPlayersActors.Remove(_ulPlayerId);
 
 		m_aUnspawnedPlayers.Remove(_ulPlayerId);
+
+        if (EventActorUnregister != null) EventActorUnregister(_ulPlayerId);
 	}
 
 

@@ -233,7 +233,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     {
         if (m_bShowMiningLaser)
         {
-            Transform cActorHeadTransform = GetComponent<CPlayerHead>().m_Head.transform;
+            Transform cActorHeadTransform = GetComponent<CPlayerHead>().Head.transform;
 
             RaycastHit tRaycastHit = new RaycastHit();
             Ray cRay = new Ray(cActorHeadTransform.position, cActorHeadTransform.forward);
@@ -247,7 +247,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                     // Make particles visible
                     if (!m_cMingingHitParticles.activeSelf)
                     {
-                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().m_Head.layer;
+                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
                         m_cMingingHitParticles.SetActive(true);
                     }
 
@@ -277,7 +277,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     {
         if (m_bShowBuildingLaser)
         {
-            Transform cActorHeadTransform = GetComponent<CPlayerHead>().m_Head.transform;
+            Transform cActorHeadTransform = GetComponent<CPlayerHead>().Head.transform;
 
             RaycastHit tRaycastHit = new RaycastHit();
             Ray cRay = new Ray(cActorHeadTransform.position, cActorHeadTransform.forward);
@@ -292,7 +292,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                     // Make particles visible
                     if (!m_cMingingHitParticles.activeSelf)
                     {
-                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().m_Head.layer;
+                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
                         m_cMingingHitParticles.SetActive(true);
                     }
 

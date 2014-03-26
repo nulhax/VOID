@@ -29,6 +29,7 @@ public class CShipDamageOnCollision : MonoBehaviour
 
 	System.Collections.Generic.List<SDebugVisual> m_DebugVisuals = new System.Collections.Generic.List<SDebugVisual>();
 
+    [AServerOnly]
     void OnCollisionEnter(Collision collision)
     {
         if (CNetwork.IsServer)
@@ -72,6 +73,44 @@ public class CShipDamageOnCollision : MonoBehaviour
             }
         }
     }
+
+
+    [AServerOnly]
+    public void ApplyExplosiveDamage(Vector3 _Position, float _fRadius, float _fImpulse)
+    {
+        // Ensure that only the server runs this code
+        if (CNetwork.IsServer)
+        {
+            // // // // //
+            //
+            // Hull Breach Nodes:
+            //
+            // // // // //
+
+            // Create an array of all hull breach nodes
+            CHullBreachNode[] HullBreachNodes = CGameShips.Ship.GetComponentsInChildren<CHullBreachNode>();
+
+            // For each hull breach node
+            foreach (CHullBreachNode Node in HullBreachNodes)
+            {
+                // Local variables
+                float fDamage   = 0.0f;
+                float fDistance = (Node.transform.position - _Position).magnitude;
+
+                // If the hull breach node is within the radius of the explosion
+                if (fDistance <= _fRadius)
+                {
+                    // Calculate the amount of damage to inflict to the node
+                    // Note: Damage scales linearly with proximity to explosion
+                    fDamage = _fImpulse * (1.0f / fDistance);
+
+                    // Damage the node
+                    Node.GetComponent<CActorHealth>().health -= fDamage;
+                }
+            }
+        }
+    }
+
 
 	void OnDrawGizmos()
 	{

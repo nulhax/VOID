@@ -190,7 +190,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     void UpdateTarget()
     {
-        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().m_Head.transform.position, gameObject.GetComponent<CPlayerHead>().m_Head.transform.forward);
+        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().Head.transform.position, gameObject.GetComponent<CPlayerHead>().Head.transform.forward);
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 

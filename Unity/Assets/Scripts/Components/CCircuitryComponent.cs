@@ -41,7 +41,8 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 	void OnBreak(CComponentInterface _Sender)
 	{
 		// TODO: swap between fixed to broken
-        gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
+        // Commented out by Nathan to prevent null-reference exception.
+        //gameObject.GetComponent<CAudioCue>().Play(0.2f, true, 0);
 	}
 	
 

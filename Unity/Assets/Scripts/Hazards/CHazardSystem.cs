@@ -26,8 +26,8 @@ public class CHazardSystem : MonoBehaviour
         INVALID     = -2,
                     
         NONE        = -1,
-        FIRE,
-        HULL_BREACH,
+    //    FIRE,
+   //     HULL_BREACH,
         MALFUNCTION,
 
         MAX
@@ -47,8 +47,11 @@ public class CHazardSystem : MonoBehaviour
 // Member Properties
     public float Difficulty
     {
+        // Get the current difficulty
         get { return (m_fDifficulty); }
 
+        // Set the current difficulty
+        [AServerOnly]
         set
         {
             if (CNetwork.IsServer)
@@ -64,36 +67,38 @@ public class CHazardSystem : MonoBehaviour
     {
         // Set initial values for member data
         m_iTotal                       = 100;
-        m_fDifficulty                  = m_iTotal - 75.0f;
+        m_fDifficulty                  = m_iTotal - 25.0f;
         m_fDifficultyWeighted          = Difficulty;
         m_fRemainder                   = m_iTotal - m_fDifficultyWeighted;
         
-        m_iTotalHazardsFire            = 0;
-        m_iTotalHazardsHullBreach      = 0;
+        // Add additional hazard info here
         m_iTotalHazardsMalfunction     = 0;
         m_iTotalHazards                = 0;
         
-        m_fHazardTriggerTimer          = 0.0f;
-        m_fHazardTriggerTimerThreshold = 5.0f;
+        m_fHazardTriggerTimer          = 0.0f; // Seconds
+        m_fHazardTriggerTimerThreshold = 280.0f; // Seconds
     }
 
 
     void Update()
     {
-        // Update the timer
-        m_fHazardTriggerTimer += Time.deltaTime;
-
-        // If the timer equals or exceeds the threshold
-        if (m_fHazardTriggerTimer >= m_fHazardTriggerTimerThreshold)
+        if (!DisableRandomHazards)
         {
-            // Reset the timer
-            m_fHazardTriggerTimer = 0.0f;
+            // Update the timer
+            m_fHazardTriggerTimer += Time.deltaTime;
 
-            // Determine what hazard to trigger
-            EHazardType eHazardTypeToTrigger = UpdateHazardTrigger();
+            // If the timer equals or exceeds the threshold
+            if (m_fHazardTriggerTimer >= m_fHazardTriggerTimerThreshold)
+            {
+                // Reset the timer
+                m_fHazardTriggerTimer = 0.0f;
 
-            // Trigger a hazard of the returned type
-            TriggerHazardOfType(eHazardTypeToTrigger);
+                // Determine what hazard to trigger
+                EHazardType eHazardTypeToTrigger = UpdateHazardTrigger();
+
+                // Trigger a hazard of the returned type
+                TriggerHazardOfType(eHazardTypeToTrigger);
+            }
         }
     }
 
@@ -106,8 +111,12 @@ public class CHazardSystem : MonoBehaviour
         // If there are no hazards
         if (m_iTotalHazards == 0)
         {
-            // Generate a random trigger value
-            eHazardReturn = (EHazardType)((Random.value * 100.0f) % (int)EHazardType.MAX);
+            // Generate a random value to determine if a hazard is triggered
+            if ((float)(Random.value * 100.0f) <= m_fRemainder)
+            {
+                // Generate a random trigger value
+                eHazardReturn = (EHazardType)((Random.value * 100.0f) % (int)EHazardType.MAX);
+            }
         }
 
         // Else
@@ -129,8 +138,8 @@ public class CHazardSystem : MonoBehaviour
 
                 // Create a new 'hazard'
                 HazardInfo NewHazard = new HazardInfo();
-                NewHazard.eType = (EHazardType)i;
-                NewHazard.uiTotal = (uint)iHazardsOfThisType;
+                NewHazard.eType      = (EHazardType)i;
+                NewHazard.uiTotal    = (uint)iHazardsOfThisType;
 
                 // Add the new hazard into the totals container
                 HazardTotals.Add(NewHazard);
@@ -184,9 +193,9 @@ public class CHazardSystem : MonoBehaviour
     EHazardType CalculateHazardTrigger(List<HazardInfo> _Info)
     {
         // Local variables
-        List<float> fThresholds = new List<float>();
+        List<float> fThresholds         = new List<float>();
         float fHazardRandomTriggerValue = -1.0f;
-        EHazardType eReturnHazard = EHazardType.NONE;
+        EHazardType eReturnHazard       = EHazardType.NONE;
 
         // Generate random trigger value to two decimal places
         fHazardRandomTriggerValue = (float)(Random.value * 100.0f);
@@ -227,30 +236,48 @@ public class CHazardSystem : MonoBehaviour
 
     List<HazardInfo> OrderTotals(List<HazardInfo> _Info) // SMALLEST -> LARGEST
     {
+        // Create a new array of equal size
         HazardInfo[] HazardInfoArray = new HazardInfo[_Info.Count];
+
+        // Copy to the new array
         _Info.CopyTo(HazardInfoArray);
+
+        // Order and save into original array
         _Info = HazardInfoArray.OrderBy((item) => item.uiTotal).ToList();
 
+        // Return
         return (_Info);
     }
 
 
     List<float> OrderRatios(List<float> _Info) // LARGEST -> SMALLEST
     {
+        // Create a new array of equal size
         float[] FloatArray = new float[_Info.Count];
+
+        // Copy to the new array
         _Info.CopyTo(FloatArray);
+
+        // Order and save into original array
         _Info = FloatArray.OrderByDescending((item) => item).ToList();
 
+        // Return
         return (_Info);
     }
 
 
     List<HazardInfo> OrderMerged(List<HazardInfo> _Info) //  SMALLEST - LARGEST
     {
+        // Create a new array of equal size
         HazardInfo[] HazardInfoArray = new HazardInfo[_Info.Count];
+
+        // Copy to the new array
         _Info.CopyTo(HazardInfoArray);
+
+        // Order and save into original array
         _Info = HazardInfoArray.OrderBy((item) => (int)item.eType).ToList();
 
+        // Return
         return (_Info);
     }
 
@@ -296,8 +323,6 @@ public class CHazardSystem : MonoBehaviour
                     // Note: This makes hazards more likely to trigger each
                     //       time the timer expires and no hazard is triggered
 
-                    // Debug.Log("Hazard Triggered: None");
-
                     // Increase the difficulty modifier by 10%
                     m_fDifficultyWeighted -= m_fDifficulty * 0.1f;
 
@@ -305,55 +330,60 @@ public class CHazardSystem : MonoBehaviour
                     break;
                 }
 
-            // Trigger fire
-            case EHazardType.FIRE:
-                {
-                //    // Trigger a fire
-                //    CFireHazard[] shipFireNodes = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
-                //    m_iTotalHazardsFire = shipFireNodes.Length;
-                //
-                //    if (shipFireNodes.Length != 0)
-                //    {
-                //        int i = (int)(Random.value * 100.0f) % shipFireNodes.Length;
-                //        shipFireNodes[i].GetComponent<CActorHealth>().health = 0;
-                //    }
-
-                    // TODO: Optimise
-
-                  //  Debug.Log("Hazard Triggered: Fire");
-
-                    // Reset the weighted difficulty
-                    m_fDifficultyWeighted = m_fDifficulty;
-
-                    // Break
-                    break;
-                }
-
-            // Trigger hull breach
-            case EHazardType.HULL_BREACH:
-                {
-                    // Trigger a hull breach
-                    ++m_iTotalHazardsHullBreach;
-
-                    //Debug.Log("Hazard Triggered: Hull Breach");
-
-                    // Reset the weighted difficulty
-                    m_fDifficultyWeighted = m_fDifficulty;
-
-                    // Break
-                    break;
-                }
+            // Add additional hazard info here
 
             // Trigger malfunction
             case EHazardType.MALFUNCTION:
                 {
-                    // Trigger a malfunction
-                    ++m_iTotalHazardsMalfunction;
+                    // Reset the total number of malfunctioning components
+                    m_iTotalHazardsMalfunction = 0;
 
-                    //Debug.Log("Hazard Triggered: Malfunction");
+                    // Create an array of module interfaces
+                    CModuleInterface[] ArrayModules = CGameShips.Ship.GetComponentsInChildren<CModuleInterface>();
 
-                    // Reset the weighted difficulty
-                    m_fDifficultyWeighted = m_fDifficulty;
+                    // Create a list of functional components
+                    List<CComponentInterface> ListFunctionalComponents = new List<CComponentInterface>();
+
+                    // For each module on the ship
+                    foreach (CModuleInterface ModInt in ArrayModules)
+                    {
+                        // Create a local variable for holding the current component interfaces
+                        CComponentInterface[] LocalCompInterface = ModInt.GetComponentsInChildren<CComponentInterface>();
+
+                        // For each component in the module
+                        foreach (CComponentInterface CompInt in LocalCompInterface)
+                        {
+                            // If the component is functional
+                            if (CompInt.IsFunctional)
+                            {
+                                // Add the component to the list
+                                ListFunctionalComponents.Add(CompInt);
+                            }
+
+                            // Else
+                            else
+                            {
+                                // Increment the total malfunctions counter
+                                ++m_iTotalHazardsMalfunction;
+                            }
+                        }
+                    }
+
+                    // If there is a functional component
+                    if (ListFunctionalComponents.Count != 0)
+                    {
+                        // Randomly determine a functional component to malfunction
+                        int iRandomComponent = (int)(Random.value * 100.0f) % ListFunctionalComponents.Count;
+
+                        // Trigger a malfunction on the selected component
+                        ListFunctionalComponents[iRandomComponent].TriggerMalfunction();
+
+                        // Reset the weighted difficulty
+                        m_fDifficultyWeighted = m_fDifficulty;
+
+                        // Increment the total malfunctions counter
+                        ++m_iTotalHazardsMalfunction;
+                    }
 
                     // Break
                     break;
@@ -374,7 +404,8 @@ public class CHazardSystem : MonoBehaviour
         m_fRemainder = m_iTotal - m_fDifficultyWeighted;
 
         // Update the total number of hazards
-        m_iTotalHazards = m_iTotalHazardsFire + m_iTotalHazardsHullBreach + m_iTotalHazardsMalfunction;
+        // Add additional hazard info here
+        m_iTotalHazards =  m_iTotalHazardsMalfunction;
     }
 
 
@@ -386,25 +417,7 @@ public class CHazardSystem : MonoBehaviour
         // Switch on the hazard parameter
         switch (_eType)
         {
-            // Fire
-            case EHazardType.FIRE:
-                {
-                    // Set return value
-                    iReturn = m_iTotalHazardsFire;
-
-                    // Break
-                    break;
-                }
-
-            // Hull Breach
-            case EHazardType.HULL_BREACH:
-                {
-                    // Set return value
-                    iReturn = m_iTotalHazardsHullBreach;
-
-                    // Break
-                    break;
-                }
+            // Add additional hazard info here
 
             // Malfunction
             case EHazardType.MALFUNCTION:
@@ -459,8 +472,10 @@ public class CHazardSystem : MonoBehaviour
     float m_fHazardTriggerTimer;
     float m_fHazardTriggerTimerThreshold;
 
-    int m_iTotalHazardsFire;
-    int m_iTotalHazardsHullBreach;
+    // Add additional hazard info here
     int m_iTotalHazardsMalfunction;
     int m_iTotalHazards;
+
+    // Debug
+    public bool DisableRandomHazards = false;
 }

@@ -57,10 +57,17 @@ public class CToolInterface : CNetworkMonoBehaviour
 		MAX
 	}
 
+
+    [ABitSize(4)]
 	public enum ENetworkAction : byte
 	{
+        INVALID,
+
 		PickUp,
-	}	
+
+        MAX
+	}
+
 
 // Member Delegates & Events
 
@@ -97,8 +104,10 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
 		get
 		{
-			if (!IsHeld) 
-				return null; 
+            if (!IsOwned)
+            {
+                return (null);
+            }
 
 			return (CGamePlayers.GetPlayerActor(OwnerPlayerId)); 
 		}
@@ -111,9 +120,16 @@ public class CToolInterface : CNetworkMonoBehaviour
 	}
 
 
-    public bool IsHeld
+    public bool IsOwned
     {
 		get { return (m_ulOwnerPlayerId.Get() != 0); }
+    }
+
+
+    [ALocalOnly]
+    public bool IsEquiped
+    {
+        get { return (m_bEquipped); }
     }
 
 
@@ -176,7 +192,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if (IsHeld)
+		if (IsOwned)
         { 
             Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
             gameObject.transform.rotation = ActorHead.rotation;
@@ -217,7 +233,7 @@ public class CToolInterface : CNetworkMonoBehaviour
         Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
         // Check currently held
-        if (IsHeld)
+        if (IsOwned)
         {
             m_bReloading.Set(true);
         }
@@ -229,7 +245,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
-		if (!IsHeld)
+		if (!IsOwned)
 		{
             // Set owner player
 			m_ulOwnerPlayerId.Set(_ulPlayerId);
@@ -243,7 +259,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
 		// Check currently held
-		if (IsHeld)
+		if (IsOwned)
 		{
             // Set owning object view id
             m_ulOwnerPlayerId.Set(0);
@@ -274,25 +290,33 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         if (_cVarInstance == m_ulOwnerPlayerId)
         {
-            if (IsHeld)
+            if (IsOwned)
             {
-                GameObject cOwnerPlayerActor = OwnerPlayerActor;
-
-                Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
-                foreach (Transform child in children)
+                if (!OwnerPlayerActor.GetComponent<CPlayerInterface>().IsOwnedByMe)
                 {
-                    if (child.name == "RightHandIndex2")
+                    GameObject cOwnerPlayerActor = OwnerPlayerActor;
+
+                    Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
+                    foreach (Transform child in children)
                     {
-                        gameObject.transform.parent = child;
+                        if (child.name == "RightHandIndex2")
+                        {
+                            gameObject.transform.parent = child;
+                        }
                     }
-                }
 
-                if (gameObject.transform.parent.gameObject == null)
+                    if (gameObject.transform.parent.gameObject == null)
+                    {
+                        Debug.LogError("Could not find right hand transform of player model!");
+                    }
+
+                    gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+                }
+                else
                 {
-                    Debug.LogError("Could not find right hand transform of player model!");
+                    gameObject.transform.parent = OwnerPlayerActor.GetComponent<CPlayerInterface>().Model.transform;
+                    gameObject.transform.localPosition = OwnerPlayerActor.GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").localPosition;
                 }
-
-                gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
 
                 // Turn off dynamic physics
                 if (CNetwork.IsServer)
@@ -325,6 +349,16 @@ public class CToolInterface : CNetworkMonoBehaviour
                 // Receive synchronizations
                 GetComponent<CActorNetworkSyncronized>().m_SyncPosition = true;
                 GetComponent<CActorNetworkSyncronized>().m_SyncRotation = true;
+
+                if (m_bPrimaryActive)
+                {
+                    SetPrimaryActive(false);
+                }
+
+                if (m_bSecondaryActive)
+                {
+                    SetSecondaryActive(false);
+                }
 
                 // Notify observers
                 if (EventDropped != null) EventDropped();
