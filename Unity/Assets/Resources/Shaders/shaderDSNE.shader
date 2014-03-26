@@ -34,8 +34,12 @@ Shader "VOID/Diffuse Spec Normal Emis"
 		ColorMask RGBA
 		Fog{}
 
+		CGINCLUDE
+		#include "VoidShaderVariables.cginc"
+		ENDCG
+
 		CGPROGRAM
-		#pragma surface surf BlinnPhongEditor
+		#pragma surface surf BlinnPhongEditor finalcolor:FogPass
 		#pragma target 3.0
 
 
@@ -99,7 +103,11 @@ Shader "VOID/Diffuse Spec Normal Emis"
 			float2 uv_Normal;
 			float2 uv_Specular;
 			float2 uv_Emissive;
+			float3 worldPos;
+			float4 screenPos;
 		};
+
+		void FogPass(Input IN, EditorSurfaceOutput o, inout fixed4 colour) {colour = void_SampleFog(IN.screenPos, IN.worldPos, colour);}
 
 		void surf (Input IN, inout EditorSurfaceOutput o) 
 		{
