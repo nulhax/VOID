@@ -37,16 +37,16 @@ Material:
     m_Floats:
       data:
         first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
           name: _Saturation
         second: .5
       data:
         first:
           name: _Brightness
         second: 2
+      data:
+        first:
+          name: _SpecPower
+        second: 1
       data:
         first:
           name: _MinHeight
@@ -58,7 +58,7 @@ Material:
       data:
         first:
           name: _Amount
-        second: .428571373
+        second: .607142806
       data:
         first:
           name: _FadeDist
@@ -74,7 +74,7 @@ Material:
       data:
         first:
           name: _FadeDistRatio
-        second: .5
+        second: .657500029
       data:
         first:
           name: _GlowIntensity

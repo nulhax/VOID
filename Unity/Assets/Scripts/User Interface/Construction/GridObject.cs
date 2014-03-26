@@ -1,0 +1,27 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+public abstract class GridObject
+{
+	public Point Location;
+	public int X { get { return Location.X; } }
+	public int Y { get { return Location.Y; } }
+	public int Z { get { return Location.Z; } }
+	
+	public GridObject(int x, int y, int z)
+		: this(new Point(x, y, z))
+	{
+	}
+	
+	public GridObject(Point location)
+	{
+		Location = location;
+	}
+	
+	public override string ToString()
+	{
+		return string.Format("[{0}, {1}, {2}]", X, Y, Z);
+	}
+}

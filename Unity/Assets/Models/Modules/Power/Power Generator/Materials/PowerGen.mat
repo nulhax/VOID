@@ -59,7 +59,7 @@ Material:
       data:
         first:
           name: _SpecPower
-        second: 2.19000006
+        second: 1
       data:
         first:
           name: _EmissivePowerR
@@ -100,4 +100,4 @@ Material:
       data:
         first:
           name: _ReflectColor
-        second: {r: .522058845, g: .522058845, b: .522058845, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
