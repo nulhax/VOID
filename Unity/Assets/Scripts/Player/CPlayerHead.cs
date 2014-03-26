@@ -31,7 +31,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Fields
-	public GameObject m_Head = null;
 
 
 	List<Type> m_cInputDisableQueue = new List<Type>();
@@ -62,7 +61,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public GameObject Head
 	{
-		get { return (m_Head); }
+		get 
+        { 
+            return (GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject); 
+        }
 	}
 
 	public bool InputDisabled
@@ -86,7 +88,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		if (CGamePlayers.SelfActor != gameObject && 
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
-	        m_Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
+	        Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
     }
 	
@@ -112,7 +114,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 
 			// Add audoio listener to head
-			m_Head.AddComponent<AudioListener>();
+			Head.AddComponent<AudioListener>();
 		}
 	}
 
@@ -144,7 +146,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		m_LocalXRotation = _LocalEulerX;
 
 		// Apply the rotation
-		m_Head.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
+		Head.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
 	}
 
 

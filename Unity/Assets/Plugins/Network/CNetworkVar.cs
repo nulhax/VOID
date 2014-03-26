@@ -74,7 +74,7 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-	public void Set(TYPE _NewValue)
+	public void Set(TYPE _NewValue, bool _bAllowSameValue)
     {
         if (!CNetwork.IsServer)
         {
@@ -91,7 +91,8 @@ public class CNetworkVar<TYPE> : INetworkVar
                     bSetValue = true;
                 }
             }
-            else if (!(_NewValue).Equals(m_Value))
+            else if (!(_NewValue).Equals(m_Value) ||
+                      _bAllowSameValue)
             {
                 bSetValue = true;
             }
@@ -109,6 +110,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 				m_nSetNotifyCallback(m_bNetworkVarId);
 			}
         }
+    }
+
+
+    public void Set(TYPE _NewValue)
+    {
+        Set(_NewValue, false);
     }
 
 

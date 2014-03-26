@@ -319,7 +319,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
 		CNetworkConnection.RegisterSerializationTarget(CLaserTurretBehaviour.SerializeOutbound      , CLaserTurretBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CMiningTurretBehaviour.SerializeOutbound     , CMiningTurretBehaviour.UnserializeInbound);
-        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeOutbound               , CPlayerBelt.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerBelt.SerializeOutbound                , CPlayerBelt.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CPlayerBackPack.SerializeOutbound            , CPlayerBackPack.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CDUIElement.SerializeElementEvents    		, CDUIElement.UnserializeElementEvents);
 		CNetworkConnection.RegisterSerializationTarget(CDUISlider.SerializeSliderEvents    		    , CDUISlider.UnserializeSliderEvents);
