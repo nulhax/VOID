@@ -175,6 +175,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
 
 	public bool initialiseDungeonMaster = true;
+	public bool debug_GalaxyStuff = false;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Functions:
@@ -265,27 +266,31 @@ public class CGalaxy : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			bool incrementNoise = Input.GetKeyDown(KeyCode.Keypad9);
-			bool decrementNoise = Input.GetKeyDown(KeyCode.Keypad6);
-
-			if (incrementNoise != decrementNoise)
+			if (Input.GetKeyDown(KeyCode.KeypadMultiply)) debug_GalaxyStuff = !debug_GalaxyStuff;
+			if (debug_GalaxyStuff)
 			{
-				int newNoise = (int)mNoise.debug_RenderNoise;
+				bool incrementNoise = Input.GetKeyDown(KeyCode.Keypad9);
+				bool decrementNoise = Input.GetKeyDown(KeyCode.Keypad6);
 
-				if (incrementNoise)
+				if (incrementNoise != decrementNoise)
 				{
-					newNoise += 1;
-					if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
-						newNoise = 0;
-				}
-				else
-				{
-					newNoise -= 1;
-					if(newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
-						newNoise = (int)(CGalaxyNoise.ENoiseLayer.MAX - 1);
-				}
+					int newNoise = (int)mNoise.debug_RenderNoise;
 
-				mNoise.debug_RenderNoise = (CGalaxyNoise.ENoiseLayer)newNoise;
+					if (incrementNoise)
+					{
+						newNoise += 1;
+						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+							newNoise = 0;
+					}
+					else
+					{
+						newNoise -= 1;
+						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+							newNoise = (int)(CGalaxyNoise.ENoiseLayer.MAX - 1);
+					}
+
+					mNoise.debug_RenderNoise = (CGalaxyNoise.ENoiseLayer)newNoise;
+				}
 			}
 
 			mfTimeUntilNextUpdateCellLoadUnloadQueues -= Time.deltaTime;
@@ -873,13 +878,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	void OnGUI()
 	{
-		float boxWidth = 700;
-		float boxHeight = 40;
-		GUI.Label(new Rect((Screen.width - boxWidth) / 2, (Screen.height - boxHeight) / 2, boxWidth, boxHeight), mNoise.noiseMeta[(uint)mNoise.debug_RenderNoise].displayName + '\n' + mCentreCell.ToString());
+		if (!debug_GalaxyStuff)
+			return;
+
+		float boxWidth = 200;
+		float boxHeight = 100;
+		GUI.Box(new Rect((Screen.width - boxWidth) / 2, (Screen.height - boxHeight) / 2, boxWidth, boxHeight), mNoise.noiseMeta[(uint)mNoise.debug_RenderNoise].displayName + '\n' + mCentreCell.ToString());
 	}
 
 	void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
 	{
+		if (!debug_GalaxyStuff)
+			return;
+
 		if (CNetwork.IsServer)
 		{
 			foreach (CRegisteredObserver elem in mObservers)
