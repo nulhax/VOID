@@ -53,7 +53,6 @@ public class CToolInterface : CNetworkMonoBehaviour
 		HealingKit,
 		AK47,
 		MiningDrill,
-        NanitePistol,
 
 		MAX
 	}
@@ -65,9 +64,6 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 
-
-	public delegate void NotifyObjectInteraction(GameObject _TargetInteractableObject);
-	public delegate void NotifyToolInteraction();
 
     [ALocalOnly]
     public delegate void NotifyPrimaryActiveChange(bool _bActive);
@@ -81,17 +77,11 @@ public class CToolInterface : CNetworkMonoBehaviour
     public delegate void NotifyEquippedChange(bool _bEquipped);
     public event NotifyEquippedChange EventEquippedChange;
 
-    [ALocalOnly]
-	public event NotifyObjectInteraction EventUse;
-	
-    [AServerOnly]
-	public event NotifyToolInteraction EventReload;
-
-    [ALocalOnly]
-    public event NotifyToolInteraction EventPickedUp;
-
-    [ALocalOnly]
-    public event NotifyToolInteraction EventDropped;
+    public delegate void NotifyToolEvent();
+    public event NotifyToolEvent EventUse;
+	public event NotifyToolEvent EventReload;
+    public event NotifyToolEvent EventPickedUp;
+    public event NotifyToolEvent EventDropped;
 
 
 // Member Properties
@@ -229,11 +219,7 @@ public class CToolInterface : CNetworkMonoBehaviour
         // Check currently held
         if (IsHeld)
         {
-            // Notify observers
-            if (EventReload != null)
-            {
-                EventReload();
-            }
+            m_bReloading.Set(true);
         }
     }
 
@@ -344,6 +330,14 @@ public class CToolInterface : CNetworkMonoBehaviour
                 if (EventDropped != null) EventDropped();
             }
         }
+        else if (_cVarInstance == m_bReloading)
+        {
+            if (m_bReloading.Get())
+            {
+                // Notify observers
+                if (EventReload != null) EventReload();
+            }
+        }
     }
 
 
@@ -353,6 +347,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
+    CNetworkVar<bool> m_bReloading = null;
 
 
     bool m_bEquipped = false;

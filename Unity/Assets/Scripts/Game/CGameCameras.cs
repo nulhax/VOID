@@ -176,21 +176,19 @@ public class CGameCameras : MonoBehaviour
 			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
 			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
 
-			// Remove Bloom IE
-			Destroy(s_ProjectedCamera.GetComponent<Bloom>());
-
 			// Instantiate the background camera
 			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
 			s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
+
+			// Remove all image effects for background camera
+			foreach(PostEffectsBase ieb in s_BackgroundCamera.GetComponents<PostEffectsBase>())
+				Destroy(ieb);
 
 			// Set up the values for the bg camera
 			s_BackgroundCamera.transform.position = Vector3.zero;
 			s_BackgroundCamera.camera.clearFlags = CameraClearFlags.Skybox;
 			s_BackgroundCamera.camera.cullingMask = 1 << LayerMask.NameToLayer("Background");
 			s_BackgroundCamera.camera.depth = 49;
-
-			// Debug: Create a nebulae sphere
-			//GameObject.Instantiate(Resources.Load("Prefabs/Galaxy/NebulaePlaceholder"));
 		}
 
 		// Move the camera to the head location
@@ -256,6 +254,10 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
+
+		// Disable image effects
+		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
+			ieb.enabled = false;
 	}
 	
 	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
@@ -271,6 +273,10 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
+
+		// Enable image effects
+		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
+			ieb.enabled = true;
 	}
 	
 	private void UpdateCameraTransforms()
