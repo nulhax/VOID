@@ -101,76 +101,6 @@ NavMeshSettings:
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
   m_NavMesh: {fileID: 0}
---- !u!1 &104539767
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 104539768}
-  - 33: {fileID: 104539771}
-  - 64: {fileID: 104539770}
-  - 23: {fileID: 104539769}
-  m_Layer: 0
-  m_Name: Plane
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &104539768
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 104539767}
-  m_LocalRotation: {x: -.382683486, y: 0, z: 0, w: .923879564}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .5, y: .5, z: .5}
-  m_Children: []
-  m_Father: {fileID: 1227992736}
---- !u!23 &104539769
-Renderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 104539767}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 2100000, guid: b2b31e721ee827d4cb9760d2860cf892, type: 2}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
---- !u!64 &104539770
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 104539767}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 0
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!33 &104539771
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 104539767}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &137407267
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,6 +1545,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1227992736}
   - 114: {fileID: 1227992737}
+  - 135: {fileID: 1227992738}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -1631,8 +1562,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 104539768}
+  m_Children: []
   m_Father: {fileID: 137407268}
 --- !u!114 &1227992737
 MonoBehaviour:
@@ -1645,75 +1575,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31a0628630463164995665e77ceae2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GridPlane: {fileID: 104539767}
   m_TileSize: 4
-  m_TileScale: .100000001
+  m_GridScale: 0
+  m_GridScaleLimits: {x: .0500000007, y: .200000003}
+  m_CurrentInteraction: 0
   m_CurrentMousePoint: {x: 0, y: 0, z: 0}
-  m_CurrentGridPoistion: {x: 0, y: 0, z: 0}
+  m_CurrentMouseGridPoistion: {x: 0, y: 0, z: 0}
+  m_CurrentMousePosition: {x: 0, y: 0, z: 0}
   m_MouseDownPoint: {x: 0, y: 0, z: 0}
+  m_MouseDownGridPoistion: {x: 0, y: 0, z: 0}
+  m_MouseDownPosition: {x: 0, y: 0, z: 0}
   m_TilesOnScreen: []
   m_TilesInDrag: []
   m_CurrentlySelectedTiles: []
-  MouseDragSkin:
-    m_Name: 
-    m_Normal:
-      m_Background: {fileID: 2800000, guid: 96fa37cf37a96c94391e37668665c169, type: 3}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_Hover:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_Active:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_Focused:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_OnNormal:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_OnHover:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_OnActive:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_OnFocused:
-      m_Background: {fileID: 0}
-      m_TextColor: {r: 0, g: 0, b: 0, a: 1}
-    m_Border:
-      m_Left: 0
-      m_Right: 0
-      m_Top: 0
-      m_Bottom: 0
-    m_Margin:
-      m_Left: 0
-      m_Right: 0
-      m_Top: 0
-      m_Bottom: 0
-    m_Padding:
-      m_Left: 0
-      m_Right: 0
-      m_Top: 0
-      m_Bottom: 0
-    m_Overflow:
-      m_Left: 0
-      m_Right: 0
-      m_Top: 0
-      m_Bottom: 0
-    m_Font: {fileID: 0}
-    m_FontSize: 0
-    m_FontStyle: 0
-    m_Alignment: 0
-    m_WordWrap: 0
-    m_RichText: 1
-    m_TextClipping: 0
-    m_ImagePosition: 0
-    m_ContentOffset: {x: 0, y: 0}
-    m_FixedWidth: 0
-    m_FixedHeight: 0
-    m_StretchWidth: 1
-    m_StretchHeight: 0
-  m_UserIsDragging: 0
   tile: {fileID: 400000, guid: d0d6ad44b71bfe8488283cba585c85ff, type: 2}
   floorTile: {fileID: 400000, guid: 9699def19c63a5442b7bc2f8d2351df0, type: 2}
   wallStraight: {fileID: 400002, guid: b48721b4355c5d341b0ff5c25b28a637, type: 2}
@@ -1721,6 +1595,18 @@ MonoBehaviour:
   Hallway: {fileID: 400000, guid: c85e0e92dc3123c4290cfe28b4acb785, type: 2}
   DeadEnd: {fileID: 400000, guid: d282c800e8a324c4d84bc0c3538a8e40, type: 2}
   cell: {fileID: 400012, guid: 05c19334b9167b141a1433798ff882d0, type: 2}
+--- !u!135 &1227992738
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1227992735}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 3
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1252298741
 GameObject:
   m_ObjectHideFlags: 0
@@ -2732,8 +2618,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1798323459}
-  m_LocalRotation: {x: 0, y: .126631796, z: 0, w: .991949797}
-  m_LocalPosition: {x: -1.74456978, y: .663603067, z: -4.04136229}
+  m_LocalRotation: {x: .176936954, y: .124600969, z: -.0225876737, w: .976041853}
+  m_LocalPosition: {x: -1.08000004, y: 2.51999998, z: -5.19999981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 137407268}
