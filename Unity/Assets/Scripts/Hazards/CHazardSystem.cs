@@ -67,7 +67,7 @@ public class CHazardSystem : MonoBehaviour
     {
         // Set initial values for member data
         m_iTotal                       = 100;
-        m_fDifficulty                  = m_iTotal - 50.0f;
+        m_fDifficulty                  = m_iTotal - 25.0f;
         m_fDifficultyWeighted          = Difficulty;
         m_fRemainder                   = m_iTotal - m_fDifficultyWeighted;
         
@@ -76,7 +76,7 @@ public class CHazardSystem : MonoBehaviour
         m_iTotalHazards                = 0;
         
         m_fHazardTriggerTimer          = 0.0f; // Seconds
-        m_fHazardTriggerTimerThreshold = 60.0f; // Seconds
+        m_fHazardTriggerTimerThreshold = 280.0f; // Seconds
     }
 
 

@@ -40,7 +40,8 @@ public class CCalibratorComponent : CNetworkMonoBehaviour
 	void OnBreak(CComponentInterface _Sender)
 	{
 		// TODO: swap between fixed to broken
-        gameObject.GetComponent<CAudioCue>().Play(0.4f, true, 0);
+        // Commented out by Nathan to prevent null-reference exception.
+        //gameObject.GetComponent<CAudioCue>().Play(0.4f, true, 0);
 	}
 	
 	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered

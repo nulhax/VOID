@@ -182,7 +182,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
     public void TriggerMalfunction()
     {
         // TODO: Data-drive this variable
-        float fExplosionRadius = 10.0f;
+        float fExplosionRadius = 2.0f;
 
         // NOTES:
         //      Consider randomising the chance for an explosion.
@@ -209,6 +209,10 @@ public class CComponentInterface : CNetworkMonoBehaviour
                 FireNode.GetComponent<CActorHealth>().health = 0;
             }
         }
+
+        // Trigger an 'explosion' centred around the local transform
+        // Note: Final values will need to be adjusted. Specifically the impulse.
+        CGameShips.GalaxyShip.GetComponent<CShipDamageOnCollision>().ApplyExplosiveDamage(transform.position, fExplosionRadius, 100000.0f);
     }
 
 	void Update() { }
