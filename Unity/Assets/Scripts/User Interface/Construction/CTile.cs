@@ -74,12 +74,7 @@ public class CTile : CGridObject
 			End,
 			Hall,
 			Cell,
-
-			InverseCorner1,
-			InverseCorner2,
-			InverseCorner3,
-			InverseCorner4,
-			InverseCorner5,
+			InverseCorner,
 			
 			MAX
 		}
@@ -397,7 +392,7 @@ public class CTile : CGridObject
 				if(currentNeighbours.Contains(tang1) && currentNeighbours.Contains(tang2) &&
 				   !m_WallInverseObjects.ContainsKey(direction))
 				{
-					GameObject wallInverseObject = CGrid.I.m_TileFactory.NewWallTile(TWallTileMeta.EType.InverseCorner1);
+					GameObject wallInverseObject = CGrid.I.m_TileFactory.NewWallTile(TWallTileMeta.EType.InverseCorner);
 					wallInverseObject.transform.parent = m_TileObject.transform;
 					wallInverseObject.transform.localPosition = Vector3.zero;
 					wallInverseObject.transform.localScale = Vector3.one;
