@@ -189,6 +189,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	}
 	
 
+    [ALocalOnly]
 	void BeginRepair(GameObject _damagedComponent)
 	{
         m_iTotalTargets = 0;
@@ -220,8 +221,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		
 		Debug.Log("Beginning repairs");
 	}
-	
 
+
+    [ALocalOnly]
 	void EndRepairs()
 	{
 		m_eRepairState = ERepairState.RepairInactive;
@@ -230,10 +232,12 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		m_TargetList.Clear();
 	}
 
+
 	void OnEquip()
 	{
 
 	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

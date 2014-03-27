@@ -71,6 +71,14 @@ Material:
         first:
           name: _NoiseSpeed
         second: .25
+      data:
+        first:
+          name: _FadeDistRatio
+        second: .5
+      data:
+        first:
+          name: _GlowIntensity
+        second: 1
     m_Colors:
       data:
         first:

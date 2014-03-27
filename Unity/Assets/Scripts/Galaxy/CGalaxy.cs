@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CLASSNAME.cs
+//  File Name   :   CGalaxy.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -14,6 +14,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(CNetworkView))]
+[RequireComponent(typeof(CGalaxyNoise))]
 public class CGalaxy : CNetworkMonoBehaviour
 {
 	///////////////////////////////////////////////////////////////////////////
@@ -29,6 +31,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		public static SCellPos operator +(SCellPos lhs, SCellPos rhs) { return new SCellPos(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z); }
 		public static SCellPos operator -(SCellPos lhs, SCellPos rhs) { return new SCellPos(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z); }
+
+		public override string ToString() { return '(' + x.ToString() + ", " + y.ToString() + ", " + z.ToString() + ')'; }
 	}
 
 	class CCellContent
@@ -92,17 +96,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		// An unloaded cell does not exist.
 	}
 
-	public enum ENoiseLayer : uint
-	{
-		SparseAsteroidCount,
-		AsteroidClusterCount,
-		DebrisDensity,
-		FogDensity,
-		AsteroidResourceAmount,
-		EnemyShipCount,
-		MAX
-	}
-
 	enum ESkybox : uint
 	{
 		Composite,
@@ -117,8 +110,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 	private static CGalaxy sGalaxy = null;
 	public static CGalaxy instance { get { return sGalaxy; } }
 
-	private PerlinSimplexNoise[] mNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
-	protected CNetworkVar<int>[] mNoiseSeeds = new CNetworkVar<int>[(uint)ENoiseLayer.MAX];
+	private CGalaxyNoise mNoise = null;
+	public CGalaxyNoise noise { get { return mNoise; } }
+
+	private DungeonMaster mDungeonMaster = null;
+	public DungeonMaster dungeonMaster { get { return mDungeonMaster; } }
 
 	private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 
@@ -179,21 +175,15 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
 
 	public bool initialiseDungeonMaster = true;
+	public bool debug_GalaxyStuff = false;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Functions:
 
-	public CGalaxy()
+	void Awake()
 	{
 		sGalaxy = this;
 
-		// Instantiate galaxy noises.
-		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-			mNoises[ui] = new PerlinSimplexNoise();
-	}
-
-	void Awake()
-	{
 		mfTimeUntilNextUpdateCellLoadUnloadQueues = 0.0f;
 		mfTimeUntilNextCellLoad = 0.0f;
 		mfTimeUntilNextCellUnload = mfTimeBetweenCellLoads / 2;
@@ -201,65 +191,61 @@ public class CGalaxy : CNetworkMonoBehaviour
 		mfTimeUntilNextGubbinLoad = 0.0f;
 		mfTimeUntilNextGubbinUnload = mfTimeBetweenGubbinLoads / 2;
 		mfTimeUntilNextShiftTest = 0.0f;
-	}
-
-	void Start()
-	{
-		//GameObject.Instantiate(Resources.Load("Prefabs/Hazards/Fire/Fire", typeof(GameObject)) as GameObject, new Vector3(-10, -10, -15), Quaternion.Euler(new Vector3(-90, 0, 0)));
 
 		// Fog and skybox are controlled by the galaxy.
 		RenderSettings.fog = false;
 		RenderSettings.skybox = null;
 
 		// Load skyboxes.
-        string[] skyboxFaces = new string[6];
-        skyboxFaces[0] = "Left";
-        skyboxFaces[1] = "Right";
-        skyboxFaces[2] = "Down";
-        skyboxFaces[3] = "Up";
-        skyboxFaces[4] = "Front";
-        skyboxFaces[5] = "Back";
+		string[] skyboxFaces = new string[6];
+		skyboxFaces[0] = "Left";
+		skyboxFaces[1] = "Right";
+		skyboxFaces[2] = "Down";
+		skyboxFaces[3] = "Up";
+		skyboxFaces[4] = "Front";
+		skyboxFaces[5] = "Back";
 
-        for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        {
-            for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
-            {
-                Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
-                if (!mSkyboxes[uiSkybox])
-                    mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
-                mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
-                Resources.UnloadAsset(skyboxFace);
-            }
+		if (true)
+		{
+			for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+			{
+				for (uint uiFace = 0; uiFace < 6; ++uiFace)  // For each face on the skybox...
+				{
+					Texture2D skyboxFace = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + skyboxFaces[uiFace], typeof(Texture2D)) as Texture2D;  // Load the texture from file.
+					if (!mSkyboxes[uiSkybox])
+						mSkyboxes[uiSkybox] = new Cubemap(skyboxFace.width, skyboxFace.format, false);
+					mSkyboxes[uiSkybox].SetPixels(skyboxFace.GetPixels(), (CubemapFace)uiFace);
+					Resources.UnloadAsset(skyboxFace);
+				}
 
-            mSkyboxes[uiSkybox].Apply(false, true);
-        }
+				mSkyboxes[uiSkybox].Apply(false, true);
+			}
+		}
+		else
+		{
+			for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
+				mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
+		}
 
-        //for (uint uiSkybox = 0; uiSkybox < (uint)ESkybox.MAX; ++uiSkybox)    // For each skybox...
-        //    mSkyboxes[uiSkybox] = Resources.Load("Textures/Galaxy/" + uiSkybox.ToString() + "Cubemap", typeof(Cubemap)) as Cubemap;  // Load the cubemap texture from file.
-
-		UpdateGalaxyAesthetic(mCentreCell);
-
-		// Statistical data sometimes helps spot errors.
-        // Commented out by Nathan to avoid extranious logging details.
-        // Feel free to uncomment when required for debugging purposes.
-		//Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
+		mNoise = gameObject.GetComponent<CGalaxyNoise>();
 
 		if (CNetwork.IsServer)
 		{
+			if (initialiseDungeonMaster)
+				mDungeonMaster = gameObject.AddComponent<DungeonMaster>();
+
 			mGubbins = new System.Collections.Generic.List<CRegisteredGubbin>();
 			mGubbinsToLoad = new System.Collections.Generic.List<SGubbinMeta>();
 			mGubbinsToUnload = new System.Collections.Generic.List<CRegisteredGubbin>();
 			mCells = new System.Collections.Generic.Dictionary<SCellPos, CCellContent>();
 			mCellsToLoad = new System.Collections.Generic.List<SCellPos>();
 			mCellsToUnload = new System.Collections.Generic.List<SCellPos>();
-
-			// Seed galaxy noises through the network variable to sync the seed across all clients.
-			for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-				mNoiseSeeds[ui].Set(Random.Range(int.MinValue, int.MaxValue));
-
-			if(initialiseDungeonMaster)
-				gameObject.AddComponent<DungeonMaster>();
 		}
+
+		UpdateGalaxyAesthetic(mCentreCell);
+
+		// Statistical data sometimes helps spot errors.
+		//Debug.Log("Galaxy is " + mfGalaxySize.ToString("n0") + " units³ with " + muiNumCellSubsets.ToString("n0") + " cell subsets, thus the " + numCells.ToString("n0") + " cells are " + (mfGalaxySize / numCellsInRow).ToString("n0") + " units in diameter and " + numCellsInRow.ToString("n0") + " cells in a row.");
 	}
 
 	void OnDestroy()
@@ -269,9 +255,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-			mNoiseSeeds[ui] = _cRegistrar.CreateNetworkVar<int>(SyncNoiseSeed);
-
 		mCentreCellX = _cRegistrar.CreateNetworkVar<int>(SyncCentreCellX, mCentreCell.x);
 		mCentreCellY = _cRegistrar.CreateNetworkVar<int>(SyncCentreCellY, mCentreCell.y);
 		mCentreCellZ = _cRegistrar.CreateNetworkVar<int>(SyncCentreCellZ, mCentreCell.z);
@@ -283,6 +266,33 @@ public class CGalaxy : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
+			if (Input.GetKeyDown(KeyCode.KeypadMultiply)) debug_GalaxyStuff = !debug_GalaxyStuff;
+			if (debug_GalaxyStuff)
+			{
+				bool incrementNoise = Input.GetKeyDown(KeyCode.Keypad9);
+				bool decrementNoise = Input.GetKeyDown(KeyCode.Keypad6);
+
+				if (incrementNoise != decrementNoise)
+				{
+					int newNoise = (int)mNoise.debug_RenderNoise;
+
+					if (incrementNoise)
+					{
+						newNoise += 1;
+						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+							newNoise = 0;
+					}
+					else
+					{
+						newNoise -= 1;
+						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+							newNoise = (int)(CGalaxyNoise.ENoiseLayer.MAX - 1);
+					}
+
+					mNoise.debug_RenderNoise = (CGalaxyNoise.ENoiseLayer)newNoise;
+				}
+			}
+
 			mfTimeUntilNextUpdateCellLoadUnloadQueues -= Time.deltaTime;
 			mfTimeUntilNextCellUnload -= Time.deltaTime;
 			mfTimeUntilNextUpdateGubbinUnloadQueue -= Time.deltaTime;
@@ -294,8 +304,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 			if (mfTimeUntilNextUpdateCellLoadUnloadQueues <= 0.0f)
 			{ UpdateCellLoadingUnloadingQueues(); mfTimeUntilNextUpdateCellLoadUnloadQueues = mfTimeBetweenUpdateCellLoadUnloadQueues; }
 
-			if (mfTimeUntilNextCellUnload <= 0.0f)
-			{ UnloadQueuedCell(); mfTimeUntilNextCellUnload = mfTimeBetweenCellUnloads; }
+			while (mfTimeUntilNextCellUnload <= 0.0f)
+			{ UnloadQueuedCell(); mfTimeUntilNextCellUnload += mfTimeBetweenCellUnloads; }
 
 			if (mfTimeUntilNextUpdateGubbinUnloadQueue <= 0.0f)
 			{ UpdateGubbinUnloadingQueue(); mfTimeUntilNextUpdateGubbinUnloadQueue = mfTimeBetweenUpdateGubbinUnloadQueue; }
@@ -401,7 +411,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	private void UnloadQueuedCell()
 	{
-		if (mCellsToUnload.Count > 0)    // If there are cells to unload...
+		if (mCellsToUnload.Count > 0)	// If there are cells to unload...
 		{
 			UnloadAbsoluteCell(mCellsToUnload[0]); // Unload the cell.
 			mCellsToUnload.RemoveAt(0); // Cell has been removed.
@@ -543,17 +553,14 @@ public class CGalaxy : CNetworkMonoBehaviour
 	private Vector3 CalculateAverageObserverPosition()
 	{
 		Vector3 result = new Vector3();
-		foreach (CRegisteredObserver observer in mObservers)
-			result += observer.mEntity.transform.position;
+		if (mObservers.Count > 0)
+		{
+			foreach (CRegisteredObserver observer in mObservers)
+				result += observer.mEntity.transform.position;
+			result /= mObservers.Count;
+		}
 
-		return result / mObservers.Count;
-	}
-
-	public void SyncNoiseSeed(INetworkVar sender)
-	{
-		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-			if (mNoiseSeeds[ui] == sender)
-				mNoises[ui].Seed(mNoiseSeeds[ui].Get());
+		return result;
 	}
 
 	public void SyncCentreCellX(INetworkVar sender)
@@ -719,30 +726,14 @@ public class CGalaxy : CNetworkMonoBehaviour
 		CNetwork.Factory.DestoryObject(gubbin.mNetworkViewID);
 	}
 
-	public Vector3 AbsoluteCellNoiseSamplePoint(SCellPos absoluteCell, float sampleScale)
-	{
-		return new Vector3((sampleScale * absoluteCell.x * cellDiameter / cellRadius), (sampleScale * absoluteCell.y * cellDiameter / cellRadius), (sampleScale * absoluteCell.z * cellDiameter / cellRadius));
-	}
-
-	public float SampleNoise(float x, float y, float z, ENoiseLayer noiseLayer)
-	{
-		return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(x, y, z);
-	}
-
-	public float SampleNoise(SCellPos absoluteCell, float sampleScale, ENoiseLayer noiseLayer)
-	{
-		Vector3 samplePoint = AbsoluteCellNoiseSamplePoint(absoluteCell, sampleScale);
-		return 0.5f + 0.5f * mNoises[(uint)noiseLayer].Generate(samplePoint.x, samplePoint.y, samplePoint.z);
-	}
-
 	public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)
 	{
-        return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
+		return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 	}
 
 	public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
 	{
-        return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+		return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
 	}
 
 	public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
@@ -751,7 +742,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
+		return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 	}
 
 	public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
@@ -769,7 +760,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		relativePoint.y += cellRadius;
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
+		return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
 	}
 
 	public SCellPos AbsolutePointToRelativeCell(Vector3 absolutePoint)
@@ -778,7 +769,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		absolutePoint.y += cellRadius;
 		absolutePoint.z += cellRadius;
 		absolutePoint /= cellDiameter;
-        return new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
+		return new SCellPos(Mathf.FloorToInt(absolutePoint.x) - mCentreCell.x, Mathf.FloorToInt(absolutePoint.y) - mCentreCell.y, Mathf.FloorToInt(absolutePoint.z) - mCentreCell.z);
 	}
 
 	public Vector3 RelativePointToAbsolutePoint(Vector3 relativePoint) { return relativePoint + AbsoluteCellToAbsolutePoint(mCentreCell); }
@@ -788,7 +779,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 	{
 		Vector3 cellCentrePos = new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 		float cellBoundingSphereRadius = cellDiameter * 0.86602540378443864676372317075294f;
-        return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
+		return (cellCentrePos - point).sqrMagnitude <= cellBoundingSphereRadius * cellBoundingSphereRadius + pointRadius * pointRadius;
 	}
 
 	void UpdateGalaxyAesthetic(SCellPos absoluteCell)
@@ -805,65 +796,12 @@ public class CGalaxy : CNetworkMonoBehaviour
 		RenderSettings.skybox.SetVector("_Tint", Color.grey);
 	}
 
-	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.CeilToInt(1 * SampleNoise_SparseAsteroid(absoluteCell)); }
-	//public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * SampleNoise_SparseAsteroid(absoluteCell)); }
-	public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * SampleNoise_AsteroidCluster(absoluteCell)); }
-	public float DebrisDensity(SCellPos absoluteCell) { return SampleNoise_DebrisDensity(absoluteCell); }
-	public float FogDensity(SCellPos absoluteCell) { return SampleNoise_FogDensity(absoluteCell); }
-	public float ResourceAmount(SCellPos absoluteCell) { return 800 * SampleNoise_ResourceAmount(absoluteCell); }
-	public uint EnemyShipCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxEnemyShips*/ * SampleNoise_EnemyShipDensity(absoluteCell)); }
-
-	public float SampleNoise_SparseAsteroid(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.SparseAsteroidCount);
-		float start = 0.0f, end = 1.0f;
-		//float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.SparseAsteroidCount);
-		//float start = 0.5f, end = 0.9f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
-
-	public float SampleNoise_AsteroidCluster(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.1f, ENoiseLayer.AsteroidClusterCount);
-		float start = 0.8f, end = 0.9f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
-
-	public float SampleNoise_DebrisDensity(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.25f, ENoiseLayer.DebrisDensity);
-		float start = 0.0f, end = 1.0f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
-
-	public float SampleNoise_FogDensity(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.000001f, ENoiseLayer.FogDensity);
-		float start = 0.4f, end = 0.8f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
-
-	public float SampleNoise_ResourceAmount(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.01f, ENoiseLayer.AsteroidResourceAmount);
-		float start = 0.75f, end = 0.9f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
-
-	public float SampleNoise_EnemyShipDensity(SCellPos absoluteCell)
-	{
-		float sample = SampleNoise(absoluteCell, 0.001f, ENoiseLayer.EnemyShipCount);
-		////float start = 0.85f, end = 0.95f;
-		//float start = 0.0f, end = 0.001f;
-		float start = 1.1f, end = 1.2f;
-		sample = (sample - start) / (end - start);
-		return sample < 0.0f ? 0.0f : sample > 1.0f ? 1.0f : sample;
-	}
+	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.SparseAsteroidCount)); }
+	public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidClusterCount)); }
+	public float DebrisDensity(SCellPos absoluteCell) { return mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.DebrisDensity); }
+	public float FogDensity(SCellPos absoluteCell) { return mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.FogDensity); }
+	public float ResourceAmount(SCellPos absoluteCell) { return 800 * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidResourceAmount); }
+	public uint EnemyShipCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxEnemyShips*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.EnemyShipCount)); }
 
 	private void LoadSparseAsteroids(SCellPos absoluteCell)
 	{
@@ -876,9 +814,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one * Random.Range(5.0f, 10.0f), // Scale
+												Vector3.one * Random.Range(5.0f, 10.0f), // Scale
 												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 50.0f), // Linear velocity.
-			                                    Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
+												Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
@@ -892,7 +830,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		uint uiNumAsteroidClusters = AsteroidClusterCount(absoluteCell);
 		for (uint uiCluster = 0; uiCluster < uiNumAsteroidClusters; ++uiCluster)
 		{
-			Vector3 linearClusterVelocity = Random.onUnitSphere * Random.Range(0.0f, 75.0f);
+			//Vector3 linearClusterVelocity = Random.onUnitSphere * Random.Range(0.0f, 75.0f);
 
 			uint uiNumAsteroidsInCluster = (uint)Random.Range(6, 21);
 			for (uint uiAsteroid = 0; uiAsteroid < uiNumAsteroidsInCluster; ++uiAsteroid)
@@ -903,8 +841,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 													absoluteCell,   // Parent cell.
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
-				                                    Vector3.one * Random.Range(2.0f, 8.0f), // Scale
-				                                    Vector3.zero, //linearClusterVelocity, // Linear velocity.
+													Vector3.one * Random.Range(2.0f, 8.0f), // Scale
+													Vector3.zero, //linearClusterVelocity, // Linear velocity.
 													Vector3.zero, //Random.onUnitSphere * Random.Range(0.0f, 0.1f), // Angular velocity.
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
@@ -925,21 +863,34 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		for (uint ui = 0; ui < uiNumEnemyShips; ++ui)
 		{
-			mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,    // Enemy ship prefab.
+			mGubbinsToLoad.Add(new SGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,	// Enemy ship prefab.
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
-			                                    Vector3.one, // Scale
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,    // Linear velocity.
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/, // Angular velocity.
+												Vector3.one, // Scale
+												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,	// Linear velocity.
+												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/,	// Angular velocity.
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
 		}
 	}
 
+	void OnGUI()
+	{
+		if (!debug_GalaxyStuff)
+			return;
+
+		float boxWidth = 200;
+		float boxHeight = 100;
+		GUI.Box(new Rect((Screen.width - boxWidth) / 2, (Screen.height - boxHeight) / 2, boxWidth, boxHeight), mNoise.noiseMeta[(uint)mNoise.debug_RenderNoise].displayName + '\n' + mCentreCell.ToString());
+	}
+
 	void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
 	{
+		if (!debug_GalaxyStuff)
+			return;
+
 		if (CNetwork.IsServer)
 		{
 			foreach (CRegisteredObserver elem in mObservers)
@@ -1011,7 +962,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 				GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
 				GL.End();
 
-				float noiseValue = SampleNoise_SparseAsteroid(pair.Key);
+				float noiseValue = mNoise.SampleNoise(pair.Key, mNoise.debug_RenderNoise);
 				Gizmos.color = new Color(1.0f, 1.0f, 1.0f, noiseValue);
 				Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
 			}

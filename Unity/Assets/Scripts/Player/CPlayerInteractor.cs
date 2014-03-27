@@ -128,6 +128,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
                     if (cNewTargetViewId != null)
                     {
                         cPlayerInteractor.m_cTargetActorObject = cNewTargetViewId.GameObject;
+
                         if (cPlayerInteractor.EventServerTargetChange != null) cPlayerInteractor.EventServerTargetChange(cPlayerInteractor.m_cTargetActorObject);
 
                        // Debug.LogError("Found new target: " + cPlayerInteractor.m_cTargetActorObject);
@@ -189,7 +190,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     void UpdateTarget()
     {
-        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().m_Head.transform.position, gameObject.GetComponent<CPlayerHead>().m_Head.transform.forward);
+        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().Head.transform.position, gameObject.GetComponent<CPlayerHead>().Head.transform.forward);
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 

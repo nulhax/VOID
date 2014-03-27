@@ -115,7 +115,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 
 	private void Update()
 	{
-		if(GetComponent<CModulePrecipitation>().IsModuleBuilt)
+		if(gameObject.GetComponent<CModulePrecipitation>().IsModuleBuilt)
 			UpdateAnimation();
 	}
 
@@ -143,11 +143,5 @@ public class CTestEngineBehaviour: MonoBehaviour
 		m_InnerRing.transform.Rotate(axis, angle);
 
         gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 15.0f);
-
-        // Commented out by Nathan to prevent spamming other people's screens.
-        // Please remember to remove these sorts of debugging tools before you push to develop.
-        // Just makes it easier for everyone else to see what we're working on.
-        // Thanks. ^.^
-        //Debug.Log(gameObject.GetComponentInChildren<Light>().intensity);
 	}
 }
