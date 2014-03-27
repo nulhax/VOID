@@ -38,7 +38,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		
 		MAX
 	}
-	
+
 	// Member Fields
 	public GameObject m_Shield = null;
 	
@@ -78,61 +78,61 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		// TODO: Make module first. 
 	}
 	
-//	public void UpdateShieldBounds()
-//	{	
-//		// Move the galaxy ship to identity transform
-//		Vector3 oldPos = transform.position;
-//		Quaternion oldRot = transform.rotation;
-//		transform.position = Vector3.zero;
-//		transform.rotation = Quaternion.identity;
-//		
-//		// Get the mesh colliders of the colliders
-//		MeshCollider[] meshColliders = gameObject.GetComponentsInChildren<MeshCollider>();
-//
-//		// Instance a primitive to encapsulate the ship in for the shield
-//		GameObject newShield = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-//		MeshFilter mf = newShield.GetComponent<MeshFilter>();
-//
-//		// Combined the instanced primitive to find the bounds extents to reform the shield boundries
-//		List<CombineInstance> combines = new List<CombineInstance>();
-//		foreach(MeshCollider mc in meshColliders) 
-//		{
-//			if(mc.gameObject == m_Shield || mc.isTrigger == true)
-//				continue;
-//
-//			// Rescale the primitive to fit around the collider
-//			Vector3 scale = mc.bounds.size + new Vector3(1.0f, 0.0f, 1.0f);
-//			scale.x = scale.x / Mathf.Sqrt(2.0f) * 2.0f;
-//			scale.z = scale.z / Mathf.Sqrt(2.0f) * 2.0f;
-//			scale.y = scale.y;
-//			
-//			newShield.transform.localScale = scale;
-//			newShield.transform.localPosition = mc.bounds.center;
-//			
-//			CombineInstance combine = new CombineInstance();
-//			combine.mesh = mf.sharedMesh;
-//			combine.transform = mf.transform.localToWorldMatrix;
-//			combines.Add(combine);
-//		}
-//		
-//		// Destroy the primitive
-//		Destroy(newShield);
-//		
-//		// Create a new mesh for the shield to use
-//		Mesh mesh = new Mesh();
-//		mesh.name = "Shield";
-//		mesh.CombineMeshes(combines.ToArray(), true, true);
-//
-//		// Apply the new mesh
-//		m_Shield.GetComponent<MeshFilter>().mesh = mesh;
-//		m_Shield.GetComponent<MeshCollider>().sharedMesh = null;
-//		m_Shield.GetComponent<MeshCollider>().sharedMesh = mesh;
-//
-//		// Move back to old transform
-//		transform.position = oldPos;
-//		transform.rotation = oldRot;
-//	}
-	
+	public void UpdateShieldBounds()
+	{	
+		// Move the galaxy ship to identity transform
+		Vector3 oldPos = transform.position;
+		Quaternion oldRot = transform.rotation;
+		transform.position = Vector3.zero;
+		transform.rotation = Quaternion.identity;
+		
+		// Get the mesh colliders of the colliders
+		MeshCollider[] meshColliders = gameObject.GetComponentsInChildren<MeshCollider>();
+
+		// Instance a primitive to encapsulate the ship in for the shield
+		GameObject newShield = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+		MeshFilter mf = newShield.GetComponent<MeshFilter>();
+
+		// Combined the instanced primitive to find the bounds extents to reform the shield boundries
+		List<CombineInstance> combines = new List<CombineInstance>();
+		foreach(MeshCollider mc in meshColliders) 
+		{
+			if(mc.gameObject == m_Shield || mc.isTrigger == true)
+				continue;
+
+			// Rescale the primitive to fit around the collider
+			Vector3 scale = mc.bounds.size + new Vector3(1.0f, 0.0f, 1.0f);
+			scale.x = scale.x / Mathf.Sqrt(2.0f) * 2.0f;
+			scale.z = scale.z / Mathf.Sqrt(2.0f) * 2.0f;
+			scale.y = scale.y / Mathf.Sqrt(2.0f);
+			
+			newShield.transform.localScale = scale;
+			newShield.transform.localPosition = mc.bounds.center;
+			
+			CombineInstance combine = new CombineInstance();
+			combine.mesh = mf.sharedMesh;
+			combine.transform = mf.transform.localToWorldMatrix;
+			combines.Add(combine);
+		}
+		
+		// Destroy the primitive
+		Destroy(newShield);
+		
+		// Create a new mesh for the shield to use
+		Mesh mesh = new Mesh();
+		mesh.name = "Shield";
+		mesh.CombineMeshes(combines.ToArray(), true, true);
+
+		// Apply the new mesh
+		m_Shield.GetComponent<MeshFilter>().mesh = mesh;
+		m_Shield.GetComponent<MeshCollider>().sharedMesh = null;
+		m_Shield.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+		// Move back to old transform
+		transform.position = oldPos;
+		transform.rotation = oldRot;
+	}
+
 	void ShipShieldCollider(Collider _Collider)
 	{
 		if(_Collider.gameObject.tag == "Asteroid")
@@ -213,22 +213,11 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		// Get the direction of the asteroid from the origin
 			Vector3 dir = (AsteroidPos - transform.position).normalized;
 
-			GameObject m_Sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-
-			m_Sphere.renderer.enabled = false;
-
-			m_Sphere.transform.localScale = new Vector3(20.0f, 1.0f, 20.0f);
-
 			if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
 			{
 				Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
 
-				m_Sphere.renderer.enabled = true;
 
-				m_Sphere.transform.position = hit.point;
-				m_Sphere.transform.parent = transform;	
-
-				Destroy(m_Sphere, 10.0f);
 			}
 		}
 	}

@@ -39,7 +39,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 		_FacilityExterior.transform.localRotation = _RelativeRot;
 
 		// Update the shield bounds
-		//gameObject.GetComponent<CGalaxyShipShield>().UpdateShieldBounds();
+		gameObject.GetComponent<CGalaxyShipShield>().UpdateShieldBounds();
 
 		// Update the camera bounds
 		gameObject.GetComponent<CGalaxyShipCamera>().UpdateCameraBounds();
