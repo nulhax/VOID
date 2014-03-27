@@ -57,6 +57,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         INVALID,
 
         UnequipingTool,
+        UnequipingToolOnly,
         EquipingTool,
 
         MAX
@@ -123,56 +124,55 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifySwitchingTool");
 
-		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_uiMaxNumTools];
+		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_bMaxNumTools];
 
-		for (uint i = 0; i < k_uiMaxNumTools; ++i)
+		for (uint i = 0; i < k_bMaxNumTools; ++i)
 		{
 			m_acToolsViewId[i] = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
         m_eState = _cRegistrar.CreateNetworkVar<EState>(OnNetworkVarSync, EState.Idle);
 		m_bToolCapacity = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 2);
-		m_bActiveToolId = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
+        m_bActiveToolId = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, k_bNoActiveToolId);
     }
 
 
 	[AServerOnly]
-	public void PickupTool(GameObject _cInteractableObject)
+	public void PickupTool(GameObject _cTool)
 	{
+        // Check object is a tool
+        if (_cTool.GetComponent<CToolInterface>() == null)
+        {
+            Debug.LogError(string.Format("Cannot pick up tool. Object does not have a CToolInterface component. GameObject({0})", _cTool));
+        }
+        
 		// Check object exists
-		if (_cInteractableObject != null)
+		else if (_cTool != null)
 		{
 			// Find free slot
 			for (uint i = 0; i < ToolCapacity; ++i)
 			{
+                // Check slot if free
 				if (GetToolViewId(i) == null)
 				{
 					// Retrieve tool interface script
-					CToolInterface cToolInterface = _cInteractableObject.GetComponent<CToolInterface>();
-					CNetworkView cToolNetworkView = _cInteractableObject.GetComponent<CNetworkView>();
+					CToolInterface cToolInterface = _cTool.GetComponent<CToolInterface>();
+					CNetworkView cToolNetworkView = _cTool.GetComponent<CNetworkView>();
 
-					// Check script found
-					if (cToolInterface == null)
-					{
-						Debug.LogError(string.Format("Target tool does not have the CToolInterface component attached! ObjectName({0})", _cInteractableObject.name));
-					}
-                    else if (cToolInterface.IsOwned)
+					// Check tool is not owned
+                    if (!cToolInterface.IsOwned)
                     {
-                        break;
-                    }
-					else
-					{
+                        // Set tool to slot
 						m_acToolsViewId[i].Set(cToolNetworkView.ViewId);
 
+                        // Notify observers
                         cToolInterface.NotifyPickedUp(m_ulOwnerPlayerId);
 
+                        // Change to this tool
 						ChangeTool((byte)i);
 
-                        // Commented out by Nathan to avoid extraneous debug information.
-                        // Feel free to uncomment for debugging purposes when required.
-						//Debug.Log(string.Format("Picked up tool. PlayerId({0}) ToolObjectName({1}) SlotId({2})", _ulPlayerId, _cInteractableObject.name, i));
+                        break;
 					}
-					break;
 				}
 			}
 		}
@@ -182,16 +182,16 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	[AServerOnly]
 	public void ChangeTool(byte _bSlotId)
 	{
+        // Check slot if is valid
 		// Check tool exists
-		if (_bSlotId >= 0 &&
-            _bSlotId < k_uiMaxNumTools &&
-            GetToolViewId(_bSlotId) != null)
+		if (_bSlotId < 0 ||
+            _bSlotId >= k_bMaxNumTools)
+        {
+            Debug.LogError(string.Format("Invalid tool slot id. SlotId({0})", _bSlotId));
+        }
+        else if (GetToolViewId(_bSlotId) != null)
 		{
             m_bActiveToolId.Set(_bSlotId);
-
-            // Commented out by Nathan to avoid extraneous debug information.
-            // Feel free to uncomment for debugging purposes when required.
-            //Debug.Log(string.Format("Changing tool to SlotId({0})", _bSlotId));
 		}
 	}
 
@@ -203,7 +203,6 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		if (GetToolViewId(_bSlotId) != null)
 		{
 			GetTool(_bSlotId).GetComponent<CToolInterface>().Reload();
-			//Debug.Log("Reloading active tool");
 		}
 	}
 
@@ -214,11 +213,16 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		// Check tool exists
 		if (GetToolViewId(_bSlotId) != null)
 		{
-			GetTool(_bSlotId).GetComponent<CToolInterface>().NotifyDropped();
+            bool bNewToolFound = false;
+
+            // Notify tool about being dropped
+            GetTool(_bSlotId).GetComponent<CToolInterface>().NotifyDropped();
+
+            // Remove tool from slot
             m_acToolsViewId[_bSlotId].Set(null);
 
             // Change tool to next available tool
-            for (int i = (int)k_uiMaxNumTools - 1; i >= 0; --i)
+            for (int i = (int)k_bMaxNumTools - 1; i >= 0; --i)
             {
                 if (m_acToolsViewId[i].Get() != null)
                 {
@@ -227,13 +231,17 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 }
             }
 
-            //Debug.Log("Dropping active tool");
+            if (!bNewToolFound)
+            {
+                ChangeTool(k_bMaxNumTools);
+            }
 		}
 	}
 
 
 	public GameObject GetTool(uint _bSlotId)
 	{
+        // Check tool exists
         if (GetToolViewId(_bSlotId) == null)
         {
             return (null);
@@ -313,8 +321,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void Start()
     {
-        m_ulOwnerPlayerId = CGamePlayers.GetPlayerActorsPlayerId(SelfNetworkView.ViewId);
+        m_ulOwnerPlayerId = GetComponent<CPlayerInterface>().PlayerId;
 
+        // Owner player subscribe to events
         if (gameObject == CGamePlayers.SelfActor)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse += OnEventInteractionUse;
@@ -332,20 +341,37 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
         }
 
-        gameObject.GetComponent<CNetworkView>().EventPreDestory += new CNetworkView.NotiftyPreDestory(OnEventPreDestroy);
+        // Signup to pre destroy
+        gameObject.GetComponent<CNetworkView>().EventPreDestory += OnEventPreDestroy;
     }
 
 
-	void OnDestroy()
-	{
+    void OnEventPreDestroy()
+    {
+        // Drop all tools
+        if (CNetwork.IsServer)
+        {
+            for (byte i = 0; i < k_bMaxNumTools; ++i)
+            {
+                DropTool(i);
+                /*
+                if (m_acToolsViewId[i].Get() != null)
+                {
+                    GetTool(i).GetComponent<CToolInterface>().NotifyDropped();
+                }
+                */
+            }
+        }
+
+        // Owner player unsubscribe from events
         if (gameObject == CGamePlayers.SelfActor)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse -= OnEventInteractionUse;
 
-            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary,             OnEventInput);
-            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary,           OnEventInput);
-            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Reload,         OnEventInput);
-            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Drop,           OnEventInput);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Reload, OnEventInput);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Drop, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot1, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot2, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot3, OnEventInput);
@@ -353,69 +379,57 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         }
 
         gameObject.GetComponent<CNetworkView>().EventPreDestory -= OnEventPreDestroy;
-	}
+    }
 
 
     void Update()
     {
-        UpdateSwitchingTool();
+        UpdateToolSwitching();
     }
 
 
-    void UpdateSwitchingTool()
+    void UpdateToolSwitching()
     {
-        if (m_eSwitchToolState == ESwitchToolState.UnequipingTool)
+        // Check we are currently unequping a tool
+        if (m_eSwitchToolState == ESwitchToolState.UnequipingTool ||
+            m_eSwitchToolState == ESwitchToolState.UnequipingToolOnly)
         {
+            // Increment timer
             m_fUnequipToolTimer += Time.deltaTime;
 
+            // Update position lerp - For testing only
             GetTool(m_bActiveToolId.GetPrevious()).transform.localPosition = Vector3.Lerp(m_vToolEquipedPosition, m_vToolUnequipedPosition, m_fUnequipToolTimer / m_fUnequipToolDuration);
 
+            // Check uneuiping has finished
             if (m_fUnequipToolTimer >= m_fUnequipToolDuration)
             {
-                //Debug.LogError("Chaning state equiping tool");
-
-                foreach (Renderer cRenderer in GetTool(m_bActiveToolId.GetPrevious()).transform.GetComponentsInChildren<Renderer>())
+                if (m_eSwitchToolState == ESwitchToolState.UnequipingTool)
                 {
-                    cRenderer.enabled = false;
+                    // Change state to equping tool
+                    SetSwitchingToolState(ESwitchToolState.EquipingTool);
                 }
-
-                foreach (Renderer cRenderer in GetTool(m_bActiveToolId.Get()).transform.GetComponentsInChildren<Renderer>())
+                else
                 {
-                    cRenderer.enabled = true;
+                    // Change state to equping tool
+                    SetSwitchingToolState(ESwitchToolState.INVALID);
                 }
-
-                m_eSwitchToolState = ESwitchToolState.EquipingTool;
             }
         }
+
+        // Check we are currently equiping a tool
         else if (m_eSwitchToolState == ESwitchToolState.EquipingTool)
         {
+            // Increment timer
             m_fEquipToolTimer += Time.deltaTime;
 
+            // Update position lerp - For testing only
             ActiveTool.transform.localPosition = Vector3.Lerp(m_vToolUnequipedPosition, m_vToolEquipedPosition, m_fEquipToolTimer / m_fEquipToolDuration);
 
+            // Check euiping has finished
             if (m_fEquipToolTimer >= m_fEquipToolDuration)
             {
-                m_eSwitchToolState = ESwitchToolState.INVALID;
-
-                if (gameObject == CGamePlayers.SelfActor)
-                {
-                    // Set equiped
-                    ActiveTool.GetComponent<CToolInterface>().SetEquipped(true);
-
-                    // Activate primary
-                    if (CUserInput.IsInputDown(CUserInput.EInput.Primary))
-                    {
-                        ActiveTool.GetComponent<CToolInterface>().SetPrimaryActive(true);
-                    }
-
-                    // Activate primary
-                    if (CUserInput.IsInputDown(CUserInput.EInput.Secondary))
-                    {
-                        ActiveTool.GetComponent<CToolInterface>().SetSecondaryActive(true);
-                    }
-                }
-
-                //Debug.LogError("Finished equiping tool");
+                // Change state to finished
+                SetSwitchingToolState(ESwitchToolState.INVALID);
             }
         }
     }
@@ -424,6 +438,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     [ALocalOnly]
     void SwitchTool(byte _bSlotId)
     {
+        // Check tool exists in that slot
         if (GetTool(_bSlotId) != null)
         {
             s_cSerializeStream.Write(ENetworkAction.EquipTool);
@@ -432,18 +447,84 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnEventPreDestroy()
+    void SetSwitchingToolState(ESwitchToolState _cNewState)
     {
-        if (CNetwork.IsServer)
+        switch (_cNewState)
         {
-            for (uint i = 0; i < k_uiMaxNumTools; ++i)
-            {
-                if (m_acToolsViewId[i].Get() != null)
+            case ESwitchToolState.UnequipingTool:
+            case ESwitchToolState.UnequipingToolOnly:
                 {
-                    GetTool(i).GetComponent<CToolInterface>().NotifyDropped();
+                    m_fUnequipToolTimer = 0.0f;
                 }
-            }
+                break;
+
+            case ESwitchToolState.EquipingTool:
+                {
+                    m_fEquipToolTimer = 0.0f;
+
+                    // Check previous active tool existed
+                    if (m_bActiveToolId.GetPrevious() != k_bNoActiveToolId)
+                    {
+                        // Turn off renderer for unequiped tool - For testing only
+                        foreach (Renderer cRenderer in GetTool(m_bActiveToolId.GetPrevious()).transform.GetComponentsInChildren<Renderer>())
+                        {
+                            cRenderer.enabled = false;
+                        }
+                    }
+
+                    // Turn on renderer for equiping tool - For testing only
+                    foreach (Renderer cRenderer in GetTool(m_bActiveToolId.Get()).transform.GetComponentsInChildren<Renderer>())
+                    {
+                        cRenderer.enabled = true;
+                    }
+                }
+                break;
+
+            case ESwitchToolState.INVALID:
+                {
+                    // Check the player was unequiping tool only
+                    if (m_eSwitchToolState == ESwitchToolState.UnequipingToolOnly)
+                    {
+                        // Check previous active tool existed
+                        if (m_bActiveToolId.GetPrevious() != k_bNoActiveToolId)
+                        {
+                            // Turn off renderer for unequiped tool - For testing only
+                            foreach (Renderer cRenderer in GetTool(m_bActiveToolId.GetPrevious()).transform.GetComponentsInChildren<Renderer>())
+                            {
+                                cRenderer.enabled = false;
+                            }
+                        }
+                    }
+
+                    // Run owner player specific functionality
+                    if (gameObject == CGamePlayers.SelfActor)
+                    {
+                        // Set equiped
+                        ActiveTool.GetComponent<CToolInterface>().SetEquipped(true);
+
+                        // Activate primary if the player is holding down their primary
+                        if (CUserInput.IsInputDown(CUserInput.EInput.Primary))
+                        {
+                            ActiveTool.GetComponent<CToolInterface>().SetPrimaryActive(true);
+                        }
+
+                        // Activate secondary if the player is holding down their secondary
+                        if (CUserInput.IsInputDown(CUserInput.EInput.Secondary))
+                        {
+                            ActiveTool.GetComponent<CToolInterface>().SetSecondaryActive(true);
+                        }
+                    }
+                }
+                break;
+
+            default:
+                Debug.LogError("Unknown switch tool state: " + _cNewState);
+                break;
         }
+
+        Debug.LogError("Switch Tool State: " + _cNewState);
+
+        m_eSwitchToolState = _cNewState;
     }
 
 
@@ -481,10 +562,13 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
+    [ALocalOnly]
     void OnEventInteractionUse(CPlayerInteractor.EInputInteractionType _eInteractionType, GameObject _cActorInteractable, RaycastHit _cRaycastHit, bool _bDown)
     {
+        // Check use input was down during this interaction
         if (_bDown)
         {
+            // Check object is a tool
             if (_cActorInteractable.GetComponent<CToolInterface>() != null)
             {
                 s_cSerializeStream.Write(ENetworkAction.PickupTool);
@@ -501,6 +585,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         {
             case CUserInput.EInput.Primary:
                 {
+                    // Check has active tool
+                    // Check tool is equiped (That we are not in a switch tool transition)
                     if (ActiveTool != null &&
                         ActiveTool.GetComponent<CToolInterface>().IsEquiped)
                     {
@@ -511,6 +597,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
             case CUserInput.EInput.Secondary:
                 {
+                    // Check has active tool
+                    // Check tool is equiped (That we are not in a switch tool transition)
                     if (ActiveTool != null &&
                         ActiveTool.GetComponent<CToolInterface>().IsEquiped)
                     {
@@ -567,11 +655,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
         // Picking up and dropping tool
-        for (uint i = 0; i < k_uiMaxNumTools; ++i)
+        for (byte i = 0; i < k_bMaxNumTools; ++i)
         {
             if (m_acToolsViewId[i] == _cSyncedVar)
             {
-                HandleVarSyncToolsViewId(m_acToolsViewId[i]);
+                HandleVarSyncToolsViewId(i);
             }
         }
 
@@ -583,27 +671,61 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void HandleVarSyncToolsViewId(CNetworkVar<CNetworkViewId> _cToolViewId)
+    void HandleVarSyncToolsViewId(byte _bSlotId)
     {
-        if (_cToolViewId.Get() == null)
+        CNetworkVar<CNetworkViewId> cToolViewId = m_acToolsViewId[_bSlotId];
+
+        // Check tool was removed from slot
+        if (cToolViewId.Get() == null)
         {
-            if (EventToolDropped != null) EventToolDropped(_cToolViewId.GetPrevious().GameObject);
+            // Notify observers
+            if (EventToolDropped != null) EventToolDropped(cToolViewId.GetPrevious().GameObject);
         }
+
+        // Check tool was added to slot
         else
         {
-            if (EventToolPickedup != null) EventToolPickedup(_cToolViewId.GetPrevious().GameObject);
+            // Notify observers
+            if (EventToolPickedup != null) EventToolPickedup(cToolViewId.GetPrevious().GameObject);
         }
     }
 
 
     void HandleVarSyncActiveToolId()
     {
-        if (GetTool(m_bActiveToolId.GetPrevious()) == null)
+        // Check new active tool id is valid
+        if (m_bActiveToolId.Get() != k_bNoActiveToolId)
         {
-            m_eSwitchToolState = ESwitchToolState.EquipingTool;
+            // Check that player is switching from another tool
+            if (m_bActiveToolId.GetPrevious() != k_bNoActiveToolId)
+            {
+                SetSwitchingToolState(ESwitchToolState.UnequipingTool);
+            }
 
-            //Debug.LogError("Set start state to equiping tool");
+            // Player has either picked up a new tool while not holding a tool
+            // Or player is switching to a tool from not having a active tool id set
+            else
+            {
+                SetSwitchingToolState(ESwitchToolState.EquipingTool);
+            }
         }
+        else
+        {
+            SetSwitchingToolState(ESwitchToolState.UnequipingToolOnly);
+        }
+
+
+        /*
+        if (m_bActiveToolId.GetPrevious() == k_bNoActiveToolId ||
+            GetTool(m_bActiveToolId.GetPrevious()) == null)
+        {
+            
+
+            // Set state to equiping tool
+            SetSwitchingToolState(ESwitchToolState.EquipingTool);
+        }
+
+        // Player 
         else
         {
             // Owner functionality
@@ -626,6 +748,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             }
         }
 
+        // Check previous active tool is 
+
+
+        // 
         if (m_eSwitchToolState == ESwitchToolState.EquipingTool)
         {
             m_eSwitchToolState = ESwitchToolState.UnequipingTool;
@@ -646,6 +772,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             m_fUnequipToolTimer = 0.0f;
             m_fEquipToolTimer = 0.0f;
         }
+            */
 
         //Debug.LogError("Set start state to unequiping tool");
 
@@ -656,7 +783,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const uint k_uiMaxNumTools = 4;
+    const byte k_bMaxNumTools = 4;
+    const byte k_bNoActiveToolId = k_bMaxNumTools;
 
 
 	CNetworkVar<CNetworkViewId>[] m_acToolsViewId = null;
