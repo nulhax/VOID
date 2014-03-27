@@ -63,9 +63,9 @@ public class CGrid : MonoBehaviour
 
 	public CTileFactory m_TileFactory = null;
 
-	public List<CTileBehaviour> m_TilesOnScreen = new List<CTileBehaviour>();
-	public List<CTileBehaviour> m_TilesInDrag = new List<CTileBehaviour>();
-	public List<CTileBehaviour> m_CurrentlySelectedTiles = new List<CTileBehaviour>();
+//	public List<CTileBehaviour> m_TilesOnScreen = new List<CTileBehaviour>();
+//	public List<CTileBehaviour> m_TilesInDrag = new List<CTileBehaviour>();
+//	public List<CTileBehaviour> m_CurrentlySelectedTiles = new List<CTileBehaviour>();
 
 	public Dictionary<string, CTileBehaviour> m_GridBoard = new Dictionary<string, CTileBehaviour>();
 
@@ -400,33 +400,33 @@ public class CGrid : MonoBehaviour
 //			)
 //			return true; else return false;
 //	}
-
-	//Check if a node is within the screen space to deal with mouse drag selecting
-	public bool NodeWithinScreenSpace(Vector2 NodeScreenPos)
-	{
-		if (
-			(NodeScreenPos.x < Screen.width && NodeScreenPos.y < Screen.height) &&
-			(NodeScreenPos.x > 0f && NodeScreenPos.y > 0f)
-			)
-			return true; else return false;
-	}
-
-	//Remove note from the screen from NodesOnScreen List
-	public void RemoveFromOnScreenUnts (CTileBehaviour Node)
-	{
-		for (int i = 0; i < m_TilesOnScreen.Count; i++)
-		{
-			CTileBehaviour tb = m_TilesOnScreen[i];
-			if (Node == tb)
-			{
-				m_TilesOnScreen.RemoveAt(i);
-				tb.onScreen = false;
-				return;
-			}
-		}
-
-		return;
-	}
+//
+//	//Check if a node is within the screen space to deal with mouse drag selecting
+//	public bool NodeWithinScreenSpace(Vector2 NodeScreenPos)
+//	{
+//		if (
+//			(NodeScreenPos.x < Screen.width && NodeScreenPos.y < Screen.height) &&
+//			(NodeScreenPos.x > 0f && NodeScreenPos.y > 0f)
+//			)
+//			return true; else return false;
+//	}
+//
+//	//Remove note from the screen from NodesOnScreen List
+//	public void RemoveFromOnScreenUnts (CTileBehaviour Node)
+//	{
+//		for (int i = 0; i < m_TilesOnScreen.Count; i++)
+//		{
+//			CTileBehaviour tb = m_TilesOnScreen[i];
+//			if (Node == tb)
+//			{
+//				m_TilesOnScreen.RemoveAt(i);
+//				tb.onScreen = false;
+//				return;
+//			}
+//		}
+//
+//		return;
+//	}
 
 //	public bool TilesInsideDrag (Vector2 ScreenPosition)
 //	{
@@ -513,9 +513,12 @@ public class CGrid : MonoBehaviour
 	
 	public void CreateTile(Vector3 gridPosition)
 	{
-		CTile newtile = new CTile((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
-		if(!m_GridBoard.ContainsKey(newtile.ToString()))
+		Point gridPoint = new Point((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
+		string gridHash = CGridObject.GridHash(gridPoint);
+		if(!m_GridBoard.ContainsKey(gridHash))
 		{
+			CTile newtile = new CTile(gridPoint);
+
 			GameObject tile = new GameObject("Tile");
 			tile.transform.parent = m_TileContainer.transform;
 			tile.transform.localScale = Vector3.one;
@@ -524,8 +527,8 @@ public class CGrid : MonoBehaviour
 
 			CTileBehaviour tb = tile.AddComponent<CTileBehaviour>();
 			tb.tile = newtile;
-			newtile.m_Tile = tile;
-			m_GridBoard.Add(newtile.ToString(), tb);
+			newtile.m_TileObject = tile;
+			m_GridBoard.Add(gridHash, tb);
 			newtile.FindNeighbours();
 			newtile.UpdateNeighbours();
 		}
@@ -533,12 +536,13 @@ public class CGrid : MonoBehaviour
 
 	public void RemoveTile(Vector3 gridPosition)
 	{
-		CTile newtile = new CTile ((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
-		if (m_GridBoard.ContainsKey(newtile.ToString()))
+		Point gridPoint = new Point((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
+		string gridHash = CGridObject.GridHash(gridPoint);
+		if (m_GridBoard.ContainsKey(gridHash))
 		{
-			CTileBehaviour tb = m_GridBoard[newtile.ToString()];
-			tb.tile.RemoveExistingTileObject();
-			m_GridBoard.Remove(newtile.ToString());
+			CTileBehaviour tb = m_GridBoard[gridHash];
+			tb.tile.ReleaseExistingTileObjects();
+			m_GridBoard.Remove(gridHash);
 			tb.tile.UpdateNeighbours();
 			Destroy(tb.gameObject);
 		}

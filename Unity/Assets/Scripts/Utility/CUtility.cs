@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -528,4 +528,16 @@ public class MeshUtils
         //TODO : Are we missing anything?
         return clone;
     }
+}
+
+[System.Serializable]
+public class Point
+{
+	public int x, y, z;
+	public Point(int _x, int _y, int _z)
+	{
+		x = _x;
+		y = _y;
+		z = _z;
+	}
 }

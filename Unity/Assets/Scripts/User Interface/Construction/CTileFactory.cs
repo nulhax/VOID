@@ -30,12 +30,17 @@ public class CTileFactory : MonoBehaviour
 
 	
 	// Member Fields
-	public List<CTile.ETileType> m_TileTypes = new List<CTile.ETileType>();
-	public List<GameObject> m_TilePrefabs = new List<GameObject>();
+	public List<CTile.TFloorTileMeta.EType> m_FloorTileTypes = new List<CTile.TFloorTileMeta.EType>();
+	public List<GameObject> m_FloorTilePrefabs = new List<GameObject>();
 
-	private Dictionary<CTile.ETileType, GameObject> m_TilePairs = new Dictionary<CTile.ETileType, GameObject>();
-	private Dictionary<CTile.ETileType, List<GameObject>> m_TileLists = new Dictionary<CTile.ETileType, List<GameObject>>();
+	public List<CTile.TWallTileMeta.EType> m_WallTileTypes = new List<CTile.TWallTileMeta.EType>();
+	public List<GameObject> m_WallTilePrefabs = new List<GameObject>();
 
+	private Dictionary<CTile.TFloorTileMeta.EType, GameObject> m_FloorTilePairs = new Dictionary<CTile.TFloorTileMeta.EType, GameObject>();
+	private Dictionary<CTile.TFloorTileMeta.EType, List<GameObject>> m_FloorTileLists = new Dictionary<CTile.TFloorTileMeta.EType, List<GameObject>>();
+
+	private Dictionary<CTile.TWallTileMeta.EType, GameObject> m_WallTilePairs = new Dictionary<CTile.TWallTileMeta.EType, GameObject>();
+	private Dictionary<CTile.TWallTileMeta.EType, List<GameObject>> m_WallTileLists = new Dictionary<CTile.TWallTileMeta.EType, List<GameObject>>();
 	
 	// Member Properties
 	
@@ -43,28 +48,56 @@ public class CTileFactory : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		if(m_TileTypes.Count != m_TilePrefabs.Count)
-			Debug.LogError("Tile type -> Tile prefab mismatch.");
+		if(m_FloorTileTypes.Count != m_FloorTilePrefabs.Count)
+			Debug.LogError("Floor tile type -> Floor tile prefab mismatch.");
 
-		for(int i = 0; i < m_TileTypes.Count; ++i)
+		for(int i = 0; i < m_FloorTileTypes.Count; ++i)
 		{
-			m_TilePairs.Add(m_TileTypes[i], m_TilePrefabs[i]);
+			m_FloorTilePairs.Add(m_FloorTileTypes[i], m_FloorTilePrefabs[i]);
+		}
+
+		if(m_WallTileTypes.Count != m_WallTilePrefabs.Count)
+			Debug.LogError("Wall tile type -> Wall tile prefab mismatch.");
+
+		for(int i = 0; i < m_WallTileTypes.Count; ++i)
+		{
+			m_WallTilePairs.Add(m_WallTileTypes[i], m_WallTilePrefabs[i]);
 		}
 	}
 
-	public GameObject GetNextFreeTile(CTile.ETileType _TileType)
+	public GameObject NewFloorTile(CTile.TFloorTileMeta.EType _FloorTileType)
 	{
-		if(!m_TileLists.ContainsKey(_TileType))
-			m_TileLists[_TileType] = new List<GameObject>();
+		if(!m_FloorTileLists.ContainsKey(_FloorTileType))
+			m_FloorTileLists[_FloorTileType] = new List<GameObject>();
 
-		GameObject tileObject = (from item in m_TileLists[_TileType]
-		                         where !item.activeInHierarchy
+		GameObject tileObject = (from item in m_FloorTileLists[_FloorTileType]
+		                         where item != null && !item.activeInHierarchy
 		                         select item).FirstOrDefault();
 
 		// If not found create a new instance
 		if(tileObject == null)
 		{
-			tileObject = CreateTileInstance(_TileType);
+			tileObject = CreateFloorTileInstance(_FloorTileType);
+		}
+		
+		tileObject.SetActive(true);
+		
+		return(tileObject);
+	}
+
+	public GameObject NewWallTile(CTile.TWallTileMeta.EType _WallTileType)
+	{
+		if(!m_WallTileLists.ContainsKey(_WallTileType))
+			m_WallTileLists[_WallTileType] = new List<GameObject>();
+		
+		GameObject tileObject = (from item in m_WallTileLists[_WallTileType]
+		                         where item != null && !item.activeInHierarchy
+		                         select item).FirstOrDefault();
+		
+		// If not found create a new instance
+		if(tileObject == null)
+		{
+			tileObject = CreateWallTileInstance(_WallTileType);
 		}
 		
 		tileObject.SetActive(true);
@@ -81,15 +114,27 @@ public class CTileFactory : MonoBehaviour
 		_TileToRelease.gameObject.SetActive(false);
 	}
 
-	private GameObject CreateTileInstance(CTile.ETileType _TileType)
+	private GameObject CreateFloorTileInstance(CTile.TFloorTileMeta.EType _FloorTileType)
 	{
-		GameObject newObject = (GameObject)GameObject.Instantiate(m_TilePairs[_TileType]);
+		GameObject newObject = (GameObject)GameObject.Instantiate(m_FloorTilePairs[_FloorTileType]);
 		newObject.transform.parent = transform;
 		newObject.gameObject.SetActive(false);
 		
 		// Add it to list for later use
-		m_TileLists[_TileType].Add(newObject);
+		m_FloorTileLists[_FloorTileType].Add(newObject);
 
+		return(newObject);
+	}
+
+	private GameObject CreateWallTileInstance(CTile.TWallTileMeta.EType _WallTileType)
+	{
+		GameObject newObject = (GameObject)GameObject.Instantiate(m_WallTilePairs[_WallTileType]);
+		newObject.transform.parent = transform;
+		newObject.gameObject.SetActive(false);
+		
+		// Add it to list for later use
+		m_WallTileLists[_WallTileType].Add(newObject);
+		
 		return(newObject);
 	}
 }

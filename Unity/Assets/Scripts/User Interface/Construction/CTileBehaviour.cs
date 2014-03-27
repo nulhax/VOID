@@ -43,21 +43,21 @@ public class CTileBehaviour : MonoBehaviour
 	// Member Methods
 	void Update()
 	{
-		//Track Screen position
-		screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
-
-		//if within screen space
-		if (CGrid.I.NodeWithinScreenSpace(screenPos))
-		{
-			if(!onScreen)
-			{
-				CGrid.I.m_TilesOnScreen.Add(this);
-				onScreen = true;
-			}
-		}
-		else if(onScreen)
-		{
-			CGrid.I.RemoveFromOnScreenUnts(this);
-		}
+//		//Track Screen position
+//		screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
+//
+//		//if within screen space
+//		if (CGrid.I.NodeWithinScreenSpace(screenPos))
+//		{
+//			if(!onScreen)
+//			{
+//				CGrid.I.m_TilesOnScreen.Add(this);
+//				onScreen = true;
+//			}
+//		}
+//		else if(onScreen)
+//		{
+//			CGrid.I.RemoveFromOnScreenUnts(this);
+//		}
 	}	
 }
