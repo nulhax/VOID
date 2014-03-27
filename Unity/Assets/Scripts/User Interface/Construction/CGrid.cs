@@ -1,9 +1,28 @@
-﻿using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CGridManager.cs
+//  Description :   --------------------------
+//
+//  Author  	:  
+//  Mail    	:  @hotmail.com
+//
 
-public class GridManager : MonoBehaviour {
+
+// Namespaces
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+
+
+/* Implementation */
+
+
+public class CGrid : MonoBehaviour 
+{
 	
 	// Member Types
 	public enum EInteraction
@@ -42,47 +61,16 @@ public class GridManager : MonoBehaviour {
 
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 
-	public List<TileBehaviour> m_TilesOnScreen = new List<TileBehaviour>();
-	public List<TileBehaviour> m_TilesInDrag = new List<TileBehaviour>();
-	public List<TileBehaviour> m_CurrentlySelectedTiles = new List<TileBehaviour>();
+	public CTileFactory m_TileFactory = null;
 
-	//public GUIStyle MouseDragSkin;
+	public List<CTileBehaviour> m_TilesOnScreen = new List<CTileBehaviour>();
+	public List<CTileBehaviour> m_TilesInDrag = new List<CTileBehaviour>();
+	public List<CTileBehaviour> m_CurrentlySelectedTiles = new List<CTileBehaviour>();
 
-	//public bool m_UserIsDragging;
-	//private float m_TimeLimitBeforeDeclareDrag = 1f;
-	//private float m_TimeLeftBeforeDeclareDrag;
+	public Dictionary<string, CTileBehaviour> m_GridBoard = new Dictionary<string, CTileBehaviour>();
 
-	//private float m_ClickDragzone = 1.3f;
+	public static CGrid I = null;
 
-	public Transform tile;
-	public Transform floorTile;
-	public Transform wallStraight;
-	public Transform wallCorner;
-	public Transform Hallway;
-	public Transform DeadEnd;
-	public Transform cell;
-	public ObjectRecycler DeadEndTiles;
-	public ObjectRecycler HallwayTiles;
-	public ObjectRecycler wallStraightTiles;
-	public ObjectRecycler wallCornerTiles;
-	public ObjectRecycler floorTiles;
-	public ObjectRecycler tiles;
-	public ObjectRecycler cellTiles;
-
-	public Dictionary<string, TileBehaviour> m_GridBoard = new Dictionary<string, TileBehaviour>();
-
-	public static GridManager I = null;
-//
-//	#region GUI
-//	float boxWidth;
-//	float boxHeight;
-//	
-//	float boxLeft;
-//	float boxTop;
-//	Vector2 boxStart;
-//	Vector2 boxFinish;
-//	#endregion
-	
 	
 	// Member Properties
 	public bool IsShiftKeyDown
@@ -110,9 +98,6 @@ public class GridManager : MonoBehaviour {
 	{
 		// Create the grid objects
 		CreateGridObjects();
-
-		// Create the tile recyclers
-		CreateRecyclers();
 	}
 
 	void CreateGridObjects()
@@ -150,25 +135,6 @@ public class GridManager : MonoBehaviour {
 		// Use the average of scale limits
 		m_GridScale = (m_GridScaleLimits.x + m_GridScaleLimits.y) * 0.5f;
 		UpdateGridScale();
-	}
-
-	void CreateRecyclers()
-	{
-		// Create the recycler container
-		GameObject recyclerContainer = new GameObject("Recycler");
-		recyclerContainer.transform.parent = transform;
-		recyclerContainer.transform.localScale = Vector3.one;
-		recyclerContainer.transform.localPosition = Vector3.zero;
-		recyclerContainer.transform.localRotation = Quaternion.identity;
-
-		// Create the tile reyclers
-		tiles = new ObjectRecycler(tile.gameObject, recyclerContainer, 3);
-		floorTiles = new ObjectRecycler(floorTile.gameObject, recyclerContainer, 1);
-		wallStraightTiles = new ObjectRecycler(wallStraight.gameObject, recyclerContainer, 1);
-		wallCornerTiles = new ObjectRecycler(wallCorner.gameObject, recyclerContainer, 1);
-		HallwayTiles = new ObjectRecycler(Hallway.gameObject, recyclerContainer, 1);
-		DeadEndTiles = new ObjectRecycler(DeadEnd.gameObject, recyclerContainer, 1);
-		cellTiles = new ObjectRecycler(cell.gameObject, recyclerContainer, 1);
 	}
 
 	void Update() 
@@ -446,11 +412,11 @@ public class GridManager : MonoBehaviour {
 	}
 
 	//Remove note from the screen from NodesOnScreen List
-	public void RemoveFromOnScreenUnts (TileBehaviour Node)
+	public void RemoveFromOnScreenUnts (CTileBehaviour Node)
 	{
 		for (int i = 0; i < m_TilesOnScreen.Count; i++)
 		{
-			TileBehaviour tb = m_TilesOnScreen[i];
+			CTileBehaviour tb = m_TilesOnScreen[i];
 			if (Node == tb)
 			{
 				m_TilesOnScreen.RemoveAt(i);
@@ -544,127 +510,38 @@ public class GridManager : MonoBehaviour {
 			}
 		}
 	}
-
-
+	
 	public void CreateTile(Vector3 gridPosition)
 	{
-		Tile newtile = new Tile((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
+		CTile newtile = new CTile((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
 		if(!m_GridBoard.ContainsKey(newtile.ToString()))
 		{
-			GameObject tile = tiles.nextFree;
+			GameObject tile = new GameObject("Tile");
 			tile.transform.parent = m_TileContainer.transform;
 			tile.transform.localScale = Vector3.one;
 			tile.transform.localRotation = Quaternion.identity;
 			tile.transform.localPosition = gridPosition * m_TileSize;
 
-			TileBehaviour tb = tile.GetComponent<TileBehaviour>();
+			CTileBehaviour tb = tile.AddComponent<CTileBehaviour>();
 			tb.tile = newtile;
-			tb.tile.hullcontainer = tb.transform;
-			m_GridBoard.Add(tb.tile.ToString(), tb);
-			tb.tile.FindNeighbours();
-			tb.tile.UpdateNeighbours();
+			newtile.m_Tile = tile;
+			m_GridBoard.Add(newtile.ToString(), tb);
+			newtile.FindNeighbours();
+			newtile.UpdateNeighbours();
 		}
 	}
 
 	public void RemoveTile(Vector3 gridPosition)
 	{
-		Tile newtile = new Tile ((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
+		CTile newtile = new CTile ((int)gridPosition.x, (int)gridPosition.y, (int)gridPosition.z);
 		if (m_GridBoard.ContainsKey(newtile.ToString()))
 		{
-			TileBehaviour tb = m_GridBoard[newtile.ToString()];
-			tb.tile.RemoveHull();
-			tiles.freeObject(tb.transform.gameObject);
+			CTileBehaviour tb = m_GridBoard[newtile.ToString()];
+			tb.tile.RemoveExistingTileObject();
 			m_GridBoard.Remove(newtile.ToString());
 			tb.tile.UpdateNeighbours();
+			Destroy(tb.gameObject);
 		}
-		
-	}
-
-	public class ObjectRecycler
-	{
-		public delegate void ObjectRecyclerChangedEventHandler ( int avaliable, int total);
-		public event ObjectRecyclerChangedEventHandler onObjectRecyclerChanged;
-		
-		private List<GameObject> objectList;
-		private GameObject objectToRecycle;
-		private GameObject objectContainer;
-
-		public ObjectRecycler(GameObject go, GameObject container, int totalObjectsAtStart)
-		{
-			objectList = new List<GameObject>(totalObjectsAtStart);
-			objectToRecycle = go;
-			objectContainer = container;
-			
-			for ( int i = 0; i < totalObjectsAtStart; i++)
-			{
-				//Create a new instance and set ourselfs as the recycleBin
-				GameObject newObject = UnityEngine.Object.Instantiate(go) as GameObject;
-				newObject.transform.parent = objectContainer.transform;
-				newObject.gameObject.SetActive(false);
-				
-				//add it to object store for later use
-				objectList.Add(newObject);
-			}
-		}
-		
-		private void fireRecyledEvent()
-		{
-			if ( onObjectRecyclerChanged !=null)
-			{
-				var allFree = from item in objectList
-					where !item.activeInHierarchy
-						select item;
-				
-				onObjectRecyclerChanged( allFree.Count(), objectList.Count );
-			}
-		}
-		
-		// Gets the next avaliable free object or null
-		public GameObject nextFree
-		{
-			get
-			{
-				GameObject freeObject = (from item in objectList
-				                         where !item.activeInHierarchy
-				                         select item).FirstOrDefault();
-				
-				if (freeObject == null)
-				{
-					freeObject = UnityEngine.Object.Instantiate(objectToRecycle) as GameObject;
-					freeObject.transform.parent = objectContainer.transform;
-					objectList.Add ( freeObject );
-				}
-				
-				freeObject.SetActive(true);
-				fireRecyledEvent();
-				
-				return freeObject;
-			}
-		}
-		
-		public void freeObject(GameObject objectToFree)
-		{
-			objectToFree.transform.parent = objectContainer.transform;
-			objectToFree.gameObject.SetActive(false);
-			objectToFree.transform.rotation = Quaternion.identity;
-			fireRecyledEvent();
-		}
-		
-		public List<GameObject> returnObjectList ()
-		{
-			return objectList;
-		}
-		
-		public int objectCount ()
-		{
-			return objectList.Count;
-		}
-		
-		//Create an object recycler to manager
-		//recycler = new ObjectRecycler ( selectionRing.transform.gameObject, 1);
-		
-		//Get next objext from recycler
-		//var go = recycler.nextFree;
 	}
 }
 
