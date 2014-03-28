@@ -241,7 +241,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void NotifyPickedUp(ulong _ulPlayerId)
+	public void SetOwner(ulong _ulPlayerId)
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
@@ -254,7 +254,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public void NotifyDropped()
+	public void SetDropped()
 	{
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
@@ -265,6 +265,26 @@ public class CToolInterface : CNetworkMonoBehaviour
             m_ulOwnerPlayerId.Set(0);
 		}
 	}
+
+
+    [AServerOnly]
+    public void SetVisible(bool _bVisible)
+    {
+        if (_bVisible)
+        {
+            foreach (Renderer cRenderer in transform.GetComponentsInChildren<Renderer>())
+            {
+                cRenderer.enabled = true;
+            }
+        }
+        else
+        {
+            foreach (Renderer cRenderer in transform.GetComponentsInChildren<Renderer>())
+            {
+                cRenderer.enabled = false;
+            }
+        }
+    }
 
 
     public static void RegisterPrefab(EType _ToolType, CGameRegistrator.ENetworkPrefab _ePrefab)
@@ -314,8 +334,6 @@ public class CToolInterface : CNetworkMonoBehaviour
                 }
                 else
                 {
-                    gameObject.transform.parent = OwnerPlayerActor.GetComponent<CPlayerInterface>().Model.transform;
-                    gameObject.transform.localPosition = OwnerPlayerActor.GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").localPosition;
                 }
 
                 // Turn off dynamic physics
@@ -334,8 +352,6 @@ public class CToolInterface : CNetworkMonoBehaviour
             }
             else
             {
-                gameObject.transform.parent = null;
-
                 // Turn on dynamic physics
                 if (CNetwork.IsServer)
                 {
