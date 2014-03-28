@@ -143,6 +143,11 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
             }
             else
             {
+                if (m_PrecipitativeObject == null)
+                {
+                    Debug.LogError(string.Format("GameObject({0}) does not have a precipitative object.", gameObject.name));
+                }
+
 				m_PrecipitativeObject.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
             }
         }
