@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -24,7 +24,7 @@ using System;
 [System.Serializable]
 public class CNeighbour
 {
-	public CNeighbour(Point gridoffset, EDirection newdirection)
+	public CNeighbour(TGridPoint gridoffset, EDirection newdirection)
 	{
 		direction = newdirection;
 		gridPositionOffset = gridoffset;
@@ -45,6 +45,6 @@ public class CNeighbour
 	}
 	
 	public EDirection direction;
-	public Point gridPositionOffset;
+	public TGridPoint gridPositionOffset;
 	public CTile tile;
 }

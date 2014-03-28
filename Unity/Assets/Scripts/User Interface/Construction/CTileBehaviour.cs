@@ -30,34 +30,11 @@ public class CTileBehaviour : MonoBehaviour
 	
 	
 	// Member Fields
-	public CTile tile;
-	
-	public Vector2 screenPos;
-	public bool onScreen;
-	public bool selected = false;
+	public CTile m_Tile = null;
 
 	
 	// Member Properties
-	
+
 	
 	// Member Methods
-	void Update()
-	{
-//		//Track Screen position
-//		screenPos = Camera.main.WorldToScreenPoint(this.transform.position);
-//
-//		//if within screen space
-//		if (CGrid.I.NodeWithinScreenSpace(screenPos))
-//		{
-//			if(!onScreen)
-//			{
-//				CGrid.I.m_TilesOnScreen.Add(this);
-//				onScreen = true;
-//			}
-//		}
-//		else if(onScreen)
-//		{
-//			CGrid.I.RemoveFromOnScreenUnts(this);
-//		}
-	}	
 }
