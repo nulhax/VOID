@@ -52,22 +52,21 @@ public class CGridUI : MonoBehaviour
 	private GameObject m_GridSphere = null;
 	private GameObject m_GridCursor = null;
 
-	private Vector3 m_TilesOffset = Vector3.zero;
-
 	public float m_GridScale = 0.1f;
 	public Vector2 m_GridScaleLimits = new Vector2(0.05f, 0.2f);
+	public Vector3 m_TilesOffset = Vector3.zero;
 
 	public EMode m_CurrentInteractionMode = EMode.AutoLayout;
 	public EInteraction m_CurrentInteraction = EInteraction.INVALID;
 	public int m_CurrentVerticalLayer = 0;
-	
-	public Vector3 m_CurrentMousePoint = Vector3.zero;
-	public TGridPoint m_CurrentMouseGridPoint;
+
 	public Vector3 m_CurrentMousePosition = Vector3.zero;
-	
-	public Vector3 m_MouseDownPoint = Vector3.zero;
-	public TGridPoint m_MouseDownGridPoint;
+	public Vector3 m_CurrentMouseHitPoint = Vector3.zero;
+	public TGridPoint m_CurrentMouseGridPoint;
+
 	public Vector3 m_MouseDownPosition = Vector3.zero;
+	public Vector3 m_MouseDownHitPoint = Vector3.zero;
+	public TGridPoint m_MouseDownGridPoint;
 
 	private RaycastHit m_RaycastHit;
 	private Quaternion m_DragRotateStart = Quaternion.identity;
@@ -108,6 +107,7 @@ public class CGridUI : MonoBehaviour
 		m_GridPlane.renderer.material.shader = Shader.Find("Transparent/Diffuse");
 		m_GridPlane.renderer.material.color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
 		m_GridPlane.collider.isTrigger = true;
+		m_GridPlane.layer = LayerMask.NameToLayer("UI 3D");
 		m_GridPlane.transform.parent = m_Grid.transform;
 		m_GridPlane.transform.localPosition = Vector3.zero;
 		m_GridPlane.transform.localRotation = Quaternion.identity;
@@ -133,7 +133,7 @@ public class CGridUI : MonoBehaviour
 
 		// Get the raycast hits against all objects
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		Physics.Raycast(ray, out m_RaycastHit, Mathf.Infinity);
+		Physics.Raycast(ray, out m_RaycastHit, Mathf.Infinity, 1 << m_GridPlane.layer);
 
 		// Update default input
 		UpdateDefaultInput();
@@ -161,7 +161,8 @@ public class CGridUI : MonoBehaviour
 
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			m_CurrentMousePoint = m_RaycastHit.point;
+			m_CurrentMouseHitPoint = m_RaycastHit.point;
+			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
 
 			// Update cursor
 			UpdateCursor();
@@ -169,8 +170,8 @@ public class CGridUI : MonoBehaviour
 			// Right Click Down
 			if(Input.GetMouseButtonDown(1))
 			{
-				m_MouseDownPoint = m_RaycastHit.point;
-				m_MouseDownPosition = Input.mousePosition;
+				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+				m_MouseDownPosition = m_CurrentMousePosition;
 				m_DragRotateStart = m_Grid.transform.rotation;
 				
 				m_CurrentInteraction = EInteraction.DragRotation;
@@ -179,8 +180,8 @@ public class CGridUI : MonoBehaviour
 			// Middle Click Down
 			if(Input.GetMouseButtonDown(2))
 			{
-				m_MouseDownPoint = m_RaycastHit.point;
-				m_MouseDownPosition = Input.mousePosition;
+				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+				m_MouseDownPosition = m_CurrentMousePosition;
 				m_DragMovementStart = m_TilesOffset;
 				
 				m_CurrentInteraction = EInteraction.DragMovement;
@@ -232,15 +233,12 @@ public class CGridUI : MonoBehaviour
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			m_CurrentMousePoint = m_RaycastHit.point;
-			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_RaycastHit.point);
-
 			// Left Click Down
 			if(Input.GetMouseButtonDown(0))
 			{
-				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+				m_MouseDownPosition = m_CurrentMousePosition;
 				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-				m_MouseDownPosition = Input.mousePosition;
 				
 				if(IsShiftKeyDown)
 					m_CurrentInteraction = EInteraction.DragSelection;
@@ -302,15 +300,12 @@ public class CGridUI : MonoBehaviour
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			m_CurrentMousePoint = m_RaycastHit.point;
-			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_RaycastHit.point);
-
 			// Left Click Down
 			if(Input.GetMouseButtonDown(0))
 			{
-				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+				m_MouseDownPosition = m_CurrentMousePosition;
 				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-				m_MouseDownPosition = Input.mousePosition;
 				
 				if(IsShiftKeyDown)
 					m_CurrentInteraction = EInteraction.DragSelection;
@@ -370,7 +365,10 @@ public class CGridUI : MonoBehaviour
 	{
 		if(m_CurrentInteraction == EInteraction.DragSelection)
 		{
-			Vector3 centerPos = (m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_Grid.GetLocalPosition(m_MouseDownGridPoint)) * 0.5f;
+			Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
+			Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint) + m_TilesOffset;
+
+			Vector3 centerPos = (point1 + point2) * 0.5f;
 			float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
 			float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
 			centerPos.y = m_Grid.m_TileSize * 0.5f;
@@ -380,7 +378,7 @@ public class CGridUI : MonoBehaviour
 		}
 		else if(m_CurrentInteraction != EInteraction.DragRotation)
 		{
-			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint);
+			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
 			centerPos.y = m_Grid.m_TileSize * 0.5f;
 
 			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
@@ -407,15 +405,18 @@ public class CGridUI : MonoBehaviour
 
 	private void DragMoveTiles()
 	{
-		// Get the screen mouse positions
-		Vector3 point1 = m_MouseDownPosition;
-		Vector3 point2 = m_CurrentMousePosition;
+		// Get the hit positions on the plane
+		Vector3 point1 = m_MouseDownHitPoint;
+		Vector3 point2 = m_CurrentMouseHitPoint;
 
 		// Get the difference of the two
 		Vector3 diff = (point1 - point2);
 
+		// Get the yaw rotation component of the grid
+		Quaternion rotY = Quaternion.Euler(0.0f,  m_Grid.transform.eulerAngles.y, 0.0f);
+
 		// Move the tiles along the x, z
-		m_TilesOffset = m_DragMovementStart - new Vector3(diff.x, 0.0f, diff.y) * 0.05f;
+		m_TilesOffset = m_DragMovementStart - (Quaternion.Inverse(rotY) * new Vector3(diff.x, 0.0f, diff.z)) / m_GridScale;
 		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
 	}
 	

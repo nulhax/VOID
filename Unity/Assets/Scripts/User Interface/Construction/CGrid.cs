@@ -31,7 +31,7 @@ public class CGrid : MonoBehaviour
 	
 	
 	// Member Fields
-	private GameObject m_TileContainer = null;
+	private Transform m_TileContainer = null;
 
 	public float m_TileSize = 4.0f;
 	public CTileFactory m_TileFactory = null;
@@ -40,7 +40,7 @@ public class CGrid : MonoBehaviour
 
 	
 	// Member Properties
-	public GameObject TileContainer
+	public Transform TileContainer
 	{
 		get { return(m_TileContainer); }
 	}
@@ -54,11 +54,11 @@ public class CGrid : MonoBehaviour
 
 	void CreateGridObjects()
 	{
-		m_TileContainer = new GameObject("Tile Container");
-		m_TileContainer.transform.parent = transform;
-		m_TileContainer.transform.localScale = Vector3.one;
-		m_TileContainer.transform.localPosition = Vector3.zero;
-		m_TileContainer.transform.localRotation = Quaternion.identity;
+		m_TileContainer = new GameObject("Tile Container").transform;
+		m_TileContainer.parent = transform;
+		m_TileContainer.localScale = Vector3.one;
+		m_TileContainer.localPosition = Vector3.zero;
+		m_TileContainer.localRotation = Quaternion.identity;
 	}
 
 	public TGridPoint GetGridPoint(Vector3 worldPosition)
@@ -72,7 +72,7 @@ public class CGrid : MonoBehaviour
 		Vector3 gridpos = Quaternion.Inverse(transform.rotation) * (worldPosition - transform.position);
 
 		// Scale the position to tilesize and scale
-		gridpos = (gridpos + m_TileContainer.transform.localPosition) / m_TileSize / transform.localScale.x;
+		gridpos = gridpos / m_TileSize / transform.localScale.x;
 
 		// Round each position to be an integer number
 		gridpos.x = Mathf.Round(gridpos.x);
@@ -103,7 +103,7 @@ public class CGrid : MonoBehaviour
 		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
 			GameObject newtile = new GameObject("Tile");
-			newtile.transform.parent = m_TileContainer.transform;
+			newtile.transform.parent = m_TileContainer;
 			newtile.transform.localScale = Vector3.one;
 			newtile.transform.localRotation = Quaternion.identity;
 			newtile.transform.localPosition = GetLocalPosition(_GridPoint);

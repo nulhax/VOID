@@ -178,7 +178,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &137407268
 Transform:
   m_ObjectHideFlags: 0
@@ -909,7 +909,7 @@ Prefab:
       objectReference: {fileID: 100006, guid: 5324d9153d10faf42beaedce8ac4a300, type: 2}
     - target: {fileID: 100002, guid: 6eb75554e4db33b40876f1aee0d36bd3, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 13500000, guid: 6eb75554e4db33b40876f1aee0d36bd3, type: 2}
@@ -1066,7 +1066,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &873988330
 Transform:
   m_ObjectHideFlags: 0
@@ -1374,7 +1374,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
       propertyPath: m_Enabled
@@ -1834,21 +1834,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GridScale: .100000001
   m_GridScaleLimits: {x: .0500000007, y: .200000003}
+  m_TilesOffset: {x: 0, y: 0, z: 0}
   m_CurrentInteractionMode: 0
   m_CurrentInteraction: 0
   m_CurrentVerticalLayer: 0
-  m_CurrentMousePoint: {x: 0, y: 0, z: 0}
+  m_CurrentMousePosition: {x: 0, y: 0, z: 0}
+  m_CurrentMouseHitPoint: {x: 0, y: 0, z: 0}
   m_CurrentMouseGridPoint:
     x: 0
     y: 0
     z: 0
-  m_CurrentMousePosition: {x: 0, y: 0, z: 0}
-  m_MouseDownPoint: {x: 0, y: 0, z: 0}
+  m_MouseDownPosition: {x: 0, y: 0, z: 0}
+  m_MouseDownHitPoint: {x: 0, y: 0, z: 0}
   m_MouseDownGridPoint:
     x: 0
     y: 0
     z: 0
-  m_MouseDownPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &1252298741
 GameObject:
   m_ObjectHideFlags: 0
@@ -2383,7 +2384,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1432749548
 Renderer:
   m_ObjectHideFlags: 0
