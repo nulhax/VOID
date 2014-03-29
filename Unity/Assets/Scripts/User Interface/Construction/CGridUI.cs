@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -39,6 +39,7 @@ public class CGridUI : MonoBehaviour
 		CursorPaint,
 		DragSelection,
 		DragRotation,
+		DragMovement,
 	}
 	
 	// Member Delegates & Events
@@ -51,11 +52,14 @@ public class CGridUI : MonoBehaviour
 	private GameObject m_GridSphere = null;
 	private GameObject m_GridCursor = null;
 
+	private Vector3 m_TilesOffset = Vector3.zero;
+
 	public float m_GridScale = 0.1f;
 	public Vector2 m_GridScaleLimits = new Vector2(0.05f, 0.2f);
 
 	public EMode m_CurrentInteractionMode = EMode.AutoLayout;
 	public EInteraction m_CurrentInteraction = EInteraction.INVALID;
+	public int m_CurrentVerticalLayer = 0;
 	
 	public Vector3 m_CurrentMousePoint = Vector3.zero;
 	public TGridPoint m_CurrentMouseGridPoint;
@@ -65,9 +69,9 @@ public class CGridUI : MonoBehaviour
 	public TGridPoint m_MouseDownGridPoint;
 	public Vector3 m_MouseDownPosition = Vector3.zero;
 
-	private RaycastHit[] m_RaycastHits;
+	private RaycastHit m_RaycastHit;
 	private Quaternion m_DragRotateStart = Quaternion.identity;
-
+	private Vector3 m_DragMovementStart = Vector3.zero;
 	
 	// Member Properties
 	public bool IsShiftKeyDown
@@ -129,7 +133,7 @@ public class CGridUI : MonoBehaviour
 
 		// Get the raycast hits against all objects
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		m_RaycastHits = Physics.RaycastAll(ray, Mathf.Infinity);
+		Physics.Raycast(ray, out m_RaycastHit, Mathf.Infinity);
 
 		// Update default input
 		UpdateDefaultInput();
@@ -155,44 +159,48 @@ public class CGridUI : MonoBehaviour
 			m_CurrentInteractionMode = EMode.ManualWallLayout;
 		}
 
-		// Check for collisions for drag rotations
-		foreach(RaycastHit hit in m_RaycastHits)
+		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			// If a grid plane collision
-			if(hit.collider.gameObject == m_GridPlane)
+			m_CurrentMousePoint = m_RaycastHit.point;
+
+			// Update cursor
+			UpdateCursor();
+			
+			// Right Click Down
+			if(Input.GetMouseButtonDown(1))
 			{
-				UpdateCursor();
+				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownPosition = Input.mousePosition;
+				m_DragRotateStart = m_Grid.transform.rotation;
+				
+				m_CurrentInteraction = EInteraction.DragRotation;
 			}
-			// else if a sphere collision
-			else if(hit.collider.gameObject == gameObject)
+
+			// Middle Click Down
+			if(Input.GetMouseButtonDown(2))
 			{
-				m_CurrentMousePoint = hit.point;
+				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownPosition = Input.mousePosition;
+				m_DragMovementStart = m_TilesOffset;
 				
-				// Right Click Down
-				if(Input.GetMouseButtonDown(1))
+				m_CurrentInteraction = EInteraction.DragMovement;
+			}
+
+			// Mouse Scroll
+			float sw = Input.GetAxis("Mouse ScrollWheel");
+			if(sw != 0.0f)
+			{
+				if(IsShiftKeyDown)
 				{
-					m_MouseDownPoint = hit.point;
-					m_MouseDownPosition = Input.mousePosition;
-					m_DragRotateStart = m_Grid.transform.rotation;
-					
-					m_CurrentInteraction = EInteraction.DragRotation;
+					int direction = (int)Mathf.Sign(sw);
+					ChangeVerticalLayer(direction);
 				}
-				
-				// Mouse Scroll
-				float sw = Input.GetAxis("Mouse ScrollWheel");
-				if(sw != 0.0f)
+				else
 				{
-					if(IsShiftKeyDown)
-					{
-						int direction = (int)Mathf.Sign(sw);
-						ChangeVerticalLayer(direction);
-					}
-					else
-					{
-						UpdateGridScale(Mathf.Clamp(m_GridScale + sw * 0.1f, m_GridScaleLimits.x, m_GridScaleLimits.y));
-					}
+					UpdateGridScale(Mathf.Clamp(m_GridScale + sw * 0.1f, m_GridScaleLimits.x, m_GridScaleLimits.y));
 				}
 			}
+	
 		}
 
 		// Right Click Hold
@@ -206,125 +214,134 @@ public class CGridUI : MonoBehaviour
 		{
 			m_CurrentInteraction = EInteraction.Nothing;
 		}
+
+		// Middle Click Hold
+		if(Input.GetMouseButton(2) && m_CurrentInteraction == EInteraction.DragMovement)
+		{
+			DragMoveTiles();
+		}
+		
+		// Middle Click Up
+		else if(Input.GetMouseButtonUp(2) && m_CurrentInteraction == EInteraction.DragMovement)
+		{
+			m_CurrentInteraction = EInteraction.Nothing;
+		}
 	}
 	
 	void UpdateLayoutInput()
 	{
-		foreach(RaycastHit hit in m_RaycastHits)
+		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			// If a grid plane collision
-			if(hit.collider.gameObject == m_GridPlane)
+			m_CurrentMousePoint = m_RaycastHit.point;
+			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_RaycastHit.point);
+
+			// Left Click Down
+			if(Input.GetMouseButtonDown(0))
 			{
-				m_CurrentMousePoint = hit.point;
-				m_CurrentMouseGridPoint = m_Grid.GetGridPoint(hit.point);
+				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
+				m_MouseDownPosition = Input.mousePosition;
 				
-				// Left Click Down
-				if(Input.GetMouseButtonDown(0))
+				if(IsShiftKeyDown)
+					m_CurrentInteraction = EInteraction.DragSelection;
+				else
+					m_CurrentInteraction = EInteraction.CursorPaint;
+			}
+			
+			// Left Click Hold
+			if(Input.GetMouseButton(0))
+			{
+				if(m_CurrentInteraction == EInteraction.CursorPaint)
 				{
-					m_MouseDownPoint = hit.point;
-					m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-					m_MouseDownPosition = Input.mousePosition;
-					
-					if(IsShiftKeyDown)
-						m_CurrentInteraction = EInteraction.DragSelection;
+					if(IsCtrlKeyDown)
+					{
+						if(m_CurrentInteractionMode == EMode.AutoLayout)
+						{
+							m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+						}
+						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
+						{
+							CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
+							if(tile != null)
+								tile.RemoveInternalWall();
+						}
+					}
 					else
-						m_CurrentInteraction = EInteraction.CursorPaint;
-				}
-				
-				// Left Click Hold
-				if(Input.GetMouseButton(0))
-				{
-					if(m_CurrentInteraction == EInteraction.CursorPaint)
 					{
-						if(IsCtrlKeyDown)
+						if(m_CurrentInteractionMode == EMode.AutoLayout)
 						{
-							if(m_CurrentInteractionMode == EMode.AutoLayout)
-							{
-								m_Grid.RemoveTile(m_CurrentMouseGridPoint);
-							}
+							m_Grid.CreateTile(m_CurrentMouseGridPoint);
 						}
-						else
+						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
 						{
-							if(m_CurrentInteractionMode == EMode.AutoLayout)
-							{
-								m_Grid.CreateTile(m_CurrentMouseGridPoint);
-							}
-							else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
-							{
-								CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
-								tile.UpdateInternalWallTile(true);
-							}
+							CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
+							if(tile != null)
+								tile.PlaceInternalWall();
 						}
 					}
 				}
-				
-				// Left Click Up
-				if(Input.GetMouseButtonUp(0))
+			}
+			
+			// Left Click Up
+			if(Input.GetMouseButtonUp(0))
+			{
+				if(m_CurrentInteraction == EInteraction.DragSelection)
 				{
-					if(m_CurrentInteraction == EInteraction.DragSelection)
-					{
-						if(IsCtrlKeyDown)
-							SelectionManipulateTiles(true);
-						else
-							SelectionManipulateTiles(false);
-					}
-					
-					m_CurrentInteraction = EInteraction.Nothing;
+					if(IsCtrlKeyDown)
+						SelectionManipulateTiles(true);
+					else
+						SelectionManipulateTiles(false);
 				}
+				
+				m_CurrentInteraction = EInteraction.Nothing;
 			}
 		}
 	}
 
 	void UpdateManualWallsInput()
 	{
-		foreach(RaycastHit hit in m_RaycastHits)
+		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
-			// If a grid plane collision
-			if(hit.collider.gameObject == m_GridPlane)
-			{
-				m_CurrentMousePoint = hit.point;
-				m_CurrentMouseGridPoint = m_Grid.GetGridPoint(hit.point);
-				
-				// Left Click Down
-				if(Input.GetMouseButtonDown(0))
-				{
-					m_MouseDownPoint = hit.point;
-					m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-					m_MouseDownPosition = Input.mousePosition;
-					
-					if(IsShiftKeyDown)
-						m_CurrentInteraction = EInteraction.DragSelection;
-					else
-						m_CurrentInteraction = EInteraction.CursorPaint;
-				}
-				
-				// Left Click Hold
-				if(Input.GetMouseButton(0))
-				{
-					if(m_CurrentInteraction == EInteraction.CursorPaint)
-					{
-						if(IsCtrlKeyDown)
-							m_Grid.RemoveTile(m_Grid.GetGridPoint(m_CurrentMousePoint));
-						else
-							m_Grid.CreateTile(m_Grid.GetGridPoint(m_CurrentMousePoint));
-					}
-				}
-				
-				// Left Click Up
-				if(Input.GetMouseButtonUp(0))
-				{
-					if(m_CurrentInteraction == EInteraction.DragSelection)
-					{
-						if (IsCtrlKeyDown)
-							SelectionManipulateTiles(true);
-						else
-							SelectionManipulateTiles(false);
-					}
-					
-					m_CurrentInteraction = EInteraction.Nothing;
-				}
-				
+			m_CurrentMousePoint = m_RaycastHit.point;
+			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_RaycastHit.point);
 
+			// Left Click Down
+			if(Input.GetMouseButtonDown(0))
+			{
+				m_MouseDownPoint = m_RaycastHit.point;
+				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
+				m_MouseDownPosition = Input.mousePosition;
+				
+				if(IsShiftKeyDown)
+					m_CurrentInteraction = EInteraction.DragSelection;
+				else
+					m_CurrentInteraction = EInteraction.CursorPaint;
+			}
+			
+			// Left Click Hold
+			if(Input.GetMouseButton(0))
+			{
+				if(m_CurrentInteraction == EInteraction.CursorPaint)
+				{
+					if(IsCtrlKeyDown)
+						m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+					else
+						m_Grid.CreateTile(m_CurrentMouseGridPoint);
+				}
+			}
+			
+			// Left Click Up
+			if(Input.GetMouseButtonUp(0))
+			{
+				if(m_CurrentInteraction == EInteraction.DragSelection)
+				{
+					if (IsCtrlKeyDown)
+						SelectionManipulateTiles(true);
+					else
+						SelectionManipulateTiles(false);
+				}
+				
+				m_CurrentInteraction = EInteraction.Nothing;
 			}
 		}
 	}
@@ -342,8 +359,11 @@ public class CGridUI : MonoBehaviour
 
 	void ChangeVerticalLayer(int _Direction)
 	{
-		// Update the raycast plane to be the same
-		//m_GridPlane.transform.localScale = Vector3.one * 0.5f / _GridScale;
+		m_CurrentVerticalLayer += _Direction;
+
+		// Update the tiles offset
+		m_TilesOffset -= Vector3.up * (float)_Direction * m_Grid.m_TileSize;
+		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
 	}
 	
 	void UpdateCursor()
@@ -353,18 +373,22 @@ public class CGridUI : MonoBehaviour
 			Vector3 centerPos = (m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_Grid.GetLocalPosition(m_MouseDownGridPoint)) * 0.5f;
 			float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
 			float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
-			
+			centerPos.y = m_Grid.m_TileSize * 0.5f;
+
 			m_GridCursor.transform.localScale = new Vector3(width, 1.0f, depth) * m_Grid.m_TileSize;
-			m_GridCursor.transform.localPosition = centerPos + Vector3.up * m_Grid.m_TileSize * 0.5f;
+			m_GridCursor.transform.localPosition = centerPos;
 		}
 		else if(m_CurrentInteraction != EInteraction.DragRotation)
 		{
+			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint);
+			centerPos.y = m_Grid.m_TileSize * 0.5f;
+
 			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
-			m_GridCursor.transform.localPosition = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + Vector3.up * m_Grid.m_TileSize * 0.5f;
+			m_GridCursor.transform.localPosition = centerPos;
 		}
 	}
 
-	public void DragRotateGrid()
+	private void DragRotateGrid()
 	{
 		// Get the screen mouse positions
 		Vector3 point1 = m_MouseDownPosition;
@@ -380,8 +404,22 @@ public class CGridUI : MonoBehaviour
 		// Lerp to the final rotation
 		m_Grid.transform.rotation = rotPitch * m_DragRotateStart * rotYaw;
 	}
+
+	private void DragMoveTiles()
+	{
+		// Get the screen mouse positions
+		Vector3 point1 = m_MouseDownPosition;
+		Vector3 point2 = m_CurrentMousePosition;
+
+		// Get the difference of the two
+		Vector3 diff = (point1 - point2);
+
+		// Move the tiles along the x, z
+		m_TilesOffset = m_DragMovementStart - new Vector3(diff.x, 0.0f, diff.y) * 0.05f;
+		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
+	}
 	
-	public void SelectionManipulateTiles(bool _Remove)
+	private void SelectionManipulateTiles(bool _Remove)
 	{
 		// Get the diagonal corner points
 		TGridPoint point1 = m_MouseDownGridPoint;

@@ -615,7 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 210e8b1c734871f43ade5077a0022d5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FloorTileTypes: 000000000100000002000000030000000400000005000000
+  m_FloorTileTypes: 010000000200000003000000040000000500000006000000
   m_FloorTilePrefabs:
   - {fileID: 100000, guid: fd7c117b8dd75124fa61494cba4f4051, type: 2}
   - {fileID: 100000, guid: 3ade203ebafa89946b3984860db57e98, type: 2}
@@ -623,14 +623,16 @@ MonoBehaviour:
   - {fileID: 100004, guid: d2065a24cf774304ca311f4642c1b0ce, type: 2}
   - {fileID: 100004, guid: b9bb5c7ef77248445a3bb70c7676d416, type: 2}
   - {fileID: 100000, guid: 087724707722f5d43bc52de4f7648350, type: 2}
-  m_WallTileTypes: 0100000002000000030000000400000005000000060000000700000008000000090000000a000000
-  m_WallTilePrefabs:
+  m_WallExtTileTypes: 0700000008000000090000000a0000000b00000010000000
+  m_WallExtTilePrefabs:
   - {fileID: 100000, guid: 455b5f79df9b24946acea0f7823dbcb6, type: 2}
   - {fileID: 100002, guid: 7ea6ef45a97ccbe44b2425c31cb9e10f, type: 2}
   - {fileID: 100000, guid: 16c17a8ac8462904c8d162d6176a97f2, type: 2}
   - {fileID: 100004, guid: 220b5e711ccab8444897b685f6bcfdb1, type: 2}
   - {fileID: 100002, guid: 696b7a7dcda570e418e4bf2477d96fe2, type: 2}
   - {fileID: 100000, guid: 4b12a5661220b2d4daa643a0ddf83aef, type: 2}
+  m_WallIntTileTypes: 0c0000000d0000000e0000000f000000
+  m_WallIntTilePrefabs:
   - {fileID: 100004, guid: 186e2ad2284411943b27affded5ec101, type: 2}
   - {fileID: 100000, guid: 4b32f6474ddcf774987144a32142d8e0, type: 2}
   - {fileID: 100000, guid: 8f2ed49795ca7214a80323e2b79fc34a, type: 2}

@@ -36,11 +36,14 @@ public class CGrid : MonoBehaviour
 	public float m_TileSize = 4.0f;
 	public CTileFactory m_TileFactory = null;
 
-	public Dictionary<string, CTileBehaviour> m_GridBoard = new Dictionary<string, CTileBehaviour>();
+	private Dictionary<string, CTile> m_GridBoard = new Dictionary<string, CTile>();
 
 	
 	// Member Properties
-
+	public GameObject TileContainer
+	{
+		get { return(m_TileContainer); }
+	}
 	
 	// Member Methods
 	void Start() 
@@ -69,7 +72,7 @@ public class CGrid : MonoBehaviour
 		Vector3 gridpos = Quaternion.Inverse(transform.rotation) * (worldPosition - transform.position);
 
 		// Scale the position to tilesize and scale
-		gridpos = gridpos / m_TileSize / transform.localScale.x;
+		gridpos = (gridpos + m_TileContainer.transform.localPosition) / m_TileSize / transform.localScale.x;
 
 		// Round each position to be an integer number
 		gridpos.x = Mathf.Round(gridpos.x);
@@ -90,7 +93,7 @@ public class CGrid : MonoBehaviour
 		CTile tile = null;
 		if(m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
-			tile = m_GridBoard[_GridPoint.ToString()].m_Tile;
+			tile = m_GridBoard[_GridPoint.ToString()];
 		}
 		return(tile);
 	}
@@ -99,21 +102,17 @@ public class CGrid : MonoBehaviour
 	{
 		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
-			CTile newtile = new CTile(_GridPoint, this);
+			GameObject newtile = new GameObject("Tile");
+			newtile.transform.parent = m_TileContainer.transform;
+			newtile.transform.localScale = Vector3.one;
+			newtile.transform.localRotation = Quaternion.identity;
+			newtile.transform.localPosition = GetLocalPosition(_GridPoint);
 
-			GameObject tile = new GameObject("Tile");
-			tile.transform.parent = m_TileContainer.transform;
-			tile.transform.localScale = Vector3.one;
-			tile.transform.localRotation = Quaternion.identity;
-			tile.transform.localPosition = GetLocalPosition(_GridPoint);
+			CTile tile = newtile.AddComponent<CTile>();
+			tile.m_Grid = this;
+			tile.m_Location = _GridPoint;
 
-			CTileBehaviour tb = tile.AddComponent<CTileBehaviour>();
-			tb.m_Tile = newtile;
-			newtile.m_TileObject = tb;
-			m_GridBoard.Add(_GridPoint.ToString(), tb);
-			newtile.FindNeighbours();
-			newtile.UpdateNeighbours();
-			newtile.UpdateAllTileObjects();
+			m_GridBoard.Add(_GridPoint.ToString(), tile);
 		}
 	}
 
@@ -121,11 +120,11 @@ public class CGrid : MonoBehaviour
 	{
 		if (m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
-			CTileBehaviour tb = m_GridBoard[_GridPoint.ToString()];
-			tb.m_Tile.ReleaseExistingTileObjects();
+			CTile tile = m_GridBoard[_GridPoint.ToString()];
+			tile.Release();
+
 			m_GridBoard.Remove(_GridPoint.ToString());
-			tb.m_Tile.UpdateNeighbours();
-			Destroy(tb.gameObject);
+			Destroy(tile.gameObject);
 		}
 	}
 }

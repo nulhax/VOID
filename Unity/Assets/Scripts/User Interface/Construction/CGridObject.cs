@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public abstract class CGridObject
+public abstract class CGridObject : MonoBehaviour
 {
 	// Member Types
 	
@@ -54,17 +54,6 @@ public abstract class CGridObject
 	
 	
 	// Member Methods
-	public CGridObject(int x, int y, int z, CGrid _Grid)
-	: this(new TGridPoint(x, y, z), _Grid)
-	{
-	}
-	
-	public CGridObject(TGridPoint location, CGrid _Grid)
-	{
-		m_Grid = _Grid;
-		m_Location = location;
-	}
-	
 	public override string ToString()
 	{
 		return(m_Location.ToString());
