@@ -77,8 +77,6 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
                 m_fQuantity.Set(0.0f);
                 m_bDepleted = true;
 
-                
-
                 CNetwork.Factory.DestoryObject(gameObject);
             }
 
@@ -91,12 +89,14 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		if (CNetwork.IsServer)
-		{
-			float resourceAmount = CGalaxy.instance.ResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
-			//Debug.Log("Resource amount: " + resourceAmount);
-			m_fQuantity.Set(resourceAmount);
-		}
+		// COMMENTED OUT: CMineralDeposits assigns mineral quantity.
+
+		//if (CNetwork.IsServer)
+		//{
+		//    float resourceAmount = CGalaxy.instance.ResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
+		//    //Debug.Log("Resource amount: " + resourceAmount);
+		//    m_fQuantity.Set(resourceAmount);
+		//}
 	}
 
 
