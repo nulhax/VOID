@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CLaserProjectileBehaviour.cs
+//  File Name   :   CLaserProjeCTile.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
+public class CLaserProjeCTile : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,7 +36,7 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	static CLaserProjectileBehaviour()
+	static CLaserProjeCTile()
 	{
 		s_iEnemyLayer   = 0;
 	}

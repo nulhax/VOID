@@ -281,6 +281,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		GameObject collider = new GameObject("_Collider");
 		GameObject exitTrigger = new GameObject("_ExitTrigger");
 		GameObject entryTrigger = new GameObject("_ExitTrigger");
+         internalTrigger.tag = "GalaxyShip";
+         collider.tag      = "GalaxyShip";
+         exitTrigger.tag = "GalaxyShip";
+         entryTrigger.tag = "GalaxyShip";
 
 		// Create the exterior version of the facility
 		GameObject extFacility = new GameObject("_" + gameObject.name + "Ext");

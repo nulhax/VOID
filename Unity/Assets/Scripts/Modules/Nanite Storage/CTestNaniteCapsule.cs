@@ -83,7 +83,8 @@ public class CTestNaniteCapsule: MonoBehaviour
 			int numWorkingComponents = NumWorkingComponents;
 			
 			// Calculate the charge capacity
-			m_NaniteStorage.StoredNanites = m_MaxNaniteCapacity * (int)((float)numWorkingComponents / 2.0f);
+			// commented this out because it just adds nanites and not sure what it's supposed to be doing...
+			// m_NaniteStorage.StoredNanites = m_MaxNaniteCapacity * (int)((float)numWorkingComponents / 2.0f);
 			
 			// Deactive the charge availablity
 			if(numWorkingComponents == 0)

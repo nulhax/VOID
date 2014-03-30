@@ -38,7 +38,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		
 		MAX
 	}
-	
+
 	// Member Fields
 	public GameObject m_Shield = null;
 	
@@ -104,7 +104,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			Vector3 scale = mc.bounds.size + new Vector3(1.0f, 0.0f, 1.0f);
 			scale.x = scale.x / Mathf.Sqrt(2.0f) * 2.0f;
 			scale.z = scale.z / Mathf.Sqrt(2.0f) * 2.0f;
-			scale.y = scale.y;
+			scale.y = scale.y / Mathf.Sqrt(2.0f);
 			
 			newShield.transform.localScale = scale;
 			newShield.transform.localPosition = mc.bounds.center;
@@ -132,7 +132,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		transform.position = oldPos;
 		transform.rotation = oldRot;
 	}
-	
+
 	void ShipShieldCollider(Collider _Collider)
 	{
 		if(_Collider.gameObject.tag == "Asteroid")
@@ -143,7 +143,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			//TODO: Make this betterer
 			Vector3 Move = CGameShips.GalaxyShip.rigidbody.velocity;
 				
-			_Collider.gameObject.transform.rigidbody.velocity = Move;
+			_Collider.gameObject.transform.rigidbody.velocity = Move * 2.0f;
 		}
 	}
 	
@@ -170,7 +170,10 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			}
 			else
 			{
-				m_ShieldPower -= fDamage;
+				if(_Collider.gameObject.tag == "Asteroid")
+				{
+					m_ShieldPower -= fDamage;
+				}
 			}
 
 			// Save the asteroid for the raycast to fire at
@@ -190,12 +193,6 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				if(m_ShieldPower < m_MaxShieldPower)
 				{
 					m_ShieldPower += cShipRechargeRate * Time.deltaTime;
-
-                    // Commented out by Nathan to prevent spamming other people's screens.
-                    // Please remember to remove these sorts of debugging tools before you push to develop.
-                    // Just makes it easier for everyone else to see what we're working on.
-                    // Thanks. ^.^
-					// Debug.Log ("Shield Health: " + m_ShieldPower);
 				}
 			}
 			else
@@ -208,32 +205,19 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 
 	void AnimateShield(Collider _Collider)
 	{
-		return; // This is totaly broken
-
-		GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-
 		RaycastHit hit;
 
 		if(_Collider.gameObject.tag == "Asteroid")
 		{
-			// Get the direction of the asteroid from the origin
+
+		// Get the direction of the asteroid from the origin
 			Vector3 dir = (AsteroidPos - transform.position).normalized;
 
 			if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
 			{
-				//if(hit.collider.gameObject.tag == "Asteroid")
-				//{
-					Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+				Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
 
-					plane.transform.position = hit.point;
-					plane.transform.parent = transform;
-		
-					Destroy(plane, 10.0f);
-				//}
-				//else
-				//{
 
-				//}
 			}
 		}
 	}
