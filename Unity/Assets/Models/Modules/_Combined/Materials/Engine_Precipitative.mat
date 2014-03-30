@@ -41,6 +41,14 @@ Material:
         second: 1
       data:
         first:
+          name: _Saturation
+        second: .5
+      data:
+        first:
+          name: _Brightness
+        second: 4
+      data:
+        first:
           name: _MinHeight
         second: 0
       data:
@@ -54,7 +62,7 @@ Material:
       data:
         first:
           name: _FadeDist
-        second: .300000012
+        second: 1
       data:
         first:
           name: _NoiseFreq
@@ -63,15 +71,11 @@ Material:
         first:
           name: _NoiseSpeed
         second: .25
-      data:
-        first:
-          name: _Saturation
-        second: .5
-      data:
-        first:
-          name: _Brightness
-        second: 4
     m_Colors:
+      data:
+        first:
+          name: _Tint
+        second: {r: .375, g: .741379321, b: 1, a: .196078435}
       data:
         first:
           name: _DiffuseCol
@@ -80,7 +84,3 @@ Material:
         first:
           name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Tint
-        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}

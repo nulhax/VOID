@@ -128,7 +128,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		set { m_HealthState.Set((byte)value); }
 	}
 
-
     public float MaxHealth
     {
         // Get
@@ -277,8 +276,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
             }
         }
     }
-
-
+	
     [AServerOnly]
     private void UpdateHealthStateDowned()
     {
@@ -407,7 +405,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     }
 
 
-    [AClientOnly]
+    [ALocalOnly]
     void OnGUI()
     {
         const float kBoxMargin = 10.0f;

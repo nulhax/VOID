@@ -63,7 +63,7 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
     }
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
         _cStream.Write(s_cSerializeStream);
@@ -82,12 +82,12 @@ public class CPlayerAirMotor : CNetworkMonoBehaviour
 
 			while (_cStream.HasUnreadData)
 			{
-				ENetworkAction eNetworkAction = (ENetworkAction)_cStream.ReadByte();
+				ENetworkAction eNetworkAction = (ENetworkAction)_cStream.Read<byte>();
 
 				switch (eNetworkAction)
 				{
 				case ENetworkAction.UpdateStates:
-					cAirMotor.m_usMovementStates = _cStream.ReadUInt();
+					cAirMotor.m_usMovementStates = _cStream.Read<uint>();
 					break;
 
 				default:

@@ -13,6 +13,7 @@
 
 // Namespaces
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 
@@ -35,6 +36,8 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 
 	private GameObject m_PrecipitativeObject = null;
     private CNetworkVar<byte> m_BuiltRatio = null;
+
+	private List<MonoBehaviour> m_DisabledComponents = new List<MonoBehaviour>();
 
 
 // Member Properties
@@ -82,6 +85,19 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 			child.gameObject.SetActive(false);
 		}
 
+		// Disable all components which are not the required
+		foreach(MonoBehaviour comp in gameObject.GetComponents<MonoBehaviour>())
+		{
+				if(	comp.GetType() != typeof(CNetworkView) &&
+					comp.GetType() != typeof(CModuleInterface) &&
+					comp.GetType() != typeof(CModulePrecipitation) &&
+					comp.GetType() != typeof(CActorInteractable))
+			{
+				m_DisabledComponents.Add(comp);
+				comp.enabled = false;
+			}
+		}
+
 		// Create the module precipitation object
 		m_PrecipitativeObject = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
 		m_PrecipitativeObject.transform.parent = transform;
@@ -96,13 +112,19 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 	}
 	
 
-    [AClientOnly]
+    [ALocalOnly]
 	void OnPrecipitationFinish()
 	{
 		// Enable all the children
 		foreach(Transform child in transform)
 		{
 			child.gameObject.SetActive(true);
+		}
+
+		// Enable disabled components
+		foreach(MonoBehaviour comp in m_DisabledComponents)
+		{
+			comp.enabled = true;
 		}
 
 		// Destroy the precipitation mesh
@@ -121,6 +143,11 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
             }
             else
             {
+                if (m_PrecipitativeObject == null)
+                {
+                    Debug.LogError(string.Format("GameObject({0}) does not have a precipitative object.", gameObject.name));
+                }
+
 				m_PrecipitativeObject.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
             }
         }

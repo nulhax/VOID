@@ -60,7 +60,7 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 
 	private void OnNetworkVarSync(INetworkVar _VarInstance)
 	{
-		if(_VarInstance == m_AtmosphereGenerationRate)
+		if(m_AtmosphereGenerationRate == _VarInstance)
 		{
 			if(EventGenerationRateChanged != null)
 				EventGenerationRateChanged(this);
@@ -69,9 +69,6 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 
 	public void Start()
 	{
-		// Register myself as a atmosphere generator
-		//CGameShips.Ship.GetComponent<CShipAtmosphere>().RegisterAtmosphereGenerator(gameObject);
-
 		if(CNetwork.IsServer)
 			ActivateGeneration();
 	}
@@ -80,11 +77,17 @@ public class CAtmosphereGeneratorBehaviour : CNetworkMonoBehaviour
 	public void ActivateGeneration()
 	{
 		m_AtmosphereGenerationActive.Set(true);
+
+		// Register self with ship atmosphere
+		CGameShips.Ship.GetComponent<CShipAtmosphere>().RegisterAtmosphereGenerator(gameObject);
 	}
 
 	[AServerOnly]
 	public void DeactivateGeneration()
 	{
 		m_AtmosphereGenerationActive.Set(false);
+
+		// Unregister self with ship atmosphere
+		CGameShips.Ship.GetComponent<CShipAtmosphere>().UnregisterAtmosphereGenerator(gameObject);
 	}
 }

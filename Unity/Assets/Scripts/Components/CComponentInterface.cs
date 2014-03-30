@@ -177,14 +177,49 @@ public class CComponentInterface : CNetworkMonoBehaviour
 	}
 
 
+    // Public trigger function for use by CHazardSystem
+    [AServerOnly]
+    public void TriggerMalfunction()
+    {
+        // TODO: Data-drive this variable
+        float fExplosionRadius = 2.0f;
+
+        // NOTES:
+        //      Consider randomising the chance for an explosion.
+        //      Consider randomising explosion radius.
+        //      Consider other potential effects beyond explosions.
+        //      Consider damaging both components and fire nodes instead of instant destruction
+        //      Consider different actions based on component type. 
+        
+        // Set component health to 0
+        GetComponent<CActorHealth>().health = 0;
+
+        // Get all of the fire hazard nodes on the ship
+        CFireHazard[] ArrayFires = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
+
+        // For each fire hazard node
+        foreach (CFireHazard FireNode in ArrayFires)
+        {
+            // If the distance between the fire node and the current component
+            // is less than or equal to the explosion radius
+            if ((transform.position - FireNode.transform.position).magnitude <= fExplosionRadius)
+            {
+                // Set the node's health to 0
+                // Sets the node on fire
+                FireNode.GetComponent<CActorHealth>().health = 0;
+            }
+        }
+
+        // Trigger an 'explosion' centred around the local transform
+        // Note: Final values will need to be adjusted. Specifically the impulse.
+        CGameShips.GalaxyShip.GetComponent<CShipDamageOnCollision>().ApplyExplosiveDamage(transform.position, fExplosionRadius, 100000.0f);
+    }
+
 	void Update() { }
 
 
 // Member Fields
-
-
     public EType m_eComponentType = EType.INVALID;
-
 
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 

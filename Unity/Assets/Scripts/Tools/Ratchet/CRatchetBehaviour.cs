@@ -61,7 +61,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	}
 
 	
-	[AClientOnly]
+	[ALocalOnly]
     public static void Serialize(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -76,27 +76,27 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		while (_cStream.HasUnreadData)
         {
             // Extract action
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
            
             switch (eAction)
             {
 				case ENetworkAction.SetRepairState:
 				{
 					//Figure out which ratchet sent it's new state
-					CRatchetBehaviour ratchet = _cStream.ReadNetworkViewId().GameObject.GetComponent<CRatchetBehaviour>();
+					CRatchetBehaviour ratchet = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CRatchetBehaviour>();
 					
-					ratchet.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject;
-					ratchet.m_eRepairState = (ERepairState)_cStream.ReadByte();
+					ratchet.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject;
+					ratchet.m_eRepairState = (ERepairState)_cStream.Read<byte>();
 					
 					break;
 				}
 				//case ENetworkAction.RepairHullBreach:
 				//{
 				//    //Figure out which ratchet sent it's new state
-				//    CRatchetBehaviour ratchet = _cStream.ReadNetworkViewId().GameObject.GetComponent<CRatchetBehaviour>();
+				//    CRatchetBehaviour ratchet = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CRatchetBehaviour>();
 
-				//    ratchet.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject;
-				//    ratchet.m_eRepairState = (ERepairState)_cStream.ReadByte();
+				//    ratchet.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject;
+				//    ratchet.m_eRepairState = (ERepairState)_cStream.Read<byte>();
 
 				//    break;
 				//}
@@ -189,6 +189,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 	}
 	
 
+    [ALocalOnly]
 	void BeginRepair(GameObject _damagedComponent)
 	{
         m_iTotalTargets = 0;
@@ -220,8 +221,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		
 		Debug.Log("Beginning repairs");
 	}
-	
 
+
+    [ALocalOnly]
 	void EndRepairs()
 	{
 		m_eRepairState = ERepairState.RepairInactive;
@@ -230,10 +232,12 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 		m_TargetList.Clear();
 	}
 
+
 	void OnEquip()
 	{
 
 	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

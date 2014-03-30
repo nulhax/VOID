@@ -191,14 +191,15 @@ public class CGameCameras : MonoBehaviour
 			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
 			s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
 
+			// Remove all image effects for background camera
+			foreach(PostEffectsBase ieb in s_BackgroundCamera.GetComponents<PostEffectsBase>())
+				Destroy(ieb);
+
 			// Set up the values for the bg camera
 			s_BackgroundCamera.transform.position = Vector3.zero;
 			s_BackgroundCamera.camera.clearFlags = CameraClearFlags.Skybox;
 			s_BackgroundCamera.camera.cullingMask = 1 << LayerMask.NameToLayer("Background");
-			s_BackgroundCamera.camera.depth = -1;
-
-			// Debug: Create a nebulae sphere
-			//GameObject.Instantiate(Resources.Load("Prefabs/Galaxy/NebulaePlaceholder"));
+			s_BackgroundCamera.camera.depth = 49;
 		}
 
 		// Move the camera to the head location
@@ -226,32 +227,32 @@ public class CGameCameras : MonoBehaviour
 		{
 			if(_IsInsideShip)
 			{
-				SetCameraDefaultValues(s_CachedMainCameraLeft.camera, 1.0f);
-				SetCameraDefaultValues(s_CachedMainCameraRight.camera, 4.0f);
+				SetCameraDefaultValues(s_CachedMainCameraLeft.camera, 51.0f);
+				SetCameraDefaultValues(s_CachedMainCameraRight.camera, 54.0f);
 
-				SetCameraGalaxyValues(s_CachedProjectedCameraLeft.camera, 0.0f);
-				SetCameraGalaxyValues(s_CachedProjectedCameraRight.camera, 3.0f);
+				SetCameraGalaxyValues(s_CachedProjectedCameraLeft.camera, 50.0f);
+				SetCameraGalaxyValues(s_CachedProjectedCameraRight.camera, 53.0f);
 			}
 			else
 			{
-				SetCameraDefaultValues(s_CachedProjectedCameraLeft.camera, 1.0f);
-				SetCameraDefaultValues(s_CachedProjectedCameraRight.camera, 4.0f);
+				SetCameraDefaultValues(s_CachedProjectedCameraLeft.camera, 51.0f);
+				SetCameraDefaultValues(s_CachedProjectedCameraRight.camera, 54.0f);
 
-				SetCameraGalaxyValues(s_CachedMainCameraLeft.camera, 0.0f);
-				SetCameraGalaxyValues(s_CachedMainCameraRight.camera, 3.0f);
+				SetCameraGalaxyValues(s_CachedMainCameraLeft.camera, 50.0f);
+				SetCameraGalaxyValues(s_CachedMainCameraRight.camera, 53.0f);
 			}
 		}
 		else
 		{
 			if(_IsInsideShip)
 			{
-				SetCameraDefaultValues(s_MainCamera.camera, 1.0f);
-				SetCameraGalaxyValues(s_ProjectedCamera.camera, 0.0f);
+				SetCameraDefaultValues(s_MainCamera.camera, 51.0f);
+				SetCameraGalaxyValues(s_ProjectedCamera.camera, 50.0f);
 			}
 			else
 			{
-				SetCameraDefaultValues(s_ProjectedCamera.camera, 1.0f);
-				SetCameraGalaxyValues(s_MainCamera.camera, 0.0f);
+				SetCameraDefaultValues(s_ProjectedCamera.camera, 51.0f);
+				SetCameraGalaxyValues(s_MainCamera.camera, 50.0f);
 			}
 		}
 	}
@@ -264,6 +265,10 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
+
+		// Disable image effects
+		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
+			ieb.enabled = false;
 	}
 	
 	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
@@ -279,6 +284,10 @@ public class CGameCameras : MonoBehaviour
 
 		// Set the depth
 		_Camera.depth = _Depth;
+
+		// Enable image effects
+		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
+			ieb.enabled = true;
 	}
 	
 	private void UpdateCameraTransforms()

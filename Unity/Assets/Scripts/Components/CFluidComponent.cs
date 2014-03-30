@@ -46,7 +46,8 @@ public class CFluidComponent : CNetworkMonoBehaviour
 	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
 	void OnBreak(CComponentInterface _Sender)
 	{
-        gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
+        // Commented out by Nathan to prevent null-reference exception.
+        //gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
 	}
 	
 

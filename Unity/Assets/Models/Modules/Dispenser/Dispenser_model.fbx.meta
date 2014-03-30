@@ -1,0 +1,105 @@
+fileFormatVersion: 2
+guid: 8f29b9432acd3ae49bfdbce3e38c7cf0
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: DispenserBase
+    100004: LeftGlassDoor
+    100006: RightGlassDoor
+    100008: RightLowerLock01
+    100010: RightLowerLock02
+    100012: RightMiddleLock01
+    100014: RightMiddleLock02
+    100016: RightUpperLock01
+    100018: RightUpperLock03
+    400000: //RootNode
+    400002: DispenserBase
+    400004: LeftGlassDoor
+    400006: RightGlassDoor
+    400008: RightLowerLock01
+    400010: RightLowerLock02
+    400012: RightMiddleLock01
+    400014: RightMiddleLock02
+    400016: RightUpperLock01
+    400018: RightUpperLock03
+    2300000: DispenserBase
+    2300002: LeftGlassDoor
+    2300004: RightGlassDoor
+    2300006: RightLowerLock01
+    2300008: RightLowerLock02
+    2300010: RightMiddleLock01
+    2300012: RightMiddleLock02
+    2300014: RightUpperLock01
+    2300016: RightUpperLock03
+    3300000: DispenserBase
+    3300002: LeftGlassDoor
+    3300004: RightGlassDoor
+    3300006: RightLowerLock01
+    3300008: RightLowerLock02
+    3300010: RightMiddleLock01
+    3300012: RightMiddleLock02
+    3300014: RightUpperLock01
+    3300016: RightUpperLock03
+    4300000: RightMiddleLock02
+    4300002: RightUpperLock03
+    4300004: DispenserBase
+    4300006: RightLowerLock02
+    4300008: LeftGlassDoor
+    4300010: RightGlassDoor
+    4300012: RightUpperLock01
+    4300014: RightMiddleLock01
+    4300016: RightLowerLock01
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

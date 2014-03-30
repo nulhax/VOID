@@ -53,6 +53,7 @@ public class CDispenserBehaviour : MonoBehaviour
 		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
     }
 
+
 	[AServerOnly]
 	private void HandleDUIButtonPressed(CDUIDispenserRoot _DUI)
 	{
@@ -69,6 +70,7 @@ public class CDispenserBehaviour : MonoBehaviour
 		}
 	}
 	
+
     [AServerOnly]
     private void SpawnTool(CToolInterface.EType _ToolType)
     {
@@ -81,5 +83,4 @@ public class CDispenserBehaviour : MonoBehaviour
 		NewTool.GetComponent<CNetworkView>().SetPosition(m_ToolSpawnLocation.position);
 		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_ToolSpawnLocation.eulerAngles);
     }
-
 };

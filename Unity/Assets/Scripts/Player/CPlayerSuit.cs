@@ -88,8 +88,6 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 		if(CGamePlayers.SelfActor == gameObject)
 		{
 			EventEnviromentalOxygenChange += OnEnviromentOxygenChange;
-
-            transform.GetComponentInChildren<SkinnedMeshRenderer>().enabled = false;
 		}
 	}
 
@@ -176,7 +174,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
         }
     }
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnEnviromentOxygenChange(bool _Breathable)
 	{
 		if(!_Breathable)

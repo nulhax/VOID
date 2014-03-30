@@ -73,7 +73,6 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         }
     } 
 
-    [AClientOnly]
     public static void Serialize(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -81,17 +80,16 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         s_cSerializeStream.Clear();        
     }
     
-    [AServerOnly]
     public static void Unserialize(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         //Extract network action
-        ERagdollState eNetworkAction = (ERagdollState)_cStream.ReadByte();
+		ERagdollState eNetworkAction = (ERagdollState)_cStream.ReadType(typeof(ERagdollState));
         
         switch (eNetworkAction)
         {
             case ERagdollState.PlayerDown:
             {
-                ulong uPlayerID = _cStream.ReadULong();
+				ulong uPlayerID = (ulong)_cStream.ReadType(typeof(ulong));
 
                 GameObject cPlayerActor = CGamePlayers.GetPlayerActor(uPlayerID);
                 CPlayerRagdoll ragdoll = cPlayerActor.GetComponent<CPlayerRagdoll>();
@@ -102,7 +100,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             }
             case ERagdollState.PlayerRevive:
             {
-                ulong uPlayerID = _cStream.ReadULong();
+				ulong uPlayerID = (ulong)_cStream.ReadType(typeof(ulong));
                 
                 GameObject cPlayerActor = CGamePlayers.GetPlayerActor(uPlayerID);
                 CPlayerRagdoll ragdoll = cPlayerActor.GetComponent<CPlayerRagdoll>();
@@ -169,7 +167,6 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         }       
     }
 
-    [AClientOnly]
     void SetRagdollActive()
     {       
         //Enable ragdoll and set position
@@ -178,7 +175,6 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 		CGameCameras.SetMainCameraParent(m_RagdollHead);
     }
 
-    [AClientOnly]
     void DeactivateRagdoll()
     {         
         //Disable ragdoll and set position

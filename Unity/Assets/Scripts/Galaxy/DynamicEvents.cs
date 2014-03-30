@@ -16,7 +16,7 @@ public class DynamicEvent_RogueAsteroid
         do
         {
             Vector3 asteroidPosition = (CGameShips.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellToRelativePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
-            created = CGalaxy.instance.LoadGubbin(new CGalaxy.SGubbinMeta(
+            created = CGalaxy.instance.LoadGubbin(new CGalaxy.CGubbinMeta(
                 (CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),   // PrefabID
                 parentAbsoluteCell, // Parent cell.
                 asteroidPosition,   // Position relative to parent.

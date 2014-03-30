@@ -75,7 +75,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         }
     }
     
-    [AClientOnly]
+    [ALocalOnly]
     public static void Serialize(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -90,17 +90,17 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Extract action
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
             
             switch (eAction)
             {
                 case ENetworkAction.SetRepairState:
                 {
                     //Figure out which kits sent it's new state
-                    CCircuitryKitBehaviour CircuitryKit = _cStream.ReadNetworkViewId().GameObject.GetComponent<CCircuitryKitBehaviour>();
+                    CCircuitryKitBehaviour CircuitryKit = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CCircuitryKitBehaviour>();
                     
-                    CircuitryKit.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
-                    CircuitryKit.m_eRepairState = (ERepairState)_cStream.ReadByte();
+                    CircuitryKit.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
+                    CircuitryKit.m_eRepairState = (ERepairState)_cStream.Read<byte>();
                     
                     break;
                 }

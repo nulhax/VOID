@@ -84,8 +84,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_StrafeRight, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Up, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Down, OnEventInputControlShip);
-        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_YawLeft, OnEventInputControlShip);
-        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_YawRight, OnEventInputControlShip);
+        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_RollLeft, OnEventInputControlShip);
+        CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_RollRight, OnEventInputControlShip);
 	}               
 
 
@@ -94,7 +94,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnEventAxisControlCamera(CUserInput.EAxis _eAxis, float _fValue)
 	{
 		CGalaxyShipCamera galaxyShipCamera = CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>();
@@ -120,22 +120,22 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			case CUserInput.EAxis.MouseX:
 				if (_fValue == 0.0f)
 				{
-	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
-	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawLeft, 0.0f);
+	                cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawRight, 0.0f);
 	            }
 	            else
 	            {
 	                if (_fValue > 0.0f)
 	                {
 	                    // / Screen.width
-	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, Mathf.Clamp(_fValue / 15, 0.0f, 1.0f));
-	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, 0.0f);
+						cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawLeft, Mathf.Clamp(_fValue / 15, 0.0f, 1.0f));
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawRight, 0.0f);
 
 	                }
 	                else
 	                {
-	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, 0.0f);
-	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, Mathf.Clamp(_fValue / 15 * -1.0f, 0.0f, 1.0f));
+						cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawLeft, 0.0f);
+	                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawRight, Mathf.Clamp(_fValue / 15 * -1.0f, 0.0f, 1.0f));
 	                }
 	            }
 	            break;
@@ -206,12 +206,12 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
                     cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.Down, fPower);
                     break;
 
-                case CUserInput.EInput.GalaxyShip_YawLeft:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawLeft, fPower);
+                case CUserInput.EInput.GalaxyShip_RollLeft:
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollLeft, fPower);
                     break;
 
-                case CUserInput.EInput.GalaxyShip_YawRight:
-                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.YawRight, fPower);
+                case CUserInput.EInput.GalaxyShip_RollRight:
+                    cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, fPower);
                     break;
 
                 default:

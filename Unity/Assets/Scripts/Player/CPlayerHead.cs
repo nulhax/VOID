@@ -31,10 +31,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Fields
-	public GameObject m_Head = null;
-	public GameObject m_SkeletalHead = null;
 
-	float m_fRoamTolerance = 0.5f;
 
 	List<Type> m_cInputDisableQueue = new List<Type>();
 	
@@ -64,7 +61,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 	public GameObject Head
 	{
-		get { return (m_Head); }
+		get 
+        { 
+            return (GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject); 
+        }
 	}
 
 	public bool InputDisabled
@@ -88,7 +88,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		if (CGamePlayers.SelfActor != gameObject && 
 			_cSyncedNetworkVar == m_fHeadEulerX)
 	    {	
-	        m_Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
+	        Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
 	    }
     }
 	
@@ -114,7 +114,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 
 			// Add audoio listener to head
-			m_Head.AddComponent<AudioListener>();
+			Head.AddComponent<AudioListener>();
 		}
 	}
 
@@ -126,27 +126,27 @@ public class CPlayerHead : CNetworkMonoBehaviour
         CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnMouseMoveY);
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void DisableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void ReenableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public void SetHeadRotations(float _LocalEulerX)
 	{
 		m_LocalXRotation = _LocalEulerX;
 
 		// Apply the rotation
-		m_Head.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
+		Head.transform.localEulerAngles = new Vector3(m_LocalXRotation, 0.0f, 0.0f);
 	}
 
 
@@ -169,7 +169,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		CPlayerHead cMyActorHead = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId).GetComponent<CPlayerHead>();
 
 		// Write my head's x-rotation
-		float fRotationX = _cStream.ReadFloat();
+		float fRotationX = _cStream.Read<float>();
 
 		cMyActorHead.m_fHeadEulerX.Set(fRotationX);
 	}
@@ -190,6 +190,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
 	}
+
 
 	private void OnMouseMoveY(CUserInput.EAxis _eAxis, float _fAmount)
 	{

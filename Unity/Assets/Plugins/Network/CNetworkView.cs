@@ -575,7 +575,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 		{
 			if (!s_cNetworkViews.ContainsKey(_cViewId.Id))
 			{
-				Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
+				//Logger.WriteError("Cannot find network view with id ({0})", _cViewId.Id);
 			}
 			else
 			{
@@ -645,10 +645,10 @@ public class CNetworkView : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Extract owner network view id
-            CNetworkViewId cNetworkViewId = _cStream.ReadNetworkViewId();
+            CNetworkViewId cNetworkViewId = _cStream.Read<CNetworkViewId>();
 
             // Extract procedure type
-            EProdecure eProcedure = (EProdecure)_cStream.ReadByte();
+            EProdecure eProcedure = (EProdecure)_cStream.Read<byte>();
 
             // Retrieve network view instance
             CNetworkView cNetworkView = CNetworkView.FindUsingViewId(cNetworkViewId);
@@ -657,7 +657,7 @@ public class CNetworkView : CNetworkMonoBehaviour
             if (eProcedure == EProdecure.SyncNetworkVar)
             {
                 // Extract network var identifier
-                byte bNetworkVarIdentifier = _cStream.ReadByte();
+                byte bNetworkVarIdentifier = _cStream.Read<byte>();
 
                 // Retrieve network var instance
                 INetworkVar cNetworkVar = cNetworkView.m_mNetworkVars[bNetworkVarIdentifier];
@@ -679,7 +679,7 @@ public class CNetworkView : CNetworkMonoBehaviour
             else if (eProcedure == EProdecure.InvokeNetworkRpc)
             {
                 // Extract rpc method identifier
-                byte bMethodIdentifier = _cStream.ReadByte();
+                byte bMethodIdentifier = _cStream.Read<byte>();
 
                 // Retrieve method owner instance
                 Component cParentComponent = cNetworkView.m_mNetworkRpcs[bMethodIdentifier].cUnityComponent;

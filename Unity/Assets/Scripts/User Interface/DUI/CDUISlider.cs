@@ -66,7 +66,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 		}
 	}
 
-	[AClientOnly]
+	[ALocalOnly]
 	static public void SerializeSliderEvents(CNetworkStream _cStream)
 	{
 		_cStream.Write(s_SliderNotificationStream);
@@ -79,16 +79,16 @@ public class CDUISlider : CNetworkMonoBehaviour
 		while(_cStream.HasUnreadData)
 		{
 			// Get the DUISlider and its network view
-			CDUISlider duiSlider = CNetwork.Factory.FindObject(_cStream.ReadNetworkViewId()).GetComponent<CDUISlider>();
+			CDUISlider duiSlider = CNetwork.Factory.FindObject(_cStream.Read<CNetworkViewId>()).GetComponent<CDUISlider>();
 			
 			// Get the interaction notification
-			ESliderNotificationType notification = (ESliderNotificationType)_cStream.ReadByte();
+			ESliderNotificationType notification = (ESliderNotificationType)_cStream.Read<byte>();
 			
 			// Based on the notification type, update the clients of the event
 			switch(notification) 
 			{
 			case ESliderNotificationType.OnValueChange:
-				float value = _cStream.ReadFloat();
+				float value = _cStream.Read<float>();
 				duiSlider.SetSliderValue(value);
 				break;
 				

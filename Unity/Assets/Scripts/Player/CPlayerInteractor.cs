@@ -18,6 +18,7 @@ using System.Collections;
 
 /* Implementation */
 using System.Linq;
+using System;
 
 
 public class CPlayerInteractor : CNetworkMonoBehaviour
@@ -52,7 +53,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
     public event HandleServerTargetChange EventServerTargetChange;
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public delegate void HandleTargetChange(GameObject _cOldTargetObject,  GameObject _CNewTargetObject, RaycastHit _cRaycastHit);
     public event HandleTargetChange EventTargetChange;
 
@@ -99,7 +100,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 	}
 
 
-    [AClientOnly]
+    [ALocalOnly]
     public static void SerializeOutbound(CNetworkStream _cStream)
     {
         _cStream.Write(s_cSerializeStream);
@@ -119,8 +120,8 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
         while (_cStream.HasUnreadData)
         {
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
-            CNetworkViewId cNewTargetViewId = _cStream.ReadNetworkViewId();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
+            CNetworkViewId cNewTargetViewId = _cStream.Read<CNetworkViewId>();
 
             switch (eAction)
             {
@@ -128,6 +129,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
                     if (cNewTargetViewId != null)
                     {
                         cPlayerInteractor.m_cTargetActorObject = cNewTargetViewId.GameObject;
+
                         if (cPlayerInteractor.EventServerTargetChange != null) cPlayerInteractor.EventServerTargetChange(cPlayerInteractor.m_cTargetActorObject);
 
                        // Debug.LogError("Found new target: " + cPlayerInteractor.m_cTargetActorObject);
@@ -189,12 +191,31 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
     void UpdateTarget()
     {
-        Ray cCameraRay = new Ray(gameObject.GetComponent<CPlayerHead>().m_Head.transform.position, gameObject.GetComponent<CPlayerHead>().m_Head.transform.forward);
+        if (CGameCameras.MainCamera == null ||
+            CGameCameras.ProjectedCamera == null)
+        {
+            return ;
+        }
+
+        Ray cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
+        Ray cProjectedCameraRay = new Ray(CGameCameras.ProjectedCamera.transform.position, CGameCameras.ProjectedCamera.transform.forward);
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
+        //Debug.DrawRay(cMainCameraRay.origin, cMainCameraRay.direction, Color.red, 0.5f);
+        Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
+
         // Do the ray cast against all objects in path
-        RaycastHit[] cRaycastHits = Physics.RaycastAll(cCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer).OrderBy(_cRay => _cRay.distance).ToArray();
+        RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer);
+
+        // Do the ray cast against all objects in path
+        RaycastHit[] cProjectedCameraRaycastHits = Physics.RaycastAll(cProjectedCameraRay, s_fRayRange, 1 << CGameCameras.ProjectedCamera.layer);
+
+        RaycastHit[] cRaycastHits = new RaycastHit[cMainCameraRaycastHits.Length + cProjectedCameraRaycastHits.Length];
+        Array.Copy(cMainCameraRaycastHits, cRaycastHits, cMainCameraRaycastHits.Length);
+        Array.Copy(cProjectedCameraRaycastHits, 0, cRaycastHits, cMainCameraRaycastHits.Length, cProjectedCameraRaycastHits.Length);
+
+        cRaycastHits = cRaycastHits.OrderBy(_cRay => _cRay.distance).ToArray();
 
 		// Check each one for an interactable object
         foreach (RaycastHit cRaycastHit in cRaycastHits)
@@ -204,6 +225,11 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
             // Check the object itself for the interactable script
             CActorInteractable cActorInteractable = cHitObject.GetComponent<CActorInteractable>();
+
+            if (cHitObject.tag == "GalaxyShip")
+            {
+                continue;
+            }
 
             // Check the parents until we find the one that has CActorInteractable on it
             if (cActorInteractable == null)
@@ -224,6 +250,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 				break;
 			}
         }
+
 
 		if (cNewTargetActorObject != null)
 		{

@@ -64,6 +64,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         Dispenser,
         NaniteCapsule,
         Engine,
+		Starter,
 
         MAX
 	}

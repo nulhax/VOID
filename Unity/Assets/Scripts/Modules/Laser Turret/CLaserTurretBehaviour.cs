@@ -48,7 +48,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
 		_cStream.Write(s_cSerializeStream);
@@ -61,13 +61,13 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cTurretViewId = _cStream.ReadNetworkViewId();
+			CNetworkViewId cTurretViewId = _cStream.Read<CNetworkViewId>();
 			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
 			
 			if (cTurretObject != null)
 			{
 				CLaserTurretBehaviour cLaserTurretBehaviour = cTurretObject.GetComponent<CLaserTurretBehaviour>();
-				ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+				ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 				
 				switch (eAction)
 				{
@@ -110,7 +110,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void UpdateFiring()
 	{
 		// Fire lasers
@@ -155,7 +155,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
 	void OnTurretControllerChange(ulong _ulPreviousPlayerId, ulong _ulNewPlayerId)
 	{
 		if (_ulNewPlayerId == CNetwork.PlayerId)
@@ -172,7 +172,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AClientOnly]
+	[ALocalOnly]
     void OnFireLasersCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
 		m_bFireLasers = _bDown;

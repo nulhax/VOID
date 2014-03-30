@@ -221,9 +221,9 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         Vector3 vCurrentAngularVelocity = Quaternion.Inverse(cGalaxyShipRigidbody.transform.rotation) * cGalaxyShipRigidbody.angularVelocity;
         float fDeltaAcceleration = m_fAngularAcceleration * Time.fixedDeltaTime;
 
-        ComputeAngularSpeed(EThrusters.PitchUp , EThrusters.PitchDown, fDeltaAcceleration, ref vCurrentAngularVelocity.x, ref vAngularAcceleration.x, 1.5f);
-        ComputeAngularSpeed(EThrusters.YawLeft , EThrusters.YawRight , fDeltaAcceleration, ref vCurrentAngularVelocity.y, ref vAngularAcceleration.y);
-        ComputeAngularSpeed(EThrusters.RollLeft, EThrusters.RollRight, fDeltaAcceleration, ref vCurrentAngularVelocity.z, ref vAngularAcceleration.z, 1.5f);
+        ComputeAngularSpeed(EThrusters.PitchDown , EThrusters.PitchUp, fDeltaAcceleration, ref vCurrentAngularVelocity.x, ref vAngularAcceleration.x, 1.5f);
+        ComputeAngularSpeed(EThrusters.YawRight, EThrusters.YawLeft , fDeltaAcceleration, ref vCurrentAngularVelocity.y, ref vAngularAcceleration.y);
+        ComputeAngularSpeed(EThrusters.RollRight, EThrusters.RollLeft, fDeltaAcceleration, ref vCurrentAngularVelocity.z, ref vAngularAcceleration.z, 1.5f);
 
         cGalaxyShipRigidbody.angularVelocity = cGalaxyShipRigidbody.transform.rotation * vCurrentAngularVelocity;
         cGalaxyShipRigidbody.AddRelativeTorque(vAngularAcceleration, ForceMode.Acceleration);

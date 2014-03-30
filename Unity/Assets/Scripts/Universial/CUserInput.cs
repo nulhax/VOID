@@ -77,14 +77,14 @@ public class CUserInput : CNetworkMonoBehaviour
         GalaxyShip_Down,          // Control
         GalaxyShip_StrafeLeft,    // D
         GalaxyShip_StrafeRight,   // A
-        GalaxyShip_YawLeft,      // Q
-        GalaxyShip_YawRight,     // E
+		GalaxyShip_RollLeft,
+		GalaxyShip_RollRight,
         GalaxyShip_Turbo,         // Shift
                                 
-        Tool_SelectSlot1,         // 1
-        Tool_SelectSlot2,         // 2
-        Tool_SelectSlot3,         // 3
-        Tool_SelectSlot4,         // 4
+        Tool_EquipToolSlot1,         // 1
+        Tool_EquipToolSlot2,         // 2
+        Tool_EquipToolSlot3,         // 3
+        Tool_EquipToolSlot4,         // 4
 		Tool_Reload,              // R
         Tool_Drop,                // G
                                 
@@ -297,13 +297,13 @@ public class CUserInput : CNetworkMonoBehaviour
         TPlayerStates tPlayerStates = s_cInstance.m_mPlayerStates[_cPlayer.PlayerId];
 
         tPlayerStates.ulPreviousInput = tPlayerStates.ulInput;
-        tPlayerStates.ulInput = _cStream.ReadULong();
+        tPlayerStates.ulInput = _cStream.Read<ulong>();
         tPlayerStates.fPreviousMouseX = tPlayerStates.fMouseX;
         tPlayerStates.fPreviousMouseY = tPlayerStates.fMouseY;
 		tPlayerStates.fPreviousMouseScroll = tPlayerStates.fMouseScroll;
-        tPlayerStates.fMouseX = _cStream.ReadFloat();
-        tPlayerStates.fMouseY = _cStream.ReadFloat();
-		tPlayerStates.fMouseScroll = _cStream.ReadFloat();
+        tPlayerStates.fMouseX = _cStream.Read<float>();
+        tPlayerStates.fMouseY = _cStream.Read<float>();
+		tPlayerStates.fMouseScroll = _cStream.Read<float>();
 
         if (tPlayerStates.fPreviousMouseX != tPlayerStates.fMouseX)
         {

@@ -75,7 +75,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         }
     }
     
-    [AClientOnly]
+    [ALocalOnly]
     public static void Serialize(CNetworkStream _cStream)
     {
         // Write in internal stream
@@ -90,17 +90,17 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Extract action
-            ENetworkAction eAction = (ENetworkAction)_cStream.ReadByte();
+            ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
             
             switch (eAction)
             {
                 case ENetworkAction.SetRepairState:
                 {
                     //Figure out which ratchet sent it's new state
-                    CCalibratorBehaviour Calibrator = _cStream.ReadNetworkViewId().GameObject.GetComponent<CCalibratorBehaviour>();
+                    CCalibratorBehaviour Calibrator = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CCalibratorBehaviour>();
                     
-                    Calibrator.m_TargetComponent = _cStream.ReadNetworkViewId().GameObject.GetComponent<CComponentInterface>();
-                    Calibrator.m_eRepairState = (ERepairState)_cStream.ReadByte();
+                    Calibrator.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
+                    Calibrator.m_eRepairState = (ERepairState)_cStream.Read<byte>();
                     
                     break;
                 }

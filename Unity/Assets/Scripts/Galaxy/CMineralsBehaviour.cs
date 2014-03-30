@@ -58,7 +58,11 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 		m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 300.0f);
 	}
 
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="_fQuantity">The amount of minerals ATTEMPTING to be extracted.</param>
+	/// <returns>The amount of minerals ACTUALLY extracted.</returns>
 	public float DecrementQuanity(float _fQuantity)
 	{
         if (!IsDepleted)
@@ -73,7 +77,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
                 m_fQuantity.Set(0.0f);
                 m_bDepleted = true;
 
-                if (EventDeplete != null) EventDeplete(gameObject);
+                
 
                 CNetwork.Factory.DestoryObject(gameObject);
             }
@@ -87,9 +91,11 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		if(CNetwork.IsServer)
+		if (CNetwork.IsServer)
 		{
-			//ResourceQuanity = CGalaxy.instance.CalculateAsteroidResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
+			float resourceAmount = CGalaxy.instance.ResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
+			//Debug.Log("Resource amount: " + resourceAmount);
+			m_fQuantity.Set(resourceAmount);
 		}
 	}
 
@@ -104,6 +110,10 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 	{
 		if (_cSyncedVar == m_fQuantity)
 		{
+            if (m_fQuantity.Get() <= 0.0f)
+            {
+                if (EventDeplete != null) EventDeplete(gameObject);
+            }
 			//gameObject.GetComponentInChildren<Renderer>.material.SetColor("_Color", new Color(1.0f - Quantity, 1.0f - Quantity, 1.0f));
 		}
 	}
