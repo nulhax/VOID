@@ -77,8 +77,8 @@ public class CUserInput : CNetworkMonoBehaviour
         GalaxyShip_Down,          // Control
         GalaxyShip_StrafeLeft,    // D
         GalaxyShip_StrafeRight,   // A
-        GalaxyShip_YawLeft,      // Q
-        GalaxyShip_YawRight,     // E
+		GalaxyShip_RollLeft,
+		GalaxyShip_RollRight,
         GalaxyShip_Turbo,         // Shift
                                 
         Tool_EquipToolSlot1,         // 1
