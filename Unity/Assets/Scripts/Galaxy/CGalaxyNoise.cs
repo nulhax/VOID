@@ -18,41 +18,104 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 {
 	public enum ENoiseLayer
 	{
-		SparseAsteroidCount,
-		AsteroidClusterCount,
+		SparseAsteroids,
+		AsteroidClustersLF,
+		AsteroidClustersHF,
 		DebrisDensity,
 		FogDensity,
-		AsteroidResourceAmount,
-		EnemyShipCount,
+		AsteroidResource,
+		EnemyShips,
 		MAX
 	}
 
-	public struct SNoiseMeta
+	public enum ENoise
+	{
+		SparseAsteroids,
+		AsteroidClusters,
+		DebrisDensity,
+		FogDensity,
+		AsteroidResource,
+		EnemyShips,
+		MAX
+	}
+
+	public struct SNoiseLayerMeta
 	{
 		public float start;
 		public float end;
 		public float sampleSize;
 		public string displayName;
 
-		public SNoiseMeta(float _start, float _end, float _sampleSize, string _displayName) { start = _start; end = _end; sampleSize = _sampleSize; displayName = _displayName; }
+		public SNoiseLayerMeta(float _start, float _end, float _sampleSize, string _displayName) { start = _start; end = _end; sampleSize = _sampleSize; displayName = _displayName; }
 	}
 
-	SNoiseMeta[] mNoiseMeta = new SNoiseMeta[(uint)ENoiseLayer.MAX];
+	public struct SNoiseMeta
+	{
+		public delegate void NoiseFunction(CGalaxy.SCellPos absoluteCell, out float sample);
+
+		public string displayName;
+		public NoiseFunction noiseFunction;
+
+		public SNoiseMeta(string _displayName, NoiseFunction _noiseFunction) { displayName = _displayName; noiseFunction = _noiseFunction; }
+	}
+
+	SNoiseMeta[] mNoiseMeta = new SNoiseMeta[(uint)ENoise.MAX];
+	SNoiseLayerMeta[] mNoiseLayerMeta = new SNoiseLayerMeta[(uint)ENoiseLayer.MAX];
 	private PerlinSimplexNoise[] mRawNoises = new PerlinSimplexNoise[(uint)ENoiseLayer.MAX];
 	protected CNetworkVar<int>[] mNoiseSeeds = new CNetworkVar<int>[(uint)ENoiseLayer.MAX];
 
-	public ENoiseLayer debug_RenderNoise = ENoiseLayer.SparseAsteroidCount;
+	public delegate void Debug_CallbackOnNoiseChange();
+	public Debug_CallbackOnNoiseChange debug_CallbackOnNoiseChange;
+	public float Debug_SampleNoise(CGalaxy.SCellPos absoluteCell) { return debug_UsingNoiseLayer ? SampleNoise(absoluteCell, debug_NoiseLayer) : SampleNoise(absoluteCell, debug_Noise); }
+	public string Debug_SampleNoiseName() { return debug_UsingNoiseLayer ? mNoiseLayerMeta[(uint)debug_NoiseLayer].displayName : mNoiseMeta[(uint)debug_Noise].displayName; }
+	public ENoise debug_Noise { get { return debug_Noise_Internal; } set { if (debug_Noise_Internal != value) { debug_Noise_Internal = value; if (debug_CallbackOnNoiseChange != null && !debug_UsingNoiseLayer) debug_CallbackOnNoiseChange(); } } }
+	private ENoise debug_Noise_Internal = ENoise.SparseAsteroids;
+	public ENoiseLayer debug_NoiseLayer { get { return debug_NoiseLayer_Internal; } set { if (debug_NoiseLayer_Internal != value) { debug_NoiseLayer_Internal = value; if (debug_CallbackOnNoiseChange != null && debug_UsingNoiseLayer) debug_CallbackOnNoiseChange(); } } }
+	private ENoiseLayer debug_NoiseLayer_Internal = ENoiseLayer.SparseAsteroids;
+	public bool debug_UsingNoiseLayer { get { return debug_UsingNoiseLayer_Internal; } set { if (debug_UsingNoiseLayer_Internal != value) { debug_UsingNoiseLayer_Internal = value; if (debug_CallbackOnNoiseChange != null) debug_CallbackOnNoiseChange(); } } }
+	private bool debug_UsingNoiseLayer_Internal = false;
 
-	public SNoiseMeta[] noiseMeta { get { return mNoiseMeta; } }
+	public SNoiseLayerMeta[] noiseMeta { get { return mNoiseLayerMeta; } }
 
 	private void Awake()
 	{
-		mNoiseMeta[(uint)ENoiseLayer.SparseAsteroidCount] =		new SNoiseMeta(0.50f, 0.90f, 100000.00f, "Sparse Asteroids");
-		mNoiseMeta[(uint)ENoiseLayer.AsteroidClusterCount] =	new SNoiseMeta(0.80f, 0.90f, 1000000.0f, "Asteroid Clusters");
-		mNoiseMeta[(uint)ENoiseLayer.DebrisDensity] =			new SNoiseMeta(0.00f, 1.00f, 250000.00f, "Debris Density");
-		mNoiseMeta[(uint)ENoiseLayer.FogDensity] =				new SNoiseMeta(0.40f, 0.80f, 100000.00f, "Fog Density");
-		mNoiseMeta[(uint)ENoiseLayer.AsteroidResourceAmount]=	new SNoiseMeta(0.75f, 0.90f, 100000.00f, "Asteroid Resource");
-		mNoiseMeta[(uint)ENoiseLayer.EnemyShipCount] =			new SNoiseMeta(1.10f, 1.20f, 100000.00f, "Enemy Ships");
+		mNoiseLayerMeta[(uint)ENoiseLayer.SparseAsteroids] =	new SNoiseLayerMeta(0.50f, 0.90f, 100000.00f, "Sparse Asteroids");
+		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidClustersHF] =	new SNoiseLayerMeta(0.80f, 0.90f, 1000000.0f, "Asteroid Clusters HF");
+		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidClustersLF] =	new SNoiseLayerMeta(0.50f, 0.60f, 100.00000f, "Asteroid Clusters LF");
+		mNoiseLayerMeta[(uint)ENoiseLayer.DebrisDensity] =		new SNoiseLayerMeta(0.00f, 1.00f, 250000.00f, "Debris Density");
+		mNoiseLayerMeta[(uint)ENoiseLayer.FogDensity] =			new SNoiseLayerMeta(0.40f, 0.80f, 100000.00f, "Fog Density");
+		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidResource]=	new SNoiseLayerMeta(0.75f, 0.90f, 100000.00f, "Asteroid Resource");
+		mNoiseLayerMeta[(uint)ENoiseLayer.EnemyShips] =			new SNoiseLayerMeta(1.10f, 1.20f, 100000.00f, "Enemy Ships");
+
+		mNoiseMeta[(uint)ENoise.SparseAsteroids] =	new SNoiseMeta("Sparse Asteroids",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample = SampleNoise(absoluteCell, ENoiseLayer.SparseAsteroids);
+		});
+
+		mNoiseMeta[(uint)ENoise.AsteroidClusters] =	new SNoiseMeta("Asteroid Clusters",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample =	1.0f;
+			sample *=	SampleNoise(absoluteCell, ENoiseLayer.AsteroidClustersHF);
+			sample *=	SampleNoise(absoluteCell, ENoiseLayer.AsteroidClustersLF);
+			float distToCentreOfGalaxy = Mathf.Clamp01(1.0f - (CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell).magnitude / CGalaxy.instance.galaxyRadius));
+			sample = Mathf.Clamp01(sample - (1.0f - distToCentreOfGalaxy));
+			//sample *= distToCentreOfGalaxy;
+			//sample =	Mathf.Pow(sample, 3.0f);
+		});
+
+		mNoiseMeta[(uint)ENoise.DebrisDensity] =	new SNoiseMeta("Debris Density",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample = SampleNoise(absoluteCell, ENoiseLayer.DebrisDensity);
+		});
+
+		mNoiseMeta[(uint)ENoise.FogDensity] =		new SNoiseMeta("Fog Density",		(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample = SampleNoise(absoluteCell, ENoiseLayer.FogDensity);
+		});
+
+		mNoiseMeta[(uint)ENoise.AsteroidResource] =	new SNoiseMeta("Asteroid Resource",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample = SampleNoise(absoluteCell, ENoiseLayer.AsteroidResource);
+		});
+
+		mNoiseMeta[(uint)ENoise.EnemyShips] =		new SNoiseMeta("Enemy Ships",		(CGalaxy.SCellPos absoluteCell, out float sample) => {
+			sample = SampleNoise(absoluteCell, ENoiseLayer.EnemyShips);
+		});
 
 		// Instantiate galaxy noises.
 		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
@@ -82,18 +145,35 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 				mRawNoises[ui].Seed(mNoiseSeeds[ui].Get());
 	}
 
-	private float SampleNoise(CGalaxy.SCellPos absoluteCell, float sampleScale, ENoiseLayer noiseLayer)
-	{
-		Vector3 samplePoint = CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell) * (sampleScale / CGalaxy.instance.galaxyRadius);
-		return 0.5f + 0.5f * mRawNoises[(uint)noiseLayer].Generate(samplePoint.x, samplePoint.y, samplePoint.z);
-	}
+	//public float SampleNoise(CGalaxy.SCellPos absoluteCell, ENoiseLayer noiseLayer)
+	//{
+	//    float start =			mNoiseMeta[(uint)noiseLayer].start;
+	//    float end =				mNoiseMeta[(uint)noiseLayer].end;
+	//    float sampleSize =		mNoiseMeta[(uint)noiseLayer].sampleSize;
+	//    float rawSample =		0.5f + 0.5f * mRawNoises[(uint)noiseLayer].Generate(CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell) * (sampleSize / CGalaxy.instance.galaxyRadius));
+	//    float filteredSample =	(rawSample - start) / (end - start);
+	//    float saturatedSample =	filteredSample < 0.0f ? 0.0f : filteredSample > 1.0f ? 1.0f : filteredSample;
+
+	//    return saturatedSample;
+	//}
 
 	public float SampleNoise(CGalaxy.SCellPos absoluteCell, ENoiseLayer noiseLayer)
 	{
-		float rawSample =	SampleNoise(absoluteCell, mNoiseMeta[(uint)noiseLayer].sampleSize, noiseLayer);
-		float start =		mNoiseMeta[(uint)noiseLayer].start;
-		float end =			mNoiseMeta[(uint)noiseLayer].end;
+		float start =		mNoiseLayerMeta[(uint)noiseLayer].start;
+		float end =			mNoiseLayerMeta[(uint)noiseLayer].end;
+		float sampleSize =	mNoiseLayerMeta[(uint)noiseLayer].sampleSize;
+
+		float rawSample = 0.5f + 0.5f * mRawNoises[(uint)noiseLayer].Generate(CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell) * (sampleSize / CGalaxy.instance.galaxyRadius));
 		float filteredSample = (rawSample - start) / (end - start);
-		return filteredSample < 0.0f ? 0.0f : filteredSample > 1.0f ? 1.0f : filteredSample;
+		float saturatedSample = filteredSample < 0.0f ? 0.0f : filteredSample > 1.0f ? 1.0f : filteredSample;
+
+		return saturatedSample;
+	}
+
+	public float SampleNoise(CGalaxy.SCellPos absoluteCell, ENoise noise)
+	{
+		float sample;
+		mNoiseMeta[(uint)noise].noiseFunction(absoluteCell, out sample);
+		return sample;
 	}
 }

@@ -45,9 +45,9 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 	{
 		radius_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialRadius);
 		zoom_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialZoom);
-		centreCellOfProjectionX= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
-		centreCellOfProjectionY= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
-		centreCellOfProjectionZ= _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
+		centreCellOfProjectionX = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
+		centreCellOfProjectionY = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
+		centreCellOfProjectionZ = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
 	}
 
 	void SyncNetworkVar(INetworkVar sender)
@@ -57,7 +57,18 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
 	void Start()
 	{
+		CGalaxy.instance.noise.debug_CallbackOnNoiseChange += RefreshProjection;
+	}
 
+	void OnDestroy()
+	{
+		CGalaxy galaxy = CGalaxy.instance;
+		if (galaxy != null)
+		{
+			CGalaxyNoise noise = galaxy.noise;
+			if(noise != null)
+				noise.debug_CallbackOnNoiseChange -= RefreshProjection;
+		}
 	}
 
 	// Update is called once per frame
@@ -67,14 +78,13 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 		//mUpToDate = false;
 
 		if (!mUpToDate && timeOfNextUpdate <= Time.time)
-		{
-			timeOfNextUpdate = framesPerSecond > 0.0f ? Time.time + (1.0f / framesPerSecond) : float.PositiveInfinity;
 			RefreshProjection();
-		}
 	}
 
 	void RefreshProjection()
 	{
+		timeOfNextUpdate = framesPerSecond > 0.0f ? Time.time + (1.0f / framesPerSecond) : float.PositiveInfinity;
+
 		ParticleEmitter emitter = GetComponent<ParticleEmitter>();
 		emitter.ClearParticles();
 
@@ -89,14 +99,14 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 					{
 						Vector3 unitPos = new Vector3(x - centreSample.x, y - centreSample.y, z - centreSample.z) / (0.5f * samplesPerAxis);    // -1 to +1 on each axis.
 						CGalaxy.SCellPos sampleCell = galaxy.AbsolutePointToAbsoluteCell(unitPos * galaxy.galaxyRadius);
-						float noiseScalar = galaxy.noise.SampleNoise(sampleCell, galaxy.noise.debug_RenderNoise);
+						//float noiseScalar = galaxy.noise.SampleNoise(sampleCell, galaxy.noise.debug_NoiseLayer);
+						float noiseScalar = galaxy.noise.Debug_SampleNoise(sampleCell);
 
 						if (noiseScalar > 0.0f)
-							emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, noiseScalar * Mathf.Clamp01(1.0f - unitPos.magnitude * unitPos.magnitude * unitPos.magnitude)));
+							emitter.Emit(unitPos * radius, Vector3.zero, particleScale * (radius * 2) / samplesPerAxis, float.PositiveInfinity, new Color(0.5f, 0.5f, 0.75f, noiseScalar));
 					}
 
 			mUpToDate = true;
-
 		}
 	}
 

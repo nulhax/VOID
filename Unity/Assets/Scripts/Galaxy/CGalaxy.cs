@@ -271,25 +271,51 @@ public class CGalaxy : CNetworkMonoBehaviour
 			{
 				bool incrementNoise = Input.GetKeyDown(KeyCode.Keypad9);
 				bool decrementNoise = Input.GetKeyDown(KeyCode.Keypad6);
+				bool switchNoise = Input.GetKeyDown(KeyCode.Keypad3);
+
+				if (switchNoise)
+					mNoise.debug_UsingNoiseLayer = !mNoise.debug_UsingNoiseLayer;
 
 				if (incrementNoise != decrementNoise)
 				{
-					int newNoise = (int)mNoise.debug_RenderNoise;
-
-					if (incrementNoise)
+					if (mNoise.debug_UsingNoiseLayer)
 					{
-						newNoise += 1;
-						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
-							newNoise = 0;
+						int newNoise = (int)mNoise.debug_NoiseLayer;
+
+						if (incrementNoise)
+						{
+							newNoise += 1;
+							if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+								newNoise = 0;
+						}
+						else
+						{
+							newNoise -= 1;
+							if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
+								newNoise = (int)(CGalaxyNoise.ENoiseLayer.MAX - 1);
+						}
+
+						mNoise.debug_NoiseLayer = (CGalaxyNoise.ENoiseLayer)newNoise;
 					}
 					else
 					{
-						newNoise -= 1;
-						if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoiseLayer.MAX)
-							newNoise = (int)(CGalaxyNoise.ENoiseLayer.MAX - 1);
-					}
+						int newNoise = (int)mNoise.debug_Noise;
 
-					mNoise.debug_RenderNoise = (CGalaxyNoise.ENoiseLayer)newNoise;
+						if (incrementNoise)
+						{
+							newNoise += 1;
+							if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoise.MAX)
+								newNoise = 0;
+						}
+						else
+						{
+							newNoise -= 1;
+							if (newNoise < 0 || newNoise >= (int)CGalaxyNoise.ENoise.MAX)
+								newNoise = (int)(CGalaxyNoise.ENoise.MAX - 1);
+						}
+
+						mNoise.debug_Noise = (CGalaxyNoise.ENoise)newNoise;
+					}
 				}
 			}
 
@@ -796,12 +822,12 @@ public class CGalaxy : CNetworkMonoBehaviour
 		RenderSettings.skybox.SetVector("_Tint", Color.grey);
 	}
 
-	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.SparseAsteroidCount)); }
-	public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidClusterCount)); }
+	public uint SparseAsteroidCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(4/*maxAsteroids*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.SparseAsteroids)); }
+	public uint AsteroidClusterCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxClusters*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidClustersHF)); }
 	public float DebrisDensity(SCellPos absoluteCell) { return mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.DebrisDensity); }
 	public float FogDensity(SCellPos absoluteCell) { return mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.FogDensity); }
-	public float ResourceAmount(SCellPos absoluteCell) { return 800 * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidResourceAmount); }
-	public uint EnemyShipCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxEnemyShips*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.EnemyShipCount)); }
+	public float ResourceAmount(SCellPos absoluteCell) { return 800 * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.AsteroidResource); }
+	public uint EnemyShipCount(SCellPos absoluteCell) { return (uint)Mathf.RoundToInt(1/*maxEnemyShips*/ * mNoise.SampleNoise(absoluteCell, CGalaxyNoise.ENoiseLayer.EnemyShips)); }
 
 	private void LoadSparseAsteroids(SCellPos absoluteCell)
 	{
@@ -883,7 +909,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		float boxWidth = 200;
 		float boxHeight = 100;
-		GUI.Box(new Rect((Screen.width - boxWidth) / 2, (Screen.height - boxHeight) / 2, boxWidth, boxHeight), mNoise.noiseMeta[(uint)mNoise.debug_RenderNoise].displayName + '\n' + mCentreCell.ToString());
+		GUI.Box(new Rect((Screen.width - boxWidth) / 2, (Screen.height - boxHeight) / 2, boxWidth, boxHeight), "Displaying " + (mNoise.debug_UsingNoiseLayer ? "raw noise" : "final noise") + '\n' + mNoise.Debug_SampleNoiseName() + '\n' + mCentreCell.ToString());
 	}
 
 	void OnDrawGizmos()/*OnDrawGizmos & OnDrawGizmosSelected*/
@@ -962,7 +988,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 				GL.Vertex3(x + fCellRadius, y + fCellRadius, z + fCellRadius);
 				GL.End();
 
-				float noiseValue = mNoise.SampleNoise(pair.Key, mNoise.debug_RenderNoise);
+				float noiseValue = mNoise.Debug_SampleNoise(pair.Key);
 				Gizmos.color = new Color(1.0f, 1.0f, 1.0f, noiseValue);
 				Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
 			}
