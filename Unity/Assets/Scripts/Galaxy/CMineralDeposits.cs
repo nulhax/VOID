@@ -1,4 +1,4 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -66,63 +66,40 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
 	void GenerateMinerals()
 	{
-
+		float minimumResourceRequiredToSpawnMineral = 20.0f;
 		float fRayLength = 500.0f;
+		float totalResourceAmount = CGalaxy.instance.ResourceAmount(CGalaxy.instance.RelativePointToAbsoluteCell(transform.position));
 
-        /*
-        RaycastHit[] cRaycastHits = Physics.RaycastAll(transform.position, Random.insideUnitSphere, 300);
+		while(totalResourceAmount >= minimumResourceRequiredToSpawnMineral)
+		{
+			float mineralResourceAmount = Random.Range(0.0f, totalResourceAmount * 1.5f);	// Get random amount of resource for the mineral, where ⅓ of the time it may consume all of the resource.
+			if (mineralResourceAmount >= totalResourceAmount)	// Prevent the mineral from holding more than the maximum.
+				mineralResourceAmount = totalResourceAmount;
+			totalResourceAmount -= mineralResourceAmount;	// Subtract from the total.
 
-        foreach (RaycastHit cRaycastHit in cRaycastHits)
-        {
-            int iRandom = Random.Range(0, cRaycastHits.Length);
-            //Debug.Log(string.Format("Start({0}) End({1}) Result({2})", 0, cRaycastHits.Length, iRandom));
-            GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
-            cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHits[iRandom].point);
-            cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
+			// Minerals below a minimum resource amount do not spawn.
+			if (mineralResourceAmount < minimumResourceRequiredToSpawnMineral)
+				continue;
 
-
-            break;
-        }
-        */
-
-
-        //Random.Range(10);
-
-
-        int iRandom = Random.Range(0, 3);
-
-
-        for (int i = 0; i < iRandom; ++i)
-        {
+			// Mineral has enough resource to spawn.
+			// Spawn the mineral:
 			Vector3 vRayDirection = Random.onUnitSphere;
-            RaycastHit cRaycastHit;
-            Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
+			RaycastHit cRaycastHit;
+			Ray cRay = new Ray(transform.position + vRayDirection * fRayLength, -vRayDirection);
 
-
-            if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
-            {
-                GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
+			if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
+			{
+				GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
 				cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-                cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
-				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * Random.Range(3.0f, 6.0f));
+				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * Mathf.Pow(mineralResourceAmount, 1.0f / 3.0f));
+				cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
 				cCrystal.GetComponent<CNetworkView>().SetRotation(Quaternion.LookRotation(vRayDirection) * Quaternion.AngleAxis(90.0f, Vector3.right));
 
-                m_aDeposits.Add(cCrystal);
-            }
-        }
+				cCrystal.GetComponent<CMineralsBehaviour>().Quantity = mineralResourceAmount;
 
-
-
-        /*
-              RaycastHit{
-                 var length : float = 100.0;
-                 var direction : Vector3 = ;
-
-                 var hit : RaycastHit;
-                 collider.Raycast (ray, hit, length*2);
-                 return hit;
-             }
-     */
+				m_aDeposits.Add(cCrystal);
+			}
+		}
 	}
 
 
