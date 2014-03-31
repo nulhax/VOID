@@ -89,12 +89,10 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
 			if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
 			{
-				// Todo: Create local mineral and test for intersection. If none, create networked mineral. Delete the local copy either way.
-
 				GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
 				cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-				cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
 				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * Mathf.Pow(mineralResourceAmount, 1.0f / 3.0f));
+				cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
 				cCrystal.GetComponent<CNetworkView>().SetRotation(Quaternion.LookRotation(vRayDirection) * Quaternion.AngleAxis(90.0f, Vector3.right));
 
 				cCrystal.GetComponent<CMineralsBehaviour>().Quantity = mineralResourceAmount;
@@ -102,22 +100,6 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 				m_aDeposits.Add(cCrystal);
 			}
 		}
-
-        /*
-        RaycastHit[] cRaycastHits = Physics.RaycastAll(transform.position, Random.insideUnitSphere, 300);
-
-        foreach (RaycastHit cRaycastHit in cRaycastHits)
-        {
-            int iRandom = Random.Range(0, cRaycastHits.Length);
-            //Debug.Log(string.Format("Start({0}) End({1}) Result({2})", 0, cRaycastHits.Length, iRandom));
-            GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
-            cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHits[iRandom].point);
-            cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-
-
-            break;
-        }
-        */
 	}
 
 

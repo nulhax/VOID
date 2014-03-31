@@ -17,7 +17,8 @@ float4 void_SampleFog(fixed4 screenPos, fixed3 worldPos, fixed4 sourceColour)
 	fixed3 vecCameraToPos = worldPos - _WorldSpaceCameraPos;
 	fixed3 dirCameraToPos = normalize(vecCameraToPos);
 	fixed distFromCamera = length(vecCameraToPos);
-	fixed fogIntensity = 1.0f - saturate((void_FogEndDistance - distFromCamera) / (void_FogEndDistance - void_FogStartDistance));
+	fixed deltaFogStartEnd = void_FogEndDistance - void_FogStartDistance;
+	fixed fogIntensity = deltaFogStartEnd ? 1.0f - saturate((void_FogEndDistance - distFromCamera) / deltaFogStartEnd) : 0.0f;
 	return lerp(sourceColour, texCUBE(void_Skybox1, dirCameraToPos), fogIntensity);
 }
 
