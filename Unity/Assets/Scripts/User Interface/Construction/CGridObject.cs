@@ -76,7 +76,7 @@ public abstract class CGridObject : MonoBehaviour
 		return(m_Location.ToString());
 	}
 
-	protected void FindNeighbours()
+	public void FindNeighbours()
 	{
 		m_NeighbourHood.Clear();
 		

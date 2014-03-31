@@ -38,6 +38,9 @@ public class CTile : CGridObject
 	}
 
 	// Member Delegates & Events
+	public delegate void HandleTileEvent(CTile _Self);
+
+	public event HandleTileEvent EventTileAppearanceChanged;
 
 
 	// Member Fields
@@ -92,9 +95,6 @@ public class CTile : CGridObject
 
 	private void Start()
 	{
-		// Find the neighbours
-		FindNeighbours();
-
 		// Update the neighbourhood
 		UpdateNeighbourhood();
 
@@ -261,6 +261,10 @@ public class CTile : CGridObject
 
 		// Update Wall Caps
 		UpdateWallTileCaps();
+
+		// Fire event on appearance change
+		if(EventTileAppearanceChanged != null)
+			EventTileAppearanceChanged(this);
 	}
 
 	private void UpdateWallTileCaps()

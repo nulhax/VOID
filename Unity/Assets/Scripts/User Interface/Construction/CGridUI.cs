@@ -68,6 +68,8 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
+	public Material m_TileMaterial = null;
+
 	private RaycastHit m_RaycastHit;
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
@@ -96,6 +98,10 @@ public class CGridUI : MonoBehaviour
 	private void Awake()
 	{
 		m_Grid = gameObject.GetComponent<CGrid>();
+
+		// Register tile creation/removal
+		m_Grid.EventTileAdded += OnTileCreated;
+		m_Grid.EventTileRemoved += OnTileRemoved;
 	}
 	
 	private void Start() 
@@ -149,6 +155,13 @@ public class CGridUI : MonoBehaviour
 			case EMode.ManualWallLayout: UpdateLayoutInput(); break;
 			default: break;
 		}
+
+		// Update the material variables
+		Vector3 up = m_Grid.transform.up;
+		Vector3 pos = m_Grid.transform.position;
+		m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
+		m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
+		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
 	}
 
 	private void UpdateDefaultInput()
@@ -449,12 +462,64 @@ public class CGridUI : MonoBehaviour
 
 	private void OnTileCreated(CTile _Tile)
 	{
+		// Check the tiles lower/upper neighbours for ceiling check
+		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
+		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
 
+		// If upper exists, remove my ceiling
+		if(upper != null)
+		{
+			_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+		}
+
+		// If lower exists, remove their ceiling
+		if(lower != null)
+		{
+			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+		}
+
+		// Register tile appearance change
+		_Tile.EventTileAppearanceChanged += OnTileAppearanceChange;
 	}
 
-	private void OnTileDestroyed(CTile _Tile)
+	private void OnTileRemoved(CTile _Tile)
 	{
-		
+		// Check the tiles lower neighbours for ceiling check
+		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
+
+		// If lower exists, re-enable ceiling
+		if(lower != null)
+		{
+			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, true);
+		}
+
+		// Unregister tile appearance change
+		_Tile.EventTileAppearanceChanged -= OnTileAppearanceChange;
+	}
+
+	private void OnTileAppearanceChange(CTile _Tile)
+	{
+		// Set the material for all children and self
+		Renderer tileRenderer = _Tile.gameObject.GetComponent<Renderer>();
+		if(tileRenderer != null)
+		{
+			Material[] sharedMaterials = tileRenderer.sharedMaterials;
+			for(int i = 0; i < tileRenderer.sharedMaterials.Length; ++i)
+			{
+				tileRenderer.sharedMaterials[i] = m_TileMaterial;
+			}
+			tileRenderer.sharedMaterials = sharedMaterials;
+		}
+
+		foreach(Renderer childRenderer in _Tile.gameObject.GetComponentsInChildren<Renderer>())
+		{
+			Material[] sharedMaterials = childRenderer.sharedMaterials;
+			for(int i = 0; i < childRenderer.sharedMaterials.Length; ++i)
+			{
+				sharedMaterials[i] = m_TileMaterial;
+			}
+			childRenderer.sharedMaterials = sharedMaterials;
+		}
 	}
 }
 

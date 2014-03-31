@@ -161,6 +161,9 @@ public class CGrid : MonoBehaviour
 			}
 			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
 
+			// Find neighbours
+			tile.FindNeighbours();
+
 			// Fire event for tile creation
 			if(EventTileAdded != null)
 				EventTileAdded(tile);
@@ -174,8 +177,8 @@ public class CGrid : MonoBehaviour
 			CTile tile = m_GridBoard[_GridPoint.ToString()];
 
 			// Fire event for tile removal
-			if(EventTileAdded != null)
-				EventTileAdded(tile);
+			if(EventTileRemoved != null)
+				EventTileRemoved(tile);
 
 			// Release
 			tile.Release();

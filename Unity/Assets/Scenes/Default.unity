@@ -186,7 +186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &137407268
 Transform:
   m_ObjectHideFlags: 0
@@ -900,7 +900,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &873988330
 Transform:
   m_ObjectHideFlags: 0
@@ -1208,7 +1208,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
       propertyPath: m_Enabled
@@ -1684,6 +1684,7 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  m_TileMaterial: {fileID: 2100000, guid: 25be727da0628a744a21d4a0f0b72178, type: 2}
 --- !u!1 &1252298741
 GameObject:
   m_ObjectHideFlags: 0
@@ -2145,7 +2146,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1432749548
 Renderer:
   m_ObjectHideFlags: 0
