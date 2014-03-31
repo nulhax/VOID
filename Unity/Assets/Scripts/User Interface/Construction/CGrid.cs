@@ -38,7 +38,11 @@ public class CGrid : MonoBehaviour
 
 	
 	// Member Delegates & Events
+	public delegate void HandleTileEvent(CTile _Tile);
 	
+	public event HandleTileEvent EventTileAdded;
+	public event HandleTileEvent EventTileRemoved;
+
 	
 	// Member Fields
 	private Transform m_TileContainer = null;
@@ -155,8 +159,11 @@ public class CGrid : MonoBehaviour
 			{
 				tile.SetTileTypeState(type, true);
 			}
-
 			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+
+			// Fire event for tile creation
+			if(EventTileAdded != null)
+				EventTileAdded(tile);
 		}
 	}
 
@@ -165,8 +172,15 @@ public class CGrid : MonoBehaviour
 		if (m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
 			CTile tile = m_GridBoard[_GridPoint.ToString()];
+
+			// Fire event for tile removal
+			if(EventTileAdded != null)
+				EventTileAdded(tile);
+
+			// Release
 			tile.Release();
 
+			// Destroy
 			m_GridBoard.Remove(_GridPoint.ToString());
 			Destroy(tile.gameObject);
 		}

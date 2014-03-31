@@ -38,10 +38,6 @@ public class CTile : CGridObject
 	}
 
 	// Member Delegates & Events
-	public delegate void HandleTileCreationDeath(CTile _Self);
-
-	public event HandleTileCreationDeath EventTileCreated;
-	public event HandleTileCreationDeath EventTileReleased;
 
 
 	// Member Fields
@@ -104,10 +100,6 @@ public class CTile : CGridObject
 
 		// Update current meta data
 		UpdateTileMetaData();
-
-		// Fire Creation event
-		if(EventTileCreated != null)
-			EventTileCreated(this);
 	}
 
 	private void OnDestroy()
@@ -376,10 +368,6 @@ public class CTile : CGridObject
 
 		// Release all inverse wall objects
 		ReleaseWallInverseTiles();
-
-		// Fire Release event
-		if(EventTileReleased != null)
-			EventTileReleased(this);
 
 		// Clear meta data
 		m_TileMetaData[ETileType.Floor] = new TTileMeta();

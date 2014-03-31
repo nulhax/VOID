@@ -93,18 +93,18 @@ public class CGridUI : MonoBehaviour
 	}
 	
 	// Member Methods
-	void Awake()
+	private void Awake()
 	{
 		m_Grid = gameObject.GetComponent<CGrid>();
 	}
 	
-	void Start() 
+	private void Start() 
 	{
 		// Create the grid objects
 		CreateGridUIObjects();
 	}
 	
-	void CreateGridUIObjects()
+	private void CreateGridUIObjects()
 	{
 		m_GridPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		m_GridPlane.name = "Raycast Plane";
@@ -125,13 +125,13 @@ public class CGridUI : MonoBehaviour
 		m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 		m_GridCursor.transform.localPosition = Vector3.zero;
 		m_GridCursor.transform.localRotation = Quaternion.identity;
-		
+
 		// Update scale and clamp
 		m_GridScale = Mathf.Clamp(m_GridScale, m_GridScaleLimits.x, m_GridScaleLimits.y);
 		UpdateGridScale(m_GridScale);
 	}
 	
-	void Update() 
+	private void Update() 
 	{
 		m_CurrentMousePosition = Input.mousePosition;
 
@@ -151,7 +151,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 
-	void UpdateDefaultInput()
+	private void UpdateDefaultInput()
 	{
 		// Toggle modes
 		if(Input.GetKeyDown(KeyCode.Alpha1))
@@ -233,7 +233,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 	
-	void UpdateLayoutInput()
+	private void UpdateLayoutInput()
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
@@ -249,7 +249,7 @@ public class CGridUI : MonoBehaviour
 				else
 					m_CurrentInteraction = EInteraction.CursorPaint;
 			}
-			
+
 			// Left Click Hold
 			if(Input.GetMouseButton(0))
 			{
@@ -300,7 +300,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 
-	void UpdateManualWallsInput()
+	private void UpdateManualWallsInput()
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
@@ -345,7 +345,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 	
-	void UpdateGridScale(float _GridScale)
+	private void UpdateGridScale(float _GridScale)
 	{
 		m_GridScale = _GridScale;
 
@@ -356,7 +356,7 @@ public class CGridUI : MonoBehaviour
 		m_GridPlane.transform.localScale = Vector3.one * 0.5f / _GridScale;
 	}
 
-	void ChangeVerticalLayer(int _Direction)
+	private void ChangeVerticalLayer(int _Direction)
 	{
 		m_CurrentVerticalLayer += _Direction;
 
@@ -365,7 +365,7 @@ public class CGridUI : MonoBehaviour
 		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
 	}
 	
-	void UpdateCursor()
+	private void UpdateCursor()
 	{
 		if(m_CurrentInteraction == EInteraction.DragSelection)
 		{
@@ -445,6 +445,16 @@ public class CGridUI : MonoBehaviour
 				else m_Grid.AddNewTile(new TGridPoint(x, point1.y, z), s_TT_FeWC);
 			}
 		}
+	}
+
+	private void OnTileCreated(CTile _Tile)
+	{
+
+	}
+
+	private void OnTileDestroyed(CTile _Tile)
+	{
+		
 	}
 }
 
