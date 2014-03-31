@@ -71,7 +71,11 @@ public class CGridUI : MonoBehaviour
 	private RaycastHit m_RaycastHit;
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
-	
+
+	private static CTile.ETileType[] s_TT_F = new CTile.ETileType[] { CTile.ETileType.Floor };
+	private static CTile.ETileType[] s_TT_FeW = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext };
+	private static CTile.ETileType[] s_TT_FeWC = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext, CTile.ETileType.Ceiling };
+
 	// Member Properties
 	public bool IsShiftKeyDown
 	{
@@ -86,7 +90,7 @@ public class CGridUI : MonoBehaviour
 	public bool AltKeyDown
 	{
 		get { return(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)); }
-	}		          
+	}
 	
 	// Member Methods
 	void Awake()
@@ -255,7 +259,7 @@ public class CGridUI : MonoBehaviour
 					{
 						if(m_CurrentInteractionMode == EMode.AutoLayout)
 						{
-							m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+							m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 						}
 						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
 						{
@@ -268,7 +272,7 @@ public class CGridUI : MonoBehaviour
 					{
 						if(m_CurrentInteractionMode == EMode.AutoLayout)
 						{
-							m_Grid.CreateTile(m_CurrentMouseGridPoint);
+							m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
 						}
 						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
 						{
@@ -319,9 +323,9 @@ public class CGridUI : MonoBehaviour
 				if(m_CurrentInteraction == EInteraction.CursorPaint)
 				{
 					if(IsCtrlKeyDown)
-						m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+						m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 					else
-						m_Grid.CreateTile(m_CurrentMouseGridPoint);
+						m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
 				}
 			}
 			
@@ -437,8 +441,8 @@ public class CGridUI : MonoBehaviour
 		{
 			for(int z = bottom; z < (bottom + height); ++z)
 			{
-				if(_Remove) m_Grid.RemoveTile(new TGridPoint(x, point1.y, z));
-				else m_Grid.CreateTile(new TGridPoint(x, point1.y, z));
+				if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, point1.y, z));
+				else m_Grid.AddNewTile(new TGridPoint(x, point1.y, z), s_TT_FeWC);
 			}
 		}
 	}
