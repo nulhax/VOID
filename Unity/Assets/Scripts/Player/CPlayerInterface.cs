@@ -88,7 +88,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        // Empty
+       //empty
 	}
 
 
@@ -101,6 +101,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 
 	void Update()
 	{
+
 	}
 
 
@@ -117,12 +118,43 @@ public class CPlayerInterface : CNetworkMonoBehaviour
                 m_cModelFirstPerson = GameObject.Instantiate(m_cModelFirstPerson) as GameObject;
                 m_cModelFirstPerson.transform.parent = transform;
                 m_cModelFirstPerson.transform.localPosition = Vector3.zero;
+
+				//Apply skeleton variables from model to ragdoll script
+				CPlayerSkeleton skeleton = m_cModelFirstPerson.GetComponent<CPlayerSkeleton>();
+				CPlayerRagdoll ragdoll = gameObject.GetComponent<CPlayerRagdoll>();
+				Animator animator = gameObject.GetComponent<Animator>();
+
+				animator.avatar = skeleton.PlayerAvatar;
+				animator.enabled = false;
+				animator.enabled = true;
+
+				ragdoll.m_RootSkeleton 	= 	skeleton.SkeletonRoot.transform;
+				ragdoll.m_PlayerHead 	= 	skeleton.PlayerHead;
+				ragdoll.m_RagdollHead 	= 	skeleton.RagdollHead; 
+
+				ragdoll.Initialise();
+
             }
             else
             {
                 m_cModel = GameObject.Instantiate(m_cModel) as GameObject;
                 m_cModel.transform.parent = transform;
                 m_cModel.transform.localPosition = Vector3.zero;
+
+				//Apply skeleton variables from model to ragdoll script
+				CPlayerSkeleton skeleton = m_cModel.GetComponent<CPlayerSkeleton>();
+				CPlayerRagdoll ragdoll = gameObject.GetComponent<CPlayerRagdoll>();
+				Animator animator = gameObject.GetComponent<Animator>();
+				
+				animator.avatar = skeleton.PlayerAvatar;
+				animator.enabled = false;
+				animator.enabled = true;
+				
+				ragdoll.m_RootSkeleton 	= 	skeleton.SkeletonRoot.transform;
+				ragdoll.m_PlayerHead 	= 	skeleton.PlayerHead;
+				ragdoll.m_RagdollHead 	= 	skeleton.RagdollHead; 
+
+				ragdoll.Initialise();
             }
         }
     }

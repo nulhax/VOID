@@ -49,7 +49,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-       m_bRagdollState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
+       m_bRagdollState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, (byte)ERagdollState.Invalid);
     }
     
     void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
@@ -113,7 +113,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     }
     
     // Use this for initialization
-    void Start ()
+    public void Initialise ()
 	{
         SetKinematicRagdoll();		
         SetRagdollLayer();
@@ -134,14 +134,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 	// Update is called once per frame
 	void LateUpdate () 
 	{
-		if (m_bRagdollState.Get() == (byte)ERagdollState.PlayerDown) 
-		{
-			//Vector3 skeletonPos = m_RootSkeleton.position;
-			//transform.position = m_RootSkeleton.position;
-			//m_RootSkeleton.position = skeletonPos;
 
-			//m_RootSkeleton.localPosition = m_initialOffset;
-		}
 	}
 
     [AServerOnly]
@@ -172,7 +165,10 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         //Enable ragdoll and set position
         SetDynamicRagdoll();
 
-		CGameCameras.SetMainCameraParent(m_RagdollHead);
+		if (CGamePlayers.SelfActor == gameObject) 
+		{
+			CGameCameras.SetMainCameraParent (m_RagdollHead);
+		}
     }
 
     void DeactivateRagdoll()
@@ -180,8 +176,11 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         //Disable ragdoll and set position
         SetKinematicRagdoll(); 
 
-		CGameCameras.SetMainCameraParent(m_PlayerHead);
-		CGameCameras.ResetCamera();
+		if (CGamePlayers.SelfActor == gameObject) 
+		{
+			CGameCameras.SetMainCameraParent (m_PlayerHead);
+			CGameCameras.ResetCamera ();
+		}
 
 		m_RagdollHead.transform.rotation = Quaternion.identity;
 
@@ -226,7 +225,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         }
 	}
 
-    void SetRagdollLayer()
+    public void SetRagdollLayer()
     {
         Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
 
