@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: TestExpansionMat
-  m_Shader: {fileID: 4800000, guid: 55c961d545192924f8f67c40bb6cda32, type: 3}
+  m_Name: Grid UI Tiles
+  m_Shader: {fileID: 4800000, guid: e07c08e95ca735e4aa7f4484dfd32b1f, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -45,11 +45,11 @@ Material:
       data:
         first:
           name: _Saturation
-        second: .5
+        second: .800000012
       data:
         first:
           name: _Brightness
-        second: 3
+        second: 2
       data:
         first:
           name: _SpecPower
@@ -57,15 +57,15 @@ Material:
       data:
         first:
           name: _MinHeight
-        second: -1
+        second: 0
       data:
         first:
           name: _MaxHeight
-        second: 4.5
+        second: 1.5
       data:
         first:
           name: _Amount
-        second: .446428537
+        second: 1
       data:
         first:
           name: _GlowIntensity
@@ -73,11 +73,11 @@ Material:
       data:
         first:
           name: _FadeDist
-        second: .5
+        second: .300000012
       data:
         first:
           name: _FadeDistRatio
-        second: .5
+        second: .00999999978
       data:
         first:
           name: _NoiseFreq
@@ -86,11 +86,15 @@ Material:
         first:
           name: _NoiseSpeed
         second: .25
+      data:
+        first:
+          name: _GlowDist
+        second: .0600000024
     m_Colors:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: .602941155, g: .836740553, b: 1, a: .0705882385}
       data:
         first:
           name: _DiffuseCol
@@ -103,3 +107,11 @@ Material:
         first:
           name: _Tint
         second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
+      data:
+        first:
+          name: _PlaneNormal
+        second: {r: .150840431, g: .799684584, b: .581164122, a: 0}
+      data:
+        first:
+          name: _PlanePoint
+        second: {r: 0, g: 1.39999998, b: 4, a: 0}

@@ -68,10 +68,16 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
+	public Material m_TileMaterial = null;
+
 	private RaycastHit m_RaycastHit;
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
-	
+
+	private static CTile.ETileType[] s_TT_F = new CTile.ETileType[] { CTile.ETileType.Floor };
+	private static CTile.ETileType[] s_TT_FeW = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext };
+	private static CTile.ETileType[] s_TT_FeWC = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext, CTile.ETileType.Ceiling };
+
 	// Member Properties
 	public bool IsShiftKeyDown
 	{
@@ -86,21 +92,25 @@ public class CGridUI : MonoBehaviour
 	public bool AltKeyDown
 	{
 		get { return(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt)); }
-	}		          
-	
-	// Member Methods
-	void Awake()
-	{
-		m_Grid = gameObject.GetComponent<CGrid>();
 	}
 	
-	void Start() 
+	// Member Methods
+	private void Awake()
+	{
+		m_Grid = gameObject.GetComponent<CGrid>();
+
+		// Register tile creation/removal
+		m_Grid.EventTileAdded += OnTileCreated;
+		m_Grid.EventTileRemoved += OnTileRemoved;
+	}
+	
+	private void Start() 
 	{
 		// Create the grid objects
 		CreateGridUIObjects();
 	}
 	
-	void CreateGridUIObjects()
+	private void CreateGridUIObjects()
 	{
 		m_GridPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		m_GridPlane.name = "Raycast Plane";
@@ -121,13 +131,13 @@ public class CGridUI : MonoBehaviour
 		m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 		m_GridCursor.transform.localPosition = Vector3.zero;
 		m_GridCursor.transform.localRotation = Quaternion.identity;
-		
+
 		// Update scale and clamp
 		m_GridScale = Mathf.Clamp(m_GridScale, m_GridScaleLimits.x, m_GridScaleLimits.y);
 		UpdateGridScale(m_GridScale);
 	}
 	
-	void Update() 
+	private void Update() 
 	{
 		m_CurrentMousePosition = Input.mousePosition;
 
@@ -145,9 +155,16 @@ public class CGridUI : MonoBehaviour
 			case EMode.ManualWallLayout: UpdateLayoutInput(); break;
 			default: break;
 		}
+
+		// Update the material variables
+		Vector3 up = m_Grid.transform.up;
+		Vector3 pos = m_Grid.transform.position;
+		m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
+		m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
+		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
 	}
 
-	void UpdateDefaultInput()
+	private void UpdateDefaultInput()
 	{
 		// Toggle modes
 		if(Input.GetKeyDown(KeyCode.Alpha1))
@@ -229,7 +246,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 	
-	void UpdateLayoutInput()
+	private void UpdateLayoutInput()
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
@@ -245,7 +262,7 @@ public class CGridUI : MonoBehaviour
 				else
 					m_CurrentInteraction = EInteraction.CursorPaint;
 			}
-			
+
 			// Left Click Hold
 			if(Input.GetMouseButton(0))
 			{
@@ -255,7 +272,7 @@ public class CGridUI : MonoBehaviour
 					{
 						if(m_CurrentInteractionMode == EMode.AutoLayout)
 						{
-							m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+							m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 						}
 						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
 						{
@@ -268,7 +285,7 @@ public class CGridUI : MonoBehaviour
 					{
 						if(m_CurrentInteractionMode == EMode.AutoLayout)
 						{
-							m_Grid.CreateTile(m_CurrentMouseGridPoint);
+							m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
 						}
 						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
 						{
@@ -296,7 +313,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 
-	void UpdateManualWallsInput()
+	private void UpdateManualWallsInput()
 	{
 		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
 		{
@@ -319,9 +336,9 @@ public class CGridUI : MonoBehaviour
 				if(m_CurrentInteraction == EInteraction.CursorPaint)
 				{
 					if(IsCtrlKeyDown)
-						m_Grid.RemoveTile(m_CurrentMouseGridPoint);
+						m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 					else
-						m_Grid.CreateTile(m_CurrentMouseGridPoint);
+						m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
 				}
 			}
 			
@@ -341,7 +358,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 	
-	void UpdateGridScale(float _GridScale)
+	private void UpdateGridScale(float _GridScale)
 	{
 		m_GridScale = _GridScale;
 
@@ -352,7 +369,7 @@ public class CGridUI : MonoBehaviour
 		m_GridPlane.transform.localScale = Vector3.one * 0.5f / _GridScale;
 	}
 
-	void ChangeVerticalLayer(int _Direction)
+	private void ChangeVerticalLayer(int _Direction)
 	{
 		m_CurrentVerticalLayer += _Direction;
 
@@ -361,7 +378,7 @@ public class CGridUI : MonoBehaviour
 		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
 	}
 	
-	void UpdateCursor()
+	private void UpdateCursor()
 	{
 		if(m_CurrentInteraction == EInteraction.DragSelection)
 		{
@@ -437,9 +454,71 @@ public class CGridUI : MonoBehaviour
 		{
 			for(int z = bottom; z < (bottom + height); ++z)
 			{
-				if(_Remove) m_Grid.RemoveTile(new TGridPoint(x, point1.y, z));
-				else m_Grid.CreateTile(new TGridPoint(x, point1.y, z));
+				if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, point1.y, z));
+				else m_Grid.AddNewTile(new TGridPoint(x, point1.y, z), s_TT_FeWC);
 			}
+		}
+	}
+
+	private void OnTileCreated(CTile _Tile)
+	{
+		// Check the tiles lower/upper neighbours for ceiling check
+		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
+		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
+
+		// If upper exists, remove my ceiling
+		if(upper != null)
+		{
+			_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+		}
+
+		// If lower exists, remove their ceiling
+		if(lower != null)
+		{
+			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+		}
+
+		// Register tile appearance change
+		_Tile.EventTileAppearanceChanged += OnTileAppearanceChange;
+	}
+
+	private void OnTileRemoved(CTile _Tile)
+	{
+		// Check the tiles lower neighbours for ceiling check
+		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
+
+		// If lower exists, re-enable ceiling
+		if(lower != null)
+		{
+			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, true);
+		}
+
+		// Unregister tile appearance change
+		_Tile.EventTileAppearanceChanged -= OnTileAppearanceChange;
+	}
+
+	private void OnTileAppearanceChange(CTile _Tile)
+	{
+		// Set the material for all children and self
+		Renderer tileRenderer = _Tile.gameObject.GetComponent<Renderer>();
+		if(tileRenderer != null)
+		{
+			Material[] sharedMaterials = tileRenderer.sharedMaterials;
+			for(int i = 0; i < tileRenderer.sharedMaterials.Length; ++i)
+			{
+				tileRenderer.sharedMaterials[i] = m_TileMaterial;
+			}
+			tileRenderer.sharedMaterials = sharedMaterials;
+		}
+
+		foreach(Renderer childRenderer in _Tile.gameObject.GetComponentsInChildren<Renderer>())
+		{
+			Material[] sharedMaterials = childRenderer.sharedMaterials;
+			for(int i = 0; i < childRenderer.sharedMaterials.Length; ++i)
+			{
+				sharedMaterials[i] = m_TileMaterial;
+			}
+			childRenderer.sharedMaterials = sharedMaterials;
 		}
 	}
 }

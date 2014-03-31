@@ -22,19 +22,36 @@ using System;
 
 
 public class CGrid : MonoBehaviour 
-{
-	
+{	
 	// Member Types
+	public struct TCreateTileInfo
+	{
+		public TCreateTileInfo(TGridPoint _GridPoint, CTile.ETileType[] _TileTypes)
+		{
+			m_GridPoint = _GridPoint;
+			m_TileTypes = _TileTypes;
+		}
+
+		public TGridPoint m_GridPoint;
+		public CTile.ETileType[] m_TileTypes;
+	}
 
 	
 	// Member Delegates & Events
+	public delegate void HandleTileEvent(CTile _Tile);
 	
+	public event HandleTileEvent EventTileAdded;
+	public event HandleTileEvent EventTileRemoved;
+
 	
 	// Member Fields
 	private Transform m_TileContainer = null;
 
 	public float m_TileSize = 4.0f;
 	public CTileFactory m_TileFactory = null;
+
+	private List<TCreateTileInfo> m_CreateQueue = new List<TCreateTileInfo>();
+	private List<TGridPoint> m_DestroyQueue = new List<TGridPoint>();
 
 	private Dictionary<string, CTile> m_GridBoard = new Dictionary<string, CTile>();
 
@@ -50,6 +67,21 @@ public class CGrid : MonoBehaviour
 	{
 		// Create the grid objects
 		CreateGridObjects();
+	}
+
+	void Update()
+	{
+		foreach(TCreateTileInfo createInfo in m_CreateQueue)
+		{
+			CreateTile(createInfo);
+		}
+		m_CreateQueue.Clear();
+
+		foreach(TGridPoint point in m_DestroyQueue)
+		{
+			RemoveTile(point);
+		}
+		m_DestroyQueue.Clear();
 	}
 
 	void CreateGridObjects()
@@ -97,32 +129,61 @@ public class CGrid : MonoBehaviour
 		}
 		return(tile);
 	}
-	
-	public void CreateTile(TGridPoint _GridPoint)
+
+	public void AddNewTile(TGridPoint _GridPoint, CTile.ETileType[] _TileTypes)
 	{
-		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
+		m_CreateQueue.Add(new TCreateTileInfo(_GridPoint, _TileTypes));
+	}
+
+	public void ReleaseTile(TGridPoint _GridPoint)
+	{
+		m_DestroyQueue.Add(_GridPoint);
+	}
+	
+	private void CreateTile(TCreateTileInfo _TileInfo)
+	{
+		if(!m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
 		{
 			GameObject newtile = new GameObject("Tile");
 			newtile.transform.parent = m_TileContainer;
 			newtile.transform.localScale = Vector3.one;
 			newtile.transform.localRotation = Quaternion.identity;
-			newtile.transform.localPosition = GetLocalPosition(_GridPoint);
+			newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
 
 			CTile tile = newtile.AddComponent<CTile>();
 			tile.m_Grid = this;
-			tile.m_Location = _GridPoint;
+			tile.m_Location = _TileInfo.m_GridPoint;
 
-			m_GridBoard.Add(_GridPoint.ToString(), tile);
+			// Set the active tile types
+			foreach(CTile.ETileType type in _TileInfo.m_TileTypes)
+			{
+				tile.SetTileTypeState(type, true);
+			}
+			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+
+			// Find neighbours
+			tile.FindNeighbours();
+
+			// Fire event for tile creation
+			if(EventTileAdded != null)
+				EventTileAdded(tile);
 		}
 	}
 
-	public void RemoveTile(TGridPoint _GridPoint)
+	private void RemoveTile(TGridPoint _GridPoint)
 	{
 		if (m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
 			CTile tile = m_GridBoard[_GridPoint.ToString()];
+
+			// Fire event for tile removal
+			if(EventTileRemoved != null)
+				EventTileRemoved(tile);
+
+			// Release
 			tile.Release();
 
+			// Destroy
 			m_GridBoard.Remove(_GridPoint.ToString());
 			Destroy(tile.gameObject);
 		}

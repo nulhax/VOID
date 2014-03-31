@@ -18,9 +18,9 @@
 		}
 		
 		Blend SrcAlpha OneMinusSrcAlpha
-		AlphaTest Greater 0.1
+		AlphaTest Greater 0
 		ZWrite Off 
-		Cull Back
+		Cull Off 
 		
 		CGPROGRAM
 			#pragma surface surf Lambert vertex:vert
@@ -42,18 +42,21 @@
 		
 			void surf(Input IN, inout SurfaceOutput o)
 			{			
-				float4 tint = _Color;																																																																
-				float4 col = tex2D(_Diffuse, IN.uv_Diffuse.xy);
+				float alpha = 0.0;
+				float3 col = tex2D(_Diffuse, IN.uv_Diffuse.xy).rgb;
 				
 				// Greyscale intensitity constant
-				float3 gsik = dot(float3(0.3, 0.59, 0.11), col.rgb);	
+				float3 gsik = dot(float3(0.3, 0.59, 0.11), col);	
 				
-				// Saturate color and add tint
-				col.rgb = _Saturation * gsik + col.rgb * (1.0 - _Saturation);
-				col = saturate(col * _Brightness);
+				// Saturate color, add brightness and add tint
+				col = _Saturation * gsik + col * (1.0 - _Saturation);
+				col = 0.5 + (col * _Brightness) * 0.5;
+				col = col * _Color.rgb;
 				
-				o.Emission = col.rgb * tint.rgb;
-				o.Alpha = tint.a;
+				alpha = _Color.a;
+				
+				o.Alpha = alpha;
+				o.Emission = col;
 			}
 		ENDCG
 		

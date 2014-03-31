@@ -32,6 +32,23 @@ public abstract class CGridObject : MonoBehaviour
 	// Member Fields
 	public TGridPoint m_Location;
 	public CGrid m_Grid = null;
+	public EDirection m_LocalNorth = EDirection.North;
+	public List<CNeighbour> m_NeighbourHood = new List<CNeighbour>();
+	
+	private List<CNeighbour> s_AllNeighbours = new List<CNeighbour>(
+		new CNeighbour[] 
+		{
+		new CNeighbour(new TGridPoint(0, 0, 1), EDirection.North),
+		new CNeighbour(new TGridPoint(1, 0, 0), EDirection.East),
+		new CNeighbour(new TGridPoint(0, 0, -1), EDirection.South),
+		new CNeighbour(new TGridPoint(-1, 0, 0), EDirection.West),
+		new CNeighbour(new TGridPoint(1, 0, 1), EDirection.NorthEast),
+		new CNeighbour(new TGridPoint(1, 0, -1), EDirection.SouthEast),
+		new CNeighbour(new TGridPoint(-1, 0, -1), EDirection.SouthWest),
+		new CNeighbour(new TGridPoint(-1, 0, 1), EDirection.NorthWest),
+		new CNeighbour(new TGridPoint(0, 1, 0), EDirection.Upper),
+		new CNeighbour(new TGridPoint(0, -1, 0), EDirection.Lower),
+	});
 	
 	// Member Properties
 	public int x 
@@ -57,6 +74,27 @@ public abstract class CGridObject : MonoBehaviour
 	public override string ToString()
 	{
 		return(m_Location.ToString());
+	}
+
+	public void FindNeighbours()
+	{
+		m_NeighbourHood.Clear();
+		
+		foreach(CNeighbour pn in s_AllNeighbours) 
+		{
+			TGridPoint possibleNeightbour = new TGridPoint(x + pn.m_GridPointOffset.x, 
+			                                               y + pn.m_GridPointOffset.y, 
+			                                               z + pn.m_GridPointOffset.z);
+			
+			CTile tile = m_Grid.GetTile(possibleNeightbour);
+			if(tile != null)
+			{
+				CNeighbour newNeighbour = new CNeighbour(pn.m_GridPointOffset, pn.m_WorldDirection);
+				newNeighbour.m_Tile = tile;
+				
+				m_NeighbourHood.Add(newNeighbour);
+			}
+		}
 	}
 }
 
