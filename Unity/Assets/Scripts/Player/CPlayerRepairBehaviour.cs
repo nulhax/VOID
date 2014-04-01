@@ -52,7 +52,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 		if(_cViewId.GameObject != null)
 		{
 			m_HeldTool = _cViewId.GameObject.GetComponent<CToolInterface>();
-            gameObject.GetComponent<CThirdPersonAnimController>().RaiseArm();
+
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
             //Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
@@ -60,7 +60,7 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 		else
 		{
             m_HeldTool = null;
-            gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();
+
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
             //Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
@@ -69,7 +69,6 @@ public class CPlayerRepairBehaviour : MonoBehaviour
     void OnToolDrop(CNetworkViewId _cViewId)
     {
         m_HeldTool = null;
-        gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();  
     }
 	
     /*

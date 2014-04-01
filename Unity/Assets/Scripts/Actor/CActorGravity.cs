@@ -31,9 +31,12 @@ public class CActorGravity : CNetworkMonoBehaviour
 	public event NotifyGravityInfulenceChange EventExitedGravityZone;
 
 	// Member Fields
+	public bool m_bSimulateClientGravity;
+
 	private CNetworkVar<bool> m_UnderGravityInfluence = null;
 
-	private Vector3 m_GravityAcceleration = Vector3.zero;
+	private CNetworkVar<Vector3> m_GravityAcceleration = null;
+
 	private List<GameObject> m_FacilitiesInfluencingGravity = new List<GameObject>();
 
 	// Member Properties
@@ -47,6 +50,7 @@ public class CActorGravity : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_UnderGravityInfluence = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_GravityAcceleration = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)
@@ -68,7 +72,7 @@ public class CActorGravity : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			m_GravityAcceleration = Vector3.zero;
+			m_GravityAcceleration.Set(Vector3.zero);
 
 			CheckGravityInfluence();
 
@@ -78,12 +82,13 @@ public class CActorGravity : CNetworkMonoBehaviour
 			foreach(GameObject facility in m_FacilitiesInfluencingGravity)
 			{
 				CFacilityGravity fg = facility.GetComponent<CFacilityGravity>();
-				if(fg.IsGravityEnabled && fg.FacilityGravityAcceleration.sqrMagnitude > m_GravityAcceleration.sqrMagnitude)
+				if(fg.IsGravityEnabled && fg.FacilityGravityAcceleration.sqrMagnitude > m_GravityAcceleration.Get().sqrMagnitude)
 				{
-					m_GravityAcceleration = fg.FacilityGravityAcceleration;
+					m_GravityAcceleration.Set (fg.FacilityGravityAcceleration);
 				}
 			}
 		}
+
 	}
 
 	public void FixedUpdate()
@@ -91,8 +96,25 @@ public class CActorGravity : CNetworkMonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			if(rigidbody != null && IsUnderGravityInfluence)
-			{	
-				rigidbody.AddForce(m_GravityAcceleration, ForceMode.Acceleration);
+			{
+                Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody>();
+
+                foreach(Rigidbody body in rigidBodies)
+				{
+					body.AddForce(m_GravityAcceleration.Get(), ForceMode.Acceleration);
+				}
+			}
+		}
+		else if(!CNetwork.IsServer && m_bSimulateClientGravity) // Var which is "clientside gravity"
+        {
+			if(rigidbody != null && IsUnderGravityInfluence)
+			{
+				Rigidbody[] rigidBodies = gameObject.GetComponentsInChildren<Rigidbody>();
+				
+				foreach(Rigidbody body in rigidBodies)
+				{
+					body.AddForce(m_GravityAcceleration.Get(), ForceMode.Acceleration);
+				}
 			}
 		}
 	}
