@@ -56,6 +56,14 @@ Material:
         second: 1
       data:
         first:
+          name: _GlowIntensity
+        second: 2
+      data:
+        first:
+          name: _GlowDist
+        second: .0269999932
+      data:
+        first:
           name: _MinHeight
         second: 0
       data:
@@ -72,24 +80,16 @@ Material:
         second: .300000012
       data:
         first:
+          name: _FadeDistRatio
+        second: .00999999978
+      data:
+        first:
           name: _NoiseFreq
         second: 10
       data:
         first:
           name: _NoiseSpeed
         second: .25
-      data:
-        first:
-          name: _FadeDistRatio
-        second: .00999999978
-      data:
-        first:
-          name: _GlowIntensity
-        second: 2
-      data:
-        first:
-          name: _GlowDist
-        second: .0300000012
     m_Colors:
       data:
         first:
@@ -110,8 +110,8 @@ Material:
       data:
         first:
           name: _PlaneNormal
-        second: {r: 0, g: 1, b: 0, a: 0}
+        second: {r: -.105376646, g: .907777548, b: -.40599969, a: 0}
       data:
         first:
           name: _PlanePoint
-        second: {r: 0, g: 1.20000005, b: 4, a: 0}
+        second: {r: 0, g: 1.17999995, b: 4, a: 0}

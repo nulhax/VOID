@@ -73,21 +73,8 @@ public class CThirdPersonAnimController : MonoBehaviour
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		//Get collider
-		m_physCollider = GetComponent<CapsuleCollider>();
-		
-		m_ThirdPersonAnim.SetLayerWeight(1,0);
+		m_physCollider = GetComponent<CapsuleCollider>();	
 	}
-	
-	public void RaiseArm()
-	{
-        m_ThirdPersonAnim.SetLayerWeight(1,1);       		
-	}
-
-    
-    public void LowerArm()
-    {      
-        m_ThirdPersonAnim.SetLayerWeight(1,0);       
-    }
 	
 	void NotifyMovementStateChange(byte _bPreviousStates, byte _bNewSates)
 	{
