@@ -26,7 +26,8 @@ public class CPlayerRegen : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if(gameObject.GetComponent<CPlayerHealth>().Health != 100.0f)
+		if(CNetwork.IsServer &&
+           gameObject.GetComponent<CPlayerHealth>().Health != 100.0f)
 		{
 			// Heal the player
 			gameObject.GetComponent<CPlayerHealth>().ApplyHeal((0.01f * Time.deltaTime) / 100.0f);

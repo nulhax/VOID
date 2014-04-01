@@ -28,14 +28,19 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 // Member Types
 
 
+    [ABitSize(4)]
 	public enum ENetworkAction : byte
 	{
-		UpdateStates
+        INVALID,
+
+        MAX
 	}
 
 
-	public enum EState : uint
+	public enum EState
 	{
+        INVALID         = -1,
+
 		MoveForward		= 1 << 0,
 		MoveBackward	= 1 << 1,
 		MoveLeft		= 1 << 2,
@@ -54,27 +59,6 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
-
-
-	public float MovementSpeed
-	{
-		set { m_fMovementSpeed.Set(value); }
-		get { return (m_fMovementSpeed.Get()); }
-	}
-
-
-	public float SprintSpeed
-	{
-		set { m_fSprintSpeed.Set(value); }
-		get { return (m_fSprintSpeed.Get()); }
-	}
-
-
-	public float JumpSpeed
-	{
-		set { m_fJumpSpeed.Set(value); }
-		get { return (m_fJumpSpeed.Get()); }
-	}
 
 
 	public bool InputDisabled
@@ -107,12 +91,9 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fRotationY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fGravity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, -9.81f);
-		m_fMovementSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 6.5f);
-		m_fSprintSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 8.0f);
-		m_fJumpSpeed = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 2.0f);
-		m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
+		m_bStates    = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
 	}
+
 
 	[ALocalOnly]
 	public void DisableInput(object _cFreezeRequester)
@@ -120,6 +101,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		m_cInputDisableQueue.Add(_cFreezeRequester.GetType());
         gameObject.GetComponent<CThirdPersonAnimController>().DisableAnimation();
 	}
+
 
 	[ALocalOnly]
 	public void ReenableInput(object _cFreezeRequester)
@@ -129,14 +111,16 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	}
 
 
-	public static void SerializePlayerState(CNetworkStream _cStream)
+    [ALocalOnly]
+	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
         _cStream.Write(s_cSerializeStream);
         s_cSerializeStream.Clear();
 	}
 
 
-	public static void UnserializePlayerState(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
+    [AServerOnly]
+	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
 		GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
 
@@ -151,24 +135,6 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
                 switch (eNetworkAction)
                 {
-                    case ENetworkAction.UpdateStates:
-                        {
-                            cPlayerActorMotor.m_uiMovementStates = _cStream.Read<byte>();
-
-                            if (cPlayerActor != CGamePlayers.SelfActor)
-                            {
-                                cPlayerActor.transform.eulerAngles = new Vector3(0.0f, _cStream.Read<float>(), 0.0f);
-                            }
-                            else
-                            {
-                                _cStream.Read<float>();
-                            }
-
-                            cPlayerActorMotor.m_bStates.Set((byte)cPlayerActorMotor.m_uiMovementStates);
-                        }
-                        break;
-
-
                     default:
                         Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
                         break;
@@ -182,41 +148,76 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	{
 		m_CachedCapsuleCollider = GetComponent<CapsuleCollider>();
 
+        if (CNetwork.IsServer)
+        {
+            // Subscribe to client axis events
+            CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
+            CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
+
+            // Subscribe to client input events
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Forward,       OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Backwards,     OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft,    OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight,   OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Crouch,  OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump,    OnEventClientInputChange);
+            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Turbo,         OnEventClientInputChange);
+        }
+
 		if (!CNetwork.IsServer)
 		{
 			rigidbody.isKinematic = true;
 			rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
 		}
 	}
+
+
+    void OnDestory()
+    {
+        if (CNetwork.IsServer)
+        {
+            // Unsubscribe to client axis events
+            CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
+            CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
+
+            // Unsubscribe from client input events
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Forward,     OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Backwards,   OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft,  OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight, OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Crouch,      OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump,        OnEventClientInputChange);
+            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Turbo,             OnEventClientInputChange);
+        }
+    }
 	
 	
 	void Update()
 	{
-		CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
-		if(!airMotor.IsActive)
+		CPlayerAirMotor cAirMotor = GetComponent<CPlayerAirMotor>();
+
+		if(!cAirMotor.IsActive)
 		{
-			// Process grounded check on server and client
 			UpdateGrounded();
-			
-			// Process input only for client owned actors
-			if (CGamePlayers.SelfActor == gameObject)
-			{
-				UpdateRotation();
-				UpdateInput();				
-			}
+
+            if (CNetwork.IsServer)
+            {
+                m_fRotationY.Set(transform.eulerAngles.y);
+            }
 		}
 	}
 	
+
 	void FixedUpdate()
 	{
         if (CNetwork.IsServer)
         {
-			CPlayerAirMotor airMotor = GetComponent<CPlayerAirMotor>();
-			if (!airMotor.IsActive)
-		    {
-                ProcessMovement();
+			CPlayerAirMotor cAirMotor = GetComponent<CPlayerAirMotor>();
 
-                m_fRotationY.Set(transform.eulerAngles.y);
+			if (!cAirMotor.IsActive)
+		    {
+                UpdateRotation();
+                UpdateMovement();
 		    }
         }
 	}
@@ -229,6 +230,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 		RaycastHit[] hits = Physics.CapsuleCastAll(p1, p2, m_CachedCapsuleCollider.radius * 0.5f, -transform.up, 0.35f);
 
 		m_bGrounded = false;
+
 		foreach(RaycastHit hit in hits) 
 		{
 			if(!hit.collider.isTrigger && hit.collider != m_CachedCapsuleCollider) 
@@ -240,52 +242,41 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	}
 
 
+    [AServerOnly]
 	void UpdateRotation()
 	{
 		if (!InputDisabled)
 		{
-			transform.Rotate(0.0f, CUserInput.MouseMovementX, 0.0f);
+            if (m_fDeltaMouseX != 0.0f)
+            {
+                transform.Rotate(0.0f, m_fDeltaMouseX, 0.0f);
+
+                m_fDeltaMouseX = 0.0f;
+            }
 		}
 	}
 
 
-	void UpdateInput()
-	{
-		m_uiMovementStates  = 0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Forward)	? (uint)EState.MoveForward	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Backwards)	? (uint)EState.MoveBackward	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeLeft)		? (uint)EState.MoveLeft		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_StrafeRight)		? (uint)EState.MoveRight	: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Jump)			? (uint)EState.Jump			: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.Move_Turbo)			? (uint)EState.Sprint		: (uint)0;
-		m_uiMovementStates |= CUserInput.IsInputDown(CUserInput.EInput.MoveGround_Crouch)         ? (uint)EState.Crouch       : (uint)0;
-
-
-        s_cSerializeStream.Write((byte)ENetworkAction.UpdateStates);
-        s_cSerializeStream.Write((byte)m_uiMovementStates);
-        s_cSerializeStream.Write(transform.eulerAngles.y);
-	}
-
-
-	void ProcessMovement()
+    [AServerOnly]
+	void UpdateMovement()
 	{
         if (!InputDisabled)
         {
             // Direction movement
             Vector3 vMovementVelocity = new Vector3();
-            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveForward) > 0) ? transform.forward : Vector3.zero;
+            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveForward)  > 0) ? transform.forward : Vector3.zero;
             vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveBackward) > 0) ? transform.forward : Vector3.zero;
-            vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveLeft) > 0) ? transform.right : Vector3.zero;
-            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveRight) > 0) ? transform.right : Vector3.zero;
+            vMovementVelocity -= ((m_uiMovementStates & (uint)EState.MoveLeft)     > 0) ? transform.right   : Vector3.zero;
+            vMovementVelocity += ((m_uiMovementStates & (uint)EState.MoveRight)    > 0) ? transform.right   : Vector3.zero;
 
             // Apply direction movement speed
             vMovementVelocity = vMovementVelocity.normalized;
-            vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? SprintSpeed : MovementSpeed;
+            vMovementVelocity *= ((m_uiMovementStates & (uint)EState.Sprint) > 0) ? k_fSprintSpeed : k_fMoveSpeed;
 
             // Jump 
             if ((m_uiMovementStates & (uint)EState.Jump) > 0 && IsGrounded)
             {
-                vMovementVelocity.y = JumpSpeed;
+                vMovementVelocity.y = k_fJumpSpeed;
             }
 
             // Apply movement velocity
@@ -296,6 +287,90 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
             }
         }
 	}
+
+
+    [AServerOnly]
+    void OnEventClientAxisChange(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
+    {
+        // Check player is the owner of this actor
+        if (_ulPlayerId == GetComponent<CPlayerInterface>().PlayerId)
+        {
+            switch (_eAxis)
+            {
+                case CUserInput.EAxis.MouseX:
+                    m_fDeltaMouseX += _fValue;
+                    break;
+
+                case CUserInput.EAxis.MouseY:
+                    m_fDeltaMouseY += _fValue;
+                    break;
+
+                default:
+                    Debug.LogError("Unknown mouse axis: " + _eAxis);
+                    break;
+            }
+        }
+    }
+
+
+    [AServerOnly]
+    void OnEventClientInputChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
+    {
+        // Check player is the owner of this actor
+        if (_ulPlayerId == GetComponent<CPlayerInterface>().PlayerId)
+        {
+            EState eTargetState = EState.INVALID;
+
+            // Match the input towards a movement state
+            switch (_eInput)
+            {
+                case CUserInput.EInput.Move_Forward:
+                    eTargetState = EState.MoveForward;
+                    break;
+
+                case CUserInput.EInput.Move_Backwards:
+                    eTargetState = EState.MoveBackward;
+                    break;
+
+                case CUserInput.EInput.Move_StrafeLeft:
+                    eTargetState = EState.MoveLeft;
+                    break;
+
+                case CUserInput.EInput.Move_StrafeRight:
+                    eTargetState = EState.MoveRight;
+                    break;
+
+                case CUserInput.EInput.MoveGround_Crouch:
+                    eTargetState = EState.Crouch;
+                    break;
+
+                case CUserInput.EInput.MoveGround_Jump:
+                    eTargetState = EState.Jump;
+                    break;
+
+                case CUserInput.EInput.Move_Turbo:
+                    eTargetState = EState.Sprint;
+                    break;
+
+                default:
+                    Debug.LogError(string.Format("Unknown client input cange. Input({0})", _eInput));
+                    break;
+            }
+
+            if (eTargetState != EState.INVALID)
+            {
+                // Update state
+                if (_bDown)
+                {
+                    m_uiMovementStates |= (uint)eTargetState;
+                }
+                else
+                {
+                    m_uiMovementStates &= ~(uint)eTargetState;
+                }
+            }
+        }
+    }
 
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
@@ -318,25 +393,34 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 // Member Fields
 
 
+    const float k_fJumpSpeed   = 2.0f;
+    const float k_fMoveSpeed   = 6.5f;
+    const float k_fSprintSpeed = 8.0f;
+
+
 	List<Type> m_cInputDisableQueue = new List<Type>();
 
 
     CNetworkVar<float> m_fRotationY = null;
-	CNetworkVar<float> m_fGravity = null;
-	CNetworkVar<float> m_fMovementSpeed = null;
-	CNetworkVar<float> m_fSprintSpeed = null;
-	CNetworkVar<float> m_fJumpSpeed = null;
 	CNetworkVar<byte>  m_bStates = null;
+
+
+    float m_fDeltaMouseX = 0.0f;
+    float m_fDeltaMouseY = 0.0f;
 
 
 	uint m_uiMovementStates = 0;
 	
 
-	CapsuleCollider m_CachedCapsuleCollider = null;
 	bool m_bGrounded = false;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
+
+
+
+
+    CapsuleCollider m_CachedCapsuleCollider = null;
 
 
 };

@@ -57,10 +57,10 @@ public class CUserInput : CNetworkMonoBehaviour
 		Use,                      // F
 		Visor,                    // C
                                  
-		MoveGround_Forward,       // W
-		MoveGround_Backwards,     // S
-		MoveGround_StrafeLeft,    // A
-		MoveGround_StrafeRight,   // D
+		Move_Forward,       // W
+		Move_Backwards,     // S
+		Move_StrafeLeft,    // A
+		Move_StrafeRight,   // D
         MoveGround_Jump,          // Space
         MoveGround_Crouch,        // Control
                                  
@@ -391,8 +391,11 @@ public class CUserInput : CNetworkMonoBehaviour
         m_fMouseMovementX = Input.GetAxis("Mouse X") * SensitivityX;
         m_fMouseMovementY = Input.GetAxis("Mouse Y") * -1.0f * SensitivityY;
 		m_fMouseScroll = Input.GetAxis("Mouse ScrollWheel") * SensitivityScroll;
+
+        // Increment mouse movement
         m_fSerializeMouseMovementX += m_fMouseMovementX;
         m_fSerializeMouseMovementY += m_fMouseMovementY;
+
 		m_fSerializeMouseScroll += m_fMouseScroll;
 
         if (m_fMouseMovementX != m_fPreviousMouseMovementX)

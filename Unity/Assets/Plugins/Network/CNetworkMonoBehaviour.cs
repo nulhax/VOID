@@ -30,12 +30,6 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 // Member Properties
 
 
-	public CNetworkViewId ViewId
-	{
-		get { return(SelfNetworkView.ViewId); }
-	}
-
-
 // Member Functions
 
     // public:
@@ -71,7 +65,7 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     }
 
 
-    public CNetworkViewId SelfNetworkViewId
+    public CNetworkViewId NetworkViewId
     {
         get { return (SelfNetworkView.ViewId); }
     }

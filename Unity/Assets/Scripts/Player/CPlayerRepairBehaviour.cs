@@ -31,49 +31,49 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 
 	
 	/* Implementation */
-	
 
-	// Use this for initialization
-	void Start () 
-	{
-		//gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += OnPlayerInteraction;
-		//gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
+    /*
+    // Use this for initialization
+    void Start () 
+    {
+        //gameObject.GetComponent<CPlayerInteractor>().EventTargetChange += OnPlayerInteraction;
+        //gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += OnToolChange;		
         //gameObject.GetComponent<CPlayerBelt>().EventToolDropped += OnToolDrop;   
-	}
+    }
 	
-	// Update is called once per frame
-	void Update () 
-	{
+    // Update is called once per frame
+    void Update () 
+    {
 		
-	}
+    }
 	
-	void OnToolChange(CNetworkViewId _cViewId)
-	{
-		if(_cViewId.GameObject != null)
-		{
-			m_HeldTool = _cViewId.GameObject.GetComponent<CToolInterface>();
+    void OnToolChange(CNetworkViewId _cViewId)
+    {
+        if(_cViewId.GameObject != null)
+        {
+            m_HeldTool = _cViewId.GameObject.GetComponent<CToolInterface>();
             gameObject.GetComponent<CThirdPersonAnimController>().RaiseArm();
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
             //Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
-		}
-		else
-		{
+        }
+        else
+        {
             m_HeldTool = null;
             gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
             //Debug.Log("Tool changed to" + m_HeldTool.gameObject.name);
-		}
-	}
+        }
+    }
     void OnToolDrop(CNetworkViewId _cViewId)
     {
         m_HeldTool = null;
         gameObject.GetComponent<CThirdPersonAnimController>().LowerArm();  
     }
 	
-    /*
-	public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
+
+    public void OnPlayerInteraction(CPlayerInteractor.EInteractionType _eType, GameObject _cInteractableObject, RaycastHit _cRayHit)
     {
         switch (_eType)
         {
@@ -81,32 +81,32 @@ public class CPlayerRepairBehaviour : MonoBehaviour
             {
                 // Commented out by Nathan to avoid extraneous debug information.
                 // Feel free to uncomment for debugging purposes when required.
-				//Debug.Log("Interactable used: " + _cInteractableObject.name);
+                //Debug.Log("Interactable used: " + _cInteractableObject.name);
 			
-				if(m_HeldTool != null)
-				{
-					HandleToolUse(_eType, _cInteractableObject, _cRayHit);
-				}
-				else
-				{
-					Debug.Log("Player not holding a tool. No interaction possible");					
-				}
+                if(m_HeldTool != null)
+                {
+                    HandleToolUse(_eType, _cInteractableObject, _cRayHit);
+                }
+                else
+                {
+                    Debug.Log("Player not holding a tool. No interaction possible");					
+                }
 			
-				break;
+                break;
             }
 
             case CPlayerInteractor.EInteractionType.PrimaryEnd:
             {
                 if(m_HeldTool != null &&  m_bRepairing)
-				{
-	                switch(m_HeldTool.ToolType)           
-					{
-						case CToolInterface.EType.Ratchet:
-						{
-							m_HeldTool.GetComponent<CRatchetBehaviour>().EndRepairs();
+                {
+                    switch(m_HeldTool.ToolType)           
+                    {
+                        case CToolInterface.EType.Ratchet:
+                        {
+                            m_HeldTool.GetComponent<CRatchetBehaviour>().EndRepairs();
                             m_bRepairing = false;
-							break;
-						}
+                            break;
+                        }
                         case CToolInterface.EType.CircuitryKit:
                         {
                             m_HeldTool.GetComponent<CCircuitryKitBehaviour>().EndRepairs();
@@ -125,8 +125,8 @@ public class CPlayerRepairBehaviour : MonoBehaviour
                             m_bRepairing = false;
                             break;
                         }
-					}
-				}
+                    }
+                }
                 break;
             }
         }
@@ -208,5 +208,5 @@ public class CPlayerRepairBehaviour : MonoBehaviour
 
 	
 	CToolInterface			m_HeldTool;	
-    bool                    m_bRepairing = false;
+   // bool                    m_bRepairing = false;
 }

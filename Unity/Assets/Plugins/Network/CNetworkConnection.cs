@@ -29,7 +29,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 // Member Constants
 
 
-	public const uint k_uiOutboundRate = 33; // 50ms
+	public const uint k_uiOutboundRate = 60; // 50ms
 
 
 // Member Types

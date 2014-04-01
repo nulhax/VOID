@@ -240,7 +240,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
             if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
             {
-                CMineralsBehaviour cMinerals = tRaycastHit.collider.gameObject.GetComponent<CMineralsBehaviour>();
+                CMineralsBehaviour cMinerals = tRaycastHit.collider.transform.parent.GetComponent<CMineralsBehaviour>();
 
                 if (cMinerals != null)
                 {
@@ -290,28 +290,28 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                     !cModule.IsBuilt)
                 {
                     // Make particles visible
-                    if (!m_cMingingHitParticles.activeSelf)
+                    if (!m_cBuildingHitParticles.activeSelf)
                     {
-                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
-                        m_cMingingHitParticles.SetActive(true);
+                        m_cBuildingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
+                        m_cBuildingHitParticles.SetActive(true);
                     }
 
                     // Position and rotate particles
-                    m_cMingingHitParticles.transform.position = tRaycastHit.point;
-                    m_cMingingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
+                    m_cBuildingHitParticles.transform.position = tRaycastHit.point;
+                    m_cBuildingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
                 }
 
                 // Make particles invisible
-                else if (m_cMingingHitParticles.activeSelf)
+                else if (m_cBuildingHitParticles.activeSelf)
                 {
-                    m_cMingingHitParticles.SetActive(false);
+                    m_cBuildingHitParticles.SetActive(false);
                 }
             }
 
             // Make particles invisible
-            else if (m_cMingingHitParticles.activeSelf)
+            else if (m_cBuildingHitParticles.activeSelf)
             {
-                m_cMingingHitParticles.SetActive(false);
+                m_cBuildingHitParticles.SetActive(false);
             }
         }
     }
@@ -466,6 +466,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
             if (State == EState.Idle)
             {
                 m_cMingingHitParticles.SetActive(false);
+                m_cBuildingHitParticles.SetActive(false);
                 m_bShowMiningLaser = false;
                 m_bShowBuildingLaser = false;
             }

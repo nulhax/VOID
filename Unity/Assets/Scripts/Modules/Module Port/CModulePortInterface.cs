@@ -118,8 +118,8 @@ public class CModulePortInterface : CNetworkMonoBehaviour
             CreateModule(m_PreplacedModuleType);
 
 			// Make the module fully built already
-			if(m_PreplacedModuleBuilt)
-				m_cAttachedModuleViewId.Value.GameObject.GetComponent<CModulePrecipitation>().SetBuiltRatio(1.0f);
+            if (m_PreplacedModuleBuilt)
+                m_cAttachedModuleViewId.Value.GameObject.GetComponent<CModuleInterface>().IncrementBuiltRatio(1.0f);
         }
 	}
 
