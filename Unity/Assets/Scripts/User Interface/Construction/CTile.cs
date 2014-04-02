@@ -147,8 +147,13 @@ public class CTile : CGridObject
 			   neighbour.m_WorldDirection == EDirection.West)
 			{
 				metaIdentifiers[(int)ETileType.Floor] |= 1 << (int)neighbour.m_WorldDirection;
-				metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << (int)neighbour.m_WorldDirection;
 				metaIdentifiers[(int)ETileType.Ceiling] |= 1 << (int)neighbour.m_WorldDirection;
+
+				// External walls only care about neighbours floors
+				if(neighbour.m_Tile.GetTileTypeState(ETileType.Floor))
+				{
+					metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << (int)neighbour.m_WorldDirection;
+				}
 
 				// Internal walls only care about neighbours internal walls
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
@@ -158,7 +163,10 @@ public class CTile : CGridObject
 			}
 			
 			// Wall caps care about all directions
-			wallCapIdentifier |= 1 << (int)neighbour.m_WorldDirection;
+			if(neighbour.m_Tile.GetTileTypeState(ETileType.Floor))
+			{
+				wallCapIdentifier |= 1 << (int)neighbour.m_WorldDirection;
+			}
 		}
 
 		// Check if floor/external wall/ceiling meta data changed
@@ -168,18 +176,24 @@ public class CTile : CGridObject
 			m_TileMetaData[ETileType.Floor] = FindTileMetaInfo(ETileType.Floor, metaIdentifiers[(int)ETileType.Floor]);
 			metaChanged = true;
 		}
-		if(m_TileMetaData[ETileType.Wall_Ext].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext])
-		{
-			m_TileMetaData[ETileType.Wall_Ext] = FindTileMetaInfo(ETileType.Wall_Ext, metaIdentifiers[(int)ETileType.Wall_Ext]);
-			metaChanged = true;
-		}
 		if(m_TileMetaData[ETileType.Ceiling].m_Identifier != metaIdentifiers[(int)ETileType.Ceiling])
 		{
 			m_TileMetaData[ETileType.Ceiling] = FindTileMetaInfo(ETileType.Ceiling, metaIdentifiers[(int)ETileType.Ceiling]);
 			metaChanged = true;
 		}
 
-		// Internal walls fist need to check to see if the external wall piece is a edge
+		// External walls need to check if there is floor
+		if(!GetTileTypeState(CTile.ETileType.Floor))
+		{
+			metaIdentifiers[(int)ETileType.Wall_Ext] = 0;
+		}
+		if(m_TileMetaData[ETileType.Wall_Ext].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext])
+		{
+			m_TileMetaData[ETileType.Wall_Ext] = FindTileMetaInfo(ETileType.Wall_Ext, metaIdentifiers[(int)ETileType.Wall_Ext]);
+			metaChanged = true;
+		}
+
+		// Internal walls need to check to see if the external wall piece is a edge
 		if(m_TileMetaData[ETileType.Wall_Ext].m_Type == TTileMeta.EType.Wall_Ext_Edge)
 		{
 			// We use the external wall pieces and bitshift 4 bits across
@@ -332,6 +346,22 @@ public class CTile : CGridObject
 		return(m_CurrentTileMetaData[_MetaType]);
 	}
 
+	public void EnableTileType(ETileType _TileType)
+	{
+		SetTileTypeState(_TileType, true);
+
+		// Update the meta data
+		UpdateTileMetaData();
+	}
+
+	public void DisableTileType(ETileType _TileType)
+	{
+		SetTileTypeState(_TileType, false);
+
+		// Update the meta data
+		UpdateTileMetaData();
+	}
+
 	public void SetTileTypeState(ETileType _TileType, bool _State)
 	{
 		if(_State)
@@ -339,27 +369,11 @@ public class CTile : CGridObject
 		else
 			m_TileTypeIdentifier &= ~(1 << (int)_TileType);
 	}
-
+	
 	public bool GetTileTypeState(ETileType _TileType)
 	{
 		bool state = ((m_TileTypeIdentifier & (1 << (int)_TileType)) != 0);
 		return(state);
-	}
-
-	public void PlaceInternalWall()
-	{
-		SetTileTypeState(ETileType.Wall_Int, true);
-
-		// Update the meta data
-		UpdateTileMetaData();
-	}
-
-	public void RemoveInternalWall()
-	{
-		SetTileTypeState(ETileType.Wall_Int, false);
-
-		// Update the meta data
-		UpdateTileMetaData();
 	}
 
 	public void Release()
