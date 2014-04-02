@@ -1669,8 +1669,9 @@ MonoBehaviour:
   m_GridScale: .100000001
   m_GridScaleLimits: {x: .0500000007, y: .200000003}
   m_TilesOffset: {x: 0, y: 0, z: 0}
-  m_CurrentInteractionMode: 0
-  m_CurrentInteraction: 0
+  m_CurrentMode: 0
+  m_CurrentTileInteraction: 0
+  m_CurrentPlaneInteraction: 0
   m_CurrentVerticalLayer: 0
   m_CurrentMousePosition: {x: 0, y: 0, z: 0}
   m_CurrentMouseHitPoint: {x: 0, y: 0, z: 0}
@@ -1684,6 +1685,7 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  m_SelectedTiles: []
   m_TileMaterial: {fileID: 2100000, guid: 25be727da0628a744a21d4a0f0b72178, type: 2}
 --- !u!1 &1252298741
 GameObject:
