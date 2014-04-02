@@ -30,11 +30,13 @@ public abstract class CGridObject : MonoBehaviour
 	
 	
 	// Member Fields
-	public TGridPoint m_Location;
 	public CGrid m_Grid = null;
+	public TGridPoint m_Location;
 	public EDirection m_LocalNorth = EDirection.North;
+
 	public List<CNeighbour> m_NeighbourHood = new List<CNeighbour>();
-	
+	public List<CNeighbour> m_ExemptNeighbours = new List<CNeighbour>();
+
 	private List<CNeighbour> s_AllNeighbours = new List<CNeighbour>(
 		new CNeighbour[] 
 		{
