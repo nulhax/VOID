@@ -17,21 +17,23 @@ public class DungeonMaster : MonoBehaviour
 	//    MAX
 	//}
 
+	public delegate void BehaviourCost(out float _cost);
 	public delegate void Behaviour();
 	public class DynamicEvent
 	{
-		public DynamicEvent(float _cost, Behaviour _behaviour) { cost = _cost; behaviour = _behaviour; timeEventLastOccurred = 0.0f; }
+		public DynamicEvent(BehaviourCost _cost, Behaviour _behaviour) { cost = _cost; behaviour = _behaviour; }
 
-		public float cost;
-		public float timeEventLastOccurred;
+		public BehaviourCost cost;
 		public Behaviour behaviour;
 	}
 
-	// Difficulty modifiers are individual factors that influence the overall difficulty.
-	// Difficulty modifiers are split into groups.
-	// Difficulty modifiers in the same group add together to form the group value, and group values are multiplied together to produce the overall difficulty.
-	// E.g. In its own group; a difficulty modifier of -0.5 will halve difficulty, +1.0 will double difficulty, -1.0 will erase difficulty entirely.
-	public class DifficultyModifier   // Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
+	/// <summary>
+	/// Difficulty modifiers are individual factors that influence the overall difficulty.
+	/// Difficulty modifiers are split into groups.
+	/// Difficulty modifiers in the same group add together to form the group value, and group values are multiplied together to produce the overall difficulty.
+	/// E.g. In its own group; a difficulty modifier of -0.5 will halve difficulty, +1.0 will double difficulty, -1.0 will erase difficulty entirely.
+	/// </summary>
+	public class DifficultyModifier	// Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
 	{
 		public DifficultyModifier() { }
 		public DifficultyModifier(float value) { value_internal = value; }
@@ -77,7 +79,7 @@ public class DungeonMaster : MonoBehaviour
 	void Update()
 	{
 		//if(!CNetwork.IsServer)
-		//    return;
+		//	return;
 
 		// Update coinage.
 		mfPengar += Time.deltaTime * difficulty;
@@ -85,12 +87,13 @@ public class DungeonMaster : MonoBehaviour
 		// Decide what to do.
 		foreach (DynamicEvent dynamicEvent in mDynamicEvents)
 		{
-			if (mfPengar >= dynamicEvent.cost)
+			float cost = 1.0f; dynamicEvent.cost(out cost);	// The cost to call the event. Todo: Have each event's cost scale by the time it last occured, to deter the DM from spamming the cheap stuff.
+			if (mfPengar >= cost)	// If the event is affordable...
 			{
-				mfPengar -= dynamicEvent.cost;
+				// Do the event.
+				mfPengar -= cost;	// Subtract the cost of the event from the DM's currency.
 
-				dynamicEvent.behaviour();
-				dynamicEvent.timeEventLastOccurred = Time.fixedTime;
+				dynamicEvent.behaviour();	// Execute the behaviour.
 			}
 		}
 	}
