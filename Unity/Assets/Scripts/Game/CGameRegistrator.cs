@@ -309,8 +309,8 @@ public class CGameRegistrator : MonoBehaviour
 
 	void RegisterSerailizationTargets()
 	{
-		CNetworkConnection.RegisterSerializationTarget(CPlayerGroundMotor.SerializePlayerState      , CPlayerGroundMotor.UnserializePlayerState);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializePlayerState             , CPlayerHead.UnserializePlayerState);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerGroundMotor.SerializeOutbound      , CPlayerGroundMotor.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializeOutbound             , CPlayerHead.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions  , CBridgeCockpit.UnserializeCockpitInteractions);
 		CNetworkConnection.RegisterSerializationTarget(CCockpit.SerializeOutbound                   , CCockpit.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerAirMotor.SerializeOutbound            , CPlayerAirMotor.UnserializeInbound);
@@ -450,10 +450,10 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Use, KeyCode.F);
 		CUserInput.SetKeyBinding(CUserInput.EInput.Visor, KeyCode.C);
 
-        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Forward, KeyCode.W);
-        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Backwards, KeyCode.S);
-        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_StrafeLeft, KeyCode.A);
-        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_StrafeRight, KeyCode.D);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_Forward, KeyCode.W);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_Backwards, KeyCode.S);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_StrafeLeft, KeyCode.A);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_StrafeRight, KeyCode.D);
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Jump, KeyCode.Space);
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Crouch, KeyCode.LeftControl);
 

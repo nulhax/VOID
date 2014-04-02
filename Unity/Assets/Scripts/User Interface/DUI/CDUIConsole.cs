@@ -98,8 +98,8 @@ public class CDUIConsole : CNetworkMonoBehaviour
 			
 			// Set the view ids
 			CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
-			dr.ConsoleViewId = ViewId;
-			m_DUIViewId.Value = dr.ViewId;
+			dr.ConsoleViewId = NetworkViewId;
+			m_DUIViewId.Value = dr.NetworkViewId;
 		}
 		else
 		{

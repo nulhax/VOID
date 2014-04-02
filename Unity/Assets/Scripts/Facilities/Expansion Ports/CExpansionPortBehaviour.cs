@@ -220,7 +220,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
         // Attach expansion ports together
         m_cAttachedExpansionPortViewId.Set(cExpansionPort.GetComponent<CNetworkView>().ViewId);
-        AttachedExpansionPortBehaviour.m_cAttachedExpansionPortViewId.Set(SelfNetworkViewId);
+        AttachedExpansionPortBehaviour.m_cAttachedExpansionPortViewId.Set(NetworkViewId);
 
         // Position expansion port and facility relative to me
         cExpansionPort.GetComponent<CExpansionPortBehaviour>().InvokeRpcAll("PositionToNeighbour");

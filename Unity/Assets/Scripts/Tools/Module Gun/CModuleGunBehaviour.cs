@@ -213,10 +213,10 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 			if(mpi != null)
 			{
 				// Register movement events
-				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Forward, OnPlayerMovement);
-				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Backwards, OnPlayerMovement);
-				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeLeft, OnPlayerMovement);
-				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeRight, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Forward, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Backwards, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft, OnPlayerMovement);
+				CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight, OnPlayerMovement);
 				CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump, OnPlayerMovement);
 
 				// Change the port selected on the UI
@@ -325,10 +325,10 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 				// Unregister movement events
 				if(CNetwork.IsServer)
 				{
-					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Forward, OnPlayerMovement);
-					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Backwards, OnPlayerMovement);
-					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeLeft, OnPlayerMovement);
-					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_StrafeRight, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Forward, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Backwards, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft, OnPlayerMovement);
+					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight, OnPlayerMovement);
 					CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump, OnPlayerMovement);
 				}
 			}

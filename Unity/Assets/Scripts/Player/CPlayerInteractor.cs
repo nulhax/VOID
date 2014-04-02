@@ -251,6 +251,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 			}
         }
 
+        //Debug.LogError(cNewTargetActorObject);
 
 		if (cNewTargetActorObject != null)
 		{

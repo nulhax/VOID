@@ -32,7 +32,6 @@ GameObject:
   - 114: {fileID: 11400024}
   - 114: {fileID: 11400036}
   - 136: {fileID: 13600000}
-  - 114: {fileID: 11400050}
   - 114: {fileID: 11400052}
   m_Layer: 0
   m_Name: Player Actor
@@ -98,7 +97,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: .100000001
-  m_AngularDrag: .0500000007
+  m_AngularDrag: .100000001
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -558,17 +557,6 @@ MonoBehaviour:
     type: 2}
   m_cRepairingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
     type: 2}
---- !u!114 &11400050
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 031359a04be652d4893045648409a338, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -601,7 +589,7 @@ CapsuleCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100078}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 5bad852372e60c040916712b179cfc90, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: .400000006

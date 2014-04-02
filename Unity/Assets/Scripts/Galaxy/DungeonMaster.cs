@@ -17,21 +17,23 @@ public class DungeonMaster : MonoBehaviour
 	//    MAX
 	//}
 
+	public delegate void BehaviourCost(out float _cost);
 	public delegate void Behaviour();
 	public class DynamicEvent
 	{
-		public DynamicEvent(float _cost, Behaviour _behaviour) { cost = _cost; behaviour = _behaviour; timeEventLastOccurred = 0.0f; }
+		public DynamicEvent(BehaviourCost _cost, Behaviour _behaviour) { cost = _cost; behaviour = _behaviour; }
 
-		public float cost;
-		public float timeEventLastOccurred;
+		public BehaviourCost cost;
 		public Behaviour behaviour;
 	}
 
-	// Difficulty modifiers are individual factors that influence the overall difficulty.
-	// Difficulty modifiers are split into groups.
-	// Difficulty modifiers in the same group add together to form the group value, and group values are multiplied together to produce the overall difficulty.
-	// E.g. In its own group; a difficulty modifier of -0.5 will halve difficulty, +1.0 will double difficulty, -1.0 will erase difficulty entirely.
-	public class DifficultyModifier   // Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
+	/// <summary>
+	/// Difficulty modifiers are individual factors that influence the overall difficulty.
+	/// Difficulty modifiers are split into groups.
+	/// Difficulty modifiers in the same group add together to form the group value, and group values are multiplied together to produce the overall difficulty.
+	/// E.g. In its own group; a difficulty modifier of -0.5 will halve difficulty, +1.0 will double difficulty, -1.0 will erase difficulty entirely.
+	/// </summary>
+	public class DifficultyModifier	// Relative effect on the overall difficulty (-50% makes it half as difficult | +100% makes it twice as difficult).
 	{
 		public DifficultyModifier() { }
 		public DifficultyModifier(float value) { value_internal = value; }
@@ -48,6 +50,10 @@ public class DungeonMaster : MonoBehaviour
 
 	private static DungeonMaster sDM = null;
 	public static DungeonMaster instance { get { return sDM; } }
+
+	// Performance reasons only - not trying to make things spawn at a predictable rate.
+	private float mTimeBetweenUpdates = 0.1f;	// Update 10 times a second.
+	private float mTimeUntilNextUpdate = 0.0f;
 
 	private System.Collections.Generic.SortedList<uint, System.Collections.Generic.List<DifficultyModifier>> mDifficultyFactors = new System.Collections.Generic.SortedList<uint, System.Collections.Generic.List<DifficultyModifier>>();
 	private bool mbDifficultyNeedsUpdating = false;
@@ -77,20 +83,41 @@ public class DungeonMaster : MonoBehaviour
 	void Update()
 	{
 		//if(!CNetwork.IsServer)
-		//    return;
+		//	return;
 
-		// Update coinage.
-		mfPengar += Time.deltaTime * difficulty;
-
-		// Decide what to do.
-		foreach (DynamicEvent dynamicEvent in mDynamicEvents)
+		// Minimise performance dent by limiting how often the DM updates.
+		mTimeUntilNextUpdate -= Time.deltaTime;
+		while (mTimeUntilNextUpdate <= 0.0f)
 		{
-			if (mfPengar >= dynamicEvent.cost)
-			{
-				mfPengar -= dynamicEvent.cost;
+			mTimeUntilNextUpdate += mTimeBetweenUpdates;
 
-				dynamicEvent.behaviour();
-				dynamicEvent.timeEventLastOccurred = Time.fixedTime;
+			// Update coinage.
+			mfPengar += mTimeBetweenUpdates * difficulty;
+
+			// Find all the events that are affordable and add them to a list.
+			System.Collections.Generic.SortedList<float, Behaviour> affordableEvents = null;	// Instantiated later to minimise the amount of stuff the GC has to clean up.
+			foreach (DynamicEvent dynamicEvent in mDynamicEvents)
+			{
+				float cost = 1.0f; dynamicEvent.cost(out cost);	// The cost to call the event. Todo: Have each event's cost scale by the time it last occured, to deter the DM from spamming the cheap stuff.
+				if (mfPengar >= cost)	// If the event is affordable...
+				{
+					if (affordableEvents == null) affordableEvents = new System.Collections.Generic.SortedList<float, Behaviour>();	// Instantiate the list now, solely to minimise the number of things needed to be cleaned up by the Garbage Collector.
+
+					affordableEvents.Add(cost, dynamicEvent.behaviour);
+				}
+			}
+
+			// Execute as many affordable events as can be afforded (cheapest first for zerg rush, so most expensive first may be better).
+			if (affordableEvents != null)
+			{
+				foreach (System.Collections.Generic.KeyValuePair<float, Behaviour> dynamicEvent in affordableEvents)
+				{
+					if (mfPengar >= dynamicEvent.Key)	// If the event is affordable...
+					{
+						mfPengar -= dynamicEvent.Key;	// Subtract the cost from the DM's currency.
+						dynamicEvent.Value();	// Execute the event.
+					}
+				}
 			}
 		}
 	}
@@ -145,6 +172,6 @@ public class DungeonMaster : MonoBehaviour
 	//    style.fontStyle = FontStyle.Bold;
 	//    float boxWidth = 0.1f;
 	//    float boxHeight = 0.06f;
-	//    GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((mfDifficulty_internal * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
+	//    GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((difficulty * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
 	//}
 }

@@ -126,7 +126,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				{
 					// Reenable intputs
 					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
-					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().ReenableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().EnableInput(this);
 
 					// Use old head rotation
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(m_EnterHeadXRot);
