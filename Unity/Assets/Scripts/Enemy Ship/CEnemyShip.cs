@@ -20,7 +20,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		none,
 		attackingPrey,	// Includes moving and turning to face the prey.
-		idling,	// Parked. Looks around occasionally.
+		idling,			// Parked. Looks around occasionally.
 		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
 		scanningForPrey,	// Later feature - after going to the disturbance, the enemy ship scans the entire area, meaning the player ship has to hide behind asteroids to avoid being detected.
 		travelling,	// Happens on spawn or after idling for a while.
@@ -32,7 +32,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public enum EEvent
 	{
 		none,
-		disturbance,
 
 		// Internal events.
 		transition_AttackPrey,
@@ -55,48 +54,53 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		public StateFunction m_Function;
 	}
 
+	class CDisturbance
+	{
+		public Vector3 location;
+		public float expireTime;
+		public CDisturbance(Vector3 _location) { location = _location; expireTime = Time.time + 3.0f; }
+		public bool Expired() { return expireTime <= Time.time; }
+	}
+
 	CStateTransition[] m_StateTransitionTable =
 	{
 		// Process.
-		new CStateTransition(EState.attackingPrey,				EEvent.any,									Proc_AttackPrey),
+		//new CStateTransition(EState.attackingPrey,				EEvent.any,									Proc_AttackPrey),
 		new CStateTransition(EState.idling,						EEvent.any,									Proc_Idle),
-		new CStateTransition(EState.movingToDisturbance,		EEvent.any,									Proc_MoveToDisturbance),
-		new CStateTransition(EState.scanningForPrey,			EEvent.any,									Proc_ScanForPrey),
-		new CStateTransition(EState.travelling,					EEvent.any,									Proc_Travel),
-		new CStateTransition(EState.turningToFaceDisturbance,	EEvent.any,									Proc_TurnToFaceDisturbance),
-		new CStateTransition(EState.turningToFacePrey,			EEvent.any,									Proc_TurnToFacePrey),
+		//new CStateTransition(EState.movingToDisturbance,		EEvent.any,									Proc_MoveToDisturbance),
+		//new CStateTransition(EState.scanningForPrey,			EEvent.any,									Proc_ScanForPrey),
+		//new CStateTransition(EState.travelling,					EEvent.any,									Proc_Travel),
+		//new CStateTransition(EState.turningToFaceDisturbance,	EEvent.any,									Proc_TurnToFaceDisturbance),
+		//new CStateTransition(EState.turningToFacePrey,			EEvent.any,									Proc_TurnToFacePrey),
 		
-		// Event.
-		new CStateTransition(EState.any,						EEvent.disturbance,							Init_TurnToFaceDisturbance),
-
 		// Transition.
-		new CStateTransition(EState.any,						EEvent.transition_AttackPrey,				Init_AttackPrey),
+		//new CStateTransition(EState.any,						EEvent.transition_AttackPrey,				Init_AttackPrey),
 		new CStateTransition(EState.any,						EEvent.transition_Idle,						Init_Idle),
-		new CStateTransition(EState.any,						EEvent.transition_MoveToDisturbance,		Init_MoveToDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_ScanForPrey,				Init_ScanForPrey),
-		new CStateTransition(EState.any,						EEvent.transition_Travel,					Init_Travel),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFaceDisturbance,	Init_TurnToFaceDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFacePrey,			Init_TurnToFacePrey),
+		//new CStateTransition(EState.any,						EEvent.transition_MoveToDisturbance,		Init_MoveToDisturbance),
+		//new CStateTransition(EState.any,						EEvent.transition_ScanForPrey,				Init_ScanForPrey),
+		//new CStateTransition(EState.any,						EEvent.transition_Travel,					Init_Travel),
+		//new CStateTransition(EState.any,						EEvent.transition_TurnToFaceDisturbance,	Init_TurnToFaceDisturbance),
+		//new CStateTransition(EState.any,						EEvent.transition_TurnToFacePrey,			Init_TurnToFacePrey),
 		
 		// Catch all.
-		new CStateTransition(EState.any,						EEvent.any,									Init_Idle),
+		//new CStateTransition(EState.any,						EEvent.any,									Init_Idle),
 	};
 
 	// State machine data.
-	EState m_State = EState.none;
-	EEvent m_Event = EEvent.none;
-    Transform state_Prey = null;
-	Vector3 state_Disturbance;
-	bool state_TargetDisturbance { get { return internal_TargetDisturbance; } set { state_LookingAtTarget = state_MovedToTarget = false; internal_TargetDisturbance = value; } }
-	private bool internal_TargetDisturbance = false;
-	bool state_LookingAtTarget = false;
-	bool state_MoveToTarget = false;
-	bool state_MovedToTarget = false;
-	float state_Timeout = 0.0f;
-	public float viewConeRadiusInDegrees = 20.0f;
-	public float detectionRadius = 200.0f;
-	public float desiredDistanceToTarget = 100.0f;
-	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+	EState mState = EState.none;
+	EEvent mEvent = EEvent.none;
+    Transform mPrey = null;	// Could be an asteroid or a ship or anything.
+	CDisturbance mDisturbance = null;
+	bool mMotor_TargetDisturbance { get { return internal_Motor_TargetDisturbance; } set { mMotor_LookingAtTarget = mMotor_MovedToTarget = false; internal_Motor_TargetDisturbance = value; } }
+	private bool internal_Motor_TargetDisturbance = false;
+	bool mMotor_LookingAtTarget = false;
+	bool mMotor_MoveToTarget = false;
+	bool mMotor_MovedToTarget = false;
+	float mTimeout = 0.0f;
+	public float mMotor_ViewConeRadiusInDegrees = 20.0f;
+	public float mMotor_DetectionRadius = 200.0f;
+	public float mMotor_DesiredDistanceToTarget = 100.0f;
+	public float mMotor_AcceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
 
 	// Physics data.
     //CPidController mPidAngleYaw = new CPidController(2000, 0, 0); // Correction for yaw angle to target.
@@ -111,14 +115,46 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	}
 
-    void Start()
-    {
-        rigidbody.maxAngularVelocity = 1;
-    }
+	void Start()
+	{
+		//rigidbody.maxAngularVelocity = 1;
+	}
 
 	void Update()
 	{
+		CheckLineOfSight();
+
 		ProcessStateMachine();
+	}
+
+	void CheckLineOfSight()
+	{
+		// Set disturbance only if there is no current disturbance, or the current disturbance is old enough to expire.
+		if (mDisturbance != null)	// If there is an existing disturbance...
+			if (mDisturbance.Expired() == false)	// And it has not expired...
+				return;	// Do not set a new disturbance, as the current one is still valid.
+
+		// Find all objects within short range sphere and long-range cone.
+		System.Collections.Generic.Dictionary<int, GameObject> objectsWithinLineOfSight = new System.Collections.Generic.Dictionary<int, GameObject>();	// ObjectID, Object.
+		// Todo: Sphere check for entities.
+		// Use: objectsWithinLineOfSight[gameObject.GetInstanceID()] = gameObject;
+		// Todo: Cone check for entities.
+
+		objectsWithinLineOfSight.Remove(gameObject.GetInstanceID());	// Remove one's self from the list.
+
+		foreach(System.Collections.Generic.KeyValuePair<int, GameObject> gubbin in objectsWithinLineOfSight)
+		{
+			// Todo: Refine this.
+			Rigidbody gubbinBody = gubbin.Value.GetComponent<Rigidbody>();
+			if(gubbinBody == null)
+				continue;
+
+			if(gubbinBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
+			{
+				mDisturbance = new CDisturbance(gubbin.Value.transform.position);
+				break;
+			}
+		}
 	}
 
 	void ProcessStateMachine()
@@ -127,7 +163,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		for (uint uiStateLoop = 0; uiStateLoop < m_StateTransitionTable.Length; ++uiStateLoop)
 		{
 			CStateTransition stateTransition = m_StateTransitionTable[uiStateLoop];
-			if ((stateTransition.m_State == m_State || stateTransition.m_State == EState.any) && (stateTransition.m_Event == m_Event || stateTransition.m_Event == EEvent.any))
+			if ((stateTransition.m_State == mState || stateTransition.m_State == EState.any) && (stateTransition.m_Event == mEvent || stateTransition.m_Event == EEvent.any))
 				if (stateTransition.m_Function(this))
 					uiStateLoop = uint.MaxValue;	// Loop will increment making iterator restart.
 				else
@@ -137,109 +173,109 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Init_AttackPrey(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = true;
-		/*Handle prey target	*/if (enemyShip.state_Prey == null) Debug.LogError("CEnemyShip: Can not attack prey when there is no prey set!");
-		/*Set state				*/enemyShip.m_State = EState.attackingPrey;
+		/*Handle prey target	*/if (enemyShip.mPrey == null) Debug.LogError("CEnemyShip: Can not attack prey when there is no prey set!");
+		/*Set state				*/enemyShip.mState = EState.attackingPrey;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_Idle(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
-		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/if (Random.Range(0, 2) == 0) enemyShip.m_State = EState.idling; else enemyShip.m_Event = EEvent.transition_Travel;	// 50/50 chance to idle or travel.
+		/*Handle prey target	*/enemyShip.mPrey = null;
+		/*Set state				*/if (Random.Range(0, 2) == 0) enemyShip.mState = EState.idling; else enemyShip.mEvent = EEvent.transition_Travel;	// 50/50 chance to idle or travel.
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_MoveToDisturbance(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = true;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = true;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = true;
-		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/enemyShip.m_State = EState.movingToDisturbance;
+		/*Handle prey target	*/enemyShip.mPrey = null;
+		/*Set state				*/enemyShip.mState = EState.movingToDisturbance;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_ScanForPrey(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 		
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
-		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/enemyShip.m_State = EState.scanningForPrey;
+		/*Handle prey target	*/enemyShip.mPrey = null;
+		/*Set state				*/enemyShip.mState = EState.scanningForPrey;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_Travel(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
-		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/enemyShip.m_State = EState.travelling;
+		/*Handle prey target	*/enemyShip.mPrey = null;
+		/*Set state				*/enemyShip.mState = EState.travelling;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_TurnToFaceDisturbance(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = true;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = true;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
-		/*Handle prey target	*/enemyShip.state_Prey = null;
-		/*Set state				*/enemyShip.m_State = EState.turningToFaceDisturbance;
+		/*Handle prey target	*/enemyShip.mPrey = null;
+		/*Set state				*/enemyShip.mState = EState.turningToFaceDisturbance;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Init_TurnToFacePrey(CEnemyShip enemyShip)
 	{
-		if (enemyShip.m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
+		if (enemyShip.mState != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
 
 		// Initialise the state.
-		/*Consume event			*/enemyShip.m_Event = EEvent.none;
-		/*Target disturbance?	*/enemyShip.state_TargetDisturbance = false;
+		/*Consume event			*/enemyShip.mEvent = EEvent.none;
+		/*Target disturbance?	*/enemyShip.mMotor_TargetDisturbance = false;
 		/*Move to target?		*/enemyShip.state_MoveToTarget = false;
-		/*Handle prey target	*/if (enemyShip.state_Prey == null) Debug.LogError("CEnemyShip: Can not face prey when there is no prey set!");
-		/*Set state				*/enemyShip.m_State = EState.turningToFacePrey;
+		/*Handle prey target	*/if (enemyShip.mPrey == null) Debug.LogError("CEnemyShip: Can not face prey when there is no prey set!");
+		/*Set state				*/enemyShip.mState = EState.turningToFacePrey;
 
 		return true;	// Init functions always return true.
 	}
 
 	static bool Proc_AttackPrey(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
-				if (!enemyShip.state_LookingAtTarget)
-					enemyShip.m_Event = EEvent.transition_TurnToFacePrey;
+				if (!enemyShip.mMotor_LookingAtTarget)
+					enemyShip.mEvent = EEvent.transition_TurnToFacePrey;
 				else
 				{
 					// Todo: Shoot at the player ship.
@@ -247,7 +283,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -256,15 +292,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_Idle(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
 				if (enemyShip.FindPrey())// Todo: Do this only periodically.
-					enemyShip.m_Event = EEvent.transition_TurnToFacePrey;
+					enemyShip.mEvent = EEvent.transition_TurnToFacePrey;
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -273,15 +309,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_MoveToDisturbance(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
 				if (enemyShip.state_MovedToTarget)
-					enemyShip.m_Event = EEvent.transition_ScanForPrey;
+					enemyShip.mEvent = EEvent.transition_ScanForPrey;
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -290,7 +326,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_ScanForPrey(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
 				// Todo: Scan for prey.
@@ -298,7 +334,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -307,13 +343,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_Travel(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -322,15 +358,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_TurnToFaceDisturbance(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
-				if (enemyShip.state_LookingAtTarget)
-					enemyShip.m_Event = enemyShip.FindPrey() ? EEvent.transition_TurnToFacePrey : EEvent.transition_MoveToDisturbance;
+				if (enemyShip.mMotor_LookingAtTarget)
+					enemyShip.mEvent = enemyShip.FindPrey() ? EEvent.transition_TurnToFacePrey : EEvent.transition_MoveToDisturbance;
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -339,15 +375,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	static bool Proc_TurnToFacePrey(CEnemyShip enemyShip)
 	{
-		switch (enemyShip.m_Event)
+		switch (enemyShip.mEvent)
 		{
 			case EEvent.none:	// Process the state.
-				if (enemyShip.state_LookingAtTarget)	// Todo: Raycast check if there is a line of sight to the prey.
-					enemyShip.m_Event = EEvent.transition_AttackPrey;
+				if (enemyShip.mMotor_LookingAtTarget)	// Todo: Raycast check if there is a line of sight to the prey.
+					enemyShip.mEvent = EEvent.transition_AttackPrey;
 				break;
 
 			default:	// Shutdown the state.
-				enemyShip.m_State = EState.none;
+				enemyShip.mState = EState.none;
 				return true;
 		}
 
@@ -360,7 +396,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	/// <returns>true if prey was found (state_Prey will be non-null)</returns>
 	bool FindPrey()
 	{
-		if (state_Prey != null)
+		if (mPrey != null)
 		{
 			Debug.LogError("CEnemyShip: Should not be scanning for prey when prey has already been found!");
 			return true;
@@ -375,13 +411,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		foreach (GameObject prey in potentialPrey)
 		{
 			if (IsWithinViewCone(prey.transform.position) || IsWithinDetectionRadius(prey.transform.position))
-				if (state_Prey == null)
-					state_Prey = prey.transform;
-				else if ((prey.transform.position - transform.position).sqrMagnitude < (state_Prey.position - transform.position).sqrMagnitude)
-					state_Prey = prey.transform;
+				if (prey == null)
+					prey = prey.transform;
+				else if ((prey.transform.position - transform.position).sqrMagnitude < (prey.position - transform.position).sqrMagnitude)
+					prey = prey.transform;
 		}
 
-		return state_Prey != null;
+		return mPrey != null;
 	}
 
 	bool IsWithinViewCone(Vector3 pos)
@@ -403,9 +439,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
     void FixedUpdate()
     {
-		if (state_TargetDisturbance || (state_TargetDisturbance == false && state_Prey != null))	// If targeting anything...
+		if (mMotor_TargetDisturbance || (mMotor_TargetDisturbance == false && mPrey != null))	// If targeting anything...
 		{
-			Vector3 targetPos = state_TargetDisturbance ? state_Disturbance : state_Prey.position;
+			Vector3 targetPos = mMotor_TargetDisturbance ? mDisturbance : mPrey.position;
 
 			transform.LookAt(targetPos);
 
@@ -435,13 +471,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			//torque += Vector3.forward * (/*torqueRoll + */velocityRoll);
 
 			// Set state information saying if the disturbance/prey is being looked at and/or is within proximity.
-			state_LookingAtTarget = IsWithinViewCone(targetPos);	// Is looking at target if within view cone.
+			mMotor_LookingAtTarget = IsWithinViewCone(targetPos);	// Is looking at target if within view cone.
 
 			float distanceToTarget = (targetPos - transform.position).magnitude;
 			state_MovedToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
 		}
 		else
-			state_LookingAtTarget = false;
+			mMotor_LookingAtTarget = false;
     }
 
     //void OnGUI()
