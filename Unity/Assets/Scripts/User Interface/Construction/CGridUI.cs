@@ -16,6 +16,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 
 /* Implementation */
@@ -29,18 +30,27 @@ public class CGridUI : MonoBehaviour
 	{
 		AutoLayout,
 		ManualWallLayout,
+		TileSelect,
 	}
 
-	public enum EInteraction
+	public enum ETileInteraction
 	{
 		INVALID,
-		
+
 		Nothing,
-		CursorPaint,
-		DragSelection,
+		SingleSelection,
+		MultipleSelection,
+	}
+
+	public enum EPlaneInteraction
+	{
+		INVALID,
+
+		Nothing,
 		DragRotation,
 		DragMovement,
 	}
+
 	
 	// Member Delegates & Events
 	
@@ -56,8 +66,9 @@ public class CGridUI : MonoBehaviour
 	public Vector2 m_GridScaleLimits = new Vector2(0.05f, 0.2f);
 	public Vector3 m_TilesOffset = Vector3.zero;
 
-	public EMode m_CurrentInteractionMode = EMode.AutoLayout;
-	public EInteraction m_CurrentInteraction = EInteraction.INVALID;
+	public EMode m_CurrentMode = EMode.AutoLayout;
+	public ETileInteraction m_CurrentTileInteraction = ETileInteraction.INVALID;
+	public EPlaneInteraction m_CurrentPlaneInteraction = EPlaneInteraction.INVALID;
 	public int m_CurrentVerticalLayer = 0;
 
 	public Vector3 m_CurrentMousePosition = Vector3.zero;
@@ -68,9 +79,13 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
+	public List<CTile> m_SelectedTiles = null;
+
 	public Material m_TileMaterial = null;
 
-	private RaycastHit m_RaycastHit;
+	private List<RaycastHit> m_RaycastHits;
+	private RaycastHit m_PlaneHit;
+
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
 
@@ -108,6 +123,10 @@ public class CGridUI : MonoBehaviour
 	{
 		// Create the grid objects
 		CreateGridUIObjects();
+
+		// Default to autolayout mode
+		m_CurrentMode = EMode.AutoLayout;
+		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
 	}
 	
 	private void CreateGridUIObjects()
@@ -142,19 +161,27 @@ public class CGridUI : MonoBehaviour
 		m_CurrentMousePosition = Input.mousePosition;
 
 		// Get the raycast hits against all objects
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		Physics.Raycast(ray, out m_RaycastHit, Mathf.Infinity, 1 << m_GridPlane.layer);
+		Ray ray = Camera.main.ScreenPointToRay(m_CurrentMousePosition);
+		m_RaycastHits = new List<RaycastHit>(Physics.RaycastAll(ray, Mathf.Infinity));
+
+		// Order the rayhits by distance
+		m_RaycastHits.OrderBy(hit => hit.distance);
+
+		// Get the plane hit
+		m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
+
+		// Get the current grid point and hit point
+		if(m_PlaneHit.collider != null)
+		{
+			m_CurrentMouseHitPoint = m_PlaneHit.point;
+			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
+		}
+		
+		// Update cursor
+		UpdateCursor();
 
 		// Update default input
-		UpdateDefaultInput();
-
-		// Update input based on interaction mode
-		switch(m_CurrentInteractionMode)
-		{
-			case EMode.AutoLayout: UpdateLayoutInput(); break;
-			case EMode.ManualWallLayout: UpdateLayoutInput(); break;
-			default: break;
-		}
+		UpdateInput();
 
 		// Update the material variables
 		Vector3 up = m_Grid.transform.up;
@@ -164,200 +191,252 @@ public class CGridUI : MonoBehaviour
 		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
 	}
 
-	private void UpdateDefaultInput()
+	private void UpdateInput()
 	{
 		// Toggle modes
 		if(Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			m_CurrentInteractionMode = EMode.AutoLayout;
-		}
+			m_CurrentMode = EMode.AutoLayout;
+
 		else if(Input.GetKeyDown(KeyCode.Alpha2))
+			m_CurrentMode = EMode.ManualWallLayout;
+
+		else if(Input.GetKeyDown(KeyCode.Alpha3))
+			m_CurrentMode = EMode.TileSelect;
+
+		if(m_CurrentMode == EMode.TileSelect)
 		{
-			m_CurrentInteractionMode = EMode.ManualWallLayout;
+			UpdateTileSelectInput();
 		}
 
-		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
+		// Left Click
+		if(Input.GetMouseButtonDown(0))
+			HandleLeftClickDown();
+
+		if(Input.GetMouseButton(0))
+			HandleLeftClickHold();
+
+		if(Input.GetMouseButtonUp(0))
+			HandleLeftClickUp();
+
+		// Right Click
+		if(Input.GetMouseButtonDown(1))
+			HandleRightClickDown();
+
+		if(Input.GetMouseButton(1))
+			HandleRightClick();
+
+		if(Input.GetMouseButtonUp(1))
+			HandleRightClickUp();
+
+		// Middle Click
+		if(Input.GetMouseButtonDown(2))
+			HandleMiddleClickDown();
+
+		if(Input.GetMouseButton(2))
+			HandleMiddleClick();
+
+		if(Input.GetMouseButtonUp(2))
+			HandleMiddleClickUp();
+
+		// Mouse Scroll
+		float sw = Input.GetAxis("Mouse ScrollWheel");
+		if(sw != 0.0f)
+			HandleMiddleScroll(sw);
+	}
+
+	private void UpdateTileSelectInput()
+	{
+		if(m_SelectedTiles.Count == 0)
+			return;
+
+		CTile.ETileType tileType = CTile.ETileType.INVALID;
+		if(Input.GetKeyDown(KeyCode.Q))
+			tileType = CTile.ETileType.Floor;
+		
+		else if(Input.GetKeyDown(KeyCode.W))
+			tileType = CTile.ETileType.Wall_Ext;
+		
+		else if(Input.GetKeyDown(KeyCode.E))
+			tileType = CTile.ETileType.Wall_Int;
+
+		else if(Input.GetKeyDown(KeyCode.R))
+			tileType = CTile.ETileType.Ceiling;
+
+		if(tileType == CTile.ETileType.INVALID)
+			return;
+
+		// Update the type state for given tiles
+		foreach(CTile tile in m_SelectedTiles)
 		{
-			m_CurrentMouseHitPoint = m_RaycastHit.point;
-			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
+			if(tile.GetTileTypeState(tileType))
+				tile.DisableTileType(tileType);
+			else
+				tile.EnableTileType(tileType);
+		}
+	}
 
-			// Update cursor
-			UpdateCursor();
-			
-			// Right Click Down
-			if(Input.GetMouseButtonDown(1))
-			{
-				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-				m_MouseDownPosition = m_CurrentMousePosition;
-				m_DragRotateStart = m_Grid.transform.rotation;
-				
-				m_CurrentInteraction = EInteraction.DragRotation;
-			}
+	private void HandleLeftClickDown()
+	{
+		if(m_PlaneHit.collider == null)
+		{
+			return;
+		}
 
-			// Middle Click Down
-			if(Input.GetMouseButtonDown(2))
-			{
-				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-				m_MouseDownPosition = m_CurrentMousePosition;
-				m_DragMovementStart = m_TilesOffset;
-				
-				m_CurrentInteraction = EInteraction.DragMovement;
-			}
-
-			// Mouse Scroll
-			float sw = Input.GetAxis("Mouse ScrollWheel");
-			if(sw != 0.0f)
-			{
-				if(IsShiftKeyDown)
-				{
-					int direction = (int)Mathf.Sign(sw);
-					ChangeVerticalLayer(direction);
-				}
-				else
-				{
-					UpdateGridScale(Mathf.Clamp(m_GridScale + sw * 0.1f, m_GridScaleLimits.x, m_GridScaleLimits.y));
-				}
-			}
+		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+		m_MouseDownPosition = m_CurrentMousePosition;
+		m_MouseDownGridPoint = m_CurrentMouseGridPoint;
+		
+		if(IsShiftKeyDown)
+			m_CurrentTileInteraction = ETileInteraction.MultipleSelection;
+		else
+			m_CurrentTileInteraction = ETileInteraction.SingleSelection;
+	}
 	
-		}
-
-		// Right Click Hold
-		if(Input.GetMouseButton(1) && m_CurrentInteraction == EInteraction.DragRotation)
+	private void HandleLeftClickHold()
+	{
+		if(m_PlaneHit.collider == null)
+			return;
+		
+		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && !IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
 		{
+			m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
+			return;
+		}
+		
+		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && !IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+		{
+			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
+			if(tile != null)
+				tile.EnableTileType(CTile.ETileType.Wall_Int);
+			return;
+		}
+		
+		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
+		{
+			m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
+			return;
+		}
+		
+		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+		{
+			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
+			if(tile != null)
+				tile.DisableTileType(CTile.ETileType.Wall_Int);
+			return;
+		}
+	}
+	
+	private void HandleLeftClickUp()
+	{
+		if (m_PlaneHit.collider == null)
+			return;
+
+		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
+		bool multi = m_CurrentTileInteraction == ETileInteraction.MultipleSelection;
+
+		if (single)
+			HandleLeftUpSingle();
+
+		if (multi)
+			HandleLeftUpMulti();
+	}
+
+	void HandleLeftUpSingle()
+	{
+		if (m_CurrentMode == EMode.TileSelect) 
+		{
+			if (!IsCtrlKeyDown)
+				m_SelectedTiles.Clear();
+
+			SelectTile(m_CurrentMouseGridPoint);
+		}
+	}
+
+	void HandleLeftUpMulti()
+	{
+		switch(m_CurrentMode) 
+		{
+			case EMode.TileSelect: 
+			{
+				if (!IsCtrlKeyDown)
+					m_SelectedTiles.Clear();
+
+				SelectMultipleTiles();
+				break;
+			}
+			case EMode.AutoLayout: 
+			{
+				SelectionManipulateTiles(IsCtrlKeyDown);
+				break;
+			}
+		}
+		m_CurrentTileInteraction = ETileInteraction.SingleSelection;
+	}
+
+	private void HandleRightClickDown()
+	{
+		if(m_PlaneHit.collider == null)
+			return;
+
+		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+		m_MouseDownPosition = m_CurrentMousePosition;
+		m_DragRotateStart = m_Grid.transform.rotation;
+		
+		m_CurrentPlaneInteraction = EPlaneInteraction.DragRotation;
+	}
+
+	private void HandleRightClick()
+	{
+		if(m_CurrentPlaneInteraction == EPlaneInteraction.DragRotation)
 			DragRotateGrid();
-		}
-		
-		// Right Click Up
-		else if(Input.GetMouseButtonUp(1) && m_CurrentInteraction == EInteraction.DragRotation)
-		{
-			m_CurrentInteraction = EInteraction.Nothing;
-		}
+	}
 
-		// Middle Click Hold
-		if(Input.GetMouseButton(2) && m_CurrentInteraction == EInteraction.DragMovement)
-		{
+	private void HandleRightClickUp()
+	{
+		if(m_CurrentPlaneInteraction == EPlaneInteraction.DragRotation)
+			m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
+	}
+
+	private void HandleMiddleClickDown()
+	{
+		if(m_PlaneHit.collider == null)
+			return;
+
+		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
+		m_MouseDownPosition = m_CurrentMousePosition;
+		m_DragMovementStart = m_TilesOffset;
+		
+		m_CurrentPlaneInteraction = EPlaneInteraction.DragMovement;
+	}
+	
+	private void HandleMiddleClick()
+	{
+		if(m_CurrentPlaneInteraction == EPlaneInteraction.DragMovement)
 			DragMoveTiles();
-		}
-		
-		// Middle Click Up
-		else if(Input.GetMouseButtonUp(2) && m_CurrentInteraction == EInteraction.DragMovement)
-		{
-			m_CurrentInteraction = EInteraction.Nothing;
-		}
 	}
 	
-	private void UpdateLayoutInput()
+	private void HandleMiddleClickUp()
 	{
-		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
-		{
-			// Left Click Down
-			if(Input.GetMouseButtonDown(0))
-			{
-				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-				m_MouseDownPosition = m_CurrentMousePosition;
-				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-				
-				if(IsShiftKeyDown)
-					m_CurrentInteraction = EInteraction.DragSelection;
-				else
-					m_CurrentInteraction = EInteraction.CursorPaint;
-			}
+		if(m_CurrentPlaneInteraction == EPlaneInteraction.DragMovement)
+			m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
+	}
 
-			// Left Click Hold
-			if(Input.GetMouseButton(0))
-			{
-				if(m_CurrentInteraction == EInteraction.CursorPaint)
-				{
-					if(IsCtrlKeyDown)
-					{
-						if(m_CurrentInteractionMode == EMode.AutoLayout)
-						{
-							m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
-						}
-						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
-						{
-							CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
-							if(tile != null)
-								tile.RemoveInternalWall();
-						}
-					}
-					else
-					{
-						if(m_CurrentInteractionMode == EMode.AutoLayout)
-						{
-							m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
-						}
-						else if(m_CurrentInteractionMode == EMode.ManualWallLayout)
-						{
-							CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
-							if(tile != null)
-								tile.PlaceInternalWall();
-						}
-					}
-				}
-			}
-			
-			// Left Click Up
-			if(Input.GetMouseButtonUp(0))
-			{
-				if(m_CurrentInteraction == EInteraction.DragSelection)
-				{
-					if(IsCtrlKeyDown)
-						SelectionManipulateTiles(true);
-					else
-						SelectionManipulateTiles(false);
-				}
-				
-				m_CurrentInteraction = EInteraction.Nothing;
-			}
+	private void HandleMiddleScroll(float _ScrollWheel)
+	{
+		if(m_PlaneHit.collider == null)
+			return;
+
+		if(IsShiftKeyDown)
+		{
+			int direction = (int)Mathf.Sign(_ScrollWheel);
+			ChangeVerticalLayer(direction);
+		}
+		else
+		{
+			UpdateGridScale(Mathf.Clamp(m_GridScale + _ScrollWheel * 0.1f, m_GridScaleLimits.x, m_GridScaleLimits.y));
 		}
 	}
 
-	private void UpdateManualWallsInput()
-	{
-		if(m_RaycastHit.collider != null && m_RaycastHit.collider.gameObject == m_GridPlane)
-		{
-			// Left Click Down
-			if(Input.GetMouseButtonDown(0))
-			{
-				m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-				m_MouseDownPosition = m_CurrentMousePosition;
-				m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-				
-				if(IsShiftKeyDown)
-					m_CurrentInteraction = EInteraction.DragSelection;
-				else
-					m_CurrentInteraction = EInteraction.CursorPaint;
-			}
-			
-			// Left Click Hold
-			if(Input.GetMouseButton(0))
-			{
-				if(m_CurrentInteraction == EInteraction.CursorPaint)
-				{
-					if(IsCtrlKeyDown)
-						m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
-					else
-						m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
-				}
-			}
-			
-			// Left Click Up
-			if(Input.GetMouseButtonUp(0))
-			{
-				if(m_CurrentInteraction == EInteraction.DragSelection)
-				{
-					if (IsCtrlKeyDown)
-						SelectionManipulateTiles(true);
-					else
-						SelectionManipulateTiles(false);
-				}
-				
-				m_CurrentInteraction = EInteraction.Nothing;
-			}
-		}
-	}
-	
 	private void UpdateGridScale(float _GridScale)
 	{
 		m_GridScale = _GridScale;
@@ -380,7 +459,10 @@ public class CGridUI : MonoBehaviour
 	
 	private void UpdateCursor()
 	{
-		if(m_CurrentInteraction == EInteraction.DragSelection)
+		if(m_CurrentPlaneInteraction != EPlaneInteraction.Nothing)
+			return;
+
+		if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
 		{
 			Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
 			Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint) + m_TilesOffset;
@@ -393,7 +475,7 @@ public class CGridUI : MonoBehaviour
 			m_GridCursor.transform.localScale = new Vector3(width, 1.0f, depth) * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;
 		}
-		else if(m_CurrentInteraction != EInteraction.DragRotation)
+		else
 		{
 			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
 			centerPos.y = m_Grid.m_TileSize * 0.5f;
@@ -456,6 +538,36 @@ public class CGridUI : MonoBehaviour
 			{
 				if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, point1.y, z));
 				else m_Grid.AddNewTile(new TGridPoint(x, point1.y, z), s_TT_FeWC);
+			}
+		}	
+	}
+
+	private void SelectTile(TGridPoint _GridPoint)
+	{
+		CTile tile = m_Grid.GetTile(_GridPoint);
+
+		if(tile != null)
+			m_SelectedTiles.Add(tile);
+	}
+
+	private void SelectMultipleTiles()
+	{
+		// Get the diagonal corner points
+		TGridPoint point1 = m_MouseDownGridPoint;
+		TGridPoint point2 = m_CurrentMouseGridPoint;
+		
+		// Determine the rect properties
+		int left = point1.x < point2.x ? point1.x : point2.x;
+		int bottom = point1.z < point2.z ? point1.z : point2.z;
+		int width = Mathf.Abs(point1.x - point2.x) + 1;
+		int height = Mathf.Abs(point1.z - point2.z) + 1;
+		
+		// Itterate through the positions
+		for(int x = left; x < (left + width); ++x)
+		{
+			for(int z = bottom; z < (bottom + height); ++z)
+			{
+				SelectTile(new TGridPoint(x, point1.y, z));
 			}
 		}
 	}
