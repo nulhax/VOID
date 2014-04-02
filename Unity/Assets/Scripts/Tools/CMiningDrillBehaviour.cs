@@ -114,7 +114,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
 
 				if (Physics.Raycast(ray, out _rh, 4.0f))
 				{
-                    CMineralsBehaviour cMinerals = _rh.collider.gameObject.GetComponent<CMineralsBehaviour>();
+                    CMineralsBehaviour cMinerals = _rh.collider.gameObject.transform.parent.GetComponent<CMineralsBehaviour>();
 
                     if (cMinerals != null)
                     {

@@ -20,6 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
+[RequireComponent(typeof(CNetworkView))]
+[RequireComponent(typeof(CActorInteractable))]
 public class CMineralsBehaviour : CNetworkMonoBehaviour
 {
 
@@ -120,6 +122,9 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 
 
 // Member Fields
+
+
+    public GameObject[] m_caPieces = null;
 
 
 	CNetworkVar<float> m_fQuantity = null;

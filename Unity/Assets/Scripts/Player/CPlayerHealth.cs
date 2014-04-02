@@ -367,7 +367,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 {
                     // Enable input
                     transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
-                    transform.GetComponent<CPlayerHead>().ReenableInput(this);
+                    transform.GetComponent<CPlayerHead>().EnableInput(this);
 
                     // Break switch
                     break;
