@@ -206,6 +206,12 @@ public class CGameCameras : MonoBehaviour
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
 
+		Debug.Log("Creating space fog");
+		GameObject fog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
+		fog.transform.parent = s_ProjectedCamera.transform;
+		fog.transform.localPosition = Vector3.zero;
+		fog.transform.localRotation = Quaternion.identity;
+
 		// Set the defult view perspective
 		SetObserverSpace(true);
 		SetObserverPerspective(CGamePlayers.SelfActorHead);

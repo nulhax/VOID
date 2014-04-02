@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 198: {fileID: 19800000}
   - 199: {fileID: 19900000}
+  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: SpaceFog
   m_TagString: Untagged
@@ -28,6 +29,28 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6163ad7833f627f469b005fa2ce7c3cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxParticles: 1000
+  range: 200
+  distanceSpawn: .949999988
+  minParticleSize: .5
+  maxParticleSize: 1
+  sizeMultiplier: 1
+  minParticleDriftSpeed: 0
+  maxParticleDriftSpeed: 1
+  driftSpeedMultiplier: 1
+  fadeParticles: 1
+  distanceFade: .5
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1
