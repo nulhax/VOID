@@ -20,7 +20,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		none,
 		attackingPrey,	// Includes moving and turning to face the prey.
-		idling,	// Parked. Looks around occasionally.
+		idling,		// Parked. Looks around occasionally.
 		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
 		scanningForPrey,	// Later feature - after going to the disturbance, the enemy ship scans the entire area, meaning the player ship has to hide behind asteroids to avoid being detected.
 		travelling,	// Happens on spawn or after idling for a while.
@@ -52,6 +52,14 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		public EState m_State;
 		public EEvent m_Event;
 		public StateFunction m_Function;
+	}
+
+	class CDisturbance
+	{
+		public Vector3 location;
+		public float expireTime;
+		public CDisturbance(Vector3 _location) { location = _location; expireTime = Time.time + 3.0f; }
+		public bool Expired() { return expireTime <= Time.time; }
 	}
 
 	CStateTransition[] m_StateTransitionTable =
@@ -90,7 +98,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	float m_Timeout = 0.0f;
 	// State machine data set by physics.
 	Transform m_Prey = null;
-	Vector3 m_Disturbance;
+	CDisturbance m_Disturbance;
 	bool m_LookingAtTarget = false;
 	bool m_MovedToTarget = false;
 	public float viewConeRadiusInDegrees = 20.0f;
@@ -99,12 +107,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
 
 	// Physics data.
-    //CPidController mPidAngleYaw = new CPidController(2000, 0, 0); // Correction for yaw angle to target.
-    //CPidController mPidAnglePitch = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
-    ////CPidController mPidAngleRoll = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
-    //CPidController mPidVelocityYaw = new CPidController(2000, 1, 1); // Correction for yaw velocity to target.
-    //CPidController mPidVelocityPitch = new CPidController(2000, 1, 1); // Correction for pitch velocity to target.
-    //CPidController mPidVelocityRoll = new CPidController(2000, 1, 1); // Correction for roll velocity to target.
+	//CPidController mPidAngleYaw = new CPidController(2000, 0, 0); // Correction for yaw angle to target.
+	//CPidController mPidAnglePitch = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
+	////CPidController mPidAngleRoll = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
+	//CPidController mPidVelocityYaw = new CPidController(2000, 1, 1); // Correction for yaw velocity to target.
+	//CPidController mPidVelocityPitch = new CPidController(2000, 1, 1); // Correction for pitch velocity to target.
+	//CPidController mPidVelocityRoll = new CPidController(2000, 1, 1); // Correction for roll velocity to target.
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -113,12 +121,44 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		rigidbody.maxAngularVelocity = 1;
+		//rigidbody.maxAngularVelocity = 1;
 	}
 
 	void Update()
 	{
+		CheckLineOfSight();
+
 		ProcessStateMachine();
+	}
+
+	void CheckLineOfSight()
+	{
+		// Set disturbance only if there is no current disturbance, or the current disturbance is old enough to expire.
+		if (mDisturbance != null)	// If there is an existing disturbance...
+			if (mDisturbance.Expired() == false)	// And it has not expired...
+				return;	// Do not set a new disturbance, as the current one is still valid.
+
+		// Find all objects within short range sphere and long-range cone.
+		System.Collections.Generic.Dictionary<int, GameObject> objectsWithinLineOfSight = new System.Collections.Generic.Dictionary<int, GameObject>();	// ObjectID, Object.
+		// Todo: Sphere check for entities.
+		// Use: objectsWithinLineOfSight[gameObject.GetInstanceID()] = gameObject;
+		// Todo: Cone check for entities.
+
+		objectsWithinLineOfSight.Remove(gameObject.GetInstanceID());	// Remove one's self from the list.
+
+		foreach(System.Collections.Generic.KeyValuePair<int, GameObject> gubbin in objectsWithinLineOfSight)
+		{
+			// Todo: Refine this.
+			Rigidbody gubbinBody = gubbin.Value.GetComponent<Rigidbody>();
+			if(gubbinBody == null)
+				continue;
+
+			if(gubbinBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
+			{
+				mDisturbance = new CDisturbance(gubbin.Value.transform.position);
+				break;
+			}
+		}
 	}
 
 	void ProcessStateMachine()
