@@ -998,4 +998,10 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		return result;
 	}
+
+	public static float GetMass(GameObject gameObject)
+	{
+		Debug.LogError("DO NOT USE THIS YET");
+		return 1.0f;
+	}
 }
