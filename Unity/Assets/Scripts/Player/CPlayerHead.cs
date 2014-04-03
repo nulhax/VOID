@@ -158,6 +158,12 @@ public class CPlayerHead : CNetworkMonoBehaviour
     void Update()
     {
         // Empty
+
+        if (gameObject != CGamePlayers.SelfActor)
+            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(0.0f,
+                                                                                                                                         90.0f + Head.transform.localEulerAngles.y,
+                                                                                                                                        -67.31491f + Head.transform.localEulerAngles.x);
+
     }
 
 
@@ -287,8 +293,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fRotationXMin   = -80; // Up
-    const float k_fRotationXMax   =  60; // Down
+    const float k_fRotationXMin   = -70; // Up
+    const float k_fRotationXMax   =  54; // Down
     const float k_fRotationYLimit =  68; // Degrees
 
 
