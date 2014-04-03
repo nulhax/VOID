@@ -61,7 +61,7 @@ GameObject:
   - 4: {fileID: 400006}
   - 65: {fileID: 6500000}
   m_Layer: 0
-  m_Name: Wall Interior End
+  m_Name: Wall Int End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
