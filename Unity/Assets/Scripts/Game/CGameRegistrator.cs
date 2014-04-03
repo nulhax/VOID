@@ -455,7 +455,7 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Move_StrafeLeft, KeyCode.A);
         CUserInput.SetKeyBinding(CUserInput.EInput.Move_StrafeRight, KeyCode.D);
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Jump, KeyCode.Space);
-        CUserInput.SetKeyBinding(CUserInput.EInput.MoveGround_Crouch, KeyCode.LeftControl);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Move_Crouch, KeyCode.LeftControl);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_Up, KeyCode.Space);
         CUserInput.SetKeyBinding(CUserInput.EInput.MoveFly_Down, KeyCode.LeftControl);

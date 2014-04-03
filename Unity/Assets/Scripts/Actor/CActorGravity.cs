@@ -18,7 +18,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CActorNetworkSyncronized))]
 public class CActorGravity : CNetworkMonoBehaviour 
 {
 	// Member Types
@@ -49,8 +48,8 @@ public class CActorGravity : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_UnderGravityInfluence = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
-		m_GravityAcceleration = _cRegistrar.CreateNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
+		m_UnderGravityInfluence = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+		m_GravityAcceleration = _cRegistrar.CreateReliableNetworkVar<Vector3>(OnNetworkVarSync, Vector3.zero);
 	}
 
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)

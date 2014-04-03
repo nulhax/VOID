@@ -57,7 +57,7 @@ public class CFacilityOnboardActors : MonoBehaviour
 		m_ActorsOnboard.RemoveAll(item => item == null);
 	}
 
-	[AServerOnly]
+
 	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
 	{
 		if(!m_ActorsOnboard.Contains(_Actor))
@@ -65,7 +65,7 @@ public class CFacilityOnboardActors : MonoBehaviour
 			m_ActorsOnboard.Add(_Actor);
 
 			// Call ActorEnteredFacility for the locator
-			if(_Actor.GetComponent<CActorLocator>() != null)
+			if (_Actor.GetComponent<CActorLocator>() != null)
 				_Actor.GetComponent<CActorLocator>().ActorEnteredFacility(gameObject);
 
 			// Fire the actor entered facility event
@@ -76,7 +76,7 @@ public class CFacilityOnboardActors : MonoBehaviour
 		}
 	}
 
-	[AServerOnly]
+
 	public void OnActorExitedFacilityTrigger(GameObject _Actor)
 	{
 		if(m_ActorsOnboard.Contains(_Actor))

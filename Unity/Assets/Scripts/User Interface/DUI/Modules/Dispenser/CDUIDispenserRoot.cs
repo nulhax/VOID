@@ -58,7 +58,7 @@ public class CDUIDispenserRoot : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_CurrentToolType = _cRegistrar.CreateNetworkVar<CToolInterface.EType>(OnNetworkVarSync, CToolInterface.EType.INVALID);
+		m_CurrentToolType = _cRegistrar.CreateReliableNetworkVar<CToolInterface.EType>(OnNetworkVarSync, CToolInterface.EType.INVALID);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)

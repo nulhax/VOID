@@ -55,7 +55,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_Value = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_Value = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)

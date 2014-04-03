@@ -125,7 +125,7 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
-			mNoiseSeeds[ui] = _cRegistrar.CreateNetworkVar<int>(SyncNoiseSeed);
+			mNoiseSeeds[ui] = _cRegistrar.CreateReliableNetworkVar<int>(SyncNoiseSeed);
 	}
 
 	private void Start()

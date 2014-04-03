@@ -55,7 +55,7 @@ public class CNetworkInterpolatedObject : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_tPosition = _cRegistrar.CreateNetworkVar<TPosition>(OnNetworkVarSync);
+		m_tPosition = _cRegistrar.CreateReliableNetworkVar<TPosition>(OnNetworkVarSync);
 	}
 
 

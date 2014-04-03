@@ -64,7 +64,7 @@ public class CDuiDoorControlBehaviour : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_ePanel = _cRegistrar.CreateNetworkVar<EPanel>(OnNetworkVarSync, EPanel.INVALID);
+        m_ePanel = _cRegistrar.CreateReliableNetworkVar<EPanel>(OnNetworkVarSync, EPanel.INVALID);
     }
 
 

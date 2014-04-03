@@ -106,7 +106,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		dataStream.Write(streamData);
 		dataStream.Write(playerViewID);		
 				
-		Dictionary<ulong,CNetworkPlayer> players = CNetwork.Server.FindNetworkPlayers();
+		Dictionary<ulong,CNetworkPlayer> players = CNetwork.Server.GetNetworkPlayers();
 					
 		foreach(ulong playerID in players.Keys)
 		{

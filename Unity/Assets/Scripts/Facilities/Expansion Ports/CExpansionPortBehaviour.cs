@@ -198,9 +198,9 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cAttachedExpansionPortViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
-        m_bCompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
-        m_bDecompressParticlesEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+        m_cAttachedExpansionPortViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_bCompressParticlesEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+        m_bDecompressParticlesEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 
         _cRegistrar.RegisterRpc(this, "PositionToNeighbour");
     }

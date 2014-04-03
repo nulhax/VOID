@@ -134,7 +134,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bBuilt = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+        m_bBuilt = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
 
 

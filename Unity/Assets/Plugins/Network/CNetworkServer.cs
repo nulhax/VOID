@@ -198,7 +198,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-	public Dictionary<ulong, CNetworkPlayer> FindNetworkPlayers()
+	public Dictionary<ulong, CNetworkPlayer> GetNetworkPlayers()
 	{
 		return (s_mNetworkPlayers);
 	}
@@ -274,7 +274,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    protected void ProcessInboundPackets()
+    void ProcessInboundPackets()
     {
         RakNet.Packet cRnPacket = null;
 
@@ -344,7 +344,7 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-    protected void ProcessOutgoingPackets()
+    void ProcessOutgoingPackets()
     {
         // Increment outbound timer
 		m_fPacketOutboundTimer += Time.deltaTime;
@@ -361,28 +361,42 @@ public class CNetworkServer : MonoBehaviour
             foreach (KeyValuePair<ulong, CNetworkPlayer> tEntry in s_mNetworkPlayers)
             {
                 CNetworkPlayer cNetworkPlayer = tEntry.Value;
-				CNetworkStream cNetworkViewStream = new CNetworkStream();
-				cNetworkViewStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
-				cNetworkViewStream.Write(RakNet.RakNet.GetTime());
-				cNetworkViewStream.Write(cNetworkPlayer.NetworkViewStream);
+
+                // Compile buffered outbound stream
+				CNetworkStream cBufferedStream = new CNetworkStream();
+				cBufferedStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
+				cBufferedStream.Write(RakNet.RakNet.GetTime());
+				cBufferedStream.Write(cNetworkPlayer.BufferedStream);
 
                 // Check stream has outbound data
-				if (cNetworkViewStream.ByteSize >= 11)
+                if (cNetworkPlayer.BufferedStream.ByteSize > 1)
                 {
-                    //Logger.WriteError("Sent packet to player id ({0}) system address ({1}) of size ({2}) MessageId ({3})", cNetworkPlayer.PlayerId, cNetworkPlayer.SystemAddress, cNetworkViewStream.GetSize(), cNetworkViewStream.Read<byte>());
-					//cNetworkViewStream.SetReadOffset(0);
-
                     // Dispatch data to player
-					m_cRnPeer.Send(cNetworkViewStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_SEQUENCED, (char)0, cNetworkPlayer.SystemAddress, false);
+					m_cRnPeer.Send(cBufferedStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.RELIABLE_ORDERED, (char)0, cNetworkPlayer.SystemAddress, false);
 
-					cNetworkPlayer.ResetNetworkViewSteam();
+					cNetworkPlayer.ResetBufferedSteam();
+                }
+
+                // Compule unbuffered outbound stream
+                CNetworkStream cUnbufferedStream = new CNetworkStream();
+                cUnbufferedStream.Write((byte)RakNet.DefaultMessageIDTypes.ID_TIMESTAMP);
+                cUnbufferedStream.Write(RakNet.RakNet.GetTime());
+                cUnbufferedStream.Write(cNetworkPlayer.UnbufferedStream);
+
+                // Check stream has outbound data
+                if (cNetworkPlayer.UnbufferedStream.ByteSize > 1)
+                {
+                    // Dispatch data to player
+                    m_cRnPeer.Send(cUnbufferedStream.BitStream, RakNet.PacketPriority.IMMEDIATE_PRIORITY, RakNet.PacketReliability.UNRELIABLE_SEQUENCED, (char)1, cNetworkPlayer.SystemAddress, false);
+
+                    cNetworkPlayer.ResetUnbufferedSteam();
                 }
             }
 		}
     }
 
 
-	protected void ProcessMasterServerRegistration()
+	void ProcessMasterServerRegistration()
 	{
 		m_fRegistrationTimer += Time.deltaTime;
 
@@ -400,7 +414,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    protected void HandlePlayerConnect(RakNet.SystemAddress _cSystemAddress, RakNet.RakNetGUID _cGuid)
+    void HandlePlayerConnect(RakNet.SystemAddress _cSystemAddress, RakNet.RakNetGUID _cGuid)
     {
         // Create network player instance for new player
 		CNetworkPlayer cNetworkPlayer = gameObject.AddComponent<CNetworkPlayer>();
@@ -431,7 +445,7 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-    protected void HandlePlayerDisconnect(CNetworkPlayer _cPlayer, EDisconnectType _eDisconnectType)
+    void HandlePlayerDisconnect(CNetworkPlayer _cPlayer, EDisconnectType _eDisconnectType)
     {
         Logger.Write("A client has disconnected");
 
@@ -451,7 +465,7 @@ public class CNetworkServer : MonoBehaviour
     }
 
 
-	protected void HandlePlayerSerializedData(RakNet.RakNetGUID _cPlayerGuid, byte[] _baData)
+	void HandlePlayerSerializedData(RakNet.RakNetGUID _cPlayerGuid, byte[] _baData)
 	{
 		CNetworkPlayer cNetworkPlayer = s_mNetworkPlayers[_cPlayerGuid.g];
 
@@ -459,7 +473,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 	
 	
-	protected void HandlePlayerMicrophoneAudio(RakNet.RakNetGUID _cPlayerGuid, byte[] _baData)
+	void HandlePlayerMicrophoneAudio(RakNet.RakNetGUID _cPlayerGuid, byte[] _baData)
 	{
 		if (EventRecievedPlayerMicrophoneAudio != null)
 		{
@@ -471,7 +485,7 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-	protected void UpdateServerInfo()
+	void UpdateServerInfo()
 	{
 		byte[] baTitle = Converter.ToByteArray(m_sTitle, typeof(string));
 		byte[] baTitlePadded = new byte[kiTitleMaxLength];

@@ -26,37 +26,36 @@ public abstract class INetworkVar
 // Member Types
 
 
-// Member Functions
+    public enum EReliabilityType
+    {
+        INVALID,
 
-    // public:
+        // Guaranteed to make it, all packets are recived and processed
+        Reliable_Ordered,
+
+        // Might not make it, old packets are thrown away
+        Unreliable_Sequenced
+    }
 
 
+// Member Methods
+
+
+    public abstract void Initialise(CNetworkView _cOwnerNetworkView, byte _bNetworkVarId, EReliabilityType _eReliabilityType);
 	public abstract void InvokeSyncCallback();
 	public abstract void SyncValue(object _cValue, float _fSyncTime);
-	public abstract void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback);
 
 
 	public abstract object GetValueObject();
 	public abstract Type GetValueType();
 	public abstract float GetLastSyncedTick();
+    public abstract EReliabilityType GetReliabilityType();
 
 
 	public abstract bool IsDefault();
 
 
-    // protected:
-
-
-    // private:
-
-
-
-// Member Variables
-
-    // protected:
-
-
-    // private:
+// Member Fields
 
 
 };

@@ -57,7 +57,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fQuantity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 300.0f);
+		m_fQuantity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 300.0f);
 	}
 
 	/// <summary>

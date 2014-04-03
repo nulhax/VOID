@@ -95,7 +95,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
     {
         for (int i = 0; i < (int)EThrusters.MAX; ++ i)
         {
-            m_baThustersEnabled[i] = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+            m_baThustersEnabled[i] = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
         }
     }
 
