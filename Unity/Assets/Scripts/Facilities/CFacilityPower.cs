@@ -72,8 +72,8 @@ public class CFacilityPower : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PowerConsumptionRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PowerActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_PowerConsumptionRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)

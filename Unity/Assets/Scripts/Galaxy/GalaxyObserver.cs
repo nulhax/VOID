@@ -12,6 +12,7 @@ public class GalaxyObserver : MonoBehaviour
             CGame game = CGame.Instance; System.Diagnostics.Debug.Assert(game);
             CGalaxy galaxy = CGalaxy.instance; System.Diagnostics.Debug.Assert(galaxy);
 
+            if (galaxy != null)
             galaxy.RegisterObserver(this.gameObject, CGalaxy.GetBoundingRadius(gameObject));
 
             //textObject = new GameObject();

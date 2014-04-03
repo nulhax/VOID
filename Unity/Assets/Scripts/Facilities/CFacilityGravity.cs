@@ -53,7 +53,7 @@ public class CFacilityGravity : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_GravityEnabled = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_GravityEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _SyncedVar)

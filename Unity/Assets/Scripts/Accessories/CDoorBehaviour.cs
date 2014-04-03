@@ -80,7 +80,7 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cOpened = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+        m_cOpened = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
 
 

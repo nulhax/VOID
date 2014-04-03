@@ -43,7 +43,7 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bBlocked = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bBlocked = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 

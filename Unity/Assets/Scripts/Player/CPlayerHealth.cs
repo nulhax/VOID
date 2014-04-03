@@ -189,10 +189,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
         //                                              Type   Callback          Initial Vlaue
-		m_fHealth        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
-        m_HealthState    = _cRegistrar.CreateNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.ALIVE);
-		m_fOxygenUseRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 5.0f);
-        m_fTimerDowned   = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fHealth        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
+        m_HealthState    = _cRegistrar.CreateReliableNetworkVar<byte> (OnNetworkVarSync, (byte)HealthState.ALIVE);
+		m_fOxygenUseRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 5.0f);
+        m_fTimerDowned   = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 
@@ -366,7 +366,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 case HealthState.ALIVE:
                 {
                     // Enable input
-                    transform.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+                    transform.GetComponent<CPlayerGroundMotor>().EnableInput(this);
                     transform.GetComponent<CPlayerHead>().EnableInput(this);
 
                     // Break switch

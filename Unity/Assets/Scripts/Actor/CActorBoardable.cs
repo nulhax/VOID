@@ -17,7 +17,6 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CActorNetworkSyncronized))]
 public class CActorBoardable : CNetworkMonoBehaviour 
 {
 	
@@ -54,7 +53,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BoardingState = _cRegistrar.CreateNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
+		m_BoardingState = _cRegistrar.CreateReliableNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _rSender)

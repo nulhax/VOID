@@ -76,7 +76,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bIsFunctional = _cRegistrar.CreateNetworkVar(OnNetworkVarSync, true);
+		m_bIsFunctional = _cRegistrar.CreateReliableNetworkVar(OnNetworkVarSync, true);
 	}
 
 

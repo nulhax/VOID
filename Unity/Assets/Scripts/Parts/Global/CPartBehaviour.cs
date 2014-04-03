@@ -59,7 +59,7 @@ public class CPartBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_bIsFunctional = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bIsFunctional = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
     }
 
 

@@ -130,11 +130,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 		for (uint i = 0; i < k_bMaxNumTools; ++i)
 		{
-			m_acToolsViewId[i] = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+			m_acToolsViewId[i] = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 		}
 
-		m_bToolCapacity = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 3);
-        m_bActiveToolId = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, k_bInvalidToolId);
+		m_bToolCapacity = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 3);
+        m_bActiveToolId = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, k_bInvalidToolId);
     }
 
 

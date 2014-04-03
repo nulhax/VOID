@@ -86,7 +86,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cMountedPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
+		m_cMountedPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
 
 
@@ -117,7 +117,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				// Remember the entering head rotations, set the rotation of the head to that of the seat
 				m_EnterHeadXRot = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().HeadEulerX;
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.LookAt(m_LookAt.position);
-				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.x);
+				//CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.x);
 			}
 
 			if (m_cMountedPlayerId.PreviousValue == CNetwork.PlayerId)
@@ -125,11 +125,11 @@ public class CCockpit : CNetworkMonoBehaviour
 				if (CGamePlayers.SelfActor != null)
 				{
 					// Reenable intputs
-					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().ReenableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().EnableInput(this);
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().EnableInput(this);
 
 					// Use old head rotation
-					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(m_EnterHeadXRot);
+					//CGamePlayers.SelfActor.GetComponent<CPlayerHead>().SetHeadRotations(m_EnterHeadXRot);
 				}
 			}
 		}
