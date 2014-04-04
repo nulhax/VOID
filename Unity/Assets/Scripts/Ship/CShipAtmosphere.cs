@@ -57,8 +57,8 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fGlobalAtmosphericQuality = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fGlobalAtmosphereGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGlobalAtmosphericQuality = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGlobalAtmosphereGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 

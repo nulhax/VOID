@@ -51,8 +51,8 @@ public class CAtmosphereConditioningBehaviour : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_AtmosphereConditioningActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
-		m_AtmosphereCapacitySupport = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_AtmosphereConditioningActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+		m_AtmosphereCapacitySupport = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _VarInstance)

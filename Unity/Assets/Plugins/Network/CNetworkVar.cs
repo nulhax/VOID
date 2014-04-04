@@ -30,8 +30,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 // Member Events
 
 
-	public delegate void OnSetCallback(byte _bIdentifier);
-	public delegate void OnSyncCallback(INetworkVar _cVarInstance);
+	public delegate void SyncedHandler(INetworkVar _cVarInstance);
 
 
 // Member Properties
@@ -39,9 +38,10 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public TYPE Value
 	{
-		get {return(Get());}
-		set {Set(value);}
+		get { return(Get()); }
+		set { Set(value); }
 	}
+
 
 	public TYPE PreviousValue
 	{
@@ -49,82 +49,112 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
-// Member Functions
-
-    // public:
+// Member Methods
 
 
 	public CNetworkVar()
 	{
-
+        // Empty
 	}
 
 
-	public CNetworkVar(OnSyncCallback _cSyncObserver)
+	public CNetworkVar(SyncedHandler _cSyncedObserver)
     {
-		m_nSyncNotifyCallback = _cSyncObserver;
+		m_nSyncedHandler = _cSyncedObserver;
     }
 
 
-	public CNetworkVar(OnSyncCallback _cSyncObserver, TYPE _DefaultValue)
+	public CNetworkVar(SyncedHandler _cSyncedObserver, TYPE _DefaultValue)
     {
-		m_nSyncNotifyCallback = _cSyncObserver;
+		m_nSyncedHandler = _cSyncedObserver;
 		m_Value = _DefaultValue;
-		m_StartValue = _DefaultValue;
+		m_DefaultValue = _DefaultValue;
     }
 
 
-	public void Set(TYPE _NewValue, bool _bAllowSameValue)
+    public virtual void Set(TYPE _NewValue, bool _bAllowSameValue)
     {
         if (!CNetwork.IsServer)
-        {
 			Logger.WriteError("Clients are not allowed to set network variables!");
-        }
-        else
-        {
-            bool bSetValue = false;
 
-            if (_NewValue == null)
-            {
-                if (m_Value != null)
-                {
-                    bSetValue = true;
-                }
-            }
-            else if (!(_NewValue).Equals(m_Value) ||
-                      _bAllowSameValue)
+        bool bSetValue = false;
+
+        // Check new value is not null
+        if (_NewValue == null)
+        {
+            // Check current value is not null 
+            if (m_Value != null)
             {
                 bSetValue = true;
             }
-             
-			if (bSetValue)
-			{
-				m_PreviousValue = m_Value;
-				m_Value = _NewValue;
-
-				if (m_nSetNotifyCallback == null)
-				{
-					Debug.LogError("cupcakes");
-				}
-
-				m_nSetNotifyCallback(m_bNetworkVarId);
-			}
         }
+
+        // Check same value setting allowed
+        // Or check values are not the same
+        else if ( _bAllowSameValue ||
+                 !(_NewValue).Equals(m_Value))
+        {
+            bSetValue = true;
+        }
+        
+        // Check value has been allowed to be set
+		if (bSetValue)
+		{
+			m_PreviousValue = m_Value;
+			m_Value = _NewValue;
+
+            // Check sending is only done by intervals
+            if (m_bSendIntervalEnabled)
+            {
+                m_bValueDirty = true;
+            }
+
+            // Send change straight away
+            else
+            {
+                m_cOwnerNetworkView.SyncNetworkVar(0, m_bNetworkVarId);
+            }
+		}
     }
 
 
-    public void Set(TYPE _NewValue)
+    public virtual void Set(TYPE _NewValue)
     {
         Set(_NewValue, false);
     }
 
 
+    public virtual void SetSendInterval(float _fInterval)
+    {
+        if (CNetwork.IsServer)
+        {
+            m_fSendInterval = _fInterval;
+
+            if (m_fSendInterval > 0.0f)
+            {
+                CNetwork.EventNetworkUpdate += UpdateSendInterval;
+
+                m_bSendIntervalEnabled = true;
+            }
+            else
+            {
+                if (m_bSendIntervalEnabled)
+                {
+                    CNetwork.EventNetworkUpdate -= UpdateSendInterval;
+                }
+
+                m_bSendIntervalEnabled = false;
+            }
+        }
+    }
+
+
 	public override void InvokeSyncCallback()
 	{
-		Logger.WriteErrorOn(m_nSyncNotifyCallback == null, "This network var does not have a OnSyncCallback defined!!");
+		Logger.WriteErrorOn(m_nSyncedHandler == null, "This network var does not have a OnSyncCallback defined!!");
 
 		// Notify observer
-		m_nSyncNotifyCallback(this);
+		m_nSyncedHandler(this);
 	}
 
 
@@ -141,22 +171,23 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
-	public override void SetNetworkViewOwner(byte _bNetworkVarId, CNetworkVar<object>.OnSetCallback _nSetCallback)
+    public override void Initialise(CNetworkView _cOwnerNetworkView, byte _bNetworkVarId, EReliabilityType _eReliabilityType)
 	{
 		Logger.WriteErrorOn(m_bNetworkVarId != 0, "You should not change a network var's network view owner once set. Undefined behaviour may occur");
 
-		m_nSetNotifyCallback = _nSetCallback;
-		m_bNetworkVarId = _bNetworkVarId;
+        m_cOwnerNetworkView = _cOwnerNetworkView;
+		m_bNetworkVarId     = _bNetworkVarId;
+        m_eReliabilityType  = _eReliabilityType;
 	}
 
 
-    public TYPE Get()
+    public virtual TYPE Get()
     {
         return (m_Value);
     }
 
 
-	public TYPE GetPrevious()
+    public virtual TYPE GetPrevious()
 	{
 		return (m_PreviousValue);
 	}
@@ -182,38 +213,65 @@ public class CNetworkVar<TYPE> : INetworkVar
 
 	public override bool IsDefault()
 	{
-		return ((m_StartValue == null && m_Value == null) || 
-		        m_Value.Equals(m_StartValue));
+		return ((m_DefaultValue == null && m_Value == null) || 
+		        m_Value.Equals(m_DefaultValue));
 	}
 
 
-    // protected:
+    public override EReliabilityType GetReliabilityType()
+    {
+        return (m_eReliabilityType);
+    }
 
 
-    // private:
+    void UpdateSendInterval(float _fDeltatick)
+    {
+        if (!m_bSendIntervalEnabled)
+            return;
+
+        m_fSendTimer += _fDeltatick;
+
+        if (m_fSendTimer > m_fSendInterval)
+        {
+            m_fSendTimer -= m_fSendInterval;
+
+            if (m_bValueDirty)
+            {
+                m_cOwnerNetworkView.SyncNetworkVar(0, m_bNetworkVarId);
+
+                m_bValueDirty = false;
+            }
+        }
+    }
 
 
-// Member Variables
-
-    // protected:
-
-
-    // private:
+// Member Fields
 
 
     TYPE m_Value;
-	TYPE m_StartValue;
-	TYPE m_PreviousValue;
+    TYPE m_DefaultValue;
+    TYPE m_PreviousValue;
 
 
-	CNetworkVar<object>.OnSetCallback m_nSetNotifyCallback = null;
-	OnSyncCallback m_nSyncNotifyCallback = null;
-	float m_fSyncedTick = 0;
-	uint m_uiSendCount = 0;
-	uint m_uiSendPacketOffset = 0;
+    CNetworkView m_cOwnerNetworkView = null;
+    SyncedHandler m_nSyncedHandler = null;
+
+
+    EReliabilityType m_eReliabilityType = EReliabilityType.INVALID;
+
+
+    float m_fSyncedTick     = 0.0f;
+    float m_fSendInterval   = 0.0f;
+    float m_fSendTimer      = 0.0f;
+
+
+    uint m_uiSendCount        = 0;
+    uint m_uiSendPacketOffset = 0;
 
 
 	byte m_bNetworkVarId = 0;
+    bool m_bSendIntervalEnabled = false;
+    bool m_bValueDirty = false;
 
 
 };

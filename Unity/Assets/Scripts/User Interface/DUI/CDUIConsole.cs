@@ -61,7 +61,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _Registrar)
 	{
-		m_DUIViewId = _Registrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_DUIViewId = _Registrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)

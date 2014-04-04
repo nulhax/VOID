@@ -210,11 +210,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		mCentreCellX = _cRegistrar.CreateNetworkVar<int>(SyncCentreCell, mCentreCell.x);
-		mCentreCellY = _cRegistrar.CreateNetworkVar<int>(SyncCentreCell, mCentreCell.y);
-		mCentreCellZ = _cRegistrar.CreateNetworkVar<int>(SyncCentreCell, mCentreCell.z);
-		mGalaxySize = _cRegistrar.CreateNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
-		mNumCellSubsets = _cRegistrar.CreateNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
+		mCentreCellX = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.x);
+		mCentreCellY = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.y);
+		mCentreCellZ = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.z);
+		mGalaxySize = _cRegistrar.CreateReliableNetworkVar<float>(SyncGalaxySize, mfGalaxySize);
+		mNumCellSubsets = _cRegistrar.CreateReliableNetworkVar<uint>(SyncNumCellSubsets, muiNumCellSubsets);
 	}
 
 	void Update()

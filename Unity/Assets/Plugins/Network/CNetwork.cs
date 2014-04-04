@@ -30,6 +30,14 @@ public class CNetwork : MonoBehaviour
     public const ushort usMasterServerPort = 9896;
 
 
+// Member Events & Delegates
+
+
+    public delegate void NetworkUpdateHandler(float _fDeltatick);
+
+    public static event NetworkUpdateHandler EventNetworkUpdate;
+
+
 // Member Functions
 
 	// public:
@@ -68,6 +76,7 @@ public class CNetwork : MonoBehaviour
 
 	public void Update()
 	{
+        if (EventNetworkUpdate != null) EventNetworkUpdate(Time.deltaTime);
 	}
 
 

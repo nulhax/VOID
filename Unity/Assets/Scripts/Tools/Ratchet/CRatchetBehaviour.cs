@@ -57,7 +57,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bRepairState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
+		m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
 	}
 
 	

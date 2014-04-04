@@ -152,7 +152,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_ulOwnerPlayerId = _cRegistrar.CreateNetworkVar<ulong>(OnNetworkVarSync, 0);
+        m_ulOwnerPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
 
 

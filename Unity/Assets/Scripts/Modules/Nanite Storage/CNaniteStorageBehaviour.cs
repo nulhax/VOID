@@ -79,9 +79,9 @@ public class CNaniteStorageBehaviour : CNetworkMonoBehaviour
 	// Member Functions
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fStoredNanites = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0);
-        m_fNaniteCapacity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0);
-		m_bNanitesAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_fStoredNanites = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0);
+        m_fNaniteCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0);
+		m_bNanitesAvailable = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)

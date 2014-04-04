@@ -1,3 +1,4 @@
+
 //  Auckland
 //  New Zealand
 //
@@ -79,6 +80,7 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
+	public CTile.ETileType m_CurrentlySelectedType = CTile.ETileType.INVALID;
 	public List<CTile> m_SelectedTiles = null;
 
 	public Material m_TileMaterial = null;
@@ -124,9 +126,10 @@ public class CGridUI : MonoBehaviour
 		// Create the grid objects
 		CreateGridUIObjects();
 
-		// Default to autolayout mode
+		// Default enums
 		m_CurrentMode = EMode.AutoLayout;
 		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
+		m_CurrentlySelectedType = CTile.ETileType.Floor;
 	}
 	
 	private void CreateGridUIObjects()
@@ -249,38 +252,90 @@ public class CGridUI : MonoBehaviour
 		if(m_SelectedTiles.Count == 0)
 			return;
 
-		CTile.ETileType tileType = CTile.ETileType.INVALID;
+		// Toggling tile type
 		if(Input.GetKeyDown(KeyCode.Q))
-			tileType = CTile.ETileType.Floor;
+			m_CurrentlySelectedType = CTile.ETileType.Floor;
 		
 		else if(Input.GetKeyDown(KeyCode.W))
-			tileType = CTile.ETileType.Wall_Ext;
+			m_CurrentlySelectedType = CTile.ETileType.Wall_Ext;
 		
 		else if(Input.GetKeyDown(KeyCode.E))
-			tileType = CTile.ETileType.Wall_Int;
+			m_CurrentlySelectedType = CTile.ETileType.Wall_Int;
 
 		else if(Input.GetKeyDown(KeyCode.R))
-			tileType = CTile.ETileType.Ceiling;
+			m_CurrentlySelectedType = CTile.ETileType.Ceiling;
 
-		if(tileType == CTile.ETileType.INVALID)
-			return;
-
-		// Update the type state for given tiles
-		foreach(CTile tile in m_SelectedTiles)
+		// Enabling/Disabling tile type
+		if(Input.GetKeyDown(KeyCode.Insert))
 		{
-			if(tile.GetTileTypeState(tileType))
-				tile.DisableTileType(tileType);
-			else
-				tile.EnableTileType(tileType);
+			// Update the type state for given tiles
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				tile.SetTileTypeState(m_CurrentlySelectedType, true);
+				tile.UpdateTileMetaData();
+			}
+		}
+		else if(Input.GetKeyDown(KeyCode.Delete))
+		{
+			// Update the type state for given tiles
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				tile.SetTileTypeState(m_CurrentlySelectedType, false);
+				tile.UpdateTileMetaData();
+			}
+		}
+
+		// Toggling Variants of neighbout exemptsions
+		if(Input.GetKeyDown(KeyCode.Keypad8))
+		{
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
+				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.North);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				tile.UpdateTileMetaData();
+			}
+		}
+		else if(Input.GetKeyDown(KeyCode.Keypad2))
+		{
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
+				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.South);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				tile.UpdateTileMetaData();
+			}
+		}
+		else if(Input.GetKeyDown(KeyCode.Keypad4))
+		{
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
+				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.West);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				tile.UpdateTileMetaData();
+			}
+		}
+		else if(Input.GetKeyDown(KeyCode.Keypad6))
+		{
+			foreach(CTile tile in m_SelectedTiles)
+			{
+				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
+				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.East);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				tile.UpdateTileMetaData();
+			}
 		}
 	}
 
 	private void HandleLeftClickDown()
 	{
 		if(m_PlaneHit.collider == null)
-		{
 			return;
-		}
 
 		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
 		m_MouseDownPosition = m_CurrentMousePosition;
@@ -296,32 +351,42 @@ public class CGridUI : MonoBehaviour
 	{
 		if(m_PlaneHit.collider == null)
 			return;
-		
-		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && !IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
+
+		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
+		if(!single)
+			return;
+
+		if(!IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
 		{
 			m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
 			return;
 		}
 		
-		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && !IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+		if(!IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
 		{
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
-				tile.EnableTileType(CTile.ETileType.Wall_Int);
+			{
+				tile.SetTileTypeState(CTile.ETileType.Wall_Int, true);
+				tile.UpdateTileMetaData();
+			}
 			return;
 		}
 		
-		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
+		if(IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
 		{
 			m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 			return;
 		}
 		
-		if(m_CurrentTileInteraction == ETileInteraction.SingleSelection && IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+		if(IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
 		{
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
-				tile.DisableTileType(CTile.ETileType.Wall_Int);
+			{
+				tile.SetTileTypeState(CTile.ETileType.Wall_Int, false);
+				tile.UpdateTileMetaData();
+			}
 			return;
 		}
 	}
@@ -335,13 +400,13 @@ public class CGridUI : MonoBehaviour
 		bool multi = m_CurrentTileInteraction == ETileInteraction.MultipleSelection;
 
 		if (single)
-			HandleLeftUpSingle();
+			HandleLeftClickUpSingle();
 
 		if (multi)
-			HandleLeftUpMulti();
+			HandleLeftClickUpMulti();
 	}
 
-	void HandleLeftUpSingle()
+	void HandleLeftClickUpSingle()
 	{
 		if (m_CurrentMode == EMode.TileSelect) 
 		{
@@ -352,7 +417,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 
-	void HandleLeftUpMulti()
+	void HandleLeftClickUpMulti()
 	{
 		switch(m_CurrentMode) 
 		{
@@ -574,7 +639,7 @@ public class CGridUI : MonoBehaviour
 
 	private void OnTileCreated(CTile _Tile)
 	{
-		// Check the tiles lower/upper neighbours for ceiling check
+		// Check the tiles lower/upper neighbours
 		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
 		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
 
@@ -584,10 +649,20 @@ public class CGridUI : MonoBehaviour
 			_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
 		}
 
-		// If lower exists, remove their ceiling
+		// If lower exists
 		if(lower != null)
 		{
+			// Remove their ceiling
 			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+
+			// Remove floor
+			_Tile.SetTileTypeState(CTile.ETileType.Floor, false);
+
+//			bool wallext = lower.m_Tile.GetMetaData(CTile.ETileType.Wall_Ext).m_Type != TTileMeta.EType.None;
+//			bool wallint = lower.m_Tile.GetTileTypeState(CTile.ETileType.Wall_Int);
+//
+//			if(!wallext && !wallint)
+//				
 		}
 
 		// Register tile appearance change
@@ -599,7 +674,7 @@ public class CGridUI : MonoBehaviour
 		// Check the tiles lower neighbours for ceiling check
 		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
 
-		// If lower exists, re-enable ceiling
+		// If lower exists, re-enable ceiling and floor
 		if(lower != null)
 		{
 			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, true);
@@ -607,6 +682,11 @@ public class CGridUI : MonoBehaviour
 
 		// Unregister tile appearance change
 		_Tile.EventTileAppearanceChanged -= OnTileAppearanceChange;
+	}
+
+	private void OnTileMetaChange(CTile _Tile)
+	{
+		// Empty
 	}
 
 	private void OnTileAppearanceChange(CTile _Tile)

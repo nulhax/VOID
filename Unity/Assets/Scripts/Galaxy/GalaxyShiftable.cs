@@ -5,6 +5,7 @@ public class GalaxyShiftable : MonoBehaviour
 {
     void Start()
     {
+        if (CGalaxy.instance != null)
         CGalaxy.instance.RegisterShiftableEntity(this);
     }
 

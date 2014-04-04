@@ -34,8 +34,8 @@ public class CFactoryToolSpawner : CNetworkMonoBehaviour
     // Member Functions
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_fRecharge      = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
-        m_sCurrentToolID = _cRegistrar.CreateNetworkVar<ushort>(OnNetworkVarSync);
+        m_fRecharge      = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync);
+        m_sCurrentToolID = _cRegistrar.CreateReliableNetworkVar<ushort>(OnNetworkVarSync);
     }
 	
 	public void Start()

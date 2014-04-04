@@ -70,7 +70,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_eState = _cRegistrar.CreateNetworkVar<EState>(OnNetworkVarSync, EState.Idle);
+        m_eState = _cRegistrar.CreateReliableNetworkVar<EState>(OnNetworkVarSync, EState.Idle);
     }
 
 

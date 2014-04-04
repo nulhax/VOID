@@ -73,9 +73,9 @@ public class CPropulsionGeneratorBehaviour : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PropulsionPotential = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fPropulsionOutput = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PropulsionGeneratorActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_PropulsionPotential = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fPropulsionOutput = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PropulsionGeneratorActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)
