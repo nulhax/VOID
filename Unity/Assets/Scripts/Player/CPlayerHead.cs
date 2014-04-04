@@ -113,7 +113,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
 
             // Add audoio listener to head
-            Head.AddComponent<AudioListener>();
+            //Head.AddComponent<AudioListener>();
         }
 
         if (CNetwork.IsServer)

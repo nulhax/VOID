@@ -44,10 +44,6 @@ Material:
     m_Floats:
       data:
         first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
           name: _Saturation
         second: .800000012
       data:
@@ -56,12 +52,16 @@ Material:
         second: 2
       data:
         first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
           name: _GlowIntensity
         second: 2
       data:
         first:
           name: _GlowDist
-        second: .0329999998
+        second: .0150000006
       data:
         first:
           name: _MinHeight
@@ -97,6 +97,10 @@ Material:
         second: {r: .602941155, g: .836740553, b: 1, a: .0705882385}
       data:
         first:
+          name: _Tint
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
+      data:
+        first:
           name: _DiffuseCol
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
@@ -105,13 +109,9 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _Tint
-        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
-      data:
-        first:
           name: _PlaneNormal
-        second: {r: -.153283566, g: .792289555, b: -.590577185, a: 0}
+        second: {r: -1.11444322e-07, g: .939692616, b: -.342020184, a: 0}
       data:
         first:
           name: _PlanePoint
-        second: {r: 0, g: 1.22000003, b: 4, a: 0}
+        second: {r: 0, g: 8.93763161, b: -1, a: 0}

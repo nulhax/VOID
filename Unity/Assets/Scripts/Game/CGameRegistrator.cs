@@ -88,6 +88,7 @@ public class CGameRegistrator : MonoBehaviour
         NaniteCapsule,
         Engine,
 		Starter,
+		ConstructionPlanner,
 
 		
 		// Components
@@ -136,6 +137,7 @@ public class CGameRegistrator : MonoBehaviour
 
 		// NulOS
 		NOSPanelWide			= 1100,
+		NOSPanelConstruction,
 
 		// NulOS Widgets
 		NOSWFacilityControl		= 1200,
@@ -245,6 +247,8 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Nanite Capsule");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ConstructionPlanner,          "Modules/Construction Planner");
+
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -293,6 +297,7 @@ public class CGameRegistrator : MonoBehaviour
 
 		// NulOS
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelWide,				"User Interface/NulOS/NOSPanelWide");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelConstruction,		"User Interface/NulOS/NOSPanelConstruction");
 
 		// NulOS Widgets
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWFacilityControl,			"User Interface/NulOS/Widgets/WidgetFacilityControl");
@@ -400,7 +405,7 @@ public class CGameRegistrator : MonoBehaviour
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule        , ENetworkPrefab.NaniteCapsule);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
-
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.ConstructionPlanner  , ENetworkPrefab.ConstructionPlanner);
     }
 
 
@@ -413,22 +418,23 @@ public class CGameRegistrator : MonoBehaviour
 
 	void RegisterUserInterfaces()
 	{
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest         , ENetworkPrefab.DUITest);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion    , ENetworkPrefab.DUIFacilityExpansion);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation       , ENetworkPrefab.DUIModuleCreation);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator       , ENetworkPrefab.DUIPowerGenerator);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor       , ENetworkPrefab.DUIPowerCapacitor);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator  , ENetworkPrefab.DUIAtmosphereGenerator);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser            , ENetworkPrefab.DUIDispenser);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower            , ENetworkPrefab.DUIShipPower);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion       , ENetworkPrefab.DUIShipPropulsion);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources        , ENetworkPrefab.DUIShipResources);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NaniteCapsule        , ENetworkPrefab.DUINaniteCapsule);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine               , ENetworkPrefab.DUIEngine);
-        CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      , ENetworkPrefab.DUIAirlockInternal);
-        CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         , ENetworkPrefab.DuiFacilityDoor);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 		, ENetworkPrefab.NOSPanelWide);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ControlsTest         		, ENetworkPrefab.DUITest);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityExpansion    		, ENetworkPrefab.DUIFacilityExpansion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ModuleCreation       		, ENetworkPrefab.DUIModuleCreation);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerGenerator       		, ENetworkPrefab.DUIPowerGenerator);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.PowerCapacitor       		, ENetworkPrefab.DUIPowerCapacitor);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.AtmosphereGenerator  		, ENetworkPrefab.DUIAtmosphereGenerator);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Dispenser            		, ENetworkPrefab.DUIDispenser);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPower            		, ENetworkPrefab.DUIShipPower);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipPropulsion       		, ENetworkPrefab.DUIShipPropulsion);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipResources        		, ENetworkPrefab.DUIShipResources);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NaniteCapsule        		, ENetworkPrefab.DUINaniteCapsule);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Engine               		, ENetworkPrefab.DUIEngine);
+        CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      		, ENetworkPrefab.DUIAirlockInternal);
+        CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         		, ENetworkPrefab.DuiFacilityDoor);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 				, ENetworkPrefab.DUIFacilityControl);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 				, ENetworkPrefab.NOSPanelWide);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelConstruction 		, ENetworkPrefab.NOSPanelConstruction);
 	}
 
 

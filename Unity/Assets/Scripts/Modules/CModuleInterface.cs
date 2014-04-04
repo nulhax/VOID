@@ -65,6 +65,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         NaniteCapsule,
         Engine,
 		Starter,
+		ConstructionPlanner,
 
         MAX
 	}

@@ -134,12 +134,13 @@ public class CGridUI : MonoBehaviour
 	
 	private void CreateGridUIObjects()
 	{
+		m_Grid.transform.localRotation = Quaternion.Euler(20.0f, 0.0f, 0.0f);
+
 		m_GridPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
 		m_GridPlane.name = "Raycast Plane";
 		m_GridPlane.renderer.material.shader = Shader.Find("Transparent/Diffuse");
 		m_GridPlane.renderer.material.color = new Color(1.0f, 1.0f, 1.0f, 0.1f);
 		m_GridPlane.collider.isTrigger = true;
-		m_GridPlane.layer = LayerMask.NameToLayer("UI 3D");
 		m_GridPlane.transform.parent = m_Grid.transform;
 		m_GridPlane.transform.localPosition = Vector3.zero;
 		m_GridPlane.transform.localRotation = Quaternion.identity;
@@ -163,12 +164,13 @@ public class CGridUI : MonoBehaviour
 	{
 		m_CurrentMousePosition = Input.mousePosition;
 
-		// Get the raycast hits against all objects
-		Ray ray = Camera.main.ScreenPointToRay(m_CurrentMousePosition);
-		m_RaycastHits = new List<RaycastHit>(Physics.RaycastAll(ray, Mathf.Infinity));
+		// Get the raycast hits against all grid objects
+		RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
+		if(lastRaycastHits == null)
+			return;
 
-		// Order the rayhits by distance
-		m_RaycastHits.OrderBy(hit => hit.distance);
+		m_RaycastHits = lastRaycastHits.ToList();
+		m_RaycastHits.RemoveAll(hit => CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
 
 		// Get the plane hit
 		m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
@@ -510,7 +512,7 @@ public class CGridUI : MonoBehaviour
 		m_Grid.transform.localScale = Vector3.one * _GridScale;
 		
 		// Update the raycast plane to be the same
-		m_GridPlane.transform.localScale = Vector3.one * 0.5f / _GridScale;
+		m_GridPlane.transform.localScale = Vector3.one * 0.25f / _GridScale;
 	}
 
 	private void ChangeVerticalLayer(int _Direction)
@@ -534,10 +536,10 @@ public class CGridUI : MonoBehaviour
 
 			Vector3 centerPos = (point1 + point2) * 0.5f;
 			float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
+			float height = Mathf.Abs(m_CurrentMouseGridPoint.y - m_MouseDownGridPoint.y) + 1.0f;
 			float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
-			centerPos.y = m_Grid.m_TileSize * 0.5f;
-
-			m_GridCursor.transform.localScale = new Vector3(width, 1.0f, depth) * m_Grid.m_TileSize;
+			
+			m_GridCursor.transform.localScale = new Vector3(width, height, depth) * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;
 		}
 		else
@@ -553,18 +555,18 @@ public class CGridUI : MonoBehaviour
 	private void DragRotateGrid()
 	{
 		// Get the screen mouse positions
-		Vector3 point1 = m_MouseDownPosition;
-		Vector3 point2 = m_CurrentMousePosition;
+		Vector3 point1 = m_MouseDownHitPoint;
+		Vector3 point2 = m_CurrentMouseHitPoint;
 		
 		// Get the difference of the two
-		Vector3 diff = (point1 - point2);
+		Vector3 diff = (point1 - point2) * 100.0f;
 		
 		// Rotate plane using the axis of camera to rotate pitch and yaw
-		Quaternion rotPitch = Quaternion.AngleAxis(-diff.y * 0.1f, Camera.main.transform.right);
-		Quaternion rotYaw = Quaternion.AngleAxis(diff.x * 0.2f, m_Grid.transform.parent.up);
+		Quaternion rotPitch = Quaternion.AngleAxis(diff.z, Camera.main.transform.right);
+		Quaternion rotYaw = Quaternion.AngleAxis(diff.x, m_Grid.transform.parent.up);
 		
 		// Lerp to the final rotation
-		m_Grid.transform.rotation = rotPitch * m_DragRotateStart * rotYaw;
+		m_Grid.transform.rotation = /*rotPitch **/ m_DragRotateStart * rotYaw;
 	}
 
 	private void DragMoveTiles()
@@ -592,17 +594,22 @@ public class CGridUI : MonoBehaviour
 		
 		// Determine the rect properties
 		int left = point1.x < point2.x ? point1.x : point2.x;
-		int bottom = point1.z < point2.z ? point1.z : point2.z;
+		int bottom = point1.y < point2.y ? point1.y : point2.y;
+		int back = point1.z < point2.z ? point1.z : point2.z;
 		int width = Mathf.Abs(point1.x - point2.x) + 1;
-		int height = Mathf.Abs(point1.z - point2.z) + 1;
-		
+		int height = Mathf.Abs(point1.y - point2.y) + 1;
+		int depth = Mathf.Abs(point1.z - point2.z) + 1;
+
 		// Itterate through the positions
 		for(int x = left; x < (left + width); ++x)
 		{
-			for(int z = bottom; z < (bottom + height); ++z)
+			for(int y = bottom; y < (bottom + height); ++y)
 			{
-				if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, point1.y, z));
-				else m_Grid.AddNewTile(new TGridPoint(x, point1.y, z), s_TT_FeWC);
+				for(int z = back; z < (back + depth); ++z)
+				{
+					if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, y, z));
+					else m_Grid.AddNewTile(new TGridPoint(x, y, z), s_TT_FeWC);
+				}
 			}
 		}	
 	}
