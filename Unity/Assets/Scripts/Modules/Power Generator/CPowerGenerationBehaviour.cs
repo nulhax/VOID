@@ -71,9 +71,9 @@ public class CPowerGenerationBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PowerGenerationRate = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PowerGenerationRatePotential = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PowerGenerationActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_PowerGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerGenerationRatePotential = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_PowerGenerationActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)

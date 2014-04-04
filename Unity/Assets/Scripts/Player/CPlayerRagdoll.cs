@@ -49,7 +49,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-       m_bRagdollState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, (byte)ERagdollState.Invalid);
+       m_bRagdollState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, (byte)ERagdollState.Invalid);
     }
     
     void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
@@ -127,7 +127,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 		//Disable client side rigidbody
 		if (!CNetwork.IsServer) 
 		{
-			rigidbody.isKinematic = true;
+			//rigidbody.isKinematic = true; // Sorry I need to disable this - Bryce
 		}
     }
 	

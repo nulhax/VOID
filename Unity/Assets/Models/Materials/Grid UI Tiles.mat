@@ -44,6 +44,10 @@ Material:
     m_Floats:
       data:
         first:
+          name: _SpecPower
+        second: 1
+      data:
+        first:
           name: _Saturation
         second: .800000012
       data:
@@ -52,16 +56,12 @@ Material:
         second: 2
       data:
         first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
           name: _GlowIntensity
         second: 2
       data:
         first:
           name: _GlowDist
-        second: .0300000012
+        second: .0329999998
       data:
         first:
           name: _MinHeight
@@ -110,8 +110,8 @@ Material:
       data:
         first:
           name: _PlaneNormal
-        second: {r: -.0949229598, g: .925870597, b: -.365722924, a: 0}
+        second: {r: -.153283566, g: .792289555, b: -.590577185, a: 0}
       data:
         first:
           name: _PlanePoint
-        second: {r: 0, g: 1.20000005, b: 4, a: 0}
+        second: {r: 0, g: 1.22000003, b: 4, a: 0}

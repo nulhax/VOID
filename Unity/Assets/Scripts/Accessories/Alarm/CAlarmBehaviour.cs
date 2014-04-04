@@ -54,7 +54,7 @@ public class CAlarmBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 
 

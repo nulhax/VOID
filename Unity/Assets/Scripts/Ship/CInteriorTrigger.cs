@@ -42,12 +42,9 @@ public class CInteriorTrigger : MonoBehaviour
 		m_CachedOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
 	}
 
-	[AServerOnly]
+
 	private void OnTriggerEnter(Collider _Other)
 	{
-		if(!CNetwork.IsServer)
-			return;
-
 		Rigidbody rb = _Other.rigidbody;
 
 		if(rb == null)
@@ -59,12 +56,9 @@ public class CInteriorTrigger : MonoBehaviour
 		}
 	}
 
-	[AServerOnly]
+
 	private void OnTriggerExit(Collider _Other)
 	{
-		if(!CNetwork.IsServer)
-			return;
-
 		Rigidbody rb = _Other.rigidbody;
 		
 		if(rb == null)

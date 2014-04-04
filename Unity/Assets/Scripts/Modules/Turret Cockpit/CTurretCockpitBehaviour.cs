@@ -59,7 +59,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
 
         //m_CalibratorComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
         //m_LiquidComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);

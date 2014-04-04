@@ -49,8 +49,8 @@ public class CTorchLight : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bTorchLit = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
-		m_bTorchColour = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_bTorchLit = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bTorchColour = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
     }
 
 

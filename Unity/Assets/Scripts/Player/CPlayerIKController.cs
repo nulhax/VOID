@@ -90,11 +90,11 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_RightHandNetworkedPos = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-		m_RightHandNetworkedRot = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_RightHandNetworkedPos = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_RightHandNetworkedRot = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
 
-		m_LeftHandNetworkedPos = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
-		m_LeftHandNetworkedRot = _cRegistrar.CreateNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);   
+		m_LeftHandNetworkedPos = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
+		m_LeftHandNetworkedRot = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);   
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)

@@ -71,7 +71,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cCarryingModuleViewId = _cRegistrar.CreateNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+		m_cCarryingModuleViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync);
 	}
 
 

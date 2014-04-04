@@ -60,7 +60,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_BuiltRatio = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_BuiltRatio = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
     }
 
 

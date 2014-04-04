@@ -43,11 +43,11 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		radius_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialRadius);
-		zoom_internal = _cRegistrar.CreateNetworkVar<float>(SyncNetworkVar, initialZoom);
-		centreCellOfProjectionX = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
-		centreCellOfProjectionY = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
-		centreCellOfProjectionZ = _cRegistrar.CreateNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
+		radius_internal = _cRegistrar.CreateReliableNetworkVar<float>(SyncNetworkVar, initialRadius);
+		zoom_internal = _cRegistrar.CreateReliableNetworkVar<float>(SyncNetworkVar, initialZoom);
+		centreCellOfProjectionX = _cRegistrar.CreateReliableNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.x);
+		centreCellOfProjectionY = _cRegistrar.CreateReliableNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.y);
+		centreCellOfProjectionZ = _cRegistrar.CreateReliableNetworkVar<int>(SyncNetworkVar, centreCellOfProjection_internal.z);
 	}
 
 	void SyncNetworkVar(INetworkVar sender)

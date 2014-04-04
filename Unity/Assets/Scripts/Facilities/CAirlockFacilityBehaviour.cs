@@ -52,7 +52,7 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bStates = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_bStates = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
     }
 
 

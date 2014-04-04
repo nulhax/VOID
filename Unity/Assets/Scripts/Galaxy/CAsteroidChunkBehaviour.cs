@@ -49,8 +49,8 @@ public class CAsteroidChunkBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bHighlighted = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync);
-		m_bAlive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bHighlighted = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync);
+		m_bAlive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}
 
 
