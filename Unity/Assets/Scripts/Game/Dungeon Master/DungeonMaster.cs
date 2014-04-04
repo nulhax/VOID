@@ -72,7 +72,8 @@ public class DungeonMaster : MonoBehaviour
 
 	void Start()
 	{
-		new DynamicEvent_RogueAsteroid();
+        new DynamicEventShipHazard();
+		new DynamicEventRogueAsteroid();
 		new DifficultyModifier_DifficultyChoice();
 		gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
 		new DifficultyModifier_ShipDamage();
@@ -92,13 +93,14 @@ public class DungeonMaster : MonoBehaviour
 			mTimeUntilNextUpdate += mTimeBetweenUpdates;
 
 			// Update coinage.
-			mfPengar += mTimeBetweenUpdates * difficulty;
+			mfPengar += mTimeBetweenUpdates * difficulty * 0.0f; // DISABLED
 
 			// Find all the events that are affordable and add them to a list.
 			System.Collections.Generic.SortedList<float, Behaviour> affordableEvents = null;	// Instantiated later to minimise the amount of stuff the GC has to clean up.
 			foreach (DynamicEvent dynamicEvent in mDynamicEvents)
 			{
 				float cost = 1.0f; dynamicEvent.cost(out cost);	// The cost to call the event. Todo: Have each event's cost scale by the time it last occured, to deter the DM from spamming the cheap stuff.
+                
 				if (mfPengar >= cost)	// If the event is affordable...
 				{
 					if (affordableEvents == null) affordableEvents = new System.Collections.Generic.SortedList<float, Behaviour>();	// Instantiate the list now, solely to minimise the number of things needed to be cleaned up by the Garbage Collector.

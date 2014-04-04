@@ -50,6 +50,8 @@ public class CGame : CNetworkMonoBehaviour
 		get { return (s_cInstance); }
 	}
 
+    public DungeonMaster DungeonMasterInstance { get { return m_DungeonMaster; } }
+
 // Member Functions
 
 
@@ -78,6 +80,13 @@ public class CGame : CNetworkMonoBehaviour
 
 		// Connect to server (Development Only)
 		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
+
+        // Initialise the dungeon master
+        // Note: This may need to be moved should the lobby system change
+        if (InitialiseDungeonMaster)
+        {
+            m_DungeonMaster = gameObject.AddComponent<DungeonMaster>();
+        }
     }
 	
 
@@ -325,5 +334,9 @@ public class CGame : CNetworkMonoBehaviour
     const float m_fTextLayoutOffset = 220;
 	static CGame s_cInstance = null;
 
+    // Dungeon Master
+    private DungeonMaster m_DungeonMaster = null;
 
+    // Debug
+    public bool InitialiseDungeonMaster = true;
 };
