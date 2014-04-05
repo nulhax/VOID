@@ -19,13 +19,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	enum EState
 	{
 		none,
-		attackingPrey,	// Includes moving and turning to face the prey.
 		idling,		// Parked. Looks around occasionally.
-		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
-		scanningForPrey,	// Later feature - after going to the disturbance, the enemy ship scans the entire area, meaning the player ship has to hide behind asteroids to avoid being detected.
-		travelling,	// Happens on spawn or after idling for a while.
 		turningToFaceDisturbance,
+		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
 		turningToFacePrey,
+		movingToPrey,
+		scanningForPrey,
+		travelling,	// Happens on spawn or after idling for a while.
 		any
 	}
 
@@ -34,13 +34,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		none,
 
 		// Internal events.
-		transition_AttackPrey,
 		transition_Idle,
+		transition_TurnToFaceDisturbance,
 		transition_MoveToDisturbance,
+		transition_TurnToFacePrey,
+		transition_MoveToPrey,
 		transition_ScanForPrey,
 		transition_Travel,
-		transition_TurnToFaceDisturbance,
-		transition_TurnToFacePrey,
 		any
 	}
 
@@ -48,63 +48,66 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	class CStateTransition
 	{
-		public CStateTransition(EState _state, EEvent _event, StateFunction _function) { m_State = _state; m_Event = _event; m_Function = _function; }
-		public EState m_State;
-		public EEvent m_Event;
-		public StateFunction m_Function;
+		public CStateTransition(EState _state, EEvent _event, StateFunction _function) { mState = _state; mEvent = _event; mFunction = _function; }
+		public EState mState;
+		public EEvent mEvent;
+		public StateFunction mFunction;
 	}
 
 	class CDisturbance
 	{
-		public Vector3 location;
+		public Vector3 position;
 		public float expireTime;
-		public CDisturbance(Vector3 _location) { location = _location; expireTime = Time.time + 3.0f; }
+		public CDisturbance(Vector3 _position) { position = _position; expireTime = Time.time + 3.0f; }
 		public bool Expired() { return expireTime <= Time.time; }
 	}
 
 	CStateTransition[] m_StateTransitionTable =
 	{
 		// Process.
-		new CStateTransition(EState.attackingPrey,				EEvent.any,									Proc_AttackPrey),
-		new CStateTransition(EState.idling,						EEvent.any,									Proc_Idle),
-		new CStateTransition(EState.movingToDisturbance,		EEvent.any,									Proc_MoveToDisturbance),
-		new CStateTransition(EState.scanningForPrey,			EEvent.any,									Proc_ScanForPrey),
-		new CStateTransition(EState.travelling,					EEvent.any,									Proc_Travel),
-		new CStateTransition(EState.turningToFaceDisturbance,	EEvent.any,									Proc_TurnToFaceDisturbance),
-		new CStateTransition(EState.turningToFacePrey,			EEvent.any,									Proc_TurnToFacePrey),
+		new CStateTransition(EState.idling,						EEvent.any,									Idle),
+		new CStateTransition(EState.turningToFaceDisturbance,	EEvent.any,									TurnToFaceDisturbance),
+		new CStateTransition(EState.movingToDisturbance,		EEvent.any,									MoveToDisturbance),
+		new CStateTransition(EState.turningToFacePrey,			EEvent.any,									TurnToFacePrey),
+		new CStateTransition(EState.movingToPrey,				EEvent.any,									MoveToPrey),
+		new CStateTransition(EState.scanningForPrey,			EEvent.any,									ScanForPrey),
+		new CStateTransition(EState.travelling,					EEvent.any,									Travel),
 		
 		// Event.
-		new CStateTransition(EState.any,						EEvent.disturbance,							Init_TurnToFaceDisturbance),
+		//new CStateTransition(EState.any,						EEvent.disturbance,							Init_TurnToFaceDisturbance),
 
 		// Transition.
-		new CStateTransition(EState.any,						EEvent.transition_AttackPrey,				Init_AttackPrey),
-		new CStateTransition(EState.any,						EEvent.transition_Idle,						Init_Idle),
-		new CStateTransition(EState.any,						EEvent.transition_MoveToDisturbance,		Init_MoveToDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_ScanForPrey,				Init_ScanForPrey),
-		new CStateTransition(EState.any,						EEvent.transition_Travel,					Init_Travel),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFaceDisturbance,	Init_TurnToFaceDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFacePrey,			Init_TurnToFacePrey),
+		new CStateTransition(EState.any,						EEvent.transition_Idle,						Idle),
+		new CStateTransition(EState.any,						EEvent.transition_TurnToFaceDisturbance,	TurnToFaceDisturbance),
+		new CStateTransition(EState.any,						EEvent.transition_MoveToDisturbance,		MoveToDisturbance),
+		new CStateTransition(EState.any,						EEvent.transition_TurnToFacePrey,			TurnToFacePrey),
+		new CStateTransition(EState.any,						EEvent.transition_MoveToPrey,				MoveToPrey),
+		new CStateTransition(EState.any,						EEvent.transition_ScanForPrey,				ScanForPrey),
+		new CStateTransition(EState.any,						EEvent.transition_Travel,					Travel),
 		
 		// Catch all.
-		new CStateTransition(EState.any,						EEvent.any,									Init_Idle),
+		//new CStateTransition(EState.any,						EEvent.any,									Idle),
 	};
 
 	// State machine data set by state machine.
-	EState m_State = EState.none;
-	EEvent m_Event = EEvent.none;
-	bool m_TargetDisturbance { get { return internal_TargetDisturbance; } set { m_LookingAtTarget = m_MovedToTarget = false; internal_TargetDisturbance = value; } }
-	bool internal_TargetDisturbance = false;
-	bool m_MoveToTarget = false;
-	float m_Timeout = 0.0f;
+	EState mState = EState.none;
+	EEvent mEvent = EEvent.none;
+	bool mLookAtTarget = false;
+	bool mMoveToTarget = false;
+	float mTimeout = 0.0f;
 	// State machine data set by physics.
-	Transform m_Prey = null;
-	CDisturbance m_Disturbance;
-	bool m_LookingAtTarget = false;
-	bool m_MovedToTarget = false;
+	Transform mPrey = null;
+	CDisturbance mDisturbance;
+	bool mLookingAtTarget = false;
+	bool mMovedToTarget = false;
 	public float viewConeRadiusInDegrees = 20.0f;
-	public float detectionRadius = 200.0f;
+	public float viewConeLength = 400.0f;
+	public float viewSphereRadius = 200.0f;
 	public float desiredDistanceToTarget = 100.0f;
 	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+
+	float mTimeBetweenLosCheck = 0.5f;
+	float mTimeUntilNextLosCheck = 0.0f;
 
 	// Physics data.
 	//CPidController mPidAngleYaw = new CPidController(2000, 0, 0); // Correction for yaw angle to target.
@@ -126,347 +129,26 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Update()
 	{
-		CheckLineOfSight();
-
 		ProcessStateMachine();
-	}
 
-	void CheckLineOfSight()
-	{
-		// Set disturbance only if there is no current disturbance, or the current disturbance is old enough to expire.
-		if (mDisturbance != null)	// If there is an existing disturbance...
-			if (mDisturbance.Expired() == false)	// And it has not expired...
-				return;	// Do not set a new disturbance, as the current one is still valid.
-
-		// Find all objects within short range sphere and long-range cone.
-		System.Collections.Generic.Dictionary<int, GameObject> objectsWithinLineOfSight = new System.Collections.Generic.Dictionary<int, GameObject>();	// ObjectID, Object.
-		// Todo: Sphere check for entities.
-		// Use: objectsWithinLineOfSight[gameObject.GetInstanceID()] = gameObject;
-		// Todo: Cone check for entities.
-
-		objectsWithinLineOfSight.Remove(gameObject.GetInstanceID());	// Remove one's self from the list.
-
-		foreach(System.Collections.Generic.KeyValuePair<int, GameObject> gubbin in objectsWithinLineOfSight)
+		if (mPrey != null)
 		{
-			// Todo: Refine this.
-			Rigidbody gubbinBody = gubbin.Value.GetComponent<Rigidbody>();
-			if(gubbinBody == null)
-				continue;
-
-			if(gubbinBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
-			{
-				mDisturbance = new CDisturbance(gubbin.Value.transform.position);
-				break;
-			}
+			// Todo: shoot prey. Bang bang.
 		}
 	}
 
-	void ProcessStateMachine()
+	void FixedUpdate()
 	{
-		// Process state machine.
-		for (uint uiStateLoop = 0; uiStateLoop < m_StateTransitionTable.Length; ++uiStateLoop)
+		mTimeUntilNextLosCheck -= Time.fixedDeltaTime;
+		if (mTimeUntilNextLosCheck <= 0.0f)
 		{
-			CStateTransition stateTransition = m_StateTransitionTable[uiStateLoop];
-			if ((stateTransition.m_State == m_State || stateTransition.m_State == EState.any) && (stateTransition.m_Event == m_Event || stateTransition.m_Event == EEvent.any))
-				if (stateTransition.m_Function(this))
-					uiStateLoop = uint.MaxValue;	// Loop will increment making iterator restart.
-				else
-					break;
-		}
-	}
-
-	void StateInitialisation(EState _state, bool _targetDisturbance, bool _moveToTarget)
-	{
-		m_State = _state;
-		m_Event = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
-		m_TargetDisturbance = _targetDisturbance;
-		m_MoveToTarget = _moveToTarget;
-	}
-
-	bool AttackPrey()
-	{
-		switch (m_State)
-		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.attackingPrey, false, true);
-				return false;	// Init functions always return false.
-
-			// Process state.
-			case EState.attackingPrey:
-				switch (m_Event)	// Process events.
-				{
-					case EEvent.none:	// Normal process.
-						if (m_LookingAtTarget)	// If prey is in sight...
-						{
-							// Todo: Shoot at the prey.
-							return false;
-						}
-						else	// Prey out of sight.
-						{
-							m_Event = EEvent.transition_TurnToFacePrey;
-							return true;
-						}
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
-						m_State = EState.none;
-						return true;	// Always return true for uncaught events.
-				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
-		}
-	}
-
-	bool Init_Idle()
-	{
-		if (m_State != EState.none) 
-
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = false;
-		/*Move to target?		*/m_MoveToTarget = false;
-		/*Handle prey target	*/m_Prey = null;
-		/*Set state				*/if (Random.Range(0, 2) == 0) m_State = EState.idling; else m_Event = EEvent.transition_Travel;	// 50/50 chance to idle or travel.
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Init_MoveToDisturbance()
-	{
-		if (m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
-
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = true;
-		/*Move to target?		*/m_MoveToTarget = true;
-		/*Handle prey target	*/m_Prey = null;
-		/*Set state				*/m_State = EState.movingToDisturbance;
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Init_ScanForPrey()
-	{
-		if (m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
-		
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = false;
-		/*Move to target?		*/m_MoveToTarget = false;
-		/*Handle prey target	*/m_Prey = null;
-		/*Set state				*/m_State = EState.scanningForPrey;
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Init_Travel()
-	{
-		if (m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
-
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = false;
-		/*Move to target?		*/m_MoveToTarget = false;
-		/*Handle prey target	*/m_Prey = null;
-		/*Set state				*/m_State = EState.travelling;
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Init_TurnToFaceDisturbance()
-	{
-		if (m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
-
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = true;
-		/*Move to target?		*/m_MoveToTarget = false;
-		/*Handle prey target	*/m_Prey = null;
-		/*Set state				*/m_State = EState.turningToFaceDisturbance;
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Init_TurnToFacePrey()
-	{
-		if (m_State != EState.none) Debug.LogError("CEnemyShip: State should be null when initialising a new state!");
-
-		// Initialise the state.
-		/*Consume event			*/m_Event = EEvent.none;
-		/*Target disturbance?	*/m_TargetDisturbance = false;
-		/*Move to target?		*/m_MoveToTarget = false;
-		/*Handle prey target	*/if (m_Prey == null) Debug.LogError("CEnemyShip: Can not face prey when there is no prey set!");
-		/*Set state				*/m_State = EState.turningToFacePrey;
-
-		return true;	// Init functions always return true.
-	}
-
-	bool Proc_AttackPrey()
-	{
-		
-
-		return false;
-	}
-
-	bool Proc_Idle()
-	{
-		switch (m_Event)
-		{
-			case EEvent.none:	// Process the state.
-				if (FindPrey())// Todo: Do this only periodically.
-					m_Event = EEvent.transition_TurnToFacePrey;
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
+			mTimeUntilNextLosCheck += mTimeBetweenLosCheck;
+			FindDisturbancesInLineOfSight();
 		}
 
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	bool Proc_MoveToDisturbance()
-	{
-		switch (m_Event)
+		if ((mLookAtTarget || mMoveToTarget) && (mPrey != null || mDisturbance != null))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
 		{
-			case EEvent.none:	// Process the state.
-				if (m_MovedToTarget)
-					m_Event = EEvent.transition_ScanForPrey;
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
-		}
-
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	bool Proc_ScanForPrey()
-	{
-		switch (m_Event)
-		{
-			case EEvent.none:	// Process the state.
-				// Todo: Scan for prey.
-				// If prey is detected, set state_Prey, set event to transition_TurnToFacePrey, and return false.
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
-		}
-
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	bool Proc_Travel()
-	{
-		switch (m_Event)
-		{
-			case EEvent.none:	// Process the state.
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
-		}
-
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	bool Proc_TurnToFaceDisturbance()
-	{
-		switch (m_Event)
-		{
-			case EEvent.none:	// Process the state.
-				if (m_LookingAtTarget)
-					m_Event = FindPrey() ? EEvent.transition_TurnToFacePrey : EEvent.transition_MoveToDisturbance;
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
-		}
-
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	bool Proc_TurnToFacePrey()
-	{
-		switch (m_Event)
-		{
-			case EEvent.none:	// Process the state.
-				if (m_LookingAtTarget)	// Todo: Raycast check if there is a line of sight to the prey.
-					m_Event = EEvent.transition_AttackPrey;
-				break;
-
-			default:	// Shutdown the state.
-				m_State = EState.none;
-				return true;
-		}
-
-		return false;	// Proc functions return false unless the event is uncaught.
-	}
-
-	/// <summary>
-	/// Sets state_Prey to a target if prey is found within view cone or view radius.
-	/// </summary>
-	/// <returns>true if prey was found (state_Prey will be non-null)</returns>
-	bool FindPrey()
-	{
-		if (m_Prey != null)
-		{
-			Debug.LogError("CEnemyShip: Should not be scanning for prey when prey has already been found!");
-			return true;
-		}
-
-		GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
-		System.Collections.Generic.List<GameObject> potentialPrey = new System.Collections.Generic.List<GameObject>();
-		foreach (GameObject obj in allObjects)
-			if ((obj.layer & 11) != 0)	// If on the galaxy layer...
-				potentialPrey.Add(obj);
-
-		foreach (GameObject prey in potentialPrey)
-		{
-			if (IsWithinViewCone(prey.transform.position) || IsWithinDetectionRadius(prey.transform.position))
-				if (m_Prey == null)
-					m_Prey = prey.transform;
-				else if ((prey.transform.position - transform.position).sqrMagnitude < (m_Prey.position - transform.position).sqrMagnitude)
-					m_Prey = prey.transform;
-		}
-
-		return m_Prey != null;
-	}
-
-	bool IsWithinViewCone(Vector3 pos)
-	{
-		Vector3 deltaPos = pos - transform.position;
-		if (deltaPos == Vector3.zero)
-			return true;
-		else
-		{
-			float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
-			return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
-		}
-	}
-
-	bool IsWithinDetectionRadius(Vector3 pos)
-	{
-		return (pos - transform.position).sqrMagnitude <= detectionRadius * detectionRadius;
-	}
-
-    void FixedUpdate()
-    {
-		if (m_TargetDisturbance || (m_TargetDisturbance == false && m_Prey != null))	// If targeting anything...
-		{
-			Vector3 targetPos = m_TargetDisturbance ? m_Disturbance : m_Prey.position;
-
-			transform.LookAt(targetPos);
-
-			if (m_MoveToTarget)
-				transform.position = (transform.position - targetPos).normalized * desiredDistanceToTarget;
+			Vector3 targetPos = mPrey != null ? mPrey.position : mDisturbance.position;	// The position of the target, regardless of whether it is prey or a disturbance.
 
 			//// Get the position of the target in local space of this ship (i.e. relative position).
 			//Vector3 targetPosition = (Quaternion.Inverse(transform.rotation) * (target.position - (transform.position + rigidbody.centerOfMass))).normalized;
@@ -491,14 +173,396 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			//torque += Vector3.forward * (/*torqueRoll + */velocityRoll);
 
 			// Set state information saying if the disturbance/prey is being looked at and/or is within proximity.
-			m_LookingAtTarget = IsWithinViewCone(targetPos);	// Is looking at target if within view cone.
 
-			float distanceToTarget = (targetPos - transform.position).magnitude;
-			m_MovedToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+			if(mLookAtTarget)
+			{
+				// Todo: Rotate to face target.
+				transform.LookAt(targetPos);
+
+				// Determine if the target is in view.
+				mLookingAtTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
+			}
+
+			if(mMoveToTarget)
+			{
+				// Todo: Move to acceptable range.
+				transform.position = (transform.position - targetPos).normalized * desiredDistanceToTarget;
+
+				// Determine if the target is within acceptable range.
+				float distanceToTarget = (targetPos - transform.position).magnitude;
+				mMovedToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+			}
 		}
+	}
+
+	/// <summary>
+	/// Checks enemy ship line of sight for something interesting, and sets mDisturbance to the thing to check out.
+	/// </summary>
+	void FindDisturbancesInLineOfSight()
+	{
+		// Set disturbance only if there is no current disturbance, or the current disturbance is old enough to expire.
+		if (mDisturbance != null)	// If there is an existing disturbance...
+			if (mDisturbance.Expired())	// And it has not expired...
+				mDisturbance = null;
+			else
+				return;	// Do not set a new disturbance, as the current one is still valid.
+
+		// Find all objects within short range sphere and long-range cone.
+		Collider[] colliders = Physics.OverlapSphere(transform.position, viewConeLength > viewSphereRadius ? viewConeLength : viewSphereRadius);
+		for (int i = 0; i < colliders.Length; ++i)
+		{
+			GameObject entity = colliders[i].gameObject;
+			if (entity == gameObject) continue;	// Ignore one's self.
+
+			if(IsWithinLineOfSight(entity.transform.position))	// If the entity is within view...
+			{
+				// Check if the entity is a disturbance.
+				// Todo: Refine this.
+				Rigidbody entityBody = entity.GetComponent<Rigidbody>();
+				if (entityBody == null) continue;	// Entities without a RigidBody can not move, thus can not have their velocity checked.
+
+				if (entityBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
+				{
+					mDisturbance = new CDisturbance(entity.transform.position);
+					break;
+				}
+			}
+		}
+	}
+
+	void ProcessStateMachine()
+	{
+		// Process state machine.
+		for (uint uiStateLoop = 0; uiStateLoop < m_StateTransitionTable.Length; ++uiStateLoop)
+		{
+			CStateTransition stateTransition = m_StateTransitionTable[uiStateLoop];
+			if ((stateTransition.mState == mState || stateTransition.mState == EState.any) && (stateTransition.mEvent == mEvent || stateTransition.mEvent == EEvent.any))
+				if (stateTransition.mFunction(this))
+					uiStateLoop = uint.MaxValue;	// Loop will increment making iterator restart.
+				else
+					break;
+		}
+	}
+
+	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget)
+	{
+		mState = _state;
+		mEvent = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
+		mLookAtTarget = _lookAtTarget;
+		mMoveToTarget = _moveToTarget;
+	}
+
+	static bool Idle(CEnemyShip enemyShip) { return enemyShip.Idle(); }
+	bool Idle()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.idling, false, false);
+				mTimeout = Time.time + 2.0f;	// Todo: Replace this example code.
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.idling:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+
+						// Switch to checking out prey or disturbances.
+						if (mPrey != null || mDisturbance != null)
+						{
+							mEvent = mPrey != null ? EEvent.transition_TurnToFacePrey : EEvent.transition_TurnToFaceDisturbance;
+							return true;
+						}
+
+						// Leave the area after a random amount of time.
+						while (mTimeout < Time.time)
+						{
+							if (Random.Range(0, 2) == 0)
+							{
+								mEvent = EEvent.transition_Travel;
+								return true;
+							}
+							else
+								mTimeout += 2.0f;
+						}
+
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool TurnToFaceDisturbance(CEnemyShip enemyShip) { return enemyShip.TurnToFaceDisturbance(); }
+	bool TurnToFaceDisturbance()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.turningToFaceDisturbance, true, false);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.turningToFaceDisturbance:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mLookingAtTarget)
+						{
+							mEvent = EEvent.transition_MoveToDisturbance;
+							return true;
+						}
+						else if (mDisturbance == null)	// If the disturbance has expired...
+						{
+							mEvent = EEvent.transition_Idle;
+							return true;
+						}
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool MoveToDisturbance(CEnemyShip enemyShip) { return enemyShip.MoveToDisturbance(); }
+	bool MoveToDisturbance()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.movingToDisturbance, true, true);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.movingToDisturbance:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mMovedToTarget)
+						{
+							mEvent = EEvent.transition_ScanForPrey;	// Find something to shoot at.
+							return true;
+						}
+						else if (mDisturbance == null)	// If the disturbance has expired...
+						{
+							mEvent = EEvent.transition_Idle;
+							return true;
+						}
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool TurnToFacePrey(CEnemyShip enemyShip) { return enemyShip.TurnToFacePrey(); }
+	bool TurnToFacePrey()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.turningToFacePrey, false, false);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.turningToFacePrey:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mLookingAtTarget)
+						{
+							mEvent = EEvent.transition_MoveToPrey;
+							return true;
+						}
+						else if (mDisturbance == null)	// If the disturbance has expired...
+						{
+							mEvent = EEvent.transition_Idle;
+							return true;
+						}
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool MoveToPrey(CEnemyShip enemyShip) { return enemyShip.MoveToPrey(); }
+	bool MoveToPrey()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.movingToPrey, false, true);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.movingToPrey:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mLookingAtTarget)	// If prey is in sight...
+						{
+							// Todo: Reset expire timer.
+							return false;
+						}
+						else	// Prey out of sight.
+						{
+							// Todo: If timer expires, TODO FINISH THIS SENTENCE.
+							mEvent = EEvent.transition_TurnToFacePrey;
+							return true;
+						}
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool ScanForPrey(CEnemyShip enemyShip) { return enemyShip.ScanForPrey(); }
+	bool ScanForPrey()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.scanningForPrey, false, false);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.scanningForPrey:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						// Todo: Scan for prey.
+						// Detection of prey (unlike detection of a disturbance) will throw an event to transition to facing prey, and eventually attacking it.
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	static bool Travel(CEnemyShip enemyShip) { return enemyShip.Travel(); }
+	bool Travel()
+	{
+		switch (mState)
+		{
+			// Initialise state.
+			case EState.none:
+				StateInitialisation(EState.travelling, false, false);
+				return false;	// Init functions always return false.
+
+			// Process state.
+			case EState.travelling:
+				switch (mEvent)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						// Todo: Fly forward.
+						return false;
+
+					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mState = EState.none;
+						return true;	// Always return true for uncaught events.
+				}
+
+			default:	// An invalid state is set.
+				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
+				return false;
+		}
+	}
+
+	/// <summary>
+	/// Sets state_Prey to a target if prey is found within view cone or view radius.
+	/// </summary>
+	/// <returns>true if prey was found (state_Prey will be non-null)</returns>
+	bool FindPrey()
+	{
+		if (mPrey != null)
+		{
+			Debug.LogError("CEnemyShip: Should not be scanning for prey when prey has already been found!");
+			return true;
+		}
+
+		GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+		System.Collections.Generic.List<GameObject> potentialPrey = new System.Collections.Generic.List<GameObject>();
+		foreach (GameObject obj in allObjects)
+			if ((obj.layer & 11) != 0)	// If on the galaxy layer...
+				potentialPrey.Add(obj);
+
+		foreach (GameObject prey in potentialPrey)
+		{
+			if (IsWithinViewCone(prey.transform.position) || IsWithinViewRadius(prey.transform.position))
+				if (mPrey == null)
+					mPrey = prey.transform;
+				else if ((prey.transform.position - transform.position).sqrMagnitude < (mPrey.position - transform.position).sqrMagnitude)
+					mPrey = prey.transform;
+		}
+
+		return mPrey != null;
+	}
+
+	bool IsWithinLineOfSight(Vector3 pos)
+	{
+		return IsWithinViewCone(pos) || IsWithinViewRadius(pos);
+	}
+
+	bool IsWithinViewCone(Vector3 pos)
+	{
+		Vector3 deltaPos = pos - transform.position;
+		if (deltaPos == Vector3.zero)
+			return true;
 		else
-			m_LookingAtTarget = false;
-    }
+		{
+			float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
+			return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
+		}
+	}
+
+	bool IsWithinViewRadius(Vector3 pos)
+	{
+		return (pos - transform.position).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
+	}
 
     //void OnGUI()
     //{
