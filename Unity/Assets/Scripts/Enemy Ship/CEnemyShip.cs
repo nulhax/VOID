@@ -20,11 +20,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		none,
 		idling,		// Parked. Looks around occasionally.
-		turningToFaceDisturbance,
-		movingToDisturbance,	// Only if the disturbance is not in direct line of sight.
-		turningToFacePrey,
-		movingToPrey,
-		scanningForPrey,
+		examiningTarget,
+		attackingTarget,
+		scanningForHeatSignature,	// Will detect players, enemies, player ships, and enemy ships within a range relative to the intesity of their heat signatures.
 		travelling,	// Happens on spawn or after idling for a while.
 		any
 	}
@@ -35,11 +33,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		// Internal events.
 		transition_Idle,
-		transition_TurnToFaceDisturbance,
-		transition_MoveToDisturbance,
-		transition_TurnToFacePrey,
-		transition_MoveToPrey,
-		transition_ScanForPrey,
+		transition_ExamineTarget,
+		transition_AttackTarget,
+		transition_ScanForHeatSignature,
 		transition_Travel,
 		any
 	}
@@ -54,36 +50,34 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		public StateFunction mFunction;
 	}
 
-	class CDisturbance
+	class SDisturbance
 	{
-		public Vector3 position;
+		public GameObject target;
+		public Vector3 lastObservedPosition;
 		public float expireTime;
-		public CDisturbance(Vector3 _position) { position = _position; expireTime = Time.time + 3.0f; }
-		public bool Expired() { return expireTime <= Time.time; }
+		public void Set(GameObject _target, float _expireTime) { target = _target; expireTime = _expireTime; }
+		public bool Invalid() { return target == null || expireTime <= Time.time; }
+		public bool Valid() { return target != null && expireTime > Time.time; }
 	}
 
 	CStateTransition[] m_StateTransitionTable =
 	{
 		// Process.
-		new CStateTransition(EState.idling,						EEvent.any,									Idle),
-		new CStateTransition(EState.turningToFaceDisturbance,	EEvent.any,									TurnToFaceDisturbance),
-		new CStateTransition(EState.movingToDisturbance,		EEvent.any,									MoveToDisturbance),
-		new CStateTransition(EState.turningToFacePrey,			EEvent.any,									TurnToFacePrey),
-		new CStateTransition(EState.movingToPrey,				EEvent.any,									MoveToPrey),
-		new CStateTransition(EState.scanningForPrey,			EEvent.any,									ScanForPrey),
-		new CStateTransition(EState.travelling,					EEvent.any,									Travel),
+		new CStateTransition(EState.idling,						EEvent.any,								Idle),
+		new CStateTransition(EState.examiningTarget,			EEvent.any,								ExamineTarget),
+		new CStateTransition(EState.attackingTarget,			EEvent.any,								AttackTarget),
+		new CStateTransition(EState.scanningForHeatSignature,	EEvent.any,								ScanForHeatSignature),
+		new CStateTransition(EState.travelling,					EEvent.any,								Travel),
 		
 		// Event.
-		//new CStateTransition(EState.any,						EEvent.disturbance,							Init_TurnToFaceDisturbance),
+		//new CStateTransition(EState.any,						EEvent.disturbance,				Init_TurnToFaceDisturbance),
 
 		// Transition.
-		new CStateTransition(EState.any,						EEvent.transition_Idle,						Idle),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFaceDisturbance,	TurnToFaceDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_MoveToDisturbance,		MoveToDisturbance),
-		new CStateTransition(EState.any,						EEvent.transition_TurnToFacePrey,			TurnToFacePrey),
-		new CStateTransition(EState.any,						EEvent.transition_MoveToPrey,				MoveToPrey),
-		new CStateTransition(EState.any,						EEvent.transition_ScanForPrey,				ScanForPrey),
-		new CStateTransition(EState.any,						EEvent.transition_Travel,					Travel),
+		new CStateTransition(EState.any,						EEvent.transition_Idle,					Idle),
+		new CStateTransition(EState.any,						EEvent.transition_ExamineTarget,		ExamineTarget),
+		new CStateTransition(EState.any,						EEvent.transition_AttackTarget,			AttackTarget),
+		new CStateTransition(EState.any,						EEvent.transition_ScanForHeatSignature,	ScanForHeatSignature),
+		new CStateTransition(EState.any,						EEvent.transition_Travel,				Travel),
 		
 		// Catch all.
 		//new CStateTransition(EState.any,						EEvent.any,									Idle),
@@ -92,14 +86,19 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	// State machine data set by state machine.
 	EState mState = EState.none;
 	EEvent mEvent = EEvent.none;
-	bool mLookAtTarget = false;
-	bool mMoveToTarget = false;
 	float mTimeout = 0.0f;
+
+	GameObject mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
+	GameObject mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
+	GameObject mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
+	bool mFaceTarget = false;
+	bool mFollowTarget = false;
+	float mTargetExpireTime = 0.0f;
+
 	// State machine data set by physics.
-	Transform mPrey = null;
-	CDisturbance mDisturbance;
-	bool mLookingAtTarget = false;
-	bool mMovedToTarget = false;
+	bool mFacingTarget = false;		// Is looking in the general direction of the target.
+	bool mCloseToTarget = false;	// Is within acceptable range of the target.
+	bool mVisibleTarget = false;	// Has direct line of sight to the target.
 	public float viewConeRadiusInDegrees = 20.0f;
 	public float viewConeLength = 400.0f;
 	public float viewSphereRadius = 200.0f;
@@ -110,31 +109,49 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	float mTimeUntilNextLosCheck = 0.0f;
 
 	// Physics data.
-	//CPidController mPidAngleYaw = new CPidController(2000, 0, 0); // Correction for yaw angle to target.
-	//CPidController mPidAnglePitch = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
-	////CPidController mPidAngleRoll = new CPidController(2000, 0, 0); // Correction for pitch angle to target.
-	//CPidController mPidVelocityYaw = new CPidController(2000, 1, 1); // Correction for yaw velocity to target.
-	//CPidController mPidVelocityPitch = new CPidController(2000, 1, 1); // Correction for pitch velocity to target.
-	//CPidController mPidVelocityRoll = new CPidController(2000, 1, 1); // Correction for roll velocity to target.
+	CPidController mPidAngularAccelerationX = new CPidController(2000, 0, 0);
+	CPidController mPidAngularAccelerationY = new CPidController(2000, 0, 0);
+	CPidController mPidAngularAccelerationZ = new CPidController(2000, 0, 0);
+	Vector3 mTorque;
+
+	bool debug_Display = true;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}
 
+	void Awake()
+	{
+		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
+		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
+
+		rigidbody.drag = 10.0f;
+		rigidbody.angularDrag = 10.0f;
+		//rigidbody.maxAngularVelocity = 1;
+
+		// Todo: Create the GameObject mTarget_InternalLastKnownPosition.
+	}
+
 	void Start()
 	{
-		//rigidbody.maxAngularVelocity = 1;
+		
 	}
 
 	void Update()
 	{
-		ProcessStateMachine();
+		mTimeout -= Time.deltaTime;
 
-		if (mPrey != null)
+		if (mState == EState.attackingTarget && mTarget != null && mVisibleTarget)	// If attacking the target, and the target is visible...
 		{
-			// Todo: shoot prey. Bang bang.
+			mTargetExpireTime = Time.time + 20.0f;	// Reset the expire time.
+			// Todo: Shoot prey. Bang bang.
 		}
+
+		if (mTargetExpireTime <= Time.time)	// If the target expire time is met...
+			mTarget = null;	// Expire the target.
+
+		ProcessStateMachine();
 	}
 
 	void FixedUpdate()
@@ -143,87 +160,115 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if (mTimeUntilNextLosCheck <= 0.0f)
 		{
 			mTimeUntilNextLosCheck += mTimeBetweenLosCheck;
-			FindDisturbancesInLineOfSight();
+			FindTargetsInLineOfSight();
 		}
 
-		if ((mLookAtTarget || mMoveToTarget) && (mPrey != null || mDisturbance != null))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
+		if (mTarget != null && (mFaceTarget || mFollowTarget))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
 		{
-			Vector3 targetPos = mPrey != null ? mPrey.position : mDisturbance.position;	// The position of the target, regardless of whether it is prey or a disturbance.
+			Vector3 targetPos = mTarget.transform.position;
 
-			//// Get the position of the target in local space of this ship (i.e. relative position).
-			//Vector3 targetPosition = (Quaternion.Inverse(transform.rotation) * (target.position - (transform.position + rigidbody.centerOfMass))).normalized;
-			//float deltaYaw = Mathf.Atan2(targetPosition.x, targetPosition.z) * ();
-			//float deltaPitch = Mathf.Atan2(targetPosition.y, targetPosition.z);
-			////float deltaRoll = Mathf.Atan2(targetPosition.y, targetPosition.x);
+			// Get the position of the target in local space of this ship (i.e. relative position).
+			Vector3 absoluteDeltaPosition = targetPos - transform.position;
+			float distanceToTarget = absoluteDeltaPosition.magnitude;
+			Vector3 absoluteDirection = absoluteDeltaPosition.normalized;
+			Vector3 relativeDirection = (Quaternion.Inverse(transform.rotation) * (targetPos - rigidbody.worldCenterOfMass)).normalized;
+			Vector3 relativeRotation = new Vector3(Mathf.Atan2(relativeDirection.y, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.y));
 
-			//float torqueYaw = mPidAngleYaw.GetOutput(deltaYaw, Time.fixedDeltaTime);
-			//float torquePitch = mPidAnglePitch.GetOutput(deltaPitch, Time.fixedDeltaTime);
-			////float torqueRoll = mPidAngleRoll.GetOutput(deltaRoll, Time.fixedDeltaTime);
-			//float velocityYaw = mPidVelocityYaw.GetOutput(-rigidbody.angularVelocity.y, Time.fixedDeltaTime);
-			//float velocityPitch = mPidVelocityPitch.GetOutput(rigidbody.angularVelocity.x, Time.fixedDeltaTime);
-			//float velocityRoll = mPidVelocityRoll.GetOutput(rigidbody.angularVelocity.z, Time.fixedDeltaTime);
-			//Debug.Log(velocityRoll.ToString());
-			//rigidbody.AddTorque(transform.up * (torqueYaw + velocityYaw));
-			//rigidbody.AddTorque(-transform.right * (torquePitch + velocityPitch));
-			//rigidbody.AddTorque(-transform.forward * (/*torqueRoll + */velocityRoll));
+			mTorque.x = mPidAngularAccelerationX.GetOutput(relativeRotation.x, Time.fixedDeltaTime);
+			mTorque.y = mPidAngularAccelerationY.GetOutput(relativeRotation.y, Time.fixedDeltaTime);
+			mTorque.z = mPidAngularAccelerationZ.GetOutput(relativeRotation.z, Time.fixedDeltaTime) * 0.0f;	// Disabled, as rolling does not bring the target any closer to the view cone.
 
-			//targetPossss = targetPosition;
-			//torque = Vector3.up * (torqueYaw + velocityYaw);
-			//torque += Vector3.right * (torquePitch + velocityPitch);
-			//torque += Vector3.forward * (/*torqueRoll + */velocityRoll);
-
-			// Set state information saying if the disturbance/prey is being looked at and/or is within proximity.
-
-			if(mLookAtTarget)
+			if(mFaceTarget)
 			{
-				// Todo: Rotate to face target.
-				transform.LookAt(targetPos);
-
-				// Determine if the target is in view.
-				mLookingAtTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
+				// Rotate to face target.
+				rigidbody.AddRelativeTorque(mTorque, ForceMode.Force);
 			}
 
-			if(mMoveToTarget)
+			if(mFollowTarget)
 			{
-				// Todo: Move to acceptable range.
-				transform.position = (transform.position - targetPos).normalized * desiredDistanceToTarget;
-
-				// Determine if the target is within acceptable range.
-				float distanceToTarget = (targetPos - transform.position).magnitude;
-				mMovedToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+				// Move to acceptable range.
+				//transform.position = (transform.position - targetPos).normalized * desiredDistanceToTarget;
 			}
+
+			// Determine if the target is in view.
+			mFacingTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
+
+			// Determine if the target is within acceptable range.
+			mCloseToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+
+			// Check if there is a direct line of sight to the target.
+			mVisibleTarget = IsWithinLineOfSight(mTarget);
 		}
 	}
 
+	void InvalidateCache()
+	{
+		mFacingTarget = false;
+		mCloseToTarget = false;
+		mVisibleTarget = false;
+	}
+
+	bool IsWithinLineOfSight(GameObject target)
+	{
+		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target);
+	}
+
+	bool IsWithinViewCone(GameObject target) { return IsWithinViewCone(target.transform.position); }
+	bool IsWithinViewCone(Vector3 pos)
+	{
+		Vector3 deltaPos = pos - transform.position;
+		if (deltaPos == Vector3.zero)
+			return true;
+		else
+		{
+			float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
+			return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
+		}
+	}
+
+	bool IsWithinViewRadius(GameObject target) { return IsWithinViewRadius(target.transform.position); }
+	bool IsWithinViewRadius(Vector3 pos)
+	{
+		return (pos - transform.position).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
+	}
+
+	bool HasDirectLineOfSight(GameObject target)
+	{
+		Vector3 deltaPos = target.transform.position - transform.position;
+		RaycastHit[] rayHits = Physics.RaycastAll(transform.position, deltaPos.normalized, deltaPos.magnitude, LayerMask.NameToLayer("Galaxy"));
+		for (int i = 0; i < rayHits.Length; ++i)
+		{
+			if (rayHits[i].collider.gameObject != gameObject || rayHits[i].collider.gameObject != target)
+				return false;
+		}
+
+		return true;
+	}
+
 	/// <summary>
-	/// Checks enemy ship line of sight for something interesting, and sets mDisturbance to the thing to check out.
+	/// Checks enemy ship line of sight for something interesting, and sets mTarget to the thing to check out.
 	/// </summary>
-	void FindDisturbancesInLineOfSight()
+	void FindTargetsInLineOfSight()
 	{
 		// Set disturbance only if there is no current disturbance, or the current disturbance is old enough to expire.
-		if (mDisturbance != null)	// If there is an existing disturbance...
-			if (mDisturbance.Expired())	// And it has not expired...
-				mDisturbance = null;
-			else
-				return;	// Do not set a new disturbance, as the current one is still valid.
+		if (mTarget != null)	// If there is an existing target...
+			return;	// Do not set a new target, as the current one is still valid.
 
 		// Find all objects within short range sphere and long-range cone.
-		Collider[] colliders = Physics.OverlapSphere(transform.position, viewConeLength > viewSphereRadius ? viewConeLength : viewSphereRadius);
+		Collider[] colliders = Physics.OverlapSphere(transform.position, viewConeLength);
 		for (int i = 0; i < colliders.Length; ++i)
 		{
 			GameObject entity = colliders[i].gameObject;
-			if (entity == gameObject) continue;	// Ignore one's self.
-
-			if(IsWithinLineOfSight(entity.transform.position))	// If the entity is within view...
+			if(entity != gameObject && IsWithinLineOfSight(entity))	// If the entity is within view cone or view sphere (and is not this ship)...
 			{
-				// Check if the entity is a disturbance.
-				// Todo: Refine this.
+				// Check if the entity is worthy of being targeted.
 				Rigidbody entityBody = entity.GetComponent<Rigidbody>();
 				if (entityBody == null) continue;	// Entities without a RigidBody can not move, thus can not have their velocity checked.
 
 				if (entityBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
 				{
-					mDisturbance = new CDisturbance(entity.transform.position);
+					mTarget = entity;
+					mTargetExpireTime = Time.time + 3.0f;
 					break;
 				}
 			}
@@ -244,12 +289,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget)
+	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout)
 	{
 		mState = _state;
 		mEvent = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
-		mLookAtTarget = _lookAtTarget;
-		mMoveToTarget = _moveToTarget;
+		mFaceTarget = _lookAtTarget;
+		mFollowTarget = _moveToTarget;
+		mTimeout = _timeout;
 	}
 
 	static bool Idle(CEnemyShip enemyShip) { return enemyShip.Idle(); }
@@ -259,8 +305,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false);
-				mTimeout = Time.time + 2.0f;	// Todo: Replace this example code.
+				StateInitialisation(EState.idling, false, false, 10.0f);
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -269,15 +314,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				{
 					case EEvent.none:	// Normal process.
 
-						// Switch to checking out prey or disturbances.
-						if (mPrey != null || mDisturbance != null)
+						// Switch to checking out the target if there is one.
+						if (mTarget != null)
 						{
-							mEvent = mPrey != null ? EEvent.transition_TurnToFacePrey : EEvent.transition_TurnToFaceDisturbance;
+							mEvent = EEvent.transition_ExamineTarget;
 							return true;
 						}
 
-						// Leave the area after a random amount of time.
-						while (mTimeout < Time.time)
+						// 50/50 chance every 5 seconds to leave the area, beginning after 10 seconds.
+						while (mTimeout <= 0.0f)
 						{
 							if (Random.Range(0, 2) == 0)
 							{
@@ -285,7 +330,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 								return true;
 							}
 							else
-								mTimeout += 2.0f;
+								mTimeout += 5.0f;
 						}
 
 						return false;
@@ -301,29 +346,57 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	static bool TurnToFaceDisturbance(CEnemyShip enemyShip) { return enemyShip.TurnToFaceDisturbance(); }
-	bool TurnToFaceDisturbance()
+	static bool ExamineTarget(CEnemyShip enemyShip) { return enemyShip.ExamineTarget(); }
+	bool ExamineTarget()
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.turningToFaceDisturbance, true, false);
+				StateInitialisation(EState.examiningTarget, true, false, 5.0f);
 				return false;	// Init functions always return false.
 
 			// Process state.
-			case EState.turningToFaceDisturbance:
+			case EState.examiningTarget:
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mLookingAtTarget)
+
+						if (mTarget == null)	// If the target has expired...
 						{
-							mEvent = EEvent.transition_MoveToDisturbance;
+							mEvent = EEvent.transition_Idle;	// Move on to other things.
 							return true;
 						}
-						else if (mDisturbance == null)	// If the disturbance has expired...
+
+						if (mFacingTarget)	// If facing the target...
 						{
-							mEvent = EEvent.transition_Idle;
+							if (mVisibleTarget)	// If there is a direct line of sight to the target...
+							{
+								mEvent = EEvent.transition_ScanForHeatSignature;	// Scan for heat signatures.
+								return true;
+							}
+							else	// Facing the target, but target is not visible...
+							{
+								if (mCloseToTarget)	// If already close to the target...
+								{
+									mEvent = EEvent.transition_Idle;	// Ignore the target.
+									return true;
+								}
+								else if(mFollowTarget == false)	// If not following the target...
+								{
+									mFollowTarget = true;	// Go to the target.
+									mTimeout = 10.0f;	// 10 seconds to reach the target.
+								}
+								else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
+								{
+									mEvent = EEvent.transition_Idle;	// Give up (can't reach the target).
+									return true;
+								}
+							}
+						}
+						else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
+						{
+							mEvent = EEvent.transition_Idle;	// Give up (can't face the target).
 							return true;
 						}
 						return false;
@@ -339,30 +412,48 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	static bool MoveToDisturbance(CEnemyShip enemyShip) { return enemyShip.MoveToDisturbance(); }
-	bool MoveToDisturbance()
+	static bool AttackTarget(CEnemyShip enemyShip) { return enemyShip.AttackTarget(); }
+	bool AttackTarget()
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.movingToDisturbance, true, true);
+				StateInitialisation(EState.examiningTarget, true, true, 15.0f);
 				return false;	// Init functions always return false.
 
 			// Process state.
-			case EState.movingToDisturbance:
+			case EState.examiningTarget:
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mMovedToTarget)
+						
+						if (mTarget == null)	// If the target has expired...
 						{
-							mEvent = EEvent.transition_ScanForPrey;	// Find something to shoot at.
+							mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something to kill.
 							return true;
 						}
-						else if (mDisturbance == null)	// If the disturbance has expired...
+
+						if(mVisibleTarget)	// If the target is in sight...
 						{
-							mEvent = EEvent.transition_Idle;
-							return true;
+							// Will be blasting away at the target.
+							// Todo: If this ship's health is low, it could run off.
+						}
+						if(mTimeout <= 0.0f)	// If the timer runs out...
+						{
+							if(mFollowTarget)	// If chasing the target...
+							{
+								mFollowTarget = false;	// Stop chasing the target
+								mTimeout = 20.0f;	// Stop chasing for 20 seconds.
+							}
+							else	// Not chasing the target...
+							{
+								if (mTimeout <= 0.0f)	// once the timer runs out...
+								{
+									mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something nearby to kill.
+									return true;
+								}
+							}
 						}
 						return false;
 
@@ -392,7 +483,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mLookingAtTarget)
+						if (mFacingTarget)
 						{
 							mEvent = EEvent.transition_MoveToPrey;
 							return true;
@@ -430,14 +521,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mLookingAtTarget)	// If prey is in sight...
+						if (mFacingTarget)	// If prey is in sight...
 						{
-							// Todo: Reset expire timer.
+							mTimeout = 10.0f;	// Give up pursuit of prey after x seconds.
 							return false;
 						}
 						else	// Prey out of sight.
 						{
-							// Todo: If timer expires, TODO FINISH THIS SENTENCE.
+							mTimeout -= Time.deltaTime;
+							if(mTimeout <= 0.0f)
 							mEvent = EEvent.transition_TurnToFacePrey;
 							return true;
 						}
@@ -453,18 +545,18 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	static bool ScanForPrey(CEnemyShip enemyShip) { return enemyShip.ScanForPrey(); }
-	bool ScanForPrey()
+	static bool ScanForHeatSignature(CEnemyShip enemyShip) { return enemyShip.ScanForHeatSignature(); }
+	bool ScanForHeatSignature()
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.scanningForPrey, false, false);
+				StateInitialisation(EState.scanningForHeatSignature, false, false);
 				return false;	// Init functions always return false.
 
 			// Process state.
-			case EState.scanningForPrey:
+			case EState.scanningForHeatSignature:
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
@@ -518,7 +610,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	/// <returns>true if prey was found (state_Prey will be non-null)</returns>
 	bool FindPrey()
 	{
-		if (mPrey != null)
+		if (mTarget != null)
 		{
 			Debug.LogError("CEnemyShip: Should not be scanning for prey when prey has already been found!");
 			return true;
@@ -533,82 +625,91 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		foreach (GameObject prey in potentialPrey)
 		{
 			if (IsWithinViewCone(prey.transform.position) || IsWithinViewRadius(prey.transform.position))
-				if (mPrey == null)
-					mPrey = prey.transform;
-				else if ((prey.transform.position - transform.position).sqrMagnitude < (mPrey.position - transform.position).sqrMagnitude)
-					mPrey = prey.transform;
+				if (mTarget == null)
+					mTarget = prey.transform;
+				else if ((prey.transform.position - transform.position).sqrMagnitude < (mTarget.position - transform.position).sqrMagnitude)
+					mTarget = prey.transform;
 		}
 
-		return mPrey != null;
+		return mTarget != null;
 	}
 
-	bool IsWithinLineOfSight(Vector3 pos)
+	void OnGUI()
 	{
-		return IsWithinViewCone(pos) || IsWithinViewRadius(pos);
+		if (!debug_Display)
+			return;
+
+		float dx = 200.0f;
+		float dy = 300.0f;
+
+		GUI.Box(new Rect(25 + dx, 5 + dy, 200, 40), "");
+
+		mPidAngularAccelerationY.Kp = GUI.HorizontalSlider(new Rect(25 + dx, 5 + dy, 200, 10), mPidAngularAccelerationY.Kp, 50, 0);
+		mPidAngularAccelerationY.Ki = GUI.HorizontalSlider(new Rect(25 + dx, 20 + dy, 200, 10), mPidAngularAccelerationY.Ki, 100, 0);
+		mPidAngularAccelerationY.Kd = GUI.HorizontalSlider(new Rect(25 + dx, 35 + dy, 200, 10), mPidAngularAccelerationY.Kd, 1, 0);
+
+		GUIStyle style1 = new GUIStyle();
+		style1.alignment = TextAnchor.MiddleRight;
+		style1.fontStyle = FontStyle.Bold;
+		style1.normal.textColor = Color.yellow;
+		style1.fontSize = 9;
+
+		GUI.Label(new Rect(0 + dx, 5 + dy, 20, 10), "Kp", style1);
+		GUI.Label(new Rect(0 + dx, 20 + dy, 20, 10), "Ki", style1);
+		GUI.Label(new Rect(0 + dx, 35 + dy, 20, 10), "Kd", style1);
+
+		GUIStyle style2 = new GUIStyle();
+		style2.alignment = TextAnchor.MiddleLeft;
+		style2.fontStyle = FontStyle.Bold;
+		style2.normal.textColor = Color.yellow;
+		style2.fontSize = 9;
+
+		GUI.TextField(new Rect(235 + dx, 5 + dy, 60, 10), mPidAngularAccelerationY.Kp.ToString(), style2);
+		GUI.TextField(new Rect(235 + dx, 20 + dy, 60, 10), mPidAngularAccelerationY.Ki.ToString(), style2);
+		GUI.TextField(new Rect(235 + dx, 35 + dy, 60, 10), mPidAngularAccelerationY.Kd.ToString(), style2);
+
+		GUI.Label(new Rect(0 + dx, -8 + dy, 200, 10), name, style2);
 	}
 
-	bool IsWithinViewCone(Vector3 pos)
+	void OnDrawGizmos()
 	{
-		Vector3 deltaPos = pos - transform.position;
-		if (deltaPos == Vector3.zero)
-			return true;
-		else
+		if (!debug_Display)
+			return;
+
+		Color oldColour = Gizmos.color;
+
+		if(mDisturbance != null)
 		{
-			float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
-			return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
+			Gizmos.color = new Color(1,1,1,Mathf.Clamp01(0.1f + mDisturbance.expireTime * 0.5f));	// White line, fading out in the last two seconds of expiry, but still 10% visible when it finally expires.
+			Gizmos.DrawLine(transform.position, mDisturbance.position);	// Point to disturbance.
 		}
+
+		if(mTarget != null)
+		{
+			Gizmos.color = Color.red;	// Red line.
+			Gizmos.DrawLine(transform.position, mDisturbance.position);	// Point to prey.
+		}
+
+		// Angular forces.
+		Gizmos.color = Color.blue;
+		Gizmos.DrawLine(transform.position + transform.up, transform.position - transform.up);
+		Gizmos.DrawLine(transform.position + transform.right, transform.position - transform.right);
+		Gizmos.DrawLine(transform.position + transform.forward, transform.position - transform.forward);
+
+		// All the following assume clockwise rotation for positive torque.
+		// Y may be incorrect.
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.forward * mTorque.x);		// X
+		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.forward * mTorque.x);		// X
+		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward - transform.up * mTorque.x);	// X
+		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward + transform.up * mTorque.x);	// X
+		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward + transform.right * mTorque.y);	// Y
+		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward - transform.right * mTorque.y);	// Y
+		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.forward * mTorque.y);	// Y
+		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.forward * mTorque.y);	// Y
+		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.right * mTorque.z);	// Z
+		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.right * mTorque.z);	// Z
+		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.up * mTorque.z);	// Z
+		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.up * mTorque.z);	// Z
 	}
-
-	bool IsWithinViewRadius(Vector3 pos)
-	{
-		return (pos - transform.position).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
-	}
-
-    //void OnGUI()
-    //{
-    //    if (target == null)
-    //        return;
-
-    //    float dx = 200.0f;
-    //    float dy = 300.0f;
-
-    //    GUI.Box(new Rect(25 + dx, 5 + dy, 200, 40), "");
-
-    //    mPidAngleYaw.Kp = GUI.HorizontalSlider(new Rect(25 + dx, 5 + dy, 200, 10), mPidAngleYaw.Kp, 50, 0);
-    //    mPidAngleYaw.Ki = GUI.HorizontalSlider(new Rect(25 + dx, 20 + dy, 200, 10), mPidAngleYaw.Ki, 100, 0);
-    //    mPidAngleYaw.Kd = GUI.HorizontalSlider(new Rect(25 + dx, 35 + dy, 200, 10), mPidAngleYaw.Kd, 1, 0);
-
-    //    GUIStyle style1 = new GUIStyle();
-    //    style1.alignment = TextAnchor.MiddleRight;
-    //    style1.fontStyle = FontStyle.Bold;
-    //    style1.normal.textColor = Color.yellow;
-    //    style1.fontSize = 9;
-
-    //    GUI.Label(new Rect(0 + dx, 5 + dy, 20, 10), "Kp", style1);
-    //    GUI.Label(new Rect(0 + dx, 20 + dy, 20, 10), "Ki", style1);
-    //    GUI.Label(new Rect(0 + dx, 35 + dy, 20, 10), "Kd", style1);
-
-    //    GUIStyle style2 = new GUIStyle();
-    //    style2.alignment = TextAnchor.MiddleLeft;
-    //    style2.fontStyle = FontStyle.Bold;
-    //    style2.normal.textColor = Color.yellow;
-    //    style2.fontSize = 9;
-
-    //    GUI.TextField(new Rect(235 + dx, 5 + dy, 60, 10), mPidAngleYaw.Kp.ToString(), style2);
-    //    GUI.TextField(new Rect(235 + dx, 20 + dy, 60, 10), mPidAngleYaw.Ki.ToString(), style2);
-    //    GUI.TextField(new Rect(235 + dx, 35 + dy, 60, 10), mPidAngleYaw.Kd.ToString(), style2);
-
-    //    GUI.Label(new Rect(0 + dx, -8 + dy, 200, 10), name, style2);
-    //}
-
-    //void OnDrawGizmos()
-    //{
-    //    if (target == null)
-    //        return;
-
-    //    Debug.DrawLine(transform.position, transform.position + transform.rotation * targetPossss * (target.position - transform.position).magnitude, Color.white);
-    //    Debug.DrawLine(transform.position, transform.position + transform.forward * 100, Color.green);
-    //    Debug.DrawLine(transform.position + transform.forward * 100, transform.position + transform.forward * 100 + transform.up * torque.x, Color.red);
-    //    Debug.DrawLine(transform.position + transform.forward * 100, transform.position + transform.forward * 100 + transform.right * torque.y, Color.red);
-    //}
 }
