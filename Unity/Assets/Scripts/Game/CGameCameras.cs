@@ -37,6 +37,8 @@ public class CGameCameras : MonoBehaviour
 	private static GameObject s_ProjectedCamera = null;
 	private static GameObject s_BackgroundCamera = null;
 
+	private static GameObject s_SpaceFog = null;
+
 	private static bool s_IsObserverInsideShip = false;
 
 	private static bool s_OculusRiftActive = false;
@@ -95,7 +97,8 @@ public class CGameCameras : MonoBehaviour
 	{
 		get { return(s_OculusRiftActive); }
 	}
-	
+
+
 	// Member Methods
 	public void Awake()
 	{	
@@ -207,10 +210,7 @@ public class CGameCameras : MonoBehaviour
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
 
 		Debug.Log("Creating space fog");
-		GameObject fog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
-		fog.transform.parent = s_ProjectedCamera.transform;
-		fog.transform.localPosition = Vector3.zero;
-		fog.transform.localRotation = Quaternion.identity;
+		s_SpaceFog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
 
 		// Set the defult view perspective
 		SetObserverSpace(true);
@@ -305,6 +305,9 @@ public class CGameCameras : MonoBehaviour
 
 			// Update the background camera rotation
 			s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
+
+			// Move fog to projected camera
+			s_SpaceFog.transform.position = s_ProjectedCamera.transform.position;
 		}
 		else
 		{
@@ -312,6 +315,9 @@ public class CGameCameras : MonoBehaviour
 
 			// Update the background camera rotation
 			s_BackgroundCamera.transform.rotation = s_MainCamera.transform.rotation;
+
+			// Move fog to projected camera
+			s_SpaceFog.transform.position = s_MainCamera.transform.position;
 		}
 
 		if(CGameCameras.IsOculusRiftActive)

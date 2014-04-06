@@ -8,26 +8,11 @@
 // The particles live for an infinite period of time but they will be relocated when they
 // are beyond "range".
 
-// This script requires the prefab "SpaceUnity\Prefabs\CameraEffects\SpaceParticles" which has a
-// particle system that this script depends on.
-
-// INSTRUCTIONS:
-// Drag the SpaceParticles/SpaceFog prefab to your scene and make it a child of the camera (e.g. Main Camera)
-
-// PARAMETERS:
-//   particleScale	(Scale of particles - used to scale the size of particles of the Particle System)
-//   range			(Range of the sphere that the particles live within)
-//   maxParticles	(Number of particles, modify this to suit your visual and performance needs)
-//   distanceSpawn  (Distance % (0.0-1.0) of range where new particles should spawn)
-//   fadeParticles	(Whether particles should alpha fade in/out when close to out of range)
-//   distanceFade   (Start fading from % (0.0-1.0) of range (should be lower than distanceSpawn))
-
-// HINTS:
-// You can also modify the particle system of the prefab to modify particle texture, size, speed, colors, etc.
 
 // Version History
 // 1.02 - Prefixed with SU_SpaceParticles to avoid naming conflicts.
 // 1.01 - Initial Release.
+// Project VOID: Edited to work with our shifting galaxy
 
 using UnityEngine;
 using System.Collections;
@@ -54,16 +39,40 @@ public class SU_SpaceParticles : MonoBehaviour {
 	public float driftSpeedMultiplier = 1.0f;	
 	// Fade particles in/out of range (usually not necessary for small particles)
 	public bool fadeParticles = true;
+
 	// Distance percentile of range to start fading particles (should be lower than distanceSpawn)
 	public float distanceFade = 0.5f;
+
+	// CGalaxy desity. Value between 0 - 1
+	public float m_density = 0.0f;
 
 	// Private variables
 	private float _distanceToSpawn;
 	private float _distanceToFade;
 	private ParticleSystem _cacheParticleSystem;
 	private Transform _cacheTransform;
-	
-	void Start () {
+
+	// Shift the particles to the next cell in the galaxy in order to keep visual appearance. 
+	void ShiftParticles(Vector3 _Translation)
+	{
+		int _numParticles = particleSystem.particleCount;	
+		_cacheTransform.position += _Translation;
+		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
+
+		particleSystem.GetParticles(_particles);
+
+		for (int i = 0; i < _particles.Length; i++) 
+		{
+			_particles[i].position += _Translation;
+		}
+
+		particleSystem.SetParticles(_particles, _numParticles); 
+	}
+
+	void Start () 
+	{
+		CGalaxy.instance.eventPostGalaxyShift += ShiftParticles;
+
 		// Cache transform and particle system to improve performance
 		_cacheTransform = transform;
 		_cacheParticleSystem = particleSystem;
@@ -90,27 +99,41 @@ public class SU_SpaceParticles : MonoBehaviour {
 			_newParticle.velocity = _velocity;						
 			_newParticle.size = Random.Range(minParticleSize, maxParticleSize) * sizeMultiplier;								
 			particleSystem.Emit(1);
-			
 		}			
 	}
 	
-	void Update () {
-		int _numParticles = particleSystem.particleCount;		
+	void Update () 
+	{
+
+		m_density = CGalaxy.instance.DebrisDensity(CGalaxy.instance.RelativePointToAbsoluteCell(CGameCameras.MainCamera.transform.position));
+
+		if(m_density < 0.2f)
+			m_density = 0.0f;
+		else if(m_density > 0.5f)
+			m_density = 0.8f;
+
+		int _numParticles = particleSystem.particleCount;
+
 		// Get the particles from the particle system
 		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
 		particleSystem.GetParticles(_particles);
 		
 		// Iterate through the particles and relocation (spawn) and fading
-		for (int i = 0; i < _particles.Length; i++) {			
+		for (int i = 0; i < _particles.Length; i++) 
+		{			
 			// Calcualte distance to particle from transform position
 			float _distance = Vector3.Distance(_particles[i].position, _cacheTransform.position);			
 			
 			// If distance is greater than range...
-			if (_distance > range) {						
+			if (_distance > range) 
+			{
+
 				// reposition (respawn) particle according to spawn distance
-				_particles[i].position = Random.onUnitSphere * _distanceToSpawn + _cacheTransform.position;								
+				_particles[i].position = Random.onUnitSphere * _distanceToSpawn + _cacheTransform.position;	
+
 				// Re-calculate distance to particle for fading
-				_distance = Vector3.Distance(_particles[i].position, _cacheTransform.position);				
+				_distance = Vector3.Distance(_particles[i].position, _cacheTransform.position);
+
 				// Set a new velocity of the particle
 				Vector3 _velocity = new Vector3(
 					Random.Range(minParticleDriftSpeed, maxParticleDriftSpeed) * driftSpeedMultiplier, 
@@ -122,20 +145,28 @@ public class SU_SpaceParticles : MonoBehaviour {
 			}
 			
 			// If particle fading is enabled...
-			if (fadeParticles) {
+			if (fadeParticles) 
+			{
 				// Get the original color of the particle
 				Color _col = _particles[i].color;				
-				if (_distance > _distanceToFade) {		
+				if (_distance > _distanceToFade) 
+				{		
 					// Fade alpha value of particle between fading distance and spawnin distance
 					_particles[i].color = new Color(_col.r, _col.g, _col.b, Mathf.Clamp01(1.0f - ((_distance - _distanceToFade) / (_distanceToSpawn - _distanceToFade))));						
-				} else {
+				} 
+				else 
+				{
 					// Particle is within range so ensure it has full alpha value
 					_particles[i].color = new Color(_col.r, _col.g, _col.b, 1.0f);						
 				}
 			}
+
+			// Make sure the particles alpha with the galaxy density value
+			Color _colour = _particles[i].color;
+			_particles[i].color = new Color(_colour.r, _colour.g, _colour.b, m_density);
        	}        
 		
 		// Set the particles according to above modifications
-    	particleSystem.SetParticles(_particles, _numParticles);    	
+    	particleSystem.SetParticles(_particles, _numParticles);    
 	}
 }
