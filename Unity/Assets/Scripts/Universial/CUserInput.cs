@@ -62,7 +62,7 @@ public class CUserInput : CNetworkMonoBehaviour
 		Move_StrafeLeft,    // A
 		Move_StrafeRight,   // D
         MoveGround_Jump,          // Space
-        MoveGround_Crouch,        // Control
+        Move_Crouch,        // Control
                                  
 		MoveFly_Up,               // Space
 		MoveFly_Down,             // Control

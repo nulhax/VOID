@@ -30,8 +30,8 @@ public class CGravityTriggerResponse : CNetworkMonoBehaviour
 	// Member Functions
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_fTriggerRadius        = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
-		m_fCurrentGravityOutput = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync);
+		m_fTriggerRadius        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync);
+		m_fCurrentGravityOutput = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _cVarInstance)

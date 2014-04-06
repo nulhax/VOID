@@ -28,18 +28,18 @@ public class NetworkedEntity : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		mPositionX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.x*/);
-		mPositionY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.y*/);
-		mPositionZ = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.z*/);
-		mAngleX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.x*/);
-		mAngleY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.y*/);
-		mAngleZ = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.z*/);
-		mPositionalVelocityX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.x*/);
-		mPositionalVelocityY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.y*/);
-		mPositionalVelocityZ = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.z*/);
-		mAngularVelocityX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.x*/);
-		mAngularVelocityY = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.y*/);
-		mAngularVelocityZ = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.z*/);
+		mPositionX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.x*/);
+		mPositionY = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.y*/);
+		mPositionZ = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.z*/);
+		mAngleX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.x*/);
+		mAngleY = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.y*/);
+		mAngleZ = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.eulerAngles.z*/);
+		mPositionalVelocityX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.x*/);
+		mPositionalVelocityY = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.y*/);
+		mPositionalVelocityZ = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.velocity.z*/);
+		mAngularVelocityX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.x*/);
+		mAngularVelocityY = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.y*/);
+		mAngularVelocityZ = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*rigidbody.angularVelocity.z*/);
 	}
 
 	public void OnNetworkVarSync(INetworkVar sender)

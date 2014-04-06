@@ -49,5 +49,6 @@ public class CPlayerSkeleton : MonoBehaviour
 	public GameObject 	m_skeletonRoot;
 	public GameObject 	m_ragdollHead;
 	public GameObject 	m_playerHead;
+    public GameObject   m_playerNeck;
 	public Avatar		m_headlessAvatar;
 }

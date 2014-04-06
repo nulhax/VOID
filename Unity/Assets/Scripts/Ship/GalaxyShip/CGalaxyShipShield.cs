@@ -232,8 +232,8 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bVarIsActive =  _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync);
-		m_fVarShieldPower =  _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, m_ShieldPower);
+		m_bVarIsActive =  _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync);
+		m_fVarShieldPower =  _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_ShieldPower);
 	}
 
 

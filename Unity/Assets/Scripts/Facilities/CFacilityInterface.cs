@@ -108,7 +108,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_FacilityId = _cRegistrar.CreateNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
+		m_FacilityId = _cRegistrar.CreateReliableNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 	}
 
 

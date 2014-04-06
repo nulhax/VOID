@@ -20,7 +20,6 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CPlayerAirMotor))]
 [RequireComponent(typeof(CPlayerBackPack))]
 [RequireComponent(typeof(CPlayerBelt))]
 [RequireComponent(typeof(CPlayerGroundMotor))]
@@ -118,6 +117,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
                 m_cModelFirstPerson = GameObject.Instantiate(m_cModelFirstPerson) as GameObject;
                 m_cModelFirstPerson.transform.parent = transform;
                 m_cModelFirstPerson.transform.localPosition = Vector3.zero;
+                m_cModelFirstPerson.transform.localRotation = Quaternion.identity;
 
 				//Apply skeleton variables from model to ragdoll script
 				CPlayerSkeleton skeleton = m_cModelFirstPerson.GetComponent<CPlayerSkeleton>();
@@ -140,6 +140,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
                 m_cModel = GameObject.Instantiate(m_cModel) as GameObject;
                 m_cModel.transform.parent = transform;
                 m_cModel.transform.localPosition = Vector3.zero;
+                m_cModel.transform.localRotation = Quaternion.identity;
 
 				//Apply skeleton variables from model to ragdoll script
 				CPlayerSkeleton skeleton = m_cModel.GetComponent<CPlayerSkeleton>();

@@ -258,7 +258,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	{
 		ulong ignorePlayer = _cNetworkPlayer.PlayerId;
 
-		foreach(ulong playerId in CNetwork.Server.FindNetworkPlayers().Keys)
+		foreach(ulong playerId in CNetwork.Server.GetNetworkPlayers().Keys)
 		{
 			if(playerId != ignorePlayer)
 			{

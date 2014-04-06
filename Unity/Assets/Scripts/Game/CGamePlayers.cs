@@ -132,7 +132,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_sNetworkedPlayerName = _cRegistrar.CreateNetworkVar<string>(OnNetworkVarSync, "");
+		m_sNetworkedPlayerName = _cRegistrar.CreateReliableNetworkVar<string>(OnNetworkVarSync, "");
 
         _cRegistrar.RegisterRpc(this, "RegisterPlayerName");
         _cRegistrar.RegisterRpc(this, "UnregisterPlayerName");
@@ -294,6 +294,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 				{
 					if (!cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().IsBlocked)
 					{
+                        m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
+
 						// Create new player's actor
 						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)CGameRegistrator.ENetworkPrefab.PlayerActor);
 						
@@ -305,13 +307,12 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						
 						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
 						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
-						
+
 						// Sync player actor view id with everyone
 						InvokeRpcAll("RemoteRegisterPlayerActor", ulUnspawnedPlayerId, cActorNetworkViewId);
 
                         cPlayerActor.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += RespawnPlayer;
 						
-						m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 						break;
 					}
 				}

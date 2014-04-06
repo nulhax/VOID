@@ -77,9 +77,9 @@ public class CPowerStorageBehaviour : CNetworkMonoBehaviour
 	
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BatteryCharge = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_BatteryCapacity = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_BatteryChargeAvailable = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, false);
+		m_BatteryCharge = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_BatteryCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_BatteryChargeAvailable = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
 	
 	void OnNetworkVarSync(INetworkVar _VarInstance)

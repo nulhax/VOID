@@ -225,7 +225,7 @@ public class CGameChat : CNetworkMonoBehaviour
 
         // Dictionary of all connected players
         // NOTE: This dictionary includes the source player
-        Dictionary<ulong, CNetworkPlayer> PlayerList = CNetwork.Server.FindNetworkPlayers();
+        Dictionary<ulong, CNetworkPlayer> PlayerList = CNetwork.Server.GetNetworkPlayers();
 
         // Loop to iterate through all players including the source
         foreach (KeyValuePair<ulong, CNetworkPlayer> Player in PlayerList)

@@ -48,9 +48,9 @@ public class CThirdPersonAnimController : MonoBehaviour
 	Animator m_ThirdPersonAnim;
 	
 	CapsuleCollider m_physCollider;
-	
-	byte m_previousMovementState;
-	byte m_MovementState;
+
+    ushort m_previousMovementState;
+	ushort m_MovementState;
 	
 	bool m_bUsedSlide = false;
 	bool m_bHoldTool = false;
@@ -67,7 +67,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	{
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerGroundMotor>();
-		m_PlayerMotor.EventStatesChange += NotifyMovementStateChange;
+		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
 		
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
@@ -75,11 +75,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Get collider
 		m_physCollider = GetComponent<CapsuleCollider>();	
 	}
-	
-	void NotifyMovementStateChange(byte _bPreviousStates, byte _bNewSates)
+
+    void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
 	{
-		m_MovementState = _bNewSates;
-		m_previousMovementState = _bPreviousStates;	
+        m_MovementState = _usPreviousStates;
+        m_previousMovementState = _usNewSates;	
 	}
 	
 	// Update is called once per frame
@@ -96,13 +96,13 @@ public class CThirdPersonAnimController : MonoBehaviour
 			bool bStrafeRight;
 			
 			
-			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveForward) > 0) ? true : false;	
-			bWalkBack = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveBackward) > 0) ? true : false;	
-			bJump = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Jump) > 0) ? true : false;	
-			bCrouch = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Crouch) > 0) ? true : false;	
-			bStrafeLeft = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveLeft) > 0) ? true : false;	
-			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EState.MoveRight) > 0) ? true : false;
-			bSprint = ((m_MovementState & (uint)CPlayerGroundMotor.EState.Sprint) > 0) ? true : false;	
+			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;	
+			bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;	
+			bJump        = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Jump)        > 0) ? true : false;	
+			bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;	
+			bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
+			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
+			bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Turbo)       > 0) ? true : false;	
 			
 			m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
 			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);

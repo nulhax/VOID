@@ -1685,6 +1685,7 @@ MonoBehaviour:
     x: 0
     y: 0
     z: 0
+  m_CurrentlySelectedType: -1
   m_SelectedTiles: []
   m_TileMaterial: {fileID: 2100000, guid: 25be727da0628a744a21d4a0f0b72178, type: 2}
 --- !u!1 &1252298741
@@ -2214,6 +2215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f917699cabd55384c8c5a658728dfdbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialiseDungeonMaster: 1
 --- !u!114 &1432749553
 MonoBehaviour:
   m_ObjectHideFlags: 0

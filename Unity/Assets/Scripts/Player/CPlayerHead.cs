@@ -38,6 +38,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
 		get { return (m_fHeadEulerX.Get()); }
 	}
 
+    public float HeadEulerY
+    {
+        get { return (m_fHeadEulerY.Get()); }
+    }
+
 	public GameObject Head
 	{
 		get 
@@ -57,7 +62,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_fHeadEulerX = _cRegistrar.CreateNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fHeadEulerX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.1f);
+        m_fHeadEulerY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.1f);
     }
 
 
@@ -72,16 +78,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	public void EnableInput(object _cFreezeRequester)
 	{
 		m_cInputDisableQueue.Remove(_cFreezeRequester.GetType());
-	}
-
-
-	[ALocalOnly]
-	public void SetHeadRotations(float _LocalEulerX)
-	{
-		m_fLocalXRotation = _LocalEulerX;
-
-		// Apply the rotation
-		Head.transform.localEulerAngles = new Vector3(m_fLocalXRotation, 0.0f, 0.0f);
 	}
 
 
@@ -123,7 +119,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             // Register for mouse movement input
+            CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
             CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
+        }
+        else if (gameObject == CGamePlayers.SelfActor)
+        {
+            // Register for mouse movement input
+            CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
+            CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisChange);
         }
     }
 
@@ -140,7 +143,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             // Register for mouse movement input
+            CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
             CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
+        }
+        else if (gameObject == CGamePlayers.SelfActor)
+        {
+            // Register for mouse movement input
+            CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
+            CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisChange);
         }
     }
 
@@ -148,24 +158,78 @@ public class CPlayerHead : CNetworkMonoBehaviour
     void Update()
     {
         // Empty
+
+        if (gameObject != CGamePlayers.SelfActor)
+            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(0.0f,
+                                                                                                                                         90.0f + Head.transform.localEulerAngles.y,
+                                                                                                                                        -67.31491f + Head.transform.localEulerAngles.x);
+
     }
 
 
     void FixedUpdate()
     {
-        if (!InputDisabled &&
-            m_fDeltaMouseX != 0.0f)
+        UpdateRotation();
+
+        if (CNetwork.IsServer)
         {
-            // Retrieve new rotations
-            m_fLocalXRotation += m_fDeltaMouseX;
+            m_fHeadEulerX.Value = Head.transform.localEulerAngles.x;
+            m_fHeadEulerY.Value = Head.transform.localEulerAngles.y;
+        }
+    }
 
-            // Clamp rotation
-            m_fLocalXRotation = Mathf.Clamp(m_fLocalXRotation, m_vCameraMinRotation.x, m_vCameraMaxRotation.x);
 
-            // Apply the pitch to the camera
-            SetHeadRotations(m_fLocalXRotation);
+    void UpdateRotation()
+    {
+        if (InputDisabled)
+            return;
 
-            m_fDeltaMouseX = 0.0f;
+        // Run on server or locally
+        if (CNetwork.IsServer ||
+            gameObject == CGamePlayers.SelfActor)
+        {
+            if (m_fMouseDeltaX == 0.0f &&
+                m_fMouseDeltaY == 0.0f)
+                return;
+
+            Vector3 vLocalRotation = Head.transform.localRotation.eulerAngles;
+
+            if (vLocalRotation.x > 180.0f)
+            {
+                vLocalRotation.x -= 360.0f;
+            }
+
+            if (vLocalRotation.y > 180.0f)
+            {
+                vLocalRotation.y -= 360.0f;
+            }
+
+            vLocalRotation.x = Mathf.Clamp(vLocalRotation.x + m_fMouseDeltaY, k_fRotationXMin, k_fRotationXMax);
+            vLocalRotation.y = Mathf.Clamp(vLocalRotation.y + m_fMouseDeltaX, -k_fRotationYLimit, k_fRotationYLimit);
+
+            Head.transform.localEulerAngles = vLocalRotation;
+
+            float fOverRotationY = vLocalRotation.y + m_fMouseDeltaX;
+
+            if (fOverRotationY < -k_fRotationYLimit)
+            {
+                GetComponent<CPlayerGroundMotor>().CorrectHeadOverRotate(fOverRotationY + k_fRotationYLimit);
+            }
+            else if (fOverRotationY > k_fRotationYLimit)
+            {
+                GetComponent<CPlayerGroundMotor>().CorrectHeadOverRotate(fOverRotationY - k_fRotationYLimit);
+            }
+
+            m_fMouseDeltaX = 0.0f;
+            m_fMouseDeltaY = 0.0f;
+        }
+
+        // Lerp to remote rotation
+        else
+        {
+            Head.transform.localRotation = Quaternion.RotateTowards(Head.transform.localRotation, 
+                                                                    Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f), 
+                                                                    360.0f * Time.fixedDeltaTime);
         }
     }
 
@@ -190,53 +254,60 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
+    [ALocalOnly]
+    void OnEventAxisChange(CUserInput.EAxis _eAxis, float _fValue)
+    {
+        OnEventClientAxisChange(_eAxis, CNetwork.PlayerId, _fValue);
+    }
+
+
     [AServerOnly]
     void OnEventClientAxisChange(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
     {
-        if (GetComponent<CPlayerInterface>().PlayerId == _ulPlayerId)
-        {
-            switch (_eAxis)
-            {
-                case CUserInput.EAxis.MouseY:
-                    m_fDeltaMouseX += _fValue;
-                    break;
+        if (GetComponent<CPlayerInterface>().PlayerId != _ulPlayerId)
+            return;
 
-                default:
-                    Debug.LogError("Unknown client axis: " + _eAxis);
-                    break;
-            }
+        switch (_eAxis)
+        {
+            case CUserInput.EAxis.MouseX:
+                m_fMouseDeltaX += _fValue;
+                break;
+
+            case CUserInput.EAxis.MouseY:
+                m_fMouseDeltaY += _fValue;
+                break;
+
+            default:
+                Debug.LogError("Unknown client axis: " + _eAxis);
+                break;
         }
 	}
 
 
-    void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        // Head Rotation
-        if (CGamePlayers.SelfActor != gameObject &&
-            _cSyncedNetworkVar     == m_fHeadEulerX)
-        {
-            Head.transform.localEulerAngles = new Vector3(m_fHeadEulerX.Get(), 0.0f, 0.0f);
-        }
+        // Empty
     }
 
 
 // Member Fields
 
 
+    const float k_fRotationXMin   = -70; // Up
+    const float k_fRotationXMax   =  54; // Down
+    const float k_fRotationYLimit =  68; // Degrees
+
+
 	List<Type> m_cInputDisableQueue = new List<Type>();
 	
 	
 	CNetworkVar<float> m_fHeadEulerX = null;
-	
-	
-    float m_fDeltaMouseX    = 0.0f;
+    CNetworkVar<float> m_fHeadEulerY = null;
+
+
+    float m_fMouseDeltaX = 0.0f;
+    float m_fMouseDeltaY = 0.0f;
 	float m_fLocalXRotation = 0.0f;
-	
-	
-	Vector2 m_vCameraMinRotation = new Vector2(-50.0f, -360.0f);
-	Vector2 m_vCameraMaxRotation = new Vector2(60.0f, 360.0f);
-	Vector2 m_vHeadMinRotation = new Vector2(-30, -60);
-	Vector2 m_vHeadMaxRotation = new Vector2(30, 70); 
 
 
 };

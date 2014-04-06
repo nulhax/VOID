@@ -56,7 +56,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
     
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bRepairState = _cRegistrar.CreateNetworkVar<byte>(OnNetworkVarSync);
+        m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
     }
     
     public void OnNetworkVarSync(INetworkVar _cSyncedVar)
@@ -172,7 +172,8 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
                 m_iTargetIndex = 0;
             }       
             
-            m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];            
+			m_IKController.RightHandIKTargetPos = m_TargetList[m_iTargetIndex].position;    
+			m_IKController.RightHandIKTargetRot = m_TargetList[m_iTargetIndex].rotation;            
             m_fTargetSwitchTimer = 0.0f;
             Debug.Log("switched target.");
         }
@@ -197,7 +198,8 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         m_fTargetSwitchTimer = 0.0f;
         
         m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
-        m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];    
+		m_IKController.RightHandIKTargetPos = m_TargetList[m_iTargetIndex].position;    
+		m_IKController.RightHandIKTargetRot = m_TargetList[m_iTargetIndex].rotation;
         
         CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
         CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;

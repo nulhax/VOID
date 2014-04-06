@@ -2324,6 +2324,7 @@ MonoBehaviour:
   m_skeletonRoot: {fileID: 100100}
   m_ragdollHead: {fileID: 100030}
   m_playerHead: {fileID: 100086}
+  m_playerNeck: {fileID: 100036}
   m_headlessAvatar: {fileID: 9000000, guid: bbc63a354b778224094d3f0205d03c3c, type: 3}
 --- !u!135 &13500000
 SphereCollider:
