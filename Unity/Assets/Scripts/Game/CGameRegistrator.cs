@@ -137,7 +137,7 @@ public class CGameRegistrator : MonoBehaviour
 
 		// NulOS
 		NOSPanelWide			= 1100,
-		NOSPanelConstruction,
+		DUIConstructionPlanner,
 
 		// NulOS Widgets
 		NOSWFacilityControl		= 1200,
@@ -290,14 +290,13 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipResources,			"User Interface/DUI/Ship/DUIShipResources");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINaniteCapsule,			"User Interface/DUI/Modules/DUINaniteCapsule");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,					"User Interface/DUI/Modules/DUIPropulsionEngine");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIConstructionPlanner,		"User Interface/DUI/Modules/DUIConstructionPlanner");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiDoorControl");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
 
-
 		// NulOS
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelWide,				"User Interface/NulOS/NOSPanelWide");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelConstruction,		"User Interface/NulOS/NOSPanelConstruction");
 
 		// NulOS Widgets
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWFacilityControl,			"User Interface/NulOS/Widgets/WidgetFacilityControl");
@@ -433,8 +432,8 @@ public class CGameRegistrator : MonoBehaviour
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.AirlockInternal      		, ENetworkPrefab.DUIAirlockInternal);
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         		, ENetworkPrefab.DuiFacilityDoor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 				, ENetworkPrefab.DUIFacilityControl);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.ConstructionPlanner 			, ENetworkPrefab.DUIConstructionPlanner);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 				, ENetworkPrefab.NOSPanelWide);
-		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelConstruction 		, ENetworkPrefab.NOSPanelConstruction);
 	}
 
 

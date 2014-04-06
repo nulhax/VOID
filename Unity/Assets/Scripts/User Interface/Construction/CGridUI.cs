@@ -27,11 +27,15 @@ using System.Linq;
 public class CGridUI : MonoBehaviour 
 {
 	// Member Types
-	public enum EMode
+	public enum EToolMode
 	{
-		AutoLayout,
-		ManualWallLayout,
-		TileSelect,
+		INVALID,
+
+		Nothing,
+		Paint_Exterior,
+		Paint_Interior_Walls,
+		Paint_Interior_Floors,
+		Select_Tiles,
 	}
 
 	public enum ETileInteraction
@@ -67,7 +71,7 @@ public class CGridUI : MonoBehaviour
 	public Vector2 m_GridScaleLimits = new Vector2(0.05f, 0.2f);
 	public Vector3 m_TilesOffset = Vector3.zero;
 
-	public EMode m_CurrentMode = EMode.AutoLayout;
+	public EToolMode m_CurrentMode = EToolMode.INVALID;
 	public ETileInteraction m_CurrentTileInteraction = ETileInteraction.INVALID;
 	public EPlaneInteraction m_CurrentPlaneInteraction = EPlaneInteraction.INVALID;
 	public int m_CurrentVerticalLayer = 0;
@@ -127,9 +131,12 @@ public class CGridUI : MonoBehaviour
 		CreateGridUIObjects();
 
 		// Default enums
-		m_CurrentMode = EMode.AutoLayout;
+		m_CurrentMode = EToolMode.Nothing;
 		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
 		m_CurrentlySelectedType = CTile.ETileType.Floor;
+
+		// Instance new material
+		m_TileMaterial = new Material(m_TileMaterial);
 	}
 	
 	private void CreateGridUIObjects()
@@ -200,15 +207,15 @@ public class CGridUI : MonoBehaviour
 	{
 		// Toggle modes
 		if(Input.GetKeyDown(KeyCode.Alpha1))
-			m_CurrentMode = EMode.AutoLayout;
+			m_CurrentMode = EToolMode.Paint_Exterior;
 
 		else if(Input.GetKeyDown(KeyCode.Alpha2))
-			m_CurrentMode = EMode.ManualWallLayout;
+			m_CurrentMode = EToolMode.Paint_Interior_Walls;
 
 		else if(Input.GetKeyDown(KeyCode.Alpha3))
-			m_CurrentMode = EMode.TileSelect;
+			m_CurrentMode = EToolMode.Select_Tiles;
 
-		if(m_CurrentMode == EMode.TileSelect)
+		if(m_CurrentMode == EToolMode.Select_Tiles)
 		{
 			UpdateTileSelectInput();
 		}
@@ -354,39 +361,35 @@ public class CGridUI : MonoBehaviour
 		if(m_PlaneHit.collider == null)
 			return;
 
-		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
-		if(!single)
+		if(m_CurrentTileInteraction != ETileInteraction.SingleSelection)
 			return;
 
-		if(!IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
+		if(m_CurrentMode == EToolMode.Paint_Exterior)
 		{
-			m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
+			if(!IsCtrlKeyDown)
+				m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
+			else
+				m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 			return;
 		}
 		
-		if(!IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+		if(m_CurrentMode == EToolMode.Paint_Interior_Walls)
 		{
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
 			{
-				tile.SetTileTypeState(CTile.ETileType.Wall_Int, true);
+				tile.SetTileTypeState(CTile.ETileType.Wall_Int, !IsCtrlKeyDown);
 				tile.UpdateTileMetaData();
 			}
 			return;
 		}
-		
-		if(IsCtrlKeyDown && m_CurrentMode == EMode.AutoLayout)
-		{
-			m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
-			return;
-		}
-		
-		if(IsCtrlKeyDown && m_CurrentMode == EMode.ManualWallLayout)
+
+		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
 		{
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
 			{
-				tile.SetTileTypeState(CTile.ETileType.Wall_Int, false);
+				tile.SetTileTypeState(CTile.ETileType.Floor, !IsCtrlKeyDown);
 				tile.UpdateTileMetaData();
 			}
 			return;
@@ -410,9 +413,9 @@ public class CGridUI : MonoBehaviour
 
 	void HandleLeftClickUpSingle()
 	{
-		if (m_CurrentMode == EMode.TileSelect) 
+		if(m_CurrentMode == EToolMode.Select_Tiles) 
 		{
-			if (!IsCtrlKeyDown)
+			if(!IsCtrlKeyDown)
 				m_SelectedTiles.Clear();
 
 			SelectTile(m_CurrentMouseGridPoint);
@@ -423,7 +426,7 @@ public class CGridUI : MonoBehaviour
 	{
 		switch(m_CurrentMode) 
 		{
-			case EMode.TileSelect: 
+			case EToolMode.Select_Tiles: 
 			{
 				if (!IsCtrlKeyDown)
 					m_SelectedTiles.Clear();
@@ -431,7 +434,7 @@ public class CGridUI : MonoBehaviour
 				SelectMultipleTiles();
 				break;
 			}
-			case EMode.AutoLayout: 
+			case EToolMode.Paint_Exterior: 
 			{
 				SelectionManipulateTiles(IsCtrlKeyDown);
 				break;
