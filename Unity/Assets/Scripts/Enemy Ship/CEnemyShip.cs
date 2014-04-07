@@ -30,6 +30,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public enum EEvent
 	{
 		none,
+		HostileTarget,
 
 		// Internal events.
 		transition_Idle,
@@ -70,29 +71,31 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.travelling,					EEvent.any,								Travel),
 		
 		// Event.
-		//new CStateTransition(EState.any,						EEvent.disturbance,				Init_TurnToFaceDisturbance),
+		new CStateTransition(EState.none,						EEvent.HostileTarget,					AttackTarget),
 
 		// Transition.
-		new CStateTransition(EState.any,						EEvent.transition_Idle,					Idle),
-		new CStateTransition(EState.any,						EEvent.transition_ExamineTarget,		ExamineTarget),
-		new CStateTransition(EState.any,						EEvent.transition_AttackTarget,			AttackTarget),
-		new CStateTransition(EState.any,						EEvent.transition_ScanForHeatSignature,	ScanForHeatSignature),
-		new CStateTransition(EState.any,						EEvent.transition_Travel,				Travel),
+		new CStateTransition(EState.none,						EEvent.transition_Idle,					Idle),
+		new CStateTransition(EState.none,						EEvent.transition_ExamineTarget,		ExamineTarget),
+		new CStateTransition(EState.none,						EEvent.transition_AttackTarget,			AttackTarget),
+		new CStateTransition(EState.none,						EEvent.transition_ScanForHeatSignature,	ScanForHeatSignature),
+		new CStateTransition(EState.none,						EEvent.transition_Travel,				Travel),
 		
 		// Catch all.
-		new CStateTransition(EState.any,						EEvent.any,									Idle),
+		new CStateTransition(EState.any,						EEvent.any,								Idle),
 	};
 
 	// State machine data set by state machine.
 	EState mState = EState.none;
 	EEvent mEvent = EEvent.none;
 	float mTimeout = 0.0f;
+	float mTimeoutSecondary = 0.0f;
 	float timeSpentIdling = 2.0f;
 	float timeSpentScanningForHeatSignatures = 15.0f;
 	float timeSpentExaminingTarget = 10.0f;
 	float timeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
 	float timeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
 	float timeSpentTravelling = 5.0f;
+	float mFireRate = 1.5f;
 
 	GameObject mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
 	GameObject mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
@@ -100,6 +103,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	bool mFaceTarget = false;
 	bool mFollowTarget = false;
 	float mTargetExpireTime = 0.0f;
+
+	int mAudioWeaponFireID = -1;
 
 	// State machine data set by physics.
 	bool mFacingTarget = false;		// Is looking in the general direction of the target.
@@ -134,31 +139,19 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
 		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
-		// Create the GameObject mTarget_InternalLastKnownPosition.
-		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy Ship/DummyTarget"));
-	}
+		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy Ship/DummyTarget"));	// Create the GameObject mTarget_InternalLastKnownPosition.
 
-	void Start()
-	{
-		// Test.
-
+		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
 	}
 
 	void OnDestroy()
 	{
-		// Destroy the GameObject mTarget_InternalLastKnownPosition.
-		Destroy(mTarget_InternalLastKnownPosition);
+		Destroy(mTarget_InternalLastKnownPosition);	// Destroy the GameObject mTarget_InternalLastKnownPosition.
 	}
 
 	void Update()
 	{
 		mTimeout -= Time.deltaTime;
-
-		if (mState == EState.attackingTarget && mTarget != null && mVisibleTarget)	// If attacking the target, and the target is visible...
-		{
-			mTargetExpireTime = Time.time + 20.0f;	// Reset the expire time.
-			// Todo: Shoot prey. Bang bang.
-		}
 
 		if (mTargetExpireTime <= Time.time)	// If the target expire time is met...
 			mTarget = null;	// Expire the target.
@@ -213,6 +206,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			// Check if there is a direct line of sight to the target.
 			mVisibleTarget = IsWithinLineOfSight(mTarget);
 		}
+	}
+
+	void OnCollisionEnter(Collision collision)
+	{
+		mEvent = EEvent.HostileTarget;
+		mTarget = collision.gameObject;
 	}
 
 	void InvalidateCache()
@@ -310,6 +309,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		mFaceTarget = _lookAtTarget;
 		mFollowTarget = _moveToTarget;
 		mTimeout = _timeout;
+		mTimeoutSecondary = 0.0f;
 
 		debug_StateName = _stateName;
 	}
@@ -355,11 +355,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
 		}
+
+		return false;
 	}
 
 	static bool ExamineTarget(CEnemyShip enemyShip) { return enemyShip.ExamineTarget(); }
@@ -421,11 +419,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
 		}
+
+		return false;
 	}
 
 	static bool AttackTarget(CEnemyShip enemyShip) { return enemyShip.AttackTarget(); }
@@ -435,11 +431,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, true, timeSpentAttackingTargetBeforeStopping, "Attacking Target");
+				StateInitialisation(EState.attackingTarget, true, true, timeSpentAttackingTargetBeforeStopping, "Attacking Target");
 				return false;	// Init functions always return false.
 
 			// Process state.
-			case EState.examiningTarget:
+			case EState.attackingTarget:
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
@@ -450,11 +446,29 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							return true;
 						}
 
+						mTimeoutSecondary -= Time.deltaTime;	// This determines fore rate.
+
 						if(mVisibleTarget)	// If the target is in sight...
 						{
-							// Will be blasting away at the target.
+							mTargetExpireTime = Time.time + 20.0f;	// Reset the expire time.
+
+							while (mTimeoutSecondary <= 0.0f)
+							{
+								mTimeoutSecondary += mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity;
+
+								// Todo: Shoot prey. Bang bang.
+								GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
+							}
+
 							// Todo: If this ship's health is low, it could run off.
 						}
+						else	// Target can not be seen.
+						{
+							// Ensure fire rate does not build up a backlog of shots to fire.
+							if (mTimeoutSecondary < 0.0f)
+								mTimeoutSecondary = 0.0f;
+						}
+
 						if(mTimeout <= 0.0f)	// If the timer runs out...
 						{
 							if(mFollowTarget)	// If chasing the target...
@@ -477,11 +491,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
 		}
+
+		return false;
 	}
 
 	static bool ScanForHeatSignature(CEnemyShip enemyShip) { return enemyShip.ScanForHeatSignature(); }
@@ -528,11 +540,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
 		}
+
+		return false;
 	}
 
 	static bool Travel(CEnemyShip enemyShip) { return enemyShip.Travel(); }
@@ -572,11 +582,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
 		}
+
+		return false;
 	}
 
 	//void OnGUI()

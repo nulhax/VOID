@@ -1133,6 +1133,7 @@ GameObject:
   - 114: {fileID: 11400008}
   - 54: {fileID: 5400000}
   - 64: {fileID: 6400002}
+  - 114: {fileID: 11400010}
   m_Layer: 11
   m_Name: Enemy Ship
   m_TagString: Untagged
@@ -3652,6 +3653,29 @@ MonoBehaviour:
   PositionalVelocity: 1
   AngularVelocity: 1
   UpdatesPerSecond: 4
+--- !u!114 &11400010
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: 
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList: []
+  m_fFadeOutTimeList: []
+  m_arAudioClipPool: []
+  m_barLoopList: 
+  m_bContinuousEvent: 0
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
