@@ -39,6 +39,7 @@ public class CPlayerArmController : MonoBehaviour
 	//Member variables
 	HoldState				m_eHoldState;
 	CPlayerIKController		m_IKController;
+    bool                    m_bInteracting;
 
 	// Use this for initialization
 	void Start () 
@@ -53,30 +54,93 @@ public class CPlayerArmController : MonoBehaviour
 
 		m_IKController = gameObject.GetComponent<CPlayerIKController>();
 	}
+
+    void LateUpdate()
+    {
+        if (m_bInteracting)
+        {
+            Ray cameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
+            RaycastHit hit = new RaycastHit();
+            Physics.Raycast(cameraRay, out hit);
+
+            switch (m_eHoldState)
+            {
+                case HoldState.NoTool:
+                {
+                    m_IKController.SetRightHandTarget(hit.point, CGameCameras.MainCamera.transform.rotation * Quaternion.Euler(-90,0,0));
+                    m_IKController.RightHandIKWeight = 1.0f;
+                    break;
+                }
+                case HoldState.OneHandedTool:
+                {
+                    m_IKController.SetLeftHandTarget(hit.point, CGameCameras.MainCamera.transform.rotation * Quaternion.Euler(-90,0,0));
+                    m_IKController.LeftHandIKWeight = 1.0f;
+                    break;  
+                }
+                case HoldState.TwoHandedTool:
+                {
+                    m_IKController.SetLeftHandTarget(hit.point, CGameCameras.MainCamera.transform.rotation * Quaternion.Euler(-90,0,0));
+                    m_IKController.LeftHandIKWeight = 1.0f;
+                    break;
+                }
+            }
+        }
+    }
 			
 	void OnUse(CPlayerInteractor.EInputInteractionType _eInteractionType, GameObject _cActorInteractable, RaycastHit _cRaycastHit, bool _bDown)
 	{
-		switch(m_eHoldState)
-		{
-			case HoldState.NoTool:
-			{
-				m_IKController.RightHandIKTargetPos = _cRaycastHit.point;
-				m_IKController.RightHandIKWeight = 1.0f;
-				break;
-			}
-			case HoldState.OneHandedTool:
-			{
-				m_IKController.LeftHandIKTargetPos = _cRaycastHit.point;
-				m_IKController.LeftHandIKWeight = 1.0f;
-				break;	
-			}
-			case HoldState.TwoHandedTool:
-			{
-				m_IKController.LeftHandIKTargetPos = _cRaycastHit.point;
-				m_IKController.LeftHandIKWeight = 1.0f;
-				break;
-			}
-		}
+        if (_bDown)
+        {
+            m_bInteracting = true;
+
+            switch (m_eHoldState)
+            {
+                case HoldState.NoTool:
+                    {
+                        m_IKController.SetRightHandTarget(_cRaycastHit.point, Quaternion.identity);
+                        m_IKController.RightHandIKWeight = 1.0f;
+                        break;
+                    }
+                case HoldState.OneHandedTool:
+                    {
+                        m_IKController.SetLeftHandTarget(_cRaycastHit.point, Quaternion.identity);
+                        m_IKController.LeftHandIKWeight = 1.0f;
+                        break;	
+                    }
+                case HoldState.TwoHandedTool:
+                    {
+                        m_IKController.SetLeftHandTarget(_cRaycastHit.point, Quaternion.identity);
+                        m_IKController.LeftHandIKWeight = 1.0f;
+                        break;
+                    }
+            }
+        }
+        else
+        {
+            m_bInteracting = false;
+
+            switch (m_eHoldState)
+            {
+                case HoldState.NoTool:
+                {
+                    m_IKController.EndRightHandIK();
+                    
+                    break;
+                }
+                case HoldState.OneHandedTool:
+                {
+                    m_IKController.EndLeftHandIK();
+
+                    break;  
+                }
+                case HoldState.TwoHandedTool:
+                {
+                    m_IKController.EndLeftHandIK();
+
+                    break;
+                }
+            }
+        }
 	}
 
 	void ToolChange(GameObject _tool)

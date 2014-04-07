@@ -640,7 +640,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 // Update state
                 if (_bDown)
                 {
-                    m_uiInputStates |= (uint)eTargetState;
+                    m_uiInputStates |= (ushort)eTargetState;
                 }
                 else
                 {
