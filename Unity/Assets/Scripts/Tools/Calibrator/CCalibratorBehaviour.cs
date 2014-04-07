@@ -173,7 +173,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
                 m_iTargetIndex = 0;
             }       
             
-            m_IKController.RightHandIKTargetPos = m_TargetList[m_iTargetIndex].position;            
+            m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
             m_fTargetSwitchTimer = 0.0f;
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
@@ -200,8 +200,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         m_fTargetSwitchTimer = 0.0f;
         
         m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
-        m_IKController.RightHandIKTargetPos = m_TargetList[m_iTargetIndex].position;    
-		m_IKController.RightHandIKTargetRot = m_TargetList[m_iTargetIndex].rotation;
+        m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
         
         CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
         CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
