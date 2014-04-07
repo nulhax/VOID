@@ -58,7 +58,10 @@ public class CGridUI : MonoBehaviour
 
 	
 	// Member Delegates & Events
-	
+	public delegate void HandleGridUIEvent();
+
+	public event HandleGridUIEvent EventTileSelectionChange;
+
 	
 	// Member Fields
 	private CGrid m_Grid = null;
@@ -75,12 +78,10 @@ public class CGridUI : MonoBehaviour
 	public ETileInteraction m_CurrentTileInteraction = ETileInteraction.INVALID;
 	public EPlaneInteraction m_CurrentPlaneInteraction = EPlaneInteraction.INVALID;
 	public int m_CurrentVerticalLayer = 0;
-
-	public Vector3 m_CurrentMousePosition = Vector3.zero;
+	
 	public Vector3 m_CurrentMouseHitPoint = Vector3.zero;
 	public TGridPoint m_CurrentMouseGridPoint;
-
-	public Vector3 m_MouseDownPosition = Vector3.zero;
+	
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
@@ -169,8 +170,6 @@ public class CGridUI : MonoBehaviour
 	
 	private void Update() 
 	{
-		m_CurrentMousePosition = Input.mousePosition;
-
 		// Get the raycast hits against all grid objects
 		RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
 		if(lastRaycastHits == null)
@@ -347,7 +346,6 @@ public class CGridUI : MonoBehaviour
 			return;
 
 		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-		m_MouseDownPosition = m_CurrentMousePosition;
 		m_MouseDownGridPoint = m_CurrentMouseGridPoint;
 		
 		if(IsShiftKeyDown)
@@ -419,6 +417,9 @@ public class CGridUI : MonoBehaviour
 				m_SelectedTiles.Clear();
 
 			SelectTile(m_CurrentMouseGridPoint);
+
+			if(EventTileSelectionChange != null)
+				EventTileSelectionChange();
 		}
 	}
 
@@ -432,6 +433,10 @@ public class CGridUI : MonoBehaviour
 					m_SelectedTiles.Clear();
 
 				SelectMultipleTiles();
+				
+				if(EventTileSelectionChange != null)
+					EventTileSelectionChange();
+
 				break;
 			}
 			case EToolMode.Paint_Exterior: 
@@ -449,7 +454,6 @@ public class CGridUI : MonoBehaviour
 			return;
 
 		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-		m_MouseDownPosition = m_CurrentMousePosition;
 		m_DragRotateStart = m_Grid.transform.rotation;
 		
 		m_CurrentPlaneInteraction = EPlaneInteraction.DragRotation;
@@ -473,7 +477,6 @@ public class CGridUI : MonoBehaviour
 			return;
 
 		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
-		m_MouseDownPosition = m_CurrentMousePosition;
 		m_DragMovementStart = m_TilesOffset;
 		
 		m_CurrentPlaneInteraction = EPlaneInteraction.DragMovement;
@@ -532,6 +535,15 @@ public class CGridUI : MonoBehaviour
 		if(m_CurrentPlaneInteraction != EPlaneInteraction.Nothing)
 			return;
 
+		if(m_CurrentMode == EToolMode.Nothing)
+		{
+			m_GridCursor.renderer.enabled = false;
+			return;
+		}
+		else if(m_GridCursor.renderer.enabled == false)
+			m_GridCursor.renderer.enabled = true;
+		
+
 		if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
 		{
 			Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
@@ -541,14 +553,15 @@ public class CGridUI : MonoBehaviour
 			float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
 			float height = Mathf.Abs(m_CurrentMouseGridPoint.y - m_MouseDownGridPoint.y) + 1.0f;
 			float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
-			
+			centerPos.y += m_Grid.m_TileSize * 0.5f;
+
 			m_GridCursor.transform.localScale = new Vector3(width, height, depth) * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;
 		}
 		else
 		{
 			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
-			centerPos.y = m_Grid.m_TileSize * 0.5f;
+			centerPos.y += m_Grid.m_TileSize * 0.5f;
 
 			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;

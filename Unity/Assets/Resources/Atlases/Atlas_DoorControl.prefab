@@ -97,14 +97,14 @@ MonoBehaviour:
     y: 72
     width: 123
     height: 28
-    borderLeft: 0
-    borderRight: 0
-    borderTop: 0
-    borderBottom: 0
-    paddingLeft: 3
+    borderLeft: 3
+    borderRight: 3
+    borderTop: 3
+    borderBottom: 3
+    paddingLeft: 4
     paddingRight: 2
     paddingTop: 2
-    paddingBottom: 2
+    paddingBottom: 3
   - name: Gradient BG
     x: 0
     y: 159

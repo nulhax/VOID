@@ -647,6 +647,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                     m_uiInputStates &= ~(uint)eTargetState;
                 }
 
+				m_usInputStates.Value = (ushort)m_uiInputStates;
+
                 if (gameObject == CGamePlayers.SelfActor)
                 {
                     // Notify event observers

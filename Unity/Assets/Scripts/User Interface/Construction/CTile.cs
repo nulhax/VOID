@@ -54,7 +54,7 @@ public class CTile : CGridObject
 	private int m_WallCapIdentifier = 0;
 	private int m_CurrentWallCapIdentifier = 0;
 
-	private Dictionary<ETileType, List<EDirection>> m_RelevantNeighbours = new Dictionary<ETileType, List<EDirection>>();
+	public Dictionary<ETileType, List<EDirection>> m_RelevantNeighbours = new Dictionary<ETileType, List<EDirection>>();
 	public Dictionary<ETileType, int> m_CurrentTileNeighbourExemptions = new Dictionary<ETileType, int>();
 
 	private bool m_IsDirty = false;
