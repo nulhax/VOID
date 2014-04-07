@@ -80,13 +80,19 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.any,						EEvent.transition_Travel,				Travel),
 		
 		// Catch all.
-		//new CStateTransition(EState.any,						EEvent.any,									Idle),
+		new CStateTransition(EState.any,						EEvent.any,									Idle),
 	};
 
 	// State machine data set by state machine.
 	EState mState = EState.none;
 	EEvent mEvent = EEvent.none;
 	float mTimeout = 0.0f;
+	float timeSpentIdling = 2.0f;
+	float timeSpentScanningForHeatSignatures = 15.0f;
+	float timeSpentExaminingTarget = 10.0f;
+	float timeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
+	float timeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
+	float timeSpentTravelling = 5.0f;
 
 	GameObject mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
 	GameObject mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
@@ -99,22 +105,24 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	bool mFacingTarget = false;		// Is looking in the general direction of the target.
 	bool mCloseToTarget = false;	// Is within acceptable range of the target.
 	bool mVisibleTarget = false;	// Has direct line of sight to the target.
-	public float viewConeRadiusInDegrees = 20.0f;
-	public float viewConeLength = 400.0f;
-	public float viewSphereRadius = 200.0f;
-	public float desiredDistanceToTarget = 100.0f;
-	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+	float viewConeRadiusInDegrees = 20.0f;
+	float viewConeLength = 400.0f;
+	float viewSphereRadius = 200.0f;
+	float desiredDistanceToTarget = 100.0f;
+	float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+	float maxLinearAcceleration = 100000.0f;
 
 	float mTimeBetweenLosCheck = 0.5f;
 	float mTimeUntilNextLosCheck = 0.0f;
 
 	// Physics data.
-	CPidController mPidAngularAccelerationX = new CPidController(2000, 0, 0);
-	CPidController mPidAngularAccelerationY = new CPidController(2000, 0, 0);
-	CPidController mPidAngularAccelerationZ = new CPidController(2000, 0, 0);
+	CPidController mPidAngularAccelerationX = new CPidController(-2, 0, 0);
+	CPidController mPidAngularAccelerationY = new CPidController(2, 0, 0);
+	CPidController mPidAngularAccelerationZ = new CPidController(0, 0, 0);
 	Vector3 mTorque;
 
 	bool debug_Display = true;
+	string debug_StateName;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -126,16 +134,20 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
 		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
-		rigidbody.drag = 10.0f;
-		rigidbody.angularDrag = 10.0f;
-		//rigidbody.maxAngularVelocity = 1;
-
-		// Todo: Create the GameObject mTarget_InternalLastKnownPosition.
+		// Create the GameObject mTarget_InternalLastKnownPosition.
+		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy Ship/DummyTarget"));
 	}
 
 	void Start()
 	{
-		
+		// Test.
+
+	}
+
+	void OnDestroy()
+	{
+		// Destroy the GameObject mTarget_InternalLastKnownPosition.
+		Destroy(mTarget_InternalLastKnownPosition);
 	}
 
 	void Update()
@@ -176,7 +188,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 			mTorque.x = mPidAngularAccelerationX.GetOutput(relativeRotation.x, Time.fixedDeltaTime);
 			mTorque.y = mPidAngularAccelerationY.GetOutput(relativeRotation.y, Time.fixedDeltaTime);
-			mTorque.z = mPidAngularAccelerationZ.GetOutput(relativeRotation.z, Time.fixedDeltaTime) * 0.0f;	// Disabled, as rolling does not bring the target any closer to the view cone.
+			mTorque.z = mPidAngularAccelerationZ.GetOutput(relativeRotation.z, Time.fixedDeltaTime);
 
 			if(mFaceTarget)
 			{
@@ -187,7 +199,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			if(mFollowTarget)
 			{
 				// Move to acceptable range.
-				//transform.position = (transform.position - targetPos).normalized * desiredDistanceToTarget;
+				float distanceToDesiredDistance = distanceToTarget - desiredDistanceToTarget;
+				float maxLinearAccelerationScale = Mathf.Clamp(distanceToDesiredDistance / desiredDistanceToTarget, -1.0f, 1.0f);	// From no deviation to maximum deviation from desired distance; acceleration is scaled from 0 to max.
+				rigidbody.AddForce(absoluteDirection * maxLinearAcceleration * maxLinearAccelerationScale, ForceMode.Force);
 			}
 
 			// Determine if the target is in view.
@@ -268,7 +282,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				if (entityBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
 				{
 					mTarget = entity;
-					mTargetExpireTime = Time.time + 3.0f;
+					mTargetExpireTime = Time.time + 15.0f;
 					break;
 				}
 			}
@@ -289,13 +303,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout)
+	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout, string _stateName)
 	{
 		mState = _state;
 		mEvent = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
 		mFaceTarget = _lookAtTarget;
 		mFollowTarget = _moveToTarget;
 		mTimeout = _timeout;
+
+		debug_StateName = _stateName;
 	}
 
 	static bool Idle(CEnemyShip enemyShip) { return enemyShip.Idle(); }
@@ -305,7 +321,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false, 10.0f);
+				StateInitialisation(EState.idling, false, false, timeSpentIdling, "Idling");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -321,7 +337,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							return true;
 						}
 
-						// 50/50 chance every 5 seconds to leave the area, beginning after 10 seconds.
+						// 50/50 chance every (timeSpentIdling/2) seconds to leave the area, beginning after (timeSpentIdling) seconds.
 						while (mTimeout <= 0.0f)
 						{
 							if (Random.Range(0, 2) == 0)
@@ -330,7 +346,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 								return true;
 							}
 							else
-								mTimeout += 5.0f;
+								mTimeout += timeSpentIdling * 0.5f;
 						}
 
 						return false;
@@ -353,7 +369,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, false, 5.0f);
+				StateInitialisation(EState.examiningTarget, true, false, timeSpentExaminingTarget, "Examining Target");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -419,7 +435,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, true, 15.0f);
+				StateInitialisation(EState.examiningTarget, true, true, timeSpentAttackingTargetBeforeStopping, "Attacking Target");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -444,7 +460,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							if(mFollowTarget)	// If chasing the target...
 							{
 								mFollowTarget = false;	// Stop chasing the target
-								mTimeout = 20.0f;	// Stop chasing for 20 seconds.
+								mTimeout = timeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
 							}
 							else	// Not chasing the target...
 							{
@@ -468,83 +484,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	static bool TurnToFacePrey(CEnemyShip enemyShip) { return enemyShip.TurnToFacePrey(); }
-	bool TurnToFacePrey()
-	{
-		switch (mState)
-		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.turningToFacePrey, false, false);
-				return false;	// Init functions always return false.
-
-			// Process state.
-			case EState.turningToFacePrey:
-				switch (mEvent)	// Process events.
-				{
-					case EEvent.none:	// Normal process.
-						if (mFacingTarget)
-						{
-							mEvent = EEvent.transition_MoveToPrey;
-							return true;
-						}
-						else if (mDisturbance == null)	// If the disturbance has expired...
-						{
-							mEvent = EEvent.transition_Idle;
-							return true;
-						}
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
-						mState = EState.none;
-						return true;	// Always return true for uncaught events.
-				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
-		}
-	}
-
-	static bool MoveToPrey(CEnemyShip enemyShip) { return enemyShip.MoveToPrey(); }
-	bool MoveToPrey()
-	{
-		switch (mState)
-		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.movingToPrey, false, true);
-				return false;	// Init functions always return false.
-
-			// Process state.
-			case EState.movingToPrey:
-				switch (mEvent)	// Process events.
-				{
-					case EEvent.none:	// Normal process.
-						if (mFacingTarget)	// If prey is in sight...
-						{
-							mTimeout = 10.0f;	// Give up pursuit of prey after x seconds.
-							return false;
-						}
-						else	// Prey out of sight.
-						{
-							mTimeout -= Time.deltaTime;
-							if(mTimeout <= 0.0f)
-							mEvent = EEvent.transition_TurnToFacePrey;
-							return true;
-						}
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
-						mState = EState.none;
-						return true;	// Always return true for uncaught events.
-				}
-
-			default:	// An invalid state is set.
-				Debug.LogError("CEnemyShip: State transition table describes incorrect function for a given state!");
-				return false;
-		}
-	}
-
 	static bool ScanForHeatSignature(CEnemyShip enemyShip) { return enemyShip.ScanForHeatSignature(); }
 	bool ScanForHeatSignature()
 	{
@@ -552,7 +491,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.scanningForHeatSignature, false, false);
+				StateInitialisation(EState.scanningForHeatSignature, false, false, timeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -560,8 +499,29 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						// Todo: Scan for prey.
-						// Detection of prey (unlike detection of a disturbance) will throw an event to transition to facing prey, and eventually attacking it.
+
+						// Switch to checking out the target if there is one.
+						if (mTarget != null)
+						{
+							mEvent = EEvent.transition_ExamineTarget;
+							return true;
+						}
+
+						// Todo: Scan for heat signature.
+						GameObject targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
+						if (targetWithHeatSignature != null)
+						{
+							mTarget = targetWithHeatSignature;
+							mEvent = EEvent.transition_AttackTarget;
+							return true;
+						}
+
+						if (mTimeout <= 0.0f)	// If the timer times out...
+						{
+							mEvent = EEvent.transition_Idle;	// Nothing found - give up.
+							return true;
+						}
+
 						return false;
 
 					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
@@ -582,7 +542,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.travelling, false, false);
+				StateInitialisation(EState.travelling, true, true, timeSpentTravelling, "Travelling");
+				if (mTarget == null)
+				{
+					mTarget = mTarget_InternalLastKnownPosition;
+					mTargetExpireTime = Time.time + timeSpentTravelling;
+				}
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -590,7 +555,17 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				switch (mEvent)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						// Todo: Fly forward.
+						if (mTarget != mTarget_InternalLastKnownPosition)
+						{
+							if (mTarget == null)
+								mEvent = EEvent.transition_Idle;
+							else
+								mEvent = EEvent.transition_ExamineTarget;
+							return true;
+						}
+
+						mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+
 						return false;
 
 					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
@@ -604,72 +579,39 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	/// <summary>
-	/// Sets state_Prey to a target if prey is found within view cone or view radius.
-	/// </summary>
-	/// <returns>true if prey was found (state_Prey will be non-null)</returns>
-	bool FindPrey()
-	{
-		if (mTarget != null)
-		{
-			Debug.LogError("CEnemyShip: Should not be scanning for prey when prey has already been found!");
-			return true;
-		}
+	//void OnGUI()
+	//{
+	//    if (!debug_Display)
+	//        return;
 
-		GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
-		System.Collections.Generic.List<GameObject> potentialPrey = new System.Collections.Generic.List<GameObject>();
-		foreach (GameObject obj in allObjects)
-			if ((obj.layer & 11) != 0)	// If on the galaxy layer...
-				potentialPrey.Add(obj);
+	//    float dx = 200.0f;
+	//    float dy = 300.0f;
 
-		foreach (GameObject prey in potentialPrey)
-		{
-			if (IsWithinViewCone(prey.transform.position) || IsWithinViewRadius(prey.transform.position))
-				if (mTarget == null)
-					mTarget = prey.transform;
-				else if ((prey.transform.position - transform.position).sqrMagnitude < (mTarget.position - transform.position).sqrMagnitude)
-					mTarget = prey.transform;
-		}
+	//    GUIStyle middleRightText = new GUIStyle();
+	//    middleRightText.alignment = TextAnchor.MiddleRight;
+	//    middleRightText.fontStyle = FontStyle.Bold;
+	//    middleRightText.normal.textColor = Color.yellow;
+	//    middleRightText.fontSize = 9;
 
-		return mTarget != null;
-	}
+	//    GUIStyle middleLeftText = new GUIStyle();
+	//    middleLeftText.alignment = TextAnchor.MiddleLeft;
+	//    middleLeftText.fontStyle = FontStyle.Bold;
+	//    middleLeftText.normal.textColor = Color.yellow;
+	//    middleLeftText.fontSize = 9;
 
-	void OnGUI()
-	{
-		if (!debug_Display)
-			return;
+	//    GUI.Box(new Rect(25 + dx, 05 + dy, 200, 100), "\n\n" + debug_StateName + "\nState Timeout: " + mTimeout.ToString("F2") + "\nTarget Timeout: " + (mTargetExpireTime - Time.time).ToString("F2"));
 
-		float dx = 200.0f;
-		float dy = 300.0f;
+	//    GUI.Label(new Rect(0 + dx, 05 + dy, 20, 10), "Angular Acceleration", middleRightText);
+	//    GUI.Label(new Rect(0 + dx, 20 + dy, 20, 10), "Linear Acceleration", middleRightText);
 
-		GUI.Box(new Rect(25 + dx, 5 + dy, 200, 40), "");
+	//    //mPidAngularAccelerationX.Kp = mPidAngularAccelerationY.Kp = mPidAngularAccelerationZ.Kp = GUI.HorizontalSlider(new Rect(25 + dx, 05 + dy, 200, 10), mPidAngularAccelerationX.Kp, 0, 1000);
+	//    maxLinearAcceleration = GUI.HorizontalSlider(new Rect(25 + dx, 20 + dy, 200, 10), maxLinearAcceleration, 0, 100000);
 
-		mPidAngularAccelerationY.Kp = GUI.HorizontalSlider(new Rect(25 + dx, 5 + dy, 200, 10), mPidAngularAccelerationY.Kp, 50, 0);
-		mPidAngularAccelerationY.Ki = GUI.HorizontalSlider(new Rect(25 + dx, 20 + dy, 200, 10), mPidAngularAccelerationY.Ki, 100, 0);
-		mPidAngularAccelerationY.Kd = GUI.HorizontalSlider(new Rect(25 + dx, 35 + dy, 200, 10), mPidAngularAccelerationY.Kd, 1, 0);
+	//    GUI.TextField(new Rect(235 + dx, 05 + dy, 60, 10), mPidAngularAccelerationY.Kp.ToString("F0"), middleLeftText);
+	//    GUI.TextField(new Rect(235 + dx, 20 + dy, 60, 10), maxLinearAcceleration.ToString("F0"), middleLeftText);
 
-		GUIStyle style1 = new GUIStyle();
-		style1.alignment = TextAnchor.MiddleRight;
-		style1.fontStyle = FontStyle.Bold;
-		style1.normal.textColor = Color.yellow;
-		style1.fontSize = 9;
-
-		GUI.Label(new Rect(0 + dx, 5 + dy, 20, 10), "Kp", style1);
-		GUI.Label(new Rect(0 + dx, 20 + dy, 20, 10), "Ki", style1);
-		GUI.Label(new Rect(0 + dx, 35 + dy, 20, 10), "Kd", style1);
-
-		GUIStyle style2 = new GUIStyle();
-		style2.alignment = TextAnchor.MiddleLeft;
-		style2.fontStyle = FontStyle.Bold;
-		style2.normal.textColor = Color.yellow;
-		style2.fontSize = 9;
-
-		GUI.TextField(new Rect(235 + dx, 5 + dy, 60, 10), mPidAngularAccelerationY.Kp.ToString(), style2);
-		GUI.TextField(new Rect(235 + dx, 20 + dy, 60, 10), mPidAngularAccelerationY.Ki.ToString(), style2);
-		GUI.TextField(new Rect(235 + dx, 35 + dy, 60, 10), mPidAngularAccelerationY.Kd.ToString(), style2);
-
-		GUI.Label(new Rect(0 + dx, -8 + dy, 200, 10), name, style2);
-	}
+	//    GUI.Label(new Rect(0 + dx, -8 + dy, 200, 10), name, middleLeftText);
+	//}
 
 	void OnDrawGizmos()
 	{
@@ -678,16 +620,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		Color oldColour = Gizmos.color;
 
-		if(mDisturbance != null)
-		{
-			Gizmos.color = new Color(1,1,1,Mathf.Clamp01(0.1f + mDisturbance.expireTime * 0.5f));	// White line, fading out in the last two seconds of expiry, but still 10% visible when it finally expires.
-			Gizmos.DrawLine(transform.position, mDisturbance.position);	// Point to disturbance.
-		}
-
 		if(mTarget != null)
 		{
-			Gizmos.color = Color.red;	// Red line.
-			Gizmos.DrawLine(transform.position, mDisturbance.position);	// Point to prey.
+			Gizmos.color = new Color(1,0,0,Mathf.Clamp01(0.1f + mTargetExpireTime * 0.5f));	// White line, fading out in the last two seconds of expiry, but still 10% visible when it finally expires.
+			Gizmos.DrawLine(transform.position, mTarget.transform.position);	// Point to target.
+			Gizmos.DrawSphere(mTarget.transform.position, 1.0f);
+			Gizmos.color = new Color(0, 1, 0, 1);
+			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.transform.position, 0.5f);
 		}
 
 		// Angular forces.
