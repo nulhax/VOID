@@ -47,8 +47,6 @@ public class CPlayerArmController : MonoBehaviour
 		gameObject.GetComponent<CPlayerInteractor> ().EventPrimary += OnUse;
 		gameObject.GetComponent<CPlayerInteractor> ().EventSecondary += OnUse;
 		gameObject.GetComponent<CPlayerInteractor> ().EventUse += OnUse;
-		gameObject.GetComponent<CPlayerBelt>().EventToolDropped += ToolChange;
-		gameObject.GetComponent<CPlayerBelt>().EventToolPickedup += ToolChange;
 
 		m_eHoldState = HoldState.NoTool;
 
@@ -141,10 +139,5 @@ public class CPlayerArmController : MonoBehaviour
                 }
             }
         }
-	}
-
-	void ToolChange(GameObject _tool)
-	{
-
 	}
 }
