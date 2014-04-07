@@ -68,7 +68,8 @@ public class CNebulae : MonoBehaviour
 			LoadNoiseResources();
 		}
 
-		m_OffsetFrom = CGalaxy.instance.RelativePointToAbsolutePoint(CGameCameras.MainCamera.transform.position) * m_OffsetScale;
+		if(CGalaxy.instance && CGameCameras.MainCamera)
+			m_OffsetFrom = CGalaxy.instance.RelativePointToAbsolutePoint(CGameCameras.MainCamera.transform.position) * m_OffsetScale;
 
 		renderer.material.SetVector("_Offset", m_OffsetFrom);
 
