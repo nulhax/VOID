@@ -26,14 +26,14 @@ public class CGrid : MonoBehaviour
 	// Member Types
 	public struct TCreateTileInfo
 	{
-		public TCreateTileInfo(TGridPoint _GridPoint, CTile.ETileType[] _TileTypes)
+		public TCreateTileInfo(TGridPoint _GridPoint, ETileType[] _TileTypes)
 		{
 			m_GridPoint = _GridPoint;
 			m_TileTypes = _TileTypes;
 		}
 
 		public TGridPoint m_GridPoint;
-		public CTile.ETileType[] m_TileTypes;
+		public ETileType[] m_TileTypes;
 	}
 
 	
@@ -45,10 +45,10 @@ public class CGrid : MonoBehaviour
 
 	
 	// Member Fields
-	private Transform m_TileContainer = null;
-
 	public float m_TileSize = 4.0f;
-	public CTileFactory m_TileFactory = null;
+
+	private Transform m_TileContainer = null;
+	private CTileFactory m_TileFactory = null;
 
 	private List<TCreateTileInfo> m_CreateQueue = new List<TCreateTileInfo>();
 	private List<TGridPoint> m_DestroyQueue = new List<TGridPoint>();
@@ -62,13 +62,18 @@ public class CGrid : MonoBehaviour
 		get { return(m_TileContainer); }
 	}
 
+	public CTileFactory TileFactory
+	{
+		get { return(m_TileFactory); } 
+	}
+
 	public List<CTile> Tiles
 	{
 		get { return(new List<CTile>(m_GridBoard.Values)); }
 	}
 
 	// Member Methods
-	private void Start() 
+	private void Awake() 
 	{
 		// Create the grid objects
 		CreateGridObjects();
@@ -96,6 +101,14 @@ public class CGrid : MonoBehaviour
 		m_TileContainer.localScale = Vector3.one;
 		m_TileContainer.localPosition = Vector3.zero;
 		m_TileContainer.localRotation = Quaternion.identity;
+
+		Transform tileFactory = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/Construction/Tile Factory"))).transform;
+		tileFactory.parent = transform;
+		tileFactory.localScale = Vector3.one;
+		tileFactory.localPosition = Vector3.zero;
+		tileFactory.localRotation = Quaternion.identity;
+
+		m_TileFactory = tileFactory.GetComponent<CTileFactory>();
 	}
 
 	public TGridPoint GetGridPoint(Vector3 worldPosition)
@@ -135,7 +148,7 @@ public class CGrid : MonoBehaviour
 		return(tile);
 	}
 
-	public void AddNewTile(TGridPoint _GridPoint, CTile.ETileType[] _TileTypes)
+	public void AddNewTile(TGridPoint _GridPoint, ETileType[] _TileTypes)
 	{
 		m_CreateQueue.Add(new TCreateTileInfo(_GridPoint, _TileTypes));
 	}
@@ -179,9 +192,9 @@ public class CGrid : MonoBehaviour
 				existingTile.m_TileTypeIdentifier = typeIdentifier;
 
 				// Replace the meta data
-				for(int i = (int)CTile.ETileType.INVALID + 1; i < (int)CTile.ETileType.MAX; ++i)
+				for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 				{
-					existingTile.SetMetaData((CTile.ETileType)i, tile.GetMetaData((CTile.ETileType)i));
+					existingTile.SetMetaData((ETileType)i, tile.GetMetaData((ETileType)i));
 				}
 
 				// Remove this tile from ones unmodified
@@ -190,11 +203,11 @@ public class CGrid : MonoBehaviour
 			else
 			{
 				// Get the active tile types
-				List<CTile.ETileType> tileTypes = new List<CTile.ETileType>();
-				for(int i = (int)CTile.ETileType.INVALID + 1; i < (int)CTile.ETileType.MAX; ++i)
+				List<ETileType> tileTypes = new List<ETileType>();
+				for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 				{
-					if(tile.GetTileTypeState((CTile.ETileType)i))
-						tileTypes.Add((CTile.ETileType)i);
+					if(tile.GetTileTypeState((ETileType)i))
+						tileTypes.Add((ETileType)i);
 				}
 
 				AddNewTile(tile.m_GridPosition, tileTypes.ToArray());
@@ -223,7 +236,7 @@ public class CGrid : MonoBehaviour
 			tile.m_GridPosition = _TileInfo.m_GridPoint;
 
 			// Set the active tile types
-			foreach(CTile.ETileType type in _TileInfo.m_TileTypes)
+			foreach(ETileType type in _TileInfo.m_TileTypes)
 			{
 				tile.SetTileTypeState(type, true);
 			}

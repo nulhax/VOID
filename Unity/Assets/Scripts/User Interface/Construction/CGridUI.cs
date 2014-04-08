@@ -35,7 +35,7 @@ public class CGridUI : MonoBehaviour
 		Paint_Exterior,
 		Paint_Interior_Walls,
 		Paint_Interior_Floors,
-		Select_Tiles,
+		ModifyTileVariants,
 	}
 
 	public enum ETileInteraction
@@ -85,7 +85,7 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
-	public CTile.ETileType m_CurrentlySelectedType = CTile.ETileType.INVALID;
+	public ETileType m_CurrentlySelectedType = ETileType.INVALID;
 	public List<CTile> m_SelectedTiles = null;
 
 	public Material m_TileMaterial = null;
@@ -96,9 +96,9 @@ public class CGridUI : MonoBehaviour
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
 
-	private static CTile.ETileType[] s_TT_F = new CTile.ETileType[] { CTile.ETileType.Floor };
-	private static CTile.ETileType[] s_TT_FeW = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext };
-	private static CTile.ETileType[] s_TT_FeWC = new CTile.ETileType[] { CTile.ETileType.Floor, CTile.ETileType.Wall_Ext, CTile.ETileType.Ceiling };
+	private static ETileType[] s_TT_F = new ETileType[] { ETileType.Floor };
+	private static ETileType[] s_TT_FeW = new ETileType[] { ETileType.Floor, ETileType.Wall_Ext };
+	private static ETileType[] s_TT_FeWC = new ETileType[] { ETileType.Floor, ETileType.Wall_Ext, ETileType.Ceiling };
 
 	// Member Properties
 	public bool IsShiftKeyDown
@@ -134,7 +134,7 @@ public class CGridUI : MonoBehaviour
 		// Default enums
 		m_CurrentMode = EToolMode.Nothing;
 		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
-		m_CurrentlySelectedType = CTile.ETileType.Floor;
+		m_CurrentlySelectedType = ETileType.Floor;
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
@@ -222,9 +222,9 @@ public class CGridUI : MonoBehaviour
 			m_CurrentMode = EToolMode.Paint_Interior_Walls;
 
 		else if(Input.GetKeyDown(KeyCode.Alpha3))
-			m_CurrentMode = EToolMode.Select_Tiles;
+			m_CurrentMode = EToolMode.ModifyTileVariants;
 
-		if(m_CurrentMode == EToolMode.Select_Tiles)
+		if(m_CurrentMode == EToolMode.ModifyTileVariants)
 		{
 			UpdateTileSelectInput();
 		}
@@ -272,16 +272,16 @@ public class CGridUI : MonoBehaviour
 
 		// Toggling tile type
 		if(Input.GetKeyDown(KeyCode.Q))
-			m_CurrentlySelectedType = CTile.ETileType.Floor;
+			m_CurrentlySelectedType = ETileType.Floor;
 		
 		else if(Input.GetKeyDown(KeyCode.W))
-			m_CurrentlySelectedType = CTile.ETileType.Wall_Ext;
+			m_CurrentlySelectedType = ETileType.Wall_Ext;
 		
 		else if(Input.GetKeyDown(KeyCode.E))
-			m_CurrentlySelectedType = CTile.ETileType.Wall_Int;
+			m_CurrentlySelectedType = ETileType.Wall_Int;
 
 		else if(Input.GetKeyDown(KeyCode.R))
-			m_CurrentlySelectedType = CTile.ETileType.Ceiling;
+			m_CurrentlySelectedType = ETileType.Ceiling;
 
 		// Enabling/Disabling tile type
 		if(Input.GetKeyDown(KeyCode.Insert))
@@ -386,7 +386,7 @@ public class CGridUI : MonoBehaviour
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
 			{
-				tile.SetTileTypeState(CTile.ETileType.Wall_Int, !IsCtrlKeyDown);
+				tile.SetTileTypeState(ETileType.Wall_Int, !IsCtrlKeyDown);
 				tile.UpdateTileMetaData();
 			}
 			return;
@@ -397,7 +397,7 @@ public class CGridUI : MonoBehaviour
 			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
 			if(tile != null)
 			{
-				tile.SetTileTypeState(CTile.ETileType.Floor, !IsCtrlKeyDown);
+				tile.SetTileTypeState(ETileType.Floor, !IsCtrlKeyDown);
 				tile.UpdateTileMetaData();
 			}
 			return;
@@ -421,7 +421,7 @@ public class CGridUI : MonoBehaviour
 
 	private void HandleLeftClickUpSingle()
 	{
-		if(m_CurrentMode == EToolMode.Select_Tiles) 
+		if(m_CurrentMode == EToolMode.ModifyTileVariants) 
 		{
 			if(!IsCtrlKeyDown)
 				m_SelectedTiles.Clear();
@@ -437,7 +437,7 @@ public class CGridUI : MonoBehaviour
 	{
 		switch(m_CurrentMode) 
 		{
-			case EToolMode.Select_Tiles: 
+			case EToolMode.ModifyTileVariants: 
 			{
 				if (!IsCtrlKeyDown)
 					m_SelectedTiles.Clear();
@@ -679,20 +679,20 @@ public class CGridUI : MonoBehaviour
 		// If upper exists, remove my ceiling
 		if(upper != null)
 		{
-			_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+			_Tile.SetTileTypeState(ETileType.Ceiling, false);
 		}
 
 		// If lower exists
 		if(lower != null)
 		{
 			// Remove their ceiling
-			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, false);
+			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, false);
 
 			// Remove floor
-			_Tile.SetTileTypeState(CTile.ETileType.Floor, false);
+			_Tile.SetTileTypeState(ETileType.Floor, false);
 
-//			bool wallext = lower.m_Tile.GetMetaData(CTile.ETileType.Wall_Ext).m_Type != TTileMeta.EType.None;
-//			bool wallint = lower.m_Tile.GetTileTypeState(CTile.ETileType.Wall_Int);
+//			bool wallext = lower.m_Tile.GetMetaData(ETileType.Wall_Ext).m_Type != TTileMeta.EType.None;
+//			bool wallint = lower.m_Tile.GetTileTypeState(ETileType.Wall_Int);
 //
 //			if(!wallext && !wallint)
 //				
@@ -711,7 +711,7 @@ public class CGridUI : MonoBehaviour
 		// If lower exists, re-enable ceiling and floor
 		if(lower != null)
 		{
-			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, true);
+			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, true);
 		}
 
 		// Unregister tile events 
@@ -722,9 +722,9 @@ public class CGridUI : MonoBehaviour
 	private void OnTileTypeStateChange(CTile _Tile)
 	{
 		// Check if there is a internal wall without a floor
-		if(_Tile.GetTileTypeState(CTile.ETileType.Wall_Int) && !_Tile.GetTileTypeState(CTile.ETileType.Floor))
+		if(_Tile.GetTileTypeState(ETileType.Wall_Int) && !_Tile.GetTileTypeState(ETileType.Floor))
 		{
-			_Tile.SetTileTypeState(CTile.ETileType.Wall_Int, false);
+			_Tile.SetTileTypeState(ETileType.Wall_Int, false);
 		}
 	}
 

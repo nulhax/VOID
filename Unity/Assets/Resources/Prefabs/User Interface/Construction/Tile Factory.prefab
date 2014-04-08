@@ -22,7 +22,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -56,6 +56,9 @@ MonoBehaviour:
   - {fileID: 100000, guid: 76e7ea335e9d402428febb32e5e7d6c4, type: 2}
   - {fileID: 100000, guid: 5b28d6721c6a2104ca9fa7a904d9b4c2, type: 2}
   - {fileID: 100000, guid: 5e27e7c42a6abf949882cdb10b7b84a1, type: 2}
+  m_WallExtTileTypes_Opening: 65000000
+  m_WallExtTilePrefabs_Opening:
+  - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
   m_WallIntTileTypes: c8000000c9000000ca000000cb000000cc000000cd000000ce000000
   m_WallIntTilePrefabs:
   - {fileID: 100000, guid: 612ba77ae278a4f43bb54fa956d2f66f, type: 2}
@@ -77,9 +80,6 @@ MonoBehaviour:
   m_WallExtCapTilePrefabs:
   - {fileID: 100000, guid: a926a9563abed474abb28a7ee62d503f, type: 2}
   - {fileID: 100000, guid: 5d8b789eb6552e440bf51055014f5a03, type: 2}
-  m_DoorTileTypes: 65000000
-  m_DoorTilePrefabs:
-  - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
