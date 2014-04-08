@@ -140,7 +140,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			Debug.Log("Collider entered Trigger as asteroid");
 				
 			// Take the ship velocity and add it to the asteroid velocity
-			//TODO: Make this betterer
+			//TODO: Make this betterer 
 			Vector3 Move = CGameShips.GalaxyShip.rigidbody.velocity;
 				
 			_Collider.gameObject.transform.rigidbody.velocity = Move * 2.0f;

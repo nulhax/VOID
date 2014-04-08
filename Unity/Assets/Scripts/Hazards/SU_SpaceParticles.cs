@@ -17,7 +17,9 @@
 using UnityEngine;
 using System.Collections;
 
-public class SU_SpaceParticles : MonoBehaviour {	
+public class SU_SpaceParticles : MonoBehaviour 
+{
+
 	// Maximum number of particles in the sphere (configure to your needs for look and performance)
 	public int maxParticles = 1000;
 	// Range of particle sphere (when particles are beyond this range from its 
@@ -68,9 +70,11 @@ public class SU_SpaceParticles : MonoBehaviour {
 
 		particleSystem.SetParticles(_particles, _numParticles); 
 	}
+	
 
 	void Start () 
 	{
+
 		CGalaxy.instance.eventPostGalaxyShift += ShiftParticles;
 
 		// Cache transform and particle system to improve performance
@@ -104,11 +108,11 @@ public class SU_SpaceParticles : MonoBehaviour {
 	
 	void Update () 
 	{
-
 		m_density = CGalaxy.instance.DebrisDensity(CGalaxy.instance.RelativePointToAbsoluteCell(CGameCameras.MainCamera.transform.position));
 
 		if(m_density < 0.2f)
 			m_density = 0.0f;
+
 		else if(m_density > 0.5f)
 			m_density = 0.8f;
 
