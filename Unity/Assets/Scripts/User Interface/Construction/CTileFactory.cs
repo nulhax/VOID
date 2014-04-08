@@ -45,6 +45,9 @@ public class CTileFactory : MonoBehaviour
 	public List<TTileMeta.EType> m_WallExtCapTileTypes = new List<TTileMeta.EType>();
 	public List<GameObject> m_WallExtCapTilePrefabs = new List<GameObject>();
 
+	public List<TTileMeta.EType> m_DoorTileTypes = new List<TTileMeta.EType>();
+	public List<GameObject> m_DoorTilePrefabs = new List<GameObject>();
+
 	private Dictionary<CTile.ETileType, Dictionary<TTileMeta.EType, GameObject>> m_TilePrefabPairs = 
 		new Dictionary<CTile.ETileType, Dictionary<TTileMeta.EType, GameObject>>();
 
@@ -58,7 +61,7 @@ public class CTileFactory : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		for(int i = (int)CTile.ETileType.INVALID + 1; i < (int)CTile.ETileType.MAX; ++i)
+		for(int i = (int)CTile.ETileType.INVALID; i < (int)CTile.ETileType.MAX; ++i)
 		{
 			m_TilePrefabPairs[(CTile.ETileType)i] = new Dictionary<TTileMeta.EType, GameObject>();
 			m_TileInstances[(CTile.ETileType)i] = new Dictionary<TTileMeta.EType, List<GameObject>>();
@@ -79,6 +82,9 @@ public class CTileFactory : MonoBehaviour
 
 		if(m_WallExtCapTileTypes.Count != m_WallExtCapTilePrefabs.Count)
 			Debug.LogError("Wall Ext Cap tile type -> Wall Ext Cap tile prefab mismatch.");
+
+		if(m_DoorTileTypes.Count != m_DoorTilePrefabs.Count)
+			Debug.LogError("Door tile type -> Door tile prefab mismatch.");
 
 		// Fill floor tiles
 		for(int i = 0; i < m_FloorTileTypes.Count; ++i)
@@ -108,6 +114,12 @@ public class CTileFactory : MonoBehaviour
 		for(int i = 0; i < m_WallExtCapTileTypes.Count; ++i)
 		{
 			m_TilePrefabPairs[CTile.ETileType.Wall_Ext_Cap].Add(m_WallExtCapTileTypes[i], m_WallExtCapTilePrefabs[i]);
+		}
+
+		//  Door tiles
+		for(int i = 0; i < m_DoorTileTypes.Count; ++i)
+		{
+			m_TilePrefabPairs[CTile.ETileType.INVALID].Add(m_DoorTileTypes[i], m_DoorTilePrefabs[i]);
 		}
 	}
 

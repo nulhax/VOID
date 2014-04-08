@@ -38,6 +38,17 @@ public class CTile : CGridObject
 		MAX
 	}
 
+	public enum ETileVariant
+	{
+		INVALID = -1,
+		
+		Normal,
+		Door,
+		Window,
+		
+		MAX
+	}
+
 	// Member Delegates & Events
 	public delegate void HandleTileEvent(CTile _Self);
 

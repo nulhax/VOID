@@ -434,6 +434,9 @@ MonoBehaviour:
   m_WallExtCapTilePrefabs:
   - {fileID: 100000, guid: a926a9563abed474abb28a7ee62d503f, type: 2}
   - {fileID: 100000, guid: 5d8b789eb6552e440bf51055014f5a03, type: 2}
+  m_DoorTileTypes: 65000000
+  m_DoorTilePrefabs:
+  - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

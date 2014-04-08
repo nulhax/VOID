@@ -163,6 +163,10 @@ public class CGrid : MonoBehaviour
 
 	public void ImportTileInformation(CTile[] _Tiles)
 	{
+		// Keep a list of tiles which werent modified
+		List<CTile> m_UnmodifiedTiles = Tiles;	
+	
+		// Iterate all the new tiles to use
 		foreach(CTile tile in _Tiles)
 		{
 			// Get the meta information of the tile
@@ -179,6 +183,9 @@ public class CGrid : MonoBehaviour
 				{
 					existingTile.SetMetaData((CTile.ETileType)i, tile.GetMetaData((CTile.ETileType)i));
 				}
+
+				// Remove this tile from ones unmodified
+				m_UnmodifiedTiles.Remove(existingTile);
 			}
 			else
 			{
@@ -192,6 +199,12 @@ public class CGrid : MonoBehaviour
 
 				AddNewTile(tile.m_GridPosition, tileTypes.ToArray());
 			}
+		}
+
+		// Remove all tiles that dont exist anymore
+		foreach(CTile tile in m_UnmodifiedTiles)
+		{
+			ReleaseTile(tile.m_GridPosition);
 		}
 	}
 	
