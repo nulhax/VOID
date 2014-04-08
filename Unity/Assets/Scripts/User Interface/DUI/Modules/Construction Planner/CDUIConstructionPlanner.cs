@@ -29,7 +29,8 @@ public class CDUIConstructionPlanner : MonoBehaviour
 	
 	
 	// Member Fields
-	CGridUI m_GridUI = null;
+	private CGridUI m_GridUI = null;
+	private CGrid m_Grid = null;
 
 	public GameObject m_SelectionGridItemTemplate = null;
 	public UILabel m_SelectionLabel = null;
@@ -54,9 +55,10 @@ public class CDUIConstructionPlanner : MonoBehaviour
 		m_SelectionVaritantGrids.Add(CTile.ETileType.Ceiling, m_CeilingSelectionGridVariations);
 	}
 
-	public void RegisterGridUI(CGridUI _GridUI)
+	public void RegisterGridUI(CGridUI _GridUI, CGrid _Grid)
 	{
 		m_GridUI = _GridUI;
+		m_Grid = _Grid;
 
 		m_GridUI.EventTileSelectionChange += OnTileSelectionChange;
 	}
@@ -84,6 +86,11 @@ public class CDUIConstructionPlanner : MonoBehaviour
 	public void EnableTileModifierSelection()
 	{
 		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Select_Tiles;
+	}
+
+	public void ExportGridTilesToShip()
+	{
+		CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
 	}
 
 	public void OnTileSelectionChange()

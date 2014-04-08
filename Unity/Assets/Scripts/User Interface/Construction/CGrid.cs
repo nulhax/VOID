@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -61,15 +61,20 @@ public class CGrid : MonoBehaviour
 	{
 		get { return(m_TileContainer); }
 	}
-	
+
+	public List<CTile> Tiles
+	{
+		get { return(new List<CTile>(m_GridBoard.Values)); }
+	}
+
 	// Member Methods
-	void Start() 
+	private void Start() 
 	{
 		// Create the grid objects
 		CreateGridObjects();
 	}
 
-	void Update()
+	private void Update()
 	{
 		foreach(TCreateTileInfo createInfo in m_CreateQueue)
 		{
@@ -84,7 +89,7 @@ public class CGrid : MonoBehaviour
 		m_DestroyQueue.Clear();
 	}
 
-	void CreateGridObjects()
+	private void CreateGridObjects()
 	{
 		m_TileContainer = new GameObject("Tile Container").transform;
 		m_TileContainer.parent = transform;
@@ -139,6 +144,56 @@ public class CGrid : MonoBehaviour
 	{
 		m_DestroyQueue.Add(_GridPoint);
 	}
+
+	public void ImportPreExistingTiles(CTile[] _Tiles)
+	{
+		foreach(CTile tile in _Tiles)
+		{
+			if(!m_GridBoard.ContainsKey(tile.m_GridPosition.ToString()))
+			{
+				m_GridBoard.Add(tile.m_GridPosition.ToString(), tile);
+				tile.m_Grid = this;
+			}
+			else
+			{
+				Debug.LogWarning("Tile already exists at position " + tile.m_GridPosition.ToString() + ". Tile was not imported.");
+			}
+		}
+	}
+
+	public void ImportTileInformation(CTile[] _Tiles)
+	{
+		foreach(CTile tile in _Tiles)
+		{
+			// Get the meta information of the tile
+			int typeIdentifier = tile.m_TileTypeIdentifier;
+
+			// Change the existing tile to match this tile
+			if(m_GridBoard.ContainsKey(tile.m_GridPosition.ToString()))
+			{
+				CTile existingTile = m_GridBoard[tile.m_GridPosition.ToString()];
+				existingTile.m_TileTypeIdentifier = typeIdentifier;
+
+				// Replace the meta data
+				for(int i = (int)CTile.ETileType.INVALID + 1; i < (int)CTile.ETileType.MAX; ++i)
+				{
+					existingTile.SetMetaData((CTile.ETileType)i, tile.GetMetaData((CTile.ETileType)i));
+				}
+			}
+			else
+			{
+				// Get the active tile types
+				List<CTile.ETileType> tileTypes = new List<CTile.ETileType>();
+				for(int i = (int)CTile.ETileType.INVALID + 1; i < (int)CTile.ETileType.MAX; ++i)
+				{
+					if(tile.GetTileTypeState((CTile.ETileType)i))
+						tileTypes.Add((CTile.ETileType)i);
+				}
+
+				AddNewTile(tile.m_GridPosition, tileTypes.ToArray());
+			}
+		}
+	}
 	
 	private void CreateTile(TCreateTileInfo _TileInfo)
 	{
@@ -152,7 +207,7 @@ public class CGrid : MonoBehaviour
 
 			CTile tile = newtile.AddComponent<CTile>();
 			tile.m_Grid = this;
-			tile.m_Location = _TileInfo.m_GridPoint;
+			tile.m_GridPosition = _TileInfo.m_GridPoint;
 
 			// Set the active tile types
 			foreach(CTile.ETileType type in _TileInfo.m_TileTypes)

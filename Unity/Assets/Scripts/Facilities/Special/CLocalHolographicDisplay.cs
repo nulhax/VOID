@@ -223,7 +223,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 		}
 	}
 
-	private void OnFacilitiesChanged(GameObject _Facility)
+	private void OnFacilitiesChanged(CFacilityInterface _Facility)
 	{
 		UpdateShipPresentation();
 	}

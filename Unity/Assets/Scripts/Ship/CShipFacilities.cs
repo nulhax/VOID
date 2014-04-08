@@ -29,11 +29,18 @@ public class CShipFacilities : MonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void OnFacilityCreate(GameObject _cFacilty);
-	public delegate void OnFacilityDestroy(GameObject _cFacility);
+	public delegate void HandleFacilityEvent(CFacilityInterface _cFacilty);
 	
-	public event OnFacilityCreate EventOnFaciltiyCreate;
-	public event OnFacilityDestroy EventOnFaciltiyDestroy;
+	public event HandleFacilityEvent EventOnFaciltiyCreate;
+	public event HandleFacilityEvent EventOnFaciltiyDestroy;
+
+// Member Fields
+	
+	public CGrid m_ShipGrid = null;
+	private uint m_FacilityIdCount = 0;
+	
+	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
+	private Dictionary<CFacilityInterface.EType, List<GameObject>> m_FacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
 
 
 // Member Properties
@@ -42,89 +49,74 @@ public class CShipFacilities : MonoBehaviour
 	[AServerOnly]
 	public List<GameObject> Facilities
 	{
-		get { return (new List<GameObject>(m_mFacilityObjects.Values)); }
+		get { return (new List<GameObject>(m_FacilityObjects.Values)); }
 	}
 
 
 // Member Methods
 
-
-    [AServerOnly]
-    public void RegisterFacility(GameObject _cFacilityObject)
+	
+    public void RegisterFacility(CFacilityInterface _Facility)
     {
-        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
+		if(CNetwork.IsServer)
+		{
+	        // Generate id for facility
+	        uint facilityId = ++ m_FacilityIdCount;
 
-        // Generate id for facility
-        uint uiFacilityId = ++ m_uiFacilityIdCount;
+	        // Give facility an id
+			_Facility.FacilityId = facilityId;
 
-        // Give facility an id
-        cFacilityInterface.FacilityId = uiFacilityId;
+			// Parent facility to ship
+			_Facility.NetworkView.SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
+		}
 
         // Add facility to dictionaries
-        m_mFacilityObjects.Add(uiFacilityId, _cFacilityObject);
+		m_FacilityObjects.Add(_Facility.FacilityId, _Facility.gameObject);
 
-        if (!m_mFacilityTypes.ContainsKey(cFacilityInterface.FacilityType))
+		if (!m_FacilityTypes.ContainsKey(_Facility.FacilityType))
         {
-            m_mFacilityTypes.Add(cFacilityInterface.FacilityType, new List<GameObject>());
+			m_FacilityTypes.Add(_Facility.FacilityType, new List<GameObject>());
         }
 
-        m_mFacilityTypes[cFacilityInterface.FacilityType].Add(_cFacilityObject);
+		m_FacilityTypes[_Facility.FacilityType].Add(_Facility.gameObject);
 
         // Notify observers
-        if (EventOnFaciltiyCreate != null) EventOnFaciltiyCreate(_cFacilityObject);
+        if (EventOnFaciltiyCreate != null) 
+			EventOnFaciltiyCreate(_Facility);
+
+		// Export the tiles to the grid
+		m_ShipGrid.ImportPreExistingTiles(_Facility.FacilityTiles.ToArray());
     }
 
-
-    [AServerOnly]
-    public void UnregisterFacility(GameObject _cFacilityObject)
+	
+	public void UnregisterFacility(CFacilityInterface _Facility)
     {
-        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
-
         // Remove facility from dictionaries
-        m_mFacilityObjects.Remove(cFacilityInterface.FacilityId);
-        m_mFacilityTypes[cFacilityInterface.FacilityType].Remove(_cFacilityObject);
+		m_FacilityObjects.Remove(_Facility.FacilityId);
+		m_FacilityTypes[_Facility.FacilityType].Remove(_Facility.gameObject);
 
         // Notify observers
-        if (EventOnFaciltiyDestroy != null) EventOnFaciltiyDestroy(_cFacilityObject);
-    }
-
-
-    [ALocalOnly]
-    public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
-    {
-        // Index facility against its Facility Id
-        m_mFacilityObjects.Add(_FacilityId, _Facility);
-
-        // Index facility against its Facility Type
-        if (!m_mFacilityTypes.ContainsKey(_FacilityType))
-        {
-            m_mFacilityTypes.Add(_FacilityType, new List<GameObject>());
-        }
-
-        m_mFacilityTypes[_FacilityType].Add(_Facility);
-    }
-
-
-    [AServerOnly]
+        if (EventOnFaciltiyDestroy != null) 
+			EventOnFaciltiyDestroy(_Facility);
+	}
+	
 	public GameObject GetFacility(uint _uiFacilityId)
 	{
-        if (_uiFacilityId >= m_mFacilityObjects.Count)
+        if (_uiFacilityId >= m_FacilityObjects.Count)
         {
             return (null);
         }
         else
         {
-            return (m_mFacilityObjects[_uiFacilityId]);
+            return (m_FacilityObjects[_uiFacilityId]);
         }
 	}
-
-
-    [AServerOnly]
+	
 	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
 	{
-        if (m_mFacilityTypes.ContainsKey(_eType))
+        if (m_FacilityTypes.ContainsKey(_eType))
         {
-            return (m_mFacilityTypes[_eType]);
+            return (m_FacilityTypes[_eType]);
         }
         else
         {
@@ -137,16 +129,5 @@ public class CShipFacilities : MonoBehaviour
     {
         // Empty
     }
-
-
-	// Member Fields
-
-
-	uint m_uiFacilityIdCount = 0;
-
-
-	Dictionary<uint, GameObject> m_mFacilityObjects = new Dictionary<uint, GameObject>();
-	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
-
 
 };

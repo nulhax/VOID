@@ -58,20 +58,21 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 // Member Fields
 	
 	
-	public EType m_eType = EType.INVALID;
+	public EType m_Type = EType.INVALID;
 	public Mesh m_CombinedMesh = null;
 
 
-	CNetworkVar<uint> m_FacilityId = null;
+	private CNetworkVar<uint> m_FacilityId = null;
+	private List<CTile> m_Tiles = new List<CTile>();
+
+	
+	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
+	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
 	
 	
-	Dictionary<CAccessoryInterface.EType, List<GameObject>> m_mAccessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
-	Dictionary<CModuleInterface.EType, List<GameObject>> m_mModules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
-	
-	
-	static Dictionary<EType, List<GameObject>> s_mFacilityObjects = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+	static Dictionary<EType, List<GameObject>> s_FacilityObjects = new Dictionary<EType, List<GameObject>>();
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 
 
@@ -99,9 +100,14 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	
 	public EType FacilityType 
 	{
-        get { return (m_eType); }
+        get { return (m_Type); }
 	}
 
+
+	public List<CTile> FacilityTiles
+	{
+		get { return(m_Tiles); }
+	}
 
 // Member Methods
 
@@ -114,131 +120,123 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
     public List<GameObject> FindAccessoriesByType(CAccessoryInterface.EType _eAccessoryType)
     {
-        if (!m_mAccessories.ContainsKey(_eAccessoryType))
+        if (!m_Accessories.ContainsKey(_eAccessoryType))
         {
             return (new List<GameObject>());
         }
 
-        return (m_mAccessories[_eAccessoryType]);
+        return (m_Accessories[_eAccessoryType]);
     }
 
 
     public List<GameObject> FindModulesByType(CModuleInterface.EType _eModuleType)
     {
-        if (!m_mModules.ContainsKey(_eModuleType))
+        if (!m_Modules.ContainsKey(_eModuleType))
         {
             return (new List<GameObject>());
         }
 
-        return (m_mModules[_eModuleType]);
+        return (m_Modules[_eModuleType]);
     }
 
 
     public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
     {
-        if (!m_mAccessories.ContainsKey(_cAccessoryInterface.AccessoryType))
+        if (!m_Accessories.ContainsKey(_cAccessoryInterface.AccessoryType))
         {
-            m_mAccessories.Add(_cAccessoryInterface.AccessoryType, new List<GameObject>());
+            m_Accessories.Add(_cAccessoryInterface.AccessoryType, new List<GameObject>());
         }
 
-        m_mAccessories[_cAccessoryInterface.AccessoryType].Add(_cAccessoryInterface.gameObject);
+        m_Accessories[_cAccessoryInterface.AccessoryType].Add(_cAccessoryInterface.gameObject);
     }
 
 
     public void RegisterModule(CModuleInterface _cModuleInterface)
     {
-        if (!m_mModules.ContainsKey(_cModuleInterface.ModuleType))
+        if (!m_Modules.ContainsKey(_cModuleInterface.ModuleType))
         {
-            m_mModules.Add(_cModuleInterface.ModuleType, new List<GameObject>());
+            m_Modules.Add(_cModuleInterface.ModuleType, new List<GameObject>());
         }
 
-        m_mModules[_cModuleInterface.ModuleType].Add(_cModuleInterface.gameObject);
+        m_Modules[_cModuleInterface.ModuleType].Add(_cModuleInterface.gameObject);
     }
 
 
     public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
     {
-        s_mRegisteredPrefabs.Add(_eFacilityType, _ePrefab);
+        s_RegisteredPrefabs.Add(_eFacilityType, _ePrefab);
     }
 
 	public static void RegistMiniaturePrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
 	{
-		s_mRegisteredMiniaturePrefabs.Add(_eFacilityType, _ePrefab);
+		s_RegisteredMiniaturePrefabs.Add(_eFacilityType, _ePrefab);
 	}
 
     public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityType)
     {
-        if (!s_mRegisteredPrefabs.ContainsKey(_eFacilityType))
+        if (!s_RegisteredPrefabs.ContainsKey(_eFacilityType))
         {
             Debug.LogError(string.Format("Facility type ({0}) has not been registered a prefab", _eFacilityType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
 
-        return (s_mRegisteredPrefabs[_eFacilityType]);
+        return (s_RegisteredPrefabs[_eFacilityType]);
     }
 
 	public static CGameRegistrator.ENetworkPrefab GetMiniaturePrefabType(EType _eFacilityType)
 	{
-		if (!s_mRegisteredMiniaturePrefabs.ContainsKey(_eFacilityType))
+		if (!s_RegisteredMiniaturePrefabs.ContainsKey(_eFacilityType))
 		{
 			Debug.LogError(string.Format("Facility type miniature ({0}) has not been registered a prefab", _eFacilityType));
 			
 			return (CGameRegistrator.ENetworkPrefab.INVALID);
 		}
 		
-		return (s_mRegisteredMiniaturePrefabs[_eFacilityType]);
+		return (s_RegisteredMiniaturePrefabs[_eFacilityType]);
 	}
 
 
     public static Dictionary<EType, List<GameObject>> GetAllFacilities()
     {
-        return (s_mFacilityObjects);
+        return (s_FacilityObjects);
     }
 
 
     void Awake()
     {
-        if (!s_mFacilityObjects.ContainsKey(m_eType))
+        if (!s_FacilityObjects.ContainsKey(m_Type))
         {
-            s_mFacilityObjects.Add(m_eType, new List<GameObject>());
+            s_FacilityObjects.Add(m_Type, new List<GameObject>());
         }
 
-        s_mFacilityObjects[m_eType].Add(gameObject);
+        s_FacilityObjects[m_Type].Add(gameObject);
     }
 
 
 	void Start()
 	{
-        if(CNetwork.IsServer)
-        {
-            // Register facility
-            CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(gameObject);
+		// Find all of the tiles contained within this facility
+		m_Tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
 
-            // Unregister facility
-            SelfNetworkView.EventPreDestory += () =>
-            {
-                CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(gameObject);
-            };
+      
+	    // Register facility
+	    CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(this);
 
-            // Parent self to ship
-            SelfNetworkView.SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
-        }
+	    // Listen to event to unregister facility
+	    NetworkView.EventPreDestory += () =>
+	    {
+			CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(this);
+		};
 
 		// Create facility triggers
 		ConfigureFacility();
-	
-		// Add self to the ship facilities
-        if (!CNetwork.IsServer)
-        {
-            CGameShips.Ship.GetComponent<CShipFacilities>().AddNewlyCreatedFacility(gameObject, FacilityId, FacilityType);
-        }
 	}
 
 
     void OnDestroy()
     {
-        s_mFacilityObjects[m_eType].Remove(gameObject);
+        s_FacilityObjects[m_Type].Remove(gameObject);
     }
 
 

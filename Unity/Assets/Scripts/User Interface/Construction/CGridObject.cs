@@ -31,11 +31,11 @@ public abstract class CGridObject : MonoBehaviour
 	
 	// Member Fields
 	public CGrid m_Grid = null;
-	public TGridPoint m_Location;
+	public TGridPoint m_GridPosition;
 
 	public List<CNeighbour> m_NeighbourHood = new List<CNeighbour>();
 
-	private List<CNeighbour> s_AllNeighbours = new List<CNeighbour>(
+	protected List<CNeighbour> s_AllNeighbours = new List<CNeighbour>(
 		new CNeighbour[] 
 		{
 		new CNeighbour(new TGridPoint(0, 0, 1), EDirection.North),
@@ -53,20 +53,20 @@ public abstract class CGridObject : MonoBehaviour
 	// Member Properties
 	public int x 
 	{ 
-		get { return m_Location.x; }
-		set { m_Location.x = value; } 
+		get { return m_GridPosition.x; }
+		set { m_GridPosition.x = value; } 
 	}
 
 	public int y 
 	{ 
-		get { return m_Location.y; }
-		set { m_Location.y = value; } 
+		get { return m_GridPosition.y; }
+		set { m_GridPosition.y = value; } 
 	}
 
 	public int z 
 	{ 
-		get { return m_Location.z ; }
-		set { m_Location.z = value; } 
+		get { return m_GridPosition.z ; }
+		set { m_GridPosition.z = value; } 
 	}
 
 
@@ -75,28 +75,7 @@ public abstract class CGridObject : MonoBehaviour
 	// Member Methods
 	public override string ToString()
 	{
-		return(m_Location.ToString());
-	}
-
-	public void FindNeighbours()
-	{
-		m_NeighbourHood.Clear();
-		
-		foreach(CNeighbour pn in s_AllNeighbours) 
-		{
-			TGridPoint possibleNeightbour = new TGridPoint(x + pn.m_GridPointOffset.x, 
-			                                               y + pn.m_GridPointOffset.y, 
-			                                               z + pn.m_GridPointOffset.z);
-			
-			CTile tile = m_Grid.GetTile(possibleNeightbour);
-			if(tile != null)
-			{
-				CNeighbour newNeighbour = new CNeighbour(pn.m_GridPointOffset, pn.m_WorldDirection);
-				newNeighbour.m_Tile = tile;
-				
-				m_NeighbourHood.Add(newNeighbour);
-			}
-		}
+		return(m_GridPosition.ToString());
 	}
 }
 

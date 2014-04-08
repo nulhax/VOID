@@ -138,6 +138,16 @@ public class CGridUI : MonoBehaviour
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
+
+		// Get the ship grid to register for when facilities are created
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate += OnFacilityCreate;
+
+		// Update the grid to be fully up to date
+		foreach(GameObject facility in CGameShips.Ship.GetComponent<CShipFacilities>().Facilities)
+		{
+			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
+			OnFacilityCreate(fi);
+		}
 	}
 	
 	private void CreateGridUIObjects()
@@ -409,7 +419,7 @@ public class CGridUI : MonoBehaviour
 			HandleLeftClickUpMulti();
 	}
 
-	void HandleLeftClickUpSingle()
+	private void HandleLeftClickUpSingle()
 	{
 		if(m_CurrentMode == EToolMode.Select_Tiles) 
 		{
@@ -423,7 +433,7 @@ public class CGridUI : MonoBehaviour
 		}
 	}
 
-	void HandleLeftClickUpMulti()
+	private void HandleLeftClickUpMulti()
 	{
 		switch(m_CurrentMode) 
 		{
@@ -688,8 +698,9 @@ public class CGridUI : MonoBehaviour
 //				
 		}
 
-		// Register tile appearance change
+		// Register tile events change
 		_Tile.EventTileAppearanceChanged += OnTileAppearanceChange;
+		_Tile.EventTileTypeStateChange += OnTileTypeStateChange;
 	}
 
 	private void OnTileRemoved(CTile _Tile)
@@ -703,13 +714,18 @@ public class CGridUI : MonoBehaviour
 			lower.m_Tile.SetTileTypeState(CTile.ETileType.Ceiling, true);
 		}
 
-		// Unregister tile appearance change
+		// Unregister tile events 
 		_Tile.EventTileAppearanceChanged -= OnTileAppearanceChange;
+		_Tile.EventTileTypeStateChange -= OnTileTypeStateChange;
 	}
 
-	private void OnTileMetaChange(CTile _Tile)
+	private void OnTileTypeStateChange(CTile _Tile)
 	{
-		// Empty
+		// Check if there is a internal wall without a floor
+		if(_Tile.GetTileTypeState(CTile.ETileType.Wall_Int) && !_Tile.GetTileTypeState(CTile.ETileType.Floor))
+		{
+			_Tile.SetTileTypeState(CTile.ETileType.Wall_Int, false);
+		}
 	}
 
 	private void OnTileAppearanceChange(CTile _Tile)
@@ -735,6 +751,12 @@ public class CGridUI : MonoBehaviour
 			}
 			childRenderer.sharedMaterials = sharedMaterials;
 		}
+	}
+
+	private void OnFacilityCreate(CFacilityInterface _Facility)
+	{
+		// Update the state of the UI grid
+		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles.ToArray());
 	}
 }
 

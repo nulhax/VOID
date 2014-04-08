@@ -1721,7 +1721,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 952, y: 512, z: 0}
+  m_ViewPortPos: {x: 952, y: 513, z: 0}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1925,6 +1925,9 @@ MonoBehaviour:
   onClick:
   - mTarget: {fileID: 11400078}
     mMethodName: ResetMode
+    oneShot: 0
+  - mTarget: {fileID: 11400078}
+    mMethodName: ExportGridTilesToShip
     oneShot: 0
 --- !u!114 &11400014
 MonoBehaviour:

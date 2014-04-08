@@ -32,13 +32,13 @@ public class CConstructionPlannerBehaviour: MonoBehaviour
 	public CDUIConsole m_ConstructionInterface = null;
 	public CGridUI m_GridUI = null;
 
-	
+
 	// Member Properties
 	
 	
 	// Member Methods
 	public void Start()
 	{
-		m_ConstructionInterface.DUIRoot.GetComponent<CDUIConstructionPlanner>().RegisterGridUI(m_GridUI);
+		m_ConstructionInterface.DUIRoot.GetComponent<CDUIConstructionPlanner>().RegisterGridUI(m_GridUI, m_GridUI.GetComponent<CGrid>());
 	}
 }

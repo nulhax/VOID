@@ -294,7 +294,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[ALocalOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 
         if (_bDown)
         {
@@ -310,7 +310,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[ALocalOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 
         if (_bDown)
         {

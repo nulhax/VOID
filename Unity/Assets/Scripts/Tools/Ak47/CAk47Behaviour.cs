@@ -158,7 +158,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.ShootEnd);
         }
 
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 	}
 
 
