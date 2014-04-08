@@ -203,7 +203,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
         //Debug.DrawRay(cMainCameraRay.origin, cMainCameraRay.direction, Color.red, 0.5f);
-        Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
+        //Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
 
         // Do the ray cast against all objects in path
         RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer);

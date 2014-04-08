@@ -38,6 +38,7 @@ public class CPlayerArmController : MonoBehaviour
 
 	//Member variables
 	HoldState				m_eHoldState;
+    HoldState               m_ePreviousHoldState;
 	CPlayerIKController		m_IKController;
     bool                    m_bInteracting;
 	bool 					m_bRighthanded;
@@ -59,38 +60,41 @@ public class CPlayerArmController : MonoBehaviour
 		m_IKController = gameObject.GetComponent<CPlayerIKController>();
 	}
 
-    void LateUpdate()
+    void Update()
     {
         if (m_bInteracting)
         {
             Ray cameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
-			RaycastHit _RaycastHit = new RaycastHit();
-
-			Physics.Raycast(cameraRay, out _RaycastHit, 5.0f, 1 << CGameCameras.MainCamera.layer);
-
+            RaycastHit _RaycastHit = new RaycastHit();
+            
+            Physics.Raycast(cameraRay, out _RaycastHit, 5.0f, 1 << CGameCameras.MainCamera.layer);
+            
             switch (m_eHoldState)
             {
                 case HoldState.NoTool:
                 {
-					m_IKController.SetRightHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-					m_IKController.RightHandIKWeight = 1.0f;
+                    m_IKController.SetRightHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
+                    m_IKController.RightHandIKWeight = 1.0f;
                     break;
                 }
                 case HoldState.OneHandedTool:
                 {
-					m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
+                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
                     m_IKController.LeftHandIKWeight = 1.0f;
                     break;  
                 }
                 case HoldState.TwoHandedTool:
                 {
-					m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
+                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
                     m_IKController.LeftHandIKWeight = 1.0f;
                     break;
                 }
             }
         }
+    }
 
+    void FixedUpdate()
+    {
         //Handle placement of hands
         if (m_heldTool != null)
         {
@@ -98,16 +102,27 @@ public class CPlayerArmController : MonoBehaviour
             {
                 case HoldState.OneHandedTool:
                 {
-                    m_IKController.RightHandIKPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
+                    Vector3 rightHandPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
+
+                    m_IKController.RightHandIKPos = rightHandPos + rigidbody.GetPointVelocity(rightHandPos) * Time.fixedDeltaTime;
                     m_IKController.RightHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.rotation;
                     m_IKController.RightHandIKWeight = 1.0f;
                     break;  
                 }
                 case HoldState.TwoHandedTool:
                 {
-                    m_IKController.RightHandIKPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
+                    Vector3 rightHandPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
+                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
+
+                    m_IKController.RightHandIKPos = rightHandPos + rigidbody.GetPointVelocity(rightHandPos) * Time.fixedDeltaTime;
                     m_IKController.RightHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.rotation;
+
+                    m_IKController.LeftHandIKPos = leftHandPos + rigidbody.GetPointVelocity(leftHandPos) * Time.fixedDeltaTime;
+                    m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;
+
                     m_IKController.RightHandIKWeight = 1.0f;
+                    m_IKController.LeftHandIKWeight = 1.0f;
+
                     break;
                 }
             }
@@ -167,9 +182,9 @@ public class CPlayerArmController : MonoBehaviour
 		switch (m_eHoldState)
 		{
 			case HoldState.NoTool:
-			{				
-				m_IKController.EndRightHandIK();											
-				break;
+			{
+				m_IKController.EndRightHandIK();
+                break;
 			}
 			case HoldState.OneHandedTool:
 			{
@@ -194,16 +209,15 @@ public class CPlayerArmController : MonoBehaviour
 			{
 				case CToolInterface.EToolCategory.OneHanded:
 				{
-					m_eHoldState = HoldState.OneHandedTool;
-                    m_IKController.RightHandIKTargetPos = _Tool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
-                    m_IKController.RightHandIKWeight = 1.0f;
-                
+                    m_eHoldState = HoldState.OneHandedTool;                   
+                    EndInteraction();
 					break;
 				}
 
 				case CToolInterface.EToolCategory.TwoHanded:
 				{
 					m_eHoldState = HoldState.TwoHandedTool;
+                    EndInteraction();
 					break;
 				}
 			}
@@ -212,6 +226,7 @@ public class CPlayerArmController : MonoBehaviour
 		{
 			m_eHoldState = HoldState.NoTool;
             m_heldTool = null;
+            EndInteraction();
 		}
 	}
 }

@@ -430,7 +430,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
             {
                 // Apply movement velocity
                 rigidbody.velocity = new Vector3(0.0f, rigidbody.velocity.y, 0.0f);
-                rigidbody.AddForce(Quaternion.Euler(vHeadRotation) * vMovementVelocity, ForceMode.VelocityChange);
+                rigidbody.velocity += Quaternion.Euler(vHeadRotation) * vMovementVelocity;
+                //rigidbody.AddForce(Quaternion.Euler(vHeadRotation) * vMovementVelocity, ForceMode.VelocityChange);
 
                 if (vMovementVelocity != Vector3.zero)
                 {
