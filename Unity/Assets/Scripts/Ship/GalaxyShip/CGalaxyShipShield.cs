@@ -151,7 +151,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			float fDamage = _Collider.rigidbody.mass / 100.0f;
+			float fDamage = CGalaxy.GetMass(_Collider.gameObject) / 100.0f;
 
 			if(m_ShieldPower <= 0.0f)
 			{

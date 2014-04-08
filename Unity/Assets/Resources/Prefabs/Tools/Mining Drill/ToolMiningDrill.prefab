@@ -485,6 +485,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eToolType: 6
+  m_eToolCategory: 2
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -507,6 +508,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bSimulateClientGravity: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
