@@ -18,8 +18,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-
-[RequireComponent(typeof(Rigidbody))]
 public class CActorLocator : MonoBehaviour 
 {
 	// Member Types
