@@ -994,7 +994,15 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	public static float GetMass(GameObject gameObject)
 	{
-		Debug.LogError("DO NOT USE THIS YET");
+		while (gameObject != null)
+		{
+			Rigidbody rigidBody = gameObject.GetComponent<Rigidbody>();
+			if (rigidBody)
+				return rigidBody.mass;
+
+			gameObject = gameObject.transform.parent.gameObject;
+		}
+
 		return 1.0f;
 	}
 }
