@@ -32,7 +32,7 @@ public class CDUIPanelTransitioner : CNetworkMonoBehaviour
 	// Member Fields
 	public CDUIPanel m_StartingPanel = null;
 
-	private CNetworkVar<CNetworkViewId> m_ActivePanelId = null;
+	private CNetworkVar<TNetworkViewId> m_ActivePanelId = null;
 
 	
 	// Member Properties
@@ -49,7 +49,7 @@ public class CDUIPanelTransitioner : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ActivePanelId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_ActivePanelId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)

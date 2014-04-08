@@ -81,11 +81,11 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 	{
 		mNoiseLayerMeta[(uint)ENoiseLayer.SparseAsteroids] =	new SNoiseLayerMeta(0.50f, 0.90f, 100000.00f, "Sparse Asteroids");
 		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidClustersHF] =	new SNoiseLayerMeta(0.80f, 0.90f, 1000000.0f, "Asteroid Clusters HF");
-		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidClustersLF] =	new SNoiseLayerMeta(0.50f, 0.60f, 100.00000f, "Asteroid Clusters LF");
+		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidClustersLF] =	new SNoiseLayerMeta(0.30f, 0.90f, 2.5000000f, "Asteroid Clusters LF");
 		mNoiseLayerMeta[(uint)ENoiseLayer.DebrisDensity] =		new SNoiseLayerMeta(0.00f, 1.00f, 250000.00f, "Debris Density");
 		mNoiseLayerMeta[(uint)ENoiseLayer.FogDensity] =			new SNoiseLayerMeta(0.40f, 0.80f, 100000.00f, "Fog Density");
 		mNoiseLayerMeta[(uint)ENoiseLayer.AsteroidResource]=	new SNoiseLayerMeta(0.75f, 0.90f, 100000.00f, "Asteroid Resource");
-		mNoiseLayerMeta[(uint)ENoiseLayer.EnemyShips] =			new SNoiseLayerMeta(1.10f, 1.20f, 100000.00f, "Enemy Ships");
+		mNoiseLayerMeta[(uint)ENoiseLayer.EnemyShips] =			new SNoiseLayerMeta(0.80f, 0.90f, 1000000.0f, "Enemy Ships");
 
 		mNoiseMeta[(uint)ENoise.SparseAsteroids] =	new SNoiseMeta("Sparse Asteroids",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
 			sample = SampleNoise(absoluteCell, ENoiseLayer.SparseAsteroids);
@@ -93,12 +93,11 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 
 		mNoiseMeta[(uint)ENoise.AsteroidClusters] =	new SNoiseMeta("Asteroid Clusters",	(CGalaxy.SCellPos absoluteCell, out float sample) => {
 			sample =	1.0f;
-			sample *=	SampleNoise(absoluteCell, ENoiseLayer.AsteroidClustersHF);
+			//sample *=	SampleNoise(absoluteCell, ENoiseLayer.AsteroidClustersHF);
 			sample *=	SampleNoise(absoluteCell, ENoiseLayer.AsteroidClustersLF);
-			float distToCentreOfGalaxy = Mathf.Clamp01(1.0f - (CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell).magnitude / CGalaxy.instance.galaxyRadius));
-			sample = Mathf.Clamp01(sample - (1.0f - distToCentreOfGalaxy));
-			//sample *= distToCentreOfGalaxy;
-			//sample =	Mathf.Pow(sample, 3.0f);
+			float distToCentreOfGalaxy = Mathf.Clamp01(CGalaxy.instance.AbsoluteCellToAbsolutePoint(absoluteCell).magnitude / CGalaxy.instance.galaxyRadius);
+			//sample -= distToCentreOfGalaxy;
+			sample -= 1.0f - Mathf.Pow(1.0f - distToCentreOfGalaxy, 2.0f);
 		});
 
 		mNoiseMeta[(uint)ENoise.DebrisDensity] =	new SNoiseMeta("Debris Density",	(CGalaxy.SCellPos absoluteCell, out float sample) => {

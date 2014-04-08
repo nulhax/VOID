@@ -195,7 +195,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 		while(_cStream.HasUnreadData)
 		{
 			// Get the DUIElement and its network view
-			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.Read<CNetworkViewId>()).GetComponent<CDUIElement>();
+			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.Read<TNetworkViewId>()).GetComponent<CDUIElement>();
 
 			// Get the interaction notification
 			EElementNotificationType notification = (EElementNotificationType)_cStream.Read<byte>();

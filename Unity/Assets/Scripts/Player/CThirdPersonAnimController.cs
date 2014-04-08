@@ -78,10 +78,9 @@ public class CThirdPersonAnimController : MonoBehaviour
 
     void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
 	{
-        m_MovementState = _usPreviousStates;
-        m_previousMovementState = _usNewSates;	
-	}
-	
+		m_MovementState = _usNewSates;
+        //m_previousMovementState = _usNewSates;	
+	}	
 	// Update is called once per frame
 	void Update () 
 	{
@@ -93,8 +92,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 			bool bJump;
 			bool bCrouch;
 			bool bStrafeLeft;
-			bool bStrafeRight;
-			
+			bool bStrafeRight;			
 			
 			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;	
 			bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;	
@@ -109,8 +107,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);		
-	       
+			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	       
 			
 			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 			

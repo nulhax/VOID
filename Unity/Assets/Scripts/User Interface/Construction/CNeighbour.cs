@@ -34,6 +34,8 @@ public enum EDirection
 	NorthWest,
 	Upper,
 	Lower,
+
+	MAX
 }
 
 
@@ -50,6 +52,25 @@ public class CNeighbour
 	public TGridPoint m_GridPointOffset;
 	public CTile m_Tile;
 
+	public static EDirection GetOppositeDirection(EDirection _Direction)
+	{
+		EDirection dir = EDirection.INVALID;
+
+		switch(_Direction)
+		{
+		case EDirection.North: dir = EDirection.South; break;
+		case EDirection.NorthWest: dir = EDirection.SouthEast; break;
+		case EDirection.West: dir = EDirection.East; break;
+		case EDirection.SouthWest: dir = EDirection.NorthEast; break;
+		case EDirection.South: dir = EDirection.North; break;
+		case EDirection.SouthEast: dir = EDirection.NorthWest; break;
+		case EDirection.East: dir = EDirection.West; break;
+		case EDirection.NorthEast: dir = EDirection.SouthWest; break;
+		}
+
+		return(dir);
+	}
+	
 	public static EDirection GetLocalDirection(EDirection _LocalNorth, EDirection _Direction)
 	{
 		EDirection dir = EDirection.INVALID;

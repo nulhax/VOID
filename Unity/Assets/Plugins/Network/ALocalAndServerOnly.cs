@@ -21,7 +21,7 @@ using System;
 
 
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-public sealed class ALocalAndServerOnly : Attribute
+public sealed class AOwnerAndServerOnly : Attribute
 {
 
 // Member Types

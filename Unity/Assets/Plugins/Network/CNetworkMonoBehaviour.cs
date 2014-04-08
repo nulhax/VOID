@@ -65,7 +65,7 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     }
 
 
-    public CNetworkViewId NetworkViewId
+    public TNetworkViewId NetworkViewId
     {
         get { return (SelfNetworkView.ViewId); }
     }

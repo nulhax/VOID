@@ -46,8 +46,8 @@ public class CActorLocator : MonoBehaviour
 	// Member Fields
 
 
-	private List<GameObject> m_ContainingFacilities = new List<GameObject>();
-	private GameObject m_CurrentFacility = null;
+	private List<GameObject> m_aContainingFacilities = new List<GameObject>();
+	private GameObject m_cCurrentFacility = null;
 
 
 	// Member Properties	
@@ -55,19 +55,19 @@ public class CActorLocator : MonoBehaviour
 
 	public GameObject CurrentFacility
 	{
-		get { return(m_CurrentFacility); }
+		get { return(m_cCurrentFacility); }
 	}
 
 
 	public List<GameObject> ContainingFacilities
 	{
-		get { return(m_ContainingFacilities); }
+		get { return(m_aContainingFacilities); }
 	}
 
 
     public bool IsInShip
     {
-        get { return (m_ContainingFacilities.Count > 0); }
+        get { return (m_aContainingFacilities.Count > 0); }
     }
 
 
@@ -78,17 +78,16 @@ public class CActorLocator : MonoBehaviour
 	public void ActorEnteredFacility(GameObject _Facility)
 	{
         // Add containing facility to list
-		m_ContainingFacilities.Add(_Facility);
+		m_aContainingFacilities.Add(_Facility);
 		
         // Remember current facility
-		m_CurrentFacility = _Facility;
+		m_cCurrentFacility = _Facility;
 
         // Notify observers about entering a facility
 		if(EventEnteredFacility != null) EventEnteredFacility(_Facility);
 
-        // Check actor just entered a facility when not previously
-        // being contained by facility
-        if (m_ContainingFacilities.Count == 1)
+        // Check actor just entered a facility when not previously being contained by facility
+        if (m_aContainingFacilities.Count == 1)
         {
             // Notify observers about entering the ship
             if (EventEnterShip != null) EventEnterShip(gameObject);
@@ -96,22 +95,21 @@ public class CActorLocator : MonoBehaviour
 	}
 	
 
-
-	public void ActorExitedFacility(GameObject _Facility)
+	public void ActorExitedFacility(GameObject _cFacility)
 	{
         // Remove containing facility from list
-		m_ContainingFacilities.Remove(_Facility);
+		m_aContainingFacilities.Remove(_cFacility);
 
-        if (m_ContainingFacilities.Count == 0)
+        if (m_aContainingFacilities.Count == 0)
         {
-            m_CurrentFacility = null;
+            m_cCurrentFacility = null;
         }
 
         // Notify observers about exiting a facility
-		if(EventExitedFacility != null) EventExitedFacility(_Facility);
+		if(EventExitedFacility != null) EventExitedFacility(_cFacility);
 
         // Check actor is not contained by any facility
-        if (m_ContainingFacilities.Count == 0)
+        if (m_aContainingFacilities.Count == 0)
         {
             // Notify observers about leaving the ship
             if (EventLeaveShip != null) EventLeaveShip(gameObject);
@@ -150,5 +148,6 @@ public class CActorLocator : MonoBehaviour
                     sFacilityText);
         }
     }
+
 
 }

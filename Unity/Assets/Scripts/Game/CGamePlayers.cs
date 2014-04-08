@@ -93,7 +93,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
-	public static CNetworkViewId SelfActorViewId
+	public static TNetworkViewId SelfActorViewId
 	{
 		get 
 		{ 
@@ -117,7 +117,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{ 
 			List<GameObject> actors = new List<GameObject>();
 			
-			foreach(CNetworkViewId playerID in s_cInstance.m_mPlayersActors.Values)
+			foreach(TNetworkViewId playerID in s_cInstance.m_mPlayersActors.Values)
 			{
 				actors.Add(CNetwork.Factory.FindObject(playerID));
 			}
@@ -217,7 +217,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
 
-	public static CNetworkViewId GetPlayerActorViewId(ulong _ulPlayerId)
+	public static TNetworkViewId GetPlayerActorViewId(ulong _ulPlayerId)
 	{
 		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
 		{
@@ -227,7 +227,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayersActors[_ulPlayerId]);
 	}
 
-	public static ulong GetPlayerActorsPlayerId(CNetworkViewId _PlayerActorViewId)
+	public static ulong GetPlayerActorsPlayerId(TNetworkViewId _PlayerActorViewId)
 	{
 		if (!s_cInstance.m_mPlayerActorsPlayers.ContainsKey(_PlayerActorViewId))
 		{
@@ -303,7 +303,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 						//cPlayerActor.GetComponent<CNetworkView>().SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
 						
 						// Get actor network view id
-						CNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+						TNetworkViewId cActorNetworkViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 						
 						cPlayerActor.GetComponent<CNetworkView>().SetPosition(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.position);
 						cPlayerActor.GetComponent<CNetworkView>().SetRotation(cPlayerSpawner.GetComponent<CPlayerSpawnerBehaviour>().m_cSpawnPosition.transform.rotation);
@@ -367,7 +367,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if (!_cPlayer.IsHost)
 		{
 			// Sync current players actor view ids with new player
-			foreach (KeyValuePair<ulong, CNetworkViewId> tEntry in m_mPlayersActors)
+			foreach (KeyValuePair<ulong, TNetworkViewId> tEntry in m_mPlayersActors)
 			{
                 InvokeRpc(_cPlayer.PlayerId, "RemoteRegisterPlayerActor", tEntry.Key, tEntry.Value);
 			}
@@ -406,7 +406,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	
 	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
-		CNetworkViewId cPlayerActorNetworkViewId = GetPlayerActorViewId(_cPlayer.PlayerId);
+		TNetworkViewId cPlayerActorNetworkViewId = GetPlayerActorViewId(_cPlayer.PlayerId);
 
 		if (cPlayerActorNetworkViewId != null)
 		{
@@ -476,7 +476,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 	[ANetworkRpc]
-	void RemoteRegisterPlayerActor(ulong _ulPlayerId, CNetworkViewId _cPlayerActorId)
+	void RemoteRegisterPlayerActor(ulong _ulPlayerId, TNetworkViewId _cPlayerActorId)
 	{
 		m_mPlayersActors.Add(_ulPlayerId, _cPlayerActorId);
 		m_mPlayerActorsPlayers.Add(_cPlayerActorId, _ulPlayerId);
@@ -542,8 +542,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Fields
 
 
-	Dictionary<ulong, CNetworkViewId> m_mPlayersActors = new Dictionary<ulong, CNetworkViewId>();
-	Dictionary<CNetworkViewId, ulong> m_mPlayerActorsPlayers = new Dictionary<CNetworkViewId, ulong>();
+	Dictionary<ulong, TNetworkViewId> m_mPlayersActors = new Dictionary<ulong, TNetworkViewId>();
+	Dictionary<TNetworkViewId, ulong> m_mPlayerActorsPlayers = new Dictionary<TNetworkViewId, ulong>();
 	Dictionary<ulong, string> m_mPlayersNames = new Dictionary<ulong, string>();
 
 	List<ulong> m_aUnspawnedPlayers = new List<ulong>();

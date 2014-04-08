@@ -97,9 +97,9 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
                 case ENetworkAction.SetRepairState:
                 {
                     //Figure out which ratchet sent it's new state
-                    CFluidToolBehaviour FluidTool = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CFluidToolBehaviour>();
+                    CFluidToolBehaviour FluidTool = _cStream.Read<TNetworkViewId>().GameObject.GetComponent<CFluidToolBehaviour>();
                     
-                    FluidTool.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
+                    FluidTool.m_TargetComponent = _cStream.Read<TNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
                     FluidTool.m_eRepairState = (ERepairState)_cStream.Read<byte>();
                     
                     break;
@@ -172,7 +172,7 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
                 m_iTargetIndex = 0;
             }       
             
-            m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];            
+            m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
             m_fTargetSwitchTimer = 0.0f;
             Debug.Log("switched target.");
         }
@@ -197,10 +197,10 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
         m_fTargetSwitchTimer = 0.0f;
         
         m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
-        m_IKController.RightHandIKTarget = m_TargetList[m_iTargetIndex];    
+        m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
         
-        CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
-        CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
         
         s_cSerializeStream.Write((byte)ENetworkAction.SetRepairState);
         s_cSerializeStream.Write(senderID);

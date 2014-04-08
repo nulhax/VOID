@@ -42,7 +42,7 @@ public class CCellSlot : CNetworkMonoBehaviour
 		m_bIsFunctionalityAllowed = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 		m_bIsCellBroken = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 		m_bIsCellMatchingSlot = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
-		m_cCurrentCell = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cCurrentCell = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 // Member Methods
@@ -101,9 +101,9 @@ public class CCellSlot : CNetworkMonoBehaviour
 		}
 	}
 	
-	public CNetworkViewId Insert (CNetworkViewId _CellNetworkID)
+	public TNetworkViewId Insert (TNetworkViewId _CellNetworkID)
 	{
-		CNetworkViewId cCurrentCell = null;
+		TNetworkViewId cCurrentCell = null;
 		if(CNetwork.IsServer)
 		{
 			cCurrentCell = m_cCurrentCell.Get();
@@ -122,7 +122,7 @@ public class CCellSlot : CNetworkMonoBehaviour
 		m_bIsFunctionalityAllowed.Set (false);
 	}
 	
-	public CNetworkViewId GetCell()
+	public TNetworkViewId GetCell()
 	{
 		return(m_cCurrentCell.Get());
 	}
@@ -132,5 +132,5 @@ public class CCellSlot : CNetworkMonoBehaviour
 	CNetworkVar<bool> m_bIsFunctionalityAllowed;
 	CNetworkVar<bool> m_bIsCellBroken;
 	CNetworkVar<bool> m_bIsCellMatchingSlot;
-	CNetworkVar<CNetworkViewId> m_cCurrentCell;
+	CNetworkVar<TNetworkViewId> m_cCurrentCell;
 };

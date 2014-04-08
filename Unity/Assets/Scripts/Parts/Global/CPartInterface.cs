@@ -71,7 +71,7 @@ public class CPartInterface : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cOwnerActorViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cOwnerActorViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
@@ -189,7 +189,7 @@ public class CPartInterface : CNetworkMonoBehaviour
 	public EType m_eType;
 
 
-	CNetworkVar<CNetworkViewId> m_cOwnerActorViewId = null;
+	CNetworkVar<TNetworkViewId> m_cOwnerActorViewId = null;
 
 	ulong m_ulOwnerPlayerId = 0;
 

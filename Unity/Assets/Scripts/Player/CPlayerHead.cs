@@ -317,14 +317,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-    [ALocalOnly]
+    [AOwnerAndServerOnly]
     void OnEventAxisChange(CUserInput.EAxis _eAxis, float _fValue)
     {
         OnEventClientAxisChange(_eAxis, CNetwork.PlayerId, _fValue);
     }
 
 
-    [AServerOnly]
+    [AOwnerAndServerOnly]
     void OnEventClientAxisChange(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
     {
         if (GetComponent<CPlayerInterface>().PlayerId != _ulPlayerId)
@@ -348,7 +348,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void MotorTypeChangeHandler(CPlayerGroundMotor.EState _ePrevious, CPlayerGroundMotor.EState _eNew)
+    void OnEventMotorStateChange(CPlayerGroundMotor.EState _ePrevious, CPlayerGroundMotor.EState _eNew)
     {
         if (_eNew == CPlayerGroundMotor.EState.AirThustersInSpace)
         {

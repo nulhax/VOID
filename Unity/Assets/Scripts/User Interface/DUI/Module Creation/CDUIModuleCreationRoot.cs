@@ -56,7 +56,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	private CModuleInterface.ESize m_SelectedPortSize = CModuleInterface.ESize.INVALID;
 
 	private CNetworkVar<CModuleInterface.EType> m_CurrentModuleType = null;
-	private CNetworkVar<CNetworkViewId> m_CurrentPortSelected = null;
+	private CNetworkVar<TNetworkViewId> m_CurrentPortSelected = null;
 	
 	
 	// Member Properties
@@ -89,7 +89,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
-		m_CurrentPortSelected = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_CurrentPortSelected = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
@@ -135,7 +135,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	}
 
 	[AServerOnly]
-	public void SetSelectedPort(CNetworkViewId _PortViewId)
+	public void SetSelectedPort(TNetworkViewId _PortViewId)
 	{
 		m_CurrentPortSelected.Set(_PortViewId);
 	}

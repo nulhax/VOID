@@ -126,11 +126,11 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifySwitchingTool");
 
-		m_acToolsViewId = new CNetworkVar<CNetworkViewId>[k_bMaxNumTools];
+		m_acToolsViewId = new CNetworkVar<TNetworkViewId>[k_bMaxNumTools];
 
 		for (uint i = 0; i < k_bMaxNumTools; ++i)
 		{
-			m_acToolsViewId[i] = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+			m_acToolsViewId[i] = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync);
 		}
 
 		m_bToolCapacity = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 3);
@@ -257,7 +257,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	}
 
 
-	public CNetworkViewId GetToolViewId(uint _bSlotId)
+	public TNetworkViewId GetToolViewId(uint _bSlotId)
 	{
         if (_bSlotId == k_bInvalidToolId)
         {
@@ -292,7 +292,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             {
                 case ENetworkAction.PickupTool:
                     {
-                        CNetworkViewId cToolViewId = _cStream.Read<CNetworkViewId>();
+                        TNetworkViewId cToolViewId = _cStream.Read<TNetworkViewId>();
 
                         cPlayerBelt.PickupTool(cToolViewId.GameObject);
                     }
@@ -725,7 +725,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void HandleVarSyncToolsViewId(byte _bSlotId)
     {
-        CNetworkVar<CNetworkViewId> cToolViewId = m_acToolsViewId[_bSlotId];
+        CNetworkVar<TNetworkViewId> cToolViewId = m_acToolsViewId[_bSlotId];
 
         // Check tool was removed from slot
         if (cToolViewId.Get() == null)
@@ -813,7 +813,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     const byte k_bInvalidToolId = k_bMaxNumTools;
 
 
-	CNetworkVar<CNetworkViewId>[] m_acToolsViewId = null;
+	CNetworkVar<TNetworkViewId>[] m_acToolsViewId = null;
 	CNetworkVar<byte> m_bToolCapacity = null;
 	CNetworkVar<byte> m_bActiveToolId = null;
 

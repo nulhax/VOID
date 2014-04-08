@@ -38,7 +38,7 @@ public class CGameShips : CNetworkMonoBehaviour
 	}
 
 
-	public static CNetworkViewId ShipViewId
+	public static TNetworkViewId ShipViewId
 	{
 		get { return (s_cInstance.m_cShipViewId); }
 	}
@@ -94,7 +94,7 @@ public class CGameShips : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	void SetShipNetworkViewId(CNetworkViewId _cShipViewId)
+	void SetShipNetworkViewId(TNetworkViewId _cShipViewId)
 	{
 		m_cShipViewId = _cShipViewId;
 		
@@ -110,9 +110,9 @@ public class CGameShips : CNetworkMonoBehaviour
 
 		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 
-        GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Bridge));
+        //GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Bridge));
         //cBirdgeObject.GetComponent<CFacilityExpansion>().GetExpansionPort(0).GetComponent<CExpansionPortBehaviour>().CreateFacility(CFacilityInterface.EType.Airlock, 0);
-        //GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Airlock));
+        GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Airlock));
 
         //cBirdgeObject.GetComponent<CFacilityExpansion>().GetExpansionPort(0).GetComponent<CExpansionPortBehaviour>().CreateFacility(CFacilityInterface.EType.Test, 0);
 
@@ -147,7 +147,7 @@ public class CGameShips : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkViewId m_cShipViewId = null;
+	TNetworkViewId m_cShipViewId = null;
 	
 	
 	static CGameShips s_cInstance = null;

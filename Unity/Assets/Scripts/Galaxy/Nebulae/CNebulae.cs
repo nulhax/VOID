@@ -9,14 +9,15 @@ public class CNebulae : MonoBehaviour
 	public float m_Persistence = 0.5f;
 	public Gradient m_Color;
 
-	public Transform m_OffsetFrom = null;
+	public Vector3 m_OffsetFrom;
+	public float m_OffsetScale = 0.01f;
 
 	private CImprovedPerlinNoise m_Perlin;
 	private Texture2D m_ColorGradient = null;
 
 	private int m_PrevSeed = 0;
 	private Gradient m_PrevGradiant = new Gradient();
-	
+
 	void Start () 
 	{
 		m_Perlin = new CImprovedPerlinNoise();
@@ -67,10 +68,10 @@ public class CNebulae : MonoBehaviour
 			LoadNoiseResources();
 		}
 
-		if(m_OffsetFrom != null)
-		{
-			renderer.material.SetVector("_Offset", m_OffsetFrom.transform.localPosition);
-		}
+		if(CGalaxy.instance && CGameCameras.MainCamera)
+			m_OffsetFrom = CGalaxy.instance.RelativePointToAbsolutePoint(CGameCameras.MainCamera.transform.position) * m_OffsetScale;
+
+		renderer.material.SetVector("_Offset", m_OffsetFrom);
 
 		renderer.material.SetFloat("_Frequency", m_Frequency);
 		renderer.material.SetFloat("_Lacunarity", m_Lacunarity);

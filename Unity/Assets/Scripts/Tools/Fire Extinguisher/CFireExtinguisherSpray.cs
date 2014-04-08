@@ -64,7 +64,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-        CNetworkViewId cFireExtinguisherViewId = _cStream.Read<CNetworkViewId>();
+        TNetworkViewId cFireExtinguisherViewId = _cStream.Read<TNetworkViewId>();
 
         switch (eAction)
         {
