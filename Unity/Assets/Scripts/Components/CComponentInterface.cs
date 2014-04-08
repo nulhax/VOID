@@ -206,7 +206,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
             {
                 // Set the node's health to 0
                 // Sets the node on fire
-                FireNode.GetComponent<CActorHealth>().health = 0;
+                FireNode.health.health = 0;
             }
         }
 

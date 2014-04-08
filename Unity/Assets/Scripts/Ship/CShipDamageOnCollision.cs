@@ -53,6 +53,7 @@ public class CShipDamageOnCollision : MonoBehaviour
                 Vector3 contactPointOnShip = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
 				m_DebugVisuals.Add(new SDebugVisual(contactPointOnShip, radius, Time.time + 1.0f));
 
+				// Damagable actors.
                 CActorHealth[] damagableActors = CGameShips.Ship.GetComponentsInChildren<CActorHealth>();
 				foreach (CActorHealth damagableActor in damagableActors)
                 {
@@ -65,11 +66,30 @@ public class CShipDamageOnCollision : MonoBehaviour
 						if (actorDistanceToImpact < radius)
 						{
 							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
-							damagableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
+							damagableActor.health -= damage;
 							//Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
 						}
 					}
                 }
+
+				// Damagable fires.
+				CFireHazard[] fireHazards = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
+				foreach (CFireHazard fireHazard in fireHazards)
+				{
+					if (fireHazard.health.takeDamageOnImpact)
+					{
+						//Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
+						float actorDistanceToImpact = (fireHazard.gameObject.transform.position - contactPointOnShip).magnitude;
+						//Debug.Log(damagableActor.gameObject.ToString() + " was " + actorDistanceToImpact.ToString() + " units from impact");
+
+						if (actorDistanceToImpact < radius)
+						{
+							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
+							fireHazard.health.health -= damage;
+							//Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
+						}
+					}
+				}
             }
         }
     }

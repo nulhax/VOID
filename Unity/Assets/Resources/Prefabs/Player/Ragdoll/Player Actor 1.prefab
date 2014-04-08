@@ -618,6 +618,7 @@ GameObject:
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400048}
+  - 114: {fileID: 11400030}
   m_Layer: 13
   m_Name: Player Actor 1
   m_TagString: Untagged
@@ -706,7 +707,6 @@ GameObject:
   - 54: {fileID: 5400002}
   - 135: {fileID: 13500000}
   - 114: {fileID: 11400040}
-  - 114: {fileID: 11400030}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged
@@ -1869,11 +1869,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400088}
   - {fileID: 400080}
   - {fileID: 400076}
   - {fileID: 400174}
   - {fileID: 400074}
+  - {fileID: 400088}
   m_Father: {fileID: 0}
 --- !u!4 &400080
 Transform:
@@ -2883,7 +2883,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eeb43f9b71d8cd347afd9820334db5d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  k_fMaxHealth: 100
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2906,13 +2905,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c2e12554ca2c1e41950fbf339c7f9a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cActorHead: {fileID: 100080}
-  m_OxygenReleaseParticles:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2935,6 +2927,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bSimulateClientGravity: 0
 --- !u!114 &11400020
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2992,20 +2985,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1519e8c8e4b0414487ff4f2bd9b307c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Visor: {fileID: 0}
 --- !u!114 &11400030
 MonoBehaviour:
-  m_ObjectHideFlags: 1
+  m_ObjectHideFlags: 13
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100088}
+  m_GameObject: {fileID: 100078}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
+  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AtmosphericConsumptionRate: .100000001
-  m_ConsumingAtmosphere: 0
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3121,6 +3111,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be6241d5b5cd608499c776fe463540d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_RootSkeleton: {fileID: 0}
+  m_PlayerHead: {fileID: 0}
+  m_RagdollHead: {fileID: 0}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -111,10 +111,10 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 				foreach(Collider collider in colliders)
 				{
-					CFireHazard fire = collider.gameObject.GetComponent<CFireHazard>();
+					CFireHazard fire = CUtility.FindInParents<CFireHazard>(collider.gameObject);
 					if (fire != null)
 					{
-						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
+						fire.health.health += 20 * Time.deltaTime;
 						break;
 					}
 				}

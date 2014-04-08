@@ -62,7 +62,12 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 
 		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.blue, m_CurrentHealth / maxHealth);
 	}
-	
+
+	void StormDamage()
+	{
+		gameObject.GetComponent<CActorHealth>().health -= 0.01f;
+		Debug.Log("Circuit Component Health: " + gameObject.GetComponent<CActorHealth>().health);
+	}
 
 	void Start()
 	{
@@ -80,8 +85,10 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
 		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
 		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
+
+		CGalaxyStorm galaxystorm = CGalaxy.instance.gameObject.GetComponent<CGalaxyStorm>();
+		galaxystorm.EventDamageComponent += StormDamage;
 	}
-	
 
 	void OnDestroy()
 	{
@@ -89,8 +96,7 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
         gameObject.GetComponent<CComponentInterface>().EventComponentFix   -= OnFix;
         gameObject.GetComponent<CComponentInterface>().EventHealthChange   -= OnHealthChange;
 	}
-	
-	
+
 	void Update()
 	{
 		
