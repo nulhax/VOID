@@ -102,7 +102,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 			bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;	
 			bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
 			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
-			bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Turbo)       > 0) ? true : false;	
+			bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Run)       > 0) ? true : false;	
 			
 			m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
 			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);

@@ -51,25 +51,25 @@ public class CUserInput : CNetworkMonoBehaviour
 	{
         INVALID = -1,
 
-		Primary,                  // Move Right                                      
-		Secondary,                // Move Left
-                                 
-		Use,                      // F
-		Visor,                    // C
-                                 
-		Move_Forward,       // W
-		Move_Backwards,     // S
-		Move_StrafeLeft,    // A
-		Move_StrafeRight,   // D
-        MoveGround_Jump,          // Space
-        Move_Crouch,        // Control
+		Primary,                 // Move Right                                      
+		Secondary,               // Move Left
+                                  
+		Use,                     // F
+		Visor,                   // C
+                                  
+		Move_Forward,            // W
+		Move_Backwards,          // S
+		Move_StrafeLeft,         // A
+		Move_StrafeRight,        // D
+        MoveGround_Jump,         // Space
+        Move_Crouch,             // Control
+        Move_Run,                // Shift
                                  
 		MoveFly_Up,               // Space
 		MoveFly_Down,             // Control
 		MoveFly_RollLeft,         // E
 		MoveFly_RollRight,        // Q
-                                
-		Move_Turbo,               // Shift
+        MoveFly_Stabilize,        // Shift
                                 
         GalaxyShip_Forward,       // W
         GalaxyShip_Backward,      // S
@@ -81,10 +81,10 @@ public class CUserInput : CNetworkMonoBehaviour
 		GalaxyShip_RollRight,
         GalaxyShip_Turbo,         // Shift
                                 
-        Tool_EquipToolSlot1,         // 1
-        Tool_EquipToolSlot2,         // 2
-        Tool_EquipToolSlot3,         // 3
-        Tool_EquipToolSlot4,         // 4
+        Tool_EquipToolSlot1,      // 1
+        Tool_EquipToolSlot2,      // 2
+        Tool_EquipToolSlot3,      // 3
+        Tool_EquipToolSlot4,      // 4
 		Tool_Reload,              // R
         Tool_Drop,                // G
                                 
