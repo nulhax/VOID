@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2300000}
   - 64: {fileID: 6400000}
   m_Layer: 0
-  m_Name: Exterior Ceiling Corner
+  m_Name: Exteiror Wall MS End
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,7 +41,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 5a3b9b314cd3ece48a6de9cf41b9bc9d, type: 2}
+  - {fileID: 2100000, guid: 2bafa10f94f7bd94a9309498d7e7e224, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -56,7 +56,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 0182c3dfeb15c0740a4053faac21bcf7, type: 3}
+  m_Mesh: {fileID: 4300000, guid: fb68e6c711baeb647a5a694d51cc0820, type: 3}
 --- !u!64 &6400000
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -68,8 +68,8 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
-  m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 0182c3dfeb15c0740a4053faac21bcf7, type: 3}
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: fb68e6c711baeb647a5a694d51cc0820, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

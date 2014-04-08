@@ -277,11 +277,16 @@ public class CTile : CGridObject
 			metaChanged = true;
 		}
 
-		// Wall caps are special cases
-		if(m_TileMetaData[ETileType.Wall_Ext_Cap].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext_Cap] && 
-		   GetTileTypeState(ETileType.Wall_Ext))
+		// Wall caps are special cases which detirmine meta on the fly
+		if(m_TileMetaData[ETileType.Wall_Ext_Cap].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext_Cap])
 		{
-			m_TileMetaData[ETileType.Wall_Ext_Cap] = new TTileMeta(TTileMeta.EType.None, metaIdentifiers[(int)ETileType.Wall_Ext_Cap], EDirection.North);
+			TTileMeta.EType metaType = TTileMeta.EType.Wall_Ext_Cap_CornerCap;
+
+			// Check for lower
+			if((metaIdentifiers[(int)ETileType.Wall_Ext_Cap] & (1 << (int)EDirection.Lower)) != 0)
+				metaType = TTileMeta.EType.Wall_Ext_Cap_CornerCap_2;
+
+			m_TileMetaData[ETileType.Wall_Ext_Cap] = new TTileMeta(metaType, metaIdentifiers[(int)ETileType.Wall_Ext_Cap], EDirection.North);
 			metaChanged = true;
 		}
 
@@ -386,7 +391,7 @@ public class CTile : CGridObject
 						// Only need to make it if it doesnt exist yet
 						if(!m_WallInverseObjects.ContainsKey(direction))
 						{
-		   					GameObject wallInverseObject = m_Grid.m_TileFactory.NewTile(ETileType.Wall_Ext_Cap, TTileMeta.EType.Wall_Ext_Cap_CornerCap);
+							GameObject wallInverseObject = m_Grid.m_TileFactory.NewTile(ETileType.Wall_Ext_Cap, m_TileMetaData[ETileType.Wall_Ext_Cap].m_Type);
 		   					wallInverseObject.transform.parent = transform;
 		   					wallInverseObject.transform.localPosition = Vector3.zero;
 		   					wallInverseObject.transform.localScale = Vector3.one;

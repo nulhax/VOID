@@ -130,8 +130,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: .123067997, y: 8.60000038, z: -2.41443801}
+  m_LocalRotation: {x: 0, y: -4.37113883e-08, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400002}
@@ -409,13 +409,13 @@ MonoBehaviour:
   - {fileID: 100000, guid: f0dd5b5539c8eca469070eed84c33293, type: 2}
   - {fileID: 100000, guid: b2e911cd60ae22640881b43fee21ec7d, type: 2}
   - {fileID: 100000, guid: dbd47e4d62fe7c94db73e52f5738b74f, type: 2}
-  - {fileID: 100002, guid: 50c53c6a8a263a846a65eb4d8f191620, type: 2}
-  - {fileID: 100000, guid: f0dd5b5539c8eca469070eed84c33293, type: 2}
-  - {fileID: 100002, guid: 5b28d6721c6a2104ca9fa7a904d9b4c2, type: 2}
-  - {fileID: 100000, guid: da5950f587b4bef4eb37b4473b45378a, type: 2}
+  - {fileID: 100000, guid: 50c53c6a8a263a846a65eb4d8f191620, type: 2}
+  - {fileID: 100000, guid: 76e7ea335e9d402428febb32e5e7d6c4, type: 2}
+  - {fileID: 100000, guid: 5b28d6721c6a2104ca9fa7a904d9b4c2, type: 2}
+  - {fileID: 100000, guid: 5e27e7c42a6abf949882cdb10b7b84a1, type: 2}
   m_WallIntTileTypes: c8000000c9000000ca000000cb000000cc000000cd000000ce000000
   m_WallIntTilePrefabs:
-  - {fileID: 100000, guid: 2ce6897639f86614eb4c4c5e966f38b4, type: 2}
+  - {fileID: 100000, guid: 612ba77ae278a4f43bb54fa956d2f66f, type: 2}
   - {fileID: 100000, guid: 2ce6897639f86614eb4c4c5e966f38b4, type: 2}
   - {fileID: 100000, guid: 950df8929da7e0744bb0fbb19e389ddc, type: 2}
   - {fileID: 100000, guid: 40d1dfd218b8e5541b99a0760b25d6e7, type: 2}
@@ -428,12 +428,12 @@ MonoBehaviour:
   - {fileID: 100000, guid: d00849cbba6118340a2d69972d018a6e, type: 2}
   - {fileID: 100000, guid: 85c6a476f3ad34349b7474eb6200318f, type: 2}
   - {fileID: 100000, guid: 2d317238efcaaa64a8702255ce043312, type: 2}
-  - {fileID: 100000, guid: 663f5865a334cf14da7f16e6b1f7d89e, type: 2}
+  - {fileID: 100000, guid: f3c738d1e6b11df4a9edf17c12a386b3, type: 2}
   - {fileID: 100000, guid: 9e8557d6388a0424e8d34fce1a0362c3, type: 2}
   m_WallExtCapTileTypes: 9001000091010000
   m_WallExtCapTilePrefabs:
   - {fileID: 100000, guid: a926a9563abed474abb28a7ee62d503f, type: 2}
-  - {fileID: 100002, guid: 5d8b789eb6552e440bf51055014f5a03, type: 2}
+  - {fileID: 100000, guid: 5d8b789eb6552e440bf51055014f5a03, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
