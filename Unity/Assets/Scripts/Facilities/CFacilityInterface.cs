@@ -218,7 +218,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	{
 		// Find all of the tiles contained within this facility
 		m_Tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
-
       
 	    // Register facility
 	    CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(this);

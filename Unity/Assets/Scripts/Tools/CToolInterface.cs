@@ -57,6 +57,16 @@ public class CToolInterface : CNetworkMonoBehaviour
 		MAX
 	}
 
+	public enum EToolCategory
+	{
+		INVALID,
+
+		OneHanded,
+		TwoHanded,
+
+		MAX,
+	}
+
 
     [ABitSize(4)]
 	public enum ENetworkAction : byte
@@ -394,7 +404,11 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Fields
 
 	public EType m_eToolType = EType.INVALID;
+	public EToolCategory m_eToolCategory = EToolCategory.INVALID;
 
+
+    public GameObject m_RightHandPos;
+    public GameObject m_LeftHandPos;
 
     CNetworkVar<ulong> m_ulOwnerPlayerId = null;
     CNetworkVar<bool> m_bReloading = null;
@@ -406,6 +420,5 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
-
 
 };

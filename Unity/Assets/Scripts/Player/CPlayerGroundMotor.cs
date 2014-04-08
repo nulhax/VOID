@@ -640,7 +640,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 // Update state
                 if (_bDown)
                 {
-                    m_uiInputStates |= (uint)eTargetState;
+					m_uiInputStates |= (uint)eTargetState;
                 }
                 else
                 {
@@ -652,7 +652,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 if (gameObject == CGamePlayers.SelfActor)
                 {
                     // Notify event observers
-                    if (EventInputStatesChange != null) EventInputStatesChange(PreviousInputStates, InputStates);
+					if (EventInputStatesChange != null) EventInputStatesChange(PreviousInputStates, InputStates);
                 }
             }
         }

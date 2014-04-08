@@ -110,9 +110,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 	private CGalaxyBackdrop mBackdrop = null;
 	public CGalaxyBackdrop backdrop { get { return mBackdrop; } }
 
-	private DungeonMaster mDungeonMaster = null;
-	public DungeonMaster dungeonMaster { get { return mDungeonMaster; } }
-
 	private SCellPos mCentreCell = new SCellPos(0, 0, 0);	// All cells are offset by this cell.
 	protected CNetworkVar<int> mCentreCellX;
 	protected CNetworkVar<int> mCentreCellY;
@@ -172,7 +169,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public ulong numCells { get { /*return (uint)Mathf.Pow(8, muiNumCellSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ul *= 8u; return ul; } }
 	public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
 
-	public bool initialiseDungeonMaster = true;
 	public bool debug_GalaxyStuff = false;
 
 	///////////////////////////////////////////////////////////////////////////
@@ -195,9 +191,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		if (CNetwork.IsServer)
 		{
-			if (initialiseDungeonMaster)
-				mDungeonMaster = gameObject.AddComponent<DungeonMaster>();
-
 			mGubbins = new System.Collections.Generic.List<CRegisteredGubbin>();
 			mGubbinsToLoad = new System.Collections.Generic.List<CGubbinMeta>();
 			mGubbinsToUnload = new System.Collections.Generic.List<CRegisteredGubbin>();
@@ -997,5 +990,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 		}
 
 		return result;
+	}
+
+	public static float GetMass(GameObject gameObject)
+	{
+		while (gameObject != null)
+		{
+			Rigidbody rigidBody = gameObject.GetComponent<Rigidbody>();
+			if (rigidBody)
+				return rigidBody.mass;
+
+			gameObject = gameObject.transform.parent.gameObject;
+		}
+
+		return 1.0f;
 	}
 }

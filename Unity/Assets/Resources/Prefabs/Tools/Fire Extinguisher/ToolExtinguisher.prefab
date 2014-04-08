@@ -276,6 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bSimulateClientGravity: 0
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -310,6 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eToolType: 6
+  m_eToolCategory: 2
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -360,11 +362,11 @@ ParticleSystem:
   looping: 1
   prewarm: 0
   playOnAwake: 0
-  moveWithTransform: 1
+  moveWithTransform: 0
   InitialModule:
     enabled: 1
     startLifetime:
-      scalar: .200000003
+      scalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -524,7 +526,7 @@ ParticleSystem:
         rgba: 4294967295
       minMaxState: 0
     startSize:
-      scalar: .319999993
+      scalar: 2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -585,7 +587,7 @@ ParticleSystem:
         m_PostInfinity: 2
       minMaxState: 0
     gravityModifier: 0
-    inheritVelocity: 0
+    inheritVelocity: .75
     maxNumParticles: 2223
   ShapeModule:
     serializedVersion: 2
@@ -646,21 +648,26 @@ ParticleSystem:
     time3: 0
     m_BurstCount: 0
   SizeModule:
-    enabled: 0
+    enabled: 1
     curve:
       scalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
         - time: 0
-          value: 1
+          value: .185185194
           inSlope: 0
           outSlope: 0
           tangentMode: 0
-        - time: 1
+        - time: .745454848
           value: 1
-          inSlope: 0
-          outSlope: 0
+          inSlope: 1.08838081
+          outSlope: 1.08838081
+          tangentMode: 0
+        - time: 1
+          value: 0
+          inSlope: -.0558278896
+          outSlope: -.0558278896
           tangentMode: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -716,7 +723,7 @@ ParticleSystem:
         m_PostInfinity: 2
       minMaxState: 0
   ColorModule:
-    enabled: 0
+    enabled: 1
     gradient:
       maxGradient:
         key0:
@@ -745,7 +752,7 @@ ParticleSystem:
           rgba: 0
         ctime0: 0
         ctime1: 65535
-        ctime2: 0
+        ctime2: 65535
         ctime3: 0
         ctime4: 0
         ctime5: 0
@@ -1367,17 +1374,17 @@ ParticleSystem:
       minMaxState: 1
     range: {x: 0, y: 1}
   CollisionModule:
-    enabled: 0
-    type: 0
+    enabled: 1
+    type: 1
     plane0: {fileID: 0}
     plane1: {fileID: 0}
     plane2: {fileID: 0}
     plane3: {fileID: 0}
     plane4: {fileID: 0}
     plane5: {fileID: 0}
-    dampen: 0
-    bounce: 1
-    energyLossOnCollision: 0
+    dampen: .949999988
+    bounce: .0500000007
+    energyLossOnCollision: .5
     minKillSpeed: 0
     particleRadius: 12.2600002
     collidesWith:
@@ -1422,7 +1429,7 @@ ParticleSystemRenderer:
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_SortMode: 0
+  m_SortMode: 1
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
