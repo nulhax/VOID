@@ -68,7 +68,7 @@ public class CTorchLight : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-            CNetworkViewId cModuleGunViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId cModuleGunViewId = _cStream.Read<TNetworkViewId>();
 
             GameObject cModuleGunObject = cModuleGunViewId.GameObject;
             CToolInterface cToolInterface = cModuleGunObject.GetComponent<CToolInterface>();

@@ -121,6 +121,7 @@ GameObject:
   - 114: {fileID: 11400002}
   - 82: {fileID: 8200000}
   - 114: {fileID: 11400000}
+  - 114: {fileID: 11400016}
   m_Layer: 0
   m_Name: ToolMiningDrill
   m_TagString: Untagged
@@ -485,6 +486,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_eToolType: 10
+  m_eToolCategory: 0
+  m_RightHandPos: {fileID: 0}
+  m_LeftHandPos: {fileID: 0}
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -507,6 +511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bSimulateClientGravity: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -519,8 +524,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_CanBoard: 1
-  m_CanDisembark: 1
+  m_bCanBoard: 1
+  m_bCanDisembark: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -543,6 +548,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400016
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!198 &19800000

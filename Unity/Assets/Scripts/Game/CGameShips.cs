@@ -38,7 +38,7 @@ public class CGameShips : CNetworkMonoBehaviour
 	}
 
 
-	public static CNetworkViewId ShipViewId
+	public static TNetworkViewId ShipViewId
 	{
 		get { return (s_cInstance.m_cShipViewId); }
 	}
@@ -94,7 +94,7 @@ public class CGameShips : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	void SetShipNetworkViewId(CNetworkViewId _cShipViewId)
+	void SetShipNetworkViewId(TNetworkViewId _cShipViewId)
 	{
 		m_cShipViewId = _cShipViewId;
 		
@@ -147,7 +147,7 @@ public class CGameShips : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkViewId m_cShipViewId = null;
+	TNetworkViewId m_cShipViewId = null;
 	
 	
 	static CGameShips s_cInstance = null;

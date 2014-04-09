@@ -38,26 +38,14 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
         set { m_RightHandPos = value; }			 
         get { return (m_RightHandPos); }
-	}
-
-    public Vector3 RightHandIKTargetPos
-    {
-        set { m_RightHandTargetPos = value; m_fRightHandPosLerpTimer = 0.0f; }          
-        get { return (m_RightHandTargetPos); }
-    }
+	}   
 
 	public Vector3 LeftHandIKPos
     {
         set { m_LeftHandPos = value; }
         get { return (m_LeftHandPos); }
-    }  
-
-    public Vector3 LeftHandIKTargetPos
-    {
-        set { m_LeftHandTargetPos = value; }          
-        get { return (m_LeftHandTargetPos); }
-    }
-
+    } 
+   
 	public Quaternion RightHandIKRot
 	{
 		set { m_RightHandRot = value; }			 
@@ -98,10 +86,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
     Quaternion              m_RightHandRot;
 
 	const float 			m_kfRightHandWeightLerpTime = 0.75f;
-	float 					m_fRightHandWeightLerpTimer = 0.0f;
-
-    const float             m_kfRightHandPosLerpTime = 0.01f;
-    float                   m_fRightHandPosLerpTimer = 0.0f;
+	float 					m_fRightHandWeightLerpTimer = 0.0f;   
 
 	//Left hand
 	float 					m_fLeftHandIKWeight = 0;
@@ -113,10 +98,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	const float 			m_kfLeftHandWeightLerpTime = 0.75f;
 	float 					m_fLeftHandWeightLerpTimer = 0.0f;		
 
-    const float             m_kfLeftHandPosLerpTime = 0.75f;
-    float                   m_fLeftHandPosLerpTimer = 0.0f;
-
-	//Member Methods
+    //Member Methods
 	
 	// Use this for initialization
 	void Start () 
@@ -244,12 +226,10 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	}  
 	
 	// Update is called once per frame
-	void LateUpdate ()
+	void Update ()
 	{ 			
        	LerpRightHandWeight(); 
-        LerpRightHandPos();
-
-		LerpLeftHandWeight();
+        LerpLeftHandWeight();
 	}  
 
     void LerpRightHandWeight()
@@ -262,19 +242,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
             
             RightHandIKWeight = Mathf.Lerp(RightHandIKWeight, m_fRightIKTargetWeight, LerpFactor);
         }       
-    }
-
-    void LerpRightHandPos()
-    {
-        if (m_fRightHandPosLerpTimer < m_kfRightHandPosLerpTime)
-        {
-            m_fRightHandPosLerpTimer += Time.deltaTime;   
-            
-            float LerpFactor = m_fRightHandPosLerpTimer / m_kfRightHandPosLerpTime;
-            
-            m_RightHandPos = Vector3.Lerp(m_RightHandPos, m_RightHandTargetPos, LerpFactor);
-        }       
-    }
+    }   
 
 	void LerpLeftHandWeight()
 	{
@@ -288,6 +256,50 @@ public class CPlayerIKController : CNetworkMonoBehaviour
         }     
 	}
 	
+    public void SetRightHandTarget(Vector3 _position, Quaternion _rotation)
+    {
+        RightHandIKPos = _position;
+        RightHandIKRot = _rotation;
+        
+        m_fRightHandIKWeight = 0;
+        m_fRightIKTargetWeight = 1;
+        
+        m_fRightHandWeightLerpTimer = 0.0f;
+    }
+    
+    public void EndRightHandIK()
+    {
+        if (m_fRightHandIKWeight > 0)
+        {
+            m_fRightHandIKWeight = 1;
+            m_fRightIKTargetWeight = 0;
+            
+            m_fRightHandWeightLerpTimer = 0.0f;
+        }
+    }
+    
+    public void SetLeftHandTarget(Vector3 _position, Quaternion _rotation)
+    {
+        LeftHandIKPos = _position;
+        LeftHandIKRot = _rotation;
+        
+        m_fLeftHandIKWeight = 0;
+        m_fLeftIKTargetWeight = 1;
+        
+        m_fLeftHandWeightLerpTimer = 0.0f;
+    }
+    
+    public void EndLeftHandIK()
+    {
+        if (m_fLeftHandIKWeight > 0)
+        {
+            m_fLeftHandIKWeight = 1;
+            m_fLeftIKTargetWeight = 0;
+            
+            m_fLeftHandWeightLerpTimer = 0.0f;
+        }
+    }
+
 	void OnAnimatorIK()
 	{
 		if(m_ThirdPersonAnim) 
@@ -321,42 +333,4 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			}
 		}
 	}  
-
-    public void SetRightHandTarget(Vector3 _position, Quaternion _rotation)
-    {
-        RightHandIKPos = _position;
-        RightHandIKRot = _rotation;
-
-        m_fRightHandIKWeight = 0;
-        m_fRightIKTargetWeight = 1;
-
-        m_fRightHandWeightLerpTimer = 0.0f;
-    }
-
-    public void EndRightHandIK()
-    {
-        m_fRightHandIKWeight = 1;
-        m_fRightIKTargetWeight = 0;
-
-        m_fRightHandWeightLerpTimer = 0.0f;
-    }
-    
-	public void SetLeftHandTarget(Vector3 _position, Quaternion _rotation)
-    {
-		LeftHandIKPos = _position;
-		LeftHandIKRot = _rotation;
-
-        m_fLeftHandIKWeight = 0;
-        m_fLeftIKTargetWeight = 1;
-
-        m_fLeftHandWeightLerpTimer = 0.0f;
-    }
-
-    public void EndLeftHandIK()
-    {
-        m_fLeftHandIKWeight = 1;
-        m_fLeftIKTargetWeight = 0;
-
-        m_fLeftHandWeightLerpTimer = 0.0f;
-    }
 }

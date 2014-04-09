@@ -11,6 +11,7 @@ GameObject:
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400002}
+  - 114: {fileID: 11400026}
   m_Layer: 11
   m_Name: Galaxy
   m_TagString: Untagged
@@ -1427,6 +1428,17 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   m_OffsetFrom: {x: 0, y: 0, z: 0}
   m_OffsetScale: .00999999978
+--- !u!114 &11400026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43d1858a8f4cd5d41b23e44a332a6fbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

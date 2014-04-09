@@ -154,7 +154,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cParentViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cParentViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
         
         _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
         _cRegistrar.RegisterRpc(this, "RemoteSetRotation");
@@ -436,7 +436,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-	public void SetParent(CNetworkViewId _cParentViewId)
+	public void SetParent(TNetworkViewId _cParentViewId)
 	{
 		m_cParentViewId.Set(_cParentViewId);
 	}
@@ -493,7 +493,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-	public CNetworkViewId ViewId
+	public TNetworkViewId ViewId
 	{
 		set
 		{
@@ -558,19 +558,19 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-    public static CNetworkViewId GenerateDynamicViewId()
+    public static TNetworkViewId GenerateDynamicViewId()
     {
 		// Ensure servers only generate dynamic view ids
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot generate network view ids!!!");
 
-        CNetworkViewId cViewId = new CNetworkViewId();
+        TNetworkViewId cViewId = new TNetworkViewId();
 
         for (ushort i = k_usMaxStaticViewId; i < k_usMaxDynamicViewId; ++i)
         {
             // Check the dynamic view id is free
             if (!s_cNetworkViews.ContainsKey(i))
             {
-                cViewId = new CNetworkViewId(i, 0);
+                cViewId = new TNetworkViewId(i, 0);
 
 				// Add id into list without owner so someone else does not claim the id
                 s_cNetworkViews.Add(i, null);
@@ -586,7 +586,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-    public static CNetworkView FindUsingViewId(CNetworkViewId _cViewId)
+    public static CNetworkView FindUsingViewId(TNetworkViewId _cViewId)
     {
 		CNetworkView cNetworkView = null;
 
@@ -664,7 +664,7 @@ public class CNetworkView : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             // Extract owner network view id
-            CNetworkViewId cNetworkViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId cNetworkViewId = _cStream.Read<TNetworkViewId>();
 
             // Extract procedure type
             EProdecure eProcedure = (EProdecure)_cStream.Read<byte>();
@@ -725,16 +725,16 @@ public class CNetworkView : CNetworkMonoBehaviour
     // protected:
 
 
-	protected static CNetworkViewId GenerateStaticViewId()
+	protected static TNetworkViewId GenerateStaticViewId()
 	{
-		CNetworkViewId cViewId = null;
+		TNetworkViewId cViewId = null;
 
 		for (ushort i = 5; i < k_usMaxStaticViewId; ++i)
 		{
 			// Check the static view id is free
 			if (!s_cNetworkViews.ContainsKey(i))
 			{
-				cViewId = new CNetworkViewId(i, 0);
+				cViewId = new TNetworkViewId(i, 0);
 
 				// Add id into list without owner so someone else does not claim the id
 				s_cNetworkViews.Add(i, null);
@@ -823,7 +823,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 			if (!m_mChildrenNetworkViews.ContainsKey(i))
 			{
 				m_mChildrenNetworkViews.Add(i, _cChildView);
-				_cChildView.ViewId = new CNetworkViewId(0, i);
+				_cChildView.ViewId = new TNetworkViewId(0, i);
 
 				//Debug.LogError(string.Format("Registered ({0}) sub newwork view with ViewId({1}) SubViewId({2})", _cSubView.gameObject.name, _cSubView.ViewId.Id, _cSubView.ViewId.ChildId));
 
@@ -841,10 +841,10 @@ public class CNetworkView : CNetworkMonoBehaviour
     // private:
 
 
-    public CNetworkViewId m_cNetworkViewId = null;
+    public TNetworkViewId m_cNetworkViewId = null;
 
 
-	CNetworkVar<CNetworkViewId> m_cParentViewId = null;
+	CNetworkVar<TNetworkViewId> m_cParentViewId = null;
     
 
     Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();

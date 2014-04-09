@@ -13,8 +13,7 @@
 
 // Instructions: Add Additional Ship Hazards
 //
-// Note: All steps can be found by pressing
-//       [Ctrl]+[F] and typing in the step.
+// Note: All steps can be found by pressing using [Ctrl] + [F]
 //
 // Step 1: Add a new element to the Enumerated type 'EHazardType'.
 //

@@ -75,7 +75,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     {
         while (_cStream.HasUnreadData)
         {
-            CNetworkViewId oxygenRefillViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId oxygenRefillViewId = _cStream.Read<TNetworkViewId>();
             ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
             GameObject cOxygenRefillerObject = oxygenRefillViewId.GameObject;
@@ -92,7 +92,7 @@ public class COxygenRefillerBehaviour : MonoBehaviour
     }
 
     [ALocalOnly]
-    private void OnPlayerUse(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)
+    private void OnPlayerUse(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bDown)
     {
         // TODO: if broken do not call this section
         s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);

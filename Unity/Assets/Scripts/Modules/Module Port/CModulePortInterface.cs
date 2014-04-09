@@ -42,7 +42,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 	private Camera m_CubemapCam = null;
 	private Cubemap m_CubemapSnapshot = null;
 	
-	CNetworkVar<CNetworkViewId> m_cAttachedModuleViewId = null;
+	CNetworkVar<TNetworkViewId> m_cAttachedModuleViewId = null;
 
 
 // Member Properties
@@ -61,7 +61,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 	}
 
 
-    public CNetworkViewId AttachedModuleViewId
+    public TNetworkViewId AttachedModuleViewId
     {
         get { return (m_cAttachedModuleViewId.Get()); }
     }
@@ -89,7 +89,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cAttachedModuleViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_cAttachedModuleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
     }
 
 

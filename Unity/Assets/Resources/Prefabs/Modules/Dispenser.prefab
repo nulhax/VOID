@@ -55,6 +55,7 @@ GameObject:
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400060}
   - 114: {fileID: 11400062}
+  - 114: {fileID: 11400010}
   m_Layer: 0
   m_Name: Dispenser
   m_TagString: Untagged
@@ -287,7 +288,6 @@ GameObject:
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400012}
   - 199: {fileID: 19900000}
-  - 114: {fileID: 11400010}
   m_Layer: 0
   m_Name: Fire
   m_TagString: Untagged
@@ -465,10 +465,10 @@ Transform:
   m_Children:
   - {fileID: 400020}
   - {fileID: 400046}
-  - {fileID: 400030}
   - {fileID: 400028}
   - {fileID: 400024}
   - {fileID: 400002}
+  - {fileID: 400030}
   m_Father: {fileID: 0}
 --- !u!4 &400006
 Transform:
@@ -1462,25 +1462,12 @@ MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100030}
+  m_GameObject: {fileID: 100004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: 
-  m_fPitchMin: 1
-  m_fpitchMax: 1
-  m_fVolumeMin: 1
-  m_fVolumeMax: 1
-  m_fFadeInTimeList: []
-  m_fFadeOutTimeList: []
-  m_arAudioClipPool:
-  - {fileID: 8300000, guid: 52a3e64b2065aa14bb14d7b10588afe7, type: 3}
-  m_barLoopList: 01
-  m_bContinuousEvent: 0
-  m_fPlayFrequency: 0
-  m_eSoundType: 0
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -990,7 +990,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.66361475, z: .100000001}
+  m_LocalPosition: {x: 0, y: 1.66361475, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400006}
@@ -2012,6 +2012,7 @@ MonoBehaviour:
   m_skeletonRoot: {fileID: 100042}
   m_ragdollHead: {fileID: 100100}
   m_playerHead: {fileID: 100004}
+  m_playerNeck: {fileID: 0}
   m_headlessAvatar: {fileID: 9000000, guid: 873759d009438c74eb042b4da538916d, type: 3}
 --- !u!135 &13500000
 SphereCollider:

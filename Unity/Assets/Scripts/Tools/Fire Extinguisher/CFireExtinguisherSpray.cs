@@ -64,7 +64,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
         ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-        CNetworkViewId cFireExtinguisherViewId = _cStream.Read<CNetworkViewId>();
+        TNetworkViewId cFireExtinguisherViewId = _cStream.Read<TNetworkViewId>();
 
         switch (eAction)
         {
@@ -111,10 +111,10 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 
 				foreach(Collider collider in colliders)
 				{
-					CFireHazard fire = collider.gameObject.GetComponent<CFireHazard>();
+					CFireHazard fire = CUtility.FindInParents<CFireHazard>(collider.gameObject);
 					if (fire != null)
 					{
-						fire.GetComponent<CActorHealth>().health += 20 * Time.deltaTime;
+						fire.health.health += 20 * Time.deltaTime;
 						break;
 					}
 				}

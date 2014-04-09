@@ -83,7 +83,8 @@ public class CGame : CNetworkMonoBehaviour
 
         // Initialise the dungeon master
         // Note: This may need to be moved should the lobby system change
-        if (InitialiseDungeonMaster)
+        if (CNetwork.IsServer &&
+            InitialiseDungeonMaster)
         {
             m_DungeonMaster = gameObject.AddComponent<DungeonMaster>();
         }

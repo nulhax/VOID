@@ -61,7 +61,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cTurretViewId = _cStream.Read<CNetworkViewId>();
+			TNetworkViewId cTurretViewId = _cStream.Read<TNetworkViewId>();
 			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
 			
 			if (cTurretObject != null)

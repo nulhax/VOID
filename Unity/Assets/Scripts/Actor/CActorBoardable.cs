@@ -21,149 +21,178 @@ public class CActorBoardable : CNetworkMonoBehaviour
 {
 	
 // Member Types
+
+
 	public enum EBoardingState
 	{
 		INVALID,
 
 		Onboard,
 		Offboard,
+
+        MAX
 	}
 	
+
 // Member Delegates and Events
+
+
 	public delegate void BoardingHandler();
 	
 	public event BoardingHandler EventBoard;
 	public event BoardingHandler EventDisembark;
 	
+
 // Member Fields
+
+
 	public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
-	public bool m_CanBoard = true;
-	public bool m_CanDisembark = true;
+	public bool m_bCanBoard = true;
+	public bool m_bCanDisembark = true;
 
-	private int m_OriginalLayer = 0;
+	private int m_iOriginalLayer = 0;
 
-	private CNetworkVar<EBoardingState> m_BoardingState = null;
+	private CNetworkVar<EBoardingState> m_eBoardingState = null;
+
 	
-// Member Properties		
+// Member Properties	
+	
+
 	public EBoardingState BoardingState
 	{
-		get { return (m_BoardingState.Get()); }
+		get { return (m_eBoardingState.Get()); }
 	}
+
 
 // Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_BoardingState = _cRegistrar.CreateReliableNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
-	}
-	
-	public void OnNetworkVarSync(INetworkVar _rSender)
-	{
-		// Boarding state
-		if(_rSender == m_BoardingState)
-		{
-			if(BoardingState == EBoardingState.Onboard && m_CanBoard)
-			{
-				if(EventBoard != null)
-					EventBoard();
-			}
-			else if(BoardingState == EBoardingState.Offboard && m_CanDisembark)
-			{
-				if(EventDisembark != null)
-					EventDisembark();
-			}
-		}
+		m_eBoardingState = _cRegistrar.CreateReliableNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 
-	public void Awake()
+
+    public void BoardActor()
+    {
+        // Check if this actor isnt a child of another boardable actor
+        if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
+        {
+            if (CNetwork.IsServer)
+            {
+                // Set the boarding state
+                m_eBoardingState.Set(EBoardingState.Onboard);
+            }
+
+            // Get the inverse of the relative velocity of the actor boarding
+            Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
+
+            // Add the current velocity of the actor transformed to simulation space
+            Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.identity) * rigidbody.velocity;
+            transferedVelocity += currentVelocity;
+
+            // Transfer the actor to ship space
+            CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
+
+            // Set the compensation velocity of the actor
+            rigidbody.velocity = transferedVelocity;
+        }
+    }
+
+
+    public void DisembarkActor()
+    {
+        // Check if this actor isnt a child of another boardable actor
+        if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
+        {
+            if (CNetwork.IsServer)
+            {
+                // Set the boarding state
+                m_eBoardingState.Set(EBoardingState.Offboard);
+            }
+
+            // Transfer the actor to galaxy ship space
+            CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
+
+            // Get the relative velocity of the actor disembarking and apply the compensation force to the actor
+            Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
+
+            // Add the current velocity of the actor transformed to galaxy space
+            Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.identity) * rigidbody.velocity;
+            transferedVelocity += currentVelocity;
+
+            // Set the compensation velocity of the actor
+            rigidbody.velocity = transferedVelocity;
+        }
+    }
+
+
+	void Awake()
 	{
 		// Save the original layer
-		m_OriginalLayer = gameObject.layer;
+		m_iOriginalLayer = gameObject.layer;
 
 		// Register the boarding/disembarking handlers
 		EventBoard += SetOriginalLayer;
 		EventDisembark += SetGalaxyLayer;
 	}
 
-	public void Start()
+
+	void Start()
 	{	
 		// Set the boarding state if it is still invalid
 		if(CNetwork.IsServer && BoardingState == EBoardingState.INVALID)
 		{
-			m_BoardingState.Set(m_InitialBoardingState);
+			m_eBoardingState.Set(m_InitialBoardingState);
 		}
 	}
 
-	private void SetGalaxyLayer()
+
+	void SetGalaxyLayer()
 	{
 		// Resursively set the galaxy layer on the actor
 		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
 
 		// Add the galaxy shiftable component
-		if(gameObject.GetComponent<GalaxyShiftable>() == null)
-			gameObject.AddComponent<GalaxyShiftable>();
-
-		// Set as parent of nothing
-		//transform.parent = null;
+        if (gameObject.GetComponent<GalaxyShiftable>() == null)
+        {
+            gameObject.AddComponent<GalaxyShiftable>();
+        }
 	}
 	
-	private void SetOriginalLayer()
+
+	void SetOriginalLayer()
 	{
 		// Resursively set the original layer on the actor
-		CUtility.SetLayerRecursively(gameObject, m_OriginalLayer);
+		CUtility.SetLayerRecursively(gameObject, m_iOriginalLayer);
 
 		// Remove the galaxy shiftable component
-		if(gameObject.GetComponent<GalaxyShiftable>() != null)
-			Destroy(gameObject.GetComponent<GalaxyShiftable>());
-
-		// Set as parent of the ship
-		//transform.parent = CGameShips.Ship.transform;
+        if (gameObject.GetComponent<GalaxyShiftable>() != null)
+        {
+            Destroy(gameObject.GetComponent<GalaxyShiftable>());
+        }
 	}
 
-	[AServerOnly]
-	public void DisembarkActor()
-	{
-		// Check if this actor isnt a child of another boardable actor
-		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
-		{
-			// Set the boarding state
-			m_BoardingState.Set(EBoardingState.Offboard);
 
-			// Transfer the actor to galaxy ship space
-			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        // Boarding state
+        if (_cSyncedVar == m_eBoardingState)
+        {
+            if (BoardingState == EBoardingState.Onboard && 
+                m_bCanBoard)
+            {
+                // Notify observers about this actor boarding
+                if (EventBoard != null) EventBoard();
+            }
+            else if (BoardingState == EBoardingState.Offboard && 
+                     m_bCanDisembark)
+            {
+                // Notify observers about this actor disembarking
+                if (EventDisembark != null) EventDisembark();
+            }
+        }
+    }
 
-			// Get the relative velocity of the actor disembarking and apply the compensation force to the actor
-			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);
 
-			// Add the current velocity of the actor transformed to galaxy space
-			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.identity) * rigidbody.velocity;
-			transferedVelocity += currentVelocity;
-
-			// Set the compensation velocity of the actor
-			rigidbody.velocity = transferedVelocity;
-		}
-	}
-
-	[AServerOnly]
-	public void BoardActor()
-	{
-		// Check if this actor isnt a child of another boardable actor
-		if(CUtility.FindInParents<CActorBoardable>(gameObject) == null)
-		{
-			// Set the boarding state
-			m_BoardingState.Set(EBoardingState.Onboard);
-
-			// Get the inverse of the relative velocity of the actor boarding
-			Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
-
-			// Add the current velocity of the actor transformed to simulation space
-			Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.identity) * rigidbody.velocity;
-			transferedVelocity += currentVelocity;
-
-			// Transfer the actor to ship space
-			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
-			
-			// Set the compensation velocity of the actor
-			rigidbody.velocity = transferedVelocity;
-		}
-	}
 }

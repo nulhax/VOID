@@ -97,9 +97,9 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
                 case ENetworkAction.SetRepairState:
                 {
                     //Figure out which kits sent it's new state
-                    CCircuitryKitBehaviour CircuitryKit = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CCircuitryKitBehaviour>();
+                    CCircuitryKitBehaviour CircuitryKit = _cStream.Read<TNetworkViewId>().GameObject.GetComponent<CCircuitryKitBehaviour>();
                     
-                    CircuitryKit.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
+                    CircuitryKit.m_TargetComponent = _cStream.Read<TNetworkViewId>().GameObject.GetComponent<CComponentInterface>();
                     CircuitryKit.m_eRepairState = (ERepairState)_cStream.Read<byte>();
                     
                     break;
@@ -203,8 +203,8 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
         m_IKController.RightHandIKPos = m_TargetList[m_iTargetIndex].position;    
         m_IKController.RightHandIKRot = m_TargetList[m_iTargetIndex].rotation; 
 
-        CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
-        CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
         
         s_cSerializeStream.Write((byte)ENetworkAction.SetRepairState);
         s_cSerializeStream.Write(senderID);

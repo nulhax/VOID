@@ -81,6 +81,7 @@ GameObject:
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400032}
   - 114: {fileID: 11400034}
+  - 114: {fileID: 11400036}
   m_Layer: 0
   m_Name: Player Spawner
   m_TagString: Untagged
@@ -1009,6 +1010,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400036
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &100100000

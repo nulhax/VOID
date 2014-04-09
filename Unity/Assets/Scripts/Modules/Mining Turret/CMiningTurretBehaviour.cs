@@ -64,7 +64,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cTargetAsteroidViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cTargetAsteroidViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 		m_bFractureLaserVisible = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 		m_bExtractorBeamVisible = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
@@ -83,7 +83,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cTurretViewId = _cStream.Read<CNetworkViewId>();
+			TNetworkViewId cTurretViewId = _cStream.Read<TNetworkViewId>();
 			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
 
 			if (cTurretObject != null)
@@ -161,7 +161,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	void UpdateFractureLaser()
 	{
-        CNetworkViewId cTargetAsteroidChunkViewId = null;
+        TNetworkViewId cTargetAsteroidChunkViewId = null;
         bool bLaserVisible = false;
         bool bExtractorBeamVisible = false;
 
@@ -375,7 +375,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	public GameObject m_MiningLaserPrefab = null;
 
 
-	CNetworkVar<CNetworkViewId> m_cTargetAsteroidViewId = null;
+	CNetworkVar<TNetworkViewId> m_cTargetAsteroidViewId = null;
 	CNetworkVar<bool> m_bFractureLaserVisible = null;
 	CNetworkVar<bool> m_bExtractorBeamVisible = null;
 

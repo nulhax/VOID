@@ -76,7 +76,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-            CNetworkViewId cAk47ViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId cAk47ViewId = _cStream.Read<TNetworkViewId>();
 
             switch (eAction)
             {

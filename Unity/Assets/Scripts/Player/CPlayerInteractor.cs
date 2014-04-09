@@ -127,7 +127,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-            CNetworkViewId cNewTargetViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId cNewTargetViewId = _cStream.Read<TNetworkViewId>();
 
             switch (eAction)
             {
@@ -209,7 +209,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
         //Debug.DrawRay(cMainCameraRay.origin, cMainCameraRay.direction, Color.red, 0.5f);
-        Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
+        //Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
 
         // Do the ray cast against all objects in path
         RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer);
@@ -270,7 +270,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
             if (cNewTargetActorObject == null)
             {
-                s_cSerializeStream.Write((CNetworkViewId)null);
+                s_cSerializeStream.Write((TNetworkViewId)null);
             }
             else
             {

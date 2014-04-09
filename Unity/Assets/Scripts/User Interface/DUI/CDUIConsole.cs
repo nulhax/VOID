@@ -30,11 +30,11 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	public GameObject m_ScreenObject = null;
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
 
-	private CNetworkVar<CNetworkViewId> m_DUIViewId = null;
+	private CNetworkVar<TNetworkViewId> m_DUIViewId = null;
 	private CDUIRoot m_CachedDUIRoot = null;
 
 	private bool m_ScreenVisible = false;
-	private CNetworkViewId m_CurrentPlayer = null;
+	private TNetworkViewId m_CurrentPlayer = null;
 	private bool m_bHovering = false;
 
 	
@@ -61,7 +61,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _Registrar)
 	{
-		m_DUIViewId = _Registrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_DUIViewId = _Registrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _SyncedVar)
@@ -144,7 +144,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	}
 
 	[ALocalOnly]
-	private void HandlePlayerHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
+	private void HandlePlayerHover(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bHover)
 	{
 		m_CurrentPlayer = _cPlayerActorViewId;
         m_bHovering = _bHover;

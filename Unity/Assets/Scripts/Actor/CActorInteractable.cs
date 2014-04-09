@@ -26,11 +26,11 @@ public class CActorInteractable : CNetworkMonoBehaviour
 // Member Delegates
 
 
-	public delegate void NotifyHoverInteraction(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover);
+	public delegate void NotifyHoverInteraction(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bHover);
 	public event NotifyHoverInteraction EventHover;
 
 
-    public delegate void NotifyInputInteraction(RaycastHit _tRayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown);
+    public delegate void NotifyInputInteraction(RaycastHit _tRayHit, TNetworkViewId _cPlayerActorViewId, bool _bDown);
     public event NotifyInputInteraction EventPrimary;
     public event NotifyInputInteraction EventSecondary;
     public event NotifyInputInteraction EventUse;
@@ -54,7 +54,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
     [ALocalOnly]
     public void OnInteractionHover(GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bHover)
     {
-        CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		if(EventHover != null)
             EventHover(_cRaycastHit, cNetworkViewId, _bHover);
@@ -64,7 +64,7 @@ public class CActorInteractable : CNetworkMonoBehaviour
     [ALocalOnly]
     public void OnInteractionInput(CPlayerInteractor.EInputInteractionType _eInputInteractionEvent, GameObject _cPlayerActor, RaycastHit _cRaycastHit, bool _bDown)
 	{
-        CNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId cNetworkViewId = _cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 		switch(_eInputInteractionEvent)
 		{

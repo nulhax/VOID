@@ -38,7 +38,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 	public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
 
-	private CNetworkVar<CNetworkViewId> m_cActiveTurretViewId = null;
+	private CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
 
 
 // Member Properties
@@ -59,7 +59,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 
         //m_CalibratorComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
         //m_LiquidComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);

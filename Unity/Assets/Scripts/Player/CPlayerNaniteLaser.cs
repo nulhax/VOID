@@ -102,7 +102,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                         // Debug.LogError("Build modules start");
 
                         cNaniteLaserBehaviour.m_eState.Set(EState.BuildingModule);
-                        cNaniteLaserBehaviour.m_cTargetModule = _cStream.Read<CNetworkViewId>().GameObject;
+                        cNaniteLaserBehaviour.m_cTargetModule = _cStream.Read<TNetworkViewId>().GameObject;
                     }
                     break;
 
@@ -111,7 +111,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                         // Debug.LogError("Mine minerals start");
 
                         cNaniteLaserBehaviour.m_eState.Set(EState.Mining);
-                        cNaniteLaserBehaviour.m_cTargetMinerals = _cStream.Read<CNetworkViewId>().GameObject;
+                        cNaniteLaserBehaviour.m_cTargetMinerals = _cStream.Read<TNetworkViewId>().GameObject;
                     }
                     break;
 
