@@ -176,9 +176,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
             // Add audoio listener to head
             Head.AddComponent<AudioListener>();
-
-            gameObject.GetComponent<CPlayerGroundMotor>().EventInputStatesChange += NotifyMovementStateChange;
-            m_initialOffset = GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject.transform.localPosition;
         }
 
         if (CNetwork.IsServer)
@@ -219,10 +216,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
         }
     }
 
-    void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
-    {
-        m_MovementState = _usNewSates;         
-    }   
 
     void Update()
     {
@@ -251,72 +244,10 @@ public class CPlayerHead : CNetworkMonoBehaviour
         // Clean up
         m_fMouseDeltaX = 0.0f;
         m_fMouseDeltaY = 0.0f;
-
-        if (CGamePlayers.SelfActor == gameObject)
-        {
-            HeadBob();
-        }
     }
 
-    void HeadBob()
-    {
-        //Determine current states
-        bool bRunForward;
-        bool bWalkBack;
-        bool bSprint;
-        bool bJump;
-        bool bCrouch;
-        bool bStrafeLeft;
-        bool bStrafeRight;          
-        
-        bRunForward =  ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;   
-        bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;   
-        bJump        = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Jump)        > 0) ? true : false;   
-        bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;   
-        bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;   
-        bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
-        bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Turbo)       > 0) ? true : false;   
 
     void UpdateFeelookRotation()
-
-        //Determine head bob amount
-        if((bRunForward || bWalkBack || bStrafeLeft || bStrafeRight) && !bJump)
-        {
-            m_fHeadBobAmount = m_kfHeadBobRunAmount;
-            m_fHeadBobSpeed = m_kfHeadBobRunSpeed;
-            Head.transform.localPosition = m_initialOffset;
-        }
-        if((bSprint && bRunForward) && !bJump)
-        {
-            m_fHeadBobAmount = m_kfHeadBobSprintAmount;
-            m_fHeadBobSpeed = m_kfHeadBobSprintSpeed;
-            Head.transform.localPosition = m_initialOffset;
-        }
-
-        //Only apply head bob if character is moving
-        if ((bRunForward || bWalkBack || bStrafeLeft || bStrafeRight) && !bJump)
-        {
-            Vector3 headPosition = Head.transform.localPosition;
-            headPosition.y += Mathf.Cos(Time.fixedTime * m_fHeadBobSpeed) * m_fHeadBobAmount;        
-            Head.transform.localPosition = headPosition;
-
-            Vector3 headRotation = Head.transform.localRotation.eulerAngles;
-            headRotation.z += Mathf.Cos(Time.fixedTime * m_fHeadBobSpeed) * (m_fHeadBobAmount * 2);   
-            Head.transform.localRotation = Quaternion.Euler(headRotation);
-        } 
-        else
-        {
-            //Reset head bob
-            Head.transform.localPosition = m_initialOffset;
-            Vector3 headRotation = Head.transform.localRotation.eulerAngles;
-            //Reset roll
-            headRotation.z = 0;
-            Head.transform.localRotation = Quaternion.Euler(headRotation);
-        }
-    }
-
-
-    void UpdateRotation()
     {
         if (InputDisabled)
             return;
@@ -445,18 +376,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 // Member Fields
 
-    //Headbob amounts   
-    public float m_kfHeadBobRunAmount = 0.07f;
-    public float m_kfHeadBobSprintAmount = 0.09f;
-
-    //Headbob speeds
-    public const float m_kfHeadBobRunSpeed = 8;
-    public const float m_kfHeadBobSprintSpeed = 10;
-
-    Vector3 m_initialOffset;
- 
-    public float m_fHeadBobAmount = 0;
-    public float m_fHeadBobSpeed = 0;
 
     const float k_fRotationXMin   = -70; // Up
     const float k_fRotationXMax   =  54; // Down
@@ -474,6 +393,5 @@ public class CPlayerHead : CNetworkMonoBehaviour
     float m_fMouseDeltaY = 0.0f;
 	float m_fLocalXRotation = 0.0f;
 
-    ushort m_MovementState;
 
 };
