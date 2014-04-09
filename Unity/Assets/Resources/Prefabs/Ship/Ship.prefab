@@ -212,6 +212,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TileSize: 4
+  m_TileFactoryPrefab: {fileID: 100000, guid: 6fe6203b03357864484ac067a3ed7659, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

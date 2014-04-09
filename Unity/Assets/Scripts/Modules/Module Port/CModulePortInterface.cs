@@ -110,7 +110,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		UpdateCubemap();
+		//UpdateCubemap();
 
         if (m_PreplacedModuleType != CModuleInterface.EType.INVALID &&
             CNetwork.IsServer)
@@ -121,6 +121,18 @@ public class CModulePortInterface : CNetworkMonoBehaviour
             if (m_PreplacedModuleBuilt)
                 m_cAttachedModuleViewId.Value.GameObject.GetComponent<CModuleInterface>().IncrementBuiltRatio(1.0f);
         }
+
+		// Register self with parent facility
+		CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(gameObject);
+		
+		if(fi != null)
+		{
+			fi.RegisterModulePort(this);
+		}
+		else
+		{
+			Debug.LogError("Could not find facility to register to");
+		}
 	}
 
 

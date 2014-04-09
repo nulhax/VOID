@@ -8337,7 +8337,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100228}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41090c89f9a98ad45a6051f2d6a758a9, type: 3}
   m_Name: 
@@ -10102,7 +10102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Type: -1
-  m_CombinedMesh: {fileID: 4300000, guid: 351c546b52a708b42bee1df416c24e20, type: 2}
+  m_CombinedMesh: {fileID: 4300000, guid: fc3c5f96b5987704e86342d469b89cba, type: 2}
 --- !u!114 &11400098
 MonoBehaviour:
   m_ObjectHideFlags: 1

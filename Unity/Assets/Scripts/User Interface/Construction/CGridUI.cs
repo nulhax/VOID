@@ -36,6 +36,7 @@ public class CGridUI : MonoBehaviour
 		Paint_Interior_Walls,
 		Paint_Interior_Floors,
 		ModifyTileVariants,
+		PlaceModulePort,
 	}
 
 	public enum ETileInteraction
@@ -68,7 +69,9 @@ public class CGridUI : MonoBehaviour
 
 	private GameObject m_GridPlane = null;
 	private GameObject m_GridSphere = null;
+
 	private GameObject m_GridCursor = null;
+	private Dictionary<CModuleInterface.ESize, GameObject> m_ModulePortCursors = new Dictionary<CModuleInterface.ESize, GameObject>();
 
 	public float m_GridScale = 0.1f;
 	public Vector2 m_GridScaleLimits = new Vector2(0.05f, 0.2f);
@@ -89,6 +92,8 @@ public class CGridUI : MonoBehaviour
 	public List<CTile> m_SelectedTiles = null;
 
 	public Material m_TileMaterial = null;
+
+	public GameObject m_SmallModulePortPrefab = null;
 
 	private List<RaycastHit> m_RaycastHits;
 	private RaycastHit m_PlaneHit;
@@ -122,8 +127,8 @@ public class CGridUI : MonoBehaviour
 		m_Grid = gameObject.GetComponent<CGrid>();
 
 		// Register tile creation/removal
-		m_Grid.EventTileAdded += OnTileCreated;
-		m_Grid.EventTileRemoved += OnTileRemoved;
+		m_Grid.EventTileCreated += OnTileCreated;
+		m_Grid.EventTileReleased += OnTileReleased;
 	}
 	
 	private void Start() 
@@ -169,9 +174,18 @@ public class CGridUI : MonoBehaviour
 		m_GridCursor.renderer.material.color = new Color(0.0f, 1.0f, 0.0f, 0.5f);
 		Destroy(m_GridCursor.collider);
 		m_GridCursor.transform.parent = m_Grid.transform;
-		m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 		m_GridCursor.transform.localPosition = Vector3.zero;
 		m_GridCursor.transform.localRotation = Quaternion.identity;
+
+		GameObject smallModuleCursor = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+		smallModuleCursor.name = "Module Cursor Small";
+		smallModuleCursor.renderer.material.shader = Shader.Find("Transparent/Diffuse");
+		smallModuleCursor.renderer.material.color = new Color(0.0f, 1.0f, 0.0f, 0.5f);
+		smallModuleCursor.collider.isTrigger = true;
+		smallModuleCursor.transform.parent = m_Grid.transform;
+		smallModuleCursor.transform.localPosition = Vector3.zero;
+		smallModuleCursor.transform.localRotation = Quaternion.identity;
+		m_ModulePortCursors.Add(CModuleInterface.ESize.Small, smallModuleCursor);
 
 		// Update scale and clamp
 		m_GridScale = Mathf.Clamp(m_GridScale, m_GridScaleLimits.x, m_GridScaleLimits.y);
@@ -545,14 +559,39 @@ public class CGridUI : MonoBehaviour
 		if(m_CurrentPlaneInteraction != EPlaneInteraction.Nothing)
 			return;
 
-		if(m_CurrentMode == EToolMode.Nothing)
+		if(m_CurrentMode == EToolMode.Paint_Exterior ||
+		   m_CurrentMode == EToolMode.Paint_Interior_Floors ||
+		   m_CurrentMode == EToolMode.Paint_Interior_Walls ||
+		   m_CurrentMode == EToolMode.ModifyTileVariants)
+		{
+			m_GridCursor.renderer.enabled = true;
+		}
+		else
 		{
 			m_GridCursor.renderer.enabled = false;
+		}
+
+		if(m_CurrentMode == EToolMode.PlaceModulePort)
+		{
+			m_ModulePortCursors[CModuleInterface.ESize.Small].renderer.enabled = true;
+		}
+		else
+		{
+			m_ModulePortCursors[CModuleInterface.ESize.Small].renderer.enabled = false;
+		}
+
+		if(m_CurrentMode == EToolMode.PlaceModulePort)
+		{
+			Vector3 centerPos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
+			centerPos.x = Mathf.Round(centerPos.x * 2.0f) / 2.0f; 
+			centerPos.z = Mathf.Round(centerPos.z * 2.0f) / 2.0f; 
+
+			centerPos = m_Grid.GetLocalPosition(centerPos) + m_TilesOffset;
+			centerPos.y += 0.25f;
+			m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localScale = new Vector3(3.0f, 0.5f, 3.0f);
+			m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition = centerPos;
 			return;
 		}
-		else if(m_GridCursor.renderer.enabled == false)
-			m_GridCursor.renderer.enabled = true;
-		
 
 		if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
 		{
@@ -679,7 +718,11 @@ public class CGridUI : MonoBehaviour
 		// If upper exists, remove my ceiling
 		if(upper != null)
 		{
+			// Remove my ceiling
 			_Tile.SetTileTypeState(ETileType.Ceiling, false);
+
+			// Remove their floor
+			upper.m_Tile.SetTileTypeState(ETileType.Floor, false);
 		}
 
 		// If lower exists
@@ -688,14 +731,8 @@ public class CGridUI : MonoBehaviour
 			// Remove their ceiling
 			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, false);
 
-			// Remove floor
-			_Tile.SetTileTypeState(ETileType.Floor, false);
-
-//			bool wallext = lower.m_Tile.GetMetaData(ETileType.Wall_Ext).m_Type != TTileMeta.EType.None;
-//			bool wallint = lower.m_Tile.GetTileTypeState(ETileType.Wall_Int);
-//
-//			if(!wallext && !wallint)
-//				
+			// Remove my floor
+			_Tile.SetTileTypeState(ETileType.Floor, false);		
 		}
 
 		// Register tile events change
@@ -703,12 +740,19 @@ public class CGridUI : MonoBehaviour
 		_Tile.EventTileTypeStateChange += OnTileTypeStateChange;
 	}
 
-	private void OnTileRemoved(CTile _Tile)
+	private void OnTileReleased(CTile _Tile)
 	{
 		// Check the tiles lower neighbours for ceiling check
+		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
 		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
 
-		// If lower exists, re-enable ceiling and floor
+		// If upper exists, re-enable floor
+		if(upper != null)
+		{
+			upper.m_Tile.SetTileTypeState(ETileType.Floor, true);
+		}
+
+		// If lower exists, re-enable ceiling
 		if(lower != null)
 		{
 			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, true);
@@ -757,6 +801,23 @@ public class CGridUI : MonoBehaviour
 	{
 		// Update the state of the UI grid
 		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles.ToArray());
+
+		// Get all the module ports and spawn them in the UI
+		PopulateModulePorts(_Facility);
+	}
+
+	private void PopulateModulePorts(CFacilityInterface _Facility)
+	{
+		// Populate the small module ports
+		foreach(GameObject modulePort in _Facility.FindModulePortsByType(CModuleInterface.ESize.Small))
+		{
+			GameObject newModulePort = (GameObject)GameObject.Instantiate(m_SmallModulePortPrefab);
+			Vector3 originalScale = newModulePort.transform.localScale;
+			newModulePort.transform.parent = m_Grid.TileContainer;
+			newModulePort.transform.localScale = originalScale;
+			newModulePort.transform.localRotation = Quaternion.identity;
+			newModulePort.transform.localPosition = modulePort.transform.position - CGameShips.Ship.transform.position;
+		}
 	}
 }
 

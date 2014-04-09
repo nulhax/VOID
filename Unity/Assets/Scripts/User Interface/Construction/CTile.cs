@@ -43,6 +43,8 @@ public class CTile : CGridObject
 	private Dictionary<ETileType, TTileMeta> m_TileMetaData = new Dictionary<ETileType, TTileMeta>();
 	private Dictionary<ETileType, TTileMeta> m_CurrentTileMetaData = new Dictionary<ETileType, TTileMeta>();
 
+	private Dictionary<ETileType, ETileVariant> m_CurrentTileVariants = new Dictionary<ETileType, ETileVariant>();
+
 	public Dictionary<ETileType, List<EDirection>> m_RelevantNeighbours = new Dictionary<ETileType, List<EDirection>>();
 	public Dictionary<ETileType, int> m_CurrentTileNeighbourExemptions = new Dictionary<ETileType, int>();
 
@@ -79,6 +81,7 @@ public class CTile : CGridObject
 			ETileType type = (ETileType)i;
 			m_TileMetaData[type] = TTileMeta.Default;
 			m_CurrentTileMetaData[type] = TTileMeta.Default;
+			m_CurrentTileVariants[type] = ETileVariant.Default;
 			m_RelevantNeighbours[type] = new List<EDirection>();
 			m_CurrentTileNeighbourExemptions[type] = 0;
 		}
@@ -101,12 +104,9 @@ public class CTile : CGridObject
 
 		// Update current meta data
 		UpdateTileMetaData();
-	}
 
-	private void OnDestroy()
-	{
-		// Update the neighbourhood
-		UpdateNeighbourhood();
+		// Fire Tile Creation Event
+		m_Grid.TilePostCreate(this);
 	}
 
 	private void Update()
@@ -324,6 +324,9 @@ public class CTile : CGridObject
 			{
 				TTileMeta tileMeta = m_TileMetaData[tileType];
 
+				// Apply the variant
+				tileMeta.m_Variant = m_CurrentTileVariants[tileType];
+
 				// If the identifier/variant has changed we need to update the object
 				if(m_CurrentTileMetaData[tileType].m_Identifier != tileMeta.m_Identifier ||
 				   m_CurrentTileMetaData[tileType].m_Variant != tileMeta.m_Variant)
@@ -331,9 +334,8 @@ public class CTile : CGridObject
 					// Release the current tile type object
 					ReleaseTile(tileType);
 
-					// Create the new tile type object as long as it is not marked as none and the variant is not nothing
-					if(tileMeta.m_Type != ETileMetaType.None && 
-					   tileMeta.m_Variant != ETileVariant.Nothing)
+					// Create the new tile type object as long as it is not marked as none
+					if(tileMeta.m_Type != ETileMetaType.None)
 					{
 						m_TileObject[tileType] = m_Grid.TileFactory.InstanceNewTile(tileType, tileMeta.m_Type, tileMeta.m_Variant);
 						m_TileObject[tileType].transform.parent = transform;
@@ -434,16 +436,15 @@ public class CTile : CGridObject
 
 	public void SetTileTypeVariant(ETileType _TileType, ETileVariant _TileVariant)
 	{
-		TTileMeta tileMeta = m_TileMetaData[_TileType];
-		tileMeta.m_Variant = _TileVariant;
+		m_CurrentTileVariants[_TileType] = _TileVariant;
 
-		// Set the new meta data
-		SetMetaData(_TileType, tileMeta);
+		// Variant type changed so this tile needs update
+		m_IsDirty = true;
 	}
 
 	public ETileVariant GetTileTypeVariant(ETileType _TileType)
 	{
-		return(m_TileMetaData[_TileType].m_Variant);
+		return(m_CurrentTileVariants[_TileType]);
 	}
 
 	public void SetTileTypeState(ETileType _TileType, bool _State)
@@ -484,12 +485,19 @@ public class CTile : CGridObject
 
 	public void Release()
 	{
+		// Fire Tile Release Event
+		m_Grid.TilePreRelease(this);
+
 		// Release tile objects
 		for(int i = 0; i < (int)ETileType.MAX; ++i)
 		{
 			ReleaseTile((ETileType)i);
 			m_TileMetaData[(ETileType)i] = new TTileMeta();
+			m_TileTypeIdentifier = 0;
 		}
+
+		// Update the neighbourhood
+		UpdateNeighbourhood();
 	}
 
 	private void ReleaseTile(ETileType _TileType)
@@ -726,8 +734,7 @@ public enum ETileMetaType
 public enum ETileVariant
 {
 	INVALID = -1,
-
-	Nothing,
+	
 	Default,
 	Opening,
 	Window,

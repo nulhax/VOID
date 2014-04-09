@@ -81,6 +81,11 @@ public class CDUIConstructionPlanner : MonoBehaviour
 		m_GridUI.m_CurrentMode = CGridUI.EToolMode.ModifyTileVariants;
 	}
 
+	public void EnableModulePortPlacement()
+	{
+		m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort;
+	}
+
 	public void ExportGridTilesToShip()
 	{
 		CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
@@ -137,25 +142,15 @@ public class CDUIConstructionPlanner : MonoBehaviour
 			return;
 		}
 
-		// Instance all nothing variants
-		if(!m_CurrentFloorVariations.ContainsKey(ETileVariant.Nothing))
-			InstanceNewFloorTileVariantSelection(ETileVariant.Nothing, "Item 01");
-
-		if(!m_CurrentWallVariations.ContainsKey(ETileVariant.Nothing))
-			InstanceNewWallTileVariantSelection(ETileVariant.Nothing, "Item 01");
-
-		if(!m_CurrentCeilingVariations.ContainsKey(ETileVariant.Nothing))
-			InstanceNewCeilingTileVariantSelection(ETileVariant.Nothing, "Item 01");
-
-		// Instance all normal variants
+		// Instance all default variants
 		if(!m_CurrentFloorVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewFloorTileVariantSelection(ETileVariant.Default, "Item 02");
+			InstanceNewFloorTileVariantSelection(ETileVariant.Default, "Item 01");
 		
 		if(!m_CurrentWallVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewWallTileVariantSelection(ETileVariant.Default, "Item 02");
+			InstanceNewWallTileVariantSelection(ETileVariant.Default, "Item 01");
 		
 		if(!m_CurrentCeilingVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewCeilingTileVariantSelection(ETileVariant.Default, "Item 02");
+			InstanceNewCeilingTileVariantSelection(ETileVariant.Default, "Item 01");
 
 		// Reposition all items
 		m_FloorVartiationsGrid.Reposition();

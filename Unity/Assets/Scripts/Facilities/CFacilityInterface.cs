@@ -61,12 +61,12 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 	public EType m_Type = EType.INVALID;
 	public Mesh m_CombinedMesh = null;
 
-
 	private CNetworkVar<uint> m_FacilityId = null;
 	private List<CTile> m_Tiles = new List<CTile>();
 
 	
 	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
+	private Dictionary<CModuleInterface.ESize, List<GameObject>> m_ModulePorts = new Dictionary<CModuleInterface.ESize, List<GameObject>>();
 	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
 	
 	
@@ -140,6 +140,17 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     }
 
 
+	public List<GameObject> FindModulePortsByType(CModuleInterface.ESize _ModuleSize)
+	{
+		if (!m_ModulePorts.ContainsKey(_ModuleSize))
+		{
+			return (new List<GameObject>());
+		}
+		
+		return (m_ModulePorts[_ModuleSize]);
+	}
+
+
     public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
     {
         if (!m_Accessories.ContainsKey(_cAccessoryInterface.AccessoryType))
@@ -160,6 +171,17 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         m_Modules[_cModuleInterface.ModuleType].Add(_cModuleInterface.gameObject);
     }
+
+
+	public void RegisterModulePort(CModulePortInterface _ModulePortInterface)
+	{
+		if (!m_ModulePorts.ContainsKey(_ModulePortInterface.PortSize))
+		{
+			m_ModulePorts.Add(_ModulePortInterface.PortSize, new List<GameObject>());
+		}
+		
+		m_ModulePorts[_ModulePortInterface.PortSize].Add(_ModulePortInterface.gameObject);
+	}
 
 
     public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
@@ -221,6 +243,12 @@ public class CFacilityInterface : CNetworkMonoBehaviour
       
 	    // Register facility
 	    CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(this);
+
+		// Delete all the preset tiles
+		foreach(CTile tile in m_Tiles)
+		{
+			Destroy(tile.gameObject);
+		}
 
 	    // Listen to event to unregister facility
 	    NetworkView.EventPreDestory += () =>

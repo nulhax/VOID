@@ -85,7 +85,7 @@ public class CShipFacilities : MonoBehaviour
 			EventOnFaciltiyCreate(_Facility);
 
 		// Export the tiles to the grid
-		m_ShipGrid.ImportPreExistingTiles(_Facility.FacilityTiles.ToArray());
+		m_ShipGrid.ImportTileInformation(_Facility.FacilityTiles.ToArray());
     }
 
 	

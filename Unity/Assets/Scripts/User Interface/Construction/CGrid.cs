@@ -40,12 +40,13 @@ public class CGrid : MonoBehaviour
 	// Member Delegates & Events
 	public delegate void HandleTileEvent(CTile _Tile);
 	
-	public event HandleTileEvent EventTileAdded;
-	public event HandleTileEvent EventTileRemoved;
+	public event HandleTileEvent EventTileCreated;
+	public event HandleTileEvent EventTileReleased;
 
 	
 	// Member Fields
 	public float m_TileSize = 4.0f;
+	public GameObject m_TileFactoryPrefab = null;
 
 	private Transform m_TileContainer = null;
 	private CTileFactory m_TileFactory = null;
@@ -102,7 +103,7 @@ public class CGrid : MonoBehaviour
 		m_TileContainer.localPosition = Vector3.zero;
 		m_TileContainer.localRotation = Quaternion.identity;
 
-		Transform tileFactory = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/Construction/Tile Factory"))).transform;
+		Transform tileFactory = ((GameObject)GameObject.Instantiate(m_TileFactoryPrefab)).transform;
 		tileFactory.parent = transform;
 		tileFactory.localScale = Vector3.one;
 		tileFactory.localPosition = Vector3.zero;
@@ -113,7 +114,13 @@ public class CGrid : MonoBehaviour
 
 	public TGridPoint GetGridPoint(Vector3 worldPosition)
 	{
-		return(new TGridPoint(GetGridPosition(worldPosition)));
+		Vector3 gridPos = GetGridPosition(worldPosition);
+
+		gridPos.x = Mathf.Round(gridPos.x);
+		gridPos.y = Mathf.Round(gridPos.y);
+		gridPos.z = Mathf.Round(gridPos.z);
+
+		return(new TGridPoint(gridPos));
 	}
 
 	public Vector3 GetGridPosition(Vector3 worldPosition)
@@ -125,11 +132,17 @@ public class CGrid : MonoBehaviour
 		gridpos = gridpos / m_TileSize / transform.localScale.x;
 
 		// Round each position to be an integer number
-		gridpos.x = Mathf.Round(gridpos.x);
-		gridpos.y = Mathf.Round(gridpos.y);
-		gridpos.z = Mathf.Round(gridpos.z);
+		gridpos.x = gridpos.x;
+		gridpos.y = gridpos.y;
+		gridpos.z = gridpos.z;
 
 		return gridpos;
+	}
+
+	public Vector3 GetLocalPosition(Vector3 worldPosition)
+	{
+		// Convert from grid space to local space
+		return(worldPosition * m_TileSize);
 	}
 
 	public Vector3 GetLocalPosition(TGridPoint _GridPoint)
@@ -156,22 +169,6 @@ public class CGrid : MonoBehaviour
 	public void ReleaseTile(TGridPoint _GridPoint)
 	{
 		m_DestroyQueue.Add(_GridPoint);
-	}
-
-	public void ImportPreExistingTiles(CTile[] _Tiles)
-	{
-		foreach(CTile tile in _Tiles)
-		{
-			if(!m_GridBoard.ContainsKey(tile.m_GridPosition.ToString()))
-			{
-				m_GridBoard.Add(tile.m_GridPosition.ToString(), tile);
-				tile.m_Grid = this;
-			}
-			else
-			{
-				Debug.LogWarning("Tile already exists at position " + tile.m_GridPosition.ToString() + ". Tile was not imported.");
-			}
-		}
 	}
 
 	public void ImportTileInformation(CTile[] _Tiles)
@@ -244,10 +241,6 @@ public class CGrid : MonoBehaviour
 
 			// Find neighbours
 			tile.FindNeighbours();
-
-			// Fire event for tile creation
-			if(EventTileAdded != null)
-				EventTileAdded(tile);
 		}
 	}
 
@@ -257,10 +250,6 @@ public class CGrid : MonoBehaviour
 		{
 			CTile tile = m_GridBoard[_GridPoint.ToString()];
 
-			// Fire event for tile removal
-			if(EventTileRemoved != null)
-				EventTileRemoved(tile);
-
 			// Release
 			tile.Release();
 
@@ -268,6 +257,18 @@ public class CGrid : MonoBehaviour
 			m_GridBoard.Remove(_GridPoint.ToString());
 			Destroy(tile.gameObject);
 		}
+	}
+
+	public void TilePostCreate(CTile _Tile)
+	{
+		if(EventTileCreated != null)
+			EventTileCreated(_Tile);
+	}
+
+	public void TilePreRelease(CTile _Tile)
+	{
+		if(EventTileReleased != null)
+			EventTileReleased(_Tile);
 	}
 }
 

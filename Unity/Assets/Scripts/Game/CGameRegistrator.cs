@@ -88,7 +88,7 @@ public class CGameRegistrator : MonoBehaviour
         NaniteCapsule,
         Engine,
 		Starter,
-		ConstructionPlanner,
+		Prefabricator,
 
 		
 		// Components
@@ -247,7 +247,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Nanite Capsule");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ConstructionPlanner,          "Modules/Construction Planner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,          		"Modules/Prefabricator");
 
 
         // Components
@@ -404,7 +404,7 @@ public class CGameRegistrator : MonoBehaviour
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteCapsule        , ENetworkPrefab.NaniteCapsule);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.ConstructionPlanner  , ENetworkPrefab.ConstructionPlanner);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Prefabricator  , ENetworkPrefab.Prefabricator);
     }
 
 
