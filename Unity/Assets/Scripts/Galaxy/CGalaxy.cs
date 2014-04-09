@@ -851,7 +851,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		for (uint ui = 0; ui < uiNumEnemyShips; ++ui)
 		{
-			mGubbinsToLoad.Add(new CGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip,	// Enemy ship prefab.
+			mGubbinsToLoad.Add(new CGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip_FIRST,	// Enemy ship prefab.
 												absoluteCell,   // Parent cell.
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
