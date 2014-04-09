@@ -198,7 +198,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cAttachedExpansionPortViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+        m_cAttachedExpansionPortViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
         m_bCompressParticlesEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
         m_bDecompressParticlesEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 
@@ -436,7 +436,7 @@ public class CExpansionPortBehaviour : CNetworkMonoBehaviour
 
     GameObject m_cParentFacility = null;
 
-    CNetworkVar<CNetworkViewId> m_cAttachedExpansionPortViewId = null;
+    CNetworkVar<TNetworkViewId> m_cAttachedExpansionPortViewId = null;
     CNetworkVar<bool> m_bCompressParticlesEnabled = null;
     CNetworkVar<bool> m_bDecompressParticlesEnabled = null;
 

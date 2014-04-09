@@ -20,16 +20,21 @@ using System.Collections.Generic;
 [RequireComponent(typeof(Rigidbody))]
 public class CActorGravity : CNetworkMonoBehaviour 
 {
-	// Member Types
+// Member Types
 
 
-	// Member Delegates and Events
+// Member Delegates and Events
+
+
 	public delegate void NotifyGravityInfulenceChange();
 
 	public event NotifyGravityInfulenceChange EventEnteredGravityZone;
 	public event NotifyGravityInfulenceChange EventExitedGravityZone;
 
-	// Member Fields
+
+// Member Fields
+
+
 	public bool m_bSimulateClientGravity;
 
 	private CNetworkVar<bool> m_UnderGravityInfluence = null;
@@ -38,14 +43,19 @@ public class CActorGravity : CNetworkMonoBehaviour
 
 	private List<GameObject> m_FacilitiesInfluencingGravity = new List<GameObject>();
 
-	// Member Properties
+
+// Member Properties
+
+
 	public bool IsUnderGravityInfluence
 	{
 		get { return(m_UnderGravityInfluence.Get()); }
 	}
 
 	
-	// Member Methods
+// Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_UnderGravityInfluence = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
@@ -121,7 +131,7 @@ public class CActorGravity : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void CheckGravityInfluence()
 	{
-		if(m_FacilitiesInfluencingGravity.Count == 0)
+		if (m_FacilitiesInfluencingGravity.Count == 0)
 		{
 			if(m_UnderGravityInfluence.Value)
 			{

@@ -42,7 +42,7 @@ public class CActorDebugGUI : MonoBehaviour
 		GetComponent<CActorInteractable>().EventHover += OnHover;
 	}
 
-	void OnHover(RaycastHit _RayHit, CNetworkViewId _cPlayerActorViewId, bool _bHover)
+	void OnHover(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bHover)
 	{
         bShowName = _bHover;
 	}

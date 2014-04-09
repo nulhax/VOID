@@ -27,7 +27,23 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Types
 
 
+    [ABitSize(4)]
+    public enum ENetworkAction
+    {
+        INVALID,
+
+        SyncLocalEuler,
+
+        MAX
+    }
+
+
 // Member Delegates & Events
+
+
+    public delegate void HeadRotateOverflowHandler(float _fEuler);
+    public event HeadRotateOverflowHandler EventRotationXOverflow;
+    public event HeadRotateOverflowHandler EventRotationYOverflow;
 
 
 // Member Properties
@@ -84,14 +100,47 @@ public class CPlayerHead : CNetworkMonoBehaviour
     [ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
-        // Empty
+        GameObject cSelfActor = CGamePlayers.SelfActor;
+
+        if ( cSelfActor != null &&
+            !CNetwork.IsServer)
+        {
+            _cStream.Write(ENetworkAction.SyncLocalEuler);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.eulerAngles.x);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.eulerAngles.y);
+        }
 	}
 
 
     [AServerOnly]
 	public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
 	{
-        // Empty
+		GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
+
+        if (cPlayerActor != null)
+        {
+            while (_cStream.HasUnreadData)
+            {
+                // Retrieve player actor motor  
+                CPlayerHead cPlayerHead = cPlayerActor.GetComponent<CPlayerHead>();
+
+                // Extract network action
+                ENetworkAction eNetworkAction = _cStream.Read<ENetworkAction>();
+
+                switch (eNetworkAction)
+                {
+                    case ENetworkAction.SyncLocalEuler:
+                        cPlayerHead.transform.localEulerAngles = new Vector3(_cStream.Read<float>(),
+                                                                             _cStream.Read<float>(),
+                                                                             0.0f);
+                        break;
+
+                    default:
+                        Debug.LogError(string.Format("Unknown network action ({0})", (byte)eNetworkAction));
+                        break;
+                }
+            }
+        }
 	}
 
 
@@ -157,29 +206,36 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void Update()
     {
-        // Empty
-
         if (gameObject != CGamePlayers.SelfActor)
             GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(0.0f,
                                                                                                                                          90.0f + Head.transform.localEulerAngles.y,
                                                                                                                                         -67.31491f + Head.transform.localEulerAngles.x);
-
     }
 
 
     void FixedUpdate()
     {
-        UpdateRotation();
+        switch (gameObject.GetComponent<CPlayerGroundMotor>().State)
+        {
+            case CPlayerGroundMotor.EState.AligningBodyToShipInternal:
+            case CPlayerGroundMotor.EState.WalkingWithinShip:
+                UpdateFeelookRotation();
+                break;
+        }
 
         if (CNetwork.IsServer)
         {
             m_fHeadEulerX.Value = Head.transform.localEulerAngles.x;
             m_fHeadEulerY.Value = Head.transform.localEulerAngles.y;
         }
+
+        // Clean up
+        m_fMouseDeltaX = 0.0f;
+        m_fMouseDeltaY = 0.0f;
     }
 
 
-    void UpdateRotation()
+    void UpdateFeelookRotation()
     {
         if (InputDisabled)
             return;
@@ -194,41 +250,48 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
             Vector3 vLocalRotation = Head.transform.localRotation.eulerAngles;
 
+            // Make rorations relevant to 180
             if (vLocalRotation.x > 180.0f)
-            {
                 vLocalRotation.x -= 360.0f;
-            }
 
             if (vLocalRotation.y > 180.0f)
-            {
                 vLocalRotation.y -= 360.0f;
-            }
 
+            // Bound rotations to their limits
             vLocalRotation.x = Mathf.Clamp(vLocalRotation.x + m_fMouseDeltaY, k_fRotationXMin, k_fRotationXMax);
             vLocalRotation.y = Mathf.Clamp(vLocalRotation.y + m_fMouseDeltaX, -k_fRotationYLimit, k_fRotationYLimit);
 
             Head.transform.localEulerAngles = vLocalRotation;
 
+            float fOverRotationX = vLocalRotation.x + m_fMouseDeltaY;
             float fOverRotationY = vLocalRotation.y + m_fMouseDeltaX;
 
+            // Overflow rotation Y
             if (fOverRotationY < -k_fRotationYLimit)
             {
-                GetComponent<CPlayerGroundMotor>().CorrectHeadOverRotate(fOverRotationY + k_fRotationYLimit);
+                if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY + k_fRotationYLimit);
             }
             else if (fOverRotationY > k_fRotationYLimit)
             {
-                GetComponent<CPlayerGroundMotor>().CorrectHeadOverRotate(fOverRotationY - k_fRotationYLimit);
+                if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY - k_fRotationYLimit);
             }
 
-            m_fMouseDeltaX = 0.0f;
-            m_fMouseDeltaY = 0.0f;
+            // Overflow rotation X
+            if (fOverRotationX < k_fRotationXMin)
+            {
+                if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMin);
+            }
+            else if (fOverRotationX > k_fRotationXMax)
+            {
+                if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMax);
+            }
         }
 
-        // Lerp to remote rotation
+        // Lerp to remote rotation on non-owner clients
         else
         {
-            Head.transform.localRotation = Quaternion.RotateTowards(Head.transform.localRotation, 
-                                                                    Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f), 
+            Head.transform.localRotation = Quaternion.RotateTowards(Head.transform.localRotation,
+                                                                    Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f),
                                                                     360.0f * Time.fixedDeltaTime);
         }
     }
@@ -254,14 +317,14 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
-    [ALocalOnly]
+    [AOwnerAndServerOnly]
     void OnEventAxisChange(CUserInput.EAxis _eAxis, float _fValue)
     {
         OnEventClientAxisChange(_eAxis, CNetwork.PlayerId, _fValue);
     }
 
 
-    [AServerOnly]
+    [AOwnerAndServerOnly]
     void OnEventClientAxisChange(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
     {
         if (GetComponent<CPlayerInterface>().PlayerId != _ulPlayerId)
@@ -282,6 +345,16 @@ public class CPlayerHead : CNetworkMonoBehaviour
                 break;
         }
 	}
+
+
+    [AServerOnly]
+    void OnEventMotorStateChange(CPlayerGroundMotor.EState _ePrevious, CPlayerGroundMotor.EState _eNew)
+    {
+        if (_eNew == CPlayerGroundMotor.EState.AirThustersInSpace)
+        {
+            //Head.transform.localEulerAngles = Vector3.zero;
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)

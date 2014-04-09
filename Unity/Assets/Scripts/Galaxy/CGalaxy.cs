@@ -54,11 +54,11 @@ public class CGalaxy : CNetworkMonoBehaviour
 	{
 		public GameObject mEntity;
 		public float mBoundingRadius;   // Bounding sphere.
-		public CNetworkViewId mNetworkViewID;
+		public TNetworkViewId mNetworkViewID;
 		public bool mAlternator;   // This is used for culling purposes.
 		public bool mAwaitingCull = false;  // Objects get culled over time.
 
-		public CRegisteredGubbin(GameObject entity, float boundingRadius, CNetworkViewId networkViewID, bool alternatorValue) { mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
+		public CRegisteredGubbin(GameObject entity, float boundingRadius, TNetworkViewId networkViewID, bool alternatorValue) { mEntity = entity; mBoundingRadius = boundingRadius; mNetworkViewID = networkViewID; mAlternator = alternatorValue; }
 	}
 
 	public class CGubbinMeta
@@ -672,7 +672,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		Vector3 gubbinPosition = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition;
 
 		// Check if the new gubbin has room to spawn.
-		if (Physics.CheckSphere(gubbinPosition, GetBoundingRadius(gubbinObject)))
+		if (Physics.CheckSphere(gubbinPosition, CUtility.GetBoundingRadius(gubbinObject)))
 		{
 			CNetwork.Factory.DestoryObject(gubbinObject);
 			return false;
@@ -714,7 +714,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		if (networkedEntity)
 			networkedEntity.UpdateNetworkVars();
 
-		mGubbins.Add(new CRegisteredGubbin(gubbinObject, CGalaxy.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
+		mGubbins.Add(new CRegisteredGubbin(gubbinObject, CUtility.GetBoundingRadius(gubbinObject), networkView.ViewId, mbValidGubbinValue));
 
 		return true;
 	}
@@ -955,54 +955,5 @@ public class CGalaxy : CNetworkMonoBehaviour
 				Gizmos.DrawSphere(new Vector3(x, y, z), cellRadius * 0.5f);
 			}
 		}
-	}
-
-	public static float GetBoundingRadius(GameObject gameObject)
-	{
-		float result = 1.0f;
-
-		// Depending on the type of model; it may use a collider, mesh renderer, animator, or something else.
-		Collider collider = gameObject.GetComponent<Collider>();
-		if (collider)
-			result = collider.bounds.extents.magnitude;
-		else
-		{
-			Renderer renderer = gameObject.GetComponent<Renderer>();
-			if (renderer)
-				result = renderer.bounds.extents.magnitude;
-			else
-			{
-				bool gotSomethingFromAnimator = false;
-				Animator anim = gameObject.GetComponent<Animator>();
-				if (anim)
-				{
-					gotSomethingFromAnimator = anim.renderer || anim.collider || anim.rigidbody;
-					if (anim.renderer) result = anim.renderer.bounds.extents.magnitude;
-					else if (anim.collider) result = anim.collider.bounds.extents.magnitude;
-					else if (anim.rigidbody) result = anim.rigidbody.collider.bounds.extents.magnitude;
-				}
-
-				if (!gotSomethingFromAnimator)
-				{
-
-				}
-			}
-		}
-
-		return result;
-	}
-
-	public static float GetMass(GameObject gameObject)
-	{
-		while (gameObject != null)
-		{
-			Rigidbody rigidBody = gameObject.GetComponent<Rigidbody>();
-			if (rigidBody)
-				return rigidBody.mass;
-
-			gameObject = gameObject.transform.parent.gameObject;
-		}
-
-		return 1.0f;
 	}
 }

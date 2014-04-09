@@ -40,7 +40,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 	private GameObject m_ShipRepresentation = null;
 	private GameObject m_GalaxyRepresentation = null;
 
-	private Dictionary<CNetworkViewId, GameObject> m_ProximityGalaxyObjects = new Dictionary<CNetworkViewId, GameObject>();
+	private Dictionary<TNetworkViewId, GameObject> m_ProximityGalaxyObjects = new Dictionary<TNetworkViewId, GameObject>();
 
 
 	// Member Properties
@@ -143,7 +143,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 		m_GalaxyRepresentation.transform.rotation = m_ShipRepresentation.transform.rotation;
 
 		// List proximity objects to remove, copy from the current key list to remove elements that fail the overlap test
-		List<CNetworkViewId> toRemoveKeys = new List<CNetworkViewId>(m_ProximityGalaxyObjects.Keys);
+		List<TNetworkViewId> toRemoveKeys = new List<TNetworkViewId>(m_ProximityGalaxyObjects.Keys);
 
 		// Calculate the radius
 		float radius = 1.0f / m_ScalingFactor * m_Radius;
@@ -196,7 +196,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 		}
 
 		// Position the objects relative to the ship, check distance
-		foreach(KeyValuePair<CNetworkViewId, GameObject> pair in m_ProximityGalaxyObjects)
+		foreach(KeyValuePair<TNetworkViewId, GameObject> pair in m_ProximityGalaxyObjects)
 		{
 			// Check object hasnt been deleted
 			if(pair.Key.GameObject == null)
@@ -216,7 +216,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 		}
 
 		// Remove listed objects objects
-		foreach(CNetworkViewId key in toRemoveKeys)
+		foreach(TNetworkViewId key in toRemoveKeys)
 		{
 			Destroy(m_ProximityGalaxyObjects[key]);
 			m_ProximityGalaxyObjects.Remove(key);

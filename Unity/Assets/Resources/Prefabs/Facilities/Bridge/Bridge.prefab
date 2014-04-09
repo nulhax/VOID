@@ -8632,7 +8632,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Size: 1
   m_PreplacedModuleType: 8
-  m_PreplacedModuleBuilt: 1
+  m_PreplacedModuleBuilt: 0
   m_Positioner: {fileID: 100206}
   m_Internal: 0
 --- !u!114 &11400168

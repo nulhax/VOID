@@ -88,7 +88,7 @@ public class CNetworkStream
     }
 
 
-	public void Write(CNetworkViewId _cNetworkViewId)
+	public void Write(TNetworkViewId _cNetworkViewId)
 	{
 		if (_cNetworkViewId == null)
 		{
@@ -111,17 +111,17 @@ public class CNetworkStream
 
     public void Write(object _cObject, Type _cType)
     {
-		if (_cType == typeof(CNetworkViewId))
+		if (_cType == typeof(TNetworkViewId))
 		{
-			if ((CNetworkViewId)_cObject == null)
+			if ((TNetworkViewId)_cObject == null)
 			{
 				this.Write((ushort)ushort.MaxValue);
 				this.Write((byte)byte.MaxValue);
 			}
 			else
 			{
-				this.Write(((CNetworkViewId)_cObject).Id);
-				this.Write(((CNetworkViewId)_cObject).ChildId);
+				this.Write(((TNetworkViewId)_cObject).Id);
+				this.Write(((TNetworkViewId)_cObject).ChildId);
 			}
 		}
 		else
@@ -272,7 +272,7 @@ public class CNetworkStream
 
     public object ReadType(Type _cType)
     {
-		if (_cType == typeof(CNetworkViewId))
+		if (_cType == typeof(TNetworkViewId))
 		{
             ushort usViewId = Read<ushort>();
 
@@ -285,7 +285,7 @@ public class CNetworkStream
             }
             else
             {
-                return (new CNetworkViewId(usViewId, bSubViewId));
+                return (new TNetworkViewId(usViewId, bSubViewId));
             }
 		}
 		else

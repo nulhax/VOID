@@ -64,7 +64,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	public EAspectRatio m_AspectRatio = EAspectRatio.Standard;
 
     private RenderTexture m_RenderTex = null; 
-	private CNetworkVar<CNetworkViewId> m_ConsoleViewId = null;
+	private CNetworkVar<TNetworkViewId> m_ConsoleViewId = null;
 
 	private UICamera m_Cached2DCamera = null;
 	private UICamera m_Cached3DCamera = null;
@@ -73,7 +73,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 	static Dictionary<CDUIRoot.EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<CDUIRoot.EType, CGameRegistrator.ENetworkPrefab>();
 
 	// Member Properties
-	public CNetworkViewId ConsoleViewId 
+	public TNetworkViewId ConsoleViewId 
 	{ 
 		get { return(m_ConsoleViewId.Get()); } 
 
@@ -100,7 +100,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
     // Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_ConsoleViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_ConsoleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 	
 	public void OnNetworkVarSync(INetworkVar _cSyncedVar)

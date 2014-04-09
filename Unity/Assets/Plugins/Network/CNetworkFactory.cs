@@ -83,7 +83,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects");
 
 		// Generate dynamic network view id for object
-		CNetworkViewId cObjectViewId = CNetworkView.GenerateDynamicViewId();
+		TNetworkViewId cObjectViewId = CNetworkView.GenerateDynamicViewId();
 
 		// Invoke create local object call on all connected players
 		InvokeRpcAll("CreateLocalObject", (ushort)_cPrefabId, cObjectViewId);
@@ -106,7 +106,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	}
 
 
-    public void DestoryObject(CNetworkViewId _cObjectNetworkViewId)
+    public void DestoryObject(TNetworkViewId _cObjectNetworkViewId)
     {
 		// Ensure only servers call this function
 		Logger.WriteErrorOn(!CNetwork.IsServer, "On the server can destroy objects");
@@ -126,14 +126,14 @@ public class CNetworkFactory : CNetworkMonoBehaviour
         {
             Logger.Write("A Player joined. Sending them the objects and states");
 
-            foreach (KeyValuePair<CNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
+            foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
             {
                 // Tell player to instantiate already created object
                 InvokeRpc(_cNetworkPlayer.PlayerId, "CreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
             }
 			
 			// Sync parents for each transform
-			foreach (KeyValuePair<CNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
+			foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
 			{
 				if (tEntry.Value.cGameObject == null)
 				{
@@ -170,7 +170,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 			}
 
 			// Sync network vars last
-			foreach (KeyValuePair<CNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
+			foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
 			{
 				// Extract the network view from this object
 				CNetworkView cNetworkView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
@@ -188,7 +188,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     }
 
 
-	public GameObject FindObject(CNetworkViewId _cNetworkViewId)
+	public GameObject FindObject(TNetworkViewId _cNetworkViewId)
 	{
 		CNetworkView cObjectNetworkView = CNetworkView.FindUsingViewId(_cNetworkViewId);
 		GameObject cGameObject = null;
@@ -227,7 +227,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 	protected void DestoryAllCreatedObjects()
 	{
-		foreach (KeyValuePair<CNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
+		foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
 		{
 			GameObject.Destroy(tEntry.Value.cGameObject);
 		}
@@ -240,7 +240,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 
     [ANetworkRpc]
-    void CreateLocalObject(ushort _usPrefabId, CNetworkViewId _cNetworkViewId)
+    void CreateLocalObject(ushort _usPrefabId, TNetworkViewId _cNetworkViewId)
     {
 		//((APrefabInfo)typeof(EPrefab).GetField(_ePrefab.ToString()).GetCustomAttributes(typeof(APrefabInfo), true)[0]).GetResourceName()
         // Extract prefab resource name
@@ -272,7 +272,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 
     [ANetworkRpc]
-    void DestroyLocalObject(CNetworkViewId _cObjectNetworkViewId)
+    void DestroyLocalObject(TNetworkViewId _cObjectNetworkViewId)
     {
         TObjectInfo tObject = m_mCreatedObjects[_cObjectNetworkViewId];
 
@@ -294,7 +294,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 
 	Dictionary<ushort, string> m_mPrefabs = new Dictionary<ushort, string>();
-	Dictionary<CNetworkViewId, TObjectInfo> m_mCreatedObjects = new Dictionary<CNetworkViewId, TObjectInfo>();
+	Dictionary<TNetworkViewId, TObjectInfo> m_mCreatedObjects = new Dictionary<TNetworkViewId, TObjectInfo>();
 
 
 };

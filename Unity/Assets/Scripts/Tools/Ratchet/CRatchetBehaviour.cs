@@ -83,9 +83,9 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 				case ENetworkAction.SetRepairState:
 				{
 					//Figure out which ratchet sent it's new state
-					CRatchetBehaviour ratchet = _cStream.Read<CNetworkViewId>().GameObject.GetComponent<CRatchetBehaviour>();
+					CRatchetBehaviour ratchet = _cStream.Read<TNetworkViewId>().GameObject.GetComponent<CRatchetBehaviour>();
 					
-					ratchet.m_TargetComponent = _cStream.Read<CNetworkViewId>().GameObject;
+					ratchet.m_TargetComponent = _cStream.Read<TNetworkViewId>().GameObject;
 					ratchet.m_eRepairState = (ERepairState)_cStream.Read<byte>();
 					
 					break;
@@ -213,8 +213,8 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
         m_IKController.RightHandIKPos = m_TargetList[m_iTargetIndex].position;    
         m_IKController.RightHandIKRot = m_TargetList[m_iTargetIndex].rotation;  
 
-        CNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
-        CNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
+        TNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;
 
         s_cSerializeStream.Write((byte)ENetworkAction.SetRepairState);
         s_cSerializeStream.Write(senderID);

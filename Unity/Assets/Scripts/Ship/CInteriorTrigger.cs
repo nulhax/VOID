@@ -23,50 +23,65 @@ using System;
 
 public class CInteriorTrigger : MonoBehaviour 
 {
-	// Member Types
+
+// Member Types
 
 
-	// Member Delegates & Events
+// Member Delegates & Events
 
 		
-	// Member Fields
-	CFacilityOnboardActors m_CachedOnboardActors = null;
+// Member Fields
+	
+    
+    CFacilityOnboardActors m_cFacilityOnboardActors = null;
 
 	
-	// Member Properties
+// Member Properties
 	
 	
-	// Member Methods
-	private void Awake()
+// Member Methods
+
+
+	void Awake()
 	{
-		m_CachedOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
+		m_cFacilityOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
 	}
 
 
-	private void OnTriggerEnter(Collider _Other)
+	void OnTriggerEnter(Collider _cOther)
 	{
-		Rigidbody rb = _Other.rigidbody;
+		Rigidbody cRigidbody = _cOther.rigidbody;
 
-		if(rb == null)
-			rb = CUtility.FindInParents<Rigidbody>(_Other.gameObject);
+        // Find rigid body in parnet
+        if (cRigidbody == null)
+        {
+            cRigidbody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+        }
 
-		if(rb != null)
+        // Notify facility that a actor entered
+		if(cRigidbody != null)
 		{
-			m_CachedOnboardActors.OnActorEnteredFacilityTrigger(rb.gameObject);
+			m_cFacilityOnboardActors.OnActorEnteredFacilityTrigger(cRigidbody.gameObject);
 		}
 	}
 
 
-	private void OnTriggerExit(Collider _Other)
+	void OnTriggerExit(Collider _cOther)
 	{
-		Rigidbody rb = _Other.rigidbody;
+		Rigidbody cRigidBody = _cOther.rigidbody;
+
+        // Find rigid body in parent
+        if (cRigidBody == null)
+        {
+            cRigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+        }
 		
-		if(rb == null)
-			rb = CUtility.FindInParents<Rigidbody>(_Other.gameObject);
-		
-		if(rb != null)
+        // Notify facility that a actor left
+		if(cRigidBody != null)
 		{
-			m_CachedOnboardActors.OnActorExitedFacilityTrigger(rb.gameObject);
+			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(cRigidBody.gameObject);
 		}
 	}
+
+
 }
