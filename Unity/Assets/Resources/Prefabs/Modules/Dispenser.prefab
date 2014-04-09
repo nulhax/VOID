@@ -1459,7 +1459,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
 --- !u!114 &11400010
 MonoBehaviour:
-  m_ObjectHideFlags: 13
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}

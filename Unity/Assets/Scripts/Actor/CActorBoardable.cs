@@ -78,8 +78,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
         // Check if this actor isnt a child of another boardable actor
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
-            // Set the boarding state
-            m_eBoardingState.Set(EBoardingState.Onboard);
+            if (CNetwork.IsServer)
+            {
+                // Set the boarding state
+                m_eBoardingState.Set(EBoardingState.Onboard);
+            }
 
             // Get the inverse of the relative velocity of the actor boarding
             Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position) * -1.0f;
@@ -102,8 +105,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
         // Check if this actor isnt a child of another boardable actor
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
-            // Set the boarding state
-            m_eBoardingState.Set(EBoardingState.Offboard);
+            if (CNetwork.IsServer)
+            {
+                // Set the boarding state
+                m_eBoardingState.Set(EBoardingState.Offboard);
+            }
 
             // Transfer the actor to galaxy ship space
             CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);

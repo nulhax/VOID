@@ -49,14 +49,19 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Properties
 
 
-	public float HeadEulerX
+	public float RemoteHeadEulerX
 	{
 		get { return (m_fHeadEulerX.Get()); }
 	}
 
-    public float HeadEulerY
+    public float RemoteHeadEulerY
     {
         get { return (m_fHeadEulerY.Get()); }
+    }
+
+    public Quaternion RemoteRotation
+    {
+        get { return (Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f)); }
     }
 
 	public GameObject Head
@@ -66,6 +71,16 @@ public class CPlayerHead : CNetworkMonoBehaviour
             return (GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject); 
         }
 	}
+
+    public Quaternion HeadRotation
+    {
+        get { return (Head.transform.rotation); }
+    }
+
+    public Quaternion HeadLocalRotation
+    {
+        get { return (Head.transform.localRotation); }
+    }
 
 	public bool InputDisabled
 	{
@@ -102,12 +117,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{
         GameObject cSelfActor = CGamePlayers.SelfActor;
 
-        if ( cSelfActor != null &&
-            !CNetwork.IsServer)
+        if (cSelfActor != null)
         {
             _cStream.Write(ENetworkAction.SyncLocalEuler);
-            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.eulerAngles.x);
-            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.eulerAngles.y);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.x);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.y);
         }
 	}
 
@@ -130,9 +144,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.SyncLocalEuler:
-                        cPlayerHead.transform.localEulerAngles = new Vector3(_cStream.Read<float>(),
-                                                                             _cStream.Read<float>(),
-                                                                             0.0f);
+                        cPlayerHead.m_fHeadEulerX.Value = _cStream.Read<float>();
+                        cPlayerHead.m_fHeadEulerY.Value = _cStream.Read<float>();
                         break;
 
                     default:
@@ -225,8 +238,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
         if (CNetwork.IsServer)
         {
-            m_fHeadEulerX.Value = Head.transform.localEulerAngles.x;
-            m_fHeadEulerY.Value = Head.transform.localEulerAngles.y;
+
         }
 
         // Clean up
@@ -241,8 +253,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             return;
 
         // Run on server or locally
-        if (CNetwork.IsServer ||
-            gameObject == CGamePlayers.SelfActor)
+        if (gameObject == CGamePlayers.SelfActor)
         {
             if (m_fMouseDeltaX == 0.0f &&
                 m_fMouseDeltaY == 0.0f)

@@ -42,14 +42,16 @@ public class CExitTrigger : MonoBehaviour
 	{
 		if(_cOther.rigidbody != null)
 		{
-			GameObject cActor = _cOther.rigidbody.gameObject;
+			GameObject cActor = _cOther.gameObject;
 			CActorBoardable cBoardableActor = cActor.GetComponent<CActorBoardable>();
 
 			if(cBoardableActor != null)
 			{
+                Debug.Log(_cOther.rigidbody);
+
 				// Ensure the actor is not onboard any other facility before disembarking
 				// If not onboard within another facility, disembark the actor
-				if(_cOther.rigidbody.GetComponent<CActorLocator>().IsInShip)
+                if (cActor.GetComponent<CActorLocator>().IsInShip)
 				{
 					// Set the disembarking state
 					cBoardableActor.DisembarkActor();

@@ -1441,7 +1441,7 @@ Animator:
   m_HasTransformHierarchy: 1
 --- !u!114 &11400000
 MonoBehaviour:
-  m_ObjectHideFlags: 13
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100090}
@@ -1635,8 +1635,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_CanBoard: 1
-  m_CanDisembark: 1
+  m_bCanBoard: 1
+  m_bCanDisembark: 1
 --- !u!114 &11400032
 MonoBehaviour:
   m_ObjectHideFlags: 1
