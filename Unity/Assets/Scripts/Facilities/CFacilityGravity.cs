@@ -23,108 +23,83 @@ using System;
 
 public class CFacilityGravity : CNetworkMonoBehaviour
 {
-	// Member Types
+
+// Member Types
 
 
-	// Member Delegates & Events
-
-	
-	// Member Fields
-
-    private CNetworkVar<bool> m_GravityEnabled = null;
-	
-	private Vector3 m_FacilityGravityAcceleration = new Vector3(0.0f, -9.8f, 0.0f);
+// Member Delegates & Events
 
 
-	// Member Properties
+    public delegate void GravityStatusChangeHandler(GameObject _cFacility, bool _bActive);
+    public event GravityStatusChangeHandler EventGravityStatusChange;
 
-	public Vector3 FacilityGravityAcceleration
-	{
-		get { return (m_FacilityGravityAcceleration); }
-	}
+
+// Member Properties
+
 
     public bool IsGravityEnabled
     {
-        get { return (m_GravityEnabled.Get()); }
+        get { return (m_bEnabled.Get()); }
     }
 	
 	
-	// Member Methods
+// Member Methods
 	
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_GravityEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
+		m_bEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}
-	
-	void OnNetworkVarSync(INetworkVar _SyncedVar)
-	{
-		
-	}
+
 
 	[AServerOnly]
 	public void SetGravityEnabled(bool _State)
 	{
-		m_GravityEnabled.Value = _State;
+		m_bEnabled.Value = _State;
 	}
 
-	public void Start()
+
+	void Start()
 	{
-		// Register the actors entering/exiting the trigger zone
-		GetComponent<CFacilityOnboardActors>().EventActorEnteredFacility += ActorEnteredGravityTrigger;
-		GetComponent<CFacilityOnboardActors>().EventActorExitedFacility += ActorExitedGravityTrigger;
-
-		// Register when facility power events
-		GetComponent<CFacilityPower>().EventFacilityPowerDeactivated += DisableGravity;
-		GetComponent<CFacilityPower>().EventFacilityPowerActivated += EnableGravity;
+        if (CNetwork.IsServer)
+        {
+            GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
+        }
 	}
 
-	[AServerOnly]
-	private void ActorEnteredGravityTrigger(GameObject _Facility, GameObject _Actor)
+
+    void OnDestroy()
+    {
+        if (CNetwork.IsServer)
+        {
+            GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
+        }
+    }
+
+
+    [AServerOnly]
+	void OnEventFacilityPowerActiveChange(GameObject _cFacility, bool _bActive)
 	{
-		CActorGravity ag = _Actor.GetComponent<CActorGravity>();
-		if(ag != null)
-		{
-			ag.ActorEnteredGravityTrigger(gameObject);
-		}
+        m_bEnabled.Value = _bActive;
 	}
 
-	[AServerOnly]
-	private void ActorExitedGravityTrigger(GameObject _Facility, GameObject _Actor)
-	{
-		CActorGravity ag = _Actor.GetComponent<CActorGravity>();
-		if(ag != null)
-		{
-			ag.ActorExitedGravityTrigger(gameObject);
-		}
-	}
 
-	private void DisableGravity(GameObject _Facility)
-	{
-		if(CNetwork.IsServer)
-		{
-			m_GravityEnabled.Value = false;
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_bEnabled)
+        {
+            Debug.LogError("Synced facility gravity: " + m_bEnabled.Value);
+             
+            // Notify observers
+            if (EventGravityStatusChange != null) EventGravityStatusChange(gameObject, m_bEnabled.Value);
+        }
+    }
 
-			// Get all of the actors inside and disable their gravity
-			CFacilityOnboardActors foa = GetComponent<CFacilityOnboardActors>();
-			foreach(GameObject actor in foa.ActorsOnboard)
-			{
-				ActorExitedGravityTrigger(gameObject, actor);
-			}
-		}
-	}
 
-	private void EnableGravity(GameObject _Facility)
-	{
-		if(CNetwork.IsServer)
-		{
-			m_GravityEnabled.Value = true;
+// Member Fields
 
-			// Get all of the actors inside and disable their gravity
-			CFacilityOnboardActors foa = GetComponent<CFacilityOnboardActors>();
-			foreach(GameObject actor in foa.ActorsOnboard)
-			{
-				ActorEnteredGravityTrigger(gameObject, actor);
-			}
-		}
-	}
+
+    CNetworkVar<bool> m_bEnabled = null;
+
+
 }

@@ -194,9 +194,9 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 			foreach(GameObject facility in gameObject.GetComponent<CShipFacilities>().Facilities)
 			{
 				CFacilityPower fp = facility.GetComponent<CFacilityPower>();
-				
-				if(fp.IsPowerActive)
-					fp.InsufficienttPower();
+
+                if (fp.IsPowerActive)
+                    fp.SetPowerActive(false);
 			}
 		}
 

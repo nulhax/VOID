@@ -78,8 +78,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 // Member Types
 
 
-    const float k_fPositionSendInterval  = 0.1f;
-    const float k_fRotationSendInterval  = 0.1f;
+    const float k_fPositionSendInterval  = 0.066f;
+    const float k_fRotationSendInterval  = 0.033f;
     const float k_fAlignBodySpeedNormal  = 180.0f;
     const float k_fAlignBodySpeedThusers = 60.0f;
 
@@ -254,6 +254,13 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Start()
 	{
+        if (CNetwork.IsServer)
+        {
+            m_fRemotePositionX.Value = transform.position.x;
+            m_fRemotePositionY.Value = transform.position.y;
+            m_fRemotePositionZ.Value = transform.position.z;
+        }
+
 		m_cCapsuleCollider = GetComponent<CapsuleCollider>();
 
         // Register the entering/exiting gravity zones
@@ -381,7 +388,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 	
 	void Update()
 	{
-        if (Input.GetKeyDown(KeyCode.O) &&
+        if (gameObject == CGamePlayers.SelfActor &&
+            Input.GetKeyDown(KeyCode.O) &&
             CNetwork.IsServer)
         {
             if (GetComponent<CActorLocator>().CurrentFacility != null)
@@ -446,7 +454,12 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
             }
         }
 
-        UpdatePositionRotationLerping();
+        if (gameObject != CGamePlayers.SelfActor ||
+            (State != EState.AligningBodyToShipInternal &&
+             State != EState.AligningBodyToShipExternal))
+        {
+            UpdatePositionRotationLerping();
+        }
 
         // Clear mouse deltas
         m_fMouseDeltaX = 0.0f;
@@ -515,6 +528,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 qHeadRotationRelative = Quaternion.Euler(0.0f, GetComponent<CPlayerHead>().Head.transform.eulerAngles.y, 0.0f); // Relative to body (Y Only)
                 break;
 
+            case EState.AirThustersInShip:
             case EState.AirThustersInSpace:
                 fAlignSpeed = k_fAlignBodySpeedThusers;
                 qHeadRotationRelative = Quaternion.Euler(GetComponent<CPlayerHead>().Head.transform.eulerAngles.x,
@@ -584,8 +598,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
         CPlayerHead cPlayerHead = GetComponent<CPlayerHead>();
         Quaternion cHeadRotation = cPlayerHead.HeadRotation;
 
-        Vector3 vVelocity            = Quaternion.Inverse(rigidbody.transform.rotation) * rigidbody.velocity;
-        Vector3 vAngularVelocity     = Quaternion.Inverse(rigidbody.transform.rotation) * rigidbody.angularVelocity;
+        Vector3 vVelocity            = Quaternion.Inverse(cHeadRotation) * rigidbody.velocity;
+        Vector3 vAngularVelocity     = Quaternion.Inverse(cHeadRotation) * rigidbody.angularVelocity;
         Vector3 vAcceleration        = Vector3.zero;
         Vector3 vAngularAcceleration = Vector3.zero;
 
@@ -627,8 +641,8 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
         rigidbody.velocity = rigidbody.transform.rotation * vVelocity;
 
         // Apply froce and torque
-        rigidbody.AddRelativeForce(vAcceleration, ForceMode.Acceleration);
-        rigidbody.AddRelativeTorque(vAngularAcceleration, ForceMode.Acceleration);
+        rigidbody.AddForce(cHeadRotation * vAcceleration, ForceMode.Acceleration);
+        rigidbody.AddTorque(cHeadRotation * vAngularAcceleration, ForceMode.Acceleration);
     }
 
 
@@ -660,26 +674,29 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 break;
         }
 
+        if (fLerpVelocity == -100.0f)
+        {
+            Debug.LogError("Unknown state! " + m_eState);
+        }
 
         float fRemoteDistance = Math.Abs((vRemotePosition - transform.position).magnitude);
 
-        if (fRemoteDistance > k_fMoveSpeed * k_fPositionSendInterval * 3.0f)
-        {
-            // Lerp to position
-            rigidbody.transform.position = vRemotePosition;
-                                                                
-        }
-        else if (gameObject != CGamePlayers.SelfActor)
-        {
-            // Lerp to position
-            rigidbody.transform.position = Vector3.MoveTowards(rigidbody.transform.position,
-                                                               vRemotePosition,
-                                                               fLerpVelocity * Time.fixedDeltaTime);
-        }
-
-
         if (gameObject != CGamePlayers.SelfActor)
         {
+            if (fRemoteDistance > k_fMoveSpeed * k_fPositionSendInterval * 3.0f)
+            {
+                // Lerp to position
+                rigidbody.transform.position = vRemotePosition;
+
+            }
+            else if (gameObject != CGamePlayers.SelfActor)
+            {
+                // Lerp to position
+                rigidbody.transform.position = Vector3.MoveTowards(rigidbody.transform.position,
+                                                                   vRemotePosition,
+                                                                   fLerpVelocity * Time.fixedDeltaTime);
+            }
+
             if (Quaternion.Angle(rigidbody.transform.rotation, Quaternion.Euler(vRemoteEuler)) > k_fAlignBodySpeedNormal * Time.fixedDeltaTime * 3.0f)
             {
                 rigidbody.transform.rotation = Quaternion.Euler(vRemoteEuler);
@@ -742,7 +759,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                 break;
         }
 
-        Debug.LogError(_eNewState);
+        //Debug.LogError(_eNewState);
 
         EState ePreviousState = m_eState;
         m_eState = _eNewState;

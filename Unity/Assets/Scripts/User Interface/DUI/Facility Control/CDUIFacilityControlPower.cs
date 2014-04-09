@@ -67,7 +67,7 @@ public class CDUIFacilityControlPower : MonoBehaviour
 		if(CNetwork.IsServer && m_Registered)
 		{
 			// Set the gravity state for the facility
-			m_CachedFacility.GetComponent<CFacilityGravity>().SetGravityEnabled(UIToggle.current.value);
+			//m_CachedFacility.GetComponent<CFacilityGravity>().SetGravityEnabled(UIToggle.current.value);
 		}
 	}
 	
@@ -75,14 +75,17 @@ public class CDUIFacilityControlPower : MonoBehaviour
 	{
 		// Get the current charge, intial capacity and current capacity
 		float consumptionRate = m_CachedFacilityPower.PowerConsumptionRate;
-		int numConsumers = m_CachedFacilityPower.PowerConsumers.Count;
-		int numActiveConsumers = 0;
+		int numConsumers = 9000;
+		int numActiveConsumers = 6666;
+
+        /*
 		foreach(GameObject consumer in m_CachedFacilityPower.PowerConsumers)
 		{
 			CModulePowerConsumption mpc = consumer.GetComponent<CModulePowerConsumption>();
 			if(mpc.IsConsumingPower)
 				++numActiveConsumers;
 		}
+         * */
 
 		// Update the labels
 		m_PowerConsumption.text = consumptionRate.ToString();

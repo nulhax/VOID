@@ -23,7 +23,9 @@ using System;
 
 public class CFacilityLighting : MonoBehaviour
 {
-	// Member Types
+// Member Types
+
+
 	public enum ELightingState
 	{
 		Normal,
@@ -31,63 +33,81 @@ public class CFacilityLighting : MonoBehaviour
 	}
 
 	
-	// Member Delegates & Events
+// Member Delegates & Events
 	
 	
-	// Member Fields
-	public GameObject m_NormalLights = null;
-	public GameObject m_NoPowerLights = null;
+// Member Properties
+	
+	
+// Member Methods
 
-	private ELightingState m_LightingState = ELightingState.Normal;
 
-	
-	// Member Properties
-	
-	
-	// Member Methods
-	public void Start()
+	void Start()
 	{
-		// Register when facility power events
-		GetComponent<CFacilityPower>().EventFacilityPowerDeactivated += SetLightingNoPower;
-		GetComponent<CFacilityPower>().EventFacilityPowerActivated += SetLightingNormal;
+        GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerStatusChange;
 
 		UpdateLightingState();
 	}
 
-	private void UpdateLightingState()
+
+    void OnDestroy()
+    {
+        GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerStatusChange;
+    }
+
+
+	void UpdateLightingState()
 	{
 		switch (m_LightingState) 
 		{
-		case ELightingState.NoPower:
-                if (m_NormalLights != null)
-			m_NormalLights.SetActive(false);
-                if (m_NoPowerLights != null)
-			m_NoPowerLights.SetActive(true);
-			break;
+            case ELightingState.NoPower:
+                {
+                    if (m_NormalLights != null)
+                        m_NormalLights.SetActive(false);
+                    if (m_NoPowerLights != null)
+                        m_NoPowerLights.SetActive(true);
+                }
+                break;
 
-		case ELightingState.Normal:
-            if (m_NormalLights != null)
-			m_NormalLights.SetActive(true);
-            if (m_NoPowerLights != null)
-			m_NoPowerLights.SetActive(false);
-			break;
+            case ELightingState.Normal:
+                {
+                    if (m_NormalLights != null)
+                        m_NormalLights.SetActive(true);
+                    if (m_NoPowerLights != null)
+                        m_NoPowerLights.SetActive(false);
+                }
+                break;
 
 		default:
 			break;
 		}
 	}
 
-	private void SetLightingNoPower(GameObject _Facility)
-	{
-		m_LightingState = ELightingState.NoPower;
 
-		UpdateLightingState();
-	}
-	
-	private void SetLightingNormal(GameObject _Facility)
-	{
-		m_LightingState = ELightingState.Normal;
+    void OnEventFacilityPowerStatusChange(GameObject _cFacility, bool _bActive)
+    {
+        if (_bActive)
+        {
+            m_LightingState = ELightingState.Normal;
 
-		UpdateLightingState();
-	}
+            UpdateLightingState();
+        }
+        else
+        {
+            m_LightingState = ELightingState.NoPower;
+
+            UpdateLightingState();
+        }
+    }
+
+
+// Member Fields
+
+
+    public GameObject m_NormalLights = null;
+    public GameObject m_NoPowerLights = null;
+
+    private ELightingState m_LightingState = ELightingState.Normal;
+
+
 }

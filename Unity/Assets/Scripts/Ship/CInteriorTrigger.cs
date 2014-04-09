@@ -48,8 +48,12 @@ public class CInteriorTrigger : MonoBehaviour
 	}
 
 
+    [AServerOnly]
 	void OnTriggerEnter(Collider _cOther)
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		Rigidbody cRigidbody = _cOther.rigidbody;
 
         // Find rigid body in parnet
@@ -66,8 +70,12 @@ public class CInteriorTrigger : MonoBehaviour
 	}
 
 
+    [AServerOnly]
 	void OnTriggerExit(Collider _cOther)
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		Rigidbody cRigidBody = _cOther.rigidbody;
 
         // Find rigid body in parent

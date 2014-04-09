@@ -18,19 +18,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class CActorLocator : MonoBehaviour 
+public class CActorLocator : CNetworkMonoBehaviour 
 {
-	// Member Types
+
+// Member Types
 	
 
 
-	// Member Delegates and Events
+// Member Delegates & Events
 
 
-	public delegate void NotifyFacilityChange(GameObject _Facility);
-	
-	public event NotifyFacilityChange EventEnteredFacility;
-	public event NotifyFacilityChange EventExitedFacility;
+	public delegate void FacilityChangeHandler(GameObject _cPreviousFacility, GameObject _cNewFacility);
+	public event FacilityChangeHandler EventFacilityChangeHandler;
 
 
     public delegate void EnterShipHandler(GameObject _cActor);
@@ -41,78 +40,106 @@ public class CActorLocator : MonoBehaviour
     public event LeaveShipHandler EventLeaveShip;
 
 
-	// Member Fields
+// Member Properties	
 
 
-	private List<GameObject> m_aContainingFacilities = new List<GameObject>();
-	private GameObject m_cCurrentFacility = null;
-
-
-	// Member Properties	
+    [AServerOnly]
+    public List<GameObject> ContainingFacilities
+    {
+        get { return (m_aContainingFacilities); }
+    }
 
 
 	public GameObject CurrentFacility
 	{
-		get { return(m_cCurrentFacility); }
-	}
+		get 
+        {
+            if (m_tCurrentFacilityViewId.Value == null)
+            {
+                return (null);
+            }
 
-
-	public List<GameObject> ContainingFacilities
-	{
-		get { return(m_aContainingFacilities); }
+            return (m_tCurrentFacilityViewId.Value.GameObject); 
+        }
 	}
 
 
     public bool IsInShip
     {
-        get { return (m_aContainingFacilities.Count > 0); }
+        get { return (m_tCurrentFacilityViewId.Value != null); }
     }
 
 
-	// Member Methods
+// Member Methods
 
 
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	{
+        m_tCurrentFacilityViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
+	}
 
-	public void ActorEnteredFacility(GameObject _Facility)
+
+    [AServerOnly]
+	public void NotifyEnteredFacility(GameObject _cFacility)
 	{
         // Add containing facility to list
-		m_aContainingFacilities.Add(_Facility);
-		
+		m_aContainingFacilities.Add(_cFacility);
+
         // Remember current facility
-		m_cCurrentFacility = _Facility;
-
-        // Notify observers about entering a facility
-		if(EventEnteredFacility != null) EventEnteredFacility(_Facility);
-
-        // Check actor just entered a facility when not previously being contained by facility
-        if (m_aContainingFacilities.Count == 1)
-        {
-            // Notify observers about entering the ship
-            if (EventEnterShip != null) EventEnterShip(gameObject);
-        }
+        m_tCurrentFacilityViewId.Value = _cFacility.GetComponent<CNetworkView>().ViewId;
 	}
-	
 
-	public void ActorExitedFacility(GameObject _cFacility)
+
+    [AServerOnly]
+	public void NotifyExitedFacility(GameObject _cFacility)
 	{
         // Remove containing facility from list
 		m_aContainingFacilities.Remove(_cFacility);
 
+        // Check still in the ship
         if (m_aContainingFacilities.Count == 0)
         {
-            m_cCurrentFacility = null;
-        }
-
-        // Notify observers about exiting a facility
-		if(EventExitedFacility != null) EventExitedFacility(_cFacility);
-
-        // Check actor is not contained by any facility
-        if (m_aContainingFacilities.Count == 0)
-        {
-            // Notify observers about leaving the ship
-            if (EventLeaveShip != null) EventLeaveShip(gameObject);
+            m_tCurrentFacilityViewId.Value = null;
         }
 	}
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_tCurrentFacilityViewId)
+        {
+            // Check not in a facility
+            if (m_tCurrentFacilityViewId.Value == null)
+            {
+                // Notify observers that actor left ship
+                if (EventLeaveShip != null) EventLeaveShip(gameObject);
+
+                // Check we were in a facility
+                if (m_tCurrentFacilityViewId.PreviousValue != null)
+                {
+                    // Notify observers about leaving the facility
+                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, null);
+                }
+            }
+            else
+            {
+                // Check actor came from space
+                if (m_tCurrentFacilityViewId.PreviousValue == null)
+                {
+                    // Notify observers about entering the ship
+                    if (EventEnterShip != null) EventEnterShip(gameObject);
+
+                    // Notify observers about entering a facility
+                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(null, m_tCurrentFacilityViewId.Value.GameObject);
+                }
+                else
+                {
+                    // Notify observers about entering a facility
+                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, m_tCurrentFacilityViewId.Value.GameObject);
+                }
+            }
+        }
+    }
 
 
     void OnGUI()
@@ -133,19 +160,26 @@ public class CActorLocator : MonoBehaviour
                 sFacilityText += "Explosive Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsExplosiveDepressurizing ? "True" : "False") + "\n";
 
                 sFacilityText += "Power Active: " + (cCurrentFacilityObject.GetComponent<CFacilityPower>().IsPowerActive ? "True" : "False") + "\n";
-                sFacilityText += "In Ship: " + (IsInShip ? "True" : "False");
-            }
-            else
-            {
-                sFacilityText += "In Ship: " + (IsInShip ? "True" : "False");
             }
 
+            sFacilityText += "Gravity: " + (GetComponent<CActorGravity>().IsUnderGravityInfluence ? "True" : "False") + "\n";
+            sFacilityText += "In Ship: " + (IsInShip ? "True" : "False");
 
-            GUI.Box(new Rect(10, Screen.height - 230, 240, 130),
+
+            GUI.Box(new Rect(10, Screen.height - 240, 240, 140),
                     "[Facility]\n" +
                     sFacilityText);
         }
     }
+
+
+// Member Fields
+
+
+    List<GameObject> m_aContainingFacilities = new List<GameObject>();
+
+
+    CNetworkVar<TNetworkViewId> m_tCurrentFacilityViewId = null;
 
 
 }

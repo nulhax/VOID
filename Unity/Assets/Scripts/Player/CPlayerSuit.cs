@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CModulePowerConsumption))]
+[RequireComponent(typeof(CModulePower))]
 public class CPlayerSuit : CNetworkMonoBehaviour
 {
 
