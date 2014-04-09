@@ -36,15 +36,10 @@ public class CFacilityOnboardActors : MonoBehaviour
 	public event FacilityActorEnterExit EventActorExitedFacility;
 
 
-// Member Fields
-
-
-	private List<GameObject> m_cContainingActors = new List<GameObject>();
-
-
 // Member Properties
 
 
+    [AServerOnly]
 	public List<GameObject> ActorsOnboard
 	{
 		get { return(m_cContainingActors); }
@@ -63,7 +58,7 @@ public class CFacilityOnboardActors : MonoBehaviour
 
 			// Tell actor 
 			if (_cEnteringActor.GetComponent<CActorLocator>() != null)
-				_cEnteringActor.GetComponent<CActorLocator>().ActorEnteredFacility(gameObject);
+				_cEnteringActor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
 
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
@@ -84,7 +79,7 @@ public class CFacilityOnboardActors : MonoBehaviour
 			// Call ActorExitedFacility for the locator
             if (_cActor.GetComponent<CActorLocator>() != null)
             {
-                _cActor.GetComponent<CActorLocator>().ActorExitedFacility(gameObject);
+                _cActor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
             }
 
 			if(EventActorExitedFacility != null)
@@ -106,6 +101,12 @@ public class CFacilityOnboardActors : MonoBehaviour
         // Remove consumers that are now null
         m_cContainingActors.RemoveAll(item => item == null); // TODO: This should not have to be called if objects unregister on destory
     }
+
+
+// Member Fields
+
+
+    List<GameObject> m_cContainingActors = new List<GameObject>();
 
 
 }

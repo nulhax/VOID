@@ -20,26 +20,21 @@ using System.Collections;
 [RequireComponent(typeof(CActorLocator))]
 public class CActorAtmosphericConsumer : MonoBehaviour 
 {
-	// Member Types
+
+// Member Types
 	
 	
-	// Member Delegates and Events
+// Member Delegates and Events
+
+
 	public delegate void NotifyAtmosphereConsumptionState();
 
 	public event NotifyAtmosphereConsumptionState EventInsufficientAtmosphere;
 
 
-	// Member Fields
-	public float m_AtmosphericConsumptionRate = 0.0f;
-	public bool m_ConsumingAtmosphere = false;
+// Member Properties	
 
-	private float m_InitialConsumptionRate = 0.0f;
-	private CActorLocator m_ActorLocator = null;
 
-    private GameObject m_cRegisteredFacilityObject = null;
-    private bool m_bRegistered = false;
-
-	// Member Properties	
 	[AServerOnly]
 	public float AtmosphericConsumptionRate
 	{
@@ -59,24 +54,42 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 		get { return (m_ConsumingAtmosphere); }
 	}
 
-	// Member Methods
-	public void Awake()
-	{
-		m_ActorLocator = gameObject.GetComponent<CActorLocator>();
-		m_ActorLocator.EventEnteredFacility += OnEnterFacility;
-		m_ActorLocator.EventExitedFacility += OnExitFacility;
 
+// Member Methods
+
+
+	void Awake()
+	{
 		m_InitialConsumptionRate = m_AtmosphericConsumptionRate;
 	}
 
-    public void OnDestroy()
+
+    void Start()
     {
-		if(CNetwork.IsServer && m_cRegisteredFacilityObject != null)
+        m_cActorLocator = gameObject.GetComponent<CActorLocator>();
+
+        if (CNetwork.IsServer)
+        {
+            m_cActorLocator.EventFacilityChangeHandler += OnEventFacilityChange;
+        }
+    }
+
+
+     
+    void OnDestroy()
+    {
+        if (CNetwork.IsServer)
+        {
+            m_cActorLocator.EventFacilityChangeHandler -= OnEventFacilityChange;
+        }
+
+		if (CNetwork.IsServer && m_cRegisteredFacilityObject != null)
 		{
 	        m_cRegisteredFacilityObject.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
 	        m_bRegistered = false;
 		}
     }
+
 
 	[AServerOnly]
 	public void InsufficientAtmosphere()
@@ -87,17 +100,20 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 		m_ConsumingAtmosphere = false;
 	}
 
+
 	[AServerOnly]
 	public void SetAtmosphereConsumption(bool _State)
 	{
 		m_ConsumingAtmosphere = _State;
 	}
 
+
 	[AServerOnly]
-	public void OnEnterFacility(GameObject _Facility)
+	void OnEventFacilityChange(GameObject _cPreviousFacility, GameObject _cNewFacility)
 	{
+        /*
 		// Unregister self from other facility atmosphere
-		foreach (GameObject facility in m_ActorLocator.ContainingFacilities)
+		foreach (GameObject facility in m_cActorLocator.ContainingFacilities)
 		{
 			if(facility != _Facility)
 				facility.GetComponent<CFacilityAtmosphere>().UnregisterAtmosphericConsumer(gameObject);
@@ -107,11 +123,13 @@ public class CActorAtmosphericConsumer : MonoBehaviour
 		_Facility.GetComponent<CFacilityAtmosphere>().RegisterAtmosphericConsumer(gameObject);
         m_bRegistered = true;
         m_cRegisteredFacilityObject = _Facility;
+         * */
 	}
+
 	
 	[AServerOnly]
-	public void OnExitFacility(GameObject _Facility)
-	{
+	void OnExitFacility(GameObject _Facility)
+	{/*
         //if (_Facility != m_cRegisteredFacilityObject)
         //    Debug.LogError("Actor consumer is unregistering from a facility that it was not registered to");
 
@@ -120,9 +138,25 @@ public class CActorAtmosphericConsumer : MonoBehaviour
         m_bRegistered = false;
         m_cRegisteredFacilityObject = null;
 
-		if (m_ActorLocator.CurrentFacility == null)
+		if (m_cActorLocator.CurrentFacility == null)
         {
             InsufficientAtmosphere();
         }
+      * */
 	}
+
+
+// Member Fields
+
+
+    public float m_AtmosphericConsumptionRate = 0.0f;
+    public bool m_ConsumingAtmosphere = false;
+
+   float m_InitialConsumptionRate = 0.0f;
+   CActorLocator m_cActorLocator = null;
+
+   GameObject m_cRegisteredFacilityObject = null;
+   bool m_bRegistered = false;
+
+
 }
