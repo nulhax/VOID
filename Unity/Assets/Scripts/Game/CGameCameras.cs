@@ -137,6 +137,7 @@ public class CGameCameras : MonoBehaviour
 	public static void SetMainCameraParent(GameObject _parent)
 	{
 		s_MainCamera.transform.parent = _parent.transform;
+        s_MainCamera.transform.localPosition = s_MainCamera.transform.localPosition + new Vector3(0.0f, 0.0f, 0.1f);
 	}
 
 	public static void ResetCamera()

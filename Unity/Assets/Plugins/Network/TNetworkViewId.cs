@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CNetworkViewId.cs
+//  File Name   :   TNetworkViewId.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CNetworkViewId
+public class TNetworkViewId
 {
 
 // Member Types
@@ -75,12 +75,12 @@ public class CNetworkViewId
 // Member Methods
 
 
-	public CNetworkViewId()
+	public TNetworkViewId()
 	{
 	}
 
 
-	public CNetworkViewId(ushort _usViewId, byte _bSubViewId)
+	public TNetworkViewId(ushort _usViewId, byte _bSubViewId)
 	{
 		m_usViewId = _usViewId;
 		m_bChildViewId = _bSubViewId;
@@ -89,7 +89,7 @@ public class CNetworkViewId
 
 	public override bool Equals(object other)
 	{
-		var cRight = other as CNetworkViewId;
+		var cRight = other as TNetworkViewId;
 		
 		if (cRight == null)
 		{

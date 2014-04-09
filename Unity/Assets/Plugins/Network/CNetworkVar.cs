@@ -235,11 +235,11 @@ public class CNetworkVar<TYPE> : INetworkVar
         {
             m_fSendTimer -= m_fSendInterval;
 
-            if (m_bValueDirty)
+            //if (m_bValueDirty)
             {
                 m_cOwnerNetworkView.SyncNetworkVar(0, m_bNetworkVarId);
 
-                m_bValueDirty = false;
+                //m_bValueDirty = false;
             }
         }
     }

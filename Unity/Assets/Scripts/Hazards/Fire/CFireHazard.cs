@@ -1,68 +1,115 @@
-//  Auckland
-//  New Zealand
-//
-//  (c) 2013
-//
-//  File Name   :   CFireHazard.cs
-//  Description :   --------------------------
-//
-//  Author  	:  Jade Abbott
-//  Mail    	:  20chimps@gmail.com
-//
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
-[RequireComponent(typeof(CActorHealth))]
-[RequireComponent(typeof(Collider))]
-public class CFireHazard : MonoBehaviour
+[RequireComponent(typeof(CNetworkView))]
+public class CFireHazard : CNetworkMonoBehaviour
 {
-	//private System.Collections.Generic.List<GameObject> m_ThingsToBurn = new System.Collections.Generic.List<GameObject>();
+	private int audioClipIndex = -1;
+	private float spreadRadius = 3.0f;
+	private float emissionsPerUnitOfSurfaceArea = 1;
+	private float emissionsPerUnitOfSurfaceAreaDiscrepancy = 0.05f;	// Variance percentage in particle emission rate.
+	private float particleLifetime = 1.0f;
+	private float particlelifetimeDiscrepancy = 0.05f;	// Variance percentage in particle lifetime.
+	private System.Collections.Generic.List<GameObject> particleSystems = new System.Collections.Generic.List<GameObject>();
+	private GameObject particleEmitterTemplate = null;
+	float[] healthStateTransitions = { 1.0f, 20.0f };
+	private CActorHealth_Embedded fireHealth = null;
+	public CActorHealth_Embedded health { get { return fireHealth; } }
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
-	private int audioClipIndex = -1;
-	
+
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	{
+		if (fireHealth == null)
+			fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, true, false, true, 25, 0, 25, 2, healthStateTransitions, 0.1f);
+		else
+			fireHealth.syncNetworkState = true;
+
+		fireHealth.InstanceNetworkVars(_cRegistrar);
+	}
+
 	void Awake()
 	{
-		if (particleSystem == null)
-			Debug.LogError("FIX FIRE ON " + transform.parent.name);
+		if(fireHealth == null)
+			fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, false, false, true, 25, 0, 25, 0, healthStateTransitions, 0.1f);
 
-		// Add components at runtime instead of updating all the prefabs.
-		{
-			// CAudioCue
-			CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
-			audioClipIndex = audioCue.AddSound("Audio/Fire/Fire", 0.0f, 0.0f, true);
-		}
+		if (GetComponent<CActorLocator>() == null)
+			gameObject.AddComponent<CActorLocator>();
+
+		if (GetComponent<CActorAtmosphericConsumer>() == null)
+			gameObject.AddComponent<CActorAtmosphericConsumer>();
+
+		particleEmitterTemplate = Resources.Load<GameObject>("Prefabs/Hazards/ParticleEmitter");
+		AttachEmitterToChildren(gameObject);
+
+		CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+		audioClipIndex = audioCue.AddSound("Audio/Fire/Fire", 0.0f, 0.0f, true);
 	}
 
 	void Start()
 	{
-		GetComponent<CActorHealth>().EventOnSetState += OnSetState;
+		fireHealth.Start();
+
+		fireHealth.EventOnSetState += OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere += OnInsufficientAtmosphere;
 	}
 
 	void OnDestroy()
 	{
-		GetComponent<CActorHealth>().EventOnSetState -= OnSetState;
+		fireHealth.EventOnSetState -= OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
-
-	[AServerOnly]
+	
 	void Update()
 	{
-		if(CNetwork.IsServer && burning)
+		if (Input.GetKeyDown(KeyCode.L))
 		{
-			CFacilityAtmosphere fa = GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityAtmosphere>();
-			CActorHealth ah = GetComponent<CActorHealth>();
-
-			ah.health -= Time.deltaTime;	// Self damage over time. Seek help.
-
-			float thresholdPercentage = 0.25f;
-			if(fa.QuantityPercent < thresholdPercentage)
-                ah.health += (1.0f / (fa.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
+			fireHealth.health = 0;
 		}
+
+		if (CNetwork.IsServer && burning)
+		{
+			CActorLocator actorLocator = GetComponent<CActorLocator>();
+			if (actorLocator != null)
+			{
+				GameObject currentFacility = actorLocator.CurrentFacility;
+				if (currentFacility != null)
+				{
+					CFacilityAtmosphere facilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
+					if (facilityAtmosphere != null)
+					{
+						float thresholdPercentage = 0.25f;
+						if (facilityAtmosphere.QuantityPercent < thresholdPercentage)
+							fireHealth.health += (1.0f / (facilityAtmosphere.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
+					}
+				}
+			}
+
+			fireHealth.health -= Time.deltaTime;	// Self damage over time. Seek help.
+		}
+
+		fireHealth.Update();
+	}
+
+	//void FixedUpdate()
+	//{
+	//    // Adjust particles.
+	//    foreach (GameObject go in particleSystems)
+	//    {
+	//        Particle[] particles = go.particleEmitter.particles;
+	//        foreach (Particle particle in particles)
+	//        {
+	//            // Particle.
+	//        }
+
+	//        go.particleEmitter.particles = particles;
+	//    }
+	//}
+
+	void OnCollisionEnter(Collision collision)
+	{
+		fireHealth.OnCollisionEnter(collision);
 	}
 
 	void OnSetState(byte prevState, byte currState)
@@ -71,19 +118,28 @@ public class CFireHazard : MonoBehaviour
 		{
 			case 0:	// Begin fire.
 				{
+					burning_internal = true;
+
 					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
-					particleSystem.Play();
-					GetComponent<CFireHazard>().burning_internal = true;
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
+
+					foreach (GameObject go in particleSystems)
+						if (go != null)
+							go.particleEmitter.emit = true;
+
 				}
 				break;
 
 			case 2:	// End fire.
 				{
+					burning_internal = false;
+
 					GetComponent<CAudioCue>().StopAllSound();
-					particleSystem.Stop();
-					GetComponent<CFireHazard>().burning_internal = false;
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
+
+					foreach (GameObject go in particleSystems)
+						if (go != null)
+							go.particleEmitter.emit = false;
 				}
 				break;
 		}
@@ -91,52 +147,85 @@ public class CFireHazard : MonoBehaviour
 
 	void OnInsufficientAtmosphere()
 	{
-		CActorHealth ah = GetComponent<CActorHealth>();
-		ah.health = ah.health_max;
+		fireHealth.health = fireHealth.health_max;
 	}
 
-	//[AServerOnly]
-	//void OnTriggerEnter(Collider other)
-	//{
-	//    CActorHealth ah = other.GetComponent<CActorHealth>();
-	//    if (ah != null)
-	//        if (ah.flammable)
-	//            m_ThingsToBurn.Add(other.gameObject);
-
-
-	//}
-
-	[AServerOnly]
-	void OnTriggerStay(Collider collider)
+	void AttachEmitterToChildren(GameObject go)
 	{
-		if(CNetwork.IsServer)
+		foreach (Transform child in go.transform)
+			AttachEmitterToChildren(child.gameObject);
+
+		MeshFilter mf = go.GetComponent<MeshFilter>();
+		if (mf == null)
+			return;
+
+		float emissionRate = emissionsPerUnitOfSurfaceArea * CUtility.GetMeshSurfaceArea(mf.sharedMesh, go.transform.lossyScale);
+
+		// Manual creation/initialisation of particle system.
+		for (int loopParticleSystem = 0; loopParticleSystem < 3; ++loopParticleSystem)
 		{
-			if (burning)
+			GameObject newParticleSystem = GameObject.Instantiate(particleEmitterTemplate) as GameObject;
+			newParticleSystem.transform.parent = go.transform;
+			newParticleSystem.transform.localPosition = Vector3.zero;
+			newParticleSystem.transform.localRotation = Quaternion.identity;
+			newParticleSystem.transform.localScale = Vector3.one;
+
+			MeshFilter newMeshFilter = newParticleSystem.GetComponent<MeshFilter>();
+			newMeshFilter.sharedMesh = mf.sharedMesh;
+
 			{
-				// Damage everything within radius that is flammable.
-				CActorHealth victimHealth = collider.GetComponent<CActorHealth>();
-				if (victimHealth != null)
-					if(victimHealth.flammable)
-						victimHealth.health -= Time.fixedDeltaTime;
-				else
-				{
-					// Damage players - they use their own health script.
-					CPlayerHealth otherPlayerhealth = collider.GetComponent<CPlayerHealth>();
-					if (otherPlayerhealth != null)
-						otherPlayerhealth.ApplyDamage(Time.fixedDeltaTime);
-				}
+				// ParticleRenderer.
+				ParticleRenderer particleRenderer = newParticleSystem.GetComponent<ParticleRenderer>(); if (particleRenderer == null) particleRenderer = newParticleSystem.AddComponent<ParticleRenderer>();	// Get or create ParticleRenderer (there must be one).
+				particleRenderer.castShadows = false;
+				particleRenderer.receiveShadows = true;
+				particleRenderer.sharedMaterial = Resources.Load<Material>("Materials/FireMaterial" + (loopParticleSystem + 1).ToString());	// One particle renderer per emitter.
+				particleRenderer.useLightProbes = false;
+				particleRenderer.cameraVelocityScale = 0.0f;
+				particleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
+				particleRenderer.lengthScale = 0.0f;
+				particleRenderer.velocityScale = 0.0f;
+				particleRenderer.maxParticleSize = 1e+10f;
+				particleRenderer.maxPartileSize = 1e+10f;
+				particleRenderer.uvAnimationCycles = 1.0f;
+				particleRenderer.uvAnimationXTile = 1;
+				particleRenderer.uvAnimationYTile = 1;
+				//particleRenderer.uvTiles;0.333333333333333333333
 			}
-		}
-	}
 
-	void OnParticleCollision(GameObject other)
-	{
-		if (CNetwork.IsServer)
-		{
-			CActorHealth otherHealth = other.GetComponent<CActorHealth>();
-			if (otherHealth != null)
-				if (otherHealth.flammable)
-					otherHealth.health -= 10.0f;
+			{
+				// ParticleAnimator.
+				ParticleAnimator particleAnimator = newParticleSystem.GetComponent<ParticleAnimator>(); if (particleAnimator == null) particleAnimator = newParticleSystem.AddComponent<ParticleAnimator>();	// Get or create ParticleAnimator (there must be one).
+				Color[] newColourAnimation = new Color[5];
+				newColourAnimation[0] = new Color(1, 0, 0, 1);
+				newColourAnimation[1] = new Color(0, 1, 0, 1);
+				newColourAnimation[2] = new Color(0, 0, 1, 1);
+				newColourAnimation[3] = new Color(1, 0, 1, 1);
+				newColourAnimation[4] = new Color(1, 1, 0, 0);
+				particleAnimator.colorAnimation = newColourAnimation;
+				particleAnimator.doesAnimateColor = true;
+			}
+
+			{
+				ParticleEmitter particleEmitter = newParticleSystem.GetComponent<ParticleEmitter>(); if (particleEmitter == null) particleEmitter = (ParticleEmitter)newParticleSystem.AddComponent("MeshParticleEmitter");	// Get or create ParticleEmitter (there must be one).
+				particleEmitter.angularVelocity = 0.0f;
+				particleEmitter.emit = false;	// Toggle this to control emission of particles.
+				particleEmitter.emitterVelocityScale = 0.333f;	// Inherit ⅓ of the emitter's velocity.
+				particleEmitter.enabled = true;
+				particleEmitter.localVelocity = Vector3.zero;
+				particleEmitter.maxEmission = emissionRate + emissionRate * emissionsPerUnitOfSurfaceAreaDiscrepancy;
+				particleEmitter.maxEnergy = particleLifetime + particleLifetime * particlelifetimeDiscrepancy;
+				particleEmitter.maxSize = /*1e+10f*/1.0f;
+				particleEmitter.minEmission = emissionRate - emissionRate * emissionsPerUnitOfSurfaceAreaDiscrepancy;
+				particleEmitter.minEnergy = particleLifetime - particleLifetime * particlelifetimeDiscrepancy;
+				particleEmitter.minSize = /*0.0f*/1.0f;
+				particleEmitter.rndAngularVelocity = 90.0f;
+				particleEmitter.rndRotation = true;
+				particleEmitter.rndVelocity = new Vector3(1.0f, 1.0f, 1.0f);
+				particleEmitter.useWorldSpace = true;
+				// Interpolating triangles is not accessible by script, which is why a ParticleEmitter should already exist on ParticleEmitter.prefab with the setting enabled.
+			}
+
+			particleSystems.Add(newParticleSystem);
 		}
 	}
 }

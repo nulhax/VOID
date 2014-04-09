@@ -23,74 +23,89 @@ using System;
 
 public class CFacilityOnboardActors : MonoBehaviour 
 {
-	// Member Types
+
+// Member Types
 	
 	
-	// Member Delegates & Events
+// Member Delegates & Events
+
+
 	public delegate void FacilityActorEnterExit(GameObject _Facility, GameObject _Actor);
 	
 	public event FacilityActorEnterExit EventActorEnteredFacility;
 	public event FacilityActorEnterExit EventActorExitedFacility;
 
 
-	// Member Fields
-	private List<GameObject> m_ActorsOnboard = new List<GameObject>();
+// Member Fields
 
 
-	// Member Properties
+	private List<GameObject> m_cContainingActors = new List<GameObject>();
+
+
+// Member Properties
+
+
 	public List<GameObject> ActorsOnboard
 	{
-		get { return(m_ActorsOnboard); }
+		get { return(m_cContainingActors); }
 	}
+
 	
-	// Member Methods
-	public void Start()
-	{
-		// Register the ship to new actor entering/exiting events
-		EventActorEnteredFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorEnteredFacilityTrigger;
-		EventActorExitedFacility += CGameShips.Ship.GetComponent<CShipOnboardActors>().ActorExitedFacilityTrigger;
-	}
-
-	private void Update()
-	{
-		// Remove consumers that are now null
-		m_ActorsOnboard.RemoveAll(item => item == null);
-	}
+// Member Methods
 
 
-	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
+	public void OnActorEnteredFacilityTrigger(GameObject _cEnteringActor)
 	{
-		if(!m_ActorsOnboard.Contains(_Actor))
+        // Check actor is not already contained in this facility
+		if (!m_cContainingActors.Contains(_cEnteringActor))
 		{
-			m_ActorsOnboard.Add(_Actor);
+			m_cContainingActors.Add(_cEnteringActor);
 
-			// Call ActorEnteredFacility for the locator
-			if (_Actor.GetComponent<CActorLocator>() != null)
-				_Actor.GetComponent<CActorLocator>().ActorEnteredFacility(gameObject);
+			// Tell actor 
+			if (_cEnteringActor.GetComponent<CActorLocator>() != null)
+				_cEnteringActor.GetComponent<CActorLocator>().ActorEnteredFacility(gameObject);
 
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
 			{
-				EventActorEnteredFacility(gameObject, _Actor);
+				EventActorEnteredFacility(gameObject, _cEnteringActor);
 			}
 		}
 	}
 
 
-	public void OnActorExitedFacilityTrigger(GameObject _Actor)
+	public void OnActorExitedFacilityTrigger(GameObject _cActor)
 	{
-		if(m_ActorsOnboard.Contains(_Actor))
+        // Check actor is contained by this facility
+		if (m_cContainingActors.Contains(_cActor))
 		{
-			m_ActorsOnboard.Remove(_Actor);
+			m_cContainingActors.Remove(_cActor);
 
 			// Call ActorExitedFacility for the locator
-			if(_Actor.GetComponent<CActorLocator>() != null)
-				_Actor.GetComponent<CActorLocator>().ActorExitedFacility(gameObject);
+            if (_cActor.GetComponent<CActorLocator>() != null)
+            {
+                _cActor.GetComponent<CActorLocator>().ActorExitedFacility(gameObject);
+            }
 
 			if(EventActorExitedFacility != null)
 			{
-				EventActorExitedFacility(gameObject, _Actor);
+				EventActorExitedFacility(gameObject, _cActor);
 			}
 		}
 	}
+
+
+    void Start()
+    {
+        // Empty
+    }
+
+
+    void Update()
+    {
+        // Remove consumers that are now null
+        m_cContainingActors.RemoveAll(item => item == null); // TODO: This should not have to be called if objects unregister on destory
+    }
+
+
 }

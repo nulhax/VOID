@@ -223,6 +223,81 @@ public class CUtility
 
 		return(_Original);
 	}
+
+	public static float GetBoundingRadius(GameObject gameObject)
+	{
+		float result = 1.0f;
+
+		// Depending on the type of model; it may use a collider, mesh renderer, animator, or something else.
+		Collider collider = gameObject.GetComponent<Collider>();
+		if (collider)
+			result = collider.bounds.extents.magnitude;
+		else
+		{
+			Renderer renderer = gameObject.GetComponent<Renderer>();
+			if (renderer)
+				result = renderer.bounds.extents.magnitude;
+			else
+			{
+				bool gotSomethingFromAnimator = false;
+				Animator anim = gameObject.GetComponent<Animator>();
+				if (anim)
+				{
+					gotSomethingFromAnimator = anim.renderer || anim.collider || anim.rigidbody;
+					if (anim.renderer) result = anim.renderer.bounds.extents.magnitude;
+					else if (anim.collider) result = anim.collider.bounds.extents.magnitude;
+					else if (anim.rigidbody) result = anim.rigidbody.collider.bounds.extents.magnitude;
+				}
+
+				if (!gotSomethingFromAnimator)
+				{
+
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public static float GetMass(GameObject gameObject)
+	{
+		Transform gameObjectTransform = gameObject.transform;
+		while (gameObjectTransform != null)
+		{
+			Rigidbody rigidBody = gameObjectTransform.rigidbody;
+			if (rigidBody)
+				return rigidBody.mass;
+
+			gameObjectTransform = gameObjectTransform.parent;
+		}
+
+		return 1.0f;
+	}
+
+	/// <summary>
+	/// http://forum.unity3d.com/threads/117388-figuring-out-the-volume-and-surface-area
+	/// </summary>
+	/// <param name="mesh"></param>
+	/// <returns></returns>
+	public static float GetMeshSurfaceArea(Mesh mesh, Vector3 scale)
+	{
+		int[] triangles = mesh.triangles;
+		Vector3[] vertices = mesh.vertices;
+
+		float surfaceArea = 0;
+
+		for (int i = 0; i < triangles.Length; i += 3)
+		{
+			Vector3 a = Vector3.Scale(vertices[triangles[i + 0]], scale);
+			Vector3 b = Vector3.Scale(vertices[triangles[i + 1]], scale);
+			Vector3 c = Vector3.Scale(vertices[triangles[i + 2]], scale);
+			float triangleHeight = Vector3.Cross((c - b).normalized, a - b).magnitude;
+			float triangleBase = (c - b).magnitude;
+			surfaceArea += 0.5f * triangleBase * triangleHeight;
+		}
+
+		return surfaceArea;
+	}
 }
 
 /*

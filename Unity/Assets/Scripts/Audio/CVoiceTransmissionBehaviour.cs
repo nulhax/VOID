@@ -33,7 +33,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 	struct DecodeInformation
 	{
 		public short[] saDecodedData;
-		public CNetworkViewId cSenderViewID;
+		public TNetworkViewId cSenderViewID;
 		public int iNumSamples;
 		public int iFrequency;
 	};
@@ -97,7 +97,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 	void OnRecievedPlayerMicrophoneAudio(CNetworkPlayer _cPlayer, CNetworkStream _cAudioDataStream)
 	{		
 		GameObject playerActor = CGamePlayers.GetPlayerActor(_cPlayer.PlayerId);
-		CNetworkViewId playerViewID = playerActor.GetComponent<CNetworkView>().ViewId;
+		TNetworkViewId playerViewID = playerActor.GetComponent<CNetworkView>().ViewId;
 			
 		_cAudioDataStream.SetReadOffset(0);		
 		byte[] streamData =  _cAudioDataStream.ReadBytes(_cAudioDataStream.NumUnreadBytes);
@@ -208,7 +208,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 			short[] saDecodedFrames = decodedFrame.saDecodedData;
 			int numSamples = decodedFrame.iNumSamples;
 			int frequency = decodedFrame.iFrequency;
-			CNetworkViewId senderViewID = decodedFrame.cSenderViewID;
+			TNetworkViewId senderViewID = decodedFrame.cSenderViewID;
 			
 			float[] faDecodedAudioData = new float[numSamples];
 	
@@ -275,7 +275,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		int iNumSamples = _cAudioDataStream.Read<int>();
 		int iNumEncodedBytes = _cAudioDataStream.Read<int>();
 		byte[] baEncodedData = _cAudioDataStream.ReadBytes(iNumEncodedBytes);
-		CNetworkViewId cSenderViewID = 	_cAudioDataStream.Read<CNetworkViewId>();	
+		TNetworkViewId cSenderViewID = 	_cAudioDataStream.Read<TNetworkViewId>();	
 		
 		// Decode
 		short[] saDecodedFrames = new short[iNumSamples];

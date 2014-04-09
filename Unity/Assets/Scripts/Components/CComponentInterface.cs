@@ -181,6 +181,9 @@ public class CComponentInterface : CNetworkMonoBehaviour
     [AServerOnly]
     public void TriggerMalfunction()
     {
+        // Explosion GameObject
+        GameObject Explosion = GameObject.Instantiate(Resources.Load("Prefabs/Accessories/Explosions/Small explosion")) as GameObject;
+
         // TODO: Data-drive this variable
         float fExplosionRadius = 2.0f;
 
@@ -194,6 +197,16 @@ public class CComponentInterface : CNetworkMonoBehaviour
         // Set component health to 0
         GetComponent<CActorHealth>().health = 0;
 
+        // Set up the explosion game object
+        Explosion.particleSystem.transform.parent        = gameObject.transform;
+        Explosion.particleSystem.transform.localPosition = transform.localPosition;
+        Explosion.particleSystem.transform.localRotation = transform.localRotation;
+        Explosion.particleSystem.transform.localScale    = transform.localScale;
+
+        // Explode!
+        Explosion.particleEmitter.emit = true;
+        Destroy(Explosion, 3.0f);
+
         // Get all of the fire hazard nodes on the ship
         CFireHazard[] ArrayFires = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
 
@@ -206,13 +219,13 @@ public class CComponentInterface : CNetworkMonoBehaviour
             {
                 // Set the node's health to 0
                 // Sets the node on fire
-                FireNode.GetComponent<CActorHealth>().health = 0;
+                FireNode.health.health = 0;
             }
         }
 
         // Trigger an 'explosion' centred around the local transform
         // Note: Final values will need to be adjusted. Specifically the impulse.
-        CGameShips.GalaxyShip.GetComponent<CShipDamageOnCollision>().ApplyExplosiveDamage(transform.position, fExplosionRadius, 100000.0f);
+        CGameShips.GalaxyShip.GetComponent<CShipDamageOnCollision>().CreateExplosion(transform.position, fExplosionRadius, 100000.0f);
     }
 
 	void Update() { }

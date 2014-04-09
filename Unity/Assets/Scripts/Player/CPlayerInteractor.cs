@@ -121,7 +121,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
-            CNetworkViewId cNewTargetViewId = _cStream.Read<CNetworkViewId>();
+            TNetworkViewId cNewTargetViewId = _cStream.Read<TNetworkViewId>();
 
             switch (eAction)
             {
@@ -264,7 +264,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
             if (cNewTargetActorObject == null)
             {
-                s_cSerializeStream.Write((CNetworkViewId)null);
+                s_cSerializeStream.Write((TNetworkViewId)null);
             }
             else
             {

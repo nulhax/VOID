@@ -53,6 +53,7 @@ public class CShipDamageOnCollision : MonoBehaviour
                 Vector3 contactPointOnShip = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(contact.point);
 				m_DebugVisuals.Add(new SDebugVisual(contactPointOnShip, radius, Time.time + 1.0f));
 
+				// Damagable actors.
                 CActorHealth[] damagableActors = CGameShips.Ship.GetComponentsInChildren<CActorHealth>();
 				foreach (CActorHealth damagableActor in damagableActors)
                 {
@@ -65,48 +66,63 @@ public class CShipDamageOnCollision : MonoBehaviour
 						if (actorDistanceToImpact < radius)
 						{
 							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
-							damagableActor.gameObject.GetComponent<CActorHealth>().health -= damage;
+							damagableActor.health -= damage;
 							//Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
 						}
 					}
                 }
+
+				// Damagable fires.
+				CFireHazard[] fireHazards = CGameShips.Ship.GetComponentsInChildren<CFireHazard>();
+				foreach (CFireHazard fireHazard in fireHazards)
+				{
+					if (fireHazard.health.takeDamageOnImpact)
+					{
+						//Debug.LogWarning(damagableActor.gameObject.ToString() + " can be damaged on impact");
+						float actorDistanceToImpact = (fireHazard.gameObject.transform.position - contactPointOnShip).magnitude;
+						//Debug.Log(damagableActor.gameObject.ToString() + " was " + actorDistanceToImpact.ToString() + " units from impact");
+
+						if (actorDistanceToImpact < radius)
+						{
+							float damage = impulse * (1.0f - (actorDistanceToImpact / radius));
+							fireHazard.health.health -= damage;
+							//Debug.Log(damagableActor.gameObject.name + " took " + damage.ToString() + " damage");
+						}
+					}
+				}
             }
         }
     }
 
 
     [AServerOnly]
-    public void ApplyExplosiveDamage(Vector3 _Position, float _fRadius, float _fImpulse)
+    public void CreateExplosion(Vector3 _Position, float _fRadius, float _fImpulse)
     {
-        // Ensure that only the server runs this code
-        if (CNetwork.IsServer)
+        // Server check
+        if (!CNetwork.IsServer) { return; }
+
+        // Create an array of all hull breach nodes
+        CHullBreachNode[] HullBreachNodes = CGameShips.Ship.GetComponentsInChildren<CHullBreachNode>();
+
+        // Create explosion visual effect
+
+
+        // For each hull breach node
+        foreach (CHullBreachNode Node in HullBreachNodes)
         {
-            // // // // //
-            //
-            // Hull Breach Nodes:
-            //
-            // // // // //
+            // Local variables
+            float fDamage = 0.0f;
+            float fDistance = (Node.transform.position - _Position).magnitude;
 
-            // Create an array of all hull breach nodes
-            CHullBreachNode[] HullBreachNodes = CGameShips.Ship.GetComponentsInChildren<CHullBreachNode>();
-
-            // For each hull breach node
-            foreach (CHullBreachNode Node in HullBreachNodes)
+            // If the hull breach node is within the radius of the explosion
+            if (fDistance <= _fRadius)
             {
-                // Local variables
-                float fDamage   = 0.0f;
-                float fDistance = (Node.transform.position - _Position).magnitude;
+                // Calculate the amount of damage to inflict to the node
+                // Note: Damage scales linearly with proximity to explosion
+                fDamage = _fImpulse * (1.0f / fDistance);
 
-                // If the hull breach node is within the radius of the explosion
-                if (fDistance <= _fRadius)
-                {
-                    // Calculate the amount of damage to inflict to the node
-                    // Note: Damage scales linearly with proximity to explosion
-                    fDamage = _fImpulse * (1.0f / fDistance);
-
-                    // Damage the node
-                    Node.GetComponent<CActorHealth>().health -= fDamage;
-                }
+                // Damage the node
+                Node.GetComponent<CActorHealth>().health -= fDamage;
             }
         }
     }

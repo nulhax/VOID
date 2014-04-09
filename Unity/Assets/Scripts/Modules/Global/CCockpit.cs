@@ -203,7 +203,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	{
 		while (_cStream.HasUnreadData)
 		{
-			CNetworkViewId cCockpitObjectViewId = _cStream.Read<CNetworkViewId>();
+			TNetworkViewId cCockpitObjectViewId = _cStream.Read<TNetworkViewId>();
 			ENetworkAction eAction = (ENetworkAction)_cStream.Read<byte>();
 
 			GameObject cCockpitObject = CNetwork.Factory.FindObject(cCockpitObjectViewId);
@@ -241,7 +241,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	
 	[ALocalOnly]
-    void OnEventInteractionUse(RaycastHit _tRayHit, CNetworkViewId _cPlayerActorViewId, bool _bDown)	
+    void OnEventInteractionUse(RaycastHit _tRayHit, TNetworkViewId _cPlayerActorViewId, bool _bDown)	
 	{
 		// Check there is no one in the cockpit locally
 		if (_bDown &&
@@ -274,7 +274,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 		if ( cPlayerActor != null &&!IsMounted)
 		{
-			CNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
+			TNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
 			// Save position on player when entering
 			m_vEnterPosition = cPlayerActor.transform.position;

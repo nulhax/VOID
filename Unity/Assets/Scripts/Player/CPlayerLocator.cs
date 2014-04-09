@@ -49,7 +49,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public CNetworkViewId ContainingFacilityViewId
+    public TNetworkViewId ContainingFacilityViewId
     {
         get
         {
@@ -77,7 +77,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cFacilityViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync, null);
+		m_cFacilityViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 
 
@@ -151,7 +151,7 @@ public class CPlayerLocator : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<CNetworkViewId> m_cFacilityViewId = null;
+    CNetworkVar<TNetworkViewId> m_cFacilityViewId = null;
 
 
 };

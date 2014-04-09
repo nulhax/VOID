@@ -54,7 +54,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 	}
 
 
-	public CNetworkViewId CarryingModuleViewId
+	public TNetworkViewId CarryingModuleViewId
 	{
 		get { return (m_cCarryingModuleViewId.Get()); }
 	}
@@ -71,12 +71,12 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cCarryingModuleViewId = _cRegistrar.CreateReliableNetworkVar<CNetworkViewId>(OnNetworkVarSync);
+		m_cCarryingModuleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync);
 	}
 
 
     [AServerOnly]
-    public void PickupModule(ulong _ulPlayerId, CNetworkViewId _cModuleViewId)
+    public void PickupModule(ulong _ulPlayerId, TNetworkViewId _cModuleViewId)
     {
         if (!IsCarryingModule)
         {
@@ -98,15 +98,15 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    public void InsertCell(ulong _ulPlayerId, CNetworkViewId _cCellSlotViewId)
+    public void InsertCell(ulong _ulPlayerId, TNetworkViewId _cCellSlotViewId)
     {
         if (IsCarryingModule)
         {
-            CNetworkViewId CellToInsert = m_cCarryingModuleViewId.Get();
+            TNetworkViewId CellToInsert = m_cCarryingModuleViewId.Get();
 
             DropModule();
 
-            CNetworkViewId replacementCell = CNetwork.Factory.FindObject(_cCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
+            TNetworkViewId replacementCell = CNetwork.Factory.FindObject(_cCellSlotViewId).GetComponent<CCellSlot>().Insert(CellToInsert);
 
             if (replacementCell != null)
             {
@@ -193,7 +193,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 			switch (eAction)
 			{
 				case ENetworkAction.PickupModule:
-					CNetworkViewId cModuleViewId = _cStream.Read<CNetworkViewId>();
+					TNetworkViewId cModuleViewId = _cStream.Read<TNetworkViewId>();
 					cPlayerBackPack.PickupModule(_cNetworkPlayer.PlayerId, cModuleViewId);
 					
 					break;
@@ -203,7 +203,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 					break;
 				
 				case ENetworkAction.InsertCell:
-					CNetworkViewId cCellSlotViewId = _cStream.Read<CNetworkViewId>();
+					TNetworkViewId cCellSlotViewId = _cStream.Read<TNetworkViewId>();
 					cPlayerBackPack.InsertCell(_cNetworkPlayer.PlayerId, cCellSlotViewId);
 					break;
 			}
@@ -279,7 +279,7 @@ public class CPlayerBackPack : CNetworkMonoBehaviour
 // Member Fields
 
 
-	CNetworkVar<CNetworkViewId> m_cCarryingModuleViewId = null;
+	CNetworkVar<TNetworkViewId> m_cCarryingModuleViewId = null;
 
 
 	static KeyCode s_eDropKey = KeyCode.H;
