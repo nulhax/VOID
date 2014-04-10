@@ -24,34 +24,26 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 {
 	
 // Member Types
+
+
+    const float k_fProgressIncrementRate = 0.1f;
 	
 	
 // Member Delegates & Events
 
 
-// Member Fields
-
-
-	public GameObject m_PrecipitativeMesh = null;
-
-	private GameObject m_PrecipitativeObject = null;
-    private CNetworkVar<byte> m_BuiltRatio = null;
-
-	private List<MonoBehaviour> m_DisabledComponents = new List<MonoBehaviour>();
-
-
 // Member Properties
 
 
-    public float BuiltRatio
+    public float ProgressRatio
     {
-        get { return (m_BuiltRatio.Get()); }
+        get { return (m_fProgressRatio); }
     }
 
 
-	public bool IsModuleBuilt
+	public bool IsCompleted
 	{
-		get { return(m_PrecipitativeMesh == null); }
+		get { return(m_cPrecipitativeMesh == null); }
 	}
 
 	
@@ -60,96 +52,92 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_BuiltRatio = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
+        // Empty
     }
 
 
-    [AServerOnly]
-    public void SetBuiltRatio(float _fRatio)
+    public void SetProgressRatio(float _fRatio)
     {
         if (_fRatio > 1.0f ||
             _fRatio < 0.0f)
         {
-            Debug.LogError("Invalid built ratio: " + _fRatio.ToString());
+            Debug.LogError("Invalid built ratio: " + _fRatio);
         }
 
-        m_BuiltRatio.Set((byte)(_fRatio * 200.0f));
+        m_fTargetProgressRatio = _fRatio;
     }
 
 
-	void Awake()
-	{
-		// Disable all children except for the precipitation mesh
-		foreach(Transform child in transform)
-		{
-			child.gameObject.SetActive(false);
-		}
+    void Start()
+    {
+        if (m_cPrecipitativeMesh == null)
+        {
+            Debug.LogError(string.Format("GameObject({0}) does not have a precipitative object.", gameObject.name));
+        }
 
-		// Disable all components which are not the required
-		foreach(MonoBehaviour comp in gameObject.GetComponents<MonoBehaviour>())
-		{
-				if(	comp.GetType() != typeof(CNetworkView) &&
-					comp.GetType() != typeof(CModuleInterface) &&
-					comp.GetType() != typeof(CModulePrecipitation) &&
-					comp.GetType() != typeof(CActorInteractable))
-			{
-				m_DisabledComponents.Add(comp);
-				comp.enabled = false;
-			}
-		}
+        if (!GetComponent<CModuleInterface>().IsBuilt)
+        {
+            // Create the module hologram object
+            m_cPrecipitativeMesh = (GameObject)GameObject.Instantiate(m_cPrecipitativeMesh);
+            m_cPrecipitativeMesh.transform.parent = transform;
+            m_cPrecipitativeMesh.transform.localPosition = Vector3.zero;
+            m_cPrecipitativeMesh.transform.localRotation = Quaternion.identity;
 
-		// Create the module precipitation object
-		m_PrecipitativeObject = (GameObject)GameObject.Instantiate(m_PrecipitativeMesh);
-		m_PrecipitativeObject.transform.parent = transform;
-		m_PrecipitativeObject.transform.localPosition = Vector3.zero;
-		m_PrecipitativeObject.transform.localRotation = Quaternion.identity;
-	}
+            m_bInstanced = true;
+        }
+    }
 	
 
 	void Update()
 	{
-        // Empty
+        if (m_bInstanced &&
+            m_fProgressRatio < m_fTargetProgressRatio)
+        {
+            m_fProgressRatio += k_fProgressIncrementRate * Time.deltaTime;
+
+            if (m_fProgressRatio > m_fTargetProgressRatio)
+            {
+                m_fProgressRatio = m_fTargetProgressRatio;
+            }
+
+            if (m_fTargetProgressRatio >= 1.0f)
+            {
+                m_fProgressRatio = 1.0f;
+
+                OnPrecipitationFinish();
+            }
+            else
+            {
+                m_cPrecipitativeMesh.renderer.material.SetFloat("_Amount", (float)m_fProgressRatio);
+            }
+        }
 	}
 	
 
     [ALocalOnly]
 	void OnPrecipitationFinish()
 	{
-		// Enable all the children
-		foreach(Transform child in transform)
-		{
-			child.gameObject.SetActive(true);
-		}
-
-		// Enable disabled components
-		foreach(MonoBehaviour comp in m_DisabledComponents)
-		{
-			comp.enabled = true;
-		}
-
-		// Destroy the precipitation mesh
-		Destroy(m_PrecipitativeObject);
-		m_PrecipitativeObject = null;
+		// Destroy the hologram mesh
+        Destroy(m_cPrecipitativeMesh);
+        m_cPrecipitativeMesh = null;
 	}
 
 
     void OnNetworkVarSync(INetworkVar _cSynedVar)
     {
-        if (_cSynedVar == m_BuiltRatio)
-        {
-            if (m_BuiltRatio.Get() == 200)
-            {
-                OnPrecipitationFinish();
-            }
-            else
-            {
-                if (m_PrecipitativeObject == null)
-                {
-                    Debug.LogError(string.Format("GameObject({0}) does not have a precipitative object.", gameObject.name));
-                }
-
-				m_PrecipitativeObject.renderer.material.SetFloat("_Amount", (float)m_BuiltRatio.Get() / 200.0f);
-            }
-        }
+        // Empty
     }
+
+
+// Member Fields
+
+
+    public GameObject m_cPrecipitativeMesh = null;
+
+    float m_fProgressRatio       = 0.0f;
+    float m_fTargetProgressRatio = 0.0f;
+
+    bool m_bInstanced = false;
+
+
 };

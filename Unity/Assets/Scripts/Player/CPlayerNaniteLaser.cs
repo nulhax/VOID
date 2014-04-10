@@ -196,7 +196,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                 case EState.BuildingModule:
                     if (m_cTargetModule != null)
                     {
-                        m_cTargetModule.GetComponent<CModuleInterface>().IncrementBuiltRatio(k_fBuildRatioPower * Time.deltaTime);
+                        m_cTargetModule.GetComponent<CModuleInterface>().Build(k_fBuildRatioPower * Time.deltaTime);
 
                         if (m_cTargetModule.GetComponent<CModuleInterface>().IsBuilt)
                         {

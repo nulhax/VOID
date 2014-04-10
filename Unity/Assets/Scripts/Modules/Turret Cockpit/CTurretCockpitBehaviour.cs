@@ -116,7 +116,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 		switch (cSelfModuleInterface.ModuleType)
 		{
-		case CModuleInterface.EType.LaserCockpit:
+		case CModuleInterface.EType.TurretCockpit:
 			acTurrets = cSelfModuleInterface.ParentFacility.GetComponent<CFacilityInterface>().FindModulesByType(CModuleInterface.EType.LaserTurret);
 			break;
 

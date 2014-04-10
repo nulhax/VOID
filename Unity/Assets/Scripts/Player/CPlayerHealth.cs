@@ -366,7 +366,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 case HealthState.ALIVE:
                 {
                     // Enable input
-                    transform.GetComponent<CPlayerGroundMotor>().EnableInput(this);
+                    transform.GetComponent<CPlayerMotor>().EnableInput(this);
                     transform.GetComponent<CPlayerHead>().EnableInput(this);
 
                     // Break switch
@@ -384,7 +384,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
                 case HealthState.DOWNED:
                 {
                     // Disable input
-                    transform.GetComponent<CPlayerGroundMotor>().DisableInput(this);
+                    transform.GetComponent<CPlayerMotor>().DisableInput(this);
                     transform.GetComponent<CPlayerHead>().DisableInput(this);
 
                     // Break switch

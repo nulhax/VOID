@@ -20,9 +20,8 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CPlayerBackPack))]
 [RequireComponent(typeof(CPlayerBelt))]
-[RequireComponent(typeof(CPlayerGroundMotor))]
+[RequireComponent(typeof(CPlayerMotor))]
 [RequireComponent(typeof(CPlayerHead))]
 [RequireComponent(typeof(CPlayerHealth))]
 [RequireComponent(typeof(CPlayerIKController))]

@@ -36,8 +36,8 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
 	public UILabel m_WarningReport = null;
 	
 	private GameObject m_NaniteCapsule = null;
-	private CNaniteStorageBehaviour m_CachedNaniteStorageBehaviour = null;
-	private CTestNaniteCapsule m_CachedNaniteCapsule = null;
+	private CNaniteStorage m_CachedNaniteStorageBehaviour = null;
+	private CNaniteSiloSmallBehaviour m_CachedNaniteCapsule = null;
 	
 	
 	// Member Properties
@@ -46,25 +46,26 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
 	// Member Methods
 	public void RegisterNaniteCapsule(GameObject _NaniteCapacitor)
 	{
+        /*
 		m_NaniteCapsule = _NaniteCapacitor;
-		m_CachedNaniteStorageBehaviour = m_NaniteCapsule.GetComponent<CNaniteStorageBehaviour>();
-		m_CachedNaniteCapsule = m_NaniteCapsule.GetComponent<CTestNaniteCapsule>();
+		m_CachedNaniteStorageBehaviour = m_NaniteCapsule.GetComponent<CNaniteStorage>();
+		m_CachedNaniteCapsule = m_NaniteCapsule.GetComponent<CNaniteSiloSmallBehaviour>();
 
 		// Register charge/capacity state chages
 		m_CachedNaniteStorageBehaviour.EventNaniteStorageChanged += HandleCapsuleStateChange;
 		m_CachedNaniteStorageBehaviour.EventNaniteCapacityChanged += HandleCapsuleStateChange;
 		
 		// Register for when the circuitry breaks/fixes
-		m_CachedNaniteCapsule.m_CircuitryComp.EventComponentBreak += HandleComponentStateChange;
-		m_CachedNaniteCapsule.m_CircuitryComp.EventComponentFix += HandleComponentStateChange;
-		m_CachedNaniteCapsule.m_CalibratorComp.EventComponentBreak += HandleComponentStateChange;
-		m_CachedNaniteCapsule.m_CalibratorComp.EventComponentFix += HandleComponentStateChange;
-		
+		m_CachedNaniteCapsule.m_cCircuitryComponent.EventComponentBreak += HandleComponentStateChange;
+		m_CachedNaniteCapsule.m_cCircuitryComponent.EventComponentFix += HandleComponentStateChange;
+		m_CachedNaniteCapsule.m_cCalibratorComponent.EventComponentBreak += HandleComponentStateChange;
+		m_CachedNaniteCapsule.m_cCalibratorComponent.EventComponentFix += HandleComponentStateChange;
+		*/
 		// Update initial values
 		UpdateDUI();
 	}
 	
-	private void HandleCapsuleStateChange(CNaniteStorageBehaviour _Capsule)
+	private void HandleCapsuleStateChange(CNaniteStorage _Capsule)
 	{
 		UpdateDUI();
 	}
@@ -82,9 +83,10 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
 	
 	private void UpdateCapacitorVariables()
 	{
+        /*
 		// Get the current charge, intial capacity and current capacity
-		float currentNanites = m_CachedNaniteStorageBehaviour.StoredNanites;
-		float currentCapacity = m_CachedNaniteStorageBehaviour.NaniteCapacity;
+		float currentNanites = m_CachedNaniteStorageBehaviour.SotredQuanity;
+		float currentCapacity = m_CachedNaniteStorageBehaviour.Capacity;
 		float initialCapacity = m_CachedNaniteCapsule.m_MaxNaniteCapacity;
 		
 		// Update the charge value
@@ -93,13 +95,15 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
 		// Update the bar colors
 		float value = currentCapacity/initialCapacity;
 		CDUIUtilites.LerpBarColor(value, m_CapacityBar);
+         * */
 		
 		// Update the label
-		m_Nanites.text = currentNanites.ToString() + " / " + currentCapacity.ToString();
+        m_Nanites.text = CGameShips.Ship.GetComponent<CShipNaniteSystem>().NanaiteMaxRatio.ToString() + "%";
 	}
 	
 	private void UpdateCircuitryStates()
 	{
+        /*
 		int numWorkingComponents = m_CachedNaniteCapsule.NumWorkingComponents;
 		
 		if(numWorkingComponents == 0)
@@ -135,5 +139,6 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
 			m_WarningReport.enabled = false;
 			m_ErrorReport.enabled = false;
 		}
+         * */
 	}
 }

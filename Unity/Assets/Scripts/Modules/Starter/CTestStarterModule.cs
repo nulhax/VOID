@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 [RequireComponent(typeof(CPowerGenerationBehaviour))]
 [RequireComponent(typeof(CPowerStorageBehaviour))]
-[RequireComponent(typeof(CNaniteStorageBehaviour))]
+[RequireComponent(typeof(CNaniteStorage))]
 [RequireComponent(typeof(CAtmosphereGeneratorBehaviour))]
 public class CTestStarterModule: MonoBehaviour 
 {
@@ -51,7 +51,7 @@ public class CTestStarterModule: MonoBehaviour
 	private CAtmosphereGeneratorBehaviour m_AtmosphereGenerator = null;
 	private CDUIAtmosphereGeneratorRoot m_DUIAtmosphereGeneration = null;
 
-	private CNaniteStorageBehaviour m_NaniteStorage = null;
+	private CNaniteStorage m_NaniteStorage = null;
 	private CDUINaniteCapsuleRoot m_DUINaniteCapsule = null;
 
 	private int m_AmbientHumSoundIndex = -1;
@@ -134,7 +134,7 @@ public class CTestStarterModule: MonoBehaviour
 
 	private void InitialiseNantieStorage()
 	{
-		m_NaniteStorage = gameObject.GetComponent<CNaniteStorageBehaviour>();
+		m_NaniteStorage = gameObject.GetComponent<CNaniteStorage>();
 
 //		// Get the DUI of the power generator
 //		m_DUINaniteCapsule = m_NaniteConsole.DUIRoot.GetComponent<CDUINaniteCapsuleRoot>();
@@ -142,8 +142,7 @@ public class CTestStarterModule: MonoBehaviour
 		
 		if(CNetwork.IsServer)
 		{
-			m_NaniteStorage.NaniteCapacity = m_MaxNaniteCapacity;
-			m_NaniteStorage.StoredNanites = 0;
+			m_NaniteStorage.SetCapacity(m_MaxNaniteCapacity);
 		}
 	}
 }

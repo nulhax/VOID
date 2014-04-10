@@ -119,8 +119,8 @@ GameObject:
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400002}
-  - 114: {fileID: 11400000}
   - 82: {fileID: 8200000}
+  - 114: {fileID: 11400000}
   - 114: {fileID: 11400016}
   m_Layer: 0
   m_Name: ToolMiningDrill
@@ -136,7 +136,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: .581708312}
+  m_LocalPosition: {x: 0, y: 0, z: .362205535}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400012}
@@ -445,6 +445,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbf082a7b65578347ac44517bc275c3f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
@@ -463,17 +474,6 @@ MonoBehaviour:
   m_bContinuousEvent: 0
   m_fPlayFrequency: 1
   m_eSoundType: 0
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a050b043d9adfd4093502113662fbf5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -485,8 +485,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eToolType: 6
-  m_eToolCategory: 2
+  m_eToolType: 10
+  m_eToolCategory: 0
   m_RightHandPos: {fileID: 0}
   m_LeftHandPos: {fileID: 0}
 --- !u!114 &11400006
@@ -735,10 +735,10 @@ ParticleSystem:
         rgba: 4294967295
       maxColor:
         serializedVersion: 2
-        rgba: 4294076965
+        rgba: 4278190335
       minMaxState: 0
     startSize:
-      scalar: .319999993
+      scalar: .150000006
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -800,11 +800,11 @@ ParticleSystem:
       minMaxState: 0
     gravityModifier: 0
     inheritVelocity: 0
-    maxNumParticles: 2223
+    maxNumParticles: 1000
   ShapeModule:
     serializedVersion: 2
     enabled: 1
-    type: 4
+    type: 6
     radius: .00999999978
     angle: 14.4300003
     length: 5
@@ -818,7 +818,7 @@ ParticleSystem:
     enabled: 1
     m_Type: 0
     rate:
-      scalar: 474.619995
+      scalar: 300
       maxCurve:
         serializedVersion: 2
         m_Curve:
