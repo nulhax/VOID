@@ -7956,7 +7956,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 1
+  m_PreplacedModuleType: 50
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100212}
   m_Internal: 1
@@ -8080,7 +8080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 7
+  m_PreplacedModuleType: 350
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100220}
   m_Internal: 1
@@ -8142,7 +8142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 14
+  m_PreplacedModuleType: 750
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100150}
   m_Internal: 1
@@ -8157,7 +8157,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3fa40c4138cd2e48b74bb897f2e3d15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SelfConsumptionRate: 0
 --- !u!114 &11400092
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8311,7 +8310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 6
+  m_PreplacedModuleType: 300
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100168}
   m_Internal: 1
@@ -8373,7 +8372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 12
+  m_PreplacedModuleType: 650
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100224}
   m_Internal: 1
@@ -8569,7 +8568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 2
-  m_PreplacedModuleType: 3
+  m_PreplacedModuleType: 150
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100166}
   m_Internal: 1
@@ -8631,7 +8630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 8
+  m_PreplacedModuleType: 400
   m_PreplacedModuleBuilt: 0
   m_Positioner: {fileID: 100206}
   m_Internal: 0
@@ -8806,7 +8805,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 5
+  m_PreplacedModuleType: 250
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100190}
   m_Internal: 1
@@ -8868,7 +8867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 4
+  m_PreplacedModuleType: 200
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100134}
   m_Internal: 0
@@ -8930,7 +8929,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 13
+  m_PreplacedModuleType: 700
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 102342}
   m_Internal: 1
@@ -9054,7 +9053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 11
+  m_PreplacedModuleType: 600
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100184}
   m_Internal: 1
@@ -9092,7 +9091,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Size: 1
-  m_PreplacedModuleType: 2
+  m_PreplacedModuleType: 100
   m_PreplacedModuleBuilt: 1
   m_Positioner: {fileID: 100234}
   m_Internal: 1

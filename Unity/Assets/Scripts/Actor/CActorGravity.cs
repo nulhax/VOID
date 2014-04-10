@@ -63,7 +63,8 @@ public class CActorGravity : CNetworkMonoBehaviour
 
     void OnDestroy()
     {
-        if (CNetwork.IsServer)
+        if (CNetwork.IsServer &&
+            GetComponent<CActorLocator>() != null)
         {
             GetComponent<CActorLocator>().EventFacilityChangeHandler -= OnEventActorChangeFacility;
         }

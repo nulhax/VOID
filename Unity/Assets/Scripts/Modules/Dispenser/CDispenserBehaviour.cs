@@ -23,56 +23,43 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CModuleInterface))]
 public class CDispenserBehaviour : MonoBehaviour
 {
-    // Member Types
+
+// Member Types
 
 
-    // Member Delegates & Events
+// Member Delegates & Events
 
 
-	// Member Fields
-	public CDUIConsole m_DUIConsole = null;
-	public Transform m_ToolSpawnLocation = null;
-	
-	public CComponentInterface m_CircuitryComponent = null;
-	public CComponentInterface m_MechanicalComponent = null;
-	public bool m_Debug = false;
-
-	private CDUIDispenserRoot m_DUIDispenser = null;
+// Member Properties
 
 
-    // Member Properties
+// Member Methods
 
 
-    // Member Methods
-	public void Start()
+	void Start()
     {
-		// Get the DUI of the dispenser
-		m_DUIDispenser = m_DUIConsole.DUIRoot.GetComponent<CDUIDispenserRoot>();
+        if (CNetwork.IsServer)
+        {
+            // Register the event for building a tool
+            m_cDuiConsole.DUIRoot.GetComponent<CDUIDispenserRoot>().EventBuildToolButtonPressed += OnEventDuiButtonPressed;
 
-		// Register the event for building a tool
-		m_DUIDispenser.EventBuildToolButtonPressed += HandleDUIButtonPressed;
+            // Register for parent facility power active change
+            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
+        }
     }
 
 
-	[AServerOnly]
-	private void HandleDUIButtonPressed(CDUIDispenserRoot _DUI)
-	{
-		// Check there is enough nanites for the selected tool
-		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		if(sns.IsEnoughNanites(_DUI.SelectedToolCost) || m_Debug)
-		{
-			// Deduct the amount
-			if(!m_Debug)
-				sns.DeductNanites(_DUI.SelectedToolCost);
-
-			// Spawn the selected tool
-			SpawnTool(_DUI.SelectedToolType);
-		}
-	}
+    void OnDestory()
+    {
+        if (CNetwork.IsServer)
+        {
+            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
+        }
+    }
 	
 
     [AServerOnly]
-    private void SpawnTool(CToolInterface.EType _ToolType)
+    void SpawnTool(CToolInterface.EType _ToolType)
     {
         // Create a new object
 		GameObject NewTool = CNetwork.Factory.CreateObject(CToolInterface.GetPrefabType(_ToolType));
@@ -80,7 +67,46 @@ public class CDispenserBehaviour : MonoBehaviour
         gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
 
         // Set the tool's position
-		NewTool.GetComponent<CNetworkView>().SetPosition(m_ToolSpawnLocation.position);
-		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_ToolSpawnLocation.eulerAngles);
+		NewTool.GetComponent<CNetworkView>().SetPosition(m_cToolSpawnLocation.position);
+		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_cToolSpawnLocation.eulerAngles);
     }
+
+
+    [AServerOnly]
+    void OnEventDuiButtonPressed(CDUIDispenserRoot _cDui)
+    {
+        CShipNaniteSystem cShipNaniteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
+
+        // Check there is enough nanites for the selected tool
+        if (cShipNaniteSystem.NanaiteQuanity > _cDui.SelectedToolCost)
+        {
+            // Deduct the amount
+            cShipNaniteSystem.ChangeQuanity(-_cDui.SelectedToolCost);
+
+            // Spawn the selected tool
+            SpawnTool(_cDui.SelectedToolType);
+        }
+    }
+
+
+    [AServerOnly]
+    void OnEventFacilityPowerActiveChange(GameObject _cFacility, bool _bActive)
+    {
+        // Empty
+    }
+
+
+// Member Fields
+
+
+    public CDUIConsole m_cDuiConsole = null;
+    public Transform m_cToolSpawnLocation = null;
+
+    public CComponentInterface m_cCircuitryComponent = null;
+    public CComponentInterface m_cMechanicalComponent = null;
+
+
+    CDUIDispenserRoot m_DUIDispenser = null;
+
+
 };

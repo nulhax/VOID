@@ -77,7 +77,14 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 
 	public int SelectedModuleCost
 	{
-		get {return(m_SelectedModuleCost); }
+		get 
+        {
+        #if UNITY_EDITOR
+            return (0);
+        #endif
+
+            return (m_SelectedModuleCost); 
+        }
 	}
 
 	public GameObject CurrentPortSelected
@@ -113,7 +120,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	public void Update()
 	{
 		// Update the color based on nanite availability
-		if(CGameShips.Ship.GetComponent<CShipNaniteSystem>().IsEnoughNanites(m_SelectedModuleCost))
+        if (CGameShips.Ship.GetComponent<CShipNaniteSystem>().NanaiteQuanity > m_SelectedModuleCost)
 			m_ModuleCostLabel.color = Color.white;
 		else
 			m_ModuleCostLabel.color = Color.red;

@@ -45,12 +45,16 @@ public class CFacilityOnboardActors : MonoBehaviour
 		get { return(m_cContainingActors); }
 	}
 
-	
+
 // Member Methods
 
 
+    [AServerOnly]
 	public void OnActorEnteredFacilityTrigger(GameObject _cEnteringActor)
 	{
+        if (!CNetwork.IsServer)
+            Debug.LogError("This is a server only function");
+
         // Check actor is not already contained in this facility
 		if (!m_cContainingActors.Contains(_cEnteringActor))
 		{
@@ -69,8 +73,12 @@ public class CFacilityOnboardActors : MonoBehaviour
 	}
 
 
+    [AServerOnly]
 	public void OnActorExitedFacilityTrigger(GameObject _cActor)
 	{
+        if (!CNetwork.IsServer)
+            Debug.LogError("This is a server only function");
+
         // Check actor is contained by this facility
 		if (m_cContainingActors.Contains(_cActor))
 		{

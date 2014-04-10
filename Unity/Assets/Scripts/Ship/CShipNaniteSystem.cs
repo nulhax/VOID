@@ -21,193 +21,112 @@ using System;
 
 public class CShipNaniteSystem : CNetworkMonoBehaviour 
 {
-	// Member Types
-	
-	
-	// Member Delegates & Events
-	
-	
-	// Member Fields
-	private List<GameObject> m_NaniteGenerators = new List<GameObject>();
-	private List<GameObject> m_NaniteSilos = new List<GameObject>();
 
-    private float m_ShipNanitesPotential = 0;
-    private float m_ShipCurrentNanites = 0;
+// Member Types
+	
+	
+// Member Delegates & Events
 
-	// Member Properties
-	public float ShipNanitesPotential
+
+    public delegate void QuantityChangeHandler(float _fPreviousQuantity, float _fNewQuantity);
+    public event QuantityChangeHandler EventQuantityChange;
+
+
+    public delegate void CapacityChangeHandler(float _fPreviousQuantity, float _fNewQuantity);
+    public event CapacityChangeHandler EventCapacityChange;
+
+
+
+// Member Properties
+
+
+    public float NanaiteMaxRatio
+    {
+        get { return (NanaiteQuanity / NanaiteCapacity); }
+    }
+
+
+    public float NanaiteQuanity
 	{
-		get { return (m_ShipNanitesPotential); } 
+        get { return (m_fNanaiteQuanity.Value); } 
 	}
 
-    public float ShipCurentNanites
+
+	public float NanaiteCapacity
 	{
-		get { return (m_ShipCurrentNanites); } 
+        get { return (m_fNanaiteCapacity.Value); } 
 	}
 
-	// Member Methods
 
-	// Use this for initialization
+// Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-       
+        m_fNanaiteQuanity  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fNanaiteCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
-	
-	public void OnNetworkVarSync(INetworkVar _VarInstance)
-	{
-		
-	}
-	
-	public void RegisterNaniteGenerator(GameObject _NaniteGenerator)
-	{
-		if(!m_NaniteGenerators.Contains(_NaniteGenerator))
-		{
-			m_NaniteGenerators.Add(_NaniteGenerator);
-		}
-	}
-	
-	public void UnregisterNaniteGenerator(GameObject _NaniteGenerator)
-	{
-		if(m_NaniteGenerators.Contains(_NaniteGenerator))
-		{
-			m_NaniteGenerators.Remove(_NaniteGenerator);
-		}
-	}
-	
-	public void RegisterNaniteSilo(GameObject _NaniteSilo)
-	{
-		if(!m_NaniteSilos.Contains(_NaniteSilo))
-		{
-			m_NaniteSilos.Add(_NaniteSilo);
-		}
-	}
-	
-	public void UnregisterNaniteSilo(GameObject _NaniteSilo)
-	{
-		if(m_NaniteSilos.Contains(_NaniteSilo))
-		{
-			m_NaniteSilos.Remove(_NaniteSilo);
-		}
-	}
+
 
 	public void Update()
 	{
-		// Update the storage variables
-		UpdateStorageVariables();
+        // Empty
 	}
 
-	public bool IsEnoughNanites(int _iNanites)
-	{
-		return(m_ShipCurrentNanites >= _iNanites);
-	}
 
-	private void UpdateStorageVariables()
-	{
-		m_ShipNanitesPotential = 0;
-		m_ShipCurrentNanites = 0;
-		foreach(GameObject ns in m_NaniteSilos)
-		{
-			CNaniteStorageBehaviour nsb = ns.GetComponent<CNaniteStorageBehaviour>();
-			
-			if(nsb.IsStorageAvailable)
-			{
-				m_ShipCurrentNanites += nsb.StoredNanites;
-				m_ShipNanitesPotential += nsb.NaniteCapacity;
-			}
-		}
-	}
-	
 	[AServerOnly]
-	public void AddNanites(float _fNanites)
+	public float ChangeQuanity(float _fNumNanites)
 	{
-		int iNumSilos = m_NaniteSilos.Count;
+        float fChangeQuanity = 0.0f;
+        float fNewQuanity = m_fNanaiteQuanity.Value + _fNumNanites;
 
-        float evenDistribution = _fNanites / iNumSilos;
+        // Check new quantity will be higher then capacity
+        if (fNewQuanity > m_fNanaiteCapacity.Value)
+        {
+            fChangeQuanity = fNewQuanity - m_fNanaiteCapacity.Value;
+        }
 
-		foreach (GameObject silo in m_NaniteSilos) 
-		{
-			CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour>();
+        // Check new quanity will be lower then zero
+        else if (fNewQuanity < 0.0f)
+        {
+            fChangeQuanity = m_fNanaiteQuanity.Value;
+        }
 
-			float newNaniteAmount = siloBehaviour.StoredNanites + evenDistribution;
+        // All nanites accepted
+        else
+        {
+            fChangeQuanity = _fNumNanites;
+        }
 
-			if(newNaniteAmount > siloBehaviour.NaniteCapacity)
-			{
-                float chargeAddition = siloBehaviour.AvailableNaniteCapacity;
-				siloBehaviour.StoredNanites = siloBehaviour.NaniteCapacity;
-				evenDistribution -= chargeAddition;
-			}
-		}
+        // Make quanity change
+        if (fChangeQuanity != 0.0f)
+        {
+            m_fNanaiteQuanity.Value += fChangeQuanity;
+        }
 
-		foreach(GameObject silo in m_NaniteSilos)
-		{
-			CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour>();
-			
-			if(siloBehaviour.StoredNanites != siloBehaviour.NaniteCapacity)
-			{
-				siloBehaviour.StoredNanites += evenDistribution;
-			}
-		}
+        return (fChangeQuanity);
 	}
-		
-	[AServerOnly]
-	public void DeductNanites(float _fNanites)
-	{	
-		float iOriginalDebt = _fNanites;
 
-		if (_fNanites < m_ShipCurrentNanites) 
-		{
-			// Take nanites from non-full silos first
-			foreach (GameObject silo in m_NaniteSilos) 
-			{
-				CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour> ();
 
-				if (siloBehaviour.IsStorageAvailable && siloBehaviour.StoredNanites < siloBehaviour.NaniteCapacity) 
-				{
-					if (siloBehaviour.StoredNanites > _fNanites) 
-					{
-						siloBehaviour.DeductNanites (_fNanites);
-						_fNanites = 0;
-						break;
-					}
-					else 
-					{
-                        float availableAmount = siloBehaviour.StoredNanites;
-						siloBehaviour.DeductNanites (availableAmount);
-						_fNanites -= availableAmount;
-					}
-				}
-			}
+    [AServerOnly]
+    public void ChangeCapacity(float _fCapacity)
+    {
+        m_fNanaiteCapacity.Value += _fCapacity;
+    }
 
-			//If there is a remaining debt, start removing nanites from full silos
-			if (_fNanites > 0) 
-			{						
-				foreach (GameObject silo in m_NaniteSilos) 
-				{
-					CNaniteStorageBehaviour siloBehaviour = silo.GetComponent<CNaniteStorageBehaviour> ();
-			
-					if (siloBehaviour.IsStorageAvailable) 
-					{
-						if (siloBehaviour.StoredNanites > _fNanites) 
-						{
-							siloBehaviour.DeductNanites (_fNanites);
-							_fNanites = 0;
-							break;
-						}
-						else 
-						{
-                            float availableAmount = siloBehaviour.StoredNanites;
-							siloBehaviour.DeductNanites (availableAmount);
-							_fNanites -= availableAmount;
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			Debug.LogError("Insufficient nanites - always check available nanites before deducting");
-		}
-	}
+
+    public void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_fNanaiteQuanity)
+        {
+            if (EventQuantityChange != null) EventQuantityChange(m_fNanaiteQuanity.PreviousValue, m_fNanaiteQuanity.Value);
+        }
+        else if (_cSyncedVar == m_fNanaiteCapacity)
+        {
+            if (EventCapacityChange != null) EventCapacityChange(m_fNanaiteQuanity.PreviousValue, m_fNanaiteQuanity.Value);
+        }
+    }
+
 
 	public void OnGUI()
 	{
@@ -217,7 +136,16 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
             float boxHeight = 40;
 
             GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
-                             "[Ship Nanites]\n" + m_ShipCurrentNanites.ToString());
+                             "[Ship Nanites]\n" + m_fNanaiteQuanity.Value.ToString() + " / " + m_fNanaiteCapacity.Value);
         }
 	}
+
+
+// Member Fields
+
+
+    CNetworkVar<float> m_fNanaiteQuanity  = null;
+    CNetworkVar<float> m_fNanaiteCapacity = null;
+
+
 }

@@ -19,7 +19,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &100002
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -324,8 +324,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
-  m_LocalRotation: {x: .000872762874, y: 0, z: 0, w: -.999999642}
-  m_LocalPosition: {x: 0, y: 1.12634325, z: .0161881447}
+  m_LocalRotation: {x: -3.81496779e-11, y: .999999642, z: .000872762874, w: 4.37113741e-08}
+  m_LocalPosition: {x: 0, y: 1.12634325, z: -.0161881447}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400000}
@@ -334,7 +334,7 @@ Transform:
   - {fileID: 400034}
   - {fileID: 400032}
   - {fileID: 400008}
-  m_Father: {fileID: 400006}
+  m_Father: {fileID: 400004}
 --- !u!4 &400004
 Transform:
   m_ObjectHideFlags: 1
@@ -344,7 +344,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 1, z: 0, w: -4.37113883e-08}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 400002}
   m_Father: {fileID: 400006}
 --- !u!4 &400006
 Transform:
@@ -359,7 +360,6 @@ Transform:
   - {fileID: 400018}
   - {fileID: 400004}
   - {fileID: 400030}
-  - {fileID: 400002}
   m_Father: {fileID: 0}
 --- !u!4 &400008
 Transform:
@@ -908,7 +908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PrecipitativeMesh: {fileID: 100000, guid: ad1f3f4a83657734a8b70dcb9cf90425, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100000, guid: ad1f3f4a83657734a8b70dcb9cf90425, type: 2}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -931,12 +931,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModuleType: 4
-  m_ModuleCategory: 3
-  m_ModuleSize: 1
-  m_Internal: 0
-  m_Buildable: 1
+  m_cModel: {fileID: 100004}
+  m_eModuleType: 200
+  m_eModuleCategory: 150
+  m_eModuleSize: 1
   m_fNanitesCost: 20
+  m_bInternal: 0
+  m_bBuildable: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1066,8 +1067,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f7ddc618ea0f340b1064bbe94077b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PowerConsumptionRate: 5
-  m_ConsumingPower: 1
+  m_fConsumptionRate: 0
 --- !u!114 &11400030
 MonoBehaviour:
   m_ObjectHideFlags: 1

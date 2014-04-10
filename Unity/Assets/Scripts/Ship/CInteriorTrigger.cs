@@ -29,12 +29,6 @@ public class CInteriorTrigger : MonoBehaviour
 
 // Member Delegates & Events
 
-		
-// Member Fields
-	
-    
-    CFacilityOnboardActors m_cFacilityOnboardActors = null;
-
 	
 // Member Properties
 	
@@ -90,6 +84,12 @@ public class CInteriorTrigger : MonoBehaviour
 			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(cRigidBody.gameObject);
 		}
 	}
+
+
+// Member Fields
+
+
+    CFacilityOnboardActors m_cFacilityOnboardActors = null;
 
 
 }

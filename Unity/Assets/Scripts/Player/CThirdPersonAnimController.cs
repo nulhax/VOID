@@ -43,7 +43,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	static int m_iFallState = Animator.StringToHash("Base Layer.Fall");
 	
 	//Player motor
-	CPlayerGroundMotor m_PlayerMotor;
+	CPlayerMotor m_PlayerMotor;
 	
 	Animator m_ThirdPersonAnim;
 	
@@ -66,7 +66,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	void Start () 
 	{
 		//Sign up to state change event in GroundMotor script
-		m_PlayerMotor = gameObject.GetComponent<CPlayerGroundMotor>();
+		m_PlayerMotor = gameObject.GetComponent<CPlayerMotor>();
 		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
 		
 		//Get players animator
@@ -94,13 +94,13 @@ public class CThirdPersonAnimController : MonoBehaviour
 			bool bStrafeLeft;
 			bool bStrafeRight;			
 			
-			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;	
-			bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;	
-			bJump        = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Jump)        > 0) ? true : false;	
-			bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;	
-			bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
-			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
-			bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Run)       > 0) ? true : false;	
+			bWalkForward = ((m_MovementState & (uint)CPlayerMotor.EInputState.Forward)     > 0) ? true : false;	
+			bWalkBack    = ((m_MovementState & (uint)CPlayerMotor.EInputState.Backward)    > 0) ? true : false;	
+			bJump        = ((m_MovementState & (uint)CPlayerMotor.EInputState.Jump)        > 0) ? true : false;	
+			bCrouch      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Crouch)      > 0) ? true : false;	
+			bStrafeLeft  = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
+			bStrafeRight = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeRight) > 0) ? true : false;
+			bSprint      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Run)       > 0) ? true : false;	
 			
 			m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
 			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
@@ -157,10 +157,10 @@ public class CThirdPersonAnimController : MonoBehaviour
 				{
 					m_bUsedSlide = true;
 	
-					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderHeight");
+					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderOrientation");
 	
 					//Set collider to be oriented to the Z axis	
-					if(fOrientation < 1)
+					if(fOrientation < 0.05f)
 					{
 						m_physCollider.direction = 2;	
 					}
@@ -168,11 +168,21 @@ public class CThirdPersonAnimController : MonoBehaviour
 					{
 						m_physCollider.direction = 1;
 					}
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.position = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.position;
+
+					Vector3 PlayerHeadRotation = gameObject.GetComponent<CPlayerHead>().Head.transform.rotation.eulerAngles;
+					Vector3 RagdollHeadRotation = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.rotation.eulerAngles;
+
+					Quaternion newRotation = Quaternion.Euler(RagdollHeadRotation.x, PlayerHeadRotation.y, PlayerHeadRotation.z);
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.rotation = newRotation;
 				}		
 				else
 				{
 					//Reset collider
 					m_physCollider.direction = 1;
+					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
 				}
 			}
 			

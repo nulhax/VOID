@@ -1503,12 +1503,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModuleType: 11
-  m_ModuleCategory: 7
-  m_ModuleSize: 1
-  m_Internal: 1
-  m_Buildable: 1
+  m_cModel: {fileID: 100046}
+  m_eModuleType: 600
+  m_eModuleCategory: 350
+  m_eModuleSize: 1
   m_fNanitesCost: 20
+  m_bInternal: 1
+  m_bBuildable: 1
 --- !u!114 &11400018
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1531,11 +1532,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034c522ba72d87449a75a9e907a249ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DUIConsole: {fileID: 11400002}
-  m_ToolSpawnLocation: {fileID: 400028}
-  m_CircuitryComponent: {fileID: 11400034}
-  m_MechanicalComponent: {fileID: 11400048}
-  m_Debug: 1
+  m_cDuiConsole: {fileID: 11400002}
+  m_cToolSpawnLocation: {fileID: 400028}
+  m_cCircuitryComponent: {fileID: 11400034}
+  m_cMechanicalComponent: {fileID: 11400048}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1547,8 +1547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f7ddc618ea0f340b1064bbe94077b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PowerConsumptionRate: 5
-  m_ConsumingPower: 1
+  m_fConsumptionRate: 0
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1855,7 +1854,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PrecipitativeMesh: {fileID: 100000, guid: 7ef6ed755ce0b1d4db5efe522a94160d, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100000, guid: 7ef6ed755ce0b1d4db5efe522a94160d, type: 2}
 --- !u!114 &11400062
 MonoBehaviour:
   m_ObjectHideFlags: 1

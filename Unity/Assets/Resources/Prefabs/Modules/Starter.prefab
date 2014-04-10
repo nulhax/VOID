@@ -5569,7 +5569,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PrecipitativeMesh: {fileID: 100000, guid: e9a722f741535f648b767ed94d00342b, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100000, guid: e9a722f741535f648b767ed94d00342b, type: 2}
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5616,12 +5616,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModuleType: 14
-  m_ModuleCategory: 2
-  m_ModuleSize: 1
-  m_Internal: 1
-  m_Buildable: 1
+  m_cModel: {fileID: 100324}
+  m_eModuleType: 750
+  m_eModuleCategory: 350
+  m_eModuleSize: 1
   m_fNanitesCost: 20
+  m_bInternal: 1
+  m_bBuildable: 1
 --- !u!114 &11400060
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5644,8 +5645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f7ddc618ea0f340b1064bbe94077b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PowerConsumptionRate: 5
-  m_ConsumingPower: 1
+  m_fConsumptionRate: 0
 --- !u!114 &11400064
 MonoBehaviour:
   m_ObjectHideFlags: 1

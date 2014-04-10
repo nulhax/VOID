@@ -52,7 +52,16 @@ public class CDUIDispenserRoot : CNetworkMonoBehaviour
 	
 	public int SelectedToolCost
 	{
-		get {return(m_SelectedToolCost); }
+		get
+        {
+        #if UNITY_EDITOR
+
+            return (0);
+
+        #endif
+
+            return(m_SelectedToolCost); 
+        }
 	}
 	
 	// Member Methods
