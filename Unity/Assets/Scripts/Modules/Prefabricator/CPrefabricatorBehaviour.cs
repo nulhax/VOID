@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CConstructionPlannerBehaviour: MonoBehaviour 
+public class CPrefabricatorBehaviour: MonoBehaviour 
 {
 	// Member Types
 	
@@ -34,11 +34,14 @@ public class CConstructionPlannerBehaviour: MonoBehaviour
 
 
 	// Member Properties
-	
+	public CDUIPrefabricator PrefabricatorUI
+	{
+		get { return(m_ConstructionInterface.DUIRoot.GetComponent<CDUIPrefabricator>()); }
+	}
 	
 	// Member Methods
 	public void Start()
 	{
-		m_ConstructionInterface.DUIRoot.GetComponent<CDUIConstructionPlanner>().RegisterGridUI(m_GridUI, m_GridUI.GetComponent<CGrid>());
+		m_ConstructionInterface.DUIRoot.GetComponent<CDUIPrefabricator>().RegisterGridUI(m_GridUI, m_GridUI.GetComponent<CGrid>());
 	}
 }

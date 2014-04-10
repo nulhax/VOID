@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CDUIConstructionPlanner : MonoBehaviour 
+public class CDUIPrefabricator : CNetworkMonoBehaviour 
 {
 	// Member Types
 	
@@ -39,15 +39,58 @@ public class CDUIConstructionPlanner : MonoBehaviour
 	public UIGrid m_WallVariationsGrid = null;
 	public UIGrid m_CeilingVariationsGrid = null;
 
+	public UILabel m_ModuleNameLabel = null;
+	public UILabel m_ModuleDescLabel = null;
+	public UILabel m_ModuleCategoryLabel = null;
+	public UILabel m_ModuleCostLabel = null;
+
+	private CModuleInterface.EType m_SelectedModuleType = CModuleInterface.EType.INVALID;
+	private CModuleInterface.ECategory m_SelectedModuleCategory = CModuleInterface.ECategory.INVALID; 
+	private CModuleInterface.ESize m_SelectedModuleSize = CModuleInterface.ESize.INVALID;
+	private int m_SelectedModuleCost = 0;
+
 	private Dictionary<ETileVariant, GameObject> m_CurrentFloorVariations = new Dictionary<ETileVariant, GameObject>();
 	private Dictionary<ETileVariant, GameObject> m_CurrentWallVariations = new Dictionary<ETileVariant, GameObject>();
 	private Dictionary<ETileVariant, GameObject> m_CurrentCeilingVariations = new Dictionary<ETileVariant, GameObject>();
 
+	private CNetworkVar<CModuleInterface.EType> m_CurrentModuleType = null;
+
 
 	// Member Properties
-	
+	public CModuleInterface.EType SelectedModuleType
+	{
+		get { return(m_SelectedModuleType); }
+	}
+
+	public CModuleInterface.ECategory SelectedModuleCategory
+	{
+		get { return(m_SelectedModuleCategory); }
+	}
+
+	public CModuleInterface.ESize SelectedModuleSize
+	{
+		get { return(m_SelectedModuleSize); }
+	}
+
+	public int SelectedModuleCost
+	{
+		get { return(m_SelectedModuleCost); }
+	}
 	
 	// Member Methods
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	{
+		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
+	}
+
+	private void OnNetworkVarSync(INetworkVar _SyncedNetworkVar)
+	{
+		if(_SyncedNetworkVar == m_CurrentModuleType)
+		{
+			UpdateModuleInfo();
+		}
+	}
+
 	public void RegisterGridUI(CGridUI _GridUI, CGrid _Grid)
 	{
 		m_GridUI = _GridUI;
@@ -56,7 +99,7 @@ public class CDUIConstructionPlanner : MonoBehaviour
 		m_GridUI.EventTileSelectionChange += OnTileSelectionChange;
 	}
 
-	public void ResetMode()
+	public void ResetCursorMode()
 	{
 		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Nothing;
 	}
@@ -81,14 +124,21 @@ public class CDUIConstructionPlanner : MonoBehaviour
 		m_GridUI.m_CurrentMode = CGridUI.EToolMode.ModifyTileVariants;
 	}
 
-	public void EnableModulePortPlacement()
-	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort;
-	}
-
 	public void ExportGridTilesToShip()
 	{
 		CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
+	}
+	
+	[AServerOnly]
+	public void SetSelectedModuleType(CModuleInterface.EType _ModuleType)
+	{
+		m_CurrentModuleType.Value = _ModuleType;
+	}
+	
+	public void ResetModuleInfo()
+	{
+		if(CNetwork.IsServer)
+			m_CurrentModuleType.Value = CModuleInterface.EType.INVALID;
 	}
 
 	public void OnTileSelectionChange()
@@ -156,6 +206,53 @@ public class CDUIConstructionPlanner : MonoBehaviour
 		m_FloorVartiationsGrid.Reposition();
 		m_WallVariationsGrid.Reposition();
 		m_CeilingVariationsGrid.Reposition();
+	}
+
+	private void UpdateModuleInfo()
+	{
+		if(m_CurrentModuleType.Value == CModuleInterface.EType.INVALID)
+		{
+			m_SelectedModuleType = CModuleInterface.EType.INVALID;
+			m_SelectedModuleCategory = CModuleInterface.ECategory.INVALID; 
+			m_SelectedModuleSize = CModuleInterface.ESize.INVALID;
+			m_SelectedModuleCost = 0;
+		
+			// Set the label values
+			m_ModuleNameLabel.text = "N/A";
+			m_ModuleCategoryLabel.text = "N/A";
+			m_ModuleDescLabel.text = "N/A";
+			m_ModuleCostLabel.text = "N/A";
+			return;
+		}
+
+		// Create a temp module
+		string modulePrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CModuleInterface.GetPrefabType(m_CurrentModuleType.Get()));
+		GameObject moduleObject = (GameObject)Resources.Load("Prefabs/" + modulePrefabFile);
+		CModuleInterface tempModuleInterface = moduleObject.GetComponent<CModuleInterface>();
+		
+		m_SelectedModuleType = tempModuleInterface.ModuleType;
+		m_SelectedModuleCategory = tempModuleInterface.ModuleCategory; 
+		m_SelectedModuleSize = tempModuleInterface.ModuleSize;
+		m_SelectedModuleCost = m_SelectedModuleSize == CModuleInterface.ESize.Small ? 400 : 800;
+
+		// Set the prefabricator cursor based on module size
+		switch(m_SelectedModuleSize)
+		{
+		case CModuleInterface.ESize.Small:
+			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+
+		case CModuleInterface.ESize.Medium:
+			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+
+		case CModuleInterface.ESize.Large:
+			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+		}
+
+		// Set the label values
+		m_ModuleNameLabel.text = CUtility.SplitCamelCase(m_SelectedModuleType.ToString());
+		m_ModuleCategoryLabel.text = m_SelectedModuleCategory.ToString();
+		m_ModuleDescLabel.text = CUtility.LoremIpsum(6, 12, 2, 4, 1);
+		m_ModuleCostLabel.text = m_SelectedModuleCost.ToString() + "N";
 	}
 
 	private void InstanceNewFloorTileVariantSelection(ETileVariant _TileVariant, string _ItemName)

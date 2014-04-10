@@ -310,7 +310,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			if (cPlayerActor != null)
 			{
 				// UnParent the player to the cockpit seat
-				cPlayerActor.GetComponent<CNetworkView>().SetParent(null);
+				cPlayerActor.GetComponent<CNetworkView>().SetParent((Transform)null);
 
 				// Move player back to positions when entered
 				cPlayerActor.GetComponent<CNetworkView>().SetPosition(m_vEnterPosition);

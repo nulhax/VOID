@@ -76,20 +76,20 @@ public class CDUIStageFacilityExpansion : CNetworkMonoBehaviour
 
 	public void UpdateChildFacilityPresentation()
 	{
-		// Create a temp miniature facility
-		string faciltyPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetMiniaturePrefabType(CurrentFacilityType));
-		GameObject tempFacilityObject = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/" + faciltyPrefabFile));
-
-		// Destroy the old facility
-		if(m_FacilityObject.transform.childCount != 0)
-			Destroy(m_FacilityObject.transform.GetChild(0).gameObject);
-
-		// Add it to the child object
-		tempFacilityObject.transform.parent = m_FacilityObject.transform;
-
-		// Reset some values
-		tempFacilityObject.layer = LayerMask.NameToLayer("UI 3D");
-		tempFacilityObject.transform.localPosition =  Vector3.zero;
-		tempFacilityObject.transform.localRotation = Quaternion.identity;
+//		// Create a temp miniature facility
+//		string faciltyPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CFacilityInterface.GetMiniaturePrefabType(CurrentFacilityType));
+//		GameObject tempFacilityObject = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/" + faciltyPrefabFile));
+//
+//		// Destroy the old facility
+//		if(m_FacilityObject.transform.childCount != 0)
+//			Destroy(m_FacilityObject.transform.GetChild(0).gameObject);
+//
+//		// Add it to the child object
+//		tempFacilityObject.transform.parent = m_FacilityObject.transform;
+//
+//		// Reset some values
+//		tempFacilityObject.layer = LayerMask.NameToLayer("UI 3D");
+//		tempFacilityObject.transform.localPosition =  Vector3.zero;
+//		tempFacilityObject.transform.localRotation = Quaternion.identity;
 	}
 }

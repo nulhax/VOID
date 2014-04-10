@@ -79,7 +79,7 @@ public class CTestPowerGenerator: MonoBehaviour
 		// Set the cubemap for the children
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
 		{
-			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
+			r.material.SetTexture("_Cube", gameObject.GetComponent<CModuleInterface>().CubeMapSnapshot);
 		}
 
 		// Begin playing the sound.

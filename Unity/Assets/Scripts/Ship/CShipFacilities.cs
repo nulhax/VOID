@@ -27,12 +27,11 @@ public class CShipFacilities : MonoBehaviour
 
 
 // Member Delegates & Events
-
-
-	public delegate void HandleFacilityEvent(CFacilityInterface _cFacilty);
 	
-	public event HandleFacilityEvent EventOnFaciltiyCreate;
-	public event HandleFacilityEvent EventOnFaciltiyDestroy;
+	public delegate void HandleFacilityEvent(CFacilityInterface _Facilty);
+	
+	public event HandleFacilityEvent EventFaciltiyCreated;
+	public event HandleFacilityEvent EventFaciltiyDestroyed;
 
 // Member Fields
 	
@@ -41,20 +40,16 @@ public class CShipFacilities : MonoBehaviour
 	
 	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
 	private Dictionary<CFacilityInterface.EType, List<GameObject>> m_FacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
-
-
+	
 // Member Properties
-
-
+	
 	[AServerOnly]
 	public List<GameObject> Facilities
 	{
 		get { return (new List<GameObject>(m_FacilityObjects.Values)); }
 	}
 
-
 // Member Methods
-
 	
     public void RegisterFacility(CFacilityInterface _Facility)
     {
@@ -81,8 +76,8 @@ public class CShipFacilities : MonoBehaviour
 		m_FacilityTypes[_Facility.FacilityType].Add(_Facility.gameObject);
 
         // Notify observers
-        if (EventOnFaciltiyCreate != null) 
-			EventOnFaciltiyCreate(_Facility);
+        if (EventFaciltiyCreated != null) 
+			EventFaciltiyCreated(_Facility);
 
 		// Export the tiles to the grid
 		m_ShipGrid.ImportTileInformation(_Facility.FacilityTiles.ToArray());
@@ -96,8 +91,8 @@ public class CShipFacilities : MonoBehaviour
 		m_FacilityTypes[_Facility.FacilityType].Remove(_Facility.gameObject);
 
         // Notify observers
-        if (EventOnFaciltiyDestroy != null) 
-			EventOnFaciltiyDestroy(_Facility);
+        if (EventFaciltiyDestroyed != null) 
+			EventFaciltiyDestroyed(_Facility);
 	}
 	
 	public GameObject GetFacility(uint _uiFacilityId)

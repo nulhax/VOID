@@ -436,8 +436,20 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+	public void SetParent(Transform _Parent)
+	{
+		// Ensure parent has network view
+		Logger.WriteErrorOn(_Parent.GetComponent<CNetworkView>() == null, "Parent must have a network view!!!");
+
+		m_cParentViewId.Set(_Parent.GetComponent<CNetworkView>().ViewId);
+	}
+
+
 	public void SetParent(TNetworkViewId _cParentViewId)
 	{
+		// Ensure servers only set parent
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network parent!!!");
+
 		m_cParentViewId.Set(_cParentViewId);
 	}
 

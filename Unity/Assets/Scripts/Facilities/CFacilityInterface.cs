@@ -33,8 +33,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
-
-
+	
     public enum EType
 	{
 		INVALID = -1,
@@ -50,14 +49,15 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		MAX,
 	}
 
-
 // Member Delegates & Events
-
-
+	
+	public delegate void HandleModuleEvent(CModuleInterface _Module, CFacilityInterface _FacilityParent);
+	
+	public event HandleModuleEvent EventModuleCreated;
+	public event HandleModuleEvent EventModuleDestroyed;
 
 // Member Fields
-	
-	
+
 	public EType m_Type = EType.INVALID;
 	public Mesh m_CombinedMesh = null;
 
@@ -66,7 +66,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	
 	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
-	private Dictionary<CModuleInterface.ESize, List<GameObject>> m_ModulePorts = new Dictionary<CModuleInterface.ESize, List<GameObject>>();
 	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
 	
 	
@@ -109,6 +108,20 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		get { return(m_Tiles); }
 	}
 
+
+	public List<GameObject> FacilityModules
+	{
+		get
+		{
+			List<GameObject> modules = new List<GameObject>();
+			foreach(List<GameObject> moduleLists in m_Modules.Values)
+			{
+				modules.AddRange(moduleLists);
+			}
+			return(modules);
+		}
+	}
+
 // Member Methods
 
 
@@ -140,17 +153,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     }
 
 
-	public List<GameObject> FindModulePortsByType(CModuleInterface.ESize _ModuleSize)
-	{
-		if (!m_ModulePorts.ContainsKey(_ModuleSize))
-		{
-			return (new List<GameObject>());
-		}
-		
-		return (m_ModulePorts[_ModuleSize]);
-	}
-
-
     public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
     {
         if (!m_Accessories.ContainsKey(_cAccessoryInterface.AccessoryType))
@@ -162,26 +164,19 @@ public class CFacilityInterface : CNetworkMonoBehaviour
     }
 
 
-    public void RegisterModule(CModuleInterface _cModuleInterface)
+    public void RegisterModule(CModuleInterface _ModuleInterface)
     {
-        if (!m_Modules.ContainsKey(_cModuleInterface.ModuleType))
+        if (!m_Modules.ContainsKey(_ModuleInterface.ModuleType))
         {
-            m_Modules.Add(_cModuleInterface.ModuleType, new List<GameObject>());
+            m_Modules.Add(_ModuleInterface.ModuleType, new List<GameObject>());
         }
 
-        m_Modules[_cModuleInterface.ModuleType].Add(_cModuleInterface.gameObject);
+        m_Modules[_ModuleInterface.ModuleType].Add(_ModuleInterface.gameObject);
+
+		// Notify observers
+		if (EventModuleCreated != null) 
+			EventModuleCreated(_ModuleInterface, this);
     }
-
-
-	public void RegisterModulePort(CModulePortInterface _ModulePortInterface)
-	{
-		if (!m_ModulePorts.ContainsKey(_ModulePortInterface.PortSize))
-		{
-			m_ModulePorts.Add(_ModulePortInterface.PortSize, new List<GameObject>());
-		}
-		
-		m_ModulePorts[_ModulePortInterface.PortSize].Add(_ModulePortInterface.gameObject);
-	}
 
 
     public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
@@ -205,18 +200,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         return (s_RegisteredPrefabs[_eFacilityType]);
     }
-
-	public static CGameRegistrator.ENetworkPrefab GetMiniaturePrefabType(EType _eFacilityType)
-	{
-		if (!s_RegisteredMiniaturePrefabs.ContainsKey(_eFacilityType))
-		{
-			Debug.LogError(string.Format("Facility type miniature ({0}) has not been registered a prefab", _eFacilityType));
-			
-			return (CGameRegistrator.ENetworkPrefab.INVALID);
-		}
-		
-		return (s_RegisteredMiniaturePrefabs[_eFacilityType]);
-	}
 
 
     public static Dictionary<EType, List<GameObject>> GetAllFacilities()

@@ -209,7 +209,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		if(_InteractableObject != null && !IsDUIActive && !m_Transitioning)
 		{
 			// Only conserned with selecting module ports
-			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
+			CPreplacedModule mpi = _InteractableObject.GetComponent<CPreplacedModule>();
 			if(mpi != null)
 			{
 				// Register movement events
@@ -247,7 +247,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void OnDUIBuildButtonPressed()
 	{
-		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
+		CPreplacedModule currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CPreplacedModule>();
 
 		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
 		if(sns.IsEnoughNanites(m_DUIModuleCreationRoot.SelectedModuleCost) || m_Debug)

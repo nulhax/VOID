@@ -611,9 +611,9 @@ public class CTile : CGridObject
 		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_T, 13, EDirection.West);
 		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_X, 15, EDirection.North);
 		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 30, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 23, EDirection.East);
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 29, EDirection.East);
 		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 27, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 29, EDirection.West);
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 23, EDirection.West);
 
 		// Ceiling
 		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Cell, 0, EDirection.North);

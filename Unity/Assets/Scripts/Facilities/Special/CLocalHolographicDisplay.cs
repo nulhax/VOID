@@ -63,8 +63,8 @@ public class CLocalHolographicDisplay : MonoBehaviour
 
 		UpdateShipPresentation();
 
-		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate += OnFacilitiesChanged;
-		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyDestroy += OnFacilitiesChanged;
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventFaciltiyCreated += OnFacilitiesChanged;
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventFaciltiyDestroyed += OnFacilitiesChanged;
 	}
 
 	private void Update()

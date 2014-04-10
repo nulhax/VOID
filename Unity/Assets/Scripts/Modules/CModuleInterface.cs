@@ -130,6 +130,12 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
+	public Cubemap CubeMapSnapshot
+	{
+		get { return (m_CubemapSnapshot); }
+	}
+
+
 // Member Methods
 
 
@@ -172,6 +178,17 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
         GetComponent<CModulePrecipitation>().SetBuiltRatio(m_fBuiltRatio);
     }
+
+
+	[AServerOnly]
+	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
+	{
+		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
+		moduleObject.transform.parent = _FacilityParent.transform;
+		moduleObject.transform.localPosition = _LocalPostion;
+
+		return(moduleObject);
+	}
 
 
 	public static List<GameObject> GetAllModules()
@@ -313,6 +330,40 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		// Empty
 	}
 
+	public void UpdateCubemap()
+	{
+		// Disable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = false;
+		}
+		
+		if(m_CubemapSnapshot == null)
+		{
+			m_CubemapSnapshot = new Cubemap(16, TextureFormat.ARGB32, false);
+		}
+		
+		if(m_CubemapCam == null)
+		{
+			GameObject tempCam = new GameObject("Cubemap Renderer");
+			tempCam.transform.parent = transform;
+			tempCam.transform.localPosition = Vector3.up * 1.5f;
+			tempCam.transform.localRotation = Quaternion.identity;
+			m_CubemapCam = tempCam.AddComponent<Camera>();
+			m_CubemapCam.cullingMask = 1 << LayerMask.NameToLayer("Default");
+			m_CubemapCam.farClipPlane = 100;
+			m_CubemapCam.enabled = false;
+		}
+		
+		//m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
+		
+		// Re-enable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = true;
+		}
+	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
@@ -380,6 +431,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 
     GameObject m_cParentFacility = null;
+	Camera m_CubemapCam = null;
+	Cubemap m_CubemapSnapshot = null;
 
 
     Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();

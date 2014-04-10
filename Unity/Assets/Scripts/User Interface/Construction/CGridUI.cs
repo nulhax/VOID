@@ -84,7 +84,7 @@ public class CGridUI : MonoBehaviour
 	
 	public Vector3 m_CurrentMouseHitPoint = Vector3.zero;
 	public TGridPoint m_CurrentMouseGridPoint;
-	
+
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public TGridPoint m_MouseDownGridPoint;
 
@@ -145,7 +145,7 @@ public class CGridUI : MonoBehaviour
 		m_TileMaterial = new Material(m_TileMaterial);
 
 		// Get the ship grid to register for when facilities are created
-		CGameShips.Ship.GetComponent<CShipFacilities>().EventOnFaciltiyCreate += OnFacilityCreate;
+		CGameShips.Ship.GetComponent<CShipFacilities>().EventFaciltiyCreated += OnFacilityCreate;
 
 		// Update the grid to be fully up to date
 		foreach(GameObject facility in CGameShips.Ship.GetComponent<CShipFacilities>().Facilities)
@@ -322,10 +322,8 @@ public class CGridUI : MonoBehaviour
 		{
 			foreach(CTile tile in m_SelectedTiles)
 			{
-				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
-				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.North);
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North, !state);
 				tile.UpdateTileMetaData();
 			}
 		}
@@ -333,10 +331,8 @@ public class CGridUI : MonoBehaviour
 		{
 			foreach(CTile tile in m_SelectedTiles)
 			{
-				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
-				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.South);
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South, !state);
 				tile.UpdateTileMetaData();
 			}
 		}
@@ -344,10 +340,8 @@ public class CGridUI : MonoBehaviour
 		{
 			foreach(CTile tile in m_SelectedTiles)
 			{
-				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
-				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.West);
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West, !state);
 				tile.UpdateTileMetaData();
 			}
 		}
@@ -355,10 +349,8 @@ public class CGridUI : MonoBehaviour
 		{
 			foreach(CTile tile in m_SelectedTiles)
 			{
-				EDirection localNorth = tile.GetTileTypeLocalNorth(m_CurrentlySelectedType);
-				EDirection final = CNeighbour.GetLocalDirection(localNorth, EDirection.East);
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, final);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, final, !state);
+				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East);
+				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East, !state);
 				tile.UpdateTileMetaData();
 			}
 		}
@@ -422,6 +414,17 @@ public class CGridUI : MonoBehaviour
 	{
 		if (m_PlaneHit.collider == null)
 			return;
+
+		if(m_CurrentMode == EToolMode.PlaceModulePort)
+		{
+			// Placeholder as fuck
+			Vector3 modulePosition = m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition;
+			CModuleInterface.EType moduleType = CUtility.FindInParents<CPrefabricatorBehaviour>(gameObject).PrefabricatorUI.SelectedModuleType;
+			CFacilityInterface facility = CGameShips.Ship.GetComponent<CShipFacilities>().FindFacilities(
+				CFacilityInterface.EType.Bridge).FirstOrDefault().GetComponent<CFacilityInterface>();
+			CModuleInterface.CreateNewModule(moduleType, facility, modulePosition);
+			return;
+		}
 
 		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
 		bool multi = m_CurrentTileInteraction == ETileInteraction.MultipleSelection;
@@ -802,22 +805,24 @@ public class CGridUI : MonoBehaviour
 		// Update the state of the UI grid
 		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles.ToArray());
 
-		// Get all the module ports and spawn them in the UI
-		PopulateModulePorts(_Facility);
+		// Register an event for when module ports are created
+		_Facility.EventModuleCreated += OnModuleCreate;
+
+		// Populate the small module ports
+		foreach(GameObject modulePort in _Facility.FacilityModules)
+		{
+			OnModuleCreate(modulePort.GetComponent<CModuleInterface>(), _Facility);
+		}
 	}
 
-	private void PopulateModulePorts(CFacilityInterface _Facility)
+	private void OnModuleCreate(CModuleInterface _Module, CFacilityInterface _FacilityParent)
 	{
-		// Populate the small module ports
-		foreach(GameObject modulePort in _Facility.FindModulePortsByType(CModuleInterface.ESize.Small))
-		{
-			GameObject newModulePort = (GameObject)GameObject.Instantiate(m_SmallModulePortPrefab);
-			Vector3 originalScale = newModulePort.transform.localScale;
-			newModulePort.transform.parent = m_Grid.TileContainer;
-			newModulePort.transform.localScale = originalScale;
-			newModulePort.transform.localRotation = Quaternion.identity;
-			newModulePort.transform.localPosition = modulePort.transform.position - CGameShips.Ship.transform.position;
-		}
+		GameObject newModulePort = (GameObject)GameObject.Instantiate(m_SmallModulePortPrefab);
+		Vector3 originalScale = newModulePort.transform.localScale;
+		newModulePort.transform.parent = m_Grid.TileContainer;
+		newModulePort.transform.localScale = originalScale;
+		newModulePort.transform.localRotation = Quaternion.identity;
+		newModulePort.transform.localPosition =  _Module.transform.position - _FacilityParent.transform.position;
 	}
 }
 
