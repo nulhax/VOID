@@ -80,7 +80,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
     const float k_fPositionSendInterval  = 0.066f;
     const float k_fRotationSendInterval  = 0.033f;
-    const float k_fAlignBodySpeedNormal  = 180.0f;
+    const float k_fAlignBodySpeedNormal  = 270.0f;
     const float k_fAlignBodySpeedThusers = 60.0f;
 
     // Ground movement
@@ -112,7 +112,6 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
 
     public delegate void MotorTypeChangeHandler(EState _ePrevious, EState _eNew);
     public event MotorTypeChangeHandler EventStateChange;
-
 
 
 // Member Properties
@@ -434,7 +433,7 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
                     break;
 
                 case EState.WalkingShipExterior:
-                    //UpdateMagneticMovement();
+                    // UpdateMagneticMovement();
                     break;
 
                 default:
@@ -672,11 +671,10 @@ public class CPlayerGroundMotor : CNetworkMonoBehaviour
             case EState.WalkingWithinShip:
                 fLerpVelocity = k_fMoveSpeed;
                 break;
-        }
 
-        if (fLerpVelocity == -100.0f)
-        {
-            Debug.LogError("Unknown state! " + m_eState);
+            default:
+                fLerpVelocity = k_fMoveSpeed;
+                break;
         }
 
         float fRemoteDistance = Math.Abs((vRemotePosition - transform.position).magnitude);
