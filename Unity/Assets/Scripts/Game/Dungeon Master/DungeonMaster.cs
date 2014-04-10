@@ -74,6 +74,8 @@ public class DungeonMaster : MonoBehaviour
 	{
         gameObject.AddComponent<DynamicEventShipHazard>();
 		new DynamicEventRogueAsteroid();
+		new DynamicEventEnemyShip();
+
 		new DifficultyModifier_DifficultyChoice();
 		gameObject.AddComponent<DifficultyModifier_RandomFluctuation>();
 		new DifficultyModifier_ShipDamage();

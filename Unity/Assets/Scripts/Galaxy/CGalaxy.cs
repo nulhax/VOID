@@ -733,9 +733,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 		return new Vector3(relativeCell.x * cellDiameter, relativeCell.y * cellDiameter, relativeCell.z * cellDiameter);
 	}
 
+	public Vector3 RelativeCellToAbsolutePoint(SCellPos relativeCell)
+	{
+		return AbsoluteCellToAbsolutePoint(relativeCell + mCentreCell);
+	}
+
 	public Vector3 AbsoluteCellToAbsolutePoint(SCellPos absoluteCell)
 	{
 		return new Vector3(absoluteCell.x * cellDiameter, absoluteCell.y * cellDiameter, absoluteCell.z * cellDiameter);
+	}
+
+	public Vector3 AbsoluteCellToRelativePoint(SCellPos absoluteCell)
+	{
+		return RelativeCellToRelativePoint(absoluteCell - mCentreCell);
 	}
 
 	public SCellPos RelativePointToRelativeCell(Vector3 relativePoint)
@@ -747,15 +757,6 @@ public class CGalaxy : CNetworkMonoBehaviour
 		return new SCellPos(Mathf.FloorToInt(relativePoint.x), Mathf.FloorToInt(relativePoint.y), Mathf.FloorToInt(relativePoint.z));
 	}
 
-	public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
-	{
-		absolutePoint.x += cellRadius;
-		absolutePoint.y += cellRadius;
-		absolutePoint.z += cellRadius;
-		absolutePoint /= cellDiameter;
-		return new SCellPos(Mathf.FloorToInt(absolutePoint.x), Mathf.FloorToInt(absolutePoint.y), Mathf.FloorToInt(absolutePoint.z));
-	}
-
 	public SCellPos RelativePointToAbsoluteCell(Vector3 relativePoint)
 	{
 		relativePoint.x += cellRadius;
@@ -763,6 +764,15 @@ public class CGalaxy : CNetworkMonoBehaviour
 		relativePoint.z += cellRadius;
 		relativePoint /= cellDiameter;
 		return new SCellPos(Mathf.FloorToInt(relativePoint.x) + mCentreCell.x, Mathf.FloorToInt(relativePoint.y) + mCentreCell.y, Mathf.FloorToInt(relativePoint.z) + mCentreCell.z);
+	}
+
+	public SCellPos AbsolutePointToAbsoluteCell(Vector3 absolutePoint)
+	{
+		absolutePoint.x += cellRadius;
+		absolutePoint.y += cellRadius;
+		absolutePoint.z += cellRadius;
+		absolutePoint /= cellDiameter;
+		return new SCellPos(Mathf.FloorToInt(absolutePoint.x), Mathf.FloorToInt(absolutePoint.y), Mathf.FloorToInt(absolutePoint.z));
 	}
 
 	public SCellPos AbsolutePointToRelativeCell(Vector3 absolutePoint)
@@ -851,16 +861,17 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		for (uint ui = 0; ui < uiNumEnemyShips; ++ui)
 		{
-			mGubbinsToLoad.Add(new CGubbinMeta(CGameRegistrator.ENetworkPrefab.EnemyShip_FIRST,	// Enemy ship prefab.
-												absoluteCell,   // Parent cell.
-												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
-												Random.rotationUniform, // Rotation.
-												Vector3.one, // Scale
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,	// Linear velocity.
-												Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/,	// Angular velocity.
-												true,   // Has NetworkedEntity script.
-												true    // Has a rigid body.
-												));
+			mGubbinsToLoad.Add(new CGubbinMeta(
+				(CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.EnemyShip_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.EnemyShip_LAST + 1),
+				absoluteCell,   // Parent cell.
+				new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
+				Random.rotationUniform, // Rotation.
+				Vector3.one, // Scale
+				Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 75.0f)*/,	// Linear velocity.
+				Vector3.zero/*Random.onUnitSphere * Random.Range(0.0f, 2.0f)*/,	// Angular velocity.
+				true,   // Has NetworkedEntity script.
+				true    // Has a rigid body.
+				));
 		}
 	}
 
