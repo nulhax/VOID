@@ -139,7 +139,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
 		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
-		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy Ship/DummyTarget"));	// Create the GameObject mTarget_InternalLastKnownPosition.
+		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"));	// Create the GameObject mTarget_InternalLastKnownPosition.
 
 		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
 	}

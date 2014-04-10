@@ -48,7 +48,8 @@ public class CGameRegistrator : MonoBehaviour
 		// Ships
 		Ship					= 200,
 		GalaxyShip,
-		EnemyShip,
+		EnemyShip_FIRST,
+		EnemyShip_LAST			= EnemyShip_FIRST + 0,
 		
 		// Facilities
 		FacilityBridge			= 300,
@@ -207,7 +208,8 @@ public class CGameRegistrator : MonoBehaviour
 		// Ships
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Ship, "Ship/Ship");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.GalaxyShip, "Ship/GalaxyShip");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.EnemyShip, "Enemy Ship/Enemy Ship");
+		for (int i = 0; i <= ENetworkPrefab.EnemyShip_LAST - ENetworkPrefab.EnemyShip_FIRST; ++i)
+			CNetwork.Factory.RegisterPrefab((ushort)((int)ENetworkPrefab.EnemyShip_FIRST + i), "EnemyShips/EnemyShip" + i.ToString());
 		
 		// Facilities
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,              "Facilities/Bridge/Bridge");

@@ -1135,7 +1135,7 @@ GameObject:
   - 64: {fileID: 6400002}
   - 114: {fileID: 11400010}
   m_Layer: 11
-  m_Name: Enemy Ship
+  m_Name: EnemyShip0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
