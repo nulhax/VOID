@@ -157,10 +157,10 @@ public class CThirdPersonAnimController : MonoBehaviour
 				{
 					m_bUsedSlide = true;
 	
-					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderHeight");
+					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderOrientation");
 	
 					//Set collider to be oriented to the Z axis	
-					if(fOrientation < 1)
+					if(fOrientation < 0.05f)
 					{
 						m_physCollider.direction = 2;	
 					}
@@ -168,11 +168,21 @@ public class CThirdPersonAnimController : MonoBehaviour
 					{
 						m_physCollider.direction = 1;
 					}
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.position = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.position;
+
+					Vector3 PlayerHeadRotation = gameObject.GetComponent<CPlayerHead>().Head.transform.rotation.eulerAngles;
+					Vector3 RagdollHeadRotation = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.rotation.eulerAngles;
+
+					Quaternion newRotation = Quaternion.Euler(RagdollHeadRotation.x, PlayerHeadRotation.y, PlayerHeadRotation.z);
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.rotation = newRotation;
 				}		
 				else
 				{
 					//Reset collider
 					m_physCollider.direction = 1;
+					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
 				}
 			}
 			

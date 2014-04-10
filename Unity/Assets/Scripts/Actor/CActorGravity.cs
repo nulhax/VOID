@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CActorLocator))]
 public class CActorGravity : CNetworkMonoBehaviour 
 {
 // Member Types
@@ -53,6 +54,7 @@ public class CActorGravity : CNetworkMonoBehaviour
     void Start()
     {
         rigidbody.useGravity = true;
+		Debug.Log (gameObject.name);
 
         if (CNetwork.IsServer)
         {

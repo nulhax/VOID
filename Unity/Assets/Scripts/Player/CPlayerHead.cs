@@ -190,6 +190,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisChange);
         }
+
     }
 
 
@@ -224,7 +225,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
                                                                                                                                          90.0f + Head.transform.localEulerAngles.y,
                                                                                                                                         -67.31491f + Head.transform.localEulerAngles.x);
     }
-
 
     void FixedUpdate()
     {
@@ -375,7 +375,6 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
 // Member Fields
-
 
     const float k_fRotationXMin   = -70; // Up
     const float k_fRotationXMax   =  54; // Down
