@@ -48,6 +48,10 @@ public class CThirdPersonAnimController : MonoBehaviour
 	Animator m_ThirdPersonAnim;
 	
 	CapsuleCollider m_physCollider;
+	const float m_kfColliderHeight = 1.8f;
+
+	float m_fColliderLerpTimer = 0.0f;
+	float m_fColliderLerpTime = 0.5f;
 
     ushort m_previousMovementState;
 	ushort m_MovementState;
@@ -107,8 +111,21 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	       
-			
+			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
+
+			if(bStrafeLeft)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", -0.75f);	       
+			}
+			else if(bStrafeRight)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.75f);	       
+			}
+			else if(bStrafeLeft == false && bStrafeRight == false)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
+			}
+
 			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 			
 			//-------------------------------------------
@@ -155,19 +172,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 			{
 				if(!m_ThirdPersonAnim.IsInTransition(0))
 				{
-					m_bUsedSlide = true;
+					m_bUsedSlide = true;				
 	
-					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderOrientation");
-	
-					//Set collider to be oriented to the Z axis	
-					if(fOrientation < 0.05f)
-					{
-						m_physCollider.direction = 2;	
-					}
-					else
-					{
-						m_physCollider.direction = 1;
-					}
+					float fColliderHeight = m_ThirdPersonAnim.GetFloat("ColliderHeight");	
+
+					m_physCollider.height = fColliderHeight;
 
 					gameObject.GetComponent<CPlayerHead>().Head.transform.position = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.position;
 
@@ -181,13 +190,28 @@ public class CThirdPersonAnimController : MonoBehaviour
 				else
 				{
 					//Reset collider
-					m_physCollider.direction = 1;
+					m_fColliderLerpTimer = 0.0f;
 					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
 				}
 			}
+
+			if(currentBaseState.nameHash != m_iSlideState && currentBaseState.nameHash != m_iJumpState)
+			{
+				RestoreColliderHeight();
+			}
 			
-			UpdateFallingState();
+			//UpdateFallingState();
 			m_ThirdPersonAnim.StopPlayback();
+		}
+	}
+
+	void RestoreColliderHeight()
+	{
+		if (m_fColliderLerpTimer < m_fColliderLerpTime) 
+		{
+			m_fColliderLerpTimer += Time.deltaTime;
+			float fLerpFactor = m_fColliderLerpTimer / m_fColliderLerpTime;
+			m_physCollider.height = Mathf.Lerp (m_physCollider.height, m_kfColliderHeight, fLerpFactor);
 		}
 	}
 	
