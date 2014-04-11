@@ -107,8 +107,21 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	       
-			
+			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
+
+			if(bStrafeLeft)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", -0.75f);	       
+			}
+			else if(bStrafeRight)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.75f);	       
+			}
+			else if(bStrafeLeft == false && bStrafeRight == false)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
+			}
+
 			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 			
 			//-------------------------------------------
@@ -157,17 +170,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 				{
 					m_bUsedSlide = true;
 	
-					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderOrientation");
+					float fColliderHeight = m_ThirdPersonAnim.GetFloat("ColliderHeight");
 	
-					//Set collider to be oriented to the Z axis	
-					if(fOrientation < 0.05f)
-					{
-						m_physCollider.direction = 2;	
-					}
-					else
-					{
-						m_physCollider.direction = 1;
-					}
+
+					m_physCollider.height = fColliderHeight;
+
 
 					gameObject.GetComponent<CPlayerHead>().Head.transform.position = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.position;
 
