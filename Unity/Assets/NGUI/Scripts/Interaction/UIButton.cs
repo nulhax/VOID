@@ -88,6 +88,13 @@ public class UIButton : UIButtonColor
 	{
 		if (isEnabled)
 			base.OnPress(isPressed);
+
+		if (isPressed)
+		{
+			current = this;
+			EventDelegate.Execute(onClick);
+			current = null;
+		}
 	}
 	
 	protected override void OnDragOver ()
