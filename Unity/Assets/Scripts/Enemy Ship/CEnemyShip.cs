@@ -110,10 +110,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	bool mFacingTarget = false;		// Is looking in the general direction of the target.
 	bool mCloseToTarget = false;	// Is within acceptable range of the target.
 	bool mVisibleTarget = false;	// Has direct line of sight to the target.
-	float viewConeRadiusInDegrees = 20.0f;
-	float viewConeLength = 400.0f;
-	float viewSphereRadius = 200.0f;
-	float desiredDistanceToTarget = 100.0f;
+	float viewConeRadiusInDegrees = 30.0f;
+	float viewConeLength_Extension = 1000.0f;
+	float viewConeLength { get { return mBoundingRadius + viewConeLength_Extension; } }
+	float viewSphereRadius_Extension = 300.0f;
+	float viewSphereRadius { get { return mBoundingRadius + viewSphereRadius_Extension; } }
+	float desiredDistanceToTarget_Extension = 100.0f;
+	float desiredDistanceToTarget { get { return mBoundingRadius + desiredDistanceToTarget_Extension; } }
 	float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
 	float maxLinearAcceleration = 100000.0f;
 
@@ -121,12 +124,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	float mTimeUntilNextLosCheck = 0.0f;
 
 	// Physics data.
+	float mBoundingRadius = 0.0f;	// Set at rumtime.
 	CPidController mPidAngularAccelerationX = new CPidController(-2, 0, 0);
 	CPidController mPidAngularAccelerationY = new CPidController(2, 0, 0);
 	CPidController mPidAngularAccelerationZ = new CPidController(0, 0, 0);
 	Vector3 mTorque;
 
-	bool debug_Display = true;
+	bool debug_Display = false;
 	string debug_StateName;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -144,6 +148,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
 	}
 
+	void Start()
+	{
+		mBoundingRadius = CUtility.GetBoundingRadius(gameObject);
+	}
+
 	void OnDestroy()
 	{
 		Destroy(mTarget_InternalLastKnownPosition);	// Destroy the GameObject mTarget_InternalLastKnownPosition.
@@ -151,6 +160,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.KeypadDivide))
+			debug_Display = !debug_Display;
+
 		mTimeout -= Time.deltaTime;
 
 		if (mTargetExpireTime <= Time.time)	// If the target expire time is met...
@@ -200,11 +212,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			// Determine if the target is in view.
 			mFacingTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
 
-			// Determine if the target is within acceptable range.
-			mCloseToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+			// Determine if the target is within range.
+			mCloseToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
 
 			// Check if there is a direct line of sight to the target.
 			mVisibleTarget = IsWithinLineOfSight(mTarget);
+			if(mVisibleTarget)
+				mTarget_InternalLastKnownPosition.transform.position = mTarget.transform.position;
 		}
 	}
 
@@ -446,7 +460,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							return true;
 						}
 
-						mTimeoutSecondary -= Time.deltaTime;	// This determines fore rate.
+						mTimeoutSecondary -= Time.deltaTime;	// Time between firing bullets.
 
 						if(mVisibleTarget)	// If the target is in sight...
 						{
@@ -556,6 +570,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				if (mTarget == null)
 				{
 					mTarget = mTarget_InternalLastKnownPosition;
+					mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+					mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
+
 					mTargetExpireTime = Time.time + timeSpentTravelling;
 				}
 				return false;	// Init functions always return false.
@@ -574,11 +591,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							return true;
 						}
 
-						mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+						//mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
 
 						return false;
 
 					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+						mTarget_InternalLastKnownPosition.transform.parent = null;
 						mState = EState.none;
 						return true;	// Always return true for uncaught events.
 				}
@@ -634,7 +652,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			Gizmos.DrawLine(transform.position, mTarget.transform.position);	// Point to target.
 			Gizmos.DrawSphere(mTarget.transform.position, 1.0f);
 			Gizmos.color = new Color(0, 1, 0, 1);
-			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.transform.position, 0.5f);
+			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.transform.position, 50.0f);
 		}
 
 		// Angular forces.
@@ -643,7 +661,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		Gizmos.DrawLine(transform.position + transform.right, transform.position - transform.right);
 		Gizmos.DrawLine(transform.position + transform.forward, transform.position - transform.forward);
 
-		// All the following assume clockwise rotation for positive torque.
 		// Y may be incorrect.
 		Gizmos.color = Color.cyan;
 		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.forward * mTorque.x);		// X
@@ -658,5 +675,14 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.right * mTorque.z);	// Z
 		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.up * mTorque.z);	// Z
 		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.up * mTorque.z);	// Z
+
+		// Field of view.
+		Gizmos.color = new Color(0, 0.5f, 0.5f, 0.25f);
+		Gizmos.DrawSphere(transform.position, mBoundingRadius);
+		Gizmos.DrawSphere(transform.position, viewSphereRadius);
+		Matrix4x4 oldMatrix = Gizmos.matrix;
+		Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+		Gizmos.DrawFrustum(Vector3.zero, viewConeRadiusInDegrees, viewConeLength, 1.0f, 1.0f);
+		Gizmos.matrix = oldMatrix;
 	}
 }
