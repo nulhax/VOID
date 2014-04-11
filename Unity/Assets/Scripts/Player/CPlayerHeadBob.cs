@@ -48,7 +48,7 @@ public class CPlayerHeadBob : MonoBehaviour {
 	void Start () 
 	{
 		//Initialise head bob
-		gameObject.GetComponent<CPlayerGroundMotor>().EventInputStatesChange += NotifyMovementStateChange;
+		gameObject.GetComponent<CPlayerMotor>().EventInputStatesChange += NotifyMovementStateChange;
 
 		m_initialOffset = gameObject.GetComponent<CPlayerHead> ().Head.transform.localPosition;
 	}
@@ -56,7 +56,7 @@ public class CPlayerHeadBob : MonoBehaviour {
 	void OnDestroy()
 	{
 		// Unregister
-		gameObject.GetComponent<CPlayerGroundMotor>().EventInputStatesChange -= NotifyMovementStateChange;
+        gameObject.GetComponent<CPlayerMotor>().EventInputStatesChange -= NotifyMovementStateChange;
 	}
 	
 	// Update is called once per frame
@@ -84,13 +84,13 @@ public class CPlayerHeadBob : MonoBehaviour {
 		bool bStrafeLeft;
 		bool bStrafeRight;          
 		
-		bRunForward =  ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;   
-		bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;   
-		bJump        = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Jump)        > 0) ? true : false;   
-		bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;   
-		bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;   
-		bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
-		bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Run)         > 0) ? true : false;   
+		bRunForward =  ((m_MovementState & (uint)CPlayerMotor.EInputState.Forward)     > 0) ? true : false;   
+		bWalkBack    = ((m_MovementState & (uint)CPlayerMotor.EInputState.Backward)    > 0) ? true : false;   
+		bJump        = ((m_MovementState & (uint)CPlayerMotor.EInputState.Jump)        > 0) ? true : false;   
+		bCrouch      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Crouch)      > 0) ? true : false;   
+		bStrafeLeft  = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeLeft)  > 0) ? true : false;   
+		bStrafeRight = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeRight) > 0) ? true : false;
+		bSprint      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Run)         > 0) ? true : false;   
 		
 		//Determine head bob amount
 		if((bRunForward || bWalkBack || bStrafeLeft || bStrafeRight) && !bJump)

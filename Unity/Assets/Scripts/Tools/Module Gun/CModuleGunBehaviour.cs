@@ -249,12 +249,11 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	{
 		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
 
-		CShipNaniteSystem sns = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-		if(sns.IsEnoughNanites(m_DUIModuleCreationRoot.SelectedModuleCost) || m_Debug)
+		CShipNaniteSystem cShipNanaiteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
+
+        if (cShipNanaiteSystem.NanaiteQuanity > m_DUIModuleCreationRoot.SelectedModuleCost)
 		{
-			// Minus the amount
-			if(!m_Debug)
-				sns.DeductNanites(m_DUIModuleCreationRoot.SelectedModuleCost);
+            cShipNanaiteSystem.ChangeQuanity(m_DUIModuleCreationRoot.SelectedModuleCost);
 
 			// Debug: Create the module instantly
 			currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);

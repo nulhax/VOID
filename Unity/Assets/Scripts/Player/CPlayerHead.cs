@@ -93,8 +93,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-		m_fHeadEulerX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.1f);
-        m_fHeadEulerY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.1f);
+		m_fHeadEulerX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
+        m_fHeadEulerY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
     }
 
 
@@ -228,17 +228,19 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void FixedUpdate()
     {
-        switch (gameObject.GetComponent<CPlayerGroundMotor>().State)
+        if (gameObject == CGamePlayers.SelfActor)
         {
-            case CPlayerGroundMotor.EState.AligningBodyToShipInternal:
-            case CPlayerGroundMotor.EState.WalkingWithinShip:
-                UpdateFeelookRotation();
-                break;
+            switch (gameObject.GetComponent<CPlayerMotor>().State)
+            {
+                case CPlayerMotor.EState.AligningBodyToShipInternal:
+                case CPlayerMotor.EState.WalkingWithinShip:
+                    UpdateFeelookRotation();
+                    break;
+            }
         }
-
-        if (CNetwork.IsServer)
+        else
         {
-
+            AlignHead();
         }
 
         // Clean up
@@ -252,59 +254,55 @@ public class CPlayerHead : CNetworkMonoBehaviour
         if (InputDisabled)
             return;
 
-        // Run on server or locally
-        if (gameObject == CGamePlayers.SelfActor)
+        if (m_fMouseDeltaX == 0.0f &&
+            m_fMouseDeltaY == 0.0f)
+            return;
+
+        Vector3 vLocalRotation = Head.transform.localRotation.eulerAngles;
+
+        // Make rorations relevant to 180
+        if (vLocalRotation.x > 180.0f)
+            vLocalRotation.x -= 360.0f;
+
+        if (vLocalRotation.y > 180.0f)
+            vLocalRotation.y -= 360.0f;
+
+        // Bound rotations to their limits
+        vLocalRotation.x = Mathf.Clamp(vLocalRotation.x + m_fMouseDeltaY, k_fRotationXMin, k_fRotationXMax);
+        vLocalRotation.y = Mathf.Clamp(vLocalRotation.y + m_fMouseDeltaX, -k_fRotationYLimit, k_fRotationYLimit);
+
+        Head.transform.localEulerAngles = vLocalRotation;
+
+        float fOverRotationX = vLocalRotation.x + m_fMouseDeltaY;
+        float fOverRotationY = vLocalRotation.y + m_fMouseDeltaX;
+
+        // Overflow rotation Y
+        if (fOverRotationY < -k_fRotationYLimit)
         {
-            if (m_fMouseDeltaX == 0.0f &&
-                m_fMouseDeltaY == 0.0f)
-                return;
-
-            Vector3 vLocalRotation = Head.transform.localRotation.eulerAngles;
-
-            // Make rorations relevant to 180
-            if (vLocalRotation.x > 180.0f)
-                vLocalRotation.x -= 360.0f;
-
-            if (vLocalRotation.y > 180.0f)
-                vLocalRotation.y -= 360.0f;
-
-            // Bound rotations to their limits
-            vLocalRotation.x = Mathf.Clamp(vLocalRotation.x + m_fMouseDeltaY, k_fRotationXMin, k_fRotationXMax);
-            vLocalRotation.y = Mathf.Clamp(vLocalRotation.y + m_fMouseDeltaX, -k_fRotationYLimit, k_fRotationYLimit);
-
-            Head.transform.localEulerAngles = vLocalRotation;
-
-            float fOverRotationX = vLocalRotation.x + m_fMouseDeltaY;
-            float fOverRotationY = vLocalRotation.y + m_fMouseDeltaX;
-
-            // Overflow rotation Y
-            if (fOverRotationY < -k_fRotationYLimit)
-            {
-                if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY + k_fRotationYLimit);
-            }
-            else if (fOverRotationY > k_fRotationYLimit)
-            {
-                if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY - k_fRotationYLimit);
-            }
-
-            // Overflow rotation X
-            if (fOverRotationX < k_fRotationXMin)
-            {
-                if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMin);
-            }
-            else if (fOverRotationX > k_fRotationXMax)
-            {
-                if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMax);
-            }
+            if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY + k_fRotationYLimit);
+        }
+        else if (fOverRotationY > k_fRotationYLimit)
+        {
+            if (EventRotationYOverflow != null) EventRotationYOverflow(fOverRotationY - k_fRotationYLimit);
         }
 
-        // Lerp to remote rotation on non-owner clients
-        else
+        // Overflow rotation X
+        if (fOverRotationX < k_fRotationXMin)
         {
-            Head.transform.localRotation = Quaternion.RotateTowards(Head.transform.localRotation,
-                                                                    Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f),
-                                                                    360.0f * Time.fixedDeltaTime);
+            if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMin);
         }
+        else if (fOverRotationX > k_fRotationXMax)
+        {
+            if (EventRotationXOverflow != null) EventRotationXOverflow(fOverRotationX - k_fRotationXMax);
+        }
+    }
+
+
+    void AlignHead()
+    {
+        Head.transform.localRotation = Quaternion.RotateTowards(Head.transform.localRotation,
+                                                                Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f),
+                                                                360.0f * Time.fixedDeltaTime);
     }
 
 
@@ -359,9 +357,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void OnEventMotorStateChange(CPlayerGroundMotor.EState _ePrevious, CPlayerGroundMotor.EState _eNew)
+    void OnEventMotorStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
     {
-        if (_eNew == CPlayerGroundMotor.EState.AirThustersInSpace)
+        if (_eNew == CPlayerMotor.EState.AirThustersInSpace)
         {
             //Head.transform.localEulerAngles = Vector3.zero;
         }
