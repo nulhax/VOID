@@ -322,29 +322,29 @@ public class CToolInterface : CNetworkMonoBehaviour
         {
             if (IsOwned)
             {
-                if (!OwnerPlayerActor.GetComponent<CPlayerInterface>().IsOwnedByMe)
-                {
-                    GameObject cOwnerPlayerActor = OwnerPlayerActor;
-
-                    Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
-                    foreach (Transform child in children)
-                    {
-                        if (child.name == "RightHandIndex2")
-                        {
-                            gameObject.transform.parent = child;
-                        }
-                    }
-
-                    if (gameObject.transform.parent.gameObject == null)
-                    {
-                        Debug.LogError("Could not find right hand transform of player model!");
-                    }
-
-                    gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-                }
-                else
-                {
-                }
+//                if (!OwnerPlayerActor.GetComponent<CPlayerInterface>().IsOwnedByMe)
+//                {
+//                    GameObject cOwnerPlayerActor = OwnerPlayerActor;
+//
+//                    Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
+//                    foreach (Transform child in children)
+//                    {
+//                        if (child.name == "RightHandIndex2")
+//                        {
+//                            gameObject.transform.parent = child;
+//                        }
+//                    }
+//
+//                    if (gameObject.transform.parent.gameObject == null)
+//                    {
+//                        Debug.LogError("Could not find right hand transform of player model!");
+//                    }
+//
+//                    gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+//                }
+//                else
+//                {
+//                }
 
                 // Turn off dynamic physics
                 if (CNetwork.IsServer)
