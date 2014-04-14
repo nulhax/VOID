@@ -486,6 +486,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 		{
 			offSet -= 360;
 		}
+		else if(offSet < -180)
+		{
+			offSet += 360;
+		}
 
 		float minRotation = -m_fLateralRotationThreshold;
 		float maxRotation = m_fLateralRotationThreshold;
