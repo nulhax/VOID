@@ -68,25 +68,32 @@ public class CPlayerArmController : MonoBehaviour
             RaycastHit _RaycastHit = new RaycastHit();
             
             Physics.Raycast(cameraRay, out _RaycastHit, 5.0f, 1 << CGameCameras.MainCamera.layer);
-            
-            switch (m_eHoldState)
+
+			Quaternion qHandRotation = transform.rotation;
+			Vector3 vHandRotation = qHandRotation.eulerAngles;
+			vHandRotation.x = -45;
+			Vector3 vCamRotation = CGameCameras.MainCamera.transform.rotation.eulerAngles;
+			vHandRotation.y = vCamRotation.y;
+
+			qHandRotation = Quaternion.Euler(vHandRotation);
+
+			Vector3 handPos = _RaycastHit.point - (cameraRay.direction * 0.05f);
+				
+				switch (m_eHoldState)
             {
                 case HoldState.NoTool:
                 {
-                    m_IKController.SetRightHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.RightHandIKWeight = 1.0f;
+					m_IKController.SetRightHandTarget(handPos,qHandRotation);
                     break;
                 }
                 case HoldState.OneHandedTool:
                 {
-                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.LeftHandIKWeight = 1.0f;
+					m_IKController.SetLeftHandTarget(handPos, qHandRotation);                    
                     break;  
                 }
                 case HoldState.TwoHandedTool:
                 {
-                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.LeftHandIKWeight = 1.0f;
+					m_IKController.SetLeftHandTarget(handPos, qHandRotation);                    
                     break;
                 }
             }
@@ -141,22 +148,17 @@ public class CPlayerArmController : MonoBehaviour
             {
                 case HoldState.NoTool:
                     {	
-						m_IKController.SetRightHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-						m_IKController.RightHandIKWeight = 1.0f;
-						
+						m_IKController.SetRightHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);											
                         break;
                     }
                 case HoldState.OneHandedTool:
                     {
-						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                        m_IKController.LeftHandIKWeight = 1.0f;
+						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);                     
                         break;	
                     }
                 case HoldState.TwoHandedTool:
                     {
-						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                        m_IKController.LeftHandIKWeight = 1.0f;
-						
+						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);                       						
                         break;
                     }
             }
