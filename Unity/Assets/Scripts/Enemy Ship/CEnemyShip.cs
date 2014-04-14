@@ -16,7 +16,7 @@ using System.Collections;
 [RequireComponent(typeof(CNetworkView))]
 public class CEnemyShip : CNetworkMonoBehaviour
 {
-	enum EState
+	public enum EState
 	{
 		none,
 		idling,		// Parked. Looks around occasionally.
@@ -85,53 +85,59 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	};
 
 	// State machine data set by state machine.
-	EState mState = EState.none;
-	EEvent mEvent = EEvent.none;
-	float mTimeout = 0.0f;
-	float mTimeoutSecondary = 0.0f;
-	float timeSpentIdling = 2.0f;
-	float timeSpentScanningForHeatSignatures = 15.0f;
-	float timeSpentExaminingTarget = 10.0f;
-	float timeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
-	float timeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
-	float timeSpentTravelling = 5.0f;
-	float mFireRate = 1.5f;
+	public EState mState = EState.none;
+	public EEvent mEvent = EEvent.none;
+	public float mTimeout = 0.0f;
+	public float mTimeoutSecondary = 0.0f;
+	public float mTimeSpentIdling = 2.0f;
+	public float mTimeSpentScanningForHeatSignatures = 15.0f;
+	public float mTimeSpentExaminingTarget = 10.0f;
+	public float mTimeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
+	public float mTimeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
+	public float mTimeSpentTravelling = 5.0f;
+	public float mFireRate = 1.5f;
+	public float mMinVelocityOfSuspiciousGubbin = 0.0f;
+	public float mTimeUntilSuspiciousGubbinExpires = 15.0f;
 
-	GameObject mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
-	GameObject mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
-	GameObject mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
-	bool mFaceTarget = false;
-	bool mFollowTarget = false;
-	float mTargetExpireTime = 0.0f;
+	public Rigidbody mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
+	public Rigidbody mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
+	public Rigidbody mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
+	public bool mFaceTarget = false;
+	public bool mFollowTarget = false;
+	public float mTargetExpireTime = 0.0f;
 
-	int mAudioWeaponFireID = -1;
+	public int mAudioWeaponFireID = -1;
 
 	// State machine data set by physics.
-	bool mFacingTarget = false;		// Is looking in the general direction of the target.
-	bool mCloseToTarget = false;	// Is within acceptable range of the target.
-	bool mVisibleTarget = false;	// Has direct line of sight to the target.
-	float viewConeRadiusInDegrees = 30.0f;
-	float viewConeLength_Extension = 1000.0f;
-	float viewConeLength { get { return mBoundingRadius + viewConeLength_Extension; } }
-	float viewSphereRadius_Extension = 300.0f;
-	float viewSphereRadius { get { return mBoundingRadius + viewSphereRadius_Extension; } }
-	float desiredDistanceToTarget_Extension = 100.0f;
-	float desiredDistanceToTarget { get { return mBoundingRadius + desiredDistanceToTarget_Extension; } }
-	float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
-	float maxLinearAcceleration = 100000.0f;
+	public bool mFacingTarget = false;		// Is looking in the general direction of the target.
+	public bool mCloseToTarget = false;	// Is within acceptable range of the target.
+	public bool mVisibleTarget = false;	// Has direct line of sight to the target.
+	public float viewConeRadiusInDegrees = 30.0f;
+	public float viewConeLength_Extension = 1000.0f;
+	public float viewConeLength { get { return mBoundingRadius + viewConeLength_Extension; } }
+	public float viewSphereRadius_Extension = 300.0f;
+	public float viewSphereRadius { get { return mBoundingRadius + viewSphereRadius_Extension; } }
+	public float desiredDistanceToTarget_Extension = 100.0f;
+	public float desiredDistanceToTarget { get { return mBoundingRadius + desiredDistanceToTarget_Extension; } }
+	public float minAcceptableDistanceToTarget { get { return desiredDistanceToTarget - desiredDistanceToTarget_Extension * acceptableDistanceToTargetRatio; } }
+	public float maxAcceptableDistanceToTarget { get { return desiredDistanceToTarget + desiredDistanceToTarget_Extension * acceptableDistanceToTargetRatio; } }
+	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+	public const float maxLinearAcceleration = 100000.0f;
+	public const float maxAngularAcceleration = 100000000.0f;
+	public uint mNumWhiskers = 16;
 
-	float mTimeBetweenLosCheck = 0.5f;
-	float mTimeUntilNextLosCheck = 0.0f;
+	public float mTimeBetweenLosCheck = 0.5f;
+	public float mTimeBetweenWhiskerCheck = 0.5f;
+	public float mTimeUntilNextLosCheck = 0.5f;
+	public float mTimeUntilNextWhiskerCheck = 0.0f;
 
 	// Physics data.
-	float mBoundingRadius = 0.0f;	// Set at rumtime.
-	CPidController mPidAngularAccelerationX = new CPidController(-2, 0, 0);
-	CPidController mPidAngularAccelerationY = new CPidController(2, 0, 0);
-	CPidController mPidAngularAccelerationZ = new CPidController(0, 0, 0);
-	Vector3 mTorque;
+	public float mBoundingRadius = 0.0f;	// Set at rumtime.
+	public Vector3 mTorque;
+	public Vector3 mRepulsionForce;
 
-	bool debug_Display = false;
-	string debug_StateName;
+	public bool debug_Display = false;
+	public string debug_StateName;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -141,9 +147,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	void Awake()
 	{
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
-		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
+		if (viewSphereRadius < maxAcceptableDistanceToTarget) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
-		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"));	// Create the GameObject mTarget_InternalLastKnownPosition.
+		mTarget_InternalLastKnownPosition = ((GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"))).rigidbody;	// Create the RigidBody mTarget_InternalLastKnownPosition.
 
 		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
 	}
@@ -173,6 +179,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void FixedUpdate()
 	{
+		ProcessWhiskers();
+
 		mTimeUntilNextLosCheck -= Time.fixedDeltaTime;
 		if (mTimeUntilNextLosCheck <= 0.0f)
 		{
@@ -182,18 +190,18 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		if (mTarget != null && (mFaceTarget || mFollowTarget))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
 		{
-			Vector3 targetPos = mTarget.transform.position;
+			Vector3 targetPos = mTarget.rigidbody.worldCenterOfMass;
 
-			// Get the position of the target in local space of this ship (i.e. relative position).
-			Vector3 absoluteDeltaPosition = targetPos - transform.position;
+			// Get the location of the target in local space of this ship (i.e. relative location).
+			Vector3 absoluteDeltaPosition = targetPos - rigidbody.worldCenterOfMass;
 			float distanceToTarget = absoluteDeltaPosition.magnitude;
 			Vector3 absoluteDirection = absoluteDeltaPosition.normalized;
 			Vector3 relativeDirection = (Quaternion.Inverse(transform.rotation) * (targetPos - rigidbody.worldCenterOfMass)).normalized;
 			Vector3 relativeRotation = new Vector3(Mathf.Atan2(relativeDirection.y, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.y));
 
-			mTorque.x = mPidAngularAccelerationX.GetOutput(relativeRotation.x, Time.fixedDeltaTime);
-			mTorque.y = mPidAngularAccelerationY.GetOutput(relativeRotation.y, Time.fixedDeltaTime);
-			mTorque.z = mPidAngularAccelerationZ.GetOutput(relativeRotation.z, Time.fixedDeltaTime);
+			mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
+			mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
+			mTorque.z = relativeRotation.z * 0.0f;
 
 			if(mFaceTarget)
 			{
@@ -213,19 +221,57 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			mFacingTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
 
 			// Determine if the target is within range.
-			mCloseToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+			mCloseToTarget = distanceToTarget < maxAcceptableDistanceToTarget;
 
 			// Check if there is a direct line of sight to the target.
 			mVisibleTarget = IsWithinLineOfSight(mTarget);
 			if(mVisibleTarget)
-				mTarget_InternalLastKnownPosition.transform.position = mTarget.transform.position;
+				mTarget_InternalLastKnownPosition.transform.position = mTarget.rigidbody.worldCenterOfMass;
 		}
+	}
+
+	void ProcessWhiskers()
+	{
+		for (mTimeUntilNextWhiskerCheck -= Time.fixedDeltaTime; mTimeUntilNextWhiskerCheck <= 0.0f; mTimeUntilNextWhiskerCheck = mTimeBetweenWhiskerCheck)
+		{
+			float whiskerLength = minAcceptableDistanceToTarget;
+			mRepulsionForce = Vector3.zero;
+			float increment = Mathf.PI * (3.0f - Mathf.Sqrt(5));
+			float offset = 2.0f / mNumWhiskers;
+			for (uint ui = 0; ui < mNumWhiskers; ++ui)
+			{
+				float y = ui * offset - 1.0f + (offset / 2.0f);
+				float radians = Mathf.Sqrt(1.0f - y * y);
+				float phi = ui * increment;
+				Vector3 direction = new Vector3(Mathf.Cos(phi) * radians, y, Mathf.Sin(phi) * radians);
+				RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, direction, whiskerLength, 1 << LayerMask.NameToLayer("Galaxy"));
+				for (int i = 0; i < rayHits.Length; ++i )
+				{
+					RaycastHit rayHit = rayHits[i];
+
+					if (rayHit.collider.isTrigger)	// Ignore triggers.
+						continue;
+
+					mRepulsionForce += -direction * (whiskerLength - rayHit.distance) * maxLinearAcceleration * 0.25f / mNumWhiskers;
+				}
+			}
+
+			float repulsionForceLength = Mathf.Min(mRepulsionForce.magnitude, whiskerLength);
+			mRepulsionForce = mRepulsionForce.normalized * maxLinearAcceleration * repulsionForceLength / whiskerLength;
+		}
+
+		rigidbody.AddForce(mRepulsionForce, ForceMode.Force);
 	}
 
 	void OnCollisionEnter(Collision collision)
 	{
 		mEvent = EEvent.HostileTarget;
-		mTarget = collision.gameObject;
+		Rigidbody targetRigidbody = collision.gameObject.rigidbody;
+		if (targetRigidbody == null)
+			targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+
+		if(targetRigidbody != null)
+			mTarget = targetRigidbody;
 	}
 
 	void InvalidateCache()
@@ -235,15 +281,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		mVisibleTarget = false;
 	}
 
-	bool IsWithinLineOfSight(GameObject target)
+	bool IsWithinLineOfSight(Rigidbody target)
 	{
 		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target);
 	}
 
-	bool IsWithinViewCone(GameObject target) { return IsWithinViewCone(target.transform.position); }
+	bool IsWithinViewCone(Rigidbody target) { return IsWithinViewCone(target.worldCenterOfMass); }
 	bool IsWithinViewCone(Vector3 pos)
 	{
-		Vector3 deltaPos = pos - transform.position;
+		Vector3 deltaPos = pos - rigidbody.worldCenterOfMass;
 		if (deltaPos == Vector3.zero)
 			return true;
 		else
@@ -253,23 +299,42 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	bool IsWithinViewRadius(GameObject target) { return IsWithinViewRadius(target.transform.position); }
+	bool IsWithinViewRadius(Rigidbody target) { return IsWithinViewRadius(target.worldCenterOfMass); }
 	bool IsWithinViewRadius(Vector3 pos)
 	{
-		return (pos - transform.position).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
+		return (pos - rigidbody.worldCenterOfMass).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
 	}
 
-	bool HasDirectLineOfSight(GameObject target)
+	bool HasDirectLineOfSight(Rigidbody target)
 	{
-		Vector3 deltaPos = target.transform.position - transform.position;
-		RaycastHit[] rayHits = Physics.RaycastAll(transform.position, deltaPos.normalized, deltaPos.magnitude, LayerMask.NameToLayer("Galaxy"));
-		for (int i = 0; i < rayHits.Length; ++i)
+		Vector3 deltaPos = target.worldCenterOfMass - rigidbody.worldCenterOfMass;
+		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, deltaPos.magnitude, 1 << LayerMask.NameToLayer("Galaxy"));
+		for (int i = 0; i < rayHits.Length; ++i)	// For each object the ray hit...
 		{
-			if (rayHits[i].collider.gameObject != gameObject || rayHits[i].collider.gameObject != target)
-				return false;
+			RaycastHit rayHit = rayHits[i];
+
+			if (rayHit.collider.isTrigger)	// Ignore triggers.
+				continue;
+
+			bool isAnIgnoredObject = false;
+			for (Transform collidedObjectTransform = rayHit.collider.transform; collidedObjectTransform != null; collidedObjectTransform = collidedObjectTransform.parent)	// For the object, and each of its parents in the hierarchy...
+			{
+				Rigidbody collidedObjectRigidbody = collidedObjectTransform.rigidbody != null ? collidedObjectTransform.rigidbody : CUtility.FindInParents<Rigidbody>(collidedObjectTransform);	// Shortcut to the object, since iteration uses its transform.
+				if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship, the target, or part of either...
+				{
+					isAnIgnoredObject = true;	// Ignore it, thus continuing the search.
+					break;	// Stop searching the hierarchy.
+				}
+			}
+
+			if (!isAnIgnoredObject)	// If the object was not one of the ignored objects...
+			{
+				Debug.Log(rayHit.collider.gameObject.name + " was in between " + gameObject.name + " and " + target.name);
+				return false;	// There was something between the ship casting the ray and the object being raycasted to, thus there is no line of sight.
+			}
 		}
 
-		return true;
+		return true;	// There are no objects between the enemy ship and the target.
 	}
 
 	/// <summary>
@@ -282,20 +347,20 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			return;	// Do not set a new target, as the current one is still valid.
 
 		// Find all objects within short range sphere and long-range cone.
-		Collider[] colliders = Physics.OverlapSphere(transform.position, viewConeLength);
+		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength);
 		for (int i = 0; i < colliders.Length; ++i)
 		{
-			GameObject entity = colliders[i].gameObject;
-			if(entity != gameObject && IsWithinLineOfSight(entity))	// If the entity is within view cone or view sphere (and is not this ship)...
+			Rigidbody entityRigidbody = colliders[i].rigidbody != null ? colliders[i].rigidbody : CUtility.FindInParents<Rigidbody>(colliders[i].gameObject);
+			if (entityRigidbody == null || entityRigidbody == rigidbody)	// If the object has no rigidbody, or it is this enemy ship...
+				continue;	// Ignore this object and look for others.
+
+			if (IsWithinLineOfSight(entityRigidbody))	// If the entity is within view cone or view sphere (and is not this ship)...
 			{
 				// Check if the entity is worthy of being targeted.
-				Rigidbody entityBody = entity.GetComponent<Rigidbody>();
-				if (entityBody == null) continue;	// Entities without a RigidBody can not move, thus can not have their velocity checked.
-
-				if (entityBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
+				if (entityRigidbody.velocity.magnitude >= mMinVelocityOfSuspiciousGubbin)	// If the gubbbin is moving faster than x units per second...
 				{
-					mTarget = entity;
-					mTargetExpireTime = Time.time + 15.0f;
+					mTarget = entityRigidbody;
+					mTargetExpireTime = Time.time + mTimeUntilSuspiciousGubbinExpires;
 					break;
 				}
 			}
@@ -335,7 +400,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false, timeSpentIdling, "Idling");
+				StateInitialisation(EState.idling, false, false, mTimeSpentIdling, "Idling");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -360,7 +425,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 								return true;
 							}
 							else
-								mTimeout += timeSpentIdling * 0.5f;
+								mTimeout += mTimeSpentIdling * 0.5f;
 						}
 
 						return false;
@@ -381,7 +446,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, false, timeSpentExaminingTarget, "Examining Target");
+				StateInitialisation(EState.examiningTarget, true, false, mTimeSpentExaminingTarget, "Examining Target");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -445,7 +510,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.attackingTarget, true, true, timeSpentAttackingTargetBeforeStopping, "Attacking Target");
+				StateInitialisation(EState.attackingTarget, true, true, mTimeSpentAttackingTargetBeforeStopping, "Attacking Target");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -488,7 +553,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							if(mFollowTarget)	// If chasing the target...
 							{
 								mFollowTarget = false;	// Stop chasing the target
-								mTimeout = timeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
+								mTimeout = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
 							}
 							else	// Not chasing the target...
 							{
@@ -517,7 +582,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.scanningForHeatSignature, false, false, timeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
+				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
 				return false;	// Init functions always return false.
 
 			// Process state.
@@ -534,7 +599,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						}
 
 						// Todo: Scan for heat signature.
-						GameObject targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
+						Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
 						if (targetWithHeatSignature != null)
 						{
 							mTarget = targetWithHeatSignature;
@@ -566,16 +631,22 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.travelling, true, true, timeSpentTravelling, "Travelling");
 				if (mTarget == null)
 				{
+					StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, "Travelling");
+
 					mTarget = mTarget_InternalLastKnownPosition;
-					mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+					mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
 					mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
 
-					mTargetExpireTime = Time.time + timeSpentTravelling;
+					mTargetExpireTime = Time.time + mTimeSpentTravelling;
+					return false;	// Init functions always return false.
 				}
-				return false;	// Init functions always return false.
+				else
+				{
+					mEvent = EEvent.transition_ExamineTarget;
+					return true;	// There is a valid target.
+				}
 
 			// Process state.
 			case EState.travelling:
@@ -590,8 +661,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 								mEvent = EEvent.transition_ExamineTarget;
 							return true;
 						}
-
-						//mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
 
 						return false;
 
@@ -649,39 +718,39 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if(mTarget != null)
 		{
 			Gizmos.color = new Color(1,0,0,Mathf.Clamp01(0.1f + mTargetExpireTime * 0.5f));	// White line, fading out in the last two seconds of expiry, but still 10% visible when it finally expires.
-			Gizmos.DrawLine(transform.position, mTarget.transform.position);	// Point to target.
-			Gizmos.DrawSphere(mTarget.transform.position, 1.0f);
+			Gizmos.DrawLine(rigidbody.worldCenterOfMass, mTarget.worldCenterOfMass);	// Point to target.
+			Gizmos.DrawSphere(mTarget.worldCenterOfMass, 1.0f);
 			Gizmos.color = new Color(0, 1, 0, 1);
-			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.transform.position, 50.0f);
+			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.worldCenterOfMass, 50.0f);
 		}
 
 		// Angular forces.
 		Gizmos.color = Color.blue;
-		Gizmos.DrawLine(transform.position + transform.up, transform.position - transform.up);
-		Gizmos.DrawLine(transform.position + transform.right, transform.position - transform.right);
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position - transform.forward);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass - transform.up);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass - transform.right);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass - transform.forward);
 
-		// Y may be incorrect.
 		Gizmos.color = Color.cyan;
-		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.forward * mTorque.x);		// X
-		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.forward * mTorque.x);		// X
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward - transform.up * mTorque.x);	// X
-		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward + transform.up * mTorque.x);	// X
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward + transform.right * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward - transform.right * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.forward * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.forward * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.right * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.right * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.up * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.up * mTorque.z);	// Z
+		Vector3 torqueScaled = mTorque / maxAngularAcceleration;
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass + transform.up + transform.forward * torqueScaled.x);		// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.up, rigidbody.worldCenterOfMass - transform.up - transform.forward * torqueScaled.x);		// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass + transform.forward - transform.up * torqueScaled.x);	// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.forward, rigidbody.worldCenterOfMass - transform.forward + transform.up * torqueScaled.x);	// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass + transform.forward + transform.right * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.forward, rigidbody.worldCenterOfMass - transform.forward - transform.right * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass + transform.right - transform.forward * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.right, rigidbody.worldCenterOfMass - transform.right + transform.forward * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass + transform.up + transform.right * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.up, rigidbody.worldCenterOfMass - transform.up - transform.right * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass + transform.right - transform.up * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.right, rigidbody.worldCenterOfMass - transform.right + transform.up * torqueScaled.z);	// Z
 
 		// Field of view.
 		Gizmos.color = new Color(0, 0.5f, 0.5f, 0.25f);
-		Gizmos.DrawSphere(transform.position, mBoundingRadius);
-		Gizmos.DrawSphere(transform.position, viewSphereRadius);
+		Gizmos.DrawSphere(rigidbody.worldCenterOfMass, mBoundingRadius);
+		Gizmos.DrawSphere(rigidbody.worldCenterOfMass, viewSphereRadius);
 		Matrix4x4 oldMatrix = Gizmos.matrix;
-		Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
+		Gizmos.matrix = Matrix4x4.TRS(rigidbody.worldCenterOfMass, transform.rotation, Vector3.one);
 		Gizmos.DrawFrustum(Vector3.zero, viewConeRadiusInDegrees, viewConeLength, 1.0f, 1.0f);
 		Gizmos.matrix = oldMatrix;
 	}

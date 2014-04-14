@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 400000}
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Object036_MeshPart1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ GameObject:
   - 33: {fileID: 3300002}
   - 23: {fileID: 2300002}
   - 65: {fileID: 6500000}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Object036_MeshPart0
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400004}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Object036
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ GameObject:
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400010}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: EnemyShip1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -249,6 +249,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ecd9db440498b04a8d773494484cedb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mState: 0
+  mEvent: 0
+  mTimeout: 0
+  mTimeoutSecondary: 0
+  mTimeSpentIdling: 2
+  mTimeSpentScanningForHeatSignatures: 15
+  mTimeSpentExaminingTarget: 10
+  mTimeSpentAttackingTargetBeforeStopping: 15
+  mTimeSpentAttackingTargetAfterStopping: 20
+  mTimeSpentTravelling: 5
+  mFireRate: 1.5
+  mMinVelocityOfSuspiciousGubbin: 0
+  mTimeUntilSuspiciousGubbinExpires: 15
+  mTarget_InternalSource: {fileID: 0}
+  mTarget_InternalLastKnownPosition: {fileID: 0}
+  mFaceTarget: 0
+  mFollowTarget: 0
+  mTargetExpireTime: 0
+  mAudioWeaponFireID: -1
+  mFacingTarget: 0
+  mCloseToTarget: 0
+  mVisibleTarget: 0
+  viewConeRadiusInDegrees: 30
+  viewConeLength_Extension: 1000
+  viewSphereRadius_Extension: 300
+  desiredDistanceToTarget_Extension: 100
+  acceptableDistanceToTargetRatio: .200000003
+  mTimeBetweenLosCheck: .5
+  mTimeBetweenWhiskerCheck: .5
+  mTimeUntilNextLosCheck: .5
+  mTimeUntilNextWhiskerCheck: 0
+  mBoundingRadius: 0
+  mTorque: {x: 0, y: 0, z: 0}
+  mRepulsionForce: {x: 0, y: 0, z: 0}
+  debug_Display: 0
+  debug_StateName: 
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
