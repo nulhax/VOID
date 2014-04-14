@@ -46,7 +46,7 @@ public class OVRPlayerControllerEditor : Editor
 	{
 		GUI.color = Color.white;
 		
-		Undo.SetSnapshotTarget(m_Component, "OVRPlayerController");
+		Undo.RecordObject(m_Component, "OVRPlayerController");
 		
 		{
 			m_Component.Acceleration 	  = EditorGUILayout.Slider("Acceleration", 			m_Component.Acceleration, 	  0, 1);
@@ -63,13 +63,7 @@ public class OVRPlayerControllerEditor : Editor
 		}
 		
 		if (GUI.changed)
-		{
-			Undo.CreateSnapshot();
-			Undo.RegisterSnapshot();
 			EditorUtility.SetDirty(m_Component);
-		}
-		
-		Undo.ClearSnapshotTarget();
 	}		
 }
 
