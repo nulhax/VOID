@@ -173,11 +173,11 @@ public class CTile : CGridObject
 				{
 					metaIdentifiers[(int)ETileType.Ceiling] |= 1 << (int)neighbour.m_WorldDirection;
 				}
+			}
 
-				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
-				{
-					metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_WorldDirection;
-				}
+			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
+			{
+				metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_WorldDirection;
 			}
 
 			if(neighbour.m_WorldDirection == EDirection.NorthWest ||
@@ -187,7 +187,7 @@ public class CTile : CGridObject
 			{
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Ext))
 				{
-					metaIdentifiers[(int)ETileType.Wall_Int_Cap] &= ~(1 << (int)neighbour.m_WorldDirection);
+					//metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_WorldDirection;
 				}
 			}
 		}
@@ -456,9 +456,13 @@ public class CTile : CGridObject
 		}
 
 		if(!s_TileMetaInfo[_TileType].ContainsKey(mask))
+		{
 			s_TileMetaInfo[_TileType].Add(mask, new TTileMeta(_MetaType, mask));
-		else
+		}
+		else if(_TileType != ETileType.Wall_Ext_Cap && _TileType != ETileType.Wall_Int_Cap)
+		{
 			Debug.LogError("Tile meta info was already added for: " + _TileType + " : " + _MetaType + " : " + mask);
+		}
 	}
 	
 	private bool UpdateTileMetaInfo(ETileType _TileType, int _TileMask)
@@ -585,23 +589,87 @@ public class CTile : CGridObject
 		                     new EDirection[]{ EDirection.West });
 
 		// Walls Interior Caps
-		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.None,
-		                     new EDirection[]{ });
+		List<EDirection> possibleDirections;
+		IEnumerable<IEnumerable<EDirection>> combinations;
 
 		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_4,
 		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 
 		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_3,
-		                     new EDirection[]{ EDirection.North, EDirection.West, EDirection.South, EDirection.NorthWest, EDirection.SouthWest });
+				             new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West, EDirection.NorthWest });
 
-		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_2_1,
-		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.SouthWest, EDirection.NorthWest });
-		
 		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_2_2,
-		                     new EDirection[]{ EDirection.North, EDirection.South, EDirection.SouthEast, EDirection.NorthWest });
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West, EDirection.NorthWest, EDirection.SouthEast });
 
-		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_1,
-		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.SouthWest, EDirection.NorthWest, EDirection.SouthEast});
+		possibleDirections = new List<EDirection>( new EDirection[]{ EDirection.West, EDirection.SouthWest, EDirection.NorthWest });
+		combinations = CUtility.GetPowerSet(possibleDirections);
+		foreach(var collection in combinations)  
+		{  
+			List<EDirection> directions = collection.ToList();
+			directions.Add(EDirection.North);
+			directions.Add(EDirection.East); 
+			directions.Add(EDirection.South); 
+
+			if(!directions.Contains(EDirection.SouthWest))
+				if(directions.Contains(EDirection.South) && collection.Contains(EDirection.West))
+					continue;
+			
+			if(!directions.Contains(EDirection.NorthWest))
+				if(directions.Contains(EDirection.North) && collection.Contains(EDirection.West))
+					continue;
+			
+			AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_2_1, directions.ToArray());
+		}
+
+		possibleDirections = new List<EDirection>( new EDirection[]{ EDirection.SouthEast, EDirection.SouthWest, EDirection.NorthWest, EDirection.South, EDirection.West });
+		combinations = CUtility.GetPowerSet(possibleDirections);
+		foreach(var collection in combinations)  
+		{  
+			List<EDirection> directions = collection.ToList();
+			directions.Add(EDirection.North);
+			directions.Add(EDirection.East);
+
+			if(!directions.Contains(EDirection.SouthEast))
+				if(directions.Contains(EDirection.South) && collection.Contains(EDirection.East))
+					continue;
+
+			if(!directions.Contains(EDirection.SouthWest))
+				if(directions.Contains(EDirection.South) && collection.Contains(EDirection.West))
+					continue;
+
+			if(!directions.Contains(EDirection.NorthWest))
+				if(directions.Contains(EDirection.North) && collection.Contains(EDirection.West))
+					continue;
+
+			AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_1, directions.ToArray());
+		}  
+
+		possibleDirections = new List<EDirection>( new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West, EDirection.SouthEast, EDirection.SouthWest, EDirection.NorthEast, EDirection.NorthWest });
+		combinations = CUtility.GetPowerSet(possibleDirections);
+		foreach(var collection in combinations)  
+		{  
+			List<EDirection> directions = collection.ToList(); 
+			bool matchFound = false;
+			
+			if(!directions.Contains(EDirection.NorthWest) && !matchFound)
+				if(directions.Contains(EDirection.North) && collection.Contains(EDirection.West))
+					matchFound = true;
+
+			if(!directions.Contains(EDirection.NorthEast) && !matchFound)
+				if(directions.Contains(EDirection.North) && collection.Contains(EDirection.East))
+					matchFound = true;
+
+			if(!directions.Contains(EDirection.SouthEast) && !matchFound)
+				if(directions.Contains(EDirection.South) && collection.Contains(EDirection.East))
+					matchFound = true;
+
+			if(!directions.Contains(EDirection.SouthWest) && !matchFound)
+				if(directions.Contains(EDirection.South) && collection.Contains(EDirection.West))
+					matchFound = true;
+
+			if(!matchFound)
+				AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.None, directions.ToArray());
+		}
 	}
 }
 

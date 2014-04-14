@@ -694,7 +694,7 @@ public class CGridUI : MonoBehaviour
 	private void CreateInternalTile(TGridPoint _GridPoint)
 	{
 		// Add the interior tile
-		m_Grid.AddNewTile(_GridPoint, new ETileType[]{ ETileType.Floor, ETileType.Wall_Int });
+		m_Grid.AddNewTile(_GridPoint, new ETileType[]{ ETileType.Floor, ETileType.Wall_Int, ETileType.Wall_Int_Cap });
 
 		// Create tiles around in each direction as external walls
 		foreach(CNeighbour neighbour in CGridObject.s_AllPossibleNeighbours)
@@ -703,7 +703,7 @@ public class CGridUI : MonoBehaviour
 			CTile tile = m_Grid.GetTile(neighboutGridPoint);
 
 			if(tile == null)
-				m_Grid.AddNewTile(neighboutGridPoint, new ETileType[]{ ETileType.Wall_Ext });
+				m_Grid.AddNewTile(neighboutGridPoint, new ETileType[]{ ETileType.Wall_Ext, ETileType.Wall_Ext_Cap });
 		}
 	}
 

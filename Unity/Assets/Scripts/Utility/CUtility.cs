@@ -15,8 +15,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 
 /* Implementation */
+
+
 public class CUtility
 {
     // Member Types
@@ -51,6 +55,15 @@ public class CUtility
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
     // Member Methods
+	static public IEnumerable<IEnumerable<T>> GetPowerSet<T>(List<T> list)  
+	{  
+		return from m in Enumerable.Range(0, 1 << list.Count)  
+			select  
+				from i in Enumerable.Range(0, list.Count)  
+				where (m & (1 << i)) != 0  
+				select list[i];  
+	}
+
 	static public GameObject CreateNewGameObject(Transform _Parent, string _Name)
 	{
 		GameObject go = new GameObject(_Name);
