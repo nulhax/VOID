@@ -102,8 +102,9 @@ public class CGridUI : MonoBehaviour
 	private Vector3 m_DragMovementStart = Vector3.zero;
 
 	private static ETileType[] s_TT_F = new ETileType[] { ETileType.Floor };
-	private static ETileType[] s_TT_FeW = new ETileType[] { ETileType.Floor, ETileType.Wall_Ext };
-	private static ETileType[] s_TT_FeWC = new ETileType[] { ETileType.Floor, ETileType.Wall_Ext, ETileType.Ceiling };
+	private static ETileType[] s_TT_eW = new ETileType[] { ETileType.Wall_Ext };
+	private static ETileType[] s_TT_iW = new ETileType[] { ETileType.Wall_Int };
+	private static ETileType[] s_TT_C = new ETileType[] { ETileType.Ceiling };
 
 	// Member Properties
 	public bool IsShiftKeyDown
@@ -317,43 +318,43 @@ public class CGridUI : MonoBehaviour
 			}
 		}
 
-		// Toggling Variants of neighbout exemptsions
-		if(Input.GetKeyDown(KeyCode.Keypad8))
-		{
-			foreach(CTile tile in m_SelectedTiles)
-			{
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North, !state);
-				tile.UpdateTileMetaData();
-			}
-		}
-		else if(Input.GetKeyDown(KeyCode.Keypad2))
-		{
-			foreach(CTile tile in m_SelectedTiles)
-			{
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South, !state);
-				tile.UpdateTileMetaData();
-			}
-		}
-		else if(Input.GetKeyDown(KeyCode.Keypad4))
-		{
-			foreach(CTile tile in m_SelectedTiles)
-			{
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West, !state);
-				tile.UpdateTileMetaData();
-			}
-		}
-		else if(Input.GetKeyDown(KeyCode.Keypad6))
-		{
-			foreach(CTile tile in m_SelectedTiles)
-			{
-				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East);
-				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East, !state);
-				tile.UpdateTileMetaData();
-			}
-		}
+//		// Toggling Variants of neighbout exemptsions
+//		if(Input.GetKeyDown(KeyCode.Keypad8))
+//		{
+//			foreach(CTile tile in m_SelectedTiles)
+//			{
+//				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North);
+//				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.North, !state);
+//				tile.UpdateTileMetaData();
+//			}
+//		}
+//		else if(Input.GetKeyDown(KeyCode.Keypad2))
+//		{
+//			foreach(CTile tile in m_SelectedTiles)
+//			{
+//				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South);
+//				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.South, !state);
+//				tile.UpdateTileMetaData();
+//			}
+//		}
+//		else if(Input.GetKeyDown(KeyCode.Keypad4))
+//		{
+//			foreach(CTile tile in m_SelectedTiles)
+//			{
+//				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West);
+//				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.West, !state);
+//				tile.UpdateTileMetaData();
+//			}
+//		}
+//		else if(Input.GetKeyDown(KeyCode.Keypad6))
+//		{
+//			foreach(CTile tile in m_SelectedTiles)
+//			{
+//				bool state = tile.GetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East);
+//				tile.SetTileNeighbourExemptionState(m_CurrentlySelectedType, EDirection.East, !state);
+//				tile.UpdateTileMetaData();
+//			}
+//		}
 	}
 
 	private void HandleLeftClickDown()
@@ -381,7 +382,7 @@ public class CGridUI : MonoBehaviour
 		if(m_CurrentMode == EToolMode.Paint_Exterior)
 		{
 			if(!IsCtrlKeyDown)
-				m_Grid.AddNewTile(m_CurrentMouseGridPoint, s_TT_FeWC);
+				CreateInternalTile(m_CurrentMouseGridPoint);
 			else
 				m_Grid.ReleaseTile(m_CurrentMouseGridPoint);
 			return;
@@ -676,7 +677,7 @@ public class CGridUI : MonoBehaviour
 				for(int z = back; z < (back + depth); ++z)
 				{
 					if(_Remove) m_Grid.ReleaseTile(new TGridPoint(x, y, z));
-					else m_Grid.AddNewTile(new TGridPoint(x, y, z), s_TT_FeWC);
+					else CreateInternalTile(new TGridPoint(x, y, z));
 				}
 			}
 		}	
@@ -688,6 +689,22 @@ public class CGridUI : MonoBehaviour
 
 		if(tile != null)
 			m_SelectedTiles.Add(tile);
+	}
+
+	private void CreateInternalTile(TGridPoint _GridPoint)
+	{
+		// Add the interior tile
+		m_Grid.AddNewTile(_GridPoint, new ETileType[]{ ETileType.Floor, ETileType.Wall_Int });
+
+		// Create tiles around in each direction as external walls
+		foreach(CNeighbour neighbour in CGridObject.s_AllPossibleNeighbours)
+		{
+			TGridPoint neighboutGridPoint = new TGridPoint(_GridPoint.ToVector + neighbour.m_GridPointOffset.ToVector);
+			CTile tile = m_Grid.GetTile(neighboutGridPoint);
+
+			if(tile == null)
+				m_Grid.AddNewTile(neighboutGridPoint, new ETileType[]{ ETileType.Wall_Ext });
+		}
 	}
 
 	private void SelectMultipleTiles()
@@ -714,65 +731,93 @@ public class CGridUI : MonoBehaviour
 
 	private void OnTileCreated(CTile _Tile)
 	{
-		// Check the tiles lower/upper neighbours
-		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
-		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
-
-		// If upper exists, remove my ceiling
-		if(upper != null)
-		{
-			// Remove my ceiling
-			_Tile.SetTileTypeState(ETileType.Ceiling, false);
-
-			// Remove their floor
-			upper.m_Tile.SetTileTypeState(ETileType.Floor, false);
-		}
-
-		// If lower exists
-		if(lower != null)
-		{
-			// Remove their ceiling
-			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, false);
-
-			// Remove my floor
-			_Tile.SetTileTypeState(ETileType.Floor, false);		
-		}
-
 		// Register tile events change
 		_Tile.EventTileAppearanceChanged += OnTileAppearanceChange;
-		_Tile.EventTileTypeStateChange += OnTileTypeStateChange;
+		_Tile.EventTileMetaChanged += OnTileMetaChange;
 	}
 
 	private void OnTileReleased(CTile _Tile)
 	{
-		// Check the tiles lower neighbours for ceiling check
-		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
-		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
-
-		// If upper exists, re-enable floor
-		if(upper != null)
-		{
-			upper.m_Tile.SetTileTypeState(ETileType.Floor, true);
-		}
-
-		// If lower exists, re-enable ceiling
-		if(lower != null)
-		{
-			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, true);
-		}
+//		// Check the tiles lower neighbours for ceiling check
+//		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
+//		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
+//
+//		// If upper exists, re-enable floor
+//		if(upper != null)
+//		{
+//			upper.m_Tile.SetTileTypeState(ETileType.Floor, true);
+//		}
+//
+//		// If lower exists, re-enable ceiling
+//		if(lower != null)
+//		{
+//			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, true);
+//		}
 
 		// Unregister tile events 
 		_Tile.EventTileAppearanceChanged -= OnTileAppearanceChange;
-		_Tile.EventTileTypeStateChange -= OnTileTypeStateChange;
+		_Tile.EventTileMetaChanged -= OnTileMetaChange;
 	}
 
-	private void OnTileTypeStateChange(CTile _Tile)
+	private void OnTileMetaChange(CTile _Tile)
 	{
-		// Check if there is a internal wall without a floor
-		if(_Tile.GetTileTypeState(ETileType.Wall_Int) && !_Tile.GetTileTypeState(ETileType.Floor))
-		{
-			_Tile.SetTileTypeState(ETileType.Wall_Int, false);
-		}
+		//		// Check the tiles lower/upper neighbours
+		//		CNeighbour upper = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Upper);
+		//		CNeighbour lower = _Tile.m_NeighbourHood.Find(neighbour => neighbour.m_WorldDirection == EDirection.Lower);
+		//
+		//		// If upper exists, remove my ceiling
+		//		if(upper != null)
+		//		{
+		//			// Remove my ceiling
+		//			_Tile.SetTileTypeState(ETileType.Ceiling, false);
+		//
+		//			// Remove their floor
+		//			upper.m_Tile.SetTileTypeState(ETileType.Floor, false);
+		//		}
+		//
+		//		// If lower exists
+		//		if(lower != null)
+		//		{
+		//			// Remove their ceiling
+		//			lower.m_Tile.SetTileTypeState(ETileType.Ceiling, false);
+		//
+		//			// Remove my floor
+		//			_Tile.SetTileTypeState(ETileType.Floor, false);		
+		//		}
+
+//		// If there is a floor
+//		if(_Tile.GetTileTypeState(ETileType.Floor))
+//		{
+//			// Find all the neighbours that are missing
+//			List<CNeighbour> missingNeighbours = new List<CNeighbour>(CGridObject.s_AllPossibleNeighbours);
+//			foreach(CNeighbour neighbour in _Tile.m_NeighbourHood)
+//			{
+//				missingNeighbours.Remove(missingNeighbours.Find(item => item.m_WorldDirection == neighbour.m_WorldDirection));
+//			}
+//			
+//			// For any missing neighbour, create a new external tile
+//			foreach(CNeighbour neighbour in missingNeighbours)
+//			{
+//				m_Grid.AddNewTile(new TGridPoint(_Tile.m_GridPosition.ToVector + neighbour.m_GridPointOffset.ToVector), s_TT_eW);
+//			}
+//		}
+//
+//		// If there is a external wall
+//		if(_Tile.GetTileTypeState(ETileType.Wall_Ext))
+//		{
+//			// Find all the neighbours that are missing
+//			List<CNeighbour> missingNeighbours = new List<CNeighbour>(CGridObject.s_AllPossibleNeighbours);
+//			foreach(CNeighbour neighbour in _Tile.m_NeighbourHood)
+//			{
+//				missingNeighbours.Remove(missingNeighbours.Find(item => item.m_WorldDirection == neighbour.m_WorldDirection));
+//			}
+//			
+//			// For any missing neighbour, create a new external tile
+//			foreach(CNeighbour neighbour in missingNeighbours)
+//			{
+//				m_Grid.AddNewTile(new TGridPoint(_Tile.m_GridPosition.ToVector + neighbour.m_GridPointOffset.ToVector), new ETileType[]{});
+//			}
+//		}
 	}
 
 	private void OnTileAppearanceChange(CTile _Tile)

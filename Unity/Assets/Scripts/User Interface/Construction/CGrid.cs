@@ -29,11 +29,11 @@ public class CGrid : MonoBehaviour
 		public TCreateTileInfo(TGridPoint _GridPoint, ETileType[] _TileTypes)
 		{
 			m_GridPoint = _GridPoint;
-			m_TileTypes = _TileTypes;
+			m_TileTypes = new List<ETileType>(_TileTypes);
 		}
 
 		public TGridPoint m_GridPoint;
-		public ETileType[] m_TileTypes;
+		public List<ETileType> m_TileTypes;
 	}
 
 	
@@ -220,6 +220,7 @@ public class CGrid : MonoBehaviour
 	
 	private void CreateTile(TCreateTileInfo _TileInfo)
 	{
+		// If it doesn't exist, create it
 		if(!m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
 		{
 			GameObject newtile = new GameObject("Tile");
@@ -239,8 +240,25 @@ public class CGrid : MonoBehaviour
 			}
 			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
 
-			// Find neighbours
+			// Update neighbours
 			tile.FindNeighbours();
+			tile.UpdateNeighbourhood();
+		}
+		// If it does exist, modify its tile type
+		else
+		{
+			CTile tile = m_GridBoard[_TileInfo.m_GridPoint.ToString()];
+
+			// Set the active tile types
+			for(int i = 0; i < (int)ETileType.MAX; ++i)
+			{
+				ETileType type = (ETileType)i;
+				tile.SetTileTypeState(type, _TileInfo.m_TileTypes.Contains(type));
+			}
+
+			// Update neighbours
+			tile.FindNeighbours();
+			tile.UpdateNeighbourhood();
 		}
 	}
 
@@ -249,23 +267,24 @@ public class CGrid : MonoBehaviour
 		if (m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
 			CTile tile = m_GridBoard[_GridPoint.ToString()];
+			m_GridBoard.Remove(_GridPoint.ToString());
 
 			// Release
+			tile.UpdateNeighbourhood();
 			tile.Release();
 
 			// Destroy
-			m_GridBoard.Remove(_GridPoint.ToString());
 			Destroy(tile.gameObject);
 		}
 	}
 
-	public void TilePostCreate(CTile _Tile)
+	public void TileCreate(CTile _Tile)
 	{
 		if(EventTileCreated != null)
 			EventTileCreated(_Tile);
 	}
 
-	public void TilePreRelease(CTile _Tile)
+	public void TileRelease(CTile _Tile)
 	{
 		if(EventTileReleased != null)
 			EventTileReleased(_Tile);

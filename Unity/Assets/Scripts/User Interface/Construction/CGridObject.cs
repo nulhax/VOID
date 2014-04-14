@@ -35,19 +35,17 @@ public abstract class CGridObject : MonoBehaviour
 
 	public List<CNeighbour> m_NeighbourHood = new List<CNeighbour>();
 
-	protected List<CNeighbour> s_AllNeighbours = new List<CNeighbour>(
+	public static List<CNeighbour> s_AllPossibleNeighbours = new List<CNeighbour>(
 		new CNeighbour[] 
 		{
-		new CNeighbour(new TGridPoint(0, 0, 1), EDirection.North),
-		new CNeighbour(new TGridPoint(1, 0, 0), EDirection.East),
-		new CNeighbour(new TGridPoint(0, 0, -1), EDirection.South),
-		new CNeighbour(new TGridPoint(-1, 0, 0), EDirection.West),
-		new CNeighbour(new TGridPoint(1, 0, 1), EDirection.NorthEast),
-		new CNeighbour(new TGridPoint(1, 0, -1), EDirection.SouthEast),
-		new CNeighbour(new TGridPoint(-1, 0, -1), EDirection.SouthWest),
 		new CNeighbour(new TGridPoint(-1, 0, 1), EDirection.NorthWest),
-		new CNeighbour(new TGridPoint(0, 1, 0), EDirection.Upper),
-		new CNeighbour(new TGridPoint(0, -1, 0), EDirection.Lower),
+		new CNeighbour(new TGridPoint(0, 0, 1), EDirection.North),
+		new CNeighbour(new TGridPoint(1, 0, 1), EDirection.NorthEast),
+		new CNeighbour(new TGridPoint(1, 0, 0), EDirection.East),
+		new CNeighbour(new TGridPoint(1, 0, -1), EDirection.SouthEast),
+		new CNeighbour(new TGridPoint(0, 0, -1), EDirection.South),
+		new CNeighbour(new TGridPoint(-1, 0, -1), EDirection.SouthWest),
+		new CNeighbour(new TGridPoint(-1, 0, 0), EDirection.West),
 	});
 	
 	// Member Properties

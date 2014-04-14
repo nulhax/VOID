@@ -31,30 +31,25 @@ public class CTile : CGridObject
 	public delegate void HandleTileEvent(CTile _Self);
 
 	public event HandleTileEvent EventTileAppearanceChanged;
-	public event HandleTileEvent EventTileTypeStateChange;
 	public event HandleTileEvent EventTileMetaChanged;
 
 
 	// Member Fields
 	public bool m_Prebuilt = false;
+
 	public int m_TileTypeIdentifier = 0;
 	private int m_PreviousTileTypeIdentifier = 0;
 
 	private Dictionary<ETileType, TTileMeta> m_TileMetaData = new Dictionary<ETileType, TTileMeta>();
 	private Dictionary<ETileType, TTileMeta> m_CurrentTileMetaData = new Dictionary<ETileType, TTileMeta>();
-
 	private Dictionary<ETileType, ETileVariant> m_CurrentTileVariants = new Dictionary<ETileType, ETileVariant>();
 
-	public Dictionary<ETileType, List<EDirection>> m_RelevantNeighbours = new Dictionary<ETileType, List<EDirection>>();
-	public Dictionary<ETileType, int> m_CurrentTileNeighbourExemptions = new Dictionary<ETileType, int>();
-
 	private bool m_IsDirty = false;
-	
+
 	private Dictionary<ETileType, GameObject> m_TileObject = new Dictionary<ETileType, GameObject>();
 	private Dictionary<EDirection, GameObject> m_WallInverseObjects = new Dictionary<EDirection, GameObject>();
 
 	static private bool s_DictionariesInitialised = false;
-
 	static private Dictionary<ETileType, Dictionary<int, TTileMeta>> s_TileMetaInfo = new Dictionary<ETileType, Dictionary<int, TTileMeta>>();
 
 
@@ -82,13 +77,14 @@ public class CTile : CGridObject
 			m_TileMetaData[type] = TTileMeta.Default;
 			m_CurrentTileMetaData[type] = TTileMeta.Default;
 			m_CurrentTileVariants[type] = ETileVariant.Default;
-			m_RelevantNeighbours[type] = new List<EDirection>();
-			m_CurrentTileNeighbourExemptions[type] = 0;
 		}
 	}
 
 	private void Start()
 	{
+		// Fire Tile Creation Event
+		m_Grid.TileCreate(this);
+
 		// Need to re-create objects to maintain links
 		if(m_Prebuilt)
 		{
@@ -99,19 +95,11 @@ public class CTile : CGridObject
 				Destroy(child.gameObject);
 		}
 
-		// Update the neighbourhood
-		UpdateNeighbourhood();
-
-		// Update current meta data
 		UpdateTileMetaData();
-
-		// Fire Tile Creation Event
-		m_Grid.TilePostCreate(this);
 	}
 
 	private void Update()
 	{
-		// If any changes have happened recently we need to update neighbours
 		if(m_IsDirty)
 		{
 			UpdateAllTileObjects();
@@ -123,7 +111,7 @@ public class CTile : CGridObject
 	{
 		m_NeighbourHood.Clear();
 		
-		foreach(CNeighbour pn in s_AllNeighbours) 
+		foreach(CNeighbour pn in s_AllPossibleNeighbours) 
 		{
 			TGridPoint possibleNeightbour = new TGridPoint(x + pn.m_GridPointOffset.x, 
 			                                               y + pn.m_GridPointOffset.y, 
@@ -140,24 +128,22 @@ public class CTile : CGridObject
 		}
 	}
 
-	private void UpdateNeighbourhood()
+	public void UpdateNeighbourhood()
 	{
 		// Find all neighbours and invoke them to find others
 		foreach(CNeighbour neighbour in m_NeighbourHood)
 		{
 			neighbour.m_Tile.FindNeighbours();
 		}
-
-		// Invoke an update of their meta data
-		foreach(CNeighbour neighbour in m_NeighbourHood)
-		{
-			neighbour.m_Tile.UpdateTileMetaData();
-		}
 	}
 
 	public void UpdateTileMetaData()
 	{
 		int[] metaIdentifiers = new int[(int)ETileType.MAX];
+		bool metaChanged = false;
+
+		// Wall caps start with all diagonal directions
+		metaIdentifiers[(int)ETileType.Wall_Ext_Cap] = 85;
 
 		// Find the meta identifier for all tile types based on neighbourhood
 		foreach(CNeighbour neighbour in m_NeighbourHood)
@@ -168,116 +154,57 @@ public class CTile : CGridObject
 			   neighbour.m_WorldDirection == EDirection.South ||
 			   neighbour.m_WorldDirection == EDirection.West)
 			{
-				EDirection oppositeDirection = CNeighbour.GetOppositeDirection(neighbour.m_WorldDirection);
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Floor))
 				{
-					bool state =(neighbour.m_Tile.m_CurrentTileNeighbourExemptions[ETileType.Floor] & (1 << (int)oppositeDirection)) != 0;
-
-					if(!state)
-						metaIdentifiers[(int)ETileType.Floor] |= 1 << (int)neighbour.m_WorldDirection;
-				}
-
-				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Ext))
-				{
-					bool state =(neighbour.m_Tile.m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext] & (1 << (int)oppositeDirection)) != 0;
-
-					if(!state)
-						metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << (int)neighbour.m_WorldDirection;
+					metaIdentifiers[(int)ETileType.Floor] |= 1 << (int)neighbour.m_WorldDirection;
 				}
 
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 				{
-					bool state =(neighbour.m_Tile.m_CurrentTileNeighbourExemptions[ETileType.Wall_Int] & (1 << (int)oppositeDirection)) != 0;
+					metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << (int)neighbour.m_WorldDirection;
+				}
 
-					if(!state)
-						metaIdentifiers[(int)ETileType.Wall_Int] |= 1 << (int)neighbour.m_WorldDirection;
+				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
+				{
+					metaIdentifiers[(int)ETileType.Wall_Int] |= 1 << (int)neighbour.m_WorldDirection;
 				}
 
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Ceiling))
 				{
-					bool state =(neighbour.m_Tile.m_CurrentTileNeighbourExemptions[ETileType.Ceiling] & (1 << (int)oppositeDirection)) != 0;
+					metaIdentifiers[(int)ETileType.Ceiling] |= 1 << (int)neighbour.m_WorldDirection;
+				}
 
-					if(!state)
-						metaIdentifiers[(int)ETileType.Ceiling] |= 1 << (int)neighbour.m_WorldDirection;
+				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
+				{
+					metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_WorldDirection;
 				}
 			}
 
-			// Wall caps care about all directions
-			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Ext))
+			if(neighbour.m_WorldDirection == EDirection.NorthWest ||
+			   neighbour.m_WorldDirection == EDirection.NorthEast ||
+			   neighbour.m_WorldDirection == EDirection.SouthWest ||
+			   neighbour.m_WorldDirection == EDirection.SouthEast)
 			{
-				metaIdentifiers[(int)ETileType.Wall_Ext_Cap] |= 1 << (int)neighbour.m_WorldDirection;
-			}
-
-			// External walls get extra meta identitfication when they aren't first story
-			if(neighbour.m_WorldDirection == EDirection.Lower)
-			{
-				metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << 4;
+				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Ext))
+				{
+					metaIdentifiers[(int)ETileType.Wall_Int_Cap] &= ~(1 << (int)neighbour.m_WorldDirection);
+				}
 			}
 		}
-
-		// Use the meta indentifiers to find the relevant neighbour types
-		for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
-		{
-			ETileType type = (ETileType)i;
-			m_RelevantNeighbours[type].Clear();
-
-			// Check if the neighbours where included in the meta identifier
-			for(int j = (int)EDirection.INVALID + 1; j < (int)EDirection.MAX; ++j)
-				if((metaIdentifiers[i] & (1 << j)) != 0)
-					m_RelevantNeighbours[type].Add((EDirection)j);
-		}
-
-		// Apply the neighbourhood tile exemptions
-		metaIdentifiers[(int)ETileType.Floor] &= ~(m_CurrentTileNeighbourExemptions[ETileType.Floor]); 
-		metaIdentifiers[(int)ETileType.Wall_Ext] &= ~(m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext]); 
-		metaIdentifiers[(int)ETileType.Wall_Int] &= ~(m_CurrentTileNeighbourExemptions[ETileType.Wall_Int]); 
-		metaIdentifiers[(int)ETileType.Ceiling] &= ~(m_CurrentTileNeighbourExemptions[ETileType.Ceiling]); 
-		metaIdentifiers[(int)ETileType.Wall_Ext_Cap] &= ~(m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap]); 
 
 		// Check if floor/external wall/ceiling meta data changed
-		bool metaChanged = false;
-		if(m_TileMetaData[ETileType.Floor].m_Identifier != metaIdentifiers[(int)ETileType.Floor])
-		{
-			m_TileMetaData[ETileType.Floor] = FindTileMetaInfo(ETileType.Floor, metaIdentifiers[(int)ETileType.Floor]);
-			metaChanged = true;
-		}
-		if(m_TileMetaData[ETileType.Ceiling].m_Identifier != metaIdentifiers[(int)ETileType.Ceiling])
-		{
-			m_TileMetaData[ETileType.Ceiling] = FindTileMetaInfo(ETileType.Ceiling, metaIdentifiers[(int)ETileType.Ceiling]);
-			metaChanged = true;
-		}
-		if(m_TileMetaData[ETileType.Wall_Ext].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext])
-		{
-			m_TileMetaData[ETileType.Wall_Ext] = FindTileMetaInfo(ETileType.Wall_Ext, metaIdentifiers[(int)ETileType.Wall_Ext]);
-			metaChanged = true;
-		}
+		if(UpdateTileMetaInfo(ETileType.Floor, metaIdentifiers[(int)ETileType.Floor])) metaChanged = true;
+		if(UpdateTileMetaInfo(ETileType.Ceiling, metaIdentifiers[(int)ETileType.Ceiling])) metaChanged = true;
+		if(UpdateTileMetaInfo(ETileType.Wall_Ext, metaIdentifiers[(int)ETileType.Wall_Ext])) metaChanged = true;
+		if(UpdateTileMetaInfo(ETileType.Wall_Int, metaIdentifiers[(int)ETileType.Wall_Int])) metaChanged = true;
+		if(UpdateTileMetaInfo(ETileType.Wall_Int_Cap, metaIdentifiers[(int)ETileType.Wall_Int_Cap])) metaChanged = true;
 
-		// Internal walls need to check to see if the external wall piece is a edge
-		if(m_TileMetaData[ETileType.Wall_Ext].m_Type == ETileMetaType.Wall_Ext_Edge ||
-		   m_TileMetaData[ETileType.Wall_Ext].m_Type == ETileMetaType.Wall_Ext_MS_Edge)
-		{
-			// We use the external wall pieces and bitshift 4 bits across
-			metaIdentifiers[(int)ETileType.Wall_Int] = m_TileMetaData[ETileType.Wall_Ext].m_Identifier;
-			metaIdentifiers[(int)ETileType.Wall_Int] |= 1 << 4;
-		}
-		if(m_TileMetaData[ETileType.Wall_Int].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Int])
-		{
-			m_TileMetaData[ETileType.Wall_Int] = FindTileMetaInfo(ETileType.Wall_Int, metaIdentifiers[(int)ETileType.Wall_Int]);
-			metaChanged = true;
-		}
-
-		// Wall caps are special cases which detirmine meta on the fly
-		if(m_TileMetaData[ETileType.Wall_Ext_Cap].m_Identifier != metaIdentifiers[(int)ETileType.Wall_Ext_Cap])
-		{
-			ETileMetaType metaType = ETileMetaType.Wall_Ext_Cap_CornerCap;
-
-			// Check for lower
-			if((metaIdentifiers[(int)ETileType.Wall_Ext_Cap] & (1 << (int)EDirection.Lower)) != 0)
-				metaType = ETileMetaType.Wall_Ext_Cap_CornerCap_2;
-
-			m_TileMetaData[ETileType.Wall_Ext_Cap] = new TTileMeta(metaType, metaIdentifiers[(int)ETileType.Wall_Ext_Cap], EDirection.North);
-			metaChanged = true;
-		}
+//		// Wall caps are special cases which detirmine meta on the fly
+//		if(m_TileMetaData[ETileType.Wall_Ext_Cap].m_TileMask != metaIdentifiers[(int)ETileType.Wall_Ext_Cap])
+//		{
+//			m_TileMetaData[ETileType.Wall_Ext_Cap] = new TTileMeta(ETileMetaType.Wall_Ext_Cap_CornerCap, metaIdentifiers[(int)ETileType.Wall_Ext_Cap]);
+//			metaChanged = true;
+//		}
 
 		// Last check to see if the tile types where changed
 		if(m_PreviousTileTypeIdentifier != m_TileTypeIdentifier)
@@ -289,6 +216,10 @@ public class CTile : CGridObject
 		// If any meta data changed
 		if(metaChanged)
 		{
+			// Invoke event for meta change
+			if(EventTileMetaChanged != null)
+				EventTileMetaChanged(this);
+
 			// Invoke neighbours to update their meta data
 			foreach(CNeighbour neighbour in m_NeighbourHood)
 			{
@@ -297,10 +228,6 @@ public class CTile : CGridObject
 
 			// Set dirty to update tile types next update
 			m_IsDirty = true;
-
-			// Invoke event for meta change
-			if(EventTileMetaChanged != null)
-				EventTileMetaChanged(this);
 		}
 	}
 
@@ -311,13 +238,13 @@ public class CTile : CGridObject
 		{
 			ETileType tileType = (ETileType)i;
 
-			// If wall cap, it is a special case
-			if(tileType == ETileType.Wall_Ext_Cap)
-			{
-				// Update Wall Caps
-				UpdateWallTileCaps();
-				continue;
-			}
+//			// If wall cap, it is a special case
+//			if(tileType == ETileType.Wall_Ext_Cap)
+//			{
+//				// Update Wall Caps
+//				UpdateWallTileCaps();
+//				continue;
+//			}
 
 			// Check if the tile should be active
 			if(GetTileTypeState(tileType))
@@ -328,7 +255,7 @@ public class CTile : CGridObject
 				tileMeta.m_Variant = m_CurrentTileVariants[tileType];
 
 				// If the identifier/variant has changed we need to update the object
-				if(m_CurrentTileMetaData[tileType].m_Identifier != tileMeta.m_Identifier ||
+				if(m_CurrentTileMetaData[tileType].m_TileMask != tileMeta.m_TileMask ||
 				   m_CurrentTileMetaData[tileType].m_Variant != tileMeta.m_Variant)
 				{
 					// Release the current tile type object
@@ -341,7 +268,7 @@ public class CTile : CGridObject
 						m_TileObject[tileType].transform.parent = transform;
 						m_TileObject[tileType].transform.localPosition = Vector3.zero;
 						m_TileObject[tileType].transform.localScale = Vector3.one;
-						m_TileObject[tileType].transform.localRotation = GetDirectionRotation(tileMeta.m_LocalNorth);
+						m_TileObject[tileType].transform.localRotation = Quaternion.Euler(0.0f, tileMeta.m_Rotations * 90.0f, 0.0f);
 					}
 
 					// Update the tiles current meta data for this type
@@ -361,65 +288,68 @@ public class CTile : CGridObject
 			EventTileAppearanceChanged(this);
 	}
 
-	private void UpdateWallTileCaps()
-	{
-		int currentWallCapIdentifier = m_CurrentTileMetaData[ETileType.Wall_Ext_Cap].m_Identifier;
-		int wallCapIdentifier = m_TileMetaData[ETileType.Wall_Ext_Cap].m_Identifier;
-
-		if(currentWallCapIdentifier != wallCapIdentifier)
-		{
-			// Extract the missing neighbours from the identifier
-			for(int i = (int)EDirection.NorthEast; i <= (int)EDirection.NorthWest; ++i)
-			{
-				EDirection direction =(EDirection)i;
-
-				// Checking bit for the neighbour, if it doesnt exist continue
-				if(!((wallCapIdentifier & (1 << i)) != 0))
-				{
-					// Get the two neighbouring neighbours
-					EDirection dirLeft = CNeighbour.GetLeftDirectionNeighbour(direction);
-					EDirection dirRight = CNeighbour.GetRightDirectionNeighbour(direction);
-
-					if(((wallCapIdentifier & (1 << (int)dirLeft)) != 0) && ((wallCapIdentifier & (1 << (int)dirRight)) != 0))
-	   				{
-						// Only need to make it if it doesnt exist yet
-						if(!m_WallInverseObjects.ContainsKey(direction))
-						{
-							GameObject wallInverseObject = m_Grid.TileFactory.InstanceNewTile(ETileType.Wall_Ext_Cap, 
-							                                                            		m_TileMetaData[ETileType.Wall_Ext_Cap].m_Type, 
-							                                                            		m_TileMetaData[ETileType.Wall_Ext_Cap].m_Variant);
-		   					wallInverseObject.transform.parent = transform;
-		   					wallInverseObject.transform.localPosition = Vector3.zero;
-		   					wallInverseObject.transform.localScale = Vector3.one;
-		   					m_WallInverseObjects.Add(direction, wallInverseObject);
-		   
-		   					// Rotation part needs to be detirmined based on which neighbour was missing
-		   					switch(direction)
-		   					{
-		   					case EDirection.NorthEast: wallInverseObject.transform.localRotation = Quaternion.identity; break;
-		   					case EDirection.SouthEast: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f); break;
-		   					case EDirection.SouthWest: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f); break;
-		   					case EDirection.NorthWest: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 270.0f, 0.0f); break;
-		   					}
-						}
-	   				}
-	   				else if(m_WallInverseObjects.ContainsKey(direction))
-	   				{
-	   					ReleaseWallInverseTile(m_WallInverseObjects[direction]);
-	   					m_WallInverseObjects.Remove(direction);
-   					}
-				}
-				// Remove wall if the neighbour was found
-				else if(m_WallInverseObjects.ContainsKey(direction))
-				{
-					ReleaseWallInverseTile(m_WallInverseObjects[direction]);
-					m_WallInverseObjects.Remove(direction);
-				}
-			}
-
-			m_CurrentTileMetaData[ETileType.Wall_Ext_Cap] = m_TileMetaData[ETileType.Wall_Ext_Cap];
-		}
-	}
+//	private void UpdateWallTileCaps()
+//	{
+//		int currentWallCapIdentifier = m_CurrentTileMetaData[ETileType.Wall_Ext_Cap].m_TileMask;
+//		int wallCapIdentifier = m_TileMetaData[ETileType.Wall_Ext_Cap].m_TileMask;
+//
+//		EDirection[] diagonalDirections = new EDirection[]{ EDirection.NorthEast, EDirection.NorthWest, EDirection.SouthEast, EDirection.SouthWest };
+//
+//		if(currentWallCapIdentifier != wallCapIdentifier)
+//		{
+//			// Extract the missing neighbours from the identifier
+//			foreach(EDirection direction in diagonalDirections)
+//			{
+//				// Checking bit for the neighbour, if it doesnt exist continue
+//				if(!((wallCapIdentifier & (1 << (int)direction)) != 0))
+//				{
+//					// Get the two neighbouring neighbours
+//					EDirection dirLeft = CNeighbour.GetLeftDirectionNeighbour(direction);
+//					EDirection dirRight = CNeighbour.GetRightDirectionNeighbour(direction);
+//
+//					bool containsLeftWall = ((wallCapIdentifier & (1 << (int)dirLeft)) != 0);
+//					bool containsRightWall = ((wallCapIdentifier & (1 << (int)dirRight)) != 0);
+//
+//					if(containsLeftWall && containsRightWall)
+//	   				{
+//						// Only need to make it if it doesnt exist yet
+//						if(!m_WallInverseObjects.ContainsKey(direction))
+//						{
+//							GameObject wallInverseObject = m_Grid.TileFactory.InstanceNewTile(ETileType.Wall_Ext_Cap, 
+//							                                                            		m_TileMetaData[ETileType.Wall_Ext_Cap].m_Type, 
+//							                                                            		m_TileMetaData[ETileType.Wall_Ext_Cap].m_Variant);
+//		   					wallInverseObject.transform.parent = transform;
+//		   					wallInverseObject.transform.localPosition = Vector3.zero;
+//		   					wallInverseObject.transform.localScale = Vector3.one;
+//		   					m_WallInverseObjects.Add(direction, wallInverseObject);
+//		   
+//		   					// Rotation part needs to be detirmined based on which neighbour was missing
+//		   					switch(direction)
+//		   					{
+//		   					case EDirection.NorthEast: wallInverseObject.transform.localRotation = Quaternion.identity; break;
+//		   					case EDirection.SouthEast: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 90.0f, 0.0f); break;
+//		   					case EDirection.SouthWest: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f); break;
+//		   					case EDirection.NorthWest: wallInverseObject.transform.localRotation = Quaternion.Euler(0.0f, 270.0f, 0.0f); break;
+//		   					}
+//						}
+//	   				}
+//	   				else if(m_WallInverseObjects.ContainsKey(direction))
+//	   				{
+//	   					ReleaseWallInverseTile(m_WallInverseObjects[direction]);
+//	   					m_WallInverseObjects.Remove(direction);
+//   					}
+//				}
+//				// Remove wall if the neighbour was found
+//				else if(m_WallInverseObjects.ContainsKey(direction))
+//				{
+//					ReleaseWallInverseTile(m_WallInverseObjects[direction]);
+//					m_WallInverseObjects.Remove(direction);
+//				}
+//			}
+//
+//			m_CurrentTileMetaData[ETileType.Wall_Ext_Cap] = m_TileMetaData[ETileType.Wall_Ext_Cap];
+//		}
+//	}
 
 	public void SetMetaData(ETileType _TileType, TTileMeta _Meta)
 	{
@@ -453,9 +383,6 @@ public class CTile : CGridObject
 			m_TileTypeIdentifier |= (1 << (int)_TileType);
 		else
 			m_TileTypeIdentifier &= ~(1 << (int)_TileType);
-
-		if(EventTileTypeStateChange != null)
-			EventTileTypeStateChange(this);
 	}
 	
 	public bool GetTileTypeState(ETileType _TileType)
@@ -464,29 +391,10 @@ public class CTile : CGridObject
 		return(state);
 	}
 
-	public void SetTileNeighbourExemptionState(ETileType _TileType, EDirection _Direction, bool _State)
-	{
-		if(_State)
-			m_CurrentTileNeighbourExemptions[_TileType] |= (1 << (int)_Direction);
-		else
-			m_CurrentTileNeighbourExemptions[_TileType] &= ~(1 << (int)_Direction);
-	}
-
-	public bool GetTileNeighbourExemptionState(ETileType _TileType, EDirection _Direction)
-	{
-		bool state = ((m_CurrentTileNeighbourExemptions[_TileType] & (1 << (int)_Direction)) != 0);
-		return(state);
-	}
-
-	public EDirection GetTileTypeLocalNorth(ETileType _TileType)
-	{
-		return(m_CurrentTileMetaData[_TileType].m_LocalNorth);
-	}
-
 	public void Release()
 	{
 		// Fire Tile Release Event
-		m_Grid.TilePreRelease(this);
+		m_Grid.TileRelease(this);
 
 		// Release tile objects
 		for(int i = 0; i < (int)ETileType.MAX; ++i)
@@ -538,144 +446,162 @@ public class CTile : CGridObject
 		}
 	}
 
+	private static void AddTileMetaInfoEntry(ETileType _TileType, ETileMetaType _MetaType, EDirection[] _MaskNeighbours)
+	{
+		// Define the mask neighbours into a int mask
+		int mask = 0;
+		foreach(EDirection direction in _MaskNeighbours)
+		{
+			mask |= 1 << (int)direction;
+		}
+
+		if(!s_TileMetaInfo[_TileType].ContainsKey(mask))
+			s_TileMetaInfo[_TileType].Add(mask, new TTileMeta(_MetaType, mask));
+		else
+			Debug.LogError("Tile meta info was already added for: " + _TileType + " : " + _MetaType + " : " + mask);
+	}
+	
+	private bool UpdateTileMetaInfo(ETileType _TileType, int _TileMask)
+	{
+		// Get the tile meta info as of this point
+		TTileMeta tileMeta = m_TileMetaData[_TileType];
+
+		// Find the tile mask out of possible 4 rotations
+		for(int i = 0; i < 4; ++i)
+		{
+			int tileMask = 0;
+			for(int j = 0; j < (int)EDirection.MAX; ++j)
+			{
+				// Define a new mask based on neighbours that exist in the mask
+				if((_TileMask & (1 << j)) != 0)
+				{
+					// "Rotate" the mask by 90*, 2 bits ac for each rotation
+					int dirMask = j - (2 * i);
+					if(dirMask < 0)
+						dirMask += 8;
+					
+					tileMask |= 1 << dirMask;
+				}
+			}
+			
+			// Return the result if it is found with the correct rotation
+			if(s_TileMetaInfo[_TileType].ContainsKey(tileMask))
+			{
+				TTileMeta newTileMeta = s_TileMetaInfo[_TileType][tileMask];
+				newTileMeta.m_Rotations = i;
+				
+				// Update the tile meta
+				m_TileMetaData[_TileType] = newTileMeta;
+				
+				// Return true if there is a change in meta data
+				if(!tileMeta.Equals(newTileMeta))
+					return(true);
+				else 
+					return(false);
+			}
+		}
+
+		Debug.LogWarning("Tile Meta data wasn't found for: " + _TileType + " Mask: " + _TileMask);
+
+		return(false);
+	}
+
 	private static void FillTileMetaData()
 	{
 		// Floors
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Cell, 0, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Middle, 15, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Hall, 10, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Hall, 5, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Edge, 13, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Edge, 11, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Edge, 7, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Edge, 14, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Corner, 3, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Corner, 6, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Corner, 12, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Corner, 9, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_End, 8, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_End, 1, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_End, 2, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_End, 4, EDirection.West);
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Cell, 
+		                     new EDirection[]{});
+		
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Middle, 
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Hall, 			
+		                     new EDirection[]{ EDirection.East, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Edge,
+		                     new EDirection[]{ EDirection.North, EDirection.South, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_Corner,
+		                     new EDirection[]{ EDirection.North, EDirection.East });
+		
+		AddTileMetaInfoEntry(ETileType.Floor, ETileMetaType.Floor_End,
+		                     new EDirection[]{ EDirection.West });
 		
 		// Walls Exterior
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.None, 15, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.None, 0, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Hall, 5, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Hall, 10, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Edge, 13, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Edge, 11, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Edge, 7, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Edge, 14, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Corner, 9, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Corner, 3, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Corner, 6, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Corner, 12, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_End, 8, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_End, 1, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_End, 2, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_End, 4, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.None, 31, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.None, 16, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Hall, 21, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Hall, 26, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Edge, 29, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Edge, 27, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Edge, 23, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Edge, 30, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Corner, 25, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Corner, 19, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Corner, 22, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_Corner, 28, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_End, 24, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_End, 17, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_End, 18, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_MS_End, 20, EDirection.West);
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.None,
+		                     new EDirection[]{ });
 
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Cell,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Hall,
+		                     new EDirection[]{ EDirection.West, EDirection.East });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Edge,
+		                     new EDirection[]{ EDirection.East });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_Corner,
+		                     new EDirection[]{ EDirection.South, EDirection.East });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Ext, ETileMetaType.Wall_Ext_End,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South });
+		
 		// Walls Interior
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Single, 0, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_End, 8, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_End, 1, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_End, 2, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_End, 4, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Middle, 5, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Middle, 10, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Corner, 6, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Corner, 12, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Corner, 9, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Corner, 3, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_T, 11, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_T, 7, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_T, 14, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_T, 13, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_X, 15, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 30, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 29, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 27, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_EdgeT, 23, EDirection.West);
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Cell,
+		                     new EDirection[]{});
 
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.None,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Hall,
+		                     new EDirection[]{ EDirection.North, EDirection.South });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Edge,
+		                     new EDirection[]{ EDirection.North, EDirection.West, EDirection.South });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_Corner,
+		                     new EDirection[]{ EDirection.North, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Int, ETileMetaType.Wall_Int_End,
+		                     new EDirection[]{ EDirection.West });
+		
 		// Ceiling
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Cell, 0, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Middle, 15, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Hall, 10, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Hall, 5, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Edge, 7, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Edge, 14, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Edge, 13, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Edge, 11, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Corner, 6, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Corner, 12, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Corner, 9, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Corner, 3, EDirection.West);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_End, 8, EDirection.North);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_End, 1, EDirection.East);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_End, 2, EDirection.South);
-		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_End, 4, EDirection.West);
-	}
-	
-	private static void AddTileMetaInfoEntry(ETileType _TileType, ETileMetaType _MetaType, int _Identifier, EDirection _LocalNorth)
-	{
-		if(!s_TileMetaInfo[_TileType].ContainsKey(_Identifier))
-			s_TileMetaInfo[_TileType].Add(_Identifier, new TTileMeta(_MetaType, _Identifier, _LocalNorth));
-		else
-			Debug.LogError("Tile meta info was already added for: " + _TileType + " : " + _MetaType + " : " + _Identifier);
-	}
-	
-	private TTileMeta FindTileMetaInfo(ETileType _TileType, int _Identifier)
-	{
-		// Find the meta data for this tile
-		if(s_TileMetaInfo[_TileType].ContainsKey(_Identifier))
-		{
-			return(s_TileMetaInfo[_TileType][_Identifier]);
-		}
-		else
-		{
-			// If it wasn't found there was no meta data found for it
-			Debug.LogWarning("Tile meta info wasn't found for:  " + _TileType + " : " + _Identifier);
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Cell, 
+		                     new EDirection[]{});
+		
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Middle, 
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Hall, 			
+		                     new EDirection[]{ EDirection.East, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Edge,
+		                     new EDirection[]{ EDirection.North, EDirection.South, EDirection.West });
+		
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_Corner,
+		                     new EDirection[]{ EDirection.North, EDirection.East });
+		
+		AddTileMetaInfoEntry(ETileType.Ceiling, ETileMetaType.Ceiling_End,
+		                     new EDirection[]{ EDirection.West });
 
-			// Return meta data that is of the same as found to avoid recursive loop
-			return(new TTileMeta(ETileMetaType.None, _Identifier, EDirection.North));
-		}
-	}
+		// Walls Interior Caps
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.None,
+		                     new EDirection[]{ });
 
-	public static Quaternion GetDirectionRotation(EDirection _Direction)
-	{
-		Quaternion quat = Quaternion.identity;
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_4,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 
-		switch(_Direction)
-		{
-		case EDirection.North: quat = Quaternion.identity; break;
-		case EDirection.NorthWest: quat = Quaternion.Euler(0.0f, -45.0f, 0.0f); break;
-		case EDirection.West: quat = Quaternion.Euler(0.0f, -90.0f, 0.0f); break;
-		case EDirection.SouthWest: quat = Quaternion.Euler(0.0f, -135.0f, 0.0f); break;
-		case EDirection.South: quat = Quaternion.Euler(0.0f, 180.0f, 0.0f); break;
-		case EDirection.SouthEast: quat = Quaternion.Euler(0.0f, 135.0f, 0.0f); break;
-		case EDirection.East: quat = Quaternion.Euler(0.0f, 90.0f, 0.0f); break;
-		case EDirection.NorthEast: quat = Quaternion.Euler(0.0f, 45.0f, 0.0f); break;
-		}
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_3,
+		                     new EDirection[]{ EDirection.North, EDirection.West, EDirection.South, EDirection.NorthWest, EDirection.SouthWest });
 
-		return(quat);
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_2_1,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.SouthWest, EDirection.NorthWest });
+		
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_2_2,
+		                     new EDirection[]{ EDirection.North, EDirection.South, EDirection.SouthEast, EDirection.NorthWest });
+
+		AddTileMetaInfoEntry(ETileType.Wall_Int_Cap, ETileMetaType.Wall_Int_Cap_1,
+		                     new EDirection[]{ EDirection.North, EDirection.East, EDirection.SouthWest, EDirection.NorthWest, EDirection.SouthEast});
 	}
 }
 
@@ -688,7 +614,8 @@ public enum ETileType
 	Wall_Int,
 	Ceiling,
 	Wall_Ext_Cap,
-	
+	Wall_Int_Cap,
+
 	MAX
 }
 
@@ -707,18 +634,13 @@ public enum ETileMetaType
 	Wall_Ext_Edge,
 	Wall_Ext_End,
 	Wall_Ext_Hall,
-	Wall_Ext_MS_Corner,
-	Wall_Ext_MS_Edge,
-	Wall_Ext_MS_End,
-	Wall_Ext_MS_Hall,
+	Wall_Ext_Cell,
 	
-	Wall_Int_EdgeT = 200,
-	Wall_Int_Middle,
-	Wall_Int_Corner,
-	Wall_Int_T,
-	Wall_Int_X,
-	Wall_Int_Single,
+	Wall_Int_Corner = 200, 
+	Wall_Int_Edge,
 	Wall_Int_End,
+	Wall_Int_Hall,
+	Wall_Int_Cell,
 	
 	Ceiling_Middle = 300, 
 	Ceiling_Corner, 
@@ -729,6 +651,12 @@ public enum ETileMetaType
 	
 	Wall_Ext_Cap_CornerCap = 400,
 	Wall_Ext_Cap_CornerCap_2,
+
+	Wall_Int_Cap_1 = 500,
+	Wall_Int_Cap_2_1,
+	Wall_Int_Cap_2_2,
+	Wall_Int_Cap_3,
+	Wall_Int_Cap_4,
 }
 
 public enum ETileVariant
@@ -747,19 +675,19 @@ public struct TTileMeta
 {	
 	public static TTileMeta Default
 	{
-		get { return(new TTileMeta(ETileMetaType.None, -1, EDirection.North)); }
+		get { return(new TTileMeta(ETileMetaType.None, -1)); }
 	}
 
-	public TTileMeta(ETileMetaType _Type, int _Identifier, EDirection _LocalNorth)
+	public TTileMeta(ETileMetaType _Type, int _Identifier)
 	{
-		m_Identifier = _Identifier;
+		m_TileMask = _Identifier;
 		m_Type = _Type;
 		m_Variant = ETileVariant.Default;
-		m_LocalNorth = _LocalNorth;
+		m_Rotations = 0;
 	}
 	
-	public int m_Identifier;
+	public int m_TileMask;
 	public ETileMetaType m_Type;
+	public int m_Rotations;
 	public ETileVariant m_Variant;
-	public EDirection m_LocalNorth;
 }

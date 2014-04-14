@@ -60,6 +60,9 @@ public class CTileFactory : MonoBehaviour
 	public List<ETileMetaType> m_WallExtCapTileTypes = new List<ETileMetaType>();
 	public List<GameObject> m_WallExtCapTilePrefabs = new List<GameObject>();
 
+	public List<ETileMetaType> m_WallIntCapTileTypes = new List<ETileMetaType>();
+	public List<GameObject> m_WallIntCapTilePrefabs = new List<GameObject>();
+
 	private Dictionary<TTileIdentifier, GameObject> m_TilePrefabPairs = new Dictionary<TTileIdentifier, GameObject>();
 	private Dictionary<TTileIdentifier, List<GameObject>> m_TileInstances = new Dictionary<TTileIdentifier, List<GameObject>>();
 
@@ -85,6 +88,9 @@ public class CTileFactory : MonoBehaviour
 
 		if(m_WallExtCapTileTypes.Count != m_WallExtCapTilePrefabs.Count)
 			Debug.LogError("Wall Ext Cap tile type -> Wall Ext Cap tile prefab mismatch.");
+
+		if(m_WallIntCapTileTypes.Count != m_WallIntCapTilePrefabs.Count)
+			Debug.LogError("Wall Int Cap tile type -> Wall Int Cap tile prefab mismatch.");
 
 		if(m_WallExtTileTypes_Opening.Count != m_WallExtTilePrefabs_Opening.Count)
 			Debug.LogError("Wall Ext Door tile type -> Wall Ext Door tile prefab mismatch.");
@@ -129,6 +135,13 @@ public class CTileFactory : MonoBehaviour
 		{
 			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Ext_Cap, m_WallExtCapTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_WallExtCapTilePrefabs[i];
+		}
+
+		// Wall Int Cap Ceiling tiles
+		for(int i = 0; i < m_WallIntCapTileTypes.Count; ++i)
+		{
+			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Int_Cap, m_WallIntCapTileTypes[i], ETileVariant.Default);
+			m_TilePrefabPairs[identifier] = m_WallIntCapTilePrefabs[i];
 		}
 	}
 
