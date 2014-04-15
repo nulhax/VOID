@@ -1419,6 +1419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f08e9a09ccd3fd45bc789e9cda03a19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fInitialGenerationRate: 60
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1430,7 +1431,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e567bb5c4edb2b84a8b9368a7e310a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxPowerGenerationRate: 100
   m_DUIConsole: {fileID: 11400028}
   m_CircuitryComponent: {fileID: 11400010}
   m_CalibrationComponent: {fileID: 11400018}

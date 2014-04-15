@@ -17,7 +17,6 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CActorLocator))]
 public class CActorBoardable : CNetworkMonoBehaviour 
 {
 	

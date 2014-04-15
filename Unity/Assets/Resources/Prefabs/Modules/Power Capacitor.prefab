@@ -5163,6 +5163,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01944d6a47457964f8daa05e3faac14c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fInitialCapacity: 60
+  m_fInitialChargeRatio: .5
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1

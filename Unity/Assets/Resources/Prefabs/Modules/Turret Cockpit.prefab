@@ -1206,7 +1206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cSeat: {fileID: 100040}
-  m_LookAt: {fileID: 400050}
+  m_cLookAt: {fileID: 400050}
   m_Components:
   - {fileID: 11400022}
   - {fileID: 11400018}

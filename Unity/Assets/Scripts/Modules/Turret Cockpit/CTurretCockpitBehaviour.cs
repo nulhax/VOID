@@ -30,70 +30,58 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-// Member Fields
-	public GameObject m_CockpitSeat = null;
-	public GameObject m_CockpitCenter = null;
-	public GameObject m_CockpitScreen = null;
-	public GameObject m_CockpitScreen2 = null;
-
-	public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
-
-	private CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
-
-
 // Member Properties
+
+
 	public GameObject ActiveTurretObject
 	{
 		get 
 		{ 
-			if (m_cActiveTurretViewId.Get() == null)
+			if (m_cActiveTurretViewId.Value == null)
 			{
 				return (null);
 			}
 
-			return (CNetwork.Factory.FindObject(m_cActiveTurretViewId.Get())); 
+			return (m_cActiveTurretViewId.Value.GameObject); 
 		}
 	}
 
 
 // Member Methods
+
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
 		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
-
-        //m_CalibratorComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
-        //m_LiquidComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
-        //m_RatchetComponentActive = _cRegistrar.CreateNetworkVar<bool>(OnNetworkVarSync, null);
     }
 
 	void Start()
 	{
-		CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
+        m_cCockpit = gameObject.GetComponent<CCockpit>();
 
-		// Subscribe to cockpit events
-		cCockpit.EventPlayerEnter += new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
-		cCockpit.EventPlayerLeave += new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
+        if (CNetwork.IsServer)
+        {
+            // Subscribe to cockpit events - Does not need to unsubscribe
+            m_cCockpit.EventMounted += new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
+            m_cCockpit.EventDismounted += new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
+        }
 	}
 
 
 	void OnDestroy()
 	{
-        CCockpit cCockpit = gameObject.GetComponent<CCockpit>();
-
-        // Unsubscribe from cockpit events
-        cCockpit.EventPlayerEnter -= new CCockpit.HandlePlayerEnter(OnPlayerEnterCockpit);
-        cCockpit.EventPlayerLeave -= new CCockpit.HandlePlayerLeave(OnPlayerLeaveCockpit);
+        // Empty
 	}
 
 
-	void HandleCockpitRotations(Vector2 _TurretRotations, Vector2 _TurretMinMaxEulerX)
+	void HandleCockpitRotations(Vector2 _vTurretRotations, Vector2 _TurretMinMaxEulerX)
 	{
 		// Get the rotations of the turret
-		Vector2 cockpitRotations = _TurretRotations;
+		Vector2 cockpitRotations = _vTurretRotations;
 
 		// Transform X for use of the turret
 		cockpitRotations.x = Mathf.Lerp(m_MinMaxEulerX.x, m_MinMaxEulerX.y, 
-		                                (_TurretRotations.x - _TurretMinMaxEulerX.x) / (_TurretMinMaxEulerX.y - _TurretMinMaxEulerX.x));
+		                                (_vTurretRotations.x - _TurretMinMaxEulerX.x) / (_TurretMinMaxEulerX.y - _TurretMinMaxEulerX.x));
 
 		// Update the rotations of the cockpit
 		Vector3 cockpitLocalEuler = m_CockpitSeat.transform.localEulerAngles;
@@ -137,7 +125,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	            if (!cTurretObject.GetComponent<CTurretBehaviour>().IsUnderControl)
 	            {
 					// Notify turret that it has been mounted by player
-					cTurretObject.GetComponent<CTurretBehaviour>().TakeControl(_ulPlayerId);
+                    cTurretObject.GetComponent<CTurretBehaviour>().SetUnderControl(true);
 
 	                m_cActiveTurretViewId.Set(cTurretObject.GetComponent<CNetworkView>().ViewId);
 
@@ -154,7 +142,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
         if (ActiveTurretObject != null)
         {
             // Release turret control
-            ActiveTurretObject.GetComponent<CTurretBehaviour>().ReleaseControl();
+            ActiveTurretObject.GetComponent<CTurretBehaviour>().SetUnderControl(false);
 
             // Cleanup
             m_cActiveTurretViewId.Set(null);
@@ -173,10 +161,10 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 				CTurretBehaviour tb = m_cActiveTurretViewId.Get().GameObject.GetComponent<CTurretBehaviour>();
 
 				// Register the handling cockpit rotations
-				tb.EventTurretRotated += HandleCockpitRotations;
+				//tb.EventTurretRotated += HandleCockpitRotations;
 
 				// Set initial states
-				HandleCockpitRotations(tb.TurretRotations, tb.MinMaxRotationX);
+				//HandleCockpitRotations(tb.Rotation, tb.MinMaxRotationX);
 
 				// Set the render texture from the turret
 				m_CockpitScreen.renderer.material.SetTexture("_MainTex", tb.CameraRenderTexture);
@@ -184,8 +172,27 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 			}
 
 			// Unregister previous the handling cockpit rotations
-			if(m_cActiveTurretViewId.GetPrevious() != null)
-				m_cActiveTurretViewId.GetPrevious().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated -= HandleCockpitRotations;
+			//if(m_cActiveTurretViewId.GetPrevious() != null)
+			//	m_cActiveTurretViewId.GetPrevious().GameObject.GetComponent<CTurretBehaviour>().EventTurretRotated -= HandleCockpitRotations;
 		}
 	}
+
+
+// Member Fields
+
+
+    public GameObject m_CockpitSeat = null;
+    public GameObject m_CockpitCenter = null;
+    public GameObject m_CockpitScreen = null;
+    public GameObject m_CockpitScreen2 = null;
+
+    public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
+
+
+    CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
+
+
+    CCockpit m_cCockpit = null;
+
+
 };

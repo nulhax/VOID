@@ -329,7 +329,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 			if (!isAnIgnoredObject)	// If the object was not one of the ignored objects...
 			{
-				Debug.Log(rayHit.collider.gameObject.name + " was in between " + gameObject.name + " and " + target.name);
+				//Debug.Log(rayHit.collider.gameObject.name + " was in between " + gameObject.name + " and " + target.name);
 				return false;	// There was something between the ship casting the ray and the object being raycasted to, thus there is no line of sight.
 			}
 		}

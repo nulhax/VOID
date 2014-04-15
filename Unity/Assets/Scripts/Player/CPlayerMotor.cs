@@ -453,9 +453,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             }
         }
 
-        if (gameObject != CGamePlayers.SelfActor ||
+        if (gameObject != CGamePlayers.SelfActor /*||
             (State != EState.AligningBodyToShipInternal &&
-             State != EState.AligningBodyToShipExternal))
+             State != EState.AligningBodyToShipExternal)*/)
         {
             UpdatePositionRotationLerping();
         }

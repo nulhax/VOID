@@ -120,7 +120,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 
 		if(m_MiningLaserPrefab == null)
 			Debug.LogError("MiningLaser prefab has not been assigned!");

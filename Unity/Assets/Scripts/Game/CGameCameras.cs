@@ -210,7 +210,7 @@ public class CGameCameras : MonoBehaviour
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
 
-		Debug.Log("Creating space fog");
+		//Debug.Log("Creating space fog");
 		s_SpaceFog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
 
 		// Set the defult view perspective

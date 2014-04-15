@@ -47,9 +47,9 @@ public class OVRComponent : MonoBehaviour
 	}
 	
 	// LateUpdate
-	public virtual void LateUpdate()
-	{
-	}
+	//public virtual void LateUpdate()
+	//{
+	//}
 }
 
 

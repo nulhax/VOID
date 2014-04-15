@@ -86,13 +86,13 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 	}
 
 
 	void OnDestroy()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
 	}
 
 
@@ -103,9 +103,9 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			m_fServerFireTimer += Time.deltaTime;
 		}
 
-		if (GetComponent<CTurretBehaviour>().ControllerPlayerId == CNetwork.PlayerId)
+		//if (GetComponent<CTurretBehaviour>().ControllerPlayerId == CNetwork.PlayerId)
 		{
-			UpdateFiring();
+			//UpdateFiring();
 		}
 	}
 

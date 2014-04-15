@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 public class CDUIPropulsionEngineRoot : MonoBehaviour 
 {
+    /*
 	// Member Types
 	
 	
@@ -36,8 +37,8 @@ public class CDUIPropulsionEngineRoot : MonoBehaviour
 	public UILabel m_WarningReport = null;
 	
 	private GameObject m_Engine = null;
-	private CPropulsionGeneratorBehaviour m_CachedPropulsionBehaviour = null;
-	private CTestEngineBehaviour m_CachedEngine = null;
+	private CEngineInterface m_CachedPropulsionBehaviour = null;
+	private CEngineSmallBehaviour m_CachedEngine = null;
 	
 	// Member Properties
 	
@@ -46,22 +47,22 @@ public class CDUIPropulsionEngineRoot : MonoBehaviour
 	public void RegisterPropulsionEngine(GameObject _Propulsion)
 	{
 		m_Engine = _Propulsion;
-		m_CachedPropulsionBehaviour = m_Engine.GetComponent<CPropulsionGeneratorBehaviour>();
-		m_CachedEngine = m_Engine.GetComponent<CTestEngineBehaviour>();
+		m_CachedPropulsionBehaviour = m_Engine.GetComponent<CEngineInterface>();
+		m_CachedEngine = m_Engine.GetComponent<CEngineSmallBehaviour>();
 		
 		// Register generation rate state chages
 		m_CachedPropulsionBehaviour.EventPropulsionOutputChanged += HandlePropulsionStateChange;
 		m_CachedPropulsionBehaviour.EventPropulsionPotentialChanged += HandlePropulsionStateChange;
 		
 		// Register for when the circuitry breaks/fixes
-		m_CachedEngine.m_MechanicalComponent1.EventComponentBreak += HandleMechanicalStateChange;
-		m_CachedEngine.m_MechanicalComponent2.EventComponentFix += HandleMechanicalStateChange;
+		m_CachedEngine.m_MechanicalComponent1.EventBreakStateChange += HandleMechanicalStateChange;
+		m_CachedEngine.m_MechanicalComponent2.EventBreakStateChange += HandleMechanicalStateChange;
 		
 		// Update initial values
 		UpdateDUI();
 	}
 	
-	private void HandlePropulsionStateChange(CPropulsionGeneratorBehaviour _Propulsion)
+	private void HandlePropulsionStateChange(CEngineInterface _Propulsion)
 	{
 		UpdateDUI();
 	}
@@ -119,8 +120,8 @@ public class CDUIPropulsionEngineRoot : MonoBehaviour
 	
 	private void UpdateStatus()
 	{
-		if(!m_CachedEngine.m_MechanicalComponent1.IsFunctional && 
-		   !m_CachedEngine.m_MechanicalComponent1.IsFunctional)
+		if(!m_CachedEngine.m_MechanicalComponent1.IsBroken && 
+		   !m_CachedEngine.m_MechanicalComponent1.IsBroken)
 		{
 			m_PropulsionActive.color = Color.red;
 			m_PropulsionActive.text = "Status: Propulsion InActive";
@@ -138,4 +139,6 @@ public class CDUIPropulsionEngineRoot : MonoBehaviour
 			m_ErrorReport.enabled = false;
 		}
 	}
+     * 
+     */
 }
