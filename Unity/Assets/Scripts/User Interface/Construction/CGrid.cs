@@ -24,9 +24,9 @@ using System;
 public class CGrid : MonoBehaviour 
 {	
 	// Member Types
-	public struct TCreateTileInfo
+	public struct TTileCreateInfo
 	{
-		public TCreateTileInfo(TGridPoint _GridPoint, ETileType[] _TileTypes)
+		public TTileCreateInfo(TGridPoint _GridPoint, ETileType[] _TileTypes)
 		{
 			m_GridPoint = _GridPoint;
 			m_TileTypes = new List<ETileType>(_TileTypes);
@@ -51,7 +51,7 @@ public class CGrid : MonoBehaviour
 	private Transform m_TileContainer = null;
 	private CTileFactory m_TileFactory = null;
 
-	private List<TCreateTileInfo> m_CreateQueue = new List<TCreateTileInfo>();
+	private List<TTileCreateInfo> m_CreateQueue = new List<TTileCreateInfo>();
 	private List<TGridPoint> m_DestroyQueue = new List<TGridPoint>();
 
 	private Dictionary<string, CTile> m_GridBoard = new Dictionary<string, CTile>();
@@ -82,7 +82,7 @@ public class CGrid : MonoBehaviour
 
 	private void Update()
 	{
-		foreach(TCreateTileInfo createInfo in m_CreateQueue)
+		foreach(TTileCreateInfo createInfo in m_CreateQueue)
 		{
 			CreateTile(createInfo);
 		}
@@ -163,12 +163,17 @@ public class CGrid : MonoBehaviour
 
 	public void AddNewTile(TGridPoint _GridPoint, ETileType[] _TileTypes)
 	{
-		m_CreateQueue.Add(new TCreateTileInfo(_GridPoint, _TileTypes));
+		m_CreateQueue.Add(new TTileCreateInfo(_GridPoint, _TileTypes));
 	}
 
 	public void ReleaseTile(TGridPoint _GridPoint)
 	{
 		m_DestroyQueue.Add(_GridPoint);
+	}
+
+	public void ReleaseTile(CTile _Tile)
+	{
+		m_DestroyQueue.Add(_Tile.m_GridPosition);
 	}
 
 	public void ImportTileInformation(CTile[] _Tiles)
@@ -218,48 +223,35 @@ public class CGrid : MonoBehaviour
 		}
 	}
 	
-	private void CreateTile(TCreateTileInfo _TileInfo)
+	private void CreateTile(TTileCreateInfo _TileInfo)
 	{
-		// If it doesn't exist, create it
-		if(!m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
+		// Destroy the existing tile
+		if(m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
 		{
-			GameObject newtile = new GameObject("Tile");
-			newtile.transform.parent = m_TileContainer;
-			newtile.transform.localScale = Vector3.one;
-			newtile.transform.localRotation = Quaternion.identity;
-			newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
-
-			CTile tile = newtile.AddComponent<CTile>();
-			tile.m_Grid = this;
-			tile.m_GridPosition = _TileInfo.m_GridPoint;
-
-			// Set the active tile types
-			foreach(ETileType type in _TileInfo.m_TileTypes)
-			{
-				tile.SetTileTypeState(type, true);
-			}
-			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
-
-			// Update neighbours
-			tile.FindNeighbours();
-			tile.UpdateNeighbourhood();
+			RemoveTile(_TileInfo.m_GridPoint);
 		}
-		// If it does exist, modify its tile type
-		else
+
+		// Create the new tile
+		GameObject newtile = new GameObject("Tile");
+		newtile.transform.parent = m_TileContainer;
+		newtile.transform.localScale = Vector3.one;
+		newtile.transform.localRotation = Quaternion.identity;
+		newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
+
+		CTile tile = newtile.AddComponent<CTile>();
+		tile.m_Grid = this;
+		tile.m_GridPosition = _TileInfo.m_GridPoint;
+
+		// Set the active tile types
+		foreach(ETileType type in _TileInfo.m_TileTypes)
 		{
-			CTile tile = m_GridBoard[_TileInfo.m_GridPoint.ToString()];
-
-			// Set the active tile types
-			for(int i = 0; i < (int)ETileType.MAX; ++i)
-			{
-				ETileType type = (ETileType)i;
-				tile.SetTileTypeState(type, _TileInfo.m_TileTypes.Contains(type));
-			}
-
-			// Update neighbours
-			tile.FindNeighbours();
-			tile.UpdateNeighbourhood();
+			tile.SetTileTypeState(type, true);
 		}
+		m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+
+		// Update neighbours
+		tile.FindNeighbours();
+		tile.UpdateNeighbourhood();
 	}
 
 	private void RemoveTile(TGridPoint _GridPoint)

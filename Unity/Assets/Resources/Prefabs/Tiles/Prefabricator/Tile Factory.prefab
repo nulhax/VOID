@@ -52,17 +52,17 @@ MonoBehaviour:
   - {fileID: 100000, guid: f0dd5b5539c8eca469070eed84c33293, type: 2}
   - {fileID: 100000, guid: b2e911cd60ae22640881b43fee21ec7d, type: 2}
   - {fileID: 100000, guid: dbd47e4d62fe7c94db73e52f5738b74f, type: 2}
-  - {fileID: 100006, guid: 3819ac303ea7ebd4682ae972e1b48589, type: 2}
+  - {fileID: 100000, guid: 3819ac303ea7ebd4682ae972e1b48589, type: 2}
   m_WallExtTileTypes_Opening: 65000000
   m_WallExtTilePrefabs_Opening:
   - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
   m_WallIntTileTypes: c8000000c9000000ca000000cb000000cc000000
   m_WallIntTilePrefabs:
-  - {fileID: 100000, guid: a176721859ad15e468ff30c66ded270a, type: 2}
-  - {fileID: 100000, guid: f0dd5b5539c8eca469070eed84c33293, type: 2}
-  - {fileID: 100000, guid: b2e911cd60ae22640881b43fee21ec7d, type: 2}
-  - {fileID: 100000, guid: dbd47e4d62fe7c94db73e52f5738b74f, type: 2}
-  - {fileID: 100006, guid: 3819ac303ea7ebd4682ae972e1b48589, type: 2}
+  - {fileID: 100000, guid: 950df8929da7e0744bb0fbb19e389ddc, type: 2}
+  - {fileID: 100000, guid: 378577a898410c44b9679824c2534c1c, type: 2}
+  - {fileID: 100000, guid: 5fa0f77122016bd46bc88dc8410e3df2, type: 2}
+  - {fileID: 100000, guid: d90a5b382ea034542b00788afbeb3df4, type: 2}
+  - {fileID: 100000, guid: a9e417bd0b995834a80d60bd7f62b883, type: 2}
   m_CeilingTileTypes: 2c0100002d0100002e0100002f0100003001000031010000
   m_CeilingTilePrefabs:
   - {fileID: 100000, guid: bd2044e991e9e2043acab72b16c7660b, type: 2}
@@ -71,17 +71,20 @@ MonoBehaviour:
   - {fileID: 100000, guid: 2d317238efcaaa64a8702255ce043312, type: 2}
   - {fileID: 100000, guid: f3c738d1e6b11df4a9edf17c12a386b3, type: 2}
   - {fileID: 100000, guid: 9e8557d6388a0424e8d34fce1a0362c3, type: 2}
-  m_WallExtCapTileTypes: 9001000091010000
+  m_WallExtCapTileTypes: 9001000091010000920100009301000094010000
   m_WallExtCapTilePrefabs:
-  - {fileID: 100000, guid: a926a9563abed474abb28a7ee62d503f, type: 2}
-  - {fileID: 100000, guid: 5d8b789eb6552e440bf51055014f5a03, type: 2}
-  m_WallIntCapTileTypes: f4010000f5010000f6010000f7010000f8010000
-  m_WallIntCapTilePrefabs:
   - {fileID: 100000, guid: 2378aa64d0d588a47aeb6ccd2433eff4, type: 2}
   - {fileID: 100002, guid: 17d2097fd6bd4064495bf76fbf30693f, type: 2}
   - {fileID: 100002, guid: 1976a5c0304833647856e1db0f9187f2, type: 2}
   - {fileID: 100004, guid: 218863a86e15ac348998eaae9cffb741, type: 2}
   - {fileID: 100006, guid: 004eab2e1d6a03e4fb0f6e6b285e771f, type: 2}
+  m_WallIntCapTileTypes: f4010000f5010000f6010000f7010000f8010000
+  m_WallIntCapTilePrefabs:
+  - {fileID: 100000, guid: dffacd1c0b2cb8844aa38cb8b2803003, type: 2}
+  - {fileID: 100000, guid: 5f765d99a0291804a99433c766a9646b, type: 2}
+  - {fileID: 100000, guid: 7cb3b585e1bbb544d83bc6bca6404965, type: 2}
+  - {fileID: 100000, guid: 548efe5a3821ba342a694b216cd60914, type: 2}
+  - {fileID: 100000, guid: 856f3120113cb6048b580b1bd198bdf5, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -42,11 +42,11 @@ public class CNeighbour
 {
 	public CNeighbour(TGridPoint _GridPointOffset, EDirection _Newdirection)
 	{
-		m_WorldDirection = _Newdirection;
+		m_Direction = _Newdirection;
 		m_GridPointOffset = _GridPointOffset;
 	}
 	
-	public EDirection m_WorldDirection;
+	public EDirection m_Direction;
 	public TGridPoint m_GridPointOffset;
 	public CTile m_Tile;
 
