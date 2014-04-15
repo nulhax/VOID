@@ -22,6 +22,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		idling,		// Parked. Looks around occasionally.
 		examiningTarget,
 		attackingTarget,
+		chargingScanner,
 		scanningForHeatSignature,	// Will detect players, enemies, player ships, and enemy ships within a range relative to the intesity of their heat signatures.
 		travelling,	// Happens on spawn or after idling for a while.
 		any
@@ -36,12 +37,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		transition_Idle,
 		transition_ExamineTarget,
 		transition_AttackTarget,
+		transition_ChargeScanner,
 		transition_ScanForHeatSignature,
 		transition_Travel,
 		any
 	}
 
-	delegate bool StateFunction(CEnemyShip enemyShip);
+	delegate void StateFunction(CEnemyShip enemyShip, EEvent _event);
 
 	class CStateTransition
 	{
@@ -67,6 +69,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.idling,						EEvent.any,								Idle),
 		new CStateTransition(EState.examiningTarget,			EEvent.any,								ExamineTarget),
 		new CStateTransition(EState.attackingTarget,			EEvent.any,								AttackTarget),
+		new CStateTransition(EState.chargingScanner,			EEvent.any,								ChargeScanner),
 		new CStateTransition(EState.scanningForHeatSignature,	EEvent.any,								ScanForHeatSignature),
 		new CStateTransition(EState.travelling,					EEvent.any,								Travel),
 		
@@ -77,6 +80,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.none,						EEvent.transition_Idle,					Idle),
 		new CStateTransition(EState.none,						EEvent.transition_ExamineTarget,		ExamineTarget),
 		new CStateTransition(EState.none,						EEvent.transition_AttackTarget,			AttackTarget),
+		new CStateTransition(EState.none,						EEvent.transition_ChargeScanner,		ChargeScanner),
 		new CStateTransition(EState.none,						EEvent.transition_ScanForHeatSignature,	ScanForHeatSignature),
 		new CStateTransition(EState.none,						EEvent.transition_Travel,				Travel),
 		
@@ -86,10 +90,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	// State machine data set by state machine.
 	public EState mState = EState.none;
-	public EEvent mEvent = EEvent.none;
 	public float mTimeout = 0.0f;
 	public float mTimeoutSecondary = 0.0f;
-	public float mTimeSpentIdling = 2.0f;
+	public float mMinTimeSpentIdling = 2.0f;
+	public float mMaxTimeSpentIdling = 10.0f;
+	public float mTimeSpentChargingScanner = 10.0f;
 	public float mTimeSpentScanningForHeatSignatures = 15.0f;
 	public float mTimeSpentExaminingTarget = 10.0f;
 	public float mTimeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
@@ -171,10 +176,17 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		mTimeout -= Time.deltaTime;
 
-		if (mTargetExpireTime <= Time.time)	// If the target expire time is met...
-			mTarget = null;	// Expire the target.
+		if (mTarget != null)	// All targets expire after some time.
+		{
+			mTargetExpireTime -= Time.deltaTime;
+			if (mTargetExpireTime <= 0.0f)	// If the target expire time is met...
+			{
+				mTargetExpireTime = 0.0f;
+				mTarget = null;	// Expire the target.
+			}
+		}
 
-		ProcessStateMachine();
+		ProcessEvent(EEvent.none);
 	}
 
 	void FixedUpdate()
@@ -234,8 +246,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	{
 		for (mTimeUntilNextWhiskerCheck -= Time.fixedDeltaTime; mTimeUntilNextWhiskerCheck <= 0.0f; mTimeUntilNextWhiskerCheck = mTimeBetweenWhiskerCheck)
 		{
-			float whiskerLength = minAcceptableDistanceToTarget;
 			mRepulsionForce = Vector3.zero;
+			float whiskerLength = minAcceptableDistanceToTarget;
 			float increment = Mathf.PI * (3.0f - Mathf.Sqrt(5));
 			float offset = 2.0f / mNumWhiskers;
 			for (uint ui = 0; ui < mNumWhiskers; ++ui)
@@ -265,13 +277,14 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		mEvent = EEvent.HostileTarget;
 		Rigidbody targetRigidbody = collision.gameObject.rigidbody;
 		if (targetRigidbody == null)
 			targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
 
 		if(targetRigidbody != null)
 			mTarget = targetRigidbody;
+
+		ProcessEvent(EEvent.HostileTarget);
 	}
 
 	void InvalidateCache()
@@ -316,22 +329,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			if (rayHit.collider.isTrigger)	// Ignore triggers.
 				continue;
 
-			bool isAnIgnoredObject = false;
-			for (Transform collidedObjectTransform = rayHit.collider.transform; collidedObjectTransform != null; collidedObjectTransform = collidedObjectTransform.parent)	// For the object, and each of its parents in the hierarchy...
-			{
-				Rigidbody collidedObjectRigidbody = collidedObjectTransform.rigidbody != null ? collidedObjectTransform.rigidbody : CUtility.FindInParents<Rigidbody>(collidedObjectTransform);	// Shortcut to the object, since iteration uses its transform.
-				if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship, the target, or part of either...
-				{
-					isAnIgnoredObject = true;	// Ignore it, thus continuing the search.
-					break;	// Stop searching the hierarchy.
-				}
-			}
-
-			if (!isAnIgnoredObject)	// If the object was not one of the ignored objects...
-			{
-				Debug.Log(rayHit.collider.gameObject.name + " was in between " + gameObject.name + " and " + target.name);
-				return false;	// There was something between the ship casting the ray and the object being raycasted to, thus there is no line of sight.
-			}
+			Rigidbody collidedObjectRigidbody = rayHit.rigidbody != null ? rayHit.rigidbody : CUtility.FindInParents<Rigidbody>(rayHit.transform);
+			if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship or the target...
+				continue;	// Ignore this object.
+			else	// The object is not part of the enemy ship or target...
+				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
 		}
 
 		return true;	// There are no objects between the enemy ship and the target.
@@ -347,7 +349,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			return;	// Do not set a new target, as the current one is still valid.
 
 		// Find all objects within short range sphere and long-range cone.
-		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength);
+		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength, 1 << LayerMask.NameToLayer("Galaxy"));
 		for (int i = 0; i < colliders.Length; ++i)
 		{
 			Rigidbody entityRigidbody = colliders[i].rigidbody != null ? colliders[i].rigidbody : CUtility.FindInParents<Rigidbody>(colliders[i].gameObject);
@@ -356,35 +358,35 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 			if (IsWithinLineOfSight(entityRigidbody))	// If the entity is within view cone or view sphere (and is not this ship)...
 			{
+				//Debug.LogError("IS IN LINE OF SIGHT!!!!");
+
 				// Check if the entity is worthy of being targeted.
 				if (entityRigidbody.velocity.magnitude >= mMinVelocityOfSuspiciousGubbin)	// If the gubbbin is moving faster than x units per second...
 				{
 					mTarget = entityRigidbody;
-					mTargetExpireTime = Time.time + mTimeUntilSuspiciousGubbinExpires;
+					mTargetExpireTime = mTimeUntilSuspiciousGubbinExpires;
 					break;
 				}
 			}
 		}
 	}
 
-	void ProcessStateMachine()
+	void ProcessEvent(EEvent _event)
 	{
-		// Process state machine.
 		for (uint uiStateLoop = 0; uiStateLoop < m_StateTransitionTable.Length; ++uiStateLoop)
 		{
 			CStateTransition stateTransition = m_StateTransitionTable[uiStateLoop];
-			if ((stateTransition.mState == mState || stateTransition.mState == EState.any) && (stateTransition.mEvent == mEvent || stateTransition.mEvent == EEvent.any))
-				if (stateTransition.mFunction(this))
-					uiStateLoop = uint.MaxValue;	// Loop will increment making iterator restart.
-				else
-					break;
+			if ((stateTransition.mState == mState || stateTransition.mState == EState.any) && (stateTransition.mEvent == _event || stateTransition.mEvent == EEvent.any))
+			{
+				stateTransition.mFunction(this, _event);
+				return;
+			}
 		}
 	}
 
 	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout, string _stateName)
 	{
 		mState = _state;
-		mEvent = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
 		mFaceTarget = _lookAtTarget;
 		mFollowTarget = _moveToTarget;
 		mTimeout = _timeout;
@@ -393,285 +395,255 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		debug_StateName = _stateName;
 	}
 
-	static bool Idle(CEnemyShip enemyShip) { return enemyShip.Idle(); }
-	bool Idle()
+	static void Idle(CEnemyShip enemyShip, EEvent _event) { enemyShip.Idle(_event); }
+	void Idle(EEvent _event)
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false, mTimeSpentIdling, "Idling");
-				return false;	// Init functions always return false.
+				StateInitialisation(EState.idling, false, false, Random.Range(mMinTimeSpentIdling, mMaxTimeSpentIdling), "Idling");
+				return;
 
 			// Process state.
 			case EState.idling:
-				switch (mEvent)	// Process events.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else if(mTimeout <= 0.0f)	// No target; if this state expired...
+							ProcessEvent(EEvent.transition_Travel);
+						return;
 
-						// Switch to checking out the target if there is one.
-						if (mTarget != null)
-						{
-							mEvent = EEvent.transition_ExamineTarget;
-							return true;
-						}
-
-						// 50/50 chance every (timeSpentIdling/2) seconds to leave the area, beginning after (timeSpentIdling) seconds.
-						while (mTimeout <= 0.0f)
-						{
-							if (Random.Range(0, 2) == 0)
-							{
-								mEvent = EEvent.transition_Travel;
-								return true;
-							}
-							else
-								mTimeout += mTimeSpentIdling * 0.5f;
-						}
-
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
 		}
 
-		return false;
+		return;
 	}
 
-	static bool ExamineTarget(CEnemyShip enemyShip) { return enemyShip.ExamineTarget(); }
-	bool ExamineTarget()
+	static void ExamineTarget(CEnemyShip enemyShip, EEvent _event) { enemyShip.ExamineTarget(_event); }
+	void ExamineTarget(EEvent _event)
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
 				StateInitialisation(EState.examiningTarget, true, false, mTimeSpentExaminingTarget, "Examining Target");
-				return false;	// Init functions always return false.
+				return;
 
 			// Process state.
 			case EState.examiningTarget:
-				switch (mEvent)	// Process events.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-
-						if (mTarget == null)	// If the target has expired...
+						if (mTarget != null)	// If there is a valid target...
 						{
-							mEvent = EEvent.transition_Idle;	// Move on to other things.
-							return true;
-						}
-
-						if (mFacingTarget)	// If facing the target...
-						{
-							if (mVisibleTarget)	// If there is a direct line of sight to the target...
+							if (mFacingTarget)	// If facing the target...
 							{
-								mEvent = EEvent.transition_ScanForHeatSignature;	// Scan for heat signatures.
-								return true;
-							}
-							else	// Facing the target, but target is not visible...
-							{
-								if (mCloseToTarget)	// If already close to the target...
+								if (mVisibleTarget)	// If there is a direct line of sight to the target...
+									ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
+								else	// Facing the target, but target is not visible...
 								{
-									mEvent = EEvent.transition_Idle;	// Ignore the target.
-									return true;
-								}
-								else if(mFollowTarget == false)	// If not following the target...
-								{
-									mFollowTarget = true;	// Go to the target.
-									mTimeout = 10.0f;	// 10 seconds to reach the target.
-								}
-								else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
-								{
-									mEvent = EEvent.transition_Idle;	// Give up (can't reach the target).
-									return true;
+									if (mCloseToTarget)	// If already close to the target...
+										ProcessEvent(EEvent.transition_Idle);	// Ignore the target.
+									else if (!mFollowTarget)	// If not following the target...
+									{
+										mFollowTarget = true;	// Go to the target.
+										mTimeout = 10.0f;	// 10 seconds to reach the target.
+									}
+									else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
+										ProcessEvent(EEvent.transition_Idle);	// Give up (can't reach the target).
 								}
 							}
+							else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
+								ProcessEvent(EEvent.transition_Idle);	// Give up (can't face the target).
 						}
-						else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
-						{
-							mEvent = EEvent.transition_Idle;	// Give up (can't face the target).
-							return true;
-						}
-						return false;
+						else	// The target has expired...
+							ProcessEvent(EEvent.transition_Idle);	// Move on to other things.
+						return;
 
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
-	static bool AttackTarget(CEnemyShip enemyShip) { return enemyShip.AttackTarget(); }
-	bool AttackTarget()
+	static void AttackTarget(CEnemyShip enemyShip, EEvent _event) { enemyShip.AttackTarget(_event); }
+	void AttackTarget(EEvent _event)
 	{
 		switch (mState)
 		{
-			// Initialise state.
-			case EState.none:
+			case EState.none:	// Initialise state.
 				StateInitialisation(EState.attackingTarget, true, true, mTimeSpentAttackingTargetBeforeStopping, "Attacking Target");
-				return false;	// Init functions always return false.
+				return;
 
-			// Process state.
-			case EState.attackingTarget:
-				switch (mEvent)	// Process events.
+			case EState.attackingTarget:	// Process state.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						
-						if (mTarget == null)	// If the target has expired...
-						{
-							mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something to kill.
-							return true;
-						}
-
-						mTimeoutSecondary -= Time.deltaTime;	// Time between firing bullets.
-
-						if(mVisibleTarget)	// If the target is in sight...
-						{
-							mTargetExpireTime = Time.time + 20.0f;	// Reset the expire time.
-
-							while (mTimeoutSecondary <= 0.0f)
-							{
-								mTimeoutSecondary += mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity;
-
-								// Todo: Shoot prey. Bang bang.
-								GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
-							}
-
-							// Todo: If this ship's health is low, it could run off.
-						}
-						else	// Target can not be seen.
-						{
-							// Ensure fire rate does not build up a backlog of shots to fire.
-							if (mTimeoutSecondary < 0.0f)
-								mTimeoutSecondary = 0.0f;
-						}
-
-						if(mTimeout <= 0.0f)	// If the timer runs out...
-						{
-							if(mFollowTarget)	// If chasing the target...
-							{
-								mFollowTarget = false;	// Stop chasing the target
-								mTimeout = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
-							}
-							else	// Not chasing the target...
-							{
-								if (mTimeout <= 0.0f)	// once the timer runs out...
-								{
-									mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something nearby to kill.
-									return true;
-								}
-							}
-						}
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
-						mState = EState.none;
-						return true;	// Always return true for uncaught events.
-				}
-		}
-
-		return false;
-	}
-
-	static bool ScanForHeatSignature(CEnemyShip enemyShip) { return enemyShip.ScanForHeatSignature(); }
-	bool ScanForHeatSignature()
-	{
-		switch (mState)
-		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
-				return false;	// Init functions always return false.
-
-			// Process state.
-			case EState.scanningForHeatSignature:
-				switch (mEvent)	// Process events.
-				{
-					case EEvent.none:	// Normal process.
-
-						// Switch to checking out the target if there is one.
 						if (mTarget != null)
 						{
-							mEvent = EEvent.transition_ExamineTarget;
-							return true;
+							if(mTimeoutSecondary > 0.0f)
+								mTimeoutSecondary -= Time.deltaTime;	// Time between firing bullets.
+
+							if (mVisibleTarget)	// If the target is in sight...
+							{
+								mTargetExpireTime = 20.0f;	// Reset the expire time.
+
+								while (mTimeoutSecondary <= 0.0f)
+								{
+									mTimeoutSecondary += (mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity);
+									// Todo: Shoot prey. Bang bang.
+									GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
+								}
+							}
+
+							if (mTimeout <= 0.0f)	// If the timer runs out...
+							{
+								if (mFollowTarget)	// If chasing the target...
+								{
+									mFollowTarget = false;	// Stop chasing the target
+									mTimeout = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
+								}
+								else	// Not chasing the target...
+									ProcessEvent(EEvent.transition_ChargeScanner);	// Search for something nearby to kill.
+							}
 						}
+						else	// The target has expired...
+							ProcessEvent(EEvent.transition_ChargeScanner);
+						return;
 
-						// Todo: Scan for heat signature.
-						Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
-						if (targetWithHeatSignature != null)
-						{
-							mTarget = targetWithHeatSignature;
-							mEvent = EEvent.transition_AttackTarget;
-							return true;
-						}
+					case EEvent.HostileTarget:
+						return;
 
-						if (mTimeout <= 0.0f)	// If the timer times out...
-						{
-							mEvent = EEvent.transition_Idle;	// Nothing found - give up.
-							return true;
-						}
-
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
-	static bool Travel(CEnemyShip enemyShip) { return enemyShip.Travel(); }
-	bool Travel()
+	static void ChargeScanner(CEnemyShip enemyShip, EEvent _event) { enemyShip.ChargeScanner(_event); }
+	void ChargeScanner(EEvent _event)
 	{
 		switch (mState)
 		{
-			// Initialise state.
-			case EState.none:
-				if (mTarget == null)
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.chargingScanner, false, false, mTimeSpentChargingScanner, "Charging Scanner");
+				return;
+
+			case EState.scanningForHeatSignature:	// Process state.
+				switch (_event)	// Process events.
 				{
-					StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, "Travelling");
+					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else if (mTimeout <= 0.0f)
+							ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						return;
 
-					mTarget = mTarget_InternalLastKnownPosition;
-					mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
-					mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
-
-					mTargetExpireTime = Time.time + mTimeSpentTravelling;
-					return false;	// Init functions always return false.
+					default:	// Shutdown the state.
+						mState = EState.none;
+						ProcessEvent(_event);
+						return;
 				}
-				else
+
+			default:
+				return;
+		}
+	}
+
+	static void ScanForHeatSignature(CEnemyShip enemyShip, EEvent _event) { enemyShip.ScanForHeatSignature(_event); }
+	void ScanForHeatSignature(EEvent _event)
+	{
+		switch (mState)
+		{
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
+				return;
+
+			case EState.scanningForHeatSignature:	// Process state.
+				switch (_event)	// Process events.
 				{
-					mEvent = EEvent.transition_ExamineTarget;
-					return true;	// There is a valid target.
+					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else	// No target.
+						{
+							// Scan for heat signature.
+							Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
+							if (targetWithHeatSignature != null)
+							{
+								mTarget = targetWithHeatSignature;
+								ProcessEvent(EEvent.transition_AttackTarget);
+							}
+							else if (mTimeout <= 0.0f)	// If the timer times out...
+								ProcessEvent(EEvent.transition_Idle);	// Nothing found - give up.
+						}
+						return;
+
+					default:	// Shutdown the state.
+						mState = EState.none;
+						ProcessEvent(_event);
+						return;
 				}
 
-			// Process state.
-			case EState.travelling:
-				switch (mEvent)	// Process events.
+			default:
+				return;
+		}
+	}
+
+	static void Travel(CEnemyShip enemyShip, EEvent _event) { enemyShip.Travel(_event); }
+	void Travel(EEvent _event)
+	{
+		switch (mState)
+		{
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, "Travelling");
+
+				mTarget = mTarget_InternalLastKnownPosition;
+				mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+				mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
+
+				mTargetExpireTime = mTimeSpentTravelling;
+				return;
+
+			case EState.travelling:	// Process state.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
 						if (mTarget != mTarget_InternalLastKnownPosition)
+							ProcessEvent(mTarget == null ? EEvent.transition_Idle : EEvent.transition_ExamineTarget);
+						else	// The target is still the dummy.
 						{
-							if (mTarget == null)
-								mEvent = EEvent.transition_Idle;
-							else
-								mEvent = EEvent.transition_ExamineTarget;
-							return true;
+
 						}
+						return;
 
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mTarget_InternalLastKnownPosition.transform.parent = null;
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
 	//void OnGUI()
@@ -722,6 +694,20 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			Gizmos.DrawSphere(mTarget.worldCenterOfMass, 1.0f);
 			Gizmos.color = new Color(0, 1, 0, 1);
 			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.worldCenterOfMass, 50.0f);
+		}
+
+		// Whiskers.
+		Gizmos.color = Color.red;
+		float whiskerLength = minAcceptableDistanceToTarget;
+		float increment = Mathf.PI * (3.0f - Mathf.Sqrt(5));
+		float offset = 2.0f / mNumWhiskers;
+		for (uint ui = 0; ui < mNumWhiskers; ++ui)
+		{
+			float y = ui * offset - 1.0f + (offset / 2.0f);
+			float radians = Mathf.Sqrt(1.0f - y * y);
+			float phi = ui * increment;
+			Vector3 direction = new Vector3(Mathf.Cos(phi) * radians, y, Mathf.Sin(phi) * radians);
+			Gizmos.DrawLine(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + direction * whiskerLength);
 		}
 
 		// Angular forces.
