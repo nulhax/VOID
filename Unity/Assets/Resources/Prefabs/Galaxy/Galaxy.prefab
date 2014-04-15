@@ -31,13 +31,13 @@ GameObject:
   - 23: {fileID: 2300000}
   - 111: {fileID: 11100000}
   - 114: {fileID: 11400006}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Turb_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100004
 GameObject:
   m_ObjectHideFlags: 1
@@ -50,13 +50,13 @@ GameObject:
   - 23: {fileID: 2300002}
   - 111: {fileID: 11100002}
   - 114: {fileID: 11400008}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Ridged_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100006
 GameObject:
   m_ObjectHideFlags: 1
@@ -69,13 +69,13 @@ GameObject:
   - 23: {fileID: 2300004}
   - 111: {fileID: 11100004}
   - 114: {fileID: 11400010}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Turb_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100008
 GameObject:
   m_ObjectHideFlags: 1
@@ -88,13 +88,13 @@ GameObject:
   - 23: {fileID: 2300006}
   - 111: {fileID: 11100006}
   - 114: {fileID: 11400012}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_FBM_Blue
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100010
 GameObject:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400010}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Nebula
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,13 +122,13 @@ GameObject:
   - 23: {fileID: 2300008}
   - 111: {fileID: 11100008}
   - 114: {fileID: 11400014}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_FBM_Blue
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100014
 GameObject:
   m_ObjectHideFlags: 1
@@ -141,13 +141,13 @@ GameObject:
   - 23: {fileID: 2300010}
   - 111: {fileID: 11100010}
   - 114: {fileID: 11400016}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Turb_Blue
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100016
 GameObject:
   m_ObjectHideFlags: 1
@@ -160,13 +160,13 @@ GameObject:
   - 23: {fileID: 2300012}
   - 111: {fileID: 11100012}
   - 114: {fileID: 11400018}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Turb_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100018
 GameObject:
   m_ObjectHideFlags: 1
@@ -179,13 +179,13 @@ GameObject:
   - 23: {fileID: 2300014}
   - 111: {fileID: 11100014}
   - 114: {fileID: 11400020}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_FBM_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100020
 GameObject:
   m_ObjectHideFlags: 1
@@ -198,13 +198,13 @@ GameObject:
   - 23: {fileID: 2300016}
   - 111: {fileID: 11100016}
   - 114: {fileID: 11400022}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_Ridged_Orange
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100022
 GameObject:
   m_ObjectHideFlags: 1
@@ -217,13 +217,13 @@ GameObject:
   - 23: {fileID: 2300018}
   - 111: {fileID: 11100018}
   - 114: {fileID: 11400024}
-  m_Layer: 20
+  m_Layer: 11
   m_Name: Nebula_FBM_Blue
   m_TagString: SpaceScene_Nebula
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
