@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CNetworkView))]
-public class CLaserProjeCTile : CNetworkMonoBehaviour
+public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,7 +36,7 @@ public class CLaserProjeCTile : CNetworkMonoBehaviour
 // Member Methods
 
 
-	static CLaserProjeCTile()
+	static CLaserProjectileBehaviour()
 	{
 		s_iEnemyLayer   = 0;
 	}
