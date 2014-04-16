@@ -51,7 +51,7 @@ GameObject:
   - 114: {fileID: 11400130}
   - 114: {fileID: 11400018}
   m_Layer: 10
-  m_Name: ParentTool
+  m_Name: Tool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -605,7 +605,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100040}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .890293121, y: 0, z: -.166288257}
+  m_LocalPosition: {x: .966565311, y: .00101317128, z: -.166288257}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400022}
@@ -1477,7 +1477,7 @@ MonoBehaviour:
   m_ToolDescLabel: {fileID: 11400394}
   m_ToolCostLabel: {fileID: 11400374}
   m_StartingToolType: 1
-  m_ParentToolObject: {fileID: 100040}
+  m_ToolObject: {fileID: 100040}
 --- !u!114 &11400130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1570,7 +1570,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 632, y: 374, z: 0}
+  m_ViewPortPos: {x: 2843, y: 981, z: 0}
 --- !u!114 &11400226
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1607,7 +1607,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 632, y: 374, z: 0}
+  m_ViewPortPos: {x: 2843, y: 981, z: 0}
 --- !u!114 &11400236
 MonoBehaviour:
   m_ObjectHideFlags: 1
