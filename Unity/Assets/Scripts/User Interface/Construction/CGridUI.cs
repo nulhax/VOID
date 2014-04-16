@@ -388,15 +388,71 @@ public class CGridUI : MonoBehaviour
 			return;
 		}
 		
-		if(m_CurrentMode == EToolMode.Paint_Interior_Walls)
+		if(m_CurrentMode == EToolMode. Paint_Interior_Walls)
 		{
-			CTile tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
-			if(tile != null)
+			Vector3 cursorPos = m_GridCursor.transform.localPosition / m_Grid.m_TileSize;
+
+			TGridPoint tilePos1 = new TGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
+			TGridPoint tilePos2 = new TGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
+
+			CTile tile1 = m_Grid.GetTile(tilePos1);
+			CTile tile2 = m_Grid.GetTile(tilePos2);
+
+			if(tile1 == null || tile2 == null)
+				return;
+
+			CNeighbour neighbour1 = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile2);
+			CNeighbour neighbour2 = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile1);
+
+			if(neighbour1 == null || neighbour2 == null)
+				return;
+
+			EDirection dir1 = neighbour1.m_Direction;
+			EDirection dir2 = neighbour2.m_Direction;
+
+			if(tile1.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir1) == !IsCtrlKeyDown &&
+			   tile2.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir2) == !IsCtrlKeyDown)
+				return;
+
+			tile1.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir1, !IsCtrlKeyDown);
+			tile2.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir2, !IsCtrlKeyDown);
+
+			EDirection tile1LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir1);
+			EDirection tile1RightDir = CNeighbour.GetRightDirectionNeighbour(dir1);
+			EDirection tile2LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir2);
+			EDirection tile2RightDir = CNeighbour.GetRightDirectionNeighbour(dir2);
+
+			CNeighbour tile1NeighbourLeft = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1LeftDir);
+			CNeighbour tile1NeighbourRight = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1RightDir);
+			CNeighbour tile2NeighbourLeft = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2LeftDir);
+			CNeighbour tile2NeighbourRight = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2RightDir);
+
+			if(tile1NeighbourLeft != null)
 			{
-				tile.SetTileTypeState(ETileType.Wall_Int, !IsCtrlKeyDown);
-				tile.UpdateTileMetaData();
+				tile1NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2LeftDir, !IsCtrlKeyDown);
+				tile1NeighbourLeft.m_Tile.UpdateTileMetaData();
 			}
-			return;
+
+			if(tile1NeighbourRight != null)
+			{
+				tile1NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2RightDir, !IsCtrlKeyDown);
+				tile1NeighbourRight.m_Tile.UpdateTileMetaData();
+			}
+
+			if(tile2NeighbourLeft != null)
+			{
+				tile2NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1LeftDir, !IsCtrlKeyDown);
+				tile2NeighbourLeft.m_Tile.UpdateTileMetaData();
+			}
+
+			if(tile2NeighbourRight != null)
+			{
+				tile2NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1RightDir, !IsCtrlKeyDown);
+				tile2NeighbourRight.m_Tile.UpdateTileMetaData();
+			}
+
+			tile1.UpdateTileMetaData();
+			tile2.UpdateTileMetaData();
 		}
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
@@ -415,17 +471,6 @@ public class CGridUI : MonoBehaviour
 	{
 		if (m_PlaneHit.collider == null)
 			return;
-
-		if(m_CurrentMode == EToolMode.PlaceModulePort)
-		{
-			// Placeholder as fuck
-			Vector3 modulePosition = m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition;
-			CModuleInterface.EType moduleType = CUtility.FindInParents<CPrefabricatorBehaviour>(gameObject).PrefabricatorUI.SelectedModuleType;
-			CFacilityInterface facility = CGameShips.Ship.GetComponent<CShipFacilities>().FindFacilities(
-				CFacilityInterface.EType.Bridge).FirstOrDefault().GetComponent<CFacilityInterface>();
-			CModuleInterface.CreateNewModule(moduleType, facility, modulePosition);
-			return;
-		}
 
 		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
 		bool multi = m_CurrentTileInteraction == ETileInteraction.MultipleSelection;
@@ -448,6 +493,19 @@ public class CGridUI : MonoBehaviour
 
 			if(EventTileSelectionChange != null)
 				EventTileSelectionChange();
+
+			return;
+		}
+
+		if(m_CurrentMode == EToolMode.PlaceModulePort)
+		{
+			// Placeholder as fuck
+			Vector3 modulePosition = m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition;
+			CModuleInterface.EType moduleType = CUtility.FindInParents<CPrefabricatorBehaviour>(gameObject).PrefabricatorUI.SelectedModuleType;
+			CFacilityInterface facility = CGameShips.Ship.GetComponent<CShipFacilities>().FindFacilities(
+				CFacilityInterface.EType.Bridge).FirstOrDefault().GetComponent<CFacilityInterface>();
+			CModuleInterface.CreateNewModule(moduleType, facility, modulePosition);
+			return;
 		}
 	}
 
@@ -597,27 +655,65 @@ public class CGridUI : MonoBehaviour
 			return;
 		}
 
-		if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
+		if(m_CurrentMode == EToolMode.Paint_Exterior)
 		{
-			Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
-			Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint) + m_TilesOffset;
+			if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
+			{
+				Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
+				Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint) + m_TilesOffset;
 
-			Vector3 centerPos = (point1 + point2) * 0.5f;
-			float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
-			float height = Mathf.Abs(m_CurrentMouseGridPoint.y - m_MouseDownGridPoint.y) + 1.0f;
-			float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
-			centerPos.y += m_Grid.m_TileSize * 0.5f;
+				Vector3 centerPos = (point1 + point2) * 0.5f;
+				float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
+				float height = Mathf.Abs(m_CurrentMouseGridPoint.y - m_MouseDownGridPoint.y) + 1.0f;
+				float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
+				centerPos.y += m_Grid.m_TileSize * 0.5f;
 
-			m_GridCursor.transform.localScale = new Vector3(width, height, depth) * m_Grid.m_TileSize;
-			m_GridCursor.transform.localPosition = centerPos;
+				m_GridCursor.transform.localScale = new Vector3(width, height, depth) * m_Grid.m_TileSize;
+				m_GridCursor.transform.localPosition = centerPos;
+				return;
+			}
+			else
+			{
+				Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
+				centerPos.y += m_Grid.m_TileSize * 0.5f;
+				
+				m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
+				m_GridCursor.transform.localPosition = centerPos;
+				return;
+			}
 		}
-		else
+
+		if(m_CurrentMode == EToolMode.Paint_Interior_Walls)
 		{
-			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
+			Vector3 tilePos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
+			Vector3 centerPos = m_CurrentMouseGridPoint.ToVector;
+			centerPos.x += Mathf.Sign(tilePos.x - centerPos.x) * 0.5f;
+			centerPos.z += Mathf.Sign(tilePos.z - centerPos.z) * 0.5f;
+
+			Vector3[] directions = new Vector3[]{ 
+				new Vector3(0.5f, 0.0f, 0.0f),
+				new Vector3(-0.5f, 0.0f, 0.0f),
+				new Vector3(0.0f, 0.0f, 0.5f), 
+				new Vector3(0.0f, 0.0f, -0.5f) };
+
+			Vector3 closest = Vector3.zero;
+			float cloststDist = float.PositiveInfinity;
+			foreach(Vector3 direction in directions)
+			{
+				float dist = Vector3.Distance(tilePos, (centerPos + direction));
+				if(dist < cloststDist)
+				{
+					closest = direction;
+					cloststDist = dist;
+				}
+			}
+
+			centerPos = m_Grid.GetLocalPosition(centerPos + closest) + m_TilesOffset;
 			centerPos.y += m_Grid.m_TileSize * 0.5f;
 
 			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;
+			return;
 		}
 	}
 
@@ -710,7 +806,7 @@ public class CGridUI : MonoBehaviour
 	private void DestroyInternalTile(TGridPoint _GridPoint)
 	{
 		CTile tile = m_Grid.GetTile(_GridPoint);
-		if(tile != null)
+		if(tile != null && tile.GetTileTypeState(ETileType.Wall_Int))
 		{
 			// Get all the tiles within the neighbourhood
 			foreach(CNeighbour neighbour in tile.m_NeighbourHood)

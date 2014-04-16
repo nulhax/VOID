@@ -179,13 +179,15 @@ public class CTile : CGridObject
 
 			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 			{
-				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int_Cap].Contains(neighbour.m_Direction))
+				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int].Contains(neighbour.m_Direction) &&
+				   !m_CurrentTileNeighbourExemptions[ETileType.Wall_Int_Cap].Contains(neighbour.m_Direction))
 					metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_Direction;
 			}
 
 			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 			{
-				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap].Contains(neighbour.m_Direction))
+				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int].Contains(neighbour.m_Direction) &&
+				   !m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap].Contains(neighbour.m_Direction))
 					metaIdentifiers[(int)ETileType.Wall_Ext_Cap] |= 1 << (int)neighbour.m_Direction;
 			}
 		}
@@ -330,13 +332,13 @@ public class CTile : CGridObject
 
 	public void SetTileNeighbourExemptionState(ETileType _TileType, EDirection _Direction, bool _State)
 	{
-		if(_State && !m_CurrentTileNeighbourExemptions[_TileType].Contains(_Direction))
+		if(_State)
 		{
 			m_CurrentTileNeighbourExemptions[_TileType].Add(_Direction);
 			return;
 		}
 
-		if(!_State && m_CurrentTileNeighbourExemptions[_TileType].Contains(_Direction))
+		if(!_State)
 		{
 			m_CurrentTileNeighbourExemptions[_TileType].Remove(_Direction);
 			return;
