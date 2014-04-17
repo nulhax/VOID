@@ -142,7 +142,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			
 			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
 			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
-			    cProjectile.GetComponent<CNetworkView>().SetEulerAngles(projRot.eulerAngles);
+			    cProjectile.GetComponent<CNetworkView>().SetEuler(projRot.eulerAngles);
 			
 				InvokeRpcAll("StartMuzzleFlash", m_iLaserNodeIndex);
 

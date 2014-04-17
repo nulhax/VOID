@@ -1,0 +1,113 @@
+fileFormatVersion: 2
+guid: 7f6dcd0b3c6493c4e92d367e3cf7eb14
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Module_Medium_Turret_Chasis
+    100004: Module_Medium_Turret_Chasis_Stem
+    100006: Pulse_Cannon_Barrel_Alpha
+    100008: Pulse_Cannon_Barrel_Beta
+    100010: Pulse_Cannon_Barrel_Delta
+    100012: Pulse_Cannon_Barrel_Gamma
+    100014: Pulse_Cannon_Struct_Alpha
+    100016: Pulse_Cannon_Struct_Beta
+    100018: Pulse_Cannon_Struct_Delta
+    100020: Pulse_Cannon_Struct_Gamma
+    400000: //RootNode
+    400002: Module_Medium_Turret_Chasis
+    400004: Module_Medium_Turret_Chasis_Stem
+    400006: Pulse_Cannon_Barrel_Alpha
+    400008: Pulse_Cannon_Barrel_Beta
+    400010: Pulse_Cannon_Barrel_Delta
+    400012: Pulse_Cannon_Barrel_Gamma
+    400014: Pulse_Cannon_Struct_Alpha
+    400016: Pulse_Cannon_Struct_Beta
+    400018: Pulse_Cannon_Struct_Delta
+    400020: Pulse_Cannon_Struct_Gamma
+    2300000: //RootNode
+    2300002: Module_Medium_Turret_Chasis
+    2300004: Module_Medium_Turret_Chasis_Stem
+    2300006: Pulse_Cannon_Barrel_Alpha
+    2300008: Pulse_Cannon_Barrel_Beta
+    2300010: Pulse_Cannon_Barrel_Delta
+    2300012: Pulse_Cannon_Barrel_Gamma
+    2300014: Pulse_Cannon_Struct_Alpha
+    2300016: Pulse_Cannon_Struct_Beta
+    2300018: Pulse_Cannon_Struct_Delta
+    2300020: Pulse_Cannon_Struct_Gamma
+    3300000: //RootNode
+    3300002: Module_Medium_Turret_Chasis
+    3300004: Module_Medium_Turret_Chasis_Stem
+    3300006: Pulse_Cannon_Barrel_Alpha
+    3300008: Pulse_Cannon_Barrel_Beta
+    3300010: Pulse_Cannon_Barrel_Delta
+    3300012: Pulse_Cannon_Barrel_Gamma
+    3300014: Pulse_Cannon_Struct_Alpha
+    3300016: Pulse_Cannon_Struct_Beta
+    3300018: Pulse_Cannon_Struct_Delta
+    3300020: Pulse_Cannon_Struct_Gamma
+    4300000: Module_Medium_Turret_Chasis_Root1
+    4300002: Module_Medium_Turret_Chasis_Stem
+    4300004: Module_Medium_Turret_Chasis
+    4300006: Pulse_Cannon_Struct_Alpha
+    4300008: Pulse_Cannon_Barrel_Alpha
+    4300010: Pulse_Cannon_Struct_Beta
+    4300012: Pulse_Cannon_Barrel_Beta
+    4300014: Pulse_Cannon_Struct_Gamma
+    4300016: Pulse_Cannon_Barrel_Gamma
+    4300018: Pulse_Cannon_Struct_Delta
+    4300020: Pulse_Cannon_Barrel_Delta
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .100000001
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

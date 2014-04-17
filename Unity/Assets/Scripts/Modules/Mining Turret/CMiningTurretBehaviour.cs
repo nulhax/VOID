@@ -140,7 +140,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	
 	void OnDestroy()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
 	}
 
 
@@ -165,7 +165,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
         bool bLaserVisible = false;
         bool bExtractorBeamVisible = false;
 
-		if (GetComponent<CTurretBehaviour>().ControllerPlayerId != 0)
+		if (GetComponent<CTurretBehaviour>().IsUnderControl)
 		{
             Vector3 vGalaxyBarrelPosition = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cBarrelObject.transform.position);
             Vector3 vGalaxyBarrelRotation = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cBarrelObject.transform.rotation) * Vector3.forward;

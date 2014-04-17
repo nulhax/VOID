@@ -149,24 +149,44 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				// Extract the network view from this object
 				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-				// Only sync if position is not default
-				if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
-				{
-					cSelfView.SyncTransformPosition();
-				}
+                // Check has parent
+                if (tEntry.Value.cGameObject.transform.parent != null)
+                {
+                    cSelfView.SyncParent();
 
-				// Sync if rotation is not default
-				if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
-				{
-					cSelfView.SyncTransformRotation();
-				}
-				
-				// Sync if scale is not default
-				if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
-				{
-					// Sync object's scale
-					cSelfView.SyncTransformScale();
-				}
+                    // Only sync if position is not default
+                    if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformLocalPosition();
+                    }
+
+                    // Sync if rotation is not default
+                    if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformLocalEuler();
+                    }
+                }
+                else
+                {
+                    // Only sync if position is not default
+                    if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformPosition();
+                    }
+
+                    // Sync if rotation is not default
+                    if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformRotation();
+                    }
+                }
+
+                // Sync if scale is not default
+                if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
+                {
+                    // Sync object's scale
+                    cSelfView.SyncTransformScale();
+                }
 			}
 
 			// Sync network vars last

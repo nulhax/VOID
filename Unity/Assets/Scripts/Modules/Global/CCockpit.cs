@@ -78,7 +78,7 @@ public class CCockpit : CNetworkMonoBehaviour
 	}
 
 
-	public GameObject SeatObject
+	public Transform Seat
 	{
 		get { return (m_cSeat); }
 	}
@@ -104,16 +104,23 @@ public class CCockpit : CNetworkMonoBehaviour
         {
             TNetworkViewId cPlayerActorViewId = cPlayerActor.GetComponent<CNetworkView>().ViewId;
 
-            // Parent the player to the cockpit seat
-            cPlayerActor.GetComponent<CNetworkView>().SetParent(m_cSeat.GetComponent<CNetworkView>().ViewId);
+            // Save the position, rotation and head rotation
+            m_vRemoteEnterPosition = cPlayerActor.transform.position;
+            m_vRemoteEnterEuler = cPlayerActor.transform.eulerAngles;
+            m_vRemoteHeadEuler = new Vector3(cPlayerActor.GetComponent<CPlayerHead>().RemoteHeadEulerX,
+                                             cPlayerActor.GetComponent<CPlayerHead>().RemoteHeadEulerY,
+                                             0.0f);
 
+            // Move player to seat location and rotation
+            cPlayerActor.GetComponent<CNetworkView>().SetParent(m_cSeat.GetComponent<CNetworkView>().ViewId);
+            cPlayerActor.GetComponent<CNetworkView>().SetLocalPosition(0.0f, 0.0f, 0.0f);
+            cPlayerActor.GetComponent<CNetworkView>().SetLocalEuler(0.0f, 0.0f, 0.0f);
+            cPlayerActor.GetComponent<CPlayerHead>().SetLookDirection(0.0f, 0.0f);
+            
             // Set the player kinematic
             cPlayerActor.rigidbody.isKinematic = true;
 
             m_cMountedPlayerId.Set(_ulPlayerId);
-
-            // Notify observers
-            if (EventMounted != null) EventMounted(m_cMountedPlayerId.Get());
         }
     }
 
@@ -131,6 +138,11 @@ public class CCockpit : CNetworkMonoBehaviour
             {
                 // UnParent the player to the cockpit seat
                 cPlayerActor.GetComponent<CNetworkView>().SetParent(null);
+
+                // Move player back to positions when entered
+                cPlayerActor.GetComponent<CNetworkView>().SetPosition(m_vRemoteEnterPosition);
+                cPlayerActor.GetComponent<CNetworkView>().SetEuler(m_vRemoteEnterEuler);
+                cPlayerActor.GetComponent<CNetworkView>().GetComponent<CPlayerHead>().SetLookDirection(m_vRemoteHeadEuler.x, m_vRemoteHeadEuler.y);
 
                 // Turn of kinematic
                 cPlayerActor.rigidbody.isKinematic = false;
@@ -258,54 +270,35 @@ public class CCockpit : CNetworkMonoBehaviour
     {
         if (_cSynedVar == m_cMountedPlayerId)
         {
-            // Check player dismounted the cockpit
-            if (m_cMountedPlayerId.Value == 0)
-            {
-                // Notify player left
-                if (EventDismounted != null)
-                    EventDismounted(m_cMountedPlayerId.PreviousValue);
-            }
-
-            // Player entered the cockput
-            else
-            {
-                // Notify player enter
-                if (EventMounted != null)
-                    EventMounted(m_cMountedPlayerId.Value);
-            }
-
-            // Check entering player was myself
-            if (m_cMountedPlayerId.Value == CNetwork.PlayerId)
-            {
-                // Disable inputs
-                CGamePlayers.SelfActor.GetComponent<CPlayerMotor>().DisableInput(this);
-                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
+            HandleVarSyncMountedPlayer();
+        }
+    }
 
 
-                m_vLocalEnterPosition = CGamePlayers.SelfActor.transform.position;
-                m_qLocalEnterRotation = CGamePlayers.SelfActor.transform.rotation;
-                m_qLocalHeadEnterRotation = CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.localRotation;
+    void HandleVarSyncMountedPlayer()
+    {
+        // Check player dismounted the cockpit
+        if (m_cMountedPlayerId.Value == 0)
+        {
+            GameObject cPlayerActor = CGamePlayers.GetPlayerActor(m_cMountedPlayerId.PreviousValue);
+            cPlayerActor.GetComponent<CPlayerMotor>().EnableInput(this);
+            cPlayerActor.GetComponent<CPlayerHead>().EnableInput(this);
 
+            // Notify obersvers
+            if (EventDismounted != null)
+                EventDismounted(m_cMountedPlayerId.PreviousValue);
+        }
 
-                CGamePlayers.SelfActor.transform.position = m_cSeat.transform.position;
-                CGamePlayers.SelfActor.transform.rotation = m_cSeat.transform.rotation;
+        // Player entered the cockput
+        else
+        {
+            GameObject cPlayerActor = CGamePlayers.GetPlayerActor(m_cMountedPlayerId.Value);
+            cPlayerActor.GetComponent<CPlayerMotor>().DisableInput(this);
+            cPlayerActor.GetComponent<CPlayerHead>().DisableInput(this);
 
-                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.LookAt(m_cLookAt.position);
-            }
-
-            // Check exiting player was myself
-            if (m_cMountedPlayerId.PreviousValue == CNetwork.PlayerId &&
-                CGamePlayers.SelfActor != null)
-            {
-                // Reenable intputs
-                CGamePlayers.SelfActor.GetComponent<CPlayerMotor>().EnableInput(this);
-                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().EnableInput(this);
-
-                // Move player back to positions when entered
-                CGamePlayers.SelfActor.transform.position = m_vLocalEnterPosition;
-                CGamePlayers.SelfActor.transform.rotation = m_qLocalEnterRotation;
-                CGamePlayers.SelfActor.GetComponent<CPlayerHead>().Head.transform.localRotation = m_qLocalHeadEnterRotation;
-            }
+            // Notify observers
+            if (EventMounted != null)
+                EventMounted(m_cMountedPlayerId.Value);
         }
     }
 
@@ -313,8 +306,8 @@ public class CCockpit : CNetworkMonoBehaviour
 // Member Fields
 
 
-	public GameObject m_cSeat = null;
-	public Transform m_cLookAt = null;
+    public Transform m_cSeat = null;
+    public CComponentInterface[] m_Components;
 
 
 	CNetworkVar<ulong> m_cMountedPlayerId = null;
@@ -323,12 +316,10 @@ public class CCockpit : CNetworkMonoBehaviour
     CModuleInterface m_cModuleInterface = null;
 
 
-    Vector3 m_vLocalEnterPosition = Vector3.zero;
-    Quaternion m_qLocalEnterRotation = Quaternion.identity;
-    Quaternion m_qLocalHeadEnterRotation = Quaternion.identity;
+    Vector3 m_vRemoteEnterPosition = Vector3.zero;
+    Vector3 m_vRemoteEnterEuler = Vector3.zero;
+    Vector3 m_vRemoteHeadEuler = Vector3.zero;
 
-
-    public CComponentInterface[] m_Components;
 
 	static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
