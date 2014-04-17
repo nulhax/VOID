@@ -252,7 +252,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_eToolType: 3
   m_eToolCategory: 1
-  m_RightHandPos: {fileID: 0}
+  m_RightHandPos: {fileID: 100002}
   m_LeftHandPos: {fileID: 0}
 --- !u!114 &11400012
 MonoBehaviour:
@@ -287,11 +287,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fLocalOffsetX: 0
-  m_fLocalOffsetY: 0
-  m_fLocalOffsetZ: 0
-  m_fVerticalDeviation: 0
-  m_fLateralDeviation: 0
+  m_fLocalOffsetX: .349999994
+  m_fLocalOffsetY: 1.35000002
+  m_fLocalOffsetZ: .5
+  m_fVerticalDeviation: .5
+  m_fLateralDeviation: .5
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1

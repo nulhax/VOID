@@ -493,13 +493,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 100014}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f76eb5bc43b35244e90d00d38abbb44d, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fHeadBobRunAmount: .5
-  m_fHeadBobSprintAmount: .5
-  m_fHeadBobRunSpeed: 8
-  m_fHeadBobSprintSpeed: 10
+  m_fLocalOffsetX: .349999994
+  m_fLocalOffsetY: 1.35000002
+  m_fLocalOffsetZ: .5
+  m_fVerticalDeviation: .5
+  m_fLateralDeviation: .5
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
