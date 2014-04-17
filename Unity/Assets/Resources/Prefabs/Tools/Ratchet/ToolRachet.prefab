@@ -132,6 +132,7 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400014}
+  - 114: {fileID: 11400016}
   m_Layer: 0
   m_Name: ToolRachet
   m_TagString: Untagged
@@ -484,6 +485,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400016
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76eb5bc43b35244e90d00d38abbb44d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_fHeadBobRunAmount: .5
+  m_fHeadBobSprintAmount: .5
+  m_fHeadBobRunSpeed: 8
+  m_fHeadBobSprintSpeed: 10
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

@@ -112,6 +112,8 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
 			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
+			m_ThirdPersonAnim.SetBool("LookAtWrist", Input.GetKey(KeyCode.Tab));	
+
 
 			if(bStrafeLeft)
 			{

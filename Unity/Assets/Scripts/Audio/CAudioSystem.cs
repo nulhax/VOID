@@ -87,7 +87,7 @@ public class CAudioSystem : MonoBehaviour
 		}
 		else
 		{
-			//ProcessActiveAudio();
+			ProcessActiveAudio();
 		}
 	}
 	
@@ -106,16 +106,14 @@ public class CAudioSystem : MonoBehaviour
 				{
 					//process fade in
 					if(audioClip.fadeInTimer < audioClip.fadeInTime)
-					{
-												
+					{												
 						audioClip.fadeInTimer += Time.deltaTime;
 						float timeScale = audioClip.fadeInTimer / audioClip.fadeInTime;						
 						audioClip.audioSource.volume =  audioClip.defaultVolume * timeScale;
 						
 						if(audioClip.audioSource.volume >= audioClip.defaultVolume)
 						{
-							//Debug.Log("Clip faded in after " + audioClip.fadeInTimer.ToString() + " seconds");								
-							//Debug.Log("Fade in time was set to: " + audioClip.fadeInTime.ToString() + " seconds");
+
 						}
 					}
 					
@@ -131,8 +129,6 @@ public class CAudioSystem : MonoBehaviour
 						if(audioClip.fadeOutTimer >= audioClip.fadeOutTime || audioClip.audioSource.volume == 0)
 						{
 							toRemove.Add(audioClip);
-							//Debug.Log("Clip faded out after " + audioClip.fadeOutTimer.ToString() + " seconds");								
-							//Debug.Log("Fade out time was set to: " + audioClip.fadeOutTime.ToString() + " seconds" );
 						}																	
 					}					
 				}
@@ -140,7 +136,7 @@ public class CAudioSystem : MonoBehaviour
 				//Process audio occlusion
 				if(audioClip.useOcclusion)			
 				{
-					ProcessAudioOcclusion(audioClip);					
+					//ProcessAudioOcclusion(audioClip);					
 				}
 			}
 	    } 
@@ -203,7 +199,7 @@ public class CAudioSystem : MonoBehaviour
 									if(occludeState != OcclusionState.OCCLUSION_PARTIAL)
 									{
 										occludeState = OcclusionState.OCCLUSION_PARTIAL;
-										//Debug.Log("Partial Occlusion");
+										Debug.Log("Partial Occlusion");
 									}									
 								}
 							}
@@ -226,7 +222,7 @@ public class CAudioSystem : MonoBehaviour
 					if(occludeState != OcclusionState.OCCLUSION_FULL)
 					{
 						occludeState = OcclusionState.OCCLUSION_FULL;
-						//Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
+						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
 					}					
 				}							
 			}	
@@ -242,7 +238,7 @@ public class CAudioSystem : MonoBehaviour
 				if(occludeState != OcclusionState.OCCLUSION_FALSE)
 				{
 					occludeState = OcclusionState.OCCLUSION_FALSE;
-					//Debug.Log("No Occlusion");
+					Debug.Log("No Occlusion");
 				}	
 			}
 					 

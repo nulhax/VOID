@@ -140,7 +140,7 @@ Transform:
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.01999998, y: 1.09000003, z: 1.27999997}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400006}
   - {fileID: 400004}
@@ -220,11 +220,14 @@ MonoBehaviour:
   m_fVolumeMax: 1
   m_fFadeInTimeList:
   - 0
+  - 0
   m_fFadeOutTimeList:
   - 0
+  - 0
   m_arAudioClipPool:
-  - {fileID: 8300000, guid: 21753ec1fbc8c704d8c5a76aa37b334a, type: 3}
-  m_barLoopList: 00
+  - {fileID: 8300000, guid: 3dfa40bf3afccb342b8cafb023fa6cc3, type: 3}
+  - {fileID: 8300000, guid: 3dfa40bf3afccb342b8cafb023fa6cc3, type: 3}
+  m_barLoopList: 0000
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
