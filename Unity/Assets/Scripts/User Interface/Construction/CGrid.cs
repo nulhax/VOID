@@ -196,7 +196,7 @@ public class CGrid : MonoBehaviour
 				// Replace the meta data
 				for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 				{
-					existingTile.SetMetaData((ETileType)i, tile.GetMetaData((ETileType)i));
+					existingTile.ApplyTileMetaData((ETileType)i, tile.GetCurrentMetaData((ETileType)i));
 				}
 
 				// Remove this tile from ones unmodified
@@ -225,33 +225,47 @@ public class CGrid : MonoBehaviour
 	
 	private void CreateTile(TTileCreateInfo _TileInfo)
 	{
-		// Destroy the existing tile
-		if(m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
+		CTile tile = null;
+
+		// If it doesnt exist, create a new tile
+		if(!m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
 		{
-			RemoveTile(_TileInfo.m_GridPoint);
+			// Create the new tile
+			GameObject newtile = new GameObject("Tile");
+			newtile.transform.parent = m_TileContainer;
+			newtile.transform.localScale = Vector3.one;
+			newtile.transform.localRotation = Quaternion.identity;
+			newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
+			tile = newtile.AddComponent<CTile>();
+			tile.m_Grid = this;
+			tile.m_GridPosition = _TileInfo.m_GridPoint;
+
+			// Set the active tile types
+			foreach(ETileType type in _TileInfo.m_TileTypes)
+			{
+				tile.SetTileTypeState(type, true);
+			}
+			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+
+			// Update neighbours
+			tile.FindNeighbours();
+			tile.UpdateNeighbourhood();
 		}
-
-		// Create the new tile
-		GameObject newtile = new GameObject("Tile");
-		newtile.transform.parent = m_TileContainer;
-		newtile.transform.localScale = Vector3.one;
-		newtile.transform.localRotation = Quaternion.identity;
-		newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
-
-		CTile tile = newtile.AddComponent<CTile>();
-		tile.m_Grid = this;
-		tile.m_GridPosition = _TileInfo.m_GridPoint;
-
-		// Set the active tile types
-		foreach(ETileType type in _TileInfo.m_TileTypes)
+		// If it does exist, modify it to match what the new tile will have
+		else
 		{
-			tile.SetTileTypeState(type, true);
-		}
-		m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+			tile = GetTile(_TileInfo.m_GridPoint);
 
-		// Update neighbours
-		tile.FindNeighbours();
-		tile.UpdateNeighbourhood();
+			// Set the active tile types
+			for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
+			{
+				ETileType type = (ETileType)i;
+				tile.SetTileTypeState(type, _TileInfo.m_TileTypes.Contains(type));
+			}
+
+			// Update meta data
+			tile.UpdateTileMetaData();
+		}
 	}
 
 	private void RemoveTile(TGridPoint _GridPoint)

@@ -230,39 +230,39 @@ public class CLocalHolographicDisplay : MonoBehaviour
 
 	private void UpdateShipPresentation()
 	{
-		GameObject tempShip = new GameObject(m_ShipRepresentation.name);
-		tempShip.transform.position = Vector3.zero;
-		tempShip.transform.rotation = Quaternion.identity;
-
-		// Get all facilities and copy their combined mesh
-		CShipFacilities sf = CGameShips.Ship.GetComponent<CShipFacilities>();
-		foreach(GameObject facility in sf.Facilities)
-		{
-			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
-			GameObject child = new GameObject(facility.name);
-			child.transform.position = facility.transform.position;
-			child.transform.rotation = facility.transform.rotation;
-
-			// Add the combined mesh and renderer
-			child.AddComponent<MeshFilter>().mesh = fi.m_CombinedMesh;
-			MeshRenderer mr = child.AddComponent<MeshRenderer>();
-			mr.castShadows = false;
-			mr.receiveShadows = false;
-			mr.material = m_HolographicMaterial;
-
-			child.transform.parent = tempShip.transform;
-		}
-
-		// Scale down the objects
-		tempShip.transform.localScale = Vector3.one * m_ScalingFactor;
-
-		// Reposition new representation
-		tempShip.transform.position = m_ShipRepresentation.transform.position;
-		tempShip.transform.rotation = m_ShipRepresentation.transform.rotation;
-		tempShip.transform.parent = transform;
-
-		// Destroy old representation
-		DestroyImmediate(m_ShipRepresentation);
-		m_ShipRepresentation = tempShip;
+//		GameObject tempShip = new GameObject(m_ShipRepresentation.name);
+//		tempShip.transform.position = Vector3.zero;
+//		tempShip.transform.rotation = Quaternion.identity;
+//
+//		// Get all facilities and copy their combined mesh
+//		CShipFacilities sf = CGameShips.Ship.GetComponent<CShipFacilities>();
+//		foreach(GameObject facility in sf.Facilities)
+//		{
+//			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
+//			GameObject child = new GameObject(facility.name);
+//			child.transform.position = facility.transform.position;
+//			child.transform.rotation = facility.transform.rotation;
+//
+//			// Add the combined mesh and renderer
+//			child.AddComponent<MeshFilter>().mesh = fi.m_CombinedMesh;
+//			MeshRenderer mr = child.AddComponent<MeshRenderer>();
+//			mr.castShadows = false;
+//			mr.receiveShadows = false;
+//			mr.material = m_HolographicMaterial;
+//
+//			child.transform.parent = tempShip.transform;
+//		}
+//
+//		// Scale down the objects
+//		tempShip.transform.localScale = Vector3.one * m_ScalingFactor;
+//
+//		// Reposition new representation
+//		tempShip.transform.position = m_ShipRepresentation.transform.position;
+//		tempShip.transform.rotation = m_ShipRepresentation.transform.rotation;
+//		tempShip.transform.parent = transform;
+//
+//		// Destroy old representation
+//		DestroyImmediate(m_ShipRepresentation);
+//		m_ShipRepresentation = tempShip;
 	}
 };

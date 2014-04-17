@@ -31,9 +31,7 @@ using System;
 [RequireComponent(typeof(CNetworkView))]
 public class CFacilityInterface : CNetworkMonoBehaviour
 {
-
-// Member Types
-	
+	// Member Types
     public enum EType
 	{
 		INVALID = -1,
@@ -49,35 +47,28 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		MAX,
 	}
 
-// Member Delegates & Events
-	
+
+	// Member Delegates & Events
 	public delegate void HandleModuleEvent(CModuleInterface _Module, CFacilityInterface _FacilityParent);
 	
 	public event HandleModuleEvent EventModuleCreated;
 	public event HandleModuleEvent EventModuleDestroyed;
 
-// Member Fields
 
+	// Member Fields
 	public EType m_Type = EType.INVALID;
-	public Mesh m_CombinedMesh = null;
 
 	private CNetworkVar<uint> m_FacilityId = null;
-	private List<CTile> m_Tiles = new List<CTile>();
-
 	
 	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
 	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
-	
-	
+
 	static Dictionary<EType, List<GameObject>> s_FacilityObjects = new Dictionary<EType, List<GameObject>>();
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-
-
-// Member Properties
-
-
+	
+	// Member Properties
 	public uint FacilityId 
 	{
 		get{return(m_FacilityId.Get());}			
@@ -95,19 +86,11 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 			}
 		}			
 	}
-	
-	
+
 	public EType FacilityType 
 	{
         get { return (m_Type); }
 	}
-
-
-	public List<CTile> FacilityTiles
-	{
-		get { return(m_Tiles); }
-	}
-
 
 	public List<GameObject> FacilityModules
 	{
@@ -122,15 +105,13 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		}
 	}
 
-// Member Methods
 
-
+	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_FacilityId = _cRegistrar.CreateReliableNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 	}
-
-
+	
     public List<GameObject> FindAccessoriesByType(CAccessoryInterface.EType _eAccessoryType)
     {
         if (!m_Accessories.ContainsKey(_eAccessoryType))
@@ -140,8 +121,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         return (m_Accessories[_eAccessoryType]);
     }
-
-
+	
     public List<GameObject> FindModulesByType(CModuleInterface.EType _eModuleType)
     {
         if (!m_Modules.ContainsKey(_eModuleType))
@@ -151,8 +131,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         return (m_Modules[_eModuleType]);
     }
-
-
+	
     public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
     {
         if (!m_Accessories.ContainsKey(_cAccessoryInterface.AccessoryType))
@@ -162,8 +141,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         m_Accessories[_cAccessoryInterface.AccessoryType].Add(_cAccessoryInterface.gameObject);
     }
-
-
+	
     public void RegisterModule(CModuleInterface _ModuleInterface)
     {
         if (!m_Modules.ContainsKey(_ModuleInterface.ModuleType))
@@ -177,8 +155,7 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		if (EventModuleCreated != null) 
 			EventModuleCreated(_ModuleInterface, this);
     }
-
-
+	
     public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
     {
         s_RegisteredPrefabs.Add(_eFacilityType, _ePrefab);
@@ -200,15 +177,13 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         return (s_RegisteredPrefabs[_eFacilityType]);
     }
-
-
+	
     public static Dictionary<EType, List<GameObject>> GetAllFacilities()
     {
         return (s_FacilityObjects);
     }
-
-
-    void Awake()
+	
+    private void Awake()
     {
         if (!s_FacilityObjects.ContainsKey(m_Type))
         {
@@ -217,136 +192,26 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         s_FacilityObjects[m_Type].Add(gameObject);
     }
-
-
+	
 	void Start()
 	{
-		// Find all of the tiles contained within this facility
-		m_Tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
-      
 	    // Register facility
 	    CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(this);
-
-		// Delete all the preset tiles
-		foreach(CTile tile in m_Tiles)
-		{
-			Destroy(tile.gameObject);
-		}
 
 	    // Listen to event to unregister facility
 	    NetworkView.EventPreDestory += () =>
 	    {
 			CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(this);
 		};
-
-		// Create facility triggers
-		ConfigureFacility();
 	}
-
-
+	
     void OnDestroy()
     {
         s_FacilityObjects[m_Type].Remove(gameObject);
     }
 
-
-    void Update()
-    {
-        if (CNetwork.IsServer &&
-            Input.GetKeyDown(KeyCode.M))
-        {
-            List<GameObject> aAlarmObjects = FindAccessoriesByType(CAccessoryInterface.EType.Alarm);
-
-            if (aAlarmObjects != null &&
-                aAlarmObjects.Count > 0)
-            {
-                bool bToggle = aAlarmObjects[0].GetComponent<CAlarmBehaviour>().IsActive;
-
-                foreach (GameObject cAlarmObject in aAlarmObjects)
-                {
-                    cAlarmObject.GetComponent<CAlarmBehaviour>().SetAlarmActive(!bToggle);
-                }
-            }
-        }
-    }
-
-
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
         // Empty
     }
-
-
-	void ConfigureFacility()
-	{
-		if(m_CombinedMesh == null)
-			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
-
-		MeshCollider mc = null;
-
-		// Create the triggers/colliders
-		GameObject internalTrigger = new GameObject("_InteriorTrigger");
-		GameObject collider = new GameObject("_Collider");
-		GameObject exitTrigger = new GameObject("_ExitTrigger");
-		GameObject entryTrigger = new GameObject("_ExitTrigger");
-         internalTrigger.tag = "GalaxyShip";
-         collider.tag      = "GalaxyShip";
-         exitTrigger.tag = "GalaxyShip";
-         entryTrigger.tag = "GalaxyShip";
-
-		// Create the exterior version of the facility
-		GameObject extFacility = new GameObject("_" + gameObject.name + "Ext");
-
-		// Child the exit trigger and interior trigger to the facility
-		exitTrigger.transform.parent = transform;
-		exitTrigger.transform.localPosition = Vector3.zero;
-		exitTrigger.transform.localRotation = Quaternion.identity;
-		internalTrigger.transform.parent = transform;
-		internalTrigger.transform.localPosition = Vector3.zero;
-		internalTrigger.transform.localRotation = Quaternion.identity;
-
-		// Child the entry trigger and collider to the exterior facility
-		entryTrigger.transform.parent = extFacility.transform;
-		entryTrigger.transform.localPosition = Vector3.zero;
-		entryTrigger.transform.localRotation = Quaternion.identity;
-		collider.transform.parent = extFacility.transform;
-		collider.transform.localPosition = Vector3.zero;
-		collider.transform.localRotation = Quaternion.identity;
-
-		// Set the exterior facility on the galaxy layer
-		CUtility.SetLayerRecursively(extFacility, LayerMask.NameToLayer("Galaxy"));
-
-		// Configure the internal trigger
-		internalTrigger.AddComponent<CInteriorTrigger>();
-		mc = internalTrigger.AddComponent<MeshCollider>();
-		mc.sharedMesh = m_CombinedMesh;
-		mc.convex = true;
-		mc.isTrigger = true;
-
-		// Configure the exit trigger
-		exitTrigger.transform.localScale = Vector3.one * 1.02f;
-		exitTrigger.AddComponent<CExitTrigger>();
-		mc = exitTrigger.AddComponent<MeshCollider>();
-		mc.sharedMesh = m_CombinedMesh;
-		mc.convex = true;
-		mc.isTrigger = true;
-
-		// Configure the entry trigger
-		entryTrigger.transform.localScale = Vector3.one * 1.02f;
-		entryTrigger.AddComponent<CEntryTrigger>();
-		mc = entryTrigger.AddComponent<MeshCollider>();
-		mc.sharedMesh = m_CombinedMesh;
-		mc.convex = true;
-		mc.isTrigger = true;
-
-		// Configure the collider trigger
-		mc = collider.AddComponent<MeshCollider>();
-		mc.sharedMesh = m_CombinedMesh;
-		mc.convex = true;
-
-		// Attach the exterior to the facility to the galaxy ship
-		CGalaxyShipFacilities galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>();
-		galaxyShipCollider.AttachNewFacility(extFacility, transform.localPosition, transform.localRotation);
-	}
-
 };

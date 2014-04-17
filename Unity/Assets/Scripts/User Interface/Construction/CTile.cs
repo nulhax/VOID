@@ -186,36 +186,19 @@ public class CTile : CGridObject
 
 			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 			{
-				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int].Contains(neighbour.m_Direction) &&
-				   !m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap].Contains(neighbour.m_Direction))
+				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap].Contains(neighbour.m_Direction))
 					metaIdentifiers[(int)ETileType.Wall_Ext_Cap] |= 1 << (int)neighbour.m_Direction;
 			}
 		}
 
-		// Check if floor/external wall/ceiling meta data changed
-		if(GetTileTypeState(ETileType.Floor))
-			if(UpdateTileMetaInfo(ETileType.Floor, metaIdentifiers[(int)ETileType.Floor])) 
-				metaChanged = true;
-
-		if(GetTileTypeState(ETileType.Ceiling))
-			if(UpdateTileMetaInfo(ETileType.Ceiling, metaIdentifiers[(int)ETileType.Ceiling])) 
-				metaChanged = true;
-
-		if(GetTileTypeState(ETileType.Wall_Ext))
-			if(UpdateTileMetaInfo(ETileType.Wall_Ext, metaIdentifiers[(int)ETileType.Wall_Ext])) 
-				metaChanged = true;
-
-		if(GetTileTypeState(ETileType.Wall_Int))
-			if(UpdateTileMetaInfo(ETileType.Wall_Int, metaIdentifiers[(int)ETileType.Wall_Int])) 
-				metaChanged = true;
-
-		if(GetTileTypeState(ETileType.Wall_Int_Cap))
-			if(UpdateTileMetaInfo(ETileType.Wall_Int_Cap, metaIdentifiers[(int)ETileType.Wall_Int_Cap])) 
-				metaChanged = true;
-
-		if(GetTileTypeState(ETileType.Wall_Ext_Cap))
-			if(UpdateTileMetaInfo(ETileType.Wall_Ext_Cap, metaIdentifiers[(int)ETileType.Wall_Ext_Cap])) 
-				metaChanged = true;
+		// Check meta data for changes
+		for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
+		{
+			ETileType type = (ETileType)i;
+			if(GetTileTypeState(type))
+				if(UpdateTileMetaInfo(type, metaIdentifiers[i])) 
+					metaChanged = true;
+		}
 
 		// Last check to see if the tile types where changed
 		if(m_PreviousTileTypeIdentifier != m_TileTypeIdentifier)
@@ -290,7 +273,7 @@ public class CTile : CGridObject
 			EventTileAppearanceChanged(this);
 	}
 
-	public void SetMetaData(ETileType _TileType, TTileMeta _Meta)
+	public void ApplyTileMetaData(ETileType _TileType, TTileMeta _Meta)
 	{
 		m_TileMetaData[_TileType] = _Meta;
 		
@@ -298,9 +281,9 @@ public class CTile : CGridObject
 		m_IsDirty = true;
 	}
 	
-	public TTileMeta GetMetaData(ETileType _TileType)
+	public TTileMeta GetCurrentMetaData(ETileType _TileType)
 	{
-		return(m_TileMetaData[_TileType]);
+		return(m_CurrentTileMetaData[_TileType]);
 	}
 
 	public void SetTileTypeVariant(ETileType _TileType, ETileVariant _TileVariant)
@@ -343,6 +326,11 @@ public class CTile : CGridObject
 			m_CurrentTileNeighbourExemptions[_TileType].Remove(_Direction);
 			return;
 		}
+	}
+
+	public void ResetTileNeighboutExemptions(ETileType _TileType)
+	{
+		m_CurrentTileNeighbourExemptions[_TileType].Clear();
 	}
 
 	public bool GetTileNeighbourExemptionState(ETileType _TileType, EDirection _Direction)

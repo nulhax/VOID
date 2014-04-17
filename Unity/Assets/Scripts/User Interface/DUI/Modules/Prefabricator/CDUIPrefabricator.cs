@@ -126,7 +126,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 
 	public void ExportGridTilesToShip()
 	{
-		CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
+		CGameShips.Ship.GetComponent<CShipTiles>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
 	}
 	
 	[AServerOnly]

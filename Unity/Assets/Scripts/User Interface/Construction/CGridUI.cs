@@ -898,7 +898,7 @@ public class CGridUI : MonoBehaviour
 	private void OnFacilityCreate(CFacilityInterface _Facility)
 	{
 		// Update the state of the UI grid
-		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles.ToArray());
+		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipTiles>().m_ShipGrid.Tiles.ToArray());
 
 		// Register an event for when module ports are created
 		_Facility.EventModuleCreated += OnModuleCreate;

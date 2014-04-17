@@ -23,34 +23,29 @@ using System.Collections.Generic;
 public class CShipFacilities : MonoBehaviour
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
-	
+	// Member Delegates & Events
 	public delegate void HandleFacilityEvent(CFacilityInterface _Facilty);
 	
 	public event HandleFacilityEvent EventFaciltiyCreated;
 	public event HandleFacilityEvent EventFaciltiyDestroyed;
 
-// Member Fields
-	
-	public CGrid m_ShipGrid = null;
+	// Member Fields
 	private uint m_FacilityIdCount = 0;
 	
 	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
 	private Dictionary<CFacilityInterface.EType, List<GameObject>> m_FacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
 	
-// Member Properties
-	
+	// Member Properties
 	[AServerOnly]
 	public List<GameObject> Facilities
 	{
 		get { return (new List<GameObject>(m_FacilityObjects.Values)); }
 	}
 
-// Member Methods
-	
+	// Member Methods
     public void RegisterFacility(CFacilityInterface _Facility)
     {
 		if(CNetwork.IsServer)
@@ -78,9 +73,6 @@ public class CShipFacilities : MonoBehaviour
         // Notify observers
         if (EventFaciltiyCreated != null) 
 			EventFaciltiyCreated(_Facility);
-
-		// Export the tiles to the grid
-		m_ShipGrid.ImportTileInformation(_Facility.FacilityTiles.ToArray());
     }
 
 	

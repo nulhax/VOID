@@ -58,7 +58,7 @@ MonoBehaviour:
   - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
   m_WallIntTileTypes: c8000000c9000000ca000000cb000000cc000000
   m_WallIntTilePrefabs:
-  - {fileID: 100000, guid: 950df8929da7e0744bb0fbb19e389ddc, type: 2}
+  - {fileID: 100000, guid: d38c67da34919bd499e2e1ca6d25d43d, type: 2}
   - {fileID: 100000, guid: 0c342799a488bdd4c9129029c7a8f6e1, type: 2}
   - {fileID: 100000, guid: 5fa0f77122016bd46bc88dc8410e3df2, type: 2}
   - {fileID: 100000, guid: d90a5b382ea034542b00788afbeb3df4, type: 2}

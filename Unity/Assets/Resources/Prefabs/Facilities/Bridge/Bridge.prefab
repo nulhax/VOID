@@ -2833,6 +2833,7 @@ GameObject:
   - 114: {fileID: 11400102}
   - 114: {fileID: 11400098}
   - 114: {fileID: 11400096}
+  - 114: {fileID: 11400160}
   - 114: {fileID: 11400094}
   - 114: {fileID: 11400092}
   - 114: {fileID: 11400090}
@@ -11084,7 +11085,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Type: 0
-  m_CombinedMesh: {fileID: 4300000, guid: fc3c5f96b5987704e86342d469b89cba, type: 2}
 --- !u!114 &11400098
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12753,6 +12753,17 @@ MonoBehaviour:
     m_Tile: {fileID: 11400142}
   m_Prebuilt: 1
   m_TileTypeIdentifier: 37
+--- !u!114 &11400160
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 102252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6005200fd6bc9074c9baedab92c21404, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400244
 MonoBehaviour:
   m_ObjectHideFlags: 1
