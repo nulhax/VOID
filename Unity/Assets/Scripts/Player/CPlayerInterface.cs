@@ -58,6 +58,10 @@ public class CPlayerInterface : CNetworkMonoBehaviour
         }
     }
 
+	public GameObject PlayerHand
+	{
+		get{ return (m_cRightHand); }
+	}
 
     public bool IsOwnedByMe
     {
@@ -133,6 +137,8 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 
 				ragdoll.Initialise();
 
+				m_cRightHand = skeleton.PlayerRightHand;
+
             }
             else
             {
@@ -155,6 +161,8 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 				ragdoll.m_RagdollHead 	= 	skeleton.RagdollHead; 
 
 				ragdoll.Initialise();
+
+				m_cRightHand = skeleton.PlayerRightHand;
             }
         }
     }
@@ -177,9 +185,9 @@ public class CPlayerInterface : CNetworkMonoBehaviour
     public GameObject m_cModel = null;
     public GameObject m_cModelFirstPerson = null;
 
+	GameObject m_cRightHand = null;
 
     ulong m_ulPlayerId = 0;
-
 
     bool m_bOwnedByMe = false;
 

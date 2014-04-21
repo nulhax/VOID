@@ -349,6 +349,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
             m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
 			m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+
             m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
         }
 
@@ -399,6 +400,14 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 		if (ActiveTool != null) 
 		{
+			//Get variables from current tool's orientation script
+			CToolOrientation cToolOrientation = ActiveTool.GetComponent<CToolOrientation>();
+			m_vToolEquipedPosition = cToolOrientation.Position;
+			m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+
+			m_fLateralDeviation = cToolOrientation.LateralDeviation;
+			m_fVerticalDeviation = cToolOrientation.VerticalDeviation;
+
 			UpdateVerticalToolPositioning ();
 			UpdateLateralToolPositioning ();
 		}

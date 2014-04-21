@@ -78,7 +78,7 @@ public class CDispenserBehaviour : MonoBehaviour
         CShipNaniteSystem cShipNaniteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
 
         // Check there is enough nanites for the selected tool
-        if (cShipNaniteSystem.NanaiteQuanity > _cDui.SelectedToolCost)
+		if(cShipNaniteSystem.NanaiteQuanity >= (float)_cDui.SelectedToolCost)
         {
             // Deduct the amount
             cShipNaniteSystem.ChangeQuanity(-_cDui.SelectedToolCost);
@@ -104,7 +104,6 @@ public class CDispenserBehaviour : MonoBehaviour
 
     public CComponentInterface m_cCircuitryComponent = null;
     public CComponentInterface m_cMechanicalComponent = null;
-
 
     CDUIDispenserRoot m_DUIDispenser = null;
 

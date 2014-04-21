@@ -36,6 +36,12 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+    public GameObject Screen
+    {
+        get { return (m_cScreen); }
+    }
+
+
 // Member Properties
 
 
@@ -56,7 +62,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
         m_vRotation = _cRegistrar.CreateUnreliableNetworkVar<Vector2>(OnNetworkVarSync, 1.0f / CNetworkConnection.k_fOutboundRate, Vector2.zero);
 
-        // Dont need to sync when not mounted
+        // Don't need to sync when not mounted
         if (CNetwork.IsServer)
         {
             m_vRotation.SetSyncEnabled(false);
@@ -108,7 +114,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
         m_cModuleInterface = GetComponent<CModuleInterface>();
         m_cCockpit = GetComponent<CCockpit>();
 
-        // Subscribe to cockpit events - Does not need to unsubscribe
+        // Subscribe to cockpit events - Does not need to Unsubscribe
         m_cCockpit.EventMounted    += OnEventCockpitMounted;
         m_cCockpit.EventDismounted += OnEventCockpitUnmounted;
 	}
@@ -153,12 +159,18 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventInputAxisChange);
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventInputAxisChange);
 
+            Camera cam = CGameCameras.MainCamera.camera;
+            float pos = (cam.nearClipPlane + 0.01f);
+            m_cScreen.transform.position = cam.transform.position + cam.transform.forward * pos;
+            float h = Mathf.Tan(cam.fieldOfView * Mathf.Deg2Rad * 0.5f) * pos * 2f;
+            m_cScreen.transform.localScale = new Vector3(h * cam.aspect, h, 0f);
+
             s_cLocalOwnedTurretCockpitBehaviour = this;
         }
 
         if (CNetwork.IsServer)
         {
-            List<GameObject> acTurrets = CModuleInterface.FindModulesByType(CModuleInterface.EType.LaserTurret);
+            List<GameObject> acTurrets = CModuleInterface.FindModulesByCategory(CModuleInterface.ECategory.Turrets);
 
             if (acTurrets != null &&
                 acTurrets.Count > 0)
@@ -205,19 +217,31 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
     [ALocalOnly]
     void OnEventInputAxisChange(CUserInput.EAxis _eAxis, float _fValue)
     {
+        Vector3 vChairLocalEuler = m_cChairModelTrans.transform.localEulerAngles;
+
         switch (_eAxis)
         {
             case CUserInput.EAxis.MouseX:
-                m_cChairModelTrans.transform.Rotate(0.0f, _fValue, 0.0f);
+                vChairLocalEuler.y += _fValue;
                 break;
 
             case CUserInput.EAxis.MouseY:
+                {
+                    // Make rotations relevant to 180
+                    if (vChairLocalEuler.x > 180.0f)
+                        vChairLocalEuler.x -= 360.0f;
+
+                    // Bound rotations to their limits
+                    vChairLocalEuler.x = Mathf.Clamp(vChairLocalEuler.x + _fValue, m_fRotationMinX, m_fRotationMaxX);
+                }
                 break;
 
             default:
                 Debug.LogError("Unknown user input axis: " + _eAxis);
                 break;
         }
+
+        m_cChairModelTrans.transform.localEulerAngles = vChairLocalEuler;
     }
 
 
@@ -235,7 +259,6 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 			{
                 // Take control of turret
                 ActiveTurretViewId.GameObject.GetComponent<CTurretBehaviour>().TakeControl(NetworkViewId);
-
 
 				CTurretBehaviour tb = m_cActiveTurretViewId.Get().GameObject.GetComponent<CTurretBehaviour>();
 
@@ -256,8 +279,10 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public GameObject m_cScreen = null;
     public Transform m_cChairModelTrans = null;
-    public Vector2 m_MinMaxEulerX = new Vector2(340.0f, 370.0f);
+    public float m_fRotationMinX = -20.0f;
+    public float m_fRotationMaxX =  15.0f;
 
 
     CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;

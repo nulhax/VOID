@@ -264,7 +264,7 @@ public class CGameCameras : MonoBehaviour
 		}
 	}
 
-	private static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
+	public static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Skybox;
@@ -277,8 +277,8 @@ public class CGameCameras : MonoBehaviour
 		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
 			ieb.enabled = false;
 	}
-	
-	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
+
+    public static void SetCameraDefaultValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Nothing;

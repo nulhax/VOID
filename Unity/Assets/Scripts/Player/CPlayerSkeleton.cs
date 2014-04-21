@@ -39,6 +39,11 @@ public class CPlayerSkeleton : MonoBehaviour
 		get { return(m_playerHead);}
 	}
 
+	public GameObject PlayerRightHand
+	{
+		get { return(m_playerRightHand);}
+	}
+
 	public Avatar PlayerAvatar
 	{
 		get { return(m_headlessAvatar);}
@@ -50,5 +55,6 @@ public class CPlayerSkeleton : MonoBehaviour
 	public GameObject 	m_ragdollHead;
 	public GameObject 	m_playerHead;
     public GameObject   m_playerNeck;
+	public GameObject   m_playerRightHand;
 	public Avatar		m_headlessAvatar;
 }

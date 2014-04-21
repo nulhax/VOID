@@ -410,7 +410,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0f1bedcc0a9f4bf4b9985b1e9a4cb504, type: 3}
+  m_Script: {fileID: 11500000, guid: d3c392cb5db91844a880750f46a74e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_cShipCamera: {fileID: 2000000}
@@ -418,6 +418,8 @@ MonoBehaviour:
   m_cBase: {fileID: 100008}
   m_cBarrel: {fileID: 100006}
   m_fRotationSpeed: 2
+  m_fEulerMinX: -15
+  m_fEulerMaxX: 80
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

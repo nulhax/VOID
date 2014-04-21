@@ -157,7 +157,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        while (_cStream.ByteSize > 1)
+        while (_cStream.HasUnreadData)
         {
             // Extract network action
             ENetworkAction eNetworkAction = _cStream.Read<ENetworkAction>();
@@ -187,7 +187,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 		m_cShipCamera.camera.enabled = false;
 		m_cGalaxyCamera.camera.enabled = false;
 
-		// Create the rendertexture
+		// Create the render texture
 		m_cCameraRenderTexture = new RenderTexture(Screen.width, Screen.height, 24);
 		m_cCameraRenderTexture.Create();
 
@@ -228,6 +228,8 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
                 // Enable the cameras
                 m_cShipCamera.camera.enabled = true;
                 m_cGalaxyCamera.camera.enabled = true;
+
+                m_cOwnerCockpitViewId.Value.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.mainTexture = m_cCameraRenderTexture;
             }
 
             // Check I do not own this turret locally anymore
@@ -239,6 +241,8 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
                 // Disable the cameras
                 m_cShipCamera.camera.enabled = false;
                 m_cGalaxyCamera.camera.enabled = false;
+
+                m_cOwnerCockpitViewId.Value.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.mainTexture = null;
             }
 
             if (EventCockpitOwnerChange != null)

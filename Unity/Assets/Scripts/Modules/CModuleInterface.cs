@@ -36,7 +36,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		
 		Atmosphere  = 50,
 		Crew        = 100,
-		Defence     = 150,
+		Turrets     = 150,
 		Exploration = 200,
         Gravity     = 250,
         Power       = 300,

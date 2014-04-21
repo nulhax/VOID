@@ -9,7 +9,7 @@ public class CEnemyShipEditor : Editor
 
 		EditorGUILayout.LabelField("State: " + myTarget.debug_StateName);
 		EditorGUILayout.LabelField("Expires: " + myTarget.mTimeout.ToString("F2"));
-		EditorGUILayout.LabelField("Targeting: " + (myTarget.mTarget_InternalSource != null ? myTarget.mTarget_InternalSource.name : "no target") + " for " + (myTarget.mTargetExpireTime - RealTime.time).ToString("F2") + " seconds");
+		EditorGUILayout.LabelField("Targeting: " + (myTarget.mTarget_InternalSource != null ? myTarget.mTarget_InternalSource.name : "no target") + " for " + myTarget.mTargetExpireTime.ToString("F2") + " seconds");
 		//EditorGUILayout.LabelField(
 	}
 }

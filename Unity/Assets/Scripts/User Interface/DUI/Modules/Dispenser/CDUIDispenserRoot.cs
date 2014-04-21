@@ -36,7 +36,7 @@ public class CDUIDispenserRoot : CNetworkMonoBehaviour
 	public UILabel m_ToolCostLabel = null;
 	
 	public CToolInterface.EType m_StartingToolType = CToolInterface.EType.INVALID;
-	public GameObject m_ParentToolObject = null;
+	public GameObject m_ToolObject = null;
 	
 	private CToolInterface.EType m_SelectedToolType = CToolInterface.EType.INVALID;
 	private int m_SelectedToolCost = 0;
@@ -112,28 +112,38 @@ public class CDUIDispenserRoot : CNetworkMonoBehaviour
 	{
 		// Create a temp module
 		string toolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CToolInterface.GetPrefabType(m_CurrentToolType.Get()));
-		GameObject toolObject = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/" + toolPrefabFile));
-		
-		// Destroy the old module
-		if(m_ParentToolObject.transform.childCount != 0)
-			Destroy(m_ParentToolObject.transform.GetChild(0).gameObject);
+		GameObject toolObject = (GameObject)Resources.Load("Prefabs/" + toolPrefabFile);
+		GameObject toolObjectMesh = new GameObject(toolObject.name);
+
+		// Get the children of the tool
+		foreach(Transform child in toolObject.transform)
+		{
+			Transform childTrans = ((GameObject)GameObject.Instantiate(child.gameObject)).transform;
+			childTrans.transform.parent = toolObjectMesh.transform;
+			childTrans.transform.localPosition = child.localPosition;
+			childTrans.transform.localRotation = child.localRotation;
+			childTrans.transform.localScale = child.localScale;
+
+			CUtility.DestroyAllNonRenderingComponents(childTrans.gameObject);
+		}
+
+		// Destroy old tools
+		if(m_ToolObject.transform.childCount > 0)
+			Destroy(m_ToolObject.transform.GetChild(0).gameObject);
+
+		// Parent to the tool object
+		toolObjectMesh.transform.parent = m_ToolObject.transform;
 
 		// Update the tool info
 		UpdateToolInfo(toolObject.GetComponent<CToolInterface>());
-
-		// Destroy the non rendering 
-		CUtility.DestroyAllNonRenderingComponents(toolObject);
-		
-		// Add it to the child object
-		toolObject.transform.parent = m_ParentToolObject.transform;
 		
 		// Reset some values
-		CUtility.SetLayerRecursively(toolObject, LayerMask.NameToLayer("UI 3D"));
-		toolObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-		toolObject.transform.localRotation = Quaternion.identity;
+		CUtility.SetLayerRecursively(toolObjectMesh, LayerMask.NameToLayer("UI 3D"));
+		toolObjectMesh.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+		toolObjectMesh.transform.localRotation = Quaternion.identity;
 		
 		// Set the scale a lot smaller
-		toolObject.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+		toolObjectMesh.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
 	}
 	
 	private void UpdateToolInfo(CToolInterface _tempToolInterface)

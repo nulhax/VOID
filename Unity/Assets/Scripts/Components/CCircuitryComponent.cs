@@ -42,10 +42,14 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
-    {
-        // Empty
-    }
+	void StormDamage()
+	{
+		gameObject.GetComponent<CActorHealth>().health -= 0.4f;
+
+		if (gameObject.GetComponent<CActorHealth> ().health > 1.0f) 
+			Debug.Log ("Circuit Component Health: " + gameObject.GetComponent<CActorHealth> ().health);
+	
+	}
 
 
 	void Start()
@@ -85,13 +89,11 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 	{
 		// Empty
 	}
-	
 
 // Member Fields
 
 
 	List<Transform> m_RepairPositions = new List<Transform>();
-	
 	bool m_IsLerping = false;
 
 

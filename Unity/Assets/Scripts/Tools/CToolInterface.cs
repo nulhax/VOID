@@ -33,6 +33,7 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CActorInteractable))]
 [RequireComponent(typeof(CActorBoardable))]
 [RequireComponent(typeof(CActorGravity))]
+[RequireComponent(typeof(CToolOrientation))]
 public class CToolInterface : CNetworkMonoBehaviour
 {
 
