@@ -45,7 +45,7 @@ public class CFacilityTiles : MonoBehaviour
 	private void Start()
 	{
 		// Find all of the tiles contained within this facility
-		m_Tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
+		m_Tiles = new List<CTile>();
 	}
 	
 //	void ConfigureFacility()

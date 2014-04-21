@@ -39,15 +39,6 @@ public class CGridUI : MonoBehaviour
 		PlaceModulePort,
 	}
 
-	public enum ETileInteraction
-	{
-		INVALID,
-
-		Nothing,
-		SingleSelection,
-		MultipleSelection,
-	}
-
 	public enum EPlaneInteraction
 	{
 		INVALID,
@@ -78,7 +69,6 @@ public class CGridUI : MonoBehaviour
 	public Vector3 m_TilesOffset = Vector3.zero;
 
 	public EToolMode m_CurrentMode = EToolMode.INVALID;
-	public ETileInteraction m_CurrentTileInteraction = ETileInteraction.INVALID;
 	public EPlaneInteraction m_CurrentPlaneInteraction = EPlaneInteraction.INVALID;
 	public int m_CurrentVerticalLayer = 0;
 	
@@ -364,19 +354,11 @@ public class CGridUI : MonoBehaviour
 
 		m_MouseDownHitPoint = m_CurrentMouseHitPoint;
 		m_MouseDownGridPoint = m_CurrentMouseGridPoint;
-		
-		if(IsShiftKeyDown)
-			m_CurrentTileInteraction = ETileInteraction.MultipleSelection;
-		else
-			m_CurrentTileInteraction = ETileInteraction.SingleSelection;
 	}
 	
 	private void HandleLeftClickHold()
 	{
 		if(m_PlaneHit.collider == null)
-			return;
-
-		if(m_CurrentTileInteraction != ETileInteraction.SingleSelection)
 			return;
 
 		if(m_CurrentMode == EToolMode.Paint_Exterior)
@@ -390,69 +372,7 @@ public class CGridUI : MonoBehaviour
 		
 		if(m_CurrentMode == EToolMode. Paint_Interior_Walls)
 		{
-			Vector3 cursorPos = m_GridCursor.transform.localPosition / m_Grid.m_TileSize;
-
-			TGridPoint tilePos1 = new TGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
-			TGridPoint tilePos2 = new TGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
-
-			CTile tile1 = m_Grid.GetTile(tilePos1);
-			CTile tile2 = m_Grid.GetTile(tilePos2);
-
-			if(tile1 == null || tile2 == null)
-				return;
-
-			CNeighbour neighbour1 = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile2);
-			CNeighbour neighbour2 = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile1);
-
-			if(neighbour1 == null || neighbour2 == null)
-				return;
-
-			EDirection dir1 = neighbour1.m_Direction;
-			EDirection dir2 = neighbour2.m_Direction;
-
-			if(tile1.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir1) == !IsCtrlKeyDown &&
-			   tile2.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir2) == !IsCtrlKeyDown)
-				return;
-
-			tile1.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir1, !IsCtrlKeyDown);
-			tile2.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir2, !IsCtrlKeyDown);
-
-			EDirection tile1LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir1);
-			EDirection tile1RightDir = CNeighbour.GetRightDirectionNeighbour(dir1);
-			EDirection tile2LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir2);
-			EDirection tile2RightDir = CNeighbour.GetRightDirectionNeighbour(dir2);
-
-			CNeighbour tile1NeighbourLeft = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1LeftDir);
-			CNeighbour tile1NeighbourRight = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1RightDir);
-			CNeighbour tile2NeighbourLeft = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2LeftDir);
-			CNeighbour tile2NeighbourRight = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2RightDir);
-
-			if(tile1NeighbourLeft != null)
-			{
-				tile1NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2LeftDir, !IsCtrlKeyDown);
-				tile1NeighbourLeft.m_Tile.UpdateTileMetaData();
-			}
-
-			if(tile1NeighbourRight != null)
-			{
-				tile1NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2RightDir, !IsCtrlKeyDown);
-				tile1NeighbourRight.m_Tile.UpdateTileMetaData();
-			}
-
-			if(tile2NeighbourLeft != null)
-			{
-				tile2NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1LeftDir, !IsCtrlKeyDown);
-				tile2NeighbourLeft.m_Tile.UpdateTileMetaData();
-			}
-
-			if(tile2NeighbourRight != null)
-			{
-				tile2NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1RightDir, !IsCtrlKeyDown);
-				tile2NeighbourRight.m_Tile.UpdateTileMetaData();
-			}
-
-			tile1.UpdateTileMetaData();
-			tile2.UpdateTileMetaData();
+			ModifyInteriorWall();
 		}
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
@@ -472,13 +392,9 @@ public class CGridUI : MonoBehaviour
 		if (m_PlaneHit.collider == null)
 			return;
 
-		bool single = m_CurrentTileInteraction == ETileInteraction.SingleSelection;
-		bool multi = m_CurrentTileInteraction == ETileInteraction.MultipleSelection;
-
-		if (single)
+		if(!IsShiftKeyDown)
 			HandleLeftClickUpSingle();
-
-		if (multi)
+		else
 			HandleLeftClickUpMulti();
 	}
 
@@ -531,7 +447,6 @@ public class CGridUI : MonoBehaviour
 				break;
 			}
 		}
-		m_CurrentTileInteraction = ETileInteraction.SingleSelection;
 	}
 
 	private void HandleRightClickDown()
@@ -657,7 +572,7 @@ public class CGridUI : MonoBehaviour
 
 		if(m_CurrentMode == EToolMode.Paint_Exterior)
 		{
-			if(m_CurrentTileInteraction == ETileInteraction.MultipleSelection)
+			if(IsShiftKeyDown)
 			{
 				Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint) + m_TilesOffset;
 				Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint) + m_TilesOffset;
@@ -801,6 +716,73 @@ public class CGridUI : MonoBehaviour
 			if(tile == null)
 				m_Grid.AddNewTile(neighboutGridPoint, new ETileType[]{ ETileType.Wall_Ext, ETileType.Wall_Ext_Cap });
 		}
+	}
+
+	private void ModifyInteriorWall()
+	{
+		Vector3 cursorPos = m_GridCursor.transform.localPosition / m_Grid.m_TileSize;
+		
+		TGridPoint tilePos1 = new TGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
+		TGridPoint tilePos2 = new TGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
+		
+		CTile tile1 = m_Grid.GetTile(tilePos1);
+		CTile tile2 = m_Grid.GetTile(tilePos2);
+		
+		if(tile1 == null || tile2 == null)
+			return;
+		
+		CNeighbour neighbour1 = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile2);
+		CNeighbour neighbour2 = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Tile == tile1);
+		
+		if(neighbour1 == null || neighbour2 == null)
+			return;
+		
+		EDirection dir1 = neighbour1.m_Direction;
+		EDirection dir2 = neighbour2.m_Direction;
+		
+		if(tile1.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir1) == !IsCtrlKeyDown &&
+		   tile2.GetTileNeighbourExemptionState(ETileType.Wall_Int, dir2) == !IsCtrlKeyDown)
+			return;
+		
+		tile1.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir1, !IsCtrlKeyDown);
+		tile2.SetTileNeighbourExemptionState(ETileType.Wall_Int, dir2, !IsCtrlKeyDown);
+		
+		EDirection tile1LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir1);
+		EDirection tile1RightDir = CNeighbour.GetRightDirectionNeighbour(dir1);
+		EDirection tile2LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir2);
+		EDirection tile2RightDir = CNeighbour.GetRightDirectionNeighbour(dir2);
+		
+		CNeighbour tile1NeighbourLeft = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1LeftDir);
+		CNeighbour tile1NeighbourRight = tile1.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1RightDir);
+		CNeighbour tile2NeighbourLeft = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2LeftDir);
+		CNeighbour tile2NeighbourRight = tile2.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2RightDir);
+		
+		if(tile1NeighbourLeft != null)
+		{
+			tile1NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2LeftDir, !IsCtrlKeyDown);
+			tile1NeighbourLeft.m_Tile.UpdateTileMetaData();
+		}
+		
+		if(tile1NeighbourRight != null)
+		{
+			tile1NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile2RightDir, !IsCtrlKeyDown);
+			tile1NeighbourRight.m_Tile.UpdateTileMetaData();
+		}
+		
+		if(tile2NeighbourLeft != null)
+		{
+			tile2NeighbourLeft.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1LeftDir, !IsCtrlKeyDown);
+			tile2NeighbourLeft.m_Tile.UpdateTileMetaData();
+		}
+		
+		if(tile2NeighbourRight != null)
+		{
+			tile2NeighbourRight.m_Tile.SetTileNeighbourExemptionState(ETileType.Wall_Int_Cap, tile1RightDir, !IsCtrlKeyDown);
+			tile2NeighbourRight.m_Tile.UpdateTileMetaData();
+		}
+		
+		tile1.UpdateTileMetaData();
+		tile2.UpdateTileMetaData();
 	}
 
 	private void DestroyInternalTile(TGridPoint _GridPoint)
