@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -29,7 +29,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 	
 	
 	// Member Fields
-	private CGridUI m_GridUI = null;
+	private CPrefabricatorGridUI m_GridUI = null;
 	private CGrid m_Grid = null;
 
 	public GameObject m_VariantItemTemplate = null;
@@ -91,7 +91,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		}
 	}
 
-	public void RegisterGridUI(CGridUI _GridUI, CGrid _Grid)
+	public void RegisterGridUI(CPrefabricatorGridUI _GridUI, CGrid _Grid)
 	{
 		m_GridUI = _GridUI;
 		m_Grid = _Grid;
@@ -101,32 +101,32 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 
 	public void ResetCursorMode()
 	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Nothing;
+		m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.Nothing;
 	}
 
 	public void EnableTilePainterExterior()
 	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Paint_Exterior;
+		m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.Paint_Exterior;
 	}
 
 	public void EnableTilePainterInteriorWalls()
 	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Paint_Interior_Walls;
+		m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.Paint_Interior_Walls;
 	}
 
 	public void EnableTilePainterInteriorFloors()
 	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.Paint_Interior_Floors;
+		m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.Paint_Interior_Floors;
 	}
 
 	public void EnableTileModifierSelection()
 	{
-		m_GridUI.m_CurrentMode = CGridUI.EToolMode.ModifyTileVariants;
+		m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.ModifyTileVariants;
 	}
 
 	public void ExportGridTilesToShip()
 	{
-		CGameShips.Ship.GetComponent<CShipTiles>().m_ShipGrid.ImportTileInformation(m_Grid.Tiles.ToArray());
+		m_GridUI.ExportTilesToShip();
 	}
 	
 	[AServerOnly]
@@ -239,13 +239,13 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		switch(m_SelectedModuleSize)
 		{
 		case CModuleInterface.ESize.Small:
-			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+			m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.PlaceModulePort; break;
 
 		case CModuleInterface.ESize.Medium:
-			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+			m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.PlaceModulePort; break;
 
 		case CModuleInterface.ESize.Large:
-			m_GridUI.m_CurrentMode = CGridUI.EToolMode.PlaceModulePort; break;
+			m_GridUI.m_CurrentMode = CPrefabricatorGridUI.EToolMode.PlaceModulePort; break;
 		}
 
 		// Set the label values

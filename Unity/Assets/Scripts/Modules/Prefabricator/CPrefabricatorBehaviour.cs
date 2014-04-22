@@ -30,7 +30,7 @@ public class CPrefabricatorBehaviour: MonoBehaviour
 	
 	// Member Fields
 	public CDUIConsole m_ConstructionInterface = null;
-	public CGridUI m_GridUI = null;
+	public CPrefabricatorGridUI m_GridUI = null;
 
 
 	// Member Properties

@@ -72,18 +72,18 @@ public class CShipAtmosphere : CNetworkMonoBehaviour
             // Create list of facilities that require refilling
             List<GameObject> aRefillingFacilities = new List<GameObject>();
 
-            foreach (KeyValuePair<CFacilityInterface.EType, List<GameObject>> tEntry in CFacilityInterface.GetAllFacilities())
-            {
-                tEntry.Value.ForEach((GameObject cFacilityObject) =>
-                {
-                    CFacilityAtmosphere cFacilityAtmosphere = cFacilityObject.GetComponent<CFacilityAtmosphere>();
-
-                    if (cFacilityAtmosphere.IsRefillingRequired)
-                    {
-                        aRefillingFacilities.Add(cFacilityObject);
-                    }
-                });
-            }
+//            foreach (KeyValuePair<CFacilityInterface.EType, List<GameObject>> tEntry in CFacilityInterface.GetAllFacilities())
+//            {
+//                tEntry.Value.ForEach((GameObject cFacilityObject) =>
+//                {
+//                    CFacilityAtmosphere cFacilityAtmosphere = cFacilityObject.GetComponent<CFacilityAtmosphere>();
+//
+//                    if (cFacilityAtmosphere.IsRefillingRequired)
+//                    {
+//                        aRefillingFacilities.Add(cFacilityObject);
+//                    }
+//                });
+//            }
 
             // Calculate the total generation available 
 			float fTotalGeneration = ShipAtmosphereGeneration;

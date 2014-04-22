@@ -32,12 +32,15 @@ public class CShipFacilities : MonoBehaviour
 	public event HandleFacilityEvent EventFaciltiyCreated;
 	public event HandleFacilityEvent EventFaciltiyDestroyed;
 
+
 	// Member Fields
+	public CGrid m_ShipGrid = null;
+
 	private uint m_FacilityIdCount = 0;
 	
 	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
-	private Dictionary<CFacilityInterface.EType, List<GameObject>> m_FacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
-	
+
+
 	// Member Properties
 	[AServerOnly]
 	public List<GameObject> Facilities
@@ -45,7 +48,17 @@ public class CShipFacilities : MonoBehaviour
 		get { return (new List<GameObject>(m_FacilityObjects.Values)); }
 	}
 
+
 	// Member Methods
+	public void CreateFacility(List<CTile> _FacilityTiles)
+	{
+		// Import the tile information into the grid
+		List<CTile> facilityTiles = m_ShipGrid.ImportTileInformation(_FacilityTiles);
+
+		// Instantiate an empty facility
+
+	}
+
     public void RegisterFacility(CFacilityInterface _Facility)
     {
 		if(CNetwork.IsServer)
@@ -63,13 +76,6 @@ public class CShipFacilities : MonoBehaviour
         // Add facility to dictionaries
 		m_FacilityObjects.Add(_Facility.FacilityId, _Facility.gameObject);
 
-		if (!m_FacilityTypes.ContainsKey(_Facility.FacilityType))
-        {
-			m_FacilityTypes.Add(_Facility.FacilityType, new List<GameObject>());
-        }
-
-		m_FacilityTypes[_Facility.FacilityType].Add(_Facility.gameObject);
-
         // Notify observers
         if (EventFaciltiyCreated != null) 
 			EventFaciltiyCreated(_Facility);
@@ -80,7 +86,6 @@ public class CShipFacilities : MonoBehaviour
     {
         // Remove facility from dictionaries
 		m_FacilityObjects.Remove(_Facility.FacilityId);
-		m_FacilityTypes[_Facility.FacilityType].Remove(_Facility.gameObject);
 
         // Notify observers
         if (EventFaciltiyDestroyed != null) 
@@ -98,23 +103,4 @@ public class CShipFacilities : MonoBehaviour
             return (m_FacilityObjects[_uiFacilityId]);
         }
 	}
-	
-	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
-	{
-        if (m_FacilityTypes.ContainsKey(_eType))
-        {
-            return (m_FacilityTypes[_eType]);
-        }
-        else
-        {
-            return (null);
-        }
-	}
-
-
-    void Start()
-    {
-        // Empty
-    }
-
 };

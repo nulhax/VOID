@@ -172,7 +172,6 @@ public class CGameRegistrator : MonoBehaviour
 	void Start()
 	{
 		RegisterSerailizationTargets();
-        RegisterFacilities();
         RegisterAccessories();
         RegisterModules();
         RegisterComponents();
@@ -345,25 +344,6 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CMiningDrillBehaviour.SerializeOutbound      , CMiningDrillBehaviour.UnserializeInbound);
 	}
 
-
-
-    void RegisterFacilities()
-    {
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Bridge                           , CGameRegistrator.ENetworkPrefab.FacilityBridge);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayStraight                  , CGameRegistrator.ENetworkPrefab.HallwayStraight);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayCorner                    , CGameRegistrator.ENetworkPrefab.HallwayCorner);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayTSection                  , CGameRegistrator.ENetworkPrefab.HallwayTSection);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayXSection                  , CGameRegistrator.ENetworkPrefab.HallwayXSection);
-
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.Bridge                    , CGameRegistrator.ENetworkPrefab.MiniFacilityBridge);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayStraight           , CGameRegistrator.ENetworkPrefab.MiniHallwayStraight);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayCorner             , CGameRegistrator.ENetworkPrefab.MiniHallwayCorner);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayTSection           , CGameRegistrator.ENetworkPrefab.MiniHallwayTSection);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayXSection           , CGameRegistrator.ENetworkPrefab.MiniHallwayXSection);
-
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Airlock                          , CGameRegistrator.ENetworkPrefab.FacilityAirlock);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Test                             , CGameRegistrator.ENetworkPrefab.FacilityTest);
-    }
 
 
     void RegisterAccessories()

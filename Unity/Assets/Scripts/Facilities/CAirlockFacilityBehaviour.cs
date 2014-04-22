@@ -216,8 +216,8 @@ public class CAirlockFacilityBehaviour : CNetworkMonoBehaviour
 
 // Member Fields
 
-    public CExpansionPortBehaviour m_cFacilityExpansionPortBehaviour = null;
-    public CExpansionPortBehaviour m_cHullExpansionPortBehaviour = null;
+    //public CExpansionPortBehaviour m_cFacilityExpansionPortBehaviour = null;
+    //public CExpansionPortBehaviour m_cHullExpansionPortBehaviour = null;
 
     public GameObject m_cDuiInternal = null;
     public GameObject m_cDuiFacility = null;

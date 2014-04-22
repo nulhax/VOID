@@ -36,13 +36,12 @@ public class CShipTiles : MonoBehaviour
 
 	// Member Properties
 	
-
 	
 	// Member Methods
-	public void OnFacilityCreated(CFacilityInterface _Facility)
+	private void Start()
 	{
-		// Export the tiles to the grid
-		//m_ShipGrid.ImportTileInformation(_Facility.FacilityTiles.ToArray());
+
 	}
+
 
 };

@@ -62,7 +62,6 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 	
 	private uint m_LocalExpansionPortIdSelected = 0;
 	private uint m_OtherExpansionPortIdSelected = 0;
-	private CFacilityInterface.EType m_FacilitySelected = CFacilityInterface.EType.INVALID;
 	
 // Member Properties
 	public GameObject FacilityControlConsole 
@@ -76,7 +75,6 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_ServerCreateExpansionStage= _cRegistrar.CreateReliableNetworkVar<int>(OnNetworkVarSync, (int)EExpansionCreatePhase.INVALID);
 		m_ServerLocalExpansionPortIdSelected = _cRegistrar.CreateReliableNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
 		m_ServerOtherExpansionPortIdSelected = _cRegistrar.CreateReliableNetworkVar<uint>(OnNetworkVarSync, uint.MaxValue);
-		m_ServerFacilitySelected= _cRegistrar.CreateReliableNetworkVar<int>(OnNetworkVarSync, (int)CFacilityInterface.EType.INVALID);
 	}
 	
 	
@@ -85,7 +83,6 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 		m_CreateExpansionStage = (EExpansionCreatePhase)m_ServerCreateExpansionStage.Get();
 		m_LocalExpansionPortIdSelected = m_ServerLocalExpansionPortIdSelected.Get();
 		m_OtherExpansionPortIdSelected = m_ServerOtherExpansionPortIdSelected.Get();
-		m_FacilitySelected = (CFacilityInterface.EType)m_ServerFacilitySelected.Get();
     }
 	
 	public void Start()
@@ -110,8 +107,7 @@ public class CFacilityGeneral : CNetworkMonoBehaviour
 			if(m_CreateExpansionStage == EExpansionCreatePhase.CreateExpansion)
 			{
 				//CGameShips.Ship.GetComponent<CShipFacilities>().CreateFacility(m_FacilitySelected, GetComponent<CFacilityInterface>().FacilityId, m_LocalExpansionPortIdSelected, m_OtherExpansionPortIdSelected);
-				
-				m_FacilitySelected = CFacilityInterface.EType.INVALID;
+
 				m_LocalExpansionPortIdSelected = 0;
 				m_OtherExpansionPortIdSelected = 0;
 			}

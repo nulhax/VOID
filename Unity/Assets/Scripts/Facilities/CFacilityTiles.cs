@@ -31,25 +31,20 @@ public class CFacilityTiles : MonoBehaviour
 
 
 	// Member Fields
-	private List<CTile> m_Tiles = new List<CTile>();
+	public List<CTile> m_InteriorTiles = new List<CTile>();
 
 	
 	// Member Properties
-	public List<CTile> FacilityTiles
-	{
-		get { return(m_Tiles); }
-	}
 	
 
 	// Member Methods
 	private void Start()
 	{
-		// Find all of the tiles contained within this facility
-		m_Tiles = new List<CTile>();
+
 	}
-	
-//	void ConfigureFacility()
-//	{
+
+	private void ConfigureFacility()
+	{
 //		if(m_CombinedMesh == null)
 //			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
 //		
@@ -118,5 +113,5 @@ public class CFacilityTiles : MonoBehaviour
 //		// Attach the exterior to the facility to the galaxy ship
 //		CGalaxyShipFacilities galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>();
 //		galaxyShipCollider.AttachNewFacility(extFacility, transform.localPosition, transform.localRotation);
-//	}
+	}
 };

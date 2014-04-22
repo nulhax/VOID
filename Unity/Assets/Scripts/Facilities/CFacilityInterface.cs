@@ -22,7 +22,6 @@ using System;
 
 
 [RequireComponent(typeof(CFacilityAtmosphere))]
-[RequireComponent(typeof(CFacilityExpansion))]
 [RequireComponent(typeof(CFacilityGravity))]
 [RequireComponent(typeof(CFacilityHull))]
 [RequireComponent(typeof(CFacilityLighting))]
@@ -32,20 +31,6 @@ using System;
 public class CFacilityInterface : CNetworkMonoBehaviour
 {
 	// Member Types
-    public enum EType
-	{
-		INVALID = -1,
-		
-		Bridge,
-		HallwayStraight,
-		HallwayCorner,
-		HallwayTSection,
-		HallwayXSection,
-        Airlock,
-        Test,
-
-		MAX,
-	}
 
 
 	// Member Delegates & Events
@@ -56,16 +41,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 
 	// Member Fields
-	public EType m_Type = EType.INVALID;
-
 	private CNetworkVar<uint> m_FacilityId = null;
 	
 	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
 	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
-
-	static Dictionary<EType, List<GameObject>> s_FacilityObjects = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
-	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_RegisteredMiniaturePrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
 	
 	// Member Properties
@@ -85,11 +64,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 				Debug.LogError("Cannot set facility ID value twice!");
 			}
 		}			
-	}
-
-	public EType FacilityType 
-	{
-        get { return (m_Type); }
 	}
 
 	public List<GameObject> FacilityModules
@@ -156,43 +130,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 			EventModuleCreated(_ModuleInterface, this);
     }
 	
-    public static void RegisterPrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
-    {
-        s_RegisteredPrefabs.Add(_eFacilityType, _ePrefab);
-    }
-
-	public static void RegistMiniaturePrefab(EType _eFacilityType, CGameRegistrator.ENetworkPrefab _ePrefab)
-	{
-		s_RegisteredMiniaturePrefabs.Add(_eFacilityType, _ePrefab);
-	}
-
-    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eFacilityType)
-    {
-        if (!s_RegisteredPrefabs.ContainsKey(_eFacilityType))
-        {
-            Debug.LogError(string.Format("Facility type ({0}) has not been registered a prefab", _eFacilityType));
-
-            return (CGameRegistrator.ENetworkPrefab.INVALID);
-        }
-
-        return (s_RegisteredPrefabs[_eFacilityType]);
-    }
-	
-    public static Dictionary<EType, List<GameObject>> GetAllFacilities()
-    {
-        return (s_FacilityObjects);
-    }
-	
-    private void Awake()
-    {
-        if (!s_FacilityObjects.ContainsKey(m_Type))
-        {
-            s_FacilityObjects.Add(m_Type, new List<GameObject>());
-        }
-
-        s_FacilityObjects[m_Type].Add(gameObject);
-    }
-	
 	void Start()
 	{
 	    // Register facility
@@ -204,11 +141,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 			CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(this);
 		};
 	}
-	
-    void OnDestroy()
-    {
-        s_FacilityObjects[m_Type].Remove(gameObject);
-    }
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

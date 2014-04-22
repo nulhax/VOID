@@ -24,24 +24,9 @@ using System;
 public class CGrid : MonoBehaviour 
 {	
 	// Member Types
-	public struct TTileCreateInfo
-	{
-		public TTileCreateInfo(TGridPoint _GridPoint, ETileType[] _TileTypes)
-		{
-			m_GridPoint = _GridPoint;
-			m_TileTypes = new List<ETileType>(_TileTypes);
-		}
-
-		public TGridPoint m_GridPoint;
-		public List<ETileType> m_TileTypes;
-	}
 
 	
 	// Member Delegates & Events
-	public delegate void HandleTileEvent(CTile _Tile);
-	
-	public event HandleTileEvent EventTileCreated;
-	public event HandleTileEvent EventTileReleased;
 
 	
 	// Member Fields
@@ -50,9 +35,6 @@ public class CGrid : MonoBehaviour
 
 	private Transform m_TileContainer = null;
 	private CTileFactory m_TileFactory = null;
-
-	private List<TTileCreateInfo> m_CreateQueue = new List<TTileCreateInfo>();
-	private List<TGridPoint> m_DestroyQueue = new List<TGridPoint>();
 
 	private Dictionary<string, CTile> m_GridBoard = new Dictionary<string, CTile>();
 
@@ -73,6 +55,7 @@ public class CGrid : MonoBehaviour
 		get { return(new List<CTile>(m_GridBoard.Values)); }
 	}
 
+
 	// Member Methods
 	private void Awake() 
 	{
@@ -82,17 +65,7 @@ public class CGrid : MonoBehaviour
 
 	private void Update()
 	{
-		foreach(TTileCreateInfo createInfo in m_CreateQueue)
-		{
-			CreateTile(createInfo);
-		}
-		m_CreateQueue.Clear();
 
-		foreach(TGridPoint point in m_DestroyQueue)
-		{
-			RemoveTile(point);
-		}
-		m_DestroyQueue.Clear();
 	}
 
 	private void CreateGridObjects()
@@ -123,10 +96,10 @@ public class CGrid : MonoBehaviour
 		return(new TGridPoint(gridPos));
 	}
 
-	public Vector3 GetGridPosition(Vector3 worldPosition)
+	public Vector3 GetGridPosition(Vector3 _WorldPosition)
 	{
 		// Convert the world space to grid space
-		Vector3 gridpos = Quaternion.Inverse(transform.rotation) * (worldPosition - transform.position);
+		Vector3 gridpos = Quaternion.Inverse(transform.rotation) * (_WorldPosition - transform.position);
 
 		// Scale the position to tilesize and scale
 		gridpos = gridpos / m_TileSize / transform.localScale.x;
@@ -139,16 +112,10 @@ public class CGrid : MonoBehaviour
 		return gridpos;
 	}
 
-	public Vector3 GetLocalPosition(Vector3 worldPosition)
+	public Vector3 GetLocalPosition(Vector3 _WorldPosition)
 	{
 		// Convert from grid space to local space
-		return(worldPosition * m_TileSize);
-	}
-
-	public Vector3 GetLocalPosition(TGridPoint _GridPoint)
-	{
-		// Convert from grid space to local space
-		return(_GridPoint.ToVector * m_TileSize);
+		return(_WorldPosition * m_TileSize);
 	}
 
 	public CTile GetTile(TGridPoint _GridPoint)
@@ -161,25 +128,11 @@ public class CGrid : MonoBehaviour
 		return(tile);
 	}
 
-	public void AddNewTile(TGridPoint _GridPoint, ETileType[] _TileTypes)
-	{
-		m_CreateQueue.Add(new TTileCreateInfo(_GridPoint, _TileTypes));
-	}
-
-	public void ReleaseTile(TGridPoint _GridPoint)
-	{
-		m_DestroyQueue.Add(_GridPoint);
-	}
-
-	public void ReleaseTile(CTile _Tile)
-	{
-		m_DestroyQueue.Add(_Tile.m_GridPosition);
-	}
-
-	public void ImportTileInformation(CTile[] _Tiles)
+	public List<CTile> ImportTileInformation(List<CTile> _Tiles)
 	{
 		// Keep a list of tiles which werent modified
-		List<CTile> m_UnmodifiedTiles = Tiles;	
+		List<CTile> unmodifiedTiles = Tiles;
+		List<CTile> newTiles = new List<CTile>();
 	
 		// Iterate all the new tiles to use
 		foreach(CTile tile in _Tiles)
@@ -187,65 +140,55 @@ public class CGrid : MonoBehaviour
 			// Get the meta information of the tile
 			int typeIdentifier = tile.m_TileTypeIdentifier;
 
-			// Change the existing tile to match this tile
-			if(m_GridBoard.ContainsKey(tile.m_GridPosition.ToString()))
+			// If the tile exists, remove from the list of unmodified tiles
+			CTile existingTile = GetTile(tile.m_GridPosition);
+			if(existingTile != null)
+				unmodifiedTiles.Remove(existingTile);
+
+			// Get the active tile types
+			List<ETileType> tileTypes = new List<ETileType>();
+			for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 			{
-				CTile existingTile = m_GridBoard[tile.m_GridPosition.ToString()];
-				existingTile.m_TileTypeIdentifier = typeIdentifier;
-
-				// Replace the meta data
-				for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
-				{
-					existingTile.ApplyTileMetaData((ETileType)i, tile.GetCurrentMetaData((ETileType)i));
-				}
-
-				// Remove this tile from ones unmodified
-				m_UnmodifiedTiles.Remove(existingTile);
+				if(tile.GetTileTypeState((ETileType)i))
+					tileTypes.Add((ETileType)i);
 			}
-			else
-			{
-				// Get the active tile types
-				List<ETileType> tileTypes = new List<ETileType>();
-				for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
-				{
-					if(tile.GetTileTypeState((ETileType)i))
-						tileTypes.Add((ETileType)i);
-				}
 
-				AddNewTile(tile.m_GridPosition, tileTypes.ToArray());
-			}
+			// Place the tile and add to the list of new tiles
+			newTiles.Add(PlaceTile(tile.m_GridPosition, tileTypes));
 		}
 
 		// Remove all tiles that dont exist anymore
-		foreach(CTile tile in m_UnmodifiedTiles)
+		foreach(CTile tile in unmodifiedTiles)
 		{
-			ReleaseTile(tile.m_GridPosition);
+			RemoveTile(tile.m_GridPosition);
 		}
+
+		return(newTiles);
 	}
 	
-	private void CreateTile(TTileCreateInfo _TileInfo)
+	public CTile PlaceTile(TGridPoint _Position, List<ETileType> _TileTypes)
 	{
 		CTile tile = null;
 
 		// If it doesnt exist, create a new tile
-		if(!m_GridBoard.ContainsKey(_TileInfo.m_GridPoint.ToString()))
+		if(!m_GridBoard.ContainsKey(_Position.ToString()))
 		{
 			// Create the new tile
 			GameObject newtile = new GameObject("Tile");
 			newtile.transform.parent = m_TileContainer;
 			newtile.transform.localScale = Vector3.one;
 			newtile.transform.localRotation = Quaternion.identity;
-			newtile.transform.localPosition = GetLocalPosition(_TileInfo.m_GridPoint);
+			newtile.transform.localPosition = GetLocalPosition(_Position.ToVector);
 			tile = newtile.AddComponent<CTile>();
 			tile.m_Grid = this;
-			tile.m_GridPosition = _TileInfo.m_GridPoint;
+			tile.m_GridPosition = _Position;
 
 			// Set the active tile types
-			foreach(ETileType type in _TileInfo.m_TileTypes)
+			foreach(ETileType type in _TileTypes)
 			{
 				tile.SetTileTypeState(type, true);
 			}
-			m_GridBoard.Add(_TileInfo.m_GridPoint.ToString(), tile);
+			m_GridBoard.Add(_Position.ToString(), tile);
 
 			// Update neighbours
 			tile.FindNeighbours();
@@ -254,21 +197,23 @@ public class CGrid : MonoBehaviour
 		// If it does exist, modify it to match what the new tile will have
 		else
 		{
-			tile = GetTile(_TileInfo.m_GridPoint);
+			tile = GetTile(_Position);
 
 			// Set the active tile types
 			for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 			{
 				ETileType type = (ETileType)i;
-				tile.SetTileTypeState(type, _TileInfo.m_TileTypes.Contains(type));
+				tile.SetTileTypeState(type, _TileTypes.Contains(type));
 			}
 
 			// Update meta data
 			tile.UpdateTileMetaData();
 		}
+
+		return(tile);
 	}
 
-	private void RemoveTile(TGridPoint _GridPoint)
+	public void RemoveTile(TGridPoint _GridPoint)
 	{
 		if (m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
@@ -282,18 +227,6 @@ public class CGrid : MonoBehaviour
 			// Destroy
 			Destroy(tile.gameObject);
 		}
-	}
-
-	public void TileCreate(CTile _Tile)
-	{
-		if(EventTileCreated != null)
-			EventTileCreated(_Tile);
-	}
-
-	public void TileRelease(CTile _Tile)
-	{
-		if(EventTileReleased != null)
-			EventTileReleased(_Tile);
 	}
 }
 

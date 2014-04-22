@@ -29,8 +29,11 @@ public class CTile : CGridObject
 
 	// Member Delegates & Events
 	public delegate void HandleTileEvent(CTile _Self);
-
-	public event HandleTileEvent EventTileAppearanceChanged;
+	
+	public event HandleTileEvent EventTileInitialised;
+	public event HandleTileEvent EventTilePreRelease;
+	public event HandleTileEvent EventTilePostRelease;
+	public event HandleTileEvent EventTileGeometryChanged;
 	public event HandleTileEvent EventTileMetaChanged;
 
 
@@ -83,9 +86,6 @@ public class CTile : CGridObject
 
 	private void Start()
 	{
-		// Fire Tile Creation Event
-		m_Grid.TileCreate(this);
-
 		// Need to re-create objects to maintain links
 		if(m_Prebuilt)
 		{
@@ -97,9 +97,18 @@ public class CTile : CGridObject
 		}
 
 		UpdateTileMetaData();
+
+		if(EventTileInitialised != null)
+			EventTileInitialised(this);
 	}
 
-	private void Update()
+	private void OnDestroy()
+	{
+		if(EventTilePostRelease != null)
+			EventTilePostRelease(this);
+	}
+
+	private void LateUpdate()
 	{
 		if(m_IsDirty)
 		{
@@ -269,8 +278,8 @@ public class CTile : CGridObject
 		}
 
 		// Fire event on appearance change
-		if(EventTileAppearanceChanged != null)
-			EventTileAppearanceChanged(this);
+		if(EventTileGeometryChanged != null)
+			EventTileGeometryChanged(this);
 	}
 
 	public void ApplyTileMetaData(ETileType _TileType, TTileMeta _Meta)
@@ -340,8 +349,8 @@ public class CTile : CGridObject
 
 	public void Release()
 	{
-		// Fire Tile Release Event
-		m_Grid.TileRelease(this);
+		if(EventTilePreRelease != null)
+            EventTilePreRelease(this);
 
 		// Release tile objects
 		for(int i = 0; i < (int)ETileType.MAX; ++i)

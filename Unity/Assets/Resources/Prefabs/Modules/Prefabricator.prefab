@@ -390,14 +390,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dfb1ec472dfc95742b5cf0f032835be2, type: 3}
+  m_Script: {fileID: 11500000, guid: 40d58463ce6ff0348bdc29a3ac3cb0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GridScale: .0500000007
-  m_GridScaleLimits: {x: .0250000004, y: .100000001}
+  m_GridScale: .100000001
+  m_GridScaleLimits: {x: .0500000007, y: .200000003}
   m_TilesOffset: {x: 0, y: 0, z: 0}
   m_CurrentMode: 0
-  m_CurrentTileInteraction: 0
   m_CurrentPlaneInteraction: 0
   m_CurrentVerticalLayer: 0
   m_CurrentMouseHitPoint: {x: 0, y: 0, z: 0}
