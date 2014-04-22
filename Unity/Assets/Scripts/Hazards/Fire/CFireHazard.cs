@@ -1,9 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CNetworkView))]
-[RequireComponent(typeof(CActorLocator))]
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CFireHazard : CNetworkMonoBehaviour
 {
 	private int audioClipIndex = -1;
@@ -32,9 +29,9 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		gameObject.AddMissingComponent<CNetworkView>();
 		gameObject.AddMissingComponent<CActorLocator>();
 		gameObject.AddMissingComponent<CActorAtmosphericConsumer>();
+		gameObject.AddMissingComponent<CNetworkView>();
 
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate += 25.0f;
 
