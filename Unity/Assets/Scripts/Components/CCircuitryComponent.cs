@@ -65,8 +65,11 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 
 	void StormDamage()
 	{
-		gameObject.GetComponent<CActorHealth>().health -= 0.01f;
-		Debug.Log("Circuit Component Health: " + gameObject.GetComponent<CActorHealth>().health);
+		gameObject.GetComponent<CActorHealth>().health -= 0.4f;
+
+		if (gameObject.GetComponent<CActorHealth> ().health > 1.0f) 
+			Debug.Log ("Circuit Component Health: " + gameObject.GetComponent<CActorHealth> ().health);
+	
 	}
 
 	void Start()
@@ -106,13 +109,11 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 	{
 		
 	}
-	
 
 	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
 	{
 		
 	}
-	
 
 	// Member Fields
 	private List<Transform> m_RepairPositions = new List<Transform>();
