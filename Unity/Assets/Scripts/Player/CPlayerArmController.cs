@@ -45,6 +45,15 @@ public class CPlayerArmController : MonoBehaviour
     const float             m_kfInteractionDistance = 1.5f;
     GameObject              m_heldTool = null;
 
+    Vector3 m_vInitialToolEquipedPosition;
+    Vector3 m_vToolEquipedPosition;
+    Vector3 m_vToolUnequipedPosition;
+
+    float m_fLateralDeviation = 0.3f;
+    float m_fVerticalDeviation = 0.4f;    
+    float m_fLateralRotationThreshold = 60.0f;
+    float m_fVerticalRotationThreshold = 45.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -58,6 +67,11 @@ public class CPlayerArmController : MonoBehaviour
 		m_eHoldState = HoldState.NoTool;
 
 		m_IKController = gameObject.GetComponent<CPlayerIKController>();
+
+        m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
+        m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+        
+        m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
 	}
 
     void Update()
@@ -134,6 +148,78 @@ public class CPlayerArmController : MonoBehaviour
                 }
             }
         }
+
+        if (m_heldTool != null) 
+        {
+            //Get variables from current tool's orientation script
+            CToolOrientation cToolOrientation = m_heldTool.GetComponent<CToolOrientation>();
+            m_vToolEquipedPosition = cToolOrientation.Position;
+            m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+            
+            m_fLateralDeviation = cToolOrientation.LateralDeviation;
+            m_fVerticalDeviation = cToolOrientation.VerticalDeviation;
+            
+            UpdateVerticalToolPositioning ();
+            UpdateLateralToolPositioning ();
+        }
+    }
+
+    void UpdateVerticalToolPositioning()
+    {
+        float cameraPitch = CGameCameras.MainCamera.transform.rotation.eulerAngles.x;
+        if(cameraPitch > 180 && cameraPitch < 360)
+        {
+            cameraPitch -= 360;
+        }
+        float minRotation = -m_fVerticalRotationThreshold;
+        float maxRotation = m_fVerticalRotationThreshold;
+        
+        float scale = maxRotation - minRotation;
+        cameraPitch += scale / 2;
+        float lerpFactor = cameraPitch / (scale);
+        
+        Vector3 maxPositionY = m_vInitialToolEquipedPosition;
+        maxPositionY.y -= m_fVerticalDeviation;
+        
+        Vector3 minPositionY = m_vInitialToolEquipedPosition;
+        minPositionY.y += m_fVerticalDeviation;
+        
+        Vector3 newOffset =  Vector3.Lerp(minPositionY, maxPositionY, lerpFactor);
+        m_vToolEquipedPosition.y = newOffset.y;
+        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
+    }
+    
+    void UpdateLateralToolPositioning()
+    {
+        float cameraYaw = CGameCameras.MainCamera.transform.rotation.eulerAngles.y;
+        float characterYaw = transform.rotation.eulerAngles.y;
+        
+        float offSet = cameraYaw - characterYaw;
+        if(offSet > 180 && offSet < 360)
+        {
+            offSet -= 360;
+        }
+        else if(offSet < -180)
+        {
+            offSet += 360;
+        }
+        
+        float minRotation = -m_fLateralRotationThreshold;
+        float maxRotation = m_fLateralRotationThreshold;
+        
+        float scale = maxRotation - minRotation;
+        offSet += scale / 2;
+        float lerpFactor = offSet / (scale);
+        
+        Vector3 maxPositionX = m_vInitialToolEquipedPosition;
+        maxPositionX.x += m_fLateralDeviation;
+        
+        Vector3 minPositionX = m_vInitialToolEquipedPosition;
+        minPositionX.x -= m_fLateralDeviation;
+        
+        Vector3 newOffset =  Vector3.Lerp(minPositionX, maxPositionX, lerpFactor);
+        m_vToolEquipedPosition.x = newOffset.x;
+        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
     }
 			
 	void OnUse(CPlayerInteractor.EInputInteractionType _eInteractionType, GameObject _cActorInteractable, RaycastHit _cRaycastHit, bool _bDown)
