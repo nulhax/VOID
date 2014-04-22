@@ -72,13 +72,19 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
     void OnComponentDamaged(CComponentInterface _Component)
     {
-        m_bBlocked.Set(true);
+		if (CNetwork.IsServer)
+		{
+			m_bBlocked.Set(true);
+		}
     }
 
 
     void OnComponentRepaired(CComponentInterface _Component)
     {
-        m_bBlocked.Set(false);
+		if (CNetwork.IsServer)
+		{
+			m_bBlocked.Set(false);
+		}
     }
 
 
