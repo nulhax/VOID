@@ -150,7 +150,7 @@ public class CGameRegistrator : MonoBehaviour
 		NOSWShipCrew,
 
 		// Other
-		LaserTurretProjectile	= 1300,
+		LaserProjectile	= 1300,
 		LaserHitParticles,
 
 		MAX
@@ -312,8 +312,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/_Other/Laser Turret Projectile");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/_Other/Laser Hit Particles");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,		"Modules/Turrets/Laser Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Turrets/Laser Hit Particles");
 	}
 
 
@@ -336,7 +336,15 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerRagdoll.Serialize                		, CPlayerRagdoll.Unserialize);
         CNetworkConnection.RegisterSerializationTarget(CTurretCockpitBehaviour.SerializeOutbound    , CTurretCockpitBehaviour.UnserializeInbound);
-        CNetworkConnection.RegisterSerializationTarget(CTurretBehaviour.SerializeOutbound           , CTurretBehaviour.UnserializeInbound);
+
+
+        CNetworkConnection.RegisterSerializationTarget(CTurretBehaviour.SerializeOutbound             , CTurretBehaviour.UnserializeInbound); // Process first so rotations can be updated before turret specialized behaviours process
+        CNetworkConnection.RegisterSerializationTarget(CPulseTurretSmallBehaviour.SerializeOutbound   , CPulseTurretSmallBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPulseTurretMediumBehaviour.SerializeOutbound  , CPulseTurretMediumBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMissileTurretSmallBehaviour.SerializeOutbound , CMissileTurretSmallBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMissileTurretMediumBehaviour.SerializeOutbound, CMissileTurretMediumBehaviour.UnserializeInbound);
+
+
 
         // Player
         CNetworkConnection.RegisterSerializationTarget(CPlayerInteractor.SerializeOutbound          , CPlayerInteractor.UnserializeInbound);

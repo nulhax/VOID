@@ -42,6 +42,12 @@ public class CCircuitryComponent : CNetworkMonoBehaviour
 // Member Methods
 
 
+    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    {
+        // Empty
+    }
+
+
 	void StormDamage()
 	{
 		gameObject.GetComponent<CActorHealth>().health -= 0.4f;

@@ -52,7 +52,7 @@ public class CCockpit : CNetworkMonoBehaviour
 
 	public ulong MountedPlayerId
 	{
-		get { return (m_cMountedPlayerId.Get()); }
+		get { return (m_cMountedPlayerId.Value); }
 	}
 
 

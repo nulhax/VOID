@@ -39,6 +39,14 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     public event CockpitOwnerChangeHandler EventCockpitOwnerChange;
 
 
+    public delegate void PrimaryFireHandler(CTurretBehaviour _cSender);
+    public event PrimaryFireHandler EventPrimaryFire;
+
+
+    public delegate void SecondaryFireHandler(CTurretBehaviour _cSender);
+    public event SecondaryFireHandler EventSecondaryFire;
+
+
 // Member Properties
 
 
@@ -90,6 +98,47 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     }
 
 
+    public Transform[] ProjectileNodes
+    {
+        get
+        {
+            return (m_caProjectileNodes);
+        }
+    }
+
+
+    public float RotationRatioX
+    {
+        get
+        {
+            Vector3 vBarrelLocalEurer = m_cBarrelTrans.transform.localEulerAngles;
+
+            if (vBarrelLocalEurer.x > 180.0f)
+            {
+                vBarrelLocalEurer.x -= 360.0f;
+            }
+
+            if (vBarrelLocalEurer.x < 0.0f)
+            {
+                return (Mathf.Abs(vBarrelLocalEurer.x / m_fBarrelEulerMaxX));
+            }
+            else
+            {
+                return (vBarrelLocalEurer.x / m_fBarrelEulerMinX);
+            }
+        }
+    }
+
+
+    public float RotationRatioY
+    {
+        get
+        {
+            return (m_cBaseTrans.transform.localEulerAngles.y / 360.0f);
+        }
+    }
+
+
 	public bool IsUnderControl
 	{
         get { return (m_cOwnerCockpitViewId.Value != null); }
@@ -130,14 +179,20 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     [ALocalOnly]
     public void RotateX(float _fX)
     {
-        m_cBase.transform.Rotate(_fX, 0.0f, 0.0f);
+        m_cBaseTrans.transform.Rotate(_fX, 0.0f, 0.0f);
     }
 
 
     [ALocalOnly]
     public void RotateY(float _fY)
     {
-        m_cBase.transform.Rotate(0.0f, _fY, 0.0f);
+        m_cBaseTrans.transform.Rotate(0.0f, _fY, 0.0f);
+    }
+
+
+    public Transform GetRandomProjectileNode()
+    {
+        return (m_caProjectileNodes[Random.Range(0, m_caProjectileNodes.Length - 1)]);
     }
 
 
@@ -148,8 +203,8 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
         {
             _cStream.Write(ENetworkAction.UpdateRotation);
             _cStream.Write(s_cLocalOwnedTurretBehaviour.NetworkViewId);
-            _cStream.Write(s_cLocalOwnedTurretBehaviour.m_cBarrel.transform.localEulerAngles.x);
-            _cStream.Write(s_cLocalOwnedTurretBehaviour.m_cBase.transform.localEulerAngles.y);
+            _cStream.Write(s_cLocalOwnedTurretBehaviour.m_cBarrelTrans.transform.localEulerAngles.x);
+            _cStream.Write(s_cLocalOwnedTurretBehaviour.m_cBaseTrans.transform.localEulerAngles.y);
         }
     }
 
@@ -205,7 +260,29 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	
 	void Update()
 	{
-        // Empty
+        if (s_cLocalOwnedTurretBehaviour == this)
+        {
+            m_fPrimaryFireTimer += Time.deltaTime;
+            m_fSecondaryFireTimer = Time.deltaTime;
+
+            if (m_fPrimaryFireTimer > m_fPrimaryFireInterval &&
+                CUserInput.IsInputDown(CUserInput.EInput.Primary))
+            {
+                if (EventPrimaryFire != null)
+                    EventPrimaryFire(this);
+
+                m_fPrimaryFireTimer = 0.0f;
+            }
+
+            if (m_fSecondaryFireTimer > m_fSecondaryFireInterval && 
+                CUserInput.IsInputDown(CUserInput.EInput.Secondary))
+            {
+                if (EventSecondaryFire != null)
+                    EventSecondaryFire(this);
+
+                m_fSecondaryFireTimer = 0.0f;
+            }
+        }
 	}
 
 
@@ -216,10 +293,57 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	}
 
 
+    [ALocalOnly]
+    void OnEventInputAxisChange(CUserInput.EAxis _eAxis, float _fValue)
+    {
+        Vector3 vBaseLocalEuler = m_cBaseTrans.transform.localEulerAngles;
+        Vector3 vBarrelLocalEuler = m_cBarrelTrans.transform.localEulerAngles;
+
+        switch (_eAxis)
+        {
+            case CUserInput.EAxis.MouseX:
+                vBaseLocalEuler.y += _fValue;
+                break;
+
+            case CUserInput.EAxis.MouseY:
+                {
+                    // Make rotations relevant to 180
+                    if (vBarrelLocalEuler.x > 180.0f)
+                        vBarrelLocalEuler.x -= 360.0f;
+
+                    // Bound rotations to their limits
+                    vBarrelLocalEuler.x = Mathf.Clamp(vBarrelLocalEuler.x + _fValue, m_fBarrelEulerMaxX * -1, m_fBarrelEulerMinX * -1);
+                }
+                break;
+
+            default:
+                Debug.LogError("Unknown user input axis: " + _eAxis);
+                break;
+        }
+
+        m_cBaseTrans.transform.localEulerAngles = vBaseLocalEuler;
+        m_cBarrelTrans.transform.localEulerAngles = vBarrelLocalEuler;
+    }
+
+
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
 		if (_cSyncedVar == m_cOwnerCockpitViewId)
 		{
+            HandleOwnerCockpitChange();
+		}
+        else if (_cSyncedVar == m_fRemoteRotationX ||
+                 _cSyncedVar == m_fRemoteRotationY)
+        {
+            HandleRemoteRotationChange();
+        }
+	}
+
+
+    void HandleOwnerCockpitChange()
+    {
+        if (m_cOwnerCockpitViewId.Value != null)
+        {
             // Check I own this turret locally
             if (OwnerCockpitBehaviour.MountedPlayerId == CNetwork.PlayerId)
             {
@@ -229,26 +353,39 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
                 m_cShipCamera.camera.enabled = true;
                 m_cGalaxyCamera.camera.enabled = true;
 
-                m_cOwnerCockpitViewId.Value.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.mainTexture = m_cCameraRenderTexture;
+                m_cOwnerCockpitViewId.Value.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.SetTexture("_UI", m_cCameraRenderTexture);
+
+                CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventInputAxisChange);
+                CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventInputAxisChange);
             }
+        }
 
-            // Check I do not own this turret locally anymore
-            if (s_cLocalOwnedTurretBehaviour == this &&
-                OwnerCockpitBehaviour.MountedPlayerId != CNetwork.PlayerId)
-            {
-                s_cLocalOwnedTurretBehaviour = null;
+        // Check I do not own this turret locally anymore
+        if (s_cLocalOwnedTurretBehaviour == this &&
+            (OwnerCockpitBehaviour == null ||
+             OwnerCockpitBehaviour.MountedPlayerId != CNetwork.PlayerId))
+        {
+            s_cLocalOwnedTurretBehaviour = null;
 
-                // Disable the cameras
-                m_cShipCamera.camera.enabled = false;
-                m_cGalaxyCamera.camera.enabled = false;
+            // Disable the cameras
+            m_cShipCamera.camera.enabled = false;
+            m_cGalaxyCamera.camera.enabled = false;
 
-                m_cOwnerCockpitViewId.Value.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.mainTexture = null;
-            }
+            m_cOwnerCockpitViewId.PreviousValue.GameObject.GetComponent<CTurretCockpitBehaviour>().Screen.renderer.material.SetTexture("_UI", null);
 
-            if (EventCockpitOwnerChange != null)
-                EventCockpitOwnerChange(this, m_cOwnerCockpitViewId.Value);
-		}
-	}
+            CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventInputAxisChange);
+            CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventInputAxisChange);
+        }
+
+        if (EventCockpitOwnerChange != null)
+            EventCockpitOwnerChange(this, m_cOwnerCockpitViewId.Value);
+    }
+
+
+    void HandleRemoteRotationChange()
+    {
+        
+    }
 
 
 // Member Fields
@@ -256,11 +393,14 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
     public Camera m_cShipCamera = null;
     public Camera m_cGalaxyCamera = null;
-    public GameObject m_cBase = null;
-    public GameObject m_cBarrel = null;
+    public Transform m_cBaseTrans = null;
+    public Transform m_cBarrelTrans = null;
+    public Transform[] m_caProjectileNodes = null;
     public float m_fRotationSpeed = 2.0f;
-    public float m_fEulerMinX = -15.0f;
-    public float m_fEulerMaxX =  80.0f;
+    public float m_fBarrelEulerMinX = -15.0f;
+    public float m_fBarrelEulerMaxX =  80.0f;
+    public float m_fPrimaryFireInterval = 0.1f;
+    public float m_fSecondaryFireInterval = 0.1f;
 
 
     CNetworkVar<TNetworkViewId> m_cOwnerCockpitViewId = null;
@@ -268,6 +408,9 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     CNetworkVar<float> m_fRemoteRotationY = null;
 
     RenderTexture m_cCameraRenderTexture = null;
+
+    float m_fPrimaryFireTimer = 0.0f;
+    float m_fSecondaryFireTimer = 0.0f;
 
     static CTurretBehaviour s_cLocalOwnedTurretBehaviour = null;
 

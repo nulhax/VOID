@@ -133,8 +133,6 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		m_cExtractorBeamObject.GetComponentInChildren<Light>().color = new Color(0.5f, 0.5f, 1.0f, 1.0f);
 		m_cFractureLaserObject.SetActive(false);
 		m_cExtractorBeamObject.SetActive(false);
-
-		m_cBarrelObject = GetComponent<CTurretBehaviour>().m_cBarrel;
 	}
 	
 	

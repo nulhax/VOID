@@ -73,7 +73,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		// Ensure the prefab file exists
 		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!! PrefabId({0})({1})", _cPrefabId, (ushort)_cPrefabId);
 			
-		return (m_mPrefabs[(ushort)_cPrefabId]);
+		return ("Prefabs/" + m_mPrefabs[(ushort)_cPrefabId]);
 	}
 
 
@@ -295,7 +295,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     void DestroyLocalObject(TNetworkViewId _cObjectNetworkViewId)
     {
         TObjectInfo tObject = m_mCreatedObjects[_cObjectNetworkViewId];
-
 
 		tObject.cGameObject.GetComponent<CNetworkView>().OnPreDestory();
         GameObject.Destroy(tObject.cGameObject);

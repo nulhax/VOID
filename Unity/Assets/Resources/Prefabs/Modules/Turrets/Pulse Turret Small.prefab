@@ -123,6 +123,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100014
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400014}
+  m_Layer: 0
+  m_Name: Projectile_Node1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -170,6 +185,7 @@ Transform:
   - {fileID: 400012}
   - {fileID: 400000}
   - {fileID: 400004}
+  - {fileID: 400014}
   m_Father: {fileID: 400008}
 --- !u!4 &400008
 Transform:
@@ -203,6 +219,17 @@ Transform:
   m_GameObject: {fileID: 100012}
   m_LocalRotation: {x: .000872999721, y: 0, z: 0, w: -.999999642}
   m_LocalPosition: {x: 0, y: .406766772, z: -.437387526}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400006}
+--- !u!4 &400014
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100014}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: .996878028}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400006}
@@ -415,11 +442,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_cShipCamera: {fileID: 2000000}
   m_cGalaxyCamera: {fileID: 2000002}
-  m_cBase: {fileID: 100008}
-  m_cBarrel: {fileID: 100006}
+  m_cBaseTrans: {fileID: 400008}
+  m_cBarrelTrans: {fileID: 400006}
+  m_caProjectileNodes:
+  - {fileID: 400014}
   m_fRotationSpeed: 2
-  m_fEulerMinX: -15
-  m_fEulerMaxX: 80
+  m_fBarrelEulerMinX: -15
+  m_fBarrelEulerMaxX: 80
+  m_fPrimaryFireInterval: .100000001
+  m_fSecondaryFireInterval: .100000001
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -480,9 +511,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 100002}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 680a7ded07efe0b48a9c7c982ab61066, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c31368f730616941b2429c07a880838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cLaserProjectile: {fileID: 100000, guid: 2a756109c8788a644b546e887c0020aa, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

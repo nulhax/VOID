@@ -140,7 +140,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			    Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLaserNodes[m_iLaserNodeIndex].transform.position);
 			    Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLaserNodes[m_iLaserNodeIndex].transform.rotation);
 			
-			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
+			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserProjectile);
 			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
 			    cProjectile.GetComponent<CNetworkView>().SetEuler(projRot.eulerAngles);
 			
