@@ -76,7 +76,10 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 		if (!m_bDestroyed && 
             CNetwork.IsServer)
 		{
-            InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
+            if (_cCollider.gameObject.GetComponent<CEnemyShip>() != null)
+            {
+                InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
+            }
 		}
 	}
 

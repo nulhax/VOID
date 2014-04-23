@@ -13,7 +13,6 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CNetworkView))]
 public class CEnemyShip : CNetworkMonoBehaviour
 {
 	public enum EState
@@ -151,6 +150,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Awake()
 	{
+		gameObject.AddMissingComponent<CNetworkView>();
+
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
 		if (viewSphereRadius < maxAcceptableDistanceToTarget) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
