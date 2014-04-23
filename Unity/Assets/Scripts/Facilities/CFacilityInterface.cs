@@ -27,6 +27,8 @@ using System;
 [RequireComponent(typeof(CFacilityLighting))]
 [RequireComponent(typeof(CFacilityOnboardActors))]
 [RequireComponent(typeof(CFacilityPower))]
+[RequireComponent(typeof(CFacilityTiles))]
+[RequireComponent(typeof(CFacilityWarningSystem))]
 [RequireComponent(typeof(CNetworkView))]
 public class CFacilityInterface : CNetworkMonoBehaviour
 {

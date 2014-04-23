@@ -28,148 +28,77 @@ public class CFacilityPower : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 
-	public delegate void FacilityPowerToggleHandler(GameObject _Sender);
 
-	public event FacilityPowerToggleHandler EventFacilityPowerActivated;
-	public event FacilityPowerToggleHandler EventFacilityPowerDeactivated;
-
-
-// Member Fields
-	
-	public float m_SelfConsumptionRate = 0.0f;
-
-	private CNetworkVar<float> m_PowerConsumptionRate = null;
-	private CNetworkVar<bool> m_PowerActive = null;
-
-	private List<GameObject> m_PowerConsumers = new List<GameObject>();
+	public delegate void PowerActiveChangeHandler(GameObject _cFacility, bool _bActive);
+	public event PowerActiveChangeHandler EventFacilityPowerActiveChange;
 
 
 // Member Properties
 	
+
     public float PowerConsumptionRate
     {
-        get { return (m_PowerConsumptionRate.Get()); }
-
-		[AServerOnly]
-		set { m_PowerConsumptionRate.Set(value); }
+        get { return (m_fConsumptionRate.Get()); }
     }
 
-	public List<GameObject> PowerConsumers
-	{
-		get { return (m_PowerConsumers); }
-	}
 
 	public bool IsPowerActive
 	{
-		get { return (m_PowerActive.Get()); }
-		
-		[AServerOnly]
-		set { m_PowerActive.Set(value); }
+		get { return (m_bActive.Get()); }
 	}
 
 
 // Member Functions
 	
+
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_PowerConsumptionRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_PowerActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+		m_fConsumptionRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_bActive          = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}
+
+
+    [AServerOnly]
+    public void SetPowerActive(bool _bEnabled)
+    {
+        m_bActive.Set(_bEnabled);
+    }
+
+
+    [AServerOnly]
+    public void ChangeConsumptionRate(float _fAmount)
+    {
+        m_fConsumptionRate.Value += _fAmount;
+    }
+
+
+	void Start()
+	{
+        // Empty
+	}
+
 	
-	void OnNetworkVarSync(INetworkVar _VarInstance)
+	void Update()
 	{
-		if(_VarInstance == m_PowerActive)
-		{
-			if(IsPowerActive)
-			{
-				if(EventFacilityPowerActivated != null) 
-					EventFacilityPowerActivated(gameObject);
-			}
-			else
-			{
-				if(EventFacilityPowerDeactivated != null) 
-					EventFacilityPowerDeactivated(gameObject);
-			}
-		}
+        // Empty
 	}
 
-	public void Start()
-	{
-		if(CNetwork.IsServer)
-			ActivatePower();
-	}
-	
-	public void Update()
-	{
-		if(CNetwork.IsServer)
-		{
-			// Remove consumers that are now null
-			m_PowerConsumers.RemoveAll(item => item == null);
 
-			// Calculate current power consumption
-			UpdateConsumptionRate();
-		}
-	}
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_bActive)
+        {
+            if (EventFacilityPowerActiveChange != null) EventFacilityPowerActiveChange(gameObject, m_bActive.Value);
+        }
+    }
 
-	[AServerOnly]
-	public void RegisterPowerConsumer(GameObject _Consumer)
-	{
-		if(!m_PowerConsumers.Contains(_Consumer))
-		{
-			m_PowerConsumers.Add(_Consumer);
-		}
-	}
-	
-	[AServerOnly]
-	public void UnregisterPowerConsumer(GameObject _Consumer)
-	{
-		if(m_PowerConsumers.Contains(_Consumer))
-		{
-			m_PowerConsumers.Remove(_Consumer);
-		}
-	}
 
-	[AServerOnly]
-	private void UpdateConsumptionRate()
-	{
-		// Calulate the combined consumption rate within the facility
-		float consumptionRate = 0.0f;
-		foreach(GameObject consumer in m_PowerConsumers)
-		{
-			CModulePowerConsumption mpc = consumer.GetComponent<CModulePowerConsumption>();
-			
-			if(mpc.IsConsumingPower)
-				consumptionRate += mpc.PowerConsumptionRate;
-		}
-		
-		// Set the consumption rate
-		PowerConsumptionRate = consumptionRate + m_SelfConsumptionRate;
-	}
+// Member Fields
 
-	[AServerOnly]
-	public void ActivatePower()
-	{
-		m_PowerActive.Set(true);
-	}
 
-	[AServerOnly]
-	public void DeactivatePower()
-	{
-		m_PowerActive.Set(false);
-	}
+    CNetworkVar<float> m_fConsumptionRate = null;
+    CNetworkVar<bool>  m_bActive          = null;
 
-	[AServerOnly]
-	public void InsufficienttPower()
-	{
-		// There was inssuficent power, let the consumers know
-		foreach(GameObject consumer in m_PowerConsumers)
-		{
-			CModulePowerConsumption mpc = consumer.GetComponent<CModulePowerConsumption>();
-			
-			if(mpc.IsConsumingPower)
-				mpc.InsufficientPower();
-		}
 
-		DeactivatePower();
-	}
+
 };

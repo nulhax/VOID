@@ -17,6 +17,7 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CActorLocator))]
 public class CActorBoardable : CNetworkMonoBehaviour 
 {
 	
@@ -41,18 +42,6 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	
 	public event BoardingHandler EventBoard;
 	public event BoardingHandler EventDisembark;
-	
-
-// Member Fields
-
-
-	public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
-	public bool m_bCanBoard = true;
-	public bool m_bCanDisembark = true;
-
-	private int m_iOriginalLayer = 0;
-
-	private CNetworkVar<EBoardingState> m_eBoardingState = null;
 
 	
 // Member Properties	
@@ -73,6 +62,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	}
 
 
+    [AServerOnly]
     public void BoardActor()
     {
         // Check if this actor isnt a child of another boardable actor
@@ -100,16 +90,14 @@ public class CActorBoardable : CNetworkMonoBehaviour
     }
 
 
+    [AServerOnly]
     public void DisembarkActor()
     {
         // Check if this actor isnt a child of another boardable actor
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
-            if (CNetwork.IsServer)
-            {
-                // Set the boarding state
-                m_eBoardingState.Set(EBoardingState.Offboard);
-            }
+            // Set the boarding state
+            m_eBoardingState.Set(EBoardingState.Offboard);
 
             // Transfer the actor to galaxy ship space
             CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
@@ -141,7 +129,8 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	void Start()
 	{	
 		// Set the boarding state if it is still invalid
-		if(CNetwork.IsServer && BoardingState == EBoardingState.INVALID)
+		if (CNetwork.IsServer && 
+            BoardingState == EBoardingState.INVALID)
 		{
 			m_eBoardingState.Set(m_InitialBoardingState);
 		}
@@ -193,6 +182,20 @@ public class CActorBoardable : CNetworkMonoBehaviour
             }
         }
     }
+
+
+// Member Fields
+
+
+    public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
+    public bool m_bCanBoard = true;
+    public bool m_bCanDisembark = true;
+
+
+    CNetworkVar<EBoardingState> m_eBoardingState = null;
+
+
+    int m_iOriginalLayer = 0;
 
 
 }

@@ -207,19 +207,27 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	{
 		RaycastHit hit;
 
-		if(_Collider.gameObject.tag == "Asteroid")
-		{
+//		if(_Collider.gameObject.tag == "Asteroid")
+//		{
 
 		// Get the direction of the asteroid from the origin
-			Vector3 dir = (AsteroidPos - transform.position).normalized;
+		Vector3 dir = (AsteroidPos - transform.position).normalized;
 
-			if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
-			{
-				Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+		if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
+		{
+			Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
 
+			GameObject shieldCollision = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Ship/Shield Collision"));
 
-			}
+			shieldCollision.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(hit.point);
+			shieldCollision.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(dir));
+			shieldCollision.transform.parent = CGameShips.Ship.transform;
+
+			Destroy(shieldCollision, 2.0f);
 		}
+		//}
+
+		Debug.Log ("Spaned Shield Collision at " + hit.point + "Galaxy Ship Pos: " + transform.position);
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)

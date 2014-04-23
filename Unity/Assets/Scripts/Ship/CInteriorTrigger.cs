@@ -24,32 +24,32 @@ using System;
 public class CInteriorTrigger : MonoBehaviour 
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
-
-		
-// Member Fields
+	// Member Delegates & Events
 	
-    
-    CFacilityOnboardActors m_cFacilityOnboardActors = null;
+
+	// Member Fields
+	private CFacilityOnboardActors m_cFacilityOnboardActors = null;
 
 	
-// Member Properties
-	
-	
-// Member Methods
+	// Member Properties
 
-
-	void Awake()
+	
+	// Member Methods
+	public void SetParentFacility(GameObject _Facility)
 	{
-		m_cFacilityOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
+		m_cFacilityOnboardActors = _Facility.GetComponent<CFacilityOnboardActors>();
 	}
 
 
+    [AServerOnly]
 	void OnTriggerEnter(Collider _cOther)
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		Rigidbody cRigidbody = _cOther.rigidbody;
 
         // Find rigid body in parnet
@@ -66,8 +66,12 @@ public class CInteriorTrigger : MonoBehaviour
 	}
 
 
+    [AServerOnly]
 	void OnTriggerExit(Collider _cOther)
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		Rigidbody cRigidBody = _cOther.rigidbody;
 
         // Find rigid body in parent
@@ -82,6 +86,4 @@ public class CInteriorTrigger : MonoBehaviour
 			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(cRigidBody.gameObject);
 		}
 	}
-
-
 }

@@ -31,20 +31,39 @@ public class CFacilityTiles : MonoBehaviour
 
 
 	// Member Fields
-	public List<CTile> m_InteriorTiles = new List<CTile>();
+	private List<CTile> m_InteriorTiles = new List<CTile>();
 
 	
 	// Member Properties
-	
+	public List<CTile> InteriorTiles
+	{
+		get { return(m_InteriorTiles); }
+		set { m_InteriorTiles = value; }
+	}
 
 	// Member Methods
 	private void Start()
 	{
-
+		// Configure the interior tiles to have volume and triggers
+		ConfigureFacilityTiles();
 	}
 
-	private void ConfigureFacility()
+	private void ConfigureFacilityTiles()
 	{
+		// Add an interior trigger to all interior tiles
+		foreach(CTile tile in m_InteriorTiles)
+		{
+			// Add a trigger box collider
+			BoxCollider boxCollider = tile.gameObject.AddComponent<BoxCollider>();
+			boxCollider.center = new Vector3(0.0f, 2.0f, 0.0f);
+			boxCollider.size = new Vector3(4.0f, 4.0f, 4.0f);
+			boxCollider.isTrigger = true;
+
+			// Add the interior trigger to this collider
+			CInteriorTrigger interiorTrigger = tile.gameObject.AddComponent<CInteriorTrigger>();
+			interiorTrigger.SetParentFacility(gameObject);
+		}
+
 //		if(m_CombinedMesh == null)
 //			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
 //		

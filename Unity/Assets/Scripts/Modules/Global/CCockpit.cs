@@ -111,7 +111,7 @@ public class CCockpit : CNetworkMonoBehaviour
 			if (m_cMountedPlayerId.Value == CNetwork.PlayerId)
 			{
 				// Disable inputs
-				CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().DisableInput(this);
+				CGamePlayers.SelfActor.GetComponent<CPlayerMotor>().DisableInput(this);
 				CGamePlayers.SelfActor.GetComponent<CPlayerHead>().DisableInput(this);
 
 				// Remember the entering head rotations, set the rotation of the head to that of the seat
@@ -125,7 +125,7 @@ public class CCockpit : CNetworkMonoBehaviour
 				if (CGamePlayers.SelfActor != null)
 				{
 					// Reenable intputs
-					CGamePlayers.SelfActor.GetComponent<CPlayerGroundMotor>().EnableInput(this);
+					CGamePlayers.SelfActor.GetComponent<CPlayerMotor>().EnableInput(this);
 					CGamePlayers.SelfActor.GetComponent<CPlayerHead>().EnableInput(this);
 
 					// Use old head rotation

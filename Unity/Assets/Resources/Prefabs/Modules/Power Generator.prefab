@@ -17,6 +17,8 @@ GameObject:
   - 82: {fileID: 8200004}
   - 114: {fileID: 11400064}
   - 114: {fileID: 11400066}
+  - 114: {fileID: 11400052}
+  - 114: {fileID: 11400050}
   - 114: {fileID: 11400048}
   m_Layer: 0
   m_Name: Power Generator
@@ -216,7 +218,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &100024
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -388,7 +390,6 @@ Transform:
   - {fileID: 400006}
   - {fileID: 400020}
   - {fileID: 400046}
-  - {fileID: 400024}
   m_Father: {fileID: 0}
 --- !u!4 &400004
 Transform:
@@ -511,12 +512,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100024}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
   m_LocalPosition: {x: 0, y: 1.25, z: 0}
-  m_LocalScale: {x: .5, y: .5, z: .5}
+  m_LocalScale: {x: .499999881, y: .5, z: .499999881}
   m_Children:
   - {fileID: 400022}
-  m_Father: {fileID: 400002}
+  m_Father: {fileID: 400046}
 --- !u!4 &400030
 Transform:
   m_ObjectHideFlags: 1
@@ -624,6 +625,7 @@ Transform:
   - {fileID: 400042}
   - {fileID: 400040}
   - {fileID: 400038}
+  - {fileID: 400024}
   m_Father: {fileID: 400002}
 --- !u!23 &2300000
 Renderer:
@@ -1283,12 +1285,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModuleType: 6
-  m_ModuleCategory: 6
-  m_ModuleSize: 1
-  m_Internal: 1
-  m_Buildable: 1
+  m_cModel: {fileID: 100046}
+  m_eModuleType: 300
+  m_eModuleCategory: 300
+  m_eModuleSize: 1
   m_fNanitesCost: 20
+  m_bInternal: 1
+  m_bBuildable: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1614,6 +1617,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400050
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 25
+  m_ConsumingAtmosphere: 0
+--- !u!114 &11400052
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400058
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1703,7 +1730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PrecipitativeMesh: {fileID: 100002, guid: d9d12ce5b2206f0458081489aa566143, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100002, guid: d9d12ce5b2206f0458081489aa566143, type: 2}
 --- !u!114 &11400066
 MonoBehaviour:
   m_ObjectHideFlags: 1

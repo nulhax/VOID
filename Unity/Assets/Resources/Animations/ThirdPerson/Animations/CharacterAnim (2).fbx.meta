@@ -1,0 +1,191 @@
+fileFormatVersion: 2
+guid: 9d214666babfe4c4ea92f019131c90e7
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: nurbsCircle1
+    100004: nurbsCircle2
+    100006: nurbsCircle3
+    100008: Space_Dude_Rigged:Hips
+    100010: Space_Dude_Rigged:Left_Index01
+    100012: Space_Dude_Rigged:Left_Index02
+    100014: Space_Dude_Rigged:Left_Index03
+    100016: Space_Dude_Rigged:Left_Index04
+    100018: Space_Dude_Rigged:Left_Middle01
+    100020: Space_Dude_Rigged:Left_Middle02
+    100022: Space_Dude_Rigged:Left_Middle03
+    100024: Space_Dude_Rigged:Left_Middle04
+    100026: Space_Dude_Rigged:Left_Ring01
+    100028: Space_Dude_Rigged:Left_Ring02
+    100030: Space_Dude_Rigged:Left_Ring02 1
+    100032: Space_Dude_Rigged:Left_Ring03
+    100034: Space_Dude_Rigged:Left_Ring03 1
+    100036: Space_Dude_Rigged:Left_Ring04
+    100038: Space_Dude_Rigged:Left_Ring04 1
+    100040: Space_Dude_Rigged:Left_Ring05
+    100042: Space_Dude_Rigged:Left_Thumb01
+    100044: Space_Dude_Rigged:Left_Thumb02
+    100046: Space_Dude_Rigged:Left_Thumb03
+    100048: Space_Dude_Rigged:LeftFoot
+    100050: Space_Dude_Rigged:LeftFootToeBase_End
+    100052: Space_Dude_Rigged:LeftLeg
+    100054: Space_Dude_Rigged:LeftShoulder
+    100056: Space_Dude_Rigged:LeftToeBase
+    100058: Space_Dude_Rigged:LeftUpLeg
+    100060: Space_Dude_Rigged:Neck
+    100062: Space_Dude_Rigged:pasted__LeftArm
+    100064: Space_Dude_Rigged:pasted__LeftForeArm
+    100066: Space_Dude_Rigged:pasted__LeftHand
+    100068: Space_Dude_Rigged:pasted__RightForeArm
+    100070: Space_Dude_Rigged:pasted__RightHand
+    100072: Space_Dude_Rigged:Right_Index01
+    100074: Space_Dude_Rigged:Right_Index02
+    100076: Space_Dude_Rigged:Right_Index03
+    100078: Space_Dude_Rigged:Right_Index04
+    100080: Space_Dude_Rigged:Right_Middle01
+    100082: Space_Dude_Rigged:Right_Middle02
+    100084: Space_Dude_Rigged:Right_Middle03
+    100086: Space_Dude_Rigged:Right_Middle04
+    100088: Space_Dude_Rigged:Right_Ring01
+    100090: Space_Dude_Rigged:Right_Ring02
+    100092: Space_Dude_Rigged:Right_Ring02 1
+    100094: Space_Dude_Rigged:Right_Ring03
+    100096: Space_Dude_Rigged:Right_Ring03 1
+    100098: Space_Dude_Rigged:Right_Ring04
+    100100: Space_Dude_Rigged:Right_Ring04 1
+    100102: Space_Dude_Rigged:Right_Ring05
+    100104: Space_Dude_Rigged:Right_Thumb01
+    100106: Space_Dude_Rigged:Right_Thumb02
+    100108: Space_Dude_Rigged:Right_Thumb03
+    100110: Space_Dude_Rigged:RightArm
+    100112: Space_Dude_Rigged:RightFoot
+    100114: Space_Dude_Rigged:RightFootToeBase_End
+    100116: Space_Dude_Rigged:RightLeg
+    100118: Space_Dude_Rigged:RightShoulder
+    100120: Space_Dude_Rigged:RightToeBase
+    100122: Space_Dude_Rigged:RightUpLeg
+    100124: Space_Dude_Rigged:Skeleton
+    100126: Space_Dude_Rigged:Spine
+    100128: Space_Dude_Rigged:Spine1
+    100130: Space_Dude_Rigged:Spine2
+    400000: //RootNode
+    400002: nurbsCircle1
+    400004: nurbsCircle2
+    400006: nurbsCircle3
+    400008: Space_Dude_Rigged:Hips
+    400010: Space_Dude_Rigged:Left_Index01
+    400012: Space_Dude_Rigged:Left_Index02
+    400014: Space_Dude_Rigged:Left_Index03
+    400016: Space_Dude_Rigged:Left_Index04
+    400018: Space_Dude_Rigged:Left_Middle01
+    400020: Space_Dude_Rigged:Left_Middle02
+    400022: Space_Dude_Rigged:Left_Middle03
+    400024: Space_Dude_Rigged:Left_Middle04
+    400026: Space_Dude_Rigged:Left_Ring01
+    400028: Space_Dude_Rigged:Left_Ring02
+    400030: Space_Dude_Rigged:Left_Ring02 1
+    400032: Space_Dude_Rigged:Left_Ring03
+    400034: Space_Dude_Rigged:Left_Ring03 1
+    400036: Space_Dude_Rigged:Left_Ring04
+    400038: Space_Dude_Rigged:Left_Ring04 1
+    400040: Space_Dude_Rigged:Left_Ring05
+    400042: Space_Dude_Rigged:Left_Thumb01
+    400044: Space_Dude_Rigged:Left_Thumb02
+    400046: Space_Dude_Rigged:Left_Thumb03
+    400048: Space_Dude_Rigged:LeftFoot
+    400050: Space_Dude_Rigged:LeftFootToeBase_End
+    400052: Space_Dude_Rigged:LeftLeg
+    400054: Space_Dude_Rigged:LeftShoulder
+    400056: Space_Dude_Rigged:LeftToeBase
+    400058: Space_Dude_Rigged:LeftUpLeg
+    400060: Space_Dude_Rigged:Neck
+    400062: Space_Dude_Rigged:pasted__LeftArm
+    400064: Space_Dude_Rigged:pasted__LeftForeArm
+    400066: Space_Dude_Rigged:pasted__LeftHand
+    400068: Space_Dude_Rigged:pasted__RightForeArm
+    400070: Space_Dude_Rigged:pasted__RightHand
+    400072: Space_Dude_Rigged:Right_Index01
+    400074: Space_Dude_Rigged:Right_Index02
+    400076: Space_Dude_Rigged:Right_Index03
+    400078: Space_Dude_Rigged:Right_Index04
+    400080: Space_Dude_Rigged:Right_Middle01
+    400082: Space_Dude_Rigged:Right_Middle02
+    400084: Space_Dude_Rigged:Right_Middle03
+    400086: Space_Dude_Rigged:Right_Middle04
+    400088: Space_Dude_Rigged:Right_Ring01
+    400090: Space_Dude_Rigged:Right_Ring02
+    400092: Space_Dude_Rigged:Right_Ring02 1
+    400094: Space_Dude_Rigged:Right_Ring03
+    400096: Space_Dude_Rigged:Right_Ring03 1
+    400098: Space_Dude_Rigged:Right_Ring04
+    400100: Space_Dude_Rigged:Right_Ring04 1
+    400102: Space_Dude_Rigged:Right_Ring05
+    400104: Space_Dude_Rigged:Right_Thumb01
+    400106: Space_Dude_Rigged:Right_Thumb02
+    400108: Space_Dude_Rigged:Right_Thumb03
+    400110: Space_Dude_Rigged:RightArm
+    400112: Space_Dude_Rigged:RightFoot
+    400114: Space_Dude_Rigged:RightFootToeBase_End
+    400116: Space_Dude_Rigged:RightLeg
+    400118: Space_Dude_Rigged:RightShoulder
+    400120: Space_Dude_Rigged:RightToeBase
+    400122: Space_Dude_Rigged:RightUpLeg
+    400124: Space_Dude_Rigged:Skeleton
+    400126: Space_Dude_Rigged:Spine
+    400128: Space_Dude_Rigged:Spine1
+    400130: Space_Dude_Rigged:Spine2
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

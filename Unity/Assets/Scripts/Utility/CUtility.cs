@@ -239,34 +239,20 @@ public class CUtility
 
 	public static float GetBoundingRadius(GameObject gameObject)
 	{
-		float result = 1.0f;
+		float result = 0.0f;
+
+		foreach (Transform child in gameObject.transform)
+			result = Mathf.Max(result, (child.position - gameObject.transform.position).magnitude + GetBoundingRadius(child.gameObject));
 
 		// Depending on the type of model; it may use a collider, mesh renderer, animator, or something else.
 		Collider collider = gameObject.GetComponent<Collider>();
 		if (collider)
-			result = collider.bounds.extents.magnitude;
+			result = Mathf.Max(result, collider.bounds.extents.magnitude);
 		else
 		{
 			Renderer renderer = gameObject.GetComponent<Renderer>();
 			if (renderer)
-				result = renderer.bounds.extents.magnitude;
-			else
-			{
-				bool gotSomethingFromAnimator = false;
-				Animator anim = gameObject.GetComponent<Animator>();
-				if (anim)
-				{
-					gotSomethingFromAnimator = anim.renderer || anim.collider || anim.rigidbody;
-					if (anim.renderer) result = anim.renderer.bounds.extents.magnitude;
-					else if (anim.collider) result = anim.collider.bounds.extents.magnitude;
-					else if (anim.rigidbody) result = anim.rigidbody.collider.bounds.extents.magnitude;
-				}
-
-				if (!gotSomethingFromAnimator)
-				{
-
-				}
-			}
+				result = Mathf.Max(result, renderer.bounds.extents.magnitude);
 		}
 
 		return result;

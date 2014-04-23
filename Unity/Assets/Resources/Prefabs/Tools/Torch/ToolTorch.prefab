@@ -12,8 +12,6 @@ GameObject:
   - 108: {fileID: 10800000}
   - 136: {fileID: 13600000}
   - 82: {fileID: 8200000}
-  - 114: {fileID: 11400004}
-  - 114: {fileID: 11400006}
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400000}
@@ -22,6 +20,8 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400016}
+  - 114: {fileID: 11400018}
+  - 114: {fileID: 11400004}
   m_Layer: 0
   m_Name: ToolTorch
   m_TagString: Untagged
@@ -71,7 +71,7 @@ Transform:
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: -4.37113883e-08}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .100000001, y: .100000001, z: .200000003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400002}
   m_Father: {fileID: 0}
@@ -294,8 +294,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_CanBoard: 1
-  m_CanDisembark: 1
+  m_bCanBoard: 1
+  m_bCanDisembark: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -304,57 +304,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a50861cb3ea8044fa38e15bc1239585, type: 3}
+  m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: TorchClick
-  m_fPitchMin: .5
-  m_fpitchMax: .699999988
-  m_fVolumeMin: .200000003
-  m_fVolumeMax: .5
-  m_fFadeInTimeList:
-  - 0
-  - 0
-  - 0
-  m_fFadeOutTimeList:
-  - 0
-  - 0
-  - 0
-  m_arAudioClipPool:
-  - {fileID: 8300000, guid: 9133ff53c01cb03429725c9b45baf008, type: 3}
-  - {fileID: 8300000, guid: 37b30d1567c5e5b49bc9460df1f4d516, type: 3}
-  - {fileID: 8300000, guid: 31758246f10264542b117fb9de3ac140, type: 3}
-  m_barLoopList: 000000
-  m_bContinuousEvent: 0
-  m_fPlayFrequency: 0
-  m_eSoundType: 0
---- !u!114 &11400006
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a50861cb3ea8044fa38e15bc1239585, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_strCueName: TorchToggle
-  m_fPitchMin: 1
-  m_fpitchMax: 1
-  m_fVolumeMin: .200000003
-  m_fVolumeMax: .5
-  m_fFadeInTimeList:
-  - 0
-  - 0
-  m_fFadeOutTimeList: []
-  m_arAudioClipPool:
-  - {fileID: 8300000, guid: f58da1afd224f70429aece605ef5b671, type: 3}
-  - {fileID: 8300000, guid: f58da1afd224f70429aece605ef5b671, type: 3}
-  m_barLoopList: 0000
-  m_bContinuousEvent: 0
-  m_fPlayFrequency: 0
-  m_eSoundType: 0
+  m_fLocalOffsetX: .349999994
+  m_fLocalOffsetY: 1.35000002
+  m_fLocalOffsetZ: .5
+  m_fVerticalDeviation: .5
+  m_fLateralDeviation: .5
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -366,7 +323,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5918be714a412bd4188369219a5c127d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_bSimulateClientGravity: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -402,6 +358,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_eToolType: 3
   m_eToolCategory: 1
+  m_RightHandPos: {fileID: 0}
+  m_LeftHandPos: {fileID: 0}
 --- !u!114 &11400016
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -411,6 +369,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b4938e30ce4c4bb47854a7b52400c41b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400018
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!136 &13600000

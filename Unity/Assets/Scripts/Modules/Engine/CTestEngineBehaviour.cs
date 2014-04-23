@@ -115,7 +115,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 
 	private void Update()
 	{
-		if(gameObject.GetComponent<CModulePrecipitation>().IsModuleBuilt)
+		if(gameObject.GetComponent<CModulePrecipitation>().IsCompleted)
 			UpdateAnimation();
 	}
 
@@ -142,6 +142,7 @@ public class CTestEngineBehaviour: MonoBehaviour
 		axis = new Vector3(Mathf.Sin(m_VarianceTimer1), -Mathf.Cos(m_VarianceTimer1), 0.0f).normalized;
 		m_InnerRing.transform.Rotate(axis, angle);
 
+        if (gameObject.GetComponentInChildren<Light>() != null)
         gameObject.GetComponentInChildren<Light>().intensity = (currentSpeed / 15.0f);
 	}
 }

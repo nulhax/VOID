@@ -34,22 +34,25 @@ public class DynamicEventRogueAsteroid
     {
         mCooldown += mCooldownCostPerUse;	// Increase cooldown by a fixed amount with each use.
 
-        CGalaxy.SCellPos parentAbsoluteCell = CGalaxy.instance.RelativePointToAbsoluteCell(CGameShips.GalaxyShip.transform.position);
-        uint uiTriesToPlaceRogueAsteroid = 5;
+		CGalaxy galaxy = CGalaxy.instance;
+        uint uiTriesToPlace = 5;
         bool created;
         do
         {
-            Vector3 asteroidPosition = (CGameShips.GalaxyShip.transform.position - CGalaxy.instance.RelativeCellToRelativePoint(parentAbsoluteCell - CGalaxy.instance.centreCell)) + Random.onUnitSphere * CGalaxy.instance.cellRadius/*Fog end*/;
+			Vector3 approachVectorNorm = Random.onUnitSphere;
+			Vector3 asteroidPosition = CGameShips.GalaxyShip.transform.position + approachVectorNorm * galaxy.backdrop.fogEnd;
+			CGalaxy.SCellPos absoluteParentCell = galaxy.RelativePointToAbsoluteCell(asteroidPosition);
+			Vector3 asteroidPositionRelativeToParent = asteroidPosition - galaxy.AbsoluteCellToRelativePoint(absoluteParentCell);
             created = CGalaxy.instance.LoadGubbin(new CGalaxy.CGubbinMeta(
                 (CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),   // PrefabID
-                parentAbsoluteCell, // Parent cell.
-                asteroidPosition,   // Position relative to parent.
+				absoluteParentCell, // Parent cell.
+				asteroidPositionRelativeToParent,	// Position relative to parent.
                 Random.rotationUniform, // Rotation.
                 Vector3.one,
-                (CGameShips.GalaxyShip.transform.position - asteroidPosition).normalized * 50.0f,  // Linear velocity.
+				approachVectorNorm * -50.0f,  // Linear velocity.
                 Random.onUnitSphere * 0.1f,    // Angular velocity.
                 true,   // Has networked entity script.
                 true)); // Has rigid body.
-        } while (created != true && --uiTriesToPlaceRogueAsteroid > 0);
+        } while (created != true && --uiTriesToPlace > 0);
     }
 }

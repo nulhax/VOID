@@ -24,7 +24,7 @@ public class SU_SpaceParticles : MonoBehaviour
 	public int maxParticles = 1000;
 	// Range of particle sphere (when particles are beyond this range from its 
 	// parent they will respawn (relocate) to within range at distanceSpawn of range.
-	public float range = 200.0f;
+	public float range = 2000.0f;
 	// Distance percentile of range to relocate/spawn particles to
 	public float distanceSpawn = 0.95f;	
 	// Minimum size of particles
@@ -71,9 +71,27 @@ public class SU_SpaceParticles : MonoBehaviour
 		particleSystem.SetParticles(_particles, _numParticles); 
 	}
 	
+	void StormEffect()
+	{
+		int _numParticles = particleSystem.particleCount;
+
+		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
+
+		particleSystem.GetParticles(_particles);
+
+		for (int i = 0; i < _particles.Length; i++) 
+		{
+			//_particles[i].
+		}
+
+		particleSystem.SetParticles(_particles, _numParticles); 
+	}
 
 	void Start () 
 	{
+		// Sign up to storm event
+		CGalaxyStorm galaxystorm = CGalaxy.instance.gameObject.GetComponent<CGalaxyStorm>();
+		galaxystorm.EventStartStorm += StormEffect;
 
 		CGalaxy.instance.eventPostGalaxyShift += ShiftParticles;
 
@@ -113,7 +131,7 @@ public class SU_SpaceParticles : MonoBehaviour
 		if(m_density < 0.2f)
 			m_density = 0.0f;
 
-		else if(m_density > 0.5f)
+		else if(m_density > 0.7f)
 			m_density = 0.8f;
 
 		int _numParticles = particleSystem.particleCount;
@@ -131,7 +149,6 @@ public class SU_SpaceParticles : MonoBehaviour
 			// If distance is greater than range...
 			if (_distance > range) 
 			{
-
 				// reposition (respawn) particle according to spawn distance
 				_particles[i].position = Random.onUnitSphere * _distanceToSpawn + _cacheTransform.position;	
 
@@ -173,4 +190,6 @@ public class SU_SpaceParticles : MonoBehaviour
 		// Set the particles according to above modifications
     	particleSystem.SetParticles(_particles, _numParticles);    
 	}
+
+	ParticleSystem.Particle[] m_particles;
 }

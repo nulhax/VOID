@@ -16,12 +16,13 @@ using System.Collections;
 [RequireComponent(typeof(CNetworkView))]
 public class CEnemyShip : CNetworkMonoBehaviour
 {
-	enum EState
+	public enum EState
 	{
 		none,
 		idling,		// Parked. Looks around occasionally.
 		examiningTarget,
 		attackingTarget,
+		chargingScanner,
 		scanningForHeatSignature,	// Will detect players, enemies, player ships, and enemy ships within a range relative to the intesity of their heat signatures.
 		travelling,	// Happens on spawn or after idling for a while.
 		any
@@ -36,12 +37,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		transition_Idle,
 		transition_ExamineTarget,
 		transition_AttackTarget,
+		transition_ChargeScanner,
 		transition_ScanForHeatSignature,
 		transition_Travel,
 		any
 	}
 
-	delegate bool StateFunction(CEnemyShip enemyShip);
+	delegate void StateFunction(CEnemyShip enemyShip, EEvent _event);
 
 	class CStateTransition
 	{
@@ -67,6 +69,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.idling,						EEvent.any,								Idle),
 		new CStateTransition(EState.examiningTarget,			EEvent.any,								ExamineTarget),
 		new CStateTransition(EState.attackingTarget,			EEvent.any,								AttackTarget),
+		new CStateTransition(EState.chargingScanner,			EEvent.any,								ChargeScanner),
 		new CStateTransition(EState.scanningForHeatSignature,	EEvent.any,								ScanForHeatSignature),
 		new CStateTransition(EState.travelling,					EEvent.any,								Travel),
 		
@@ -77,6 +80,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		new CStateTransition(EState.none,						EEvent.transition_Idle,					Idle),
 		new CStateTransition(EState.none,						EEvent.transition_ExamineTarget,		ExamineTarget),
 		new CStateTransition(EState.none,						EEvent.transition_AttackTarget,			AttackTarget),
+		new CStateTransition(EState.none,						EEvent.transition_ChargeScanner,		ChargeScanner),
 		new CStateTransition(EState.none,						EEvent.transition_ScanForHeatSignature,	ScanForHeatSignature),
 		new CStateTransition(EState.none,						EEvent.transition_Travel,				Travel),
 		
@@ -85,49 +89,60 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	};
 
 	// State machine data set by state machine.
-	EState mState = EState.none;
-	EEvent mEvent = EEvent.none;
-	float mTimeout = 0.0f;
-	float mTimeoutSecondary = 0.0f;
-	float timeSpentIdling = 2.0f;
-	float timeSpentScanningForHeatSignatures = 15.0f;
-	float timeSpentExaminingTarget = 10.0f;
-	float timeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
-	float timeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
-	float timeSpentTravelling = 5.0f;
-	float mFireRate = 1.5f;
+	public EState mState = EState.none;
+	public float mTimeout = 0.0f;
+	public float mTimeoutSecondary = 0.0f;
+	public float mMinTimeSpentIdling = 2.0f;
+	public float mMaxTimeSpentIdling = 10.0f;
+	public float mTimeSpentChargingScanner = 10.0f;
+	public float mTimeSpentScanningForHeatSignatures = 15.0f;
+	public float mTimeSpentExaminingTarget = 10.0f;
+	public float mTimeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
+	public float mTimeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
+	public float mTimeSpentTravelling = 5.0f;
+	public float mFireRate = 1.5f;
+	public float mMinVelocityOfSuspiciousGubbin = 0.0f;
+	public float mTimeUntilSuspiciousGubbinExpires = 15.0f;
 
-	GameObject mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
-	GameObject mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
-	GameObject mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
-	bool mFaceTarget = false;
-	bool mFollowTarget = false;
-	float mTargetExpireTime = 0.0f;
+	public Rigidbody mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
+	public Rigidbody mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
+	public Rigidbody mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
+	public bool mFaceTarget = false;
+	public bool mFollowTarget = false;
+	public float mTargetExpireTime = 0.0f;
 
-	int mAudioWeaponFireID = -1;
+	public int mAudioWeaponFireID = -1;
 
 	// State machine data set by physics.
-	bool mFacingTarget = false;		// Is looking in the general direction of the target.
-	bool mCloseToTarget = false;	// Is within acceptable range of the target.
-	bool mVisibleTarget = false;	// Has direct line of sight to the target.
-	float viewConeRadiusInDegrees = 20.0f;
-	float viewConeLength = 400.0f;
-	float viewSphereRadius = 200.0f;
-	float desiredDistanceToTarget = 100.0f;
-	float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
-	float maxLinearAcceleration = 100000.0f;
+	public bool mFacingTarget = false;		// Is looking in the general direction of the target.
+	public bool mCloseToTarget = false;	// Is within acceptable range of the target.
+	public bool mVisibleTarget = false;	// Has direct line of sight to the target.
+	public float viewConeRadiusInDegrees = 30.0f;
+	public float viewConeLength_Extension = 1000.0f;
+	public float viewConeLength { get { return mBoundingRadius + viewConeLength_Extension; } }
+	public float viewSphereRadius_Extension = 300.0f;
+	public float viewSphereRadius { get { return mBoundingRadius + viewSphereRadius_Extension; } }
+	public float desiredDistanceToTarget_Extension = 100.0f;
+	public float desiredDistanceToTarget { get { return mBoundingRadius + desiredDistanceToTarget_Extension; } }
+	public float minAcceptableDistanceToTarget { get { return desiredDistanceToTarget - desiredDistanceToTarget_Extension * acceptableDistanceToTargetRatio; } }
+	public float maxAcceptableDistanceToTarget { get { return desiredDistanceToTarget + desiredDistanceToTarget_Extension * acceptableDistanceToTargetRatio; } }
+	public float acceptableDistanceToTargetRatio = 0.2f;	// 20% deviation from desired distance to target is acceptable.
+	public const float maxLinearAcceleration = 100000.0f;
+	public const float maxAngularAcceleration = 100000000.0f;
+	public uint mNumWhiskers = 16;
 
-	float mTimeBetweenLosCheck = 0.5f;
-	float mTimeUntilNextLosCheck = 0.0f;
+	public float mTimeBetweenLosCheck = 0.5f;
+	public float mTimeBetweenWhiskerCheck = 0.5f;
+	public float mTimeUntilNextLosCheck = 0.5f;
+	public float mTimeUntilNextWhiskerCheck = 0.0f;
 
 	// Physics data.
-	CPidController mPidAngularAccelerationX = new CPidController(-2, 0, 0);
-	CPidController mPidAngularAccelerationY = new CPidController(2, 0, 0);
-	CPidController mPidAngularAccelerationZ = new CPidController(0, 0, 0);
-	Vector3 mTorque;
+	public float mBoundingRadius = 0.0f;	// Set at rumtime.
+	public Vector3 mTorque;
+	public Vector3 mRepulsionForce;
 
-	bool debug_Display = true;
-	string debug_StateName;
+	public bool debug_Display = false;
+	public string debug_StateName;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -137,11 +152,16 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	void Awake()
 	{
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
-		if (viewSphereRadius < desiredDistanceToTarget + desiredDistanceToTarget * acceptableDistanceToTargetRatio) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
+		if (viewSphereRadius < maxAcceptableDistanceToTarget) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
-		mTarget_InternalLastKnownPosition = (GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Enemy Ship/DummyTarget"));	// Create the GameObject mTarget_InternalLastKnownPosition.
+		mTarget_InternalLastKnownPosition = ((GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"))).rigidbody;	// Create the RigidBody mTarget_InternalLastKnownPosition.
 
 		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
+	}
+
+	void Start()
+	{
+		mBoundingRadius = CUtility.GetBoundingRadius(gameObject);
 	}
 
 	void OnDestroy()
@@ -151,16 +171,28 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Update()
 	{
+		if (Input.GetKeyDown(KeyCode.KeypadDivide))
+			debug_Display = !debug_Display;
+
 		mTimeout -= Time.deltaTime;
 
-		if (mTargetExpireTime <= Time.time)	// If the target expire time is met...
-			mTarget = null;	// Expire the target.
+		if (mTarget != null)	// All targets expire after some time.
+		{
+			mTargetExpireTime -= Time.deltaTime;
+			if (mTargetExpireTime <= 0.0f)	// If the target expire time is met...
+			{
+				mTargetExpireTime = 0.0f;
+				mTarget = null;	// Expire the target.
+			}
+		}
 
-		ProcessStateMachine();
+		ProcessEvent(EEvent.none);
 	}
 
 	void FixedUpdate()
 	{
+		ProcessWhiskers();
+
 		mTimeUntilNextLosCheck -= Time.fixedDeltaTime;
 		if (mTimeUntilNextLosCheck <= 0.0f)
 		{
@@ -170,18 +202,18 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		if (mTarget != null && (mFaceTarget || mFollowTarget))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
 		{
-			Vector3 targetPos = mTarget.transform.position;
+			Vector3 targetPos = mTarget.rigidbody.worldCenterOfMass;
 
-			// Get the position of the target in local space of this ship (i.e. relative position).
-			Vector3 absoluteDeltaPosition = targetPos - transform.position;
+			// Get the location of the target in local space of this ship (i.e. relative location).
+			Vector3 absoluteDeltaPosition = targetPos - rigidbody.worldCenterOfMass;
 			float distanceToTarget = absoluteDeltaPosition.magnitude;
 			Vector3 absoluteDirection = absoluteDeltaPosition.normalized;
 			Vector3 relativeDirection = (Quaternion.Inverse(transform.rotation) * (targetPos - rigidbody.worldCenterOfMass)).normalized;
 			Vector3 relativeRotation = new Vector3(Mathf.Atan2(relativeDirection.y, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.y));
 
-			mTorque.x = mPidAngularAccelerationX.GetOutput(relativeRotation.x, Time.fixedDeltaTime);
-			mTorque.y = mPidAngularAccelerationY.GetOutput(relativeRotation.y, Time.fixedDeltaTime);
-			mTorque.z = mPidAngularAccelerationZ.GetOutput(relativeRotation.z, Time.fixedDeltaTime);
+			mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
+			mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
+			mTorque.z = relativeRotation.z * 0.0f;
 
 			if(mFaceTarget)
 			{
@@ -200,18 +232,59 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			// Determine if the target is in view.
 			mFacingTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
 
-			// Determine if the target is within acceptable range.
-			mCloseToTarget = distanceToTarget < desiredDistanceToTarget + (desiredDistanceToTarget * acceptableDistanceToTargetRatio) && distanceToTarget > desiredDistanceToTarget - (desiredDistanceToTarget * acceptableDistanceToTargetRatio);
+			// Determine if the target is within range.
+			mCloseToTarget = distanceToTarget < maxAcceptableDistanceToTarget;
 
 			// Check if there is a direct line of sight to the target.
 			mVisibleTarget = IsWithinLineOfSight(mTarget);
+			if(mVisibleTarget)
+				mTarget_InternalLastKnownPosition.transform.position = mTarget.rigidbody.worldCenterOfMass;
 		}
+	}
+
+	void ProcessWhiskers()
+	{
+		for (mTimeUntilNextWhiskerCheck -= Time.fixedDeltaTime; mTimeUntilNextWhiskerCheck <= 0.0f; mTimeUntilNextWhiskerCheck = mTimeBetweenWhiskerCheck)
+		{
+			mRepulsionForce = Vector3.zero;
+			float whiskerLength = minAcceptableDistanceToTarget;
+			float increment = Mathf.PI * (3.0f - Mathf.Sqrt(5));
+			float offset = 2.0f / mNumWhiskers;
+			for (uint ui = 0; ui < mNumWhiskers; ++ui)
+			{
+				float y = ui * offset - 1.0f + (offset / 2.0f);
+				float radians = Mathf.Sqrt(1.0f - y * y);
+				float phi = ui * increment;
+				Vector3 direction = new Vector3(Mathf.Cos(phi) * radians, y, Mathf.Sin(phi) * radians);
+				RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, direction, whiskerLength, 1 << LayerMask.NameToLayer("Galaxy"));
+				for (int i = 0; i < rayHits.Length; ++i )
+				{
+					RaycastHit rayHit = rayHits[i];
+
+					if (rayHit.collider.isTrigger)	// Ignore triggers.
+						continue;
+
+					mRepulsionForce += -direction * (whiskerLength - rayHit.distance) * maxLinearAcceleration * 0.25f / mNumWhiskers;
+				}
+			}
+
+			float repulsionForceLength = Mathf.Min(mRepulsionForce.magnitude, whiskerLength);
+			mRepulsionForce = mRepulsionForce.normalized * maxLinearAcceleration * repulsionForceLength / whiskerLength;
+		}
+
+		rigidbody.AddForce(mRepulsionForce, ForceMode.Force);
 	}
 
 	void OnCollisionEnter(Collision collision)
 	{
-		mEvent = EEvent.HostileTarget;
-		mTarget = collision.gameObject;
+		Rigidbody targetRigidbody = collision.gameObject.rigidbody;
+		if (targetRigidbody == null)
+			targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+
+		if(targetRigidbody != null)
+			mTarget = targetRigidbody;
+
+		ProcessEvent(EEvent.HostileTarget);
 	}
 
 	void InvalidateCache()
@@ -221,15 +294,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		mVisibleTarget = false;
 	}
 
-	bool IsWithinLineOfSight(GameObject target)
+	bool IsWithinLineOfSight(Rigidbody target)
 	{
 		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target);
 	}
 
-	bool IsWithinViewCone(GameObject target) { return IsWithinViewCone(target.transform.position); }
+	bool IsWithinViewCone(Rigidbody target) { return IsWithinViewCone(target.worldCenterOfMass); }
 	bool IsWithinViewCone(Vector3 pos)
 	{
-		Vector3 deltaPos = pos - transform.position;
+		Vector3 deltaPos = pos - rigidbody.worldCenterOfMass;
 		if (deltaPos == Vector3.zero)
 			return true;
 		else
@@ -239,23 +312,31 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	bool IsWithinViewRadius(GameObject target) { return IsWithinViewRadius(target.transform.position); }
+	bool IsWithinViewRadius(Rigidbody target) { return IsWithinViewRadius(target.worldCenterOfMass); }
 	bool IsWithinViewRadius(Vector3 pos)
 	{
-		return (pos - transform.position).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
+		return (pos - rigidbody.worldCenterOfMass).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
 	}
 
-	bool HasDirectLineOfSight(GameObject target)
+	bool HasDirectLineOfSight(Rigidbody target)
 	{
-		Vector3 deltaPos = target.transform.position - transform.position;
-		RaycastHit[] rayHits = Physics.RaycastAll(transform.position, deltaPos.normalized, deltaPos.magnitude, LayerMask.NameToLayer("Galaxy"));
-		for (int i = 0; i < rayHits.Length; ++i)
+		Vector3 deltaPos = target.worldCenterOfMass - rigidbody.worldCenterOfMass;
+		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, deltaPos.magnitude, 1 << LayerMask.NameToLayer("Galaxy"));
+		for (int i = 0; i < rayHits.Length; ++i)	// For each object the ray hit...
 		{
-			if (rayHits[i].collider.gameObject != gameObject || rayHits[i].collider.gameObject != target)
-				return false;
+			RaycastHit rayHit = rayHits[i];
+
+			if (rayHit.collider.isTrigger)	// Ignore triggers.
+				continue;
+
+			Rigidbody collidedObjectRigidbody = rayHit.rigidbody != null ? rayHit.rigidbody : CUtility.FindInParents<Rigidbody>(rayHit.transform);
+			if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship or the target...
+				continue;	// Ignore this object.
+			else	// The object is not part of the enemy ship or target...
+				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
 		}
 
-		return true;
+		return true;	// There are no objects between the enemy ship and the target.
 	}
 
 	/// <summary>
@@ -268,44 +349,44 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			return;	// Do not set a new target, as the current one is still valid.
 
 		// Find all objects within short range sphere and long-range cone.
-		Collider[] colliders = Physics.OverlapSphere(transform.position, viewConeLength);
+		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength, 1 << LayerMask.NameToLayer("Galaxy"));
 		for (int i = 0; i < colliders.Length; ++i)
 		{
-			GameObject entity = colliders[i].gameObject;
-			if(entity != gameObject && IsWithinLineOfSight(entity))	// If the entity is within view cone or view sphere (and is not this ship)...
-			{
-				// Check if the entity is worthy of being targeted.
-				Rigidbody entityBody = entity.GetComponent<Rigidbody>();
-				if (entityBody == null) continue;	// Entities without a RigidBody can not move, thus can not have their velocity checked.
+			Rigidbody entityRigidbody = colliders[i].rigidbody != null ? colliders[i].rigidbody : CUtility.FindInParents<Rigidbody>(colliders[i].gameObject);
+			if (entityRigidbody == null || entityRigidbody == rigidbody)	// If the object has no rigidbody, or it is this enemy ship...
+				continue;	// Ignore this object and look for others.
 
-				if (entityBody.velocity.magnitude > 20.0f)	// If the gubbbin is moving faster than 20 units per second...
+			if (IsWithinLineOfSight(entityRigidbody))	// If the entity is within view cone or view sphere (and is not this ship)...
+			{
+				//Debug.LogError("IS IN LINE OF SIGHT!!!!");
+
+				// Check if the entity is worthy of being targeted.
+				if (entityRigidbody.velocity.magnitude >= mMinVelocityOfSuspiciousGubbin)	// If the gubbbin is moving faster than x units per second...
 				{
-					mTarget = entity;
-					mTargetExpireTime = Time.time + 15.0f;
+					mTarget = entityRigidbody;
+					mTargetExpireTime = mTimeUntilSuspiciousGubbinExpires;
 					break;
 				}
 			}
 		}
 	}
 
-	void ProcessStateMachine()
+	void ProcessEvent(EEvent _event)
 	{
-		// Process state machine.
 		for (uint uiStateLoop = 0; uiStateLoop < m_StateTransitionTable.Length; ++uiStateLoop)
 		{
 			CStateTransition stateTransition = m_StateTransitionTable[uiStateLoop];
-			if ((stateTransition.mState == mState || stateTransition.mState == EState.any) && (stateTransition.mEvent == mEvent || stateTransition.mEvent == EEvent.any))
-				if (stateTransition.mFunction(this))
-					uiStateLoop = uint.MaxValue;	// Loop will increment making iterator restart.
-				else
-					break;
+			if ((stateTransition.mState == mState || stateTransition.mState == EState.any) && (stateTransition.mEvent == _event || stateTransition.mEvent == EEvent.any))
+			{
+				stateTransition.mFunction(this, _event);
+				return;
+			}
 		}
 	}
 
 	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout, string _stateName)
 	{
 		mState = _state;
-		mEvent = EEvent.none;	// The event describes the state to switch to. It is always nulled after initialisation.
 		mFaceTarget = _lookAtTarget;
 		mFollowTarget = _moveToTarget;
 		mTimeout = _timeout;
@@ -314,277 +395,255 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		debug_StateName = _stateName;
 	}
 
-	static bool Idle(CEnemyShip enemyShip) { return enemyShip.Idle(); }
-	bool Idle()
+	static void Idle(CEnemyShip enemyShip, EEvent _event) { enemyShip.Idle(_event); }
+	void Idle(EEvent _event)
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false, timeSpentIdling, "Idling");
-				return false;	// Init functions always return false.
+				StateInitialisation(EState.idling, false, false, Random.Range(mMinTimeSpentIdling, mMaxTimeSpentIdling), "Idling");
+				return;
 
 			// Process state.
 			case EState.idling:
-				switch (mEvent)	// Process events.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else if(mTimeout <= 0.0f)	// No target; if this state expired...
+							ProcessEvent(EEvent.transition_Travel);
+						return;
 
-						// Switch to checking out the target if there is one.
-						if (mTarget != null)
-						{
-							mEvent = EEvent.transition_ExamineTarget;
-							return true;
-						}
-
-						// 50/50 chance every (timeSpentIdling/2) seconds to leave the area, beginning after (timeSpentIdling) seconds.
-						while (mTimeout <= 0.0f)
-						{
-							if (Random.Range(0, 2) == 0)
-							{
-								mEvent = EEvent.transition_Travel;
-								return true;
-							}
-							else
-								mTimeout += timeSpentIdling * 0.5f;
-						}
-
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
 		}
 
-		return false;
+		return;
 	}
 
-	static bool ExamineTarget(CEnemyShip enemyShip) { return enemyShip.ExamineTarget(); }
-	bool ExamineTarget()
+	static void ExamineTarget(CEnemyShip enemyShip, EEvent _event) { enemyShip.ExamineTarget(_event); }
+	void ExamineTarget(EEvent _event)
 	{
 		switch (mState)
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, false, timeSpentExaminingTarget, "Examining Target");
-				return false;	// Init functions always return false.
+				StateInitialisation(EState.examiningTarget, true, false, mTimeSpentExaminingTarget, "Examining Target");
+				return;
 
 			// Process state.
 			case EState.examiningTarget:
-				switch (mEvent)	// Process events.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-
-						if (mTarget == null)	// If the target has expired...
+						if (mTarget != null)	// If there is a valid target...
 						{
-							mEvent = EEvent.transition_Idle;	// Move on to other things.
-							return true;
-						}
-
-						if (mFacingTarget)	// If facing the target...
-						{
-							if (mVisibleTarget)	// If there is a direct line of sight to the target...
+							if (mFacingTarget)	// If facing the target...
 							{
-								mEvent = EEvent.transition_ScanForHeatSignature;	// Scan for heat signatures.
-								return true;
-							}
-							else	// Facing the target, but target is not visible...
-							{
-								if (mCloseToTarget)	// If already close to the target...
+								if (mVisibleTarget)	// If there is a direct line of sight to the target...
+									ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
+								else	// Facing the target, but target is not visible...
 								{
-									mEvent = EEvent.transition_Idle;	// Ignore the target.
-									return true;
-								}
-								else if(mFollowTarget == false)	// If not following the target...
-								{
-									mFollowTarget = true;	// Go to the target.
-									mTimeout = 10.0f;	// 10 seconds to reach the target.
-								}
-								else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
-								{
-									mEvent = EEvent.transition_Idle;	// Give up (can't reach the target).
-									return true;
+									if (mCloseToTarget)	// If already close to the target...
+										ProcessEvent(EEvent.transition_Idle);	// Ignore the target.
+									else if (!mFollowTarget)	// If not following the target...
+									{
+										mFollowTarget = true;	// Go to the target.
+										mTimeout = 10.0f;	// 10 seconds to reach the target.
+									}
+									else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
+										ProcessEvent(EEvent.transition_Idle);	// Give up (can't reach the target).
 								}
 							}
+							else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
+								ProcessEvent(EEvent.transition_Idle);	// Give up (can't face the target).
 						}
-						else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
-						{
-							mEvent = EEvent.transition_Idle;	// Give up (can't face the target).
-							return true;
-						}
-						return false;
+						else	// The target has expired...
+							ProcessEvent(EEvent.transition_Idle);	// Move on to other things.
+						return;
 
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
-	static bool AttackTarget(CEnemyShip enemyShip) { return enemyShip.AttackTarget(); }
-	bool AttackTarget()
+	static void AttackTarget(CEnemyShip enemyShip, EEvent _event) { enemyShip.AttackTarget(_event); }
+	void AttackTarget(EEvent _event)
 	{
 		switch (mState)
 		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.attackingTarget, true, true, timeSpentAttackingTargetBeforeStopping, "Attacking Target");
-				return false;	// Init functions always return false.
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.attackingTarget, true, true, mTimeSpentAttackingTargetBeforeStopping, "Attacking Target");
+				return;
 
-			// Process state.
-			case EState.attackingTarget:
-				switch (mEvent)	// Process events.
+			case EState.attackingTarget:	// Process state.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						
-						if (mTarget == null)	// If the target has expired...
-						{
-							mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something to kill.
-							return true;
-						}
-
-						mTimeoutSecondary -= Time.deltaTime;	// This determines fore rate.
-
-						if(mVisibleTarget)	// If the target is in sight...
-						{
-							mTargetExpireTime = Time.time + 20.0f;	// Reset the expire time.
-
-							while (mTimeoutSecondary <= 0.0f)
-							{
-								mTimeoutSecondary += mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity;
-
-								// Todo: Shoot prey. Bang bang.
-								GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
-							}
-
-							// Todo: If this ship's health is low, it could run off.
-						}
-						else	// Target can not be seen.
-						{
-							// Ensure fire rate does not build up a backlog of shots to fire.
-							if (mTimeoutSecondary < 0.0f)
-								mTimeoutSecondary = 0.0f;
-						}
-
-						if(mTimeout <= 0.0f)	// If the timer runs out...
-						{
-							if(mFollowTarget)	// If chasing the target...
-							{
-								mFollowTarget = false;	// Stop chasing the target
-								mTimeout = timeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
-							}
-							else	// Not chasing the target...
-							{
-								if (mTimeout <= 0.0f)	// once the timer runs out...
-								{
-									mEvent = EEvent.transition_ScanForHeatSignature;	// Search for something nearby to kill.
-									return true;
-								}
-							}
-						}
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
-						mState = EState.none;
-						return true;	// Always return true for uncaught events.
-				}
-		}
-
-		return false;
-	}
-
-	static bool ScanForHeatSignature(CEnemyShip enemyShip) { return enemyShip.ScanForHeatSignature(); }
-	bool ScanForHeatSignature()
-	{
-		switch (mState)
-		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.scanningForHeatSignature, false, false, timeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
-				return false;	// Init functions always return false.
-
-			// Process state.
-			case EState.scanningForHeatSignature:
-				switch (mEvent)	// Process events.
-				{
-					case EEvent.none:	// Normal process.
-
-						// Switch to checking out the target if there is one.
 						if (mTarget != null)
 						{
-							mEvent = EEvent.transition_ExamineTarget;
-							return true;
+							if(mTimeoutSecondary > 0.0f)
+								mTimeoutSecondary -= Time.deltaTime;	// Time between firing bullets.
+
+							if (mVisibleTarget)	// If the target is in sight...
+							{
+								mTargetExpireTime = 20.0f;	// Reset the expire time.
+
+								while (mTimeoutSecondary <= 0.0f)
+								{
+									mTimeoutSecondary += (mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity);
+									// Todo: Shoot prey. Bang bang.
+									GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
+								}
+							}
+
+							if (mTimeout <= 0.0f)	// If the timer runs out...
+							{
+								if (mFollowTarget)	// If chasing the target...
+								{
+									mFollowTarget = false;	// Stop chasing the target
+									mTimeout = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
+								}
+								else	// Not chasing the target...
+									ProcessEvent(EEvent.transition_ChargeScanner);	// Search for something nearby to kill.
+							}
 						}
+						else	// The target has expired...
+							ProcessEvent(EEvent.transition_ChargeScanner);
+						return;
 
-						// Todo: Scan for heat signature.
-						GameObject targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
-						if (targetWithHeatSignature != null)
-						{
-							mTarget = targetWithHeatSignature;
-							mEvent = EEvent.transition_AttackTarget;
-							return true;
-						}
+					case EEvent.HostileTarget:
+						return;
 
-						if (mTimeout <= 0.0f)	// If the timer times out...
-						{
-							mEvent = EEvent.transition_Idle;	// Nothing found - give up.
-							return true;
-						}
-
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
-	static bool Travel(CEnemyShip enemyShip) { return enemyShip.Travel(); }
-	bool Travel()
+	static void ChargeScanner(CEnemyShip enemyShip, EEvent _event) { enemyShip.ChargeScanner(_event); }
+	void ChargeScanner(EEvent _event)
 	{
 		switch (mState)
 		{
-			// Initialise state.
-			case EState.none:
-				StateInitialisation(EState.travelling, true, true, timeSpentTravelling, "Travelling");
-				if (mTarget == null)
-				{
-					mTarget = mTarget_InternalLastKnownPosition;
-					mTargetExpireTime = Time.time + timeSpentTravelling;
-				}
-				return false;	// Init functions always return false.
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.chargingScanner, false, false, mTimeSpentChargingScanner, "Charging Scanner");
+				return;
 
-			// Process state.
-			case EState.travelling:
-				switch (mEvent)	// Process events.
+			case EState.scanningForHeatSignature:	// Process state.
+				switch (_event)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else if (mTimeout <= 0.0f)
+							ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						return;
+
+					default:	// Shutdown the state.
+						mState = EState.none;
+						ProcessEvent(_event);
+						return;
+				}
+
+			default:
+				return;
+		}
+	}
+
+	static void ScanForHeatSignature(CEnemyShip enemyShip, EEvent _event) { enemyShip.ScanForHeatSignature(_event); }
+	void ScanForHeatSignature(EEvent _event)
+	{
+		switch (mState)
+		{
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
+				return;
+
+			case EState.scanningForHeatSignature:	// Process state.
+				switch (_event)	// Process events.
+				{
+					case EEvent.none:	// Normal process.
+						if (mTarget != null)	// Switch to checking out the target if there is one.
+							ProcessEvent(EEvent.transition_ExamineTarget);
+						else	// No target.
+						{
+							// Scan for heat signature.
+							Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
+							if (targetWithHeatSignature != null)
+							{
+								mTarget = targetWithHeatSignature;
+								ProcessEvent(EEvent.transition_AttackTarget);
+							}
+							else if (mTimeout <= 0.0f)	// If the timer times out...
+								ProcessEvent(EEvent.transition_Idle);	// Nothing found - give up.
+						}
+						return;
+
+					default:	// Shutdown the state.
+						mState = EState.none;
+						ProcessEvent(_event);
+						return;
+				}
+
+			default:
+				return;
+		}
+	}
+
+	static void Travel(CEnemyShip enemyShip, EEvent _event) { enemyShip.Travel(_event); }
+	void Travel(EEvent _event)
+	{
+		switch (mState)
+		{
+			case EState.none:	// Initialise state.
+				StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, "Travelling");
+
+				mTarget = mTarget_InternalLastKnownPosition;
+				mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
+				mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
+
+				mTargetExpireTime = mTimeSpentTravelling;
+				return;
+
+			case EState.travelling:	// Process state.
+				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
 						if (mTarget != mTarget_InternalLastKnownPosition)
+							ProcessEvent(mTarget == null ? EEvent.transition_Idle : EEvent.transition_ExamineTarget);
+						else	// The target is still the dummy.
 						{
-							if (mTarget == null)
-								mEvent = EEvent.transition_Idle;
-							else
-								mEvent = EEvent.transition_ExamineTarget;
-							return true;
+
 						}
+						return;
 
-						mTarget_InternalLastKnownPosition.transform.position = gameObject.transform.position + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
-
-						return false;
-
-					default:	// Shutdown the state. An uncaught event is the only time the process returns true.
+					default:	// Shutdown the state.
+						mTarget_InternalLastKnownPosition.transform.parent = null;
 						mState = EState.none;
-						return true;	// Always return true for uncaught events.
+						ProcessEvent(_event);
+						return;
 				}
-		}
 
-		return false;
+			default:
+				return;
+		}
 	}
 
 	//void OnGUI()
@@ -631,32 +690,54 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if(mTarget != null)
 		{
 			Gizmos.color = new Color(1,0,0,Mathf.Clamp01(0.1f + mTargetExpireTime * 0.5f));	// White line, fading out in the last two seconds of expiry, but still 10% visible when it finally expires.
-			Gizmos.DrawLine(transform.position, mTarget.transform.position);	// Point to target.
-			Gizmos.DrawSphere(mTarget.transform.position, 1.0f);
+			Gizmos.DrawLine(rigidbody.worldCenterOfMass, mTarget.worldCenterOfMass);	// Point to target.
+			Gizmos.DrawSphere(mTarget.worldCenterOfMass, 1.0f);
 			Gizmos.color = new Color(0, 1, 0, 1);
-			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.transform.position, 0.5f);
+			Gizmos.DrawSphere(mTarget_InternalLastKnownPosition.worldCenterOfMass, 50.0f);
+		}
+
+		// Whiskers.
+		Gizmos.color = Color.red;
+		float whiskerLength = minAcceptableDistanceToTarget;
+		float increment = Mathf.PI * (3.0f - Mathf.Sqrt(5));
+		float offset = 2.0f / mNumWhiskers;
+		for (uint ui = 0; ui < mNumWhiskers; ++ui)
+		{
+			float y = ui * offset - 1.0f + (offset / 2.0f);
+			float radians = Mathf.Sqrt(1.0f - y * y);
+			float phi = ui * increment;
+			Vector3 direction = new Vector3(Mathf.Cos(phi) * radians, y, Mathf.Sin(phi) * radians);
+			Gizmos.DrawLine(rigidbody.worldCenterOfMass, rigidbody.worldCenterOfMass + direction * whiskerLength);
 		}
 
 		// Angular forces.
 		Gizmos.color = Color.blue;
-		Gizmos.DrawLine(transform.position + transform.up, transform.position - transform.up);
-		Gizmos.DrawLine(transform.position + transform.right, transform.position - transform.right);
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position - transform.forward);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass - transform.up);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass - transform.right);
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass - transform.forward);
 
-		// All the following assume clockwise rotation for positive torque.
-		// Y may be incorrect.
 		Gizmos.color = Color.cyan;
-		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.forward * mTorque.x);		// X
-		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.forward * mTorque.x);		// X
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward - transform.up * mTorque.x);	// X
-		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward + transform.up * mTorque.x);	// X
-		Gizmos.DrawLine(transform.position + transform.forward, transform.position + transform.forward + transform.right * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position - transform.forward, transform.position - transform.forward - transform.right * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.forward * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.forward * mTorque.y);	// Y
-		Gizmos.DrawLine(transform.position + transform.up, transform.position + transform.up + transform.right * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position - transform.up, transform.position - transform.up - transform.right * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position + transform.right, transform.position + transform.right - transform.up * mTorque.z);	// Z
-		Gizmos.DrawLine(transform.position - transform.right, transform.position - transform.right + transform.up * mTorque.z);	// Z
+		Vector3 torqueScaled = mTorque / maxAngularAcceleration;
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass + transform.up + transform.forward * torqueScaled.x);		// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.up, rigidbody.worldCenterOfMass - transform.up - transform.forward * torqueScaled.x);		// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass + transform.forward - transform.up * torqueScaled.x);	// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.forward, rigidbody.worldCenterOfMass - transform.forward + transform.up * torqueScaled.x);	// X
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.forward, rigidbody.worldCenterOfMass + transform.forward + transform.right * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.forward, rigidbody.worldCenterOfMass - transform.forward - transform.right * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass + transform.right - transform.forward * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.right, rigidbody.worldCenterOfMass - transform.right + transform.forward * torqueScaled.y);	// Y
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.up, rigidbody.worldCenterOfMass + transform.up + transform.right * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.up, rigidbody.worldCenterOfMass - transform.up - transform.right * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass + transform.right, rigidbody.worldCenterOfMass + transform.right - transform.up * torqueScaled.z);	// Z
+		Gizmos.DrawLine(rigidbody.worldCenterOfMass - transform.right, rigidbody.worldCenterOfMass - transform.right + transform.up * torqueScaled.z);	// Z
+
+		// Field of view.
+		Gizmos.color = new Color(0, 0.5f, 0.5f, 0.25f);
+		Gizmos.DrawSphere(rigidbody.worldCenterOfMass, mBoundingRadius);
+		Gizmos.DrawSphere(rigidbody.worldCenterOfMass, viewSphereRadius);
+		Matrix4x4 oldMatrix = Gizmos.matrix;
+		Gizmos.matrix = Matrix4x4.TRS(rigidbody.worldCenterOfMass, transform.rotation, Vector3.one);
+		Gizmos.DrawFrustum(Vector3.zero, viewConeRadiusInDegrees, viewConeLength, 1.0f, 1.0f);
+		Gizmos.matrix = oldMatrix;
 	}
 }

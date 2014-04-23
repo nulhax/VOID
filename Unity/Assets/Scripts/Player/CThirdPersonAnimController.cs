@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -43,11 +43,15 @@ public class CThirdPersonAnimController : MonoBehaviour
 	static int m_iFallState = Animator.StringToHash("Base Layer.Fall");
 	
 	//Player motor
-	CPlayerGroundMotor m_PlayerMotor;
+	CPlayerMotor m_PlayerMotor;
 	
 	Animator m_ThirdPersonAnim;
 	
 	CapsuleCollider m_physCollider;
+	const float m_kfColliderHeight = 1.8f;
+
+	float m_fColliderLerpTimer = 0.0f;
+	float m_fColliderLerpTime = 0.5f;
 
     ushort m_previousMovementState;
 	ushort m_MovementState;
@@ -66,7 +70,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	void Start () 
 	{
 		//Sign up to state change event in GroundMotor script
-		m_PlayerMotor = gameObject.GetComponent<CPlayerGroundMotor>();
+		m_PlayerMotor = gameObject.GetComponent<CPlayerMotor>();
 		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
 		
 		//Get players animator
@@ -94,21 +98,35 @@ public class CThirdPersonAnimController : MonoBehaviour
 			bool bStrafeLeft;
 			bool bStrafeRight;			
 			
-			bWalkForward = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Forward)     > 0) ? true : false;	
-			bWalkBack    = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Backward)    > 0) ? true : false;	
-			bJump        = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Jump)        > 0) ? true : false;	
-			bCrouch      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Crouch)      > 0) ? true : false;	
-			bStrafeLeft  = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
-			bStrafeRight = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.StrafeRight) > 0) ? true : false;
-			bSprint      = ((m_MovementState & (uint)CPlayerGroundMotor.EInputState.Run)       > 0) ? true : false;	
+			bWalkForward = ((m_MovementState & (uint)CPlayerMotor.EInputState.Forward)     > 0) ? true : false;	
+			bWalkBack    = ((m_MovementState & (uint)CPlayerMotor.EInputState.Backward)    > 0) ? true : false;	
+			bJump        = ((m_MovementState & (uint)CPlayerMotor.EInputState.Jump)        > 0) ? true : false;	
+			bCrouch      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Crouch)      > 0) ? true : false;	
+			bStrafeLeft  = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeLeft)  > 0) ? true : false;	
+			bStrafeRight = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeRight) > 0) ? true : false;
+			bSprint      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Run)       > 0) ? true : false;	
 			
 			m_ThirdPersonAnim.SetBool("JogForward", bWalkForward);	
 			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	       
+			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
 			
+
+			if(bStrafeLeft)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", -0.75f);	       
+			}
+			else if(bStrafeRight)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.75f);	       
+			}
+			else if(bStrafeLeft == false && bStrafeRight == false)
+			{
+				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
+			}
+
 			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
 			
 			//-------------------------------------------
@@ -155,29 +173,46 @@ public class CThirdPersonAnimController : MonoBehaviour
 			{
 				if(!m_ThirdPersonAnim.IsInTransition(0))
 				{
-					m_bUsedSlide = true;
+					m_bUsedSlide = true;				
 	
-					float fOrientation = m_ThirdPersonAnim.GetFloat("ColliderHeight");
-	
-					//Set collider to be oriented to the Z axis	
-					if(fOrientation < 1)
-					{
-						m_physCollider.direction = 2;	
-					}
-					else
-					{
-						m_physCollider.direction = 1;
-					}
+					float fColliderHeight = m_ThirdPersonAnim.GetFloat("ColliderHeight");	
+
+					m_physCollider.height = fColliderHeight;
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.position = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.position;
+
+					Vector3 PlayerHeadRotation = gameObject.GetComponent<CPlayerHead>().Head.transform.rotation.eulerAngles;
+					Vector3 RagdollHeadRotation = gameObject.GetComponent<CPlayerRagdoll>().m_RagdollHead.transform.rotation.eulerAngles;
+
+					Quaternion newRotation = Quaternion.Euler(RagdollHeadRotation.x, PlayerHeadRotation.y, PlayerHeadRotation.z);
+
+					gameObject.GetComponent<CPlayerHead>().Head.transform.rotation = newRotation;
 				}		
 				else
 				{
 					//Reset collider
-					m_physCollider.direction = 1;
+					m_fColliderLerpTimer = 0.0f;
+					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
 				}
 			}
+
+			if(currentBaseState.nameHash != m_iSlideState && currentBaseState.nameHash != m_iJumpState)
+			{
+				RestoreColliderHeight();
+			}
 			
-			UpdateFallingState();
+			//UpdateFallingState();
 			m_ThirdPersonAnim.StopPlayback();
+		}
+	}
+
+	void RestoreColliderHeight()
+	{
+		if (m_fColliderLerpTimer < m_fColliderLerpTime) 
+		{
+			m_fColliderLerpTimer += Time.deltaTime;
+			float fLerpFactor = m_fColliderLerpTimer / m_fColliderLerpTime;
+			m_physCollider.height = Mathf.Lerp (m_physCollider.height, m_kfColliderHeight, fLerpFactor);
 		}
 	}
 	

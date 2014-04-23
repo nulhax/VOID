@@ -45,6 +45,15 @@ public class CPlayerArmController : MonoBehaviour
     const float             m_kfInteractionDistance = 1.5f;
     GameObject              m_heldTool = null;
 
+    Vector3 m_vInitialToolEquipedPosition;
+    Vector3 m_vToolEquipedPosition;
+    Vector3 m_vToolUnequipedPosition;
+
+    float m_fLateralDeviation = 0.3f;
+    float m_fVerticalDeviation = 0.4f;    
+    float m_fLateralRotationThreshold = 60.0f;
+    float m_fVerticalRotationThreshold = 45.0f;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -58,6 +67,11 @@ public class CPlayerArmController : MonoBehaviour
 		m_eHoldState = HoldState.NoTool;
 
 		m_IKController = gameObject.GetComponent<CPlayerIKController>();
+
+        m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
+        m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+        
+        m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
 	}
 
     void Update()
@@ -68,25 +82,32 @@ public class CPlayerArmController : MonoBehaviour
             RaycastHit _RaycastHit = new RaycastHit();
             
             Physics.Raycast(cameraRay, out _RaycastHit, 5.0f, 1 << CGameCameras.MainCamera.layer);
-            
-            switch (m_eHoldState)
+
+			Quaternion qHandRotation = transform.rotation;
+			Vector3 vHandRotation = qHandRotation.eulerAngles;
+			vHandRotation.x = -45;
+			Vector3 vCamRotation = CGameCameras.MainCamera.transform.rotation.eulerAngles;
+			vHandRotation.y = vCamRotation.y;
+
+			qHandRotation = Quaternion.Euler(vHandRotation);
+
+			Vector3 handPos = _RaycastHit.point - (cameraRay.direction * 0.05f);
+				
+				switch (m_eHoldState)
             {
                 case HoldState.NoTool:
                 {
-                    m_IKController.SetRightHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.RightHandIKWeight = 1.0f;
+					m_IKController.SetRightHandTarget(handPos,qHandRotation);
                     break;
                 }
                 case HoldState.OneHandedTool:
                 {
-                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.LeftHandIKWeight = 1.0f;
+					m_IKController.SetLeftHandTarget(handPos, qHandRotation);                    
                     break;  
                 }
                 case HoldState.TwoHandedTool:
                 {
-                    m_IKController.SetLeftHandTarget(_RaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                    m_IKController.LeftHandIKWeight = 1.0f;
+					m_IKController.SetLeftHandTarget(handPos, qHandRotation);                    
                     break;
                 }
             }
@@ -127,6 +148,78 @@ public class CPlayerArmController : MonoBehaviour
                 }
             }
         }
+
+        if (m_heldTool != null) 
+        {
+            //Get variables from current tool's orientation script
+            CToolOrientation cToolOrientation = m_heldTool.GetComponent<CToolOrientation>();
+            m_vToolEquipedPosition = cToolOrientation.Position;
+            m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+            
+            m_fLateralDeviation = cToolOrientation.LateralDeviation;
+            m_fVerticalDeviation = cToolOrientation.VerticalDeviation;
+            
+            UpdateVerticalToolPositioning ();
+            UpdateLateralToolPositioning ();
+        }
+    }
+
+    void UpdateVerticalToolPositioning()
+    {
+        float cameraPitch = CGameCameras.MainCamera.transform.rotation.eulerAngles.x;
+        if(cameraPitch > 180 && cameraPitch < 360)
+        {
+            cameraPitch -= 360;
+        }
+        float minRotation = -m_fVerticalRotationThreshold;
+        float maxRotation = m_fVerticalRotationThreshold;
+        
+        float scale = maxRotation - minRotation;
+        cameraPitch += scale / 2;
+        float lerpFactor = cameraPitch / (scale);
+        
+        Vector3 maxPositionY = m_vInitialToolEquipedPosition;
+        maxPositionY.y -= m_fVerticalDeviation;
+        
+        Vector3 minPositionY = m_vInitialToolEquipedPosition;
+        minPositionY.y += m_fVerticalDeviation;
+        
+        Vector3 newOffset =  Vector3.Lerp(minPositionY, maxPositionY, lerpFactor);
+        m_vToolEquipedPosition.y = newOffset.y;
+        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
+    }
+    
+    void UpdateLateralToolPositioning()
+    {
+        float cameraYaw = CGameCameras.MainCamera.transform.rotation.eulerAngles.y;
+        float characterYaw = transform.rotation.eulerAngles.y;
+        
+        float offSet = cameraYaw - characterYaw;
+        if(offSet > 180 && offSet < 360)
+        {
+            offSet -= 360;
+        }
+        else if(offSet < -180)
+        {
+            offSet += 360;
+        }
+        
+        float minRotation = -m_fLateralRotationThreshold;
+        float maxRotation = m_fLateralRotationThreshold;
+        
+        float scale = maxRotation - minRotation;
+        offSet += scale / 2;
+        float lerpFactor = offSet / (scale);
+        
+        Vector3 maxPositionX = m_vInitialToolEquipedPosition;
+        maxPositionX.x += m_fLateralDeviation;
+        
+        Vector3 minPositionX = m_vInitialToolEquipedPosition;
+        minPositionX.x -= m_fLateralDeviation;
+        
+        Vector3 newOffset =  Vector3.Lerp(minPositionX, maxPositionX, lerpFactor);
+        m_vToolEquipedPosition.x = newOffset.x;
+        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
     }
 			
 	void OnUse(CPlayerInteractor.EInputInteractionType _eInteractionType, GameObject _cActorInteractable, RaycastHit _cRaycastHit, bool _bDown)
@@ -141,22 +234,17 @@ public class CPlayerArmController : MonoBehaviour
             {
                 case HoldState.NoTool:
                     {	
-						m_IKController.SetRightHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-						m_IKController.RightHandIKWeight = 1.0f;
-						
+						m_IKController.SetRightHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);											
                         break;
                     }
                 case HoldState.OneHandedTool:
                     {
-						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                        m_IKController.LeftHandIKWeight = 1.0f;
+						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);                     
                         break;	
                     }
                 case HoldState.TwoHandedTool:
                     {
-						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);
-                        m_IKController.LeftHandIKWeight = 1.0f;
-						
+						m_IKController.SetLeftHandTarget(_cRaycastHit.point, CGameCameras.MainCamera.transform.rotation);                       						
                         break;
                     }
             }

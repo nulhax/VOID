@@ -14,6 +14,11 @@ public class CGalaxyBackdrop
 	private Cubemap[] mSkyboxes = new Cubemap[(uint)ESkybox.MAX];
 	private CGalaxy mGalaxy = null;
 
+	private float mFogStart = 3000.0f;
+	public float fogStart { get { return mFogStart; } }
+	private float mFogEnd = 4000.0f;
+	public float fogEnd { get { return mFogEnd; } }
+
 	public CGalaxyBackdrop(CGalaxy _galaxy)
 	{
 		mGalaxy = _galaxy;
@@ -57,8 +62,8 @@ public class CGalaxyBackdrop
 
 	public void UpdateBackdrop(CGalaxy.SCellPos absoluteCell)
 	{
-		Shader.SetGlobalFloat("void_FogStartDistance", 2000.0f);
-		Shader.SetGlobalFloat("void_FogEndDistance", 4000.0f);
+		Shader.SetGlobalFloat("void_FogStartDistance", mFogStart);
+		Shader.SetGlobalFloat("void_FogEndDistance", mFogEnd);
 		Shader.SetGlobalFloat("void_FogDensity", 0.01f);
 
 		Shader.SetGlobalTexture("void_Skybox1", mSkyboxes[(uint)ESkybox.Stars]);

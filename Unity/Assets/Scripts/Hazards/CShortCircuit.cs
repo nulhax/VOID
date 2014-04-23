@@ -13,7 +13,7 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CModulePowerConsumption))]
+[RequireComponent(typeof(CModulePower))]
 [RequireComponent(typeof(CActorHealth))]
 public class CShortCircuit : MonoBehaviour
 {

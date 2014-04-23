@@ -194,7 +194,7 @@ public class DynamicEventShipHazard : MonoBehaviour
     }
 
 
-    public void Trigger(EHazardType _eBiasedType = EHazardType.NONE)
+    public void Trigger(EHazardType _eBiasedType = EHazardType.NONE) 
     {
         // Quick return case
         if (DisableRandomHazards) { return; }

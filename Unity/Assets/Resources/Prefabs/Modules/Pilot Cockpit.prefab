@@ -67,6 +67,8 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400042}
   - 114: {fileID: 11400012}
+  - 114: {fileID: 11400046}
+  - 114: {fileID: 11400044}
   - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Pilot Cockpit
@@ -754,12 +756,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ModuleType: 5
-  m_ModuleCategory: 4
-  m_ModuleSize: 1
-  m_Internal: 1
-  m_Buildable: 0
+  m_cModel: {fileID: 100020}
+  m_eModuleType: 250
+  m_eModuleCategory: 200
+  m_eModuleSize: 1
   m_fNanitesCost: 20
+  m_bInternal: 1
+  m_bBuildable: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -771,7 +774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PrecipitativeMesh: {fileID: 100000, guid: 1126085289d990e4daa88c109ee6ce89, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100000, guid: 1126085289d990e4daa88c109ee6ce89, type: 2}
 --- !u!114 &11400014
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -971,8 +974,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69f7ddc618ea0f340b1064bbe94077b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PowerConsumptionRate: 5
-  m_ConsumingPower: 1
+  m_fConsumptionRate: 0
+--- !u!114 &11400044
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 25
+  m_ConsumingAtmosphere: 0
+--- !u!114 &11400046
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

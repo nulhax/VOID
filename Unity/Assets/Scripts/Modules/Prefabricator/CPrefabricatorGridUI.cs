@@ -130,16 +130,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
-
-		// Get the ship grid to register for when facilities are created
-		CGameShips.Ship.GetComponent<CShipFacilities>().EventFaciltiyCreated += OnFacilityCreate;
-
-		// Update the grid to be fully up to date
-		foreach(GameObject facility in CGameShips.Ship.GetComponent<CShipFacilities>().Facilities)
-		{
-			CFacilityInterface fi = facility.GetComponent<CFacilityInterface>();
-			OnFacilityCreate(fi);
-		}
 	}
 	
 	private void CreateGridUIObjects()
@@ -970,21 +960,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		}
 	}
 
-	private void OnFacilityCreate(CFacilityInterface _Facility)
-	{
-//		// Update the state of the UI grid
-//		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipTiles>().m_ShipGrid.Tiles.ToArray());
-//
-//		// Register an event for when module ports are created
-//		_Facility.EventModuleCreated += OnModuleCreate;
-//
-//		// Populate the small module ports
-//		foreach(GameObject modulePort in _Facility.FacilityModules)
-//		{
-//			OnModuleCreate(modulePort.GetComponent<CModuleInterface>(), _Facility);
-//		}
-	}
-
 	private void OnModuleCreate(CModuleInterface _Module, CFacilityInterface _FacilityParent)
 	{
 		GameObject newModulePort = (GameObject)GameObject.Instantiate(m_SmallModulePortPrefab);
@@ -997,7 +972,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 	public void ExportTilesToShip()
 	{
-		// 
+		CGameShips.Ship.GetComponent<CShipFacilities>().ImportNewGridTiles(m_Grid.Tiles, m_FacilityTiles);
 	}
 }
 

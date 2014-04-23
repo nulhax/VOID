@@ -50,7 +50,6 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         MAX
     }
 
-
 // Member Delegates & Events
 
 
@@ -117,7 +116,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	{
 		get { return (m_bToolCapacity.Get()); }
 	}
-	
+			
 	
 // Member Functions
 
@@ -349,6 +348,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);
 
             m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
+			m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+
             m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
         }
 
@@ -395,7 +396,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateToolSwitching();
+        UpdateToolSwitching();		
     }
 
 
@@ -443,8 +444,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                 SetSwitchingToolState(ESwitchToolState.INVALID);
             }
         }
-    }
-
+    }	
 
     [ALocalOnly]
     void SwitchTool(byte _bSlotId)
@@ -818,9 +818,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	CNetworkVar<byte> m_bActiveToolId = null;
 
 
+	Vector3 m_vInitialToolEquipedPosition;
     Vector3 m_vToolEquipedPosition;
     Vector3 m_vToolUnequipedPosition;
-
+	
 
     [AServerOnly]
     ulong m_ulOwnerPlayerId = 0;
@@ -839,6 +840,5 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
 
 	static CNetworkStream s_cSerializeStream = new CNetworkStream();
-
 
 };

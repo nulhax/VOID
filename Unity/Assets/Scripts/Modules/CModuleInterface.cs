@@ -28,47 +28,45 @@ public class CModuleInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
+
+
 	public enum ECategory
 	{
 		INVALID,
 		
-		Atmosphere,
-		Crew,
-		Defence,
-		Exploration,
-		Gravity,
-		Power,
-		Production,
-		Propulsion,
-		Research,
-		Resources,
-		
-		MAX
+		Atmosphere  = 50,
+		Crew        = 100,
+		Defence     = 150,
+		Exploration = 200,
+        Gravity     = 250,
+        Power       = 300,
+        Production  = 350,
+        Propulsion  = 400,
+        Research    = 450,
+        Resources   = 500
 	}
 	
+
 	public enum EType
 	{
 		INVALID,
 
-		AtmosphereGenerator,
-		PlayerSpawner,
-		LaserCockpit,
-		LaserTurret,
-		PilotCockpit,
-		PowerGenerator,
-		PowerCapacitor,
-		MiningTurret,
-		MiningCockpit,
-		//AtmosphereConditioner,
-        OxygenRefiller,
-        Dispenser,
-        NaniteCapsule,
-        Engine,
-		Starter,
-		Prefabricator,
-
-        MAX
+		AtmosphereGenerator = 50,
+		PlayerSpawner       = 100,
+        TurretCockpit       = 150,
+        LaserTurret         = 200,
+        PilotCockpit        = 250,
+        PowerGenerator      = 300,
+        PowerCapacitor      = 350,
+        MiningTurret        = 400,
+        MiningCockpit       = 450,
+        Dispenser           = 600,
+        NaniteSilo          = 650,
+        Engine              = 700,
+        Starter             = 750,
+		Prefabricator		= 800
 	}
+
 
 	public enum ESize
 	{
@@ -85,42 +83,46 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
+    public delegate void BuiltHandler(GameObject _cModule);
+    public event BuiltHandler EventBuilt;
+
+
 // Member Properties
 
 
 	public EType ModuleType
 	{
-		get { return (m_ModuleType); }
+		get { return (m_eModuleType); }
 	}
 
 
 	public ECategory ModuleCategory
 	{
-		get { return (m_ModuleCategory); }
+		get { return (m_eModuleCategory); }
 	}
 
 
 	public ESize ModuleSize
 	{
-		get { return (m_ModuleSize); }
+		get { return (m_eModuleSize); }
 	}
 
 
 	public bool IsInternal
 	{
-		get { return(m_Internal); }
+		get { return(m_bInternal); }
 	}
 
 
     public bool IsBuilt
     {
-        get { return (m_bBuilt.Get()); }
+        get { return (m_bBuiltPercent.Value == 100); }
     }
 
 
 	public bool IsBuildable
 	{
-		get { return(m_Buildable); }
+		get { return(m_bBuildable); }
 	}
 
 
@@ -141,42 +143,30 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
-        m_bBuilt = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+        m_bBuiltPercent = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
     }
 
 
-    public List<GameObject> FindAttachedComponentsByType(CComponentInterface.EType _eAccessoryType)
+    public List<GameObject> GetAttachedComponents()
     {
-        if (!m_mAttachedComponents.ContainsKey(_eAccessoryType))
-        {
-			return (new List<GameObject>());
-        }
-
-        return (m_mAttachedComponents[_eAccessoryType]);
+        return (m_aAttachedComponents);
     }
 
 
     public void RegisterAttachedComponent(CComponentInterface _cComponentInterface)
     {
-        if (!m_mAttachedComponents.ContainsKey(_cComponentInterface.ComponentType))
-        {
-            m_mAttachedComponents.Add(_cComponentInterface.ComponentType, new List<GameObject>());
-        }
-
-        m_mAttachedComponents[_cComponentInterface.ComponentType].Add(_cComponentInterface.gameObject);
+        m_aAttachedComponents.Add(_cComponentInterface.gameObject);
     }
 
 
-    public void IncrementBuiltRatio(float _fRatio)
+    public void Build(float _fRatio)
     {
         // Incrmeent and cap
-        m_fBuiltRatio += _fRatio;
-        m_fBuiltRatio = Mathf.Clamp(m_fBuiltRatio, 0.0f, 1.0f);
+        m_fServerBuiltRatio += _fRatio;
+        m_fServerBuiltRatio = Mathf.Clamp(m_fServerBuiltRatio, 0.0f, 1.0f);
 
         // Set built
-        m_bBuilt.Set(m_fBuiltRatio == 1.0f);
-
-        GetComponent<CModulePrecipitation>().SetBuiltRatio(m_fBuiltRatio);
+        m_bBuiltPercent.Set((byte)(m_fServerBuiltRatio * 100.0f));
     }
 
 
@@ -255,58 +245,74 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		s_mModules.Add(gameObject);
 
 		// Add self to the global list of module types
-		if (!s_mModulesByType.ContainsKey(m_ModuleType))
+		if (!s_mModulesByType.ContainsKey(m_eModuleType))
 		{
-			s_mModulesByType.Add(m_ModuleType, new List<GameObject>());
+			s_mModulesByType.Add(m_eModuleType, new List<GameObject>());
 		}
 	
-		s_mModulesByType[m_ModuleType].Add(gameObject);
+		s_mModulesByType[m_eModuleType].Add(gameObject);
 
 		// Add self to the global list of module categories
-		if (!s_mModulesByCategory.ContainsKey(m_ModuleCategory))
+		if (!s_mModulesByCategory.ContainsKey(m_eModuleCategory))
 		{
-			s_mModulesByCategory.Add(m_ModuleCategory, new List<GameObject>());
+			s_mModulesByCategory.Add(m_eModuleCategory, new List<GameObject>());
 		}
 		
-		s_mModulesByCategory[m_ModuleCategory].Add(gameObject);
+		s_mModulesByCategory[m_eModuleCategory].Add(gameObject);
 
 		// Add self to the global list of module sizes
-		if (!s_mModulesBySize.ContainsKey(m_ModuleSize))
+		if (!s_mModulesBySize.ContainsKey(m_eModuleSize))
 		{
-			s_mModulesBySize.Add(m_ModuleSize, new List<GameObject>());
+			s_mModulesBySize.Add(m_eModuleSize, new List<GameObject>());
 		}
 		
-		s_mModulesBySize[m_ModuleSize].Add(gameObject);
+		s_mModulesBySize[m_eModuleSize].Add(gameObject);
 	}
 
 
 	void Start()
 	{
 		// Ensure a type is defined 
-		if (m_ModuleType == EType.INVALID)
+		if (m_eModuleType == EType.INVALID)
 		{
 			Debug.LogError(string.Format("This module has not been given a module type. GameObjectName({0})", gameObject.name));
 		}
 		
 		// Ensure a category is defined 
-		if (m_ModuleCategory == ECategory.INVALID)
+		if (m_eModuleCategory == ECategory.INVALID)
 		{
 			Debug.LogError(string.Format("This module has not been given a module category. GameObjectName({0})", gameObject.name));
 		}
 		
 		// Ensure a size is defined 
-		if (m_ModuleSize == ESize.INVALID)
+		if (m_eModuleSize == ESize.INVALID)
 		{
 			Debug.LogError(string.Format("This module has not been given a module size. GameObjectName({0})", gameObject.name));
 		}
 
-		// Register self with parent facility
-		CFacilityInterface fi = CUtility.FindInParents<CFacilityInterface>(gameObject);
+        if (m_cModel == null)
+        {
+            Debug.LogError(string.Format("This module has not had its model defined. GameObjectName({0})", gameObject.name));
+        }
 
-		if(fi != null)
+        // Hide model if not built
+        if (!IsBuilt)
+        {
+            m_cModel.SetActive(false);
+
+            m_aAttachedComponents.ForEach((GameObject _cComponent) =>
+            {
+                _cComponent.SetActive(false);
+            });
+        }
+
+		// Register self with parent facility
+		CFacilityInterface cFacilityInterface = CUtility.FindInParents<CFacilityInterface>(gameObject);
+
+		if(cFacilityInterface != null)
 		{
-			fi.RegisterModule(this);
-			m_cParentFacility = fi.gameObject;
+			cFacilityInterface.RegisterModule(this);
+			m_cParentFacility = cFacilityInterface.gameObject;
 		}
 		else
 		{
@@ -367,8 +373,24 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        // Empty
+        if (_cSyncedVar == m_bBuiltPercent)
+        {
+            GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+
+            if (m_bBuiltPercent.Value == 100)
+            {
+                m_cModel.SetActive(true);
+
+                m_aAttachedComponents.ForEach((GameObject _cComponent) =>
+                {
+                    _cComponent.SetActive(true);
+                });
+
+                if (EventBuilt != null) EventBuilt(gameObject);
+            }
+        }
     }
+
 
 #if UNITY_EDITOR
 	[ContextMenu("Create Module Extras (Editor only)")]
@@ -420,14 +442,16 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
-	public EType m_ModuleType = EType.INVALID;
-	public ECategory m_ModuleCategory = ECategory.INVALID;
-	public ESize m_ModuleSize = ESize.INVALID;
-	public bool m_Internal = true;
-	public bool m_Buildable = true;
+    public GameObject m_cModel = null;
+	public EType m_eModuleType = EType.INVALID;
+	public ECategory m_eModuleCategory = ECategory.INVALID;
+	public ESize m_eModuleSize = ESize.INVALID;
+    public float m_fNanitesCost = 100.124f;
+	public bool m_bInternal = true;
+	public bool m_bBuildable = true;
 
 
-    CNetworkVar<bool> m_bBuilt = null;
+    CNetworkVar<byte> m_bBuiltPercent = null;
 
 
     GameObject m_cParentFacility = null;
@@ -435,7 +459,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	Cubemap m_CubemapSnapshot = null;
 
 
-    Dictionary<CComponentInterface.EType, List<GameObject>> m_mAttachedComponents = new Dictionary<CComponentInterface.EType, List<GameObject>>();
+    List<GameObject> m_aAttachedComponents = new List<GameObject>();
 
 
 	static List<GameObject> s_mModules                                                  = new List<GameObject>();
@@ -448,11 +472,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Server Member Fields
 
 
-    public float m_fNanitesCost = 100.124f;
-
-
-    float m_fBuildSpeedRatio = 1.0f;    // 1.0f = 100% of tool speed
-    float m_fBuiltRatio = 0.0f;         // 0.0f (0%) => 1.0f (100%)
+    float m_fServerBuiltRatio = 0.0f; // 0.0f (0%) => 1.0f (100%)
 
 
 };

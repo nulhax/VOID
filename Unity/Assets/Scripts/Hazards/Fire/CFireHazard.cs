@@ -2,6 +2,8 @@
 using System.Collections;
 
 [RequireComponent(typeof(CNetworkView))]
+[RequireComponent(typeof(CActorLocator))]
+[RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CFireHazard : CNetworkMonoBehaviour
 {
 	private int audioClipIndex = -1;
@@ -16,29 +18,25 @@ public class CFireHazard : CNetworkMonoBehaviour
 	private CActorHealth_Embedded fireHealth = null;
 	public CActorHealth_Embedded health { get { return fireHealth; } }
 
+	private CFacilityAtmosphere cache_FacilityAtmosphere = null;
+	private System.Collections.Generic.List<CActorHealth> cache_ActorHealths = new System.Collections.Generic.List<CActorHealth>();
+
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		if (fireHealth == null)
-			fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, true, false, true, 25, 0, 25, 2, healthStateTransitions, 0.1f);
-		else
-			fireHealth.syncNetworkState = true;
-
+		fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, true, false, true, 25, 0, 25, 2, healthStateTransitions, 0.1f);
 		fireHealth.InstanceNetworkVars(_cRegistrar);
 	}
 
 	void Awake()
 	{
-		if(fireHealth == null)
-			fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, false, false, true, 25, 0, 25, 0, healthStateTransitions, 0.1f);
+		gameObject.AddMissingComponent<CNetworkView>();
+		gameObject.AddMissingComponent<CActorLocator>();
+		gameObject.AddMissingComponent<CActorAtmosphericConsumer>();
 
-		if (GetComponent<CActorLocator>() == null)
-			gameObject.AddComponent<CActorLocator>();
-
-		if (GetComponent<CActorAtmosphericConsumer>() == null)
-			gameObject.AddComponent<CActorAtmosphericConsumer>();
+		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate += 25.0f;
 
 		particleEmitterTemplate = Resources.Load<GameObject>("Prefabs/Hazards/ParticleEmitter");
 		AttachEmitterToChildren(gameObject);
@@ -49,6 +47,20 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 	void Start()
 	{
+		if (CNetwork.IsServer)
+		{
+			CActorLocator actorLocator = GetComponent<CActorLocator>();
+			if (actorLocator != null)
+			{
+				GameObject currentFacility = actorLocator.CurrentFacility;
+				if (currentFacility != null)
+					cache_FacilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
+			}
+
+			cache_ActorHealths.AddRange(GetComponentsInChildren<CActorHealth>());
+			cache_ActorHealths.AddRange(GetComponents<CActorHealth>());
+		}
+
 		fireHealth.Start();
 
 		fireHealth.EventOnSetState += OnSetState;
@@ -64,29 +76,21 @@ public class CFireHazard : CNetworkMonoBehaviour
 	void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.L))
-		{
-			fireHealth.health = 0;
-		}
+			fireHealth.health = fireHealth.health_min;
 
 		if (CNetwork.IsServer && burning)
 		{
-			CActorLocator actorLocator = GetComponent<CActorLocator>();
-			if (actorLocator != null)
+			if(cache_FacilityAtmosphere != null)
 			{
-				GameObject currentFacility = actorLocator.CurrentFacility;
-				if (currentFacility != null)
-				{
-					CFacilityAtmosphere facilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
-					if (facilityAtmosphere != null)
-					{
-						float thresholdPercentage = 0.25f;
-						if (facilityAtmosphere.QuantityPercent < thresholdPercentage)
-							fireHealth.health += (1.0f / (facilityAtmosphere.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
-					}
-				}
+				float thresholdPercentage = 0.25f;
+				if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
+					fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
 			}
 
 			fireHealth.health -= Time.deltaTime;	// Self damage over time. Seek help.
+
+			foreach (CActorHealth actorHealth in cache_ActorHealths)
+				actorHealth.health -= Time.deltaTime;
 		}
 
 		fireHealth.Update();
