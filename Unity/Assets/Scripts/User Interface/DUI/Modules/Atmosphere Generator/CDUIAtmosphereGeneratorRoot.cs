@@ -22,6 +22,8 @@ using System.Collections.Generic;
 
 public class CDUIAtmosphereGeneratorRoot : MonoBehaviour 
 {
+    /*
+
 	// Member Types
 	
 	
@@ -36,14 +38,14 @@ public class CDUIAtmosphereGeneratorRoot : MonoBehaviour
 	public UILabel m_WarningReport = null;
 	
 	private GameObject m_AtmosphereGenerator = null;
-	private CAtmosphereGeneratorBehaviour m_CachedAtmosphereGeneratorBehaviour = null;
-	private CTestAtmosphereGenerator m_CachedAtmosphereGenerator = null;
+	private CAtmosphereGeneratorInterface m_CachedAtmosphereGeneratorBehaviour = null;
+	private CAtmosphereGeneratorSmallBehaviour m_CachedAtmosphereGenerator = null;
 
 
 	// Member Properties
 	private bool IsCircuitryFunctional
 	{
-		get { return(m_CachedAtmosphereGenerator.m_CircuitryComponent.IsFunctional); }
+		get { return(m_CachedAtmosphereGenerator.m_cCircuitryComponent.IsBroken); }
 	}
 
 	
@@ -51,21 +53,21 @@ public class CDUIAtmosphereGeneratorRoot : MonoBehaviour
 	public void RegisterAtmosphereGenerator(GameObject _AtmosphereGenerator)
 	{
 		m_AtmosphereGenerator = _AtmosphereGenerator;
-		m_CachedAtmosphereGeneratorBehaviour = m_AtmosphereGenerator.GetComponent<CAtmosphereGeneratorBehaviour>();
-		m_CachedAtmosphereGenerator = m_AtmosphereGenerator.GetComponent<CTestAtmosphereGenerator>();
+		m_CachedAtmosphereGeneratorBehaviour = m_AtmosphereGenerator.GetComponent<CAtmosphereGeneratorInterface>();
+		m_CachedAtmosphereGenerator = m_AtmosphereGenerator.GetComponent<CAtmosphereGeneratorSmallBehaviour>();
 		
 		// Register generation rate state chages
 		m_CachedAtmosphereGeneratorBehaviour.EventGenerationRateChanged += HandleGenerationRateStateChange;
 		
 		// Register for when the circuitry breaks/fixes
-		m_CachedAtmosphereGenerator.m_CircuitryComponent.EventComponentBreak += HandleCircuitryStateChange;
-		m_CachedAtmosphereGenerator.m_CircuitryComponent.EventComponentFix += HandleCircuitryStateChange;
+		m_CachedAtmosphereGenerator.m_cCircuitryComponent.EventBreakStateChange += HandleCircuitryStateChange;
+		m_CachedAtmosphereGenerator.m_cCircuitryComponent.EventBreakStateChange += HandleCircuitryStateChange;
 		
 		// Update initial values
 		UpdateDUI();
 	}
 	
-	private void HandleGenerationRateStateChange(CAtmosphereGeneratorBehaviour _Generator)
+	private void HandleGenerationRateStateChange(CAtmosphereGeneratorInterface _Generator)
 	{
 		UpdateDUI();
 	}
@@ -141,4 +143,6 @@ public class CDUIAtmosphereGeneratorRoot : MonoBehaviour
 			m_ErrorReport.text = "Warning: Circuitry component defective!";
 		}
 	}
+    
+     */
 }

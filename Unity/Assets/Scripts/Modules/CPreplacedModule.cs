@@ -23,45 +23,32 @@ using System.Collections.Generic;
 public class CPreplacedModule : MonoBehaviour
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
+	// Member Delegates & Events
 
 
-// Member Fields
-	
-
+	// Member Fields
 	public CModuleInterface.EType m_PreplacedModuleType = CModuleInterface.EType.INVALID;
 	public bool m_PreplacedModuleBuilt = false;
 
 
-// Member Properties
+	// Member Properties
 
 
 
-// Member Methods
-	
-
-    public GameObject CreateModule(CModuleInterface.EType _eType)
+	// Member Methods
+    public GameObject CreateModule(GameObject _FacilityParent)
     {
-		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_eType));
+		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(m_PreplacedModuleType));
         moduleObject.GetComponent<CNetworkView>().SetPosition(transform.position);
-        moduleObject.GetComponent<CNetworkView>().SetEulerAngles(transform.rotation.eulerAngles);
-		moduleObject.GetComponent<CNetworkView>().SetParent(CUtility.FindInParents<CFacilityInterface>(transform).transform);
+        moduleObject.GetComponent<CNetworkView>().SetRotation(transform.rotation);
+		moduleObject.GetComponent<CNetworkView>().SetParent(_FacilityParent.GetComponent<CNetworkView>().ViewId);
+
+		if(m_PreplacedModuleBuilt)
+			moduleObject.GetComponent<CModuleInterface>().Build(1.0f);
 
         return(moduleObject);
     }
-
-	void Start()
-	{
-        if(m_PreplacedModuleType != CModuleInterface.EType.INVALID && CNetwork.IsServer)
-        {
-            GameObject module = CreateModule(m_PreplacedModuleType);
-
-			// Make the module fully built already
-            if(m_PreplacedModuleBuilt)
-				module.GetComponent<CModuleInterface>().Build(1.0f);
-        }
-	}
 };

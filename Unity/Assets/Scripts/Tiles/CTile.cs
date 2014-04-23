@@ -42,11 +42,9 @@ public class CTile : CGridObject
 
 	public int m_TileTypeIdentifier = 0;
 	private int m_PreviousTileTypeIdentifier = 0;
-
-	private Dictionary<ETileType, TTileMeta> m_TileMetaData = new Dictionary<ETileType, TTileMeta>();
+	
 	private Dictionary<ETileType, TTileMeta> m_CurrentTileMetaData = new Dictionary<ETileType, TTileMeta>();
-	private Dictionary<ETileType, ETileVariant> m_CurrentTileVariants = new Dictionary<ETileType, ETileVariant>();
-	private Dictionary<ETileType, List<EDirection>> m_CurrentTileNeighbourExemptions = new Dictionary<ETileType, List<EDirection>>();
+	private Dictionary<ETileType, TTileMeta> m_ActiveTileMetaData = new Dictionary<ETileType, TTileMeta>();
 
 	private bool m_IsDirty = false;
 
@@ -77,10 +75,8 @@ public class CTile : CGridObject
 		for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 		{
 			ETileType type = (ETileType)i;
-			m_TileMetaData[type] = TTileMeta.Default;
+			m_ActiveTileMetaData[type] = TTileMeta.Default;
 			m_CurrentTileMetaData[type] = TTileMeta.Default;
-			m_CurrentTileVariants[type] = ETileVariant.Default;
-			m_CurrentTileNeighbourExemptions[type] = new List<EDirection>();
 		}
 	}
 
@@ -163,39 +159,39 @@ public class CTile : CGridObject
 			{
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Floor))
 				{
-					if(!m_CurrentTileNeighbourExemptions[ETileType.Floor].Contains(neighbour.m_Direction))
+					if(!m_CurrentTileMetaData[ETileType.Floor].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 						metaIdentifiers[(int)ETileType.Floor] |= 1 << (int)neighbour.m_Direction;
 				}
 
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 				{
-					if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext].Contains(neighbour.m_Direction))
+					if(!m_CurrentTileMetaData[ETileType.Wall_Ext].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 						metaIdentifiers[(int)ETileType.Wall_Ext] |= 1 << (int)neighbour.m_Direction;
 				}
 
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 				{
-					if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int].Contains(neighbour.m_Direction))
+					if(!m_CurrentTileMetaData[ETileType.Wall_Int].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 						metaIdentifiers[(int)ETileType.Wall_Int] |= 1 << (int)neighbour.m_Direction;
 				}
 
 				if(neighbour.m_Tile.GetTileTypeState(ETileType.Ceiling))
 				{
-					if(!m_CurrentTileNeighbourExemptions[ETileType.Ceiling].Contains(neighbour.m_Direction))
+					if(!m_CurrentTileMetaData[ETileType.Ceiling].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 						metaIdentifiers[(int)ETileType.Ceiling] |= 1 << (int)neighbour.m_Direction;
 				}
 			}
 
 			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 			{
-				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Int].Contains(neighbour.m_Direction) &&
-				   !m_CurrentTileNeighbourExemptions[ETileType.Wall_Int_Cap].Contains(neighbour.m_Direction))
+				if(!m_CurrentTileMetaData[ETileType.Wall_Int].m_NeighbourExemptions.Contains(neighbour.m_Direction) &&
+				   !m_CurrentTileMetaData[ETileType.Wall_Int_Cap].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 					metaIdentifiers[(int)ETileType.Wall_Int_Cap] |= 1 << (int)neighbour.m_Direction;
 			}
 
 			if(neighbour.m_Tile.GetTileTypeState(ETileType.Wall_Int))
 			{
-				if(!m_CurrentTileNeighbourExemptions[ETileType.Wall_Ext_Cap].Contains(neighbour.m_Direction))
+				if(!m_CurrentTileMetaData[ETileType.Wall_Ext_Cap].m_NeighbourExemptions.Contains(neighbour.m_Direction))
 					metaIdentifiers[(int)ETileType.Wall_Ext_Cap] |= 1 << (int)neighbour.m_Direction;
 			}
 		}
@@ -244,13 +240,10 @@ public class CTile : CGridObject
 			// Check if the tile should be active
 			if(GetTileTypeState(tileType))
 			{
-				TTileMeta tileMeta = m_TileMetaData[tileType];
-
-				// Apply the variant
-				tileMeta.m_Variant = m_CurrentTileVariants[tileType];
+				TTileMeta tileMeta = m_CurrentTileMetaData[tileType];
 
 				// If the meta data changed
-				if(!m_CurrentTileMetaData[tileType].Equals(tileMeta))
+				if(!m_ActiveTileMetaData[tileType].Equals(tileMeta))
 				{
 					// Release the current tile type object
 					ReleaseTile(tileType);
@@ -266,14 +259,14 @@ public class CTile : CGridObject
 					}
 
 					// Update the tiles current meta data for this type
-					m_CurrentTileMetaData[tileType] = tileMeta;
+					m_ActiveTileMetaData[tileType] = tileMeta;
 				}
 			}
 			else
 			{
 				// Release the tile as it is not needed
 				ReleaseTile(tileType);
-				m_CurrentTileMetaData[tileType] = TTileMeta.Default;
+				m_ActiveTileMetaData[tileType] = TTileMeta.Default;
 			}
 		}
 
@@ -282,30 +275,19 @@ public class CTile : CGridObject
 			EventTileGeometryChanged(this);
 	}
 
-	public void ApplyTileMetaData(ETileType _TileType, TTileMeta _Meta)
-	{
-		m_TileMetaData[_TileType] = _Meta;
-		
-		// Meta type changed so this tile needs update
-		m_IsDirty = true;
-	}
-	
-	public TTileMeta GetCurrentMetaData(ETileType _TileType)
-	{
-		return(m_CurrentTileMetaData[_TileType]);
-	}
-
 	public void SetTileTypeVariant(ETileType _TileType, ETileVariant _TileVariant)
 	{
-		m_CurrentTileVariants[_TileType] = _TileVariant;
+		TTileMeta tileMeta = m_CurrentTileMetaData[_TileType];
+		tileMeta.m_Variant = _TileVariant;
+		m_CurrentTileMetaData[_TileType] = tileMeta;
 
-		// Variant type changed so this tile needs update
+		// Set is dirty
 		m_IsDirty = true;
 	}
 
 	public ETileVariant GetTileTypeVariant(ETileType _TileType)
 	{
-		return(m_CurrentTileVariants[_TileType]);
+		return(m_CurrentTileMetaData[_TileType].m_Variant);
 	}
 
 	public void SetTileTypeState(ETileType _TileType, bool _State)
@@ -326,25 +308,35 @@ public class CTile : CGridObject
 	{
 		if(_State)
 		{
-			m_CurrentTileNeighbourExemptions[_TileType].Add(_Direction);
-			return;
+			m_CurrentTileMetaData[_TileType].m_NeighbourExemptions.Add(_Direction);
 		}
-
-		if(!_State)
+		else
 		{
-			m_CurrentTileNeighbourExemptions[_TileType].Remove(_Direction);
-			return;
+			m_CurrentTileMetaData[_TileType].m_NeighbourExemptions.Remove(_Direction);
 		}
 	}
 
 	public void ResetTileNeighboutExemptions(ETileType _TileType)
 	{
-		m_CurrentTileNeighbourExemptions[_TileType].Clear();
+		m_CurrentTileMetaData[_TileType].m_NeighbourExemptions.Clear();
 	}
 
 	public bool GetTileNeighbourExemptionState(ETileType _TileType, EDirection _Direction)
 	{
-		return(m_CurrentTileNeighbourExemptions[_TileType].Contains(_Direction));
+		return(m_CurrentTileMetaData[_TileType].m_NeighbourExemptions.Contains(_Direction));
+	}
+
+	public void CloneTileMetaData(CTile _From)
+	{
+		// Copy the variables from one to the other
+		m_TileTypeIdentifier = _From.m_TileTypeIdentifier;
+		for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
+		{
+			m_CurrentTileMetaData[(ETileType)i] = _From.m_CurrentTileMetaData[(ETileType)i];
+		}
+
+		// Set is dirty
+		m_IsDirty = true;
 	}
 
 	public void Release()
@@ -353,10 +345,9 @@ public class CTile : CGridObject
             EventTilePreRelease(this);
 
 		// Release tile objects
-		for(int i = 0; i < (int)ETileType.MAX; ++i)
+		for(int i = (int)ETileType.INVALID + 1; i < (int)ETileType.MAX; ++i)
 		{
 			ReleaseTile((ETileType)i);
-			m_TileMetaData[(ETileType)i] = new TTileMeta();
 			m_TileTypeIdentifier = 0;
 		}
 
@@ -400,7 +391,7 @@ public class CTile : CGridObject
 	private bool UpdateTileMetaInfo(ETileType _TileType, int _TileMask)
 	{
 		// Get the tile meta info as of this point
-		TTileMeta tileMeta = m_TileMetaData[_TileType];
+		TTileMeta tileMeta = m_CurrentTileMetaData[_TileType];
 
 		// Find the tile mask out of possible 4 rotations
 		for(int i = 0; i < 4; ++i)
@@ -425,9 +416,11 @@ public class CTile : CGridObject
 			{
 				TTileMeta newTileMeta = s_TileMetaInfo[_TileType][tileMask];
 				newTileMeta.m_Rotations = i;
-				
+				newTileMeta.m_Variant = m_CurrentTileMetaData[_TileType].m_Variant;
+				newTileMeta.m_NeighbourExemptions = m_CurrentTileMetaData[_TileType].m_NeighbourExemptions;
+
 				// Update the tile meta
-				m_TileMetaData[_TileType] = newTileMeta;
+				m_CurrentTileMetaData[_TileType] = newTileMeta;
 				
 				// Return true if there is a change in meta data
 				if(!tileMeta.Equals(newTileMeta))
@@ -764,12 +757,14 @@ public struct TTileMeta
 	{
 		m_TileMask = _Identifier;
 		m_Type = _Type;
-		m_Variant = ETileVariant.Default;
 		m_Rotations = 0;
+		m_Variant = ETileVariant.Default;
+		m_NeighbourExemptions = new List<EDirection>();
 	}
 	
 	public int m_TileMask;
 	public ETileMetaType m_Type;
 	public int m_Rotations;
 	public ETileVariant m_Variant;
+	public List<EDirection> m_NeighbourExemptions;
 }

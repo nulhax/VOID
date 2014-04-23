@@ -120,7 +120,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 
 		if(m_MiningLaserPrefab == null)
 			Debug.LogError("MiningLaser prefab has not been assigned!");
@@ -133,14 +133,12 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		m_cExtractorBeamObject.GetComponentInChildren<Light>().color = new Color(0.5f, 0.5f, 1.0f, 1.0f);
 		m_cFractureLaserObject.SetActive(false);
 		m_cExtractorBeamObject.SetActive(false);
-
-		m_cBarrelObject = GetComponent<CTurretBehaviour>().m_cBarrel;
 	}
 	
 	
 	void OnDestroy()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
 	}
 
 
@@ -165,7 +163,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
         bool bLaserVisible = false;
         bool bExtractorBeamVisible = false;
 
-		if (GetComponent<CTurretBehaviour>().ControllerPlayerId != 0)
+		if (GetComponent<CTurretBehaviour>().IsUnderControl)
 		{
             Vector3 vGalaxyBarrelPosition = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cBarrelObject.transform.position);
             Vector3 vGalaxyBarrelRotation = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cBarrelObject.transform.rotation) * Vector3.forward;

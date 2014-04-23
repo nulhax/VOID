@@ -86,13 +86,13 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 	}
 
 
 	void OnDestroy()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
 	}
 
 
@@ -103,9 +103,9 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			m_fServerFireTimer += Time.deltaTime;
 		}
 
-		if (GetComponent<CTurretBehaviour>().ControllerPlayerId == CNetwork.PlayerId)
+		//if (GetComponent<CTurretBehaviour>().ControllerPlayerId == CNetwork.PlayerId)
 		{
-			UpdateFiring();
+			//UpdateFiring();
 		}
 	}
 
@@ -140,9 +140,9 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 			    Vector3 projPos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_aLaserNodes[m_iLaserNodeIndex].transform.position);
 			    Quaternion projRot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_aLaserNodes[m_iLaserNodeIndex].transform.rotation);
 			
-			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserTurretProjectile);
+			    GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.LaserProjectile);
 			    cProjectile.GetComponent<CNetworkView>().SetPosition(projPos);
-			    cProjectile.GetComponent<CNetworkView>().SetEulerAngles(projRot.eulerAngles);
+			    cProjectile.GetComponent<CNetworkView>().SetEuler(projRot.eulerAngles);
 			
 				InvokeRpcAll("StartMuzzleFlash", m_iLaserNodeIndex);
 

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 public class CDUIPowerGeneratorRoot : MonoBehaviour 
 {
+    /*
 	// Member Types
 	
 	
@@ -36,8 +37,8 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 	public UILabel m_WarningReport = null;
 
 	private GameObject m_PowerGenerator = null;
-	private CPowerGenerationBehaviour m_CachedPowerGeneratorBehaviour = null;
-	private CTestPowerGenerator m_CachedPowerGenerator = null;
+	private CPowerGeneratorInterface m_CachedPowerGeneratorBehaviour = null;
+	private CPowerGeneratorSmallBehaviour m_CachedPowerGenerator = null;
 
 	// Member Properties
 
@@ -46,22 +47,22 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 	public void RegisterPowerGenerator(GameObject _PowerGenerator)
 	{
 		m_PowerGenerator = _PowerGenerator;
-		m_CachedPowerGeneratorBehaviour = m_PowerGenerator.GetComponent<CPowerGenerationBehaviour>();
-		m_CachedPowerGenerator = m_PowerGenerator.GetComponent<CTestPowerGenerator>();
+		m_CachedPowerGeneratorBehaviour = m_PowerGenerator.GetComponent<CPowerGeneratorInterface>();
+		m_CachedPowerGenerator = m_PowerGenerator.GetComponent<CPowerGeneratorSmallBehaviour>();
 		
 		// Register generation rate state chages
 		m_CachedPowerGeneratorBehaviour.EventGenerationRateChanged += HandleGenerationStateChange;
 		m_CachedPowerGeneratorBehaviour.EventGenerationRatePotentialChanged += HandleGenerationStateChange;
 
 		// Register for when the circuitry breaks/fixes
-		m_CachedPowerGenerator.m_CircuitryComponent.EventComponentBreak += HandleCircuitryStateChange;
-		m_CachedPowerGenerator.m_CircuitryComponent.EventComponentFix += HandleCircuitryStateChange;
+		m_CachedPowerGenerator.m_CircuitryComponent.EventBreakStateChange += HandleCircuitryStateChange;
+		m_CachedPowerGenerator.m_CircuitryComponent.EventBreakStateChange += HandleCircuitryStateChange;
 		
 		// Update initial values
 		UpdateDUI();
 	}
 
-	private void HandleGenerationStateChange(CPowerGenerationBehaviour _Generator)
+	private void HandleGenerationStateChange(CPowerGeneratorInterface _Generator)
 	{
 		UpdateDUI();
 	}
@@ -119,7 +120,7 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 	
 	private void UpdateCircuitryState()
 	{
-		if(m_CachedPowerGenerator.m_CircuitryComponent.IsFunctional)
+		if(m_CachedPowerGenerator.m_CircuitryComponent.IsBroken)
 		{
 			m_GenerationActive.color = Color.green;
 			m_GenerationActive.text = "Status: Generation Active";
@@ -137,4 +138,5 @@ public class CDUIPowerGeneratorRoot : MonoBehaviour
 			m_ErrorReport.text = "Warning: Circuitry component defective!";
 		}
 	}
+     */
 }

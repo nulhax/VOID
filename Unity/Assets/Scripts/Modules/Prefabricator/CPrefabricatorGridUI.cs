@@ -130,6 +130,17 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
+
+		// Import the tiles from the current ship
+		foreach(CTile tile in m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles))
+		{
+			// Register events
+			tile.EventTileInitialised += OnTileInitialised;
+			tile.EventTilePreRelease += OnTilePreRelease;
+			tile.EventTilePostRelease += OnTilePostRelease;
+			tile.EventTileGeometryChanged += OnTileGeometryChange;
+		}
+		m_FacilityTilesDirty = true;
 	}
 	
 	private void CreateGridUIObjects()
@@ -570,8 +581,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		{
 			if(IsShiftKeyDown)
 			{
-				Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector) + m_TilesOffset;
-				Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint.ToVector) + m_TilesOffset;
+				Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector * m_GridScale) + m_TilesOffset;
+				Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint.ToVector * m_GridScale) + m_TilesOffset;
 
 				Vector3 centerPos = (point1 + point2) * 0.5f;
 				float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
@@ -596,7 +607,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Walls)
 		{
-			Vector3 tilePos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset));
+			Vector3 tilePos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
 			Vector3 centerPos = m_CurrentMouseGridPoint.ToVector;
 			centerPos.x += Mathf.Sign(tilePos.x - centerPos.x) * 0.5f;
 			centerPos.z += Mathf.Sign(tilePos.z - centerPos.z) * 0.5f;
@@ -761,7 +772,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 	private void ModifyInteriorWall()
 	{
-		Vector3 cursorPos = m_GridCursor.transform.localPosition / m_Grid.m_TileSize;
+		Vector3 cursorPos = (m_GridCursor.transform.localPosition - m_TilesOffset) / m_Grid.m_TileSize;
 		
 		TGridPoint tilePos1 = new TGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
 		TGridPoint tilePos2 = new TGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));

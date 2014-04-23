@@ -21,7 +21,6 @@ using System;
 /* Implementation */
 
 
-[RequireComponent(typeof(CFacilityInterface))]
 public class CFacilityTiles : MonoBehaviour
 {
 	// Member Types
@@ -31,7 +30,7 @@ public class CFacilityTiles : MonoBehaviour
 
 
 	// Member Fields
-	private List<CTile> m_InteriorTiles = new List<CTile>();
+	public List<CTile> m_InteriorTiles = new List<CTile>();
 
 	
 	// Member Properties
@@ -54,13 +53,13 @@ public class CFacilityTiles : MonoBehaviour
 		foreach(CTile tile in m_InteriorTiles)
 		{
 			// Add a trigger box collider
-			BoxCollider boxCollider = tile.gameObject.AddComponent<BoxCollider>();
+			BoxCollider boxCollider = tile.gameObject.AddMissingComponent<BoxCollider>();
 			boxCollider.center = new Vector3(0.0f, 2.0f, 0.0f);
 			boxCollider.size = new Vector3(4.0f, 4.0f, 4.0f);
 			boxCollider.isTrigger = true;
 
 			// Add the interior trigger to this collider
-			CInteriorTrigger interiorTrigger = tile.gameObject.AddComponent<CInteriorTrigger>();
+			CInteriorTrigger interiorTrigger = tile.gameObject.AddMissingComponent<CInteriorTrigger>();
 			interiorTrigger.SetParentFacility(gameObject);
 		}
 

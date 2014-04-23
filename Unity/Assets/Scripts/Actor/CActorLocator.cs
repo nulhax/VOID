@@ -54,6 +54,9 @@ public class CActorLocator : CNetworkMonoBehaviour
 	{
 		get 
         {
+            if (m_tCurrentFacilityViewId == null)
+                Debug.LogError(gameObject.name + " is missing a network view? The network variables were not instanced");
+
             if (m_tCurrentFacilityViewId.Value == null)
             {
                 return (null);
@@ -100,6 +103,9 @@ public class CActorLocator : CNetworkMonoBehaviour
         if (m_aContainingFacilities.Count == 0)
         {
             m_tCurrentFacilityViewId.Value = null;
+
+			// Disembark the player from the ship
+			gameObject.GetComponent<CActorBoardable>().DisembarkActor();
         }
 	}
 

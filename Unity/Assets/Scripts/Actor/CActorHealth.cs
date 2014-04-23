@@ -17,7 +17,7 @@ using System.Collections;
 [System.Serializable]
 public class CActorHealth : CNetworkMonoBehaviour
 {
-	public delegate void OnSetHealth(float prevHealth, float currHealth);
+	public delegate void OnSetHealth(CActorHealth _cSender, float prevHealth, float currHealth);
 	public event OnSetHealth EventOnSetHealth;
 
 	public delegate void OnSetState(byte prevState, byte currState);
@@ -65,7 +65,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		if (callEventsOnStart)
 		{
 			if (EventOnSetHealth != null)
-				EventOnSetHealth(health_previous, health_current);
+				EventOnSetHealth(this, health_previous, health_current);
 
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
@@ -113,7 +113,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		}
 
 		if (EventOnSetHealth != null && health_current != health_previous)
-			EventOnSetHealth(health_previous, health_current);
+			EventOnSetHealth(this, health_previous, health_current);
 
 		health_previous = health_current;
 

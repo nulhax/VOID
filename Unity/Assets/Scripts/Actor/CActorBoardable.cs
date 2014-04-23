@@ -17,13 +17,10 @@ using UnityEngine;
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(CActorLocator))]
 public class CActorBoardable : CNetworkMonoBehaviour 
 {
 	
-// Member Types
-
-
+	// Member Types
 	public enum EBoardingState
 	{
 		INVALID,
@@ -35,30 +32,30 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	}
 	
 
-// Member Delegates and Events
+	// Member Delegates and Events
 
 
-	public delegate void BoardingHandler();
+	// Member Fields
+	public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
+	public bool m_CanBoard = true;
+	public bool m_CanDisembark = true;
+
+
+	CNetworkVar<EBoardingState> m_BoardingState = null;
+	int m_iOriginalLayer = 0;
+
 	
-	public event BoardingHandler EventBoard;
-	public event BoardingHandler EventDisembark;
-
-	
-// Member Properties	
-	
-
+	// Member Properties	
 	public EBoardingState BoardingState
 	{
-		get { return (m_eBoardingState.Get()); }
+		get { return (m_BoardingState.Get()); }
 	}
 
 
-// Member Methods
-
-
+	// Member Methods
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_eBoardingState = _cRegistrar.CreateReliableNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
+		m_BoardingState = _cRegistrar.CreateReliableNetworkVar<EBoardingState>(OnNetworkVarSync, EBoardingState.INVALID);
 	}
 
 
@@ -71,7 +68,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
             if (CNetwork.IsServer)
             {
                 // Set the boarding state
-                m_eBoardingState.Set(EBoardingState.Onboard);
+                m_BoardingState.Set(EBoardingState.Onboard);
             }
 
             // Get the inverse of the relative velocity of the actor boarding
@@ -97,7 +94,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
             // Set the boarding state
-            m_eBoardingState.Set(EBoardingState.Offboard);
+            m_BoardingState.Set(EBoardingState.Offboard);
 
             // Transfer the actor to galaxy ship space
             CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
@@ -119,10 +116,6 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	{
 		// Save the original layer
 		m_iOriginalLayer = gameObject.layer;
-
-		// Register the boarding/disembarking handlers
-		EventBoard += SetOriginalLayer;
-		EventDisembark += SetGalaxyLayer;
 	}
 
 
@@ -132,7 +125,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		if (CNetwork.IsServer && 
             BoardingState == EBoardingState.INVALID)
 		{
-			m_eBoardingState.Set(m_InitialBoardingState);
+			m_BoardingState.Set(m_InitialBoardingState);
 		}
 	}
 
@@ -163,39 +156,21 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	}
 
 
-    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    void OnNetworkVarSync(INetworkVar _SyncedVar)
     {
-        // Boarding state
-        if (_cSyncedVar == m_eBoardingState)
-        {
-            if (BoardingState == EBoardingState.Onboard && 
-                m_bCanBoard)
-            {
-                // Notify observers about this actor boarding
-                if (EventBoard != null) EventBoard();
-            }
-            else if (BoardingState == EBoardingState.Offboard && 
-                     m_bCanDisembark)
-            {
-                // Notify observers about this actor disembarking
-                if (EventDisembark != null) EventDisembark();
-            }
-        }
+		// Boarding state
+		if (_SyncedVar == m_BoardingState)
+		{
+			if (BoardingState == EBoardingState.Onboard && 
+			    m_CanBoard)
+			{
+				SetOriginalLayer();
+			}
+			else if (BoardingState == EBoardingState.Offboard && 
+			         m_CanDisembark)
+			{
+				SetGalaxyLayer();
+			}
+		}
     }
-
-
-// Member Fields
-
-
-    public EBoardingState m_InitialBoardingState = EBoardingState.Onboard;
-    public bool m_bCanBoard = true;
-    public bool m_bCanDisembark = true;
-
-
-    CNetworkVar<EBoardingState> m_eBoardingState = null;
-
-
-    int m_iOriginalLayer = 0;
-
-
 }

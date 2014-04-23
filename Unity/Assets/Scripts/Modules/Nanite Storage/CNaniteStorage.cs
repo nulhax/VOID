@@ -65,7 +65,7 @@ public class CNaniteStorage : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void OnEventBuilt(GameObject _cModule)
+    void OnEventBuilt(CModuleInterface _cSender)
     {
         // Add nanite capacity to ship
         CGameShips.Ship.GetComponent<CShipNaniteSystem>().ChangeCapacity(m_fCapacity.Value);

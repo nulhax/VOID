@@ -487,7 +487,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fBuildRatioPower      = 0.05f; // 5% per sec
+    const float k_fBuildRatioPower = 0.10f; // 5% per sec
     const float k_fBuildingRange        = 3.0f;
     const float k_fMiningRate           = 5.0f;
     const float k_fMiningRange          = 10.0f;

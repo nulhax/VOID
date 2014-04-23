@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cModel: {fileID: 100002}
-  m_eModuleType: 800
+  m_eModuleType: 0
   m_eModuleCategory: 350
   m_eModuleSize: 1
   m_fNanitesCost: 100.124001

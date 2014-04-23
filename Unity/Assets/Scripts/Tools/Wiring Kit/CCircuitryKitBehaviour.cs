@@ -125,7 +125,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CircuitryComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Circuitry)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

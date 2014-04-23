@@ -179,7 +179,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 			// Save the asteroid for the raycast to fire at
 			AsteroidPos = _Collider.transform.position;
 
-			Debug.Log ("Shield Health is at: " + m_ShieldPower);
+			//Debug.Log ("Shield Health is at: " + m_ShieldPower);
 		}
 	}
 	
@@ -213,6 +213,9 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 		// Get the direction of the asteroid from the origin
 		Vector3 dir = (AsteroidPos - transform.position).normalized;
 
+
+
+        return; // Commit files that you need to add
 		if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
 		{
 			Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);

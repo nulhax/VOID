@@ -131,18 +131,6 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		if (EventModuleCreated != null) 
 			EventModuleCreated(_ModuleInterface, this);
     }
-	
-	void Start()
-	{
-	    // Register facility
-	    CGameShips.Ship.GetComponent<CShipFacilities>().RegisterFacility(this);
-
-	    // Listen to event to unregister facility
-	    NetworkView.EventPreDestory += () =>
-	    {
-			CGameShips.Ship.GetComponent<CShipFacilities>().UnregisterFacility(this);
-		};
-	}
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {

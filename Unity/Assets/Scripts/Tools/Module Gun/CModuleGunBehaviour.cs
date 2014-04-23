@@ -256,7 +256,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             cShipNanaiteSystem.ChangeQuanity(m_DUIModuleCreationRoot.SelectedModuleCost);
 
 			// Debug: Create the module instantly
-			currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+			//currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
 		
 			// Deactivate the UI
 			m_DUIActive.Set(false);

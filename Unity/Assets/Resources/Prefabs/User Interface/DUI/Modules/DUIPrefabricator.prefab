@@ -286,7 +286,7 @@ GameObject:
   - 114: {fileID: 11400042}
   - 114: {fileID: 11400078}
   m_Layer: 0
-  m_Name: DUIConstructionPlanner
+  m_Name: DUIPrefabricator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

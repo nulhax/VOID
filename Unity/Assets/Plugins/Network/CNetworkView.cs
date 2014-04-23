@@ -154,28 +154,19 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_cParentViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
-        
         _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
-        _cRegistrar.RegisterRpc(this, "RemoteSetRotation");
+        _cRegistrar.RegisterRpc(this, "RemoteSetEuler");
+        _cRegistrar.RegisterRpc(this, "RemoteSetLocalPosition");
+        _cRegistrar.RegisterRpc(this, "RemoteSetLocalEuler");
         _cRegistrar.RegisterRpc(this, "RemoteSetScale");
         _cRegistrar.RegisterRpc(this, "RemoteSetRigidBodyMass");
+        _cRegistrar.RegisterRpc(this, "RemoteSetParent");
 	}
 
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		if (_cSyncedVar == m_cParentViewId)
-		{
-			if (m_cParentViewId.Get() == null)
-			{
-				transform.parent = null;
-			}
-			else
-			{
-				transform.parent = m_cParentViewId.Get().GameObject.transform;
-			}
-		}
+        // Empty
 	}
 
 
@@ -414,8 +405,20 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 	public void SyncTransformRotation()
 	{
-		SetEulerAngles(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
+		SetEuler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
 	}
+
+
+    public void SyncTransformLocalPosition()
+    {
+        SetLocalPosition(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z);
+    }
+
+
+    public void SyncTransformLocalEuler()
+    {
+        SetLocalEuler(transform.localEulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z);
+    }
 
 
 	public void SyncTransformScale()
@@ -436,21 +439,18 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-	public void SetParent(Transform _Parent)
-	{
-		// Ensure parent has network view
-		Logger.WriteErrorOn(_Parent.GetComponent<CNetworkView>() == null, "Parent must have a network view!!!");
+    public void SyncParent()
+    {
+        // Ensure servers only sync RigidBodyMass
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot sync network object's parent!!!");
 
-		m_cParentViewId.Set(_Parent.GetComponent<CNetworkView>().ViewId);
-	}
+        SetParent(transform.parent.GetComponent<CNetworkView>().ViewId);
+    }
 
 
 	public void SetParent(TNetworkViewId _cParentViewId)
 	{
-		// Ensure servers only set parent
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network parent!!!");
-
-		m_cParentViewId.Set(_cParentViewId);
+        InvokeRpcAll("RemoteSetParent", _cParentViewId);
 	}
 
 
@@ -469,25 +469,55 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+    public void SetLocalPosition(Vector3 _vPosition)
+    {
+        SetLocalPosition(_vPosition.x, _vPosition.y, _vPosition.z);
+    }
+
+
+    public void SetLocalPosition(float _fX, float _fY, float _fZ)
+    {
+        // Ensure servers only sync transforms
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform local position!!!");
+
+        InvokeRpcAll("RemoteSetLocalPosition", _fX, _fY, _fZ);
+    }
+
+
 	public void SetRotation(Quaternion _Rotation)
 	{
-		SetEulerAngles(_Rotation.eulerAngles);
+		SetEuler(_Rotation.eulerAngles);
 	}
 
 
-	public void SetEulerAngles(Vector3 _vEulerAngles)
+	public void SetEuler(Vector3 _vEulerAngles)
 	{
-		SetEulerAngles(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
+		SetEuler(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
 	}
 
 
-	public void SetEulerAngles(float _fX, float _fY, float _fZ)
+	public void SetEuler(float _fX, float _fY, float _fZ)
 	{
 		// Ensure servers only set transforms
-		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform rotation!!!");
+		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform euler!!!");
 
-		InvokeRpcAll("RemoteSetRotation", _fX, _fY, _fZ);
+        InvokeRpcAll("RemoteSetEuler", _fX, _fY, _fZ);
 	}
+
+
+    public void SetLocalEuler(Vector3 _vEulerAngles)
+    {
+        SetLocalEuler(_vEulerAngles.x, _vEulerAngles.y, _vEulerAngles.z);
+    }
+
+
+    public void SetLocalEuler(float _fX, float _fY, float _fZ)
+    {
+        // Ensure servers only set transforms
+        Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot set network object's transform local euler rotation!!!");
+
+        InvokeRpcAll("RemoteSetLocalEuler", _fX, _fY, _fZ);
+    }
 
 
 	public void SetScale(float _fX, float _fY, float _fZ)
@@ -690,6 +720,11 @@ public class CNetworkView : CNetworkMonoBehaviour
                 // Extract network var identifier
                 byte bNetworkVarIdentifier = _cStream.Read<byte>();
 
+                if (!cNetworkView.m_mNetworkVars.ContainsKey(bNetworkVarIdentifier))
+                {
+                    Debug.LogError(string.Format("Network var not found. GameObject({0}) ViewId({1}) VarId({2})", cNetworkView.gameObject.name, cNetworkView.ViewId, bNetworkVarIdentifier));
+                }
+
                 // Retrieve network var instance
                 INetworkVar cNetworkVar = cNetworkView.m_mNetworkVars[bNetworkVarIdentifier];
 
@@ -806,10 +841,24 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
 	[ANetworkRpc]
-	void RemoteSetRotation(float _fRotationX, float _fRotationY, float _fRotationZ)
+	void RemoteSetEuler(float _fRotationX, float _fRotationY, float _fRotationZ)
 	{
 		transform.rotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
 	}
+
+
+    [ANetworkRpc]
+    void RemoteSetLocalPosition(float _fPositionX, float _fPositionY, float _fPositionZ)
+    {
+        transform.localPosition = new Vector3(_fPositionX, _fPositionY, _fPositionZ);
+    }
+
+
+    [ANetworkRpc]
+    void RemoteSetLocalEuler(float _fRotationX, float _fRotationY, float _fRotationZ)
+    {
+        transform.localRotation = Quaternion.Euler(_fRotationX, _fRotationY, _fRotationZ);
+    }
 
 
 	[ANetworkRpc]
@@ -817,6 +866,21 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		transform.localScale = new Vector3(_fScaleX, _fScaleY, _fScaleZ);
 	}
+
+
+    [ANetworkRpc]
+    void RemoteSetParent(TNetworkViewId _cParentViewId)
+    {
+        if (_cParentViewId == null)
+        {
+            transform.parent = null;
+        }
+        else
+        {
+            transform.parent = transform.parent = _cParentViewId.GameObject.transform;
+        }
+        
+    }
 
 
     [ANetworkRpc]
@@ -854,9 +918,6 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
     public TNetworkViewId m_cNetworkViewId = null;
-
-
-	CNetworkVar<TNetworkViewId> m_cParentViewId = null;
     
 
     Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();

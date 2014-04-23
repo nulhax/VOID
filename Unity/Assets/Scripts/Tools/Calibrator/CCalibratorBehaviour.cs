@@ -125,7 +125,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CalibratorComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Calibrator)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

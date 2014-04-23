@@ -49,6 +49,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
+    public bool IsSyncEnabled
+    {
+        get { return (m_bSyncEnabled); }
+    }
+
+
 // Member Methods
 
 
@@ -149,6 +155,12 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
+    public void SetSyncEnabled(bool _bEnabled)
+    {
+        m_bSyncEnabled = _bEnabled;
+    }
+
+
 	public override void InvokeSyncCallback()
 	{
 		Logger.WriteErrorOn(m_nSyncedHandler == null, "This network var does not have a OnSyncCallback defined!!");
@@ -235,7 +247,7 @@ public class CNetworkVar<TYPE> : INetworkVar
         {
             m_fSendTimer -= m_fSendInterval;
 
-            //if (m_bValueDirty)
+            if (m_bSyncEnabled)
             {
                 m_cOwnerNetworkView.SyncNetworkVar(0, m_bNetworkVarId);
 
@@ -272,6 +284,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 	byte m_bNetworkVarId = 0;
     bool m_bSendIntervalEnabled = false;
     bool m_bValueDirty = false;
+    bool m_bSyncEnabled = true;
 
 
 };

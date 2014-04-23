@@ -27,7 +27,7 @@ public class CShipFacilities : MonoBehaviour
 
 
 	// Member Delegates & Events
-	public delegate void HandleFacilityEvent(CFacilityInterface _Facilty);
+	public delegate void HandleFacilityEvent(GameObject _Facilty);
 	
 	public event HandleFacilityEvent EventFaciltiyCreated;
 	public event HandleFacilityEvent EventFaciltiyDestroyed;
@@ -37,7 +37,8 @@ public class CShipFacilities : MonoBehaviour
 	public CGrid m_ShipGrid = null;
 
 	private uint m_FacilityIdCount = 0;
-	
+
+	private List<uint> m_UnusedFacilityIds = new List<uint>();
 	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
 
 
@@ -58,7 +59,7 @@ public class CShipFacilities : MonoBehaviour
 
 		// Destoy all facilities
 		foreach(GameObject facility in Facilities)
-			Network.Destroy(facility);
+			DestoryFacility(facility);
 
 		// Create all new facilities
 		foreach(List<CTile> facilityTiles in _FacilityTiles)
@@ -82,43 +83,32 @@ public class CShipFacilities : MonoBehaviour
 		newFacility.transform.localPosition = Vector3.zero;
 		newFacility.transform.localRotation = Quaternion.identity;
 
-		CNetworkView netowrkView = newFacility.GetComponent<CNetworkView>();
-
 		// Give the facility its tiles
 		newFacility.GetComponent<CFacilityTiles>().InteriorTiles = interiorTiles;
+
+		// Give facility an id
+		uint facilityId = ++m_FacilityIdCount;
+		newFacility.GetComponent<CFacilityInterface>().FacilityId = facilityId;
+		
+		// Add facility to dictionaries
+		m_FacilityObjects.Add(facilityId, newFacility);
+		
+		// Notify observers
+		if (EventFaciltiyCreated != null) 
+			EventFaciltiyCreated(newFacility);
 	}
 
-    public void RegisterFacility(CFacilityInterface _Facility)
-    {
-		if(CNetwork.IsServer)
-		{
-	        // Generate id for facility
-	        uint facilityId = ++m_FacilityIdCount;
-
-	        // Give facility an id
-			_Facility.FacilityId = facilityId;
-
-			// Parent facility to ship
-			_Facility.NetworkView.SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
-		}
-
-        // Add facility to dictionaries
-		m_FacilityObjects.Add(_Facility.FacilityId, _Facility.gameObject);
-
-        // Notify observers
-        if (EventFaciltiyCreated != null) 
-			EventFaciltiyCreated(_Facility);
-    }
-
-	
-	public void UnregisterFacility(CFacilityInterface _Facility)
+	private void DestoryFacility(GameObject _Facility)
     {
         // Remove facility from dictionaries
-		m_FacilityObjects.Remove(_Facility.FacilityId);
+		m_FacilityObjects.Remove(_Facility.GetComponent<CFacilityInterface>().FacilityId);
 
         // Notify observers
         if (EventFaciltiyDestroyed != null) 
 			EventFaciltiyDestroyed(_Facility);
+
+		// Destroy the facility
+		Destroy(_Facility);
 	}
 	
 	public GameObject GetFacility(uint _uiFacilityId)
