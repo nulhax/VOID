@@ -49,7 +49,7 @@ Material:
       data:
         first:
           name: _UIAlpha
-        second: .899999976
+        second: .949999988
       data:
         first:
           name: _UIBrightness
