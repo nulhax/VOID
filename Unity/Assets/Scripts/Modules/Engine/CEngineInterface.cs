@@ -54,7 +54,7 @@ public class CEngineInterface : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    public void SetPulposition(float _fValue)
+    public void SetPropulsion(float _fValue)
     {
         m_fPropulsion.Value = _fValue;
 
@@ -66,7 +66,7 @@ public class CEngineInterface : CNetworkMonoBehaviour
 	{
         CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangeMaxPropolsion(m_fInitialPropulsion);
 
-        SetPulposition(m_fInitialPropulsion);
+        SetPropulsion(m_fInitialPropulsion);
 	}
 
 

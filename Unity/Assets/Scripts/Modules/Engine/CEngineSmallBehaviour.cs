@@ -79,7 +79,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 			combinedInitialHealth += m_MechanicalComponent1.GetComponent<CActorHealth>().health_initial;
 			combinedInitialHealth += m_MechanicalComponent2.GetComponent<CActorHealth>().health_initial;
 
-            m_cEngineInterface.SetPulposition( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
+            m_cEngineInterface.SetPropulsion( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
 		}
 	}
 

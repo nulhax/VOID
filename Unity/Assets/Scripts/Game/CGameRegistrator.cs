@@ -71,7 +71,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Modules
 		AtmosphereGenerator		= 600,
 		PlayerSpawner,
-		LaserCockpit,
+		TurretCockpit,
 		LaserTurret,
 		PilotCockpit,
 		PowerGenerator,
@@ -223,6 +223,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereConditioner,		"Modules/Atmosphere Conditioner");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,				"Modules/Player Spawner");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,					"Modules/Laser Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,				"Modules/Turret Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Pilot Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Capacitor");
@@ -369,7 +370,7 @@ public class CGameRegistrator : MonoBehaviour
     {
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereGenerator  , ENetworkPrefab.AtmosphereGenerator);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner        , ENetworkPrefab.PlayerSpawner);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.LaserCockpit);		
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.TurretCockpit);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret          , ENetworkPrefab.LaserTurret);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit         , ENetworkPrefab.PilotCockpit);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerGenerator       , ENetworkPrefab.PowerGenerator);			
