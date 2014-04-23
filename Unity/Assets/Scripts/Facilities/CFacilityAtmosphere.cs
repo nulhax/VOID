@@ -200,10 +200,12 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             // Subscribe to ship atmosphere pre-update
-            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessControlledDecompression;
-            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessExplosiveDecompression;
-            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessConsumption;
-            CGameShips.Ship.GetComponent<CShipAtmosphere>().EventAtmospherePreUpdate += ProcessNeighbourTransfer;
+            /*
+            CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().EventAtmospherePreUpdate += ProcessControlledDecompression;
+            CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().EventAtmospherePreUpdate += ProcessExplosiveDecompression;
+            CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().EventAtmospherePreUpdate += ProcessConsumption;
+            CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().EventAtmospherePreUpdate += ProcessNeighbourTransfer;
+             * */
 
             // Subscribe to hull events
             GetComponent<CFacilityHull>().EventBreached += OnHullEvent;
@@ -234,6 +236,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 	}
 
 
+    /*
     [AServerOnly]
     void ProcessControlledDecompression()
     {
@@ -258,6 +261,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
             }
         }
     }
+     * */
 
 
     [AServerOnly]

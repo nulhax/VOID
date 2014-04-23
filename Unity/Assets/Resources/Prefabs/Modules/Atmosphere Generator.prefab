@@ -907,10 +907,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4005a8ed42e8f4b4b92d2d5f0b160e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxAtmosphereGenerationRate: 30
-  m_DUIConsole: {fileID: 11400010}
-  m_CircuitryComponent: {fileID: 11400026}
-  m_LiquidComponent: {fileID: 11400034}
+  m_cDuiConsole: {fileID: 0}
+  m_cCircuitryComponent: {fileID: 11400026}
+  m_cLiquidComponent: {fileID: 11400034}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -922,6 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc52d1f6e9f60498d8475f5e1ba2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fInitialGenerationRate: 90
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1

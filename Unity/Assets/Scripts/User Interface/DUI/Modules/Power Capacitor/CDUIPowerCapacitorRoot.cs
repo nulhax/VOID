@@ -22,6 +22,7 @@ using System.Collections.Generic;
 
 public class CDUIPowerCapacitorRoot : MonoBehaviour 
 {
+    /*
 	// Member Types
 	
 	
@@ -36,8 +37,8 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 	public UILabel m_WarningReport = null;
 	
 	private GameObject m_PowerCapacitor = null;
-	private CPowerStorageBehaviour m_CachedPowerStorageBehaviour = null;
-	private CTestPowerCapacitor m_CachedPowerCapacitor = null;
+	private CPowerBatteryInterface m_CachedPowerStorageBehaviour = null;
+	private CPowerBatterySmallBehaviour m_CachedPowerCapacitor = null;
 
 
 	// Member Properties
@@ -47,24 +48,24 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 	public void RegisterPowerCapacitor(GameObject _PowerCapacitor)
 	{
 		m_PowerCapacitor = _PowerCapacitor;
-		m_CachedPowerStorageBehaviour = m_PowerCapacitor.GetComponent<CPowerStorageBehaviour>();
-		m_CachedPowerCapacitor = m_PowerCapacitor.GetComponent<CTestPowerCapacitor>();
+		m_CachedPowerStorageBehaviour = m_PowerCapacitor.GetComponent<CPowerBatteryInterface>();
+		m_CachedPowerCapacitor = m_PowerCapacitor.GetComponent<CPowerBatterySmallBehaviour>();
 
 		// Register charge/capacity state chages
 		m_CachedPowerStorageBehaviour.EventBatteryCapacityChanged += HandleCapacitorStateChange;
 		m_CachedPowerStorageBehaviour.EventBatteryChargeChanged += HandleCapacitorStateChange;
 		
 		// Register for when the circuitry breaks/fixes
-		m_CachedPowerCapacitor.m_Circuitry1.EventComponentBreak += HandleCircuitryStateChange;
-		m_CachedPowerCapacitor.m_Circuitry1.EventComponentFix += HandleCircuitryStateChange;
-		m_CachedPowerCapacitor.m_Circuitry2.EventComponentBreak += HandleCircuitryStateChange;
-		m_CachedPowerCapacitor.m_Circuitry2.EventComponentFix += HandleCircuitryStateChange;
+		m_CachedPowerCapacitor.m_Circuitry1.EventBreakStateChange += HandleCircuitryStateChange;
+		m_CachedPowerCapacitor.m_Circuitry1.EventBreakStateChange += HandleCircuitryStateChange;
+		m_CachedPowerCapacitor.m_Circuitry2.EventBreakStateChange += HandleCircuitryStateChange;
+		m_CachedPowerCapacitor.m_Circuitry2.EventBreakStateChange += HandleCircuitryStateChange;
 
 		// Update initial values
 		UpdateDUI();
 	}
 
-	private void HandleCapacitorStateChange(CPowerStorageBehaviour _Capacitor)
+	private void HandleCapacitorStateChange(CPowerBatteryInterface _Capacitor)
 	{
 		UpdateDUI();
 	}
@@ -83,8 +84,8 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 	private void UpdateCapacitorVariables()
 	{
 		// Get the current charge, intial capacity and current capacity
-		float currentCharge = m_CachedPowerStorageBehaviour.BatteryCharge;
-		float currentCapacity = m_CachedPowerStorageBehaviour.BatteryCapacity;
+		float currentCharge = m_CachedPowerStorageBehaviour.ChargedAmount;
+		float currentCapacity = m_CachedPowerStorageBehaviour.ChargeCapacity;
 		float initialCapacity = m_CachedPowerCapacitor.m_MaxPowerBatteryCapacity;
 
 		// Update the charge value
@@ -136,4 +137,7 @@ public class CDUIPowerCapacitorRoot : MonoBehaviour
 			m_ErrorReport.enabled = false;
 		}
 	}
+     * 
+     * 
+     */
 }

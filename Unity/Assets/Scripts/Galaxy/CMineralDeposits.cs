@@ -96,10 +96,10 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 			if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
 			{
 				GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
+				cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
 				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * 2.0f * Mathf.Pow(mineralResourceAmount, 1.0f / 3.0f));
 				cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
 				cCrystal.GetComponent<CNetworkView>().SetRotation(Quaternion.LookRotation(vRayDirection) * Quaternion.AngleAxis(90.0f, Vector3.right));
-				cCrystal.GetComponent<CNetworkView>().SetParent(gameObject.GetComponent<CNetworkView>().ViewId);
 
 				cCrystal.GetComponent<CMineralsBehaviour>().Quantity = mineralResourceAmount;
 

@@ -123,7 +123,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 					CHullBreachNode cHullBreachNode = cTargetActorInteractable.GetComponent<CHullBreachNode>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.MechanicalComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Mechanical)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

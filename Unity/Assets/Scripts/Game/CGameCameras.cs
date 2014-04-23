@@ -210,7 +210,7 @@ public class CGameCameras : MonoBehaviour
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
 
-		Debug.Log("Creating space fog");
+		//Debug.Log("Creating space fog");
 		s_SpaceFog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
 
 		// Set the defult view perspective
@@ -264,7 +264,7 @@ public class CGameCameras : MonoBehaviour
 		}
 	}
 
-	private static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
+	public static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Skybox;
@@ -277,8 +277,8 @@ public class CGameCameras : MonoBehaviour
 		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
 			ieb.enabled = false;
 	}
-	
-	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
+
+    public static void SetCameraDefaultValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Nothing;

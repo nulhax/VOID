@@ -100,7 +100,7 @@ public class CModulePortInterface : CNetworkMonoBehaviour
 		{
 	        cModuleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_eType));
 	        cModuleObject.GetComponent<CNetworkView>().SetPosition(m_Positioner.transform.position);
-	        cModuleObject.GetComponent<CNetworkView>().SetEulerAngles(m_Positioner.transform.rotation.eulerAngles);
+	        cModuleObject.GetComponent<CNetworkView>().SetEuler(m_Positioner.transform.rotation.eulerAngles);
 	        cModuleObject.GetComponent<CNetworkView>().SetParent(GetComponent<CNetworkView>().ViewId);
 
 	        m_cAttachedModuleViewId.Set(cModuleObject.GetComponent<CNetworkView>().ViewId);

@@ -122,7 +122,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		{
 			// Offset its position
 			gameObject.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
-			gameObject.GetComponent<CNetworkView>().SetEulerAngles(Quaternion.identity.eulerAngles);
+			gameObject.GetComponent<CNetworkView>().SetEuler(Quaternion.identity.eulerAngles);
 
 			// Increment the offset
 			s_UIOffset += 10.0f;

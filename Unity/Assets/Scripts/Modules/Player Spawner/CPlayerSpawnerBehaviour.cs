@@ -49,10 +49,7 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
-        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
+        // Empty
 
 		// Find owner facility
 		//		Signup to power evetns, requires power to operate
@@ -63,10 +60,7 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
     void OnDestroy()
     {
-        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
-        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
+        // Empty
     }
 
 

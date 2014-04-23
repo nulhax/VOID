@@ -147,7 +147,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 	void UpdateVariables()
 	{
-		float currentPropulsion = m_CachedShipPropulsionSystem.ShipCurentPropulsion;
+        float currentPropulsion = m_CachedShipPropulsionSystem.TotalPropulsion;
 
 		// Debug: Set the galaxy ship stuff based on the propulsion
 
