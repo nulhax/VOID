@@ -309,8 +309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3eb83591a70b4749b0770beb9ea63db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fHeadBobRunAmount: 1
-  m_fHeadBobSprintAmount: 2
+  m_fHeadBobRunAmount: 1.5
+  m_fHeadBobSprintAmount: 3
   m_fHeadBobRunSpeed: 8
   m_fHeadBobSprintSpeed: 10
 --- !u!114 &11400034

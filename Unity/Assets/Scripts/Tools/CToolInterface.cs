@@ -192,6 +192,8 @@ public class CToolInterface : CNetworkMonoBehaviour
                 SetSecondaryActive(false);
             }
         };
+
+        CGamePlayers.SelfActor.GetComponent<CPlayerArmController>().EventDisableToolRotation += OnDisableToolRotation;
 	}
 
 
@@ -203,7 +205,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if (IsOwned)
+        if (IsOwned && m_bUseToolRotation)
         { 
             Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
             gameObject.transform.rotation = ActorHead.rotation;
@@ -322,31 +324,7 @@ public class CToolInterface : CNetworkMonoBehaviour
         if (_cVarInstance == m_ulOwnerPlayerId)
         {
             if (IsOwned)
-            {
-//                if (!OwnerPlayerActor.GetComponent<CPlayerInterface>().IsOwnedByMe)
-//                {
-//                    GameObject cOwnerPlayerActor = OwnerPlayerActor;
-//
-//                    Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
-//                    foreach (Transform child in children)
-//                    {
-//                        if (child.name == "RightHandIndex2")
-//                        {
-//                            gameObject.transform.parent = child;
-//                        }
-//                    }
-//
-//                    if (gameObject.transform.parent.gameObject == null)
-//                    {
-//                        Debug.LogError("Could not find right hand transform of player model!");
-//                    }
-//
-//                    gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-//                }
-//                else
-//                {
-//                }
-
+            {                        
                 // Turn off dynamic physics
                 if (CNetwork.IsServer)
                 {
@@ -401,6 +379,11 @@ public class CToolInterface : CNetworkMonoBehaviour
         }
     }
 
+    void OnDisableToolRotation(bool _bUseHeadRotation)
+    {
+        m_bUseToolRotation = _bUseHeadRotation;
+    }
+
 
 // Member Fields
 
@@ -418,7 +401,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     bool m_bEquipped = false;
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
-
+    bool m_bUseToolRotation = true;
 
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
