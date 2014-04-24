@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &100000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400000}
+  - 114: {fileID: 11400000}
+  m_Layer: 0
+  m_Name: Tile Factory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &400000
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 210e8b1c734871f43ade5077a0022d5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FloorTileTypes: 000000000100000002000000030000000400000005000000
+  m_FloorTilePrefabs:
+  - {fileID: 100000, guid: d417ee8ec1cb6ac44896f2290dfc37b9, type: 2}
+  - {fileID: 100000, guid: f77751efcc0c7ad4da16ed8653bd4c5a, type: 2}
+  - {fileID: 100000, guid: a564cb379b4d0324c9795e2451024619, type: 2}
+  - {fileID: 100000, guid: 47faa102ef46ad445bf7f53e88fffacc, type: 2}
+  - {fileID: 100000, guid: ab28e668f2b738147beafd572c336b59, type: 2}
+  - {fileID: 100000, guid: 5042048e5b90972449139dcb584c2bf7, type: 2}
+  m_WallExtTileTypes: 6400000065000000660000006700000068000000
+  m_WallExtTilePrefabs:
+  - {fileID: 100000, guid: a176721859ad15e468ff30c66ded270a, type: 2}
+  - {fileID: 100000, guid: f0dd5b5539c8eca469070eed84c33293, type: 2}
+  - {fileID: 100000, guid: b2e911cd60ae22640881b43fee21ec7d, type: 2}
+  - {fileID: 100000, guid: dbd47e4d62fe7c94db73e52f5738b74f, type: 2}
+  - {fileID: 100000, guid: 3819ac303ea7ebd4682ae972e1b48589, type: 2}
+  m_WallExtTileTypes_Opening: 65000000
+  m_WallExtTilePrefabs_Opening:
+  - {fileID: 100000, guid: 2bf946c29065662418f610d6b965fed0, type: 2}
+  m_WallIntTileTypes: c8000000c9000000ca000000cb000000cc000000
+  m_WallIntTilePrefabs:
+  - {fileID: 100000, guid: d38c67da34919bd499e2e1ca6d25d43d, type: 2}
+  - {fileID: 100000, guid: 0c342799a488bdd4c9129029c7a8f6e1, type: 2}
+  - {fileID: 100000, guid: 5fa0f77122016bd46bc88dc8410e3df2, type: 2}
+  - {fileID: 100000, guid: d90a5b382ea034542b00788afbeb3df4, type: 2}
+  - {fileID: 100000, guid: a9e417bd0b995834a80d60bd7f62b883, type: 2}
+  m_CeilingTileTypes: 2c0100002d0100002e0100002f0100003001000031010000
+  m_CeilingTilePrefabs:
+  - {fileID: 100000, guid: bd2044e991e9e2043acab72b16c7660b, type: 2}
+  - {fileID: 100000, guid: d00849cbba6118340a2d69972d018a6e, type: 2}
+  - {fileID: 100000, guid: 85c6a476f3ad34349b7474eb6200318f, type: 2}
+  - {fileID: 100000, guid: 2d317238efcaaa64a8702255ce043312, type: 2}
+  - {fileID: 100000, guid: f3c738d1e6b11df4a9edf17c12a386b3, type: 2}
+  - {fileID: 100000, guid: 9e8557d6388a0424e8d34fce1a0362c3, type: 2}
+  m_WallExtCapTileTypes: 9001000091010000920100009301000094010000
+  m_WallExtCapTilePrefabs:
+  - {fileID: 100000, guid: 2378aa64d0d588a47aeb6ccd2433eff4, type: 2}
+  - {fileID: 100002, guid: 17d2097fd6bd4064495bf76fbf30693f, type: 2}
+  - {fileID: 100002, guid: 1976a5c0304833647856e1db0f9187f2, type: 2}
+  - {fileID: 100004, guid: 218863a86e15ac348998eaae9cffb741, type: 2}
+  - {fileID: 100006, guid: 004eab2e1d6a03e4fb0f6e6b285e771f, type: 2}
+  m_WallIntCapTileTypes: f4010000f5010000f6010000f7010000f8010000
+  m_WallIntCapTilePrefabs:
+  - {fileID: 100000, guid: dffacd1c0b2cb8844aa38cb8b2803003, type: 2}
+  - {fileID: 100000, guid: 5f765d99a0291804a99433c766a9646b, type: 2}
+  - {fileID: 100000, guid: 7cb3b585e1bbb544d83bc6bca6404965, type: 2}
+  - {fileID: 100000, guid: 548efe5a3821ba342a694b216cd60914, type: 2}
+  - {fileID: 100000, guid: 856f3120113cb6048b580b1bd198bdf5, type: 2}
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 100000}
+  m_IsPrefabParent: 1
+  m_IsExploded: 1

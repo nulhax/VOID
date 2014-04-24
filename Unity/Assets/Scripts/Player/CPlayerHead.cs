@@ -187,15 +187,12 @@ public class CPlayerHead : CNetworkMonoBehaviour
             // Setup the HUD
             CGameHUD.SetupHUD();
 
-            // Set the ship view perspective of the camera to the actors head
-            TransferPlayerPerspectiveToShipSpace();
-
             // Register event handler for entering/exiting ship
-            gameObject.GetComponent<CActorBoardable>().EventBoard     += TransferPlayerPerspectiveToShipSpace;
-            gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
+            gameObject.GetComponent<CActorLocator>().EventEnterShip += OnPlayerEnterShip;
+			gameObject.GetComponent<CActorLocator>().EventLeaveShip += OnPlayerLeaveShip;
 
             // Add audoio listener to head
-            Head.AddComponent<AudioListener>();
+            //Head.AddComponent<AudioListener>();
         }
 
         if (CNetwork.IsServer)
@@ -219,8 +216,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
         // Unregister
         if (CGamePlayers.SelfActor == gameObject)
         {
-            gameObject.GetComponent<CActorBoardable>().EventBoard     -= TransferPlayerPerspectiveToShipSpace;
-            gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
+			gameObject.GetComponent<CActorLocator>().EventEnterShip -= OnPlayerEnterShip;
+			gameObject.GetComponent<CActorLocator>().EventLeaveShip -= OnPlayerLeaveShip;
         }
 
         if (CNetwork.IsServer)
@@ -327,7 +324,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-	void TransferPlayerPerspectiveToShipSpace()
+	void OnPlayerEnterShip(GameObject _Player)
 	{
 		CGameCameras.SetObserverSpace(true);
 
@@ -337,7 +334,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 
     [ALocalOnly]
-	void TransferPlayerPerspectiveToGalaxySpace()
+	void OnPlayerLeaveShip(GameObject _Player)
 	{
 		CGameCameras.SetObserverSpace(false);
 

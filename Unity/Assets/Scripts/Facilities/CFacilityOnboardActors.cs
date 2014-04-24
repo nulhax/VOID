@@ -28,93 +28,74 @@ public class CFacilityOnboardActors : MonoBehaviour
 	
 	
 // Member Delegates & Events
-
-
 	public delegate void FacilityActorEnterExit(GameObject _Facility, GameObject _Actor);
 	
 	public event FacilityActorEnterExit EventActorEnteredFacility;
 	public event FacilityActorEnterExit EventActorExitedFacility;
 
 
+// Member Fields
+	Dictionary<GameObject, int> m_ContainingActors = new Dictionary<GameObject, int>();
+
+
 // Member Properties
-
-
     [AServerOnly]
 	public List<GameObject> ActorsOnboard
 	{
-		get { return(m_cContainingActors); }
+		get { return(new List<GameObject>(m_ContainingActors.Keys)); }
 	}
 
 
 // Member Methods
-
-
     [AServerOnly]
-	public void OnActorEnteredFacilityTrigger(GameObject _cEnteringActor)
+	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
 	{
-        if (!CNetwork.IsServer)
+        if(!CNetwork.IsServer)
             Debug.LogError("This is a server only function");
 
         // Check actor is not already contained in this facility
-		if (!m_cContainingActors.Contains(_cEnteringActor))
+		if(!m_ContainingActors.ContainsKey(_Actor))
 		{
-			m_cContainingActors.Add(_cEnteringActor);
+			m_ContainingActors.Add(_Actor, 0);
 
 			// Tell actor 
-			if (_cEnteringActor.GetComponent<CActorLocator>() != null)
-				_cEnteringActor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
+			if(_Actor.GetComponent<CActorLocator>() != null)
+				_Actor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
 
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
-			{
-				EventActorEnteredFacility(gameObject, _cEnteringActor);
-			}
+				EventActorEnteredFacility(gameObject, _Actor);
 		}
+
+		// Increment the count to the containing actor
+		m_ContainingActors[_Actor] += 1;
 	}
 
 
     [AServerOnly]
-	public void OnActorExitedFacilityTrigger(GameObject _cActor)
+	public void OnActorExitedFacilityTrigger(GameObject _Actor)
 	{
-        if (!CNetwork.IsServer)
+        if(!CNetwork.IsServer)
             Debug.LogError("This is a server only function");
 
-        // Check actor is contained by this facility
-		if (m_cContainingActors.Contains(_cActor))
+        // Make sure actor is contained within this facility
+		if(!m_ContainingActors.ContainsKey(_Actor))
+			return;
+
+		// Decrement the count to the containing actor
+		m_ContainingActors[_Actor] -= 1;
+
+		// If count is zero, remove the actor
+		if(m_ContainingActors[_Actor] == 0)
 		{
-			m_cContainingActors.Remove(_cActor);
-
+			m_ContainingActors.Remove(_Actor);
+			
 			// Call ActorExitedFacility for the locator
-            if (_cActor.GetComponent<CActorLocator>() != null)
-            {
-                _cActor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
-            }
-
+			if(_Actor.GetComponent<CActorLocator>() != null)
+				_Actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
+			
 			if(EventActorExitedFacility != null)
-			{
-				EventActorExitedFacility(gameObject, _cActor);
-			}
+				EventActorExitedFacility(gameObject, _Actor);
 		}
 	}
-
-
-    void Start()
-    {
-        // Empty
-    }
-
-
-    void Update()
-    {
-        // Remove consumers that are now null
-        m_cContainingActors.RemoveAll(item => item == null); // TODO: This should not have to be called if objects unregister on destory
-    }
-
-
-// Member Fields
-
-
-    List<GameObject> m_cContainingActors = new List<GameObject>();
-
-
 }

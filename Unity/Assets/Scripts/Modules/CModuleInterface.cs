@@ -49,8 +49,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public enum EType
 	{
-		INVALID,
+		INVALID 			= -1,
 
+		Prefabricator		= 0,
 		AtmosphereGenerator = 50,
 		PlayerSpawner       = 100,
         TurretCockpit       = 150,
@@ -68,6 +69,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
+
 	}
 
 
@@ -162,6 +164,12 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
+	public Cubemap CubeMapSnapshot
+	{
+		get { return (m_CubemapSnapshot); }
+	}
+
+
 // Member Methods
 
 
@@ -195,6 +203,17 @@ public class CModuleInterface : CNetworkMonoBehaviour
         // Set built
         m_bBuiltPercent.Set((byte)(m_fServerBuiltRatio * 100.0f));
     }
+
+
+	[AServerOnly]
+	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
+	{
+		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
+		moduleObject.transform.parent = _FacilityParent.transform;
+		moduleObject.transform.localPosition = _LocalPostion;
+
+		return(moduleObject);
+	}
 
 
     [AServerOnly]
@@ -366,6 +385,40 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		// Empty
 	}
 
+	public void UpdateCubemap()
+	{
+		// Disable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = false;
+		}
+		
+		if(m_CubemapSnapshot == null)
+		{
+			m_CubemapSnapshot = new Cubemap(16, TextureFormat.ARGB32, false);
+		}
+		
+		if(m_CubemapCam == null)
+		{
+			GameObject tempCam = new GameObject("Cubemap Renderer");
+			tempCam.transform.parent = transform;
+			tempCam.transform.localPosition = Vector3.up * 1.5f;
+			tempCam.transform.localRotation = Quaternion.identity;
+			m_CubemapCam = tempCam.AddComponent<Camera>();
+			m_CubemapCam.cullingMask = 1 << LayerMask.NameToLayer("Default");
+			m_CubemapCam.farClipPlane = 100;
+			m_CubemapCam.enabled = false;
+		}
+		
+		//m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
+		
+		// Re-enable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = true;
+		}
+	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
@@ -468,6 +521,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 
     GameObject m_cParentFacility = null;
+	Camera m_CubemapCam = null;
+	Cubemap m_CubemapSnapshot = null;
 
 
     List<GameObject> m_aAttachedComponents = new List<GameObject>();

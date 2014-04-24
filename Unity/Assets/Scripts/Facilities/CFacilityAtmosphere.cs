@@ -212,16 +212,16 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
             GetComponent<CFacilityHull>().EventBreachFixed += OnHullEvent;
 
             // Subscriber to expansion ports door events
-            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
-            {
-                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
-
-                if (cExpansionPortBehaviour.Door != null)
-                {
-                    cExpansionPortBehaviour.DoorBehaviour.EventOpenStart += OnDoorEvent;
-                    cExpansionPortBehaviour.DoorBehaviour.EventClosed += OnDoorEvent;
-                }
-            }
+//            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
+//            {
+//                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+//
+//                if (cExpansionPortBehaviour.Door != null)
+//                {
+//                    cExpansionPortBehaviour.DoorBehaviour.EventOpenStart += OnDoorEvent;
+//                    cExpansionPortBehaviour.DoorBehaviour.EventClosed += OnDoorEvent;
+//                }
+//            }
         }
     }
 
@@ -290,41 +290,41 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
     [AServerOnly]
     void ProcessNeighbourTransfer()
     {
-        foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
-        {
-            CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
-
-            // Check door is open on this expansion port
-            if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
-            {
-                GameObject cNeighbourFacilityObject = cExpansionPortBehaviour.AttachedFacility;
-
-                if (cNeighbourFacilityObject != null)
-                {
-                    CFacilityAtmosphere cNeighbourFacilityAtmosphere = cNeighbourFacilityObject.GetComponent<CFacilityAtmosphere>();
-
-                    // Check this facility atmosphere pressure is higher then nighbour facility
-                    if (cNeighbourFacilityAtmosphere.QuantityRatio < QuantityRatio)
-                    {
-                        // Transfer atmosphere to neighbour facility
-                        float fRatioDifference = QuantityRatio - cNeighbourFacilityAtmosphere.QuantityRatio;
-                        float fDeltaTransfer = 500.0f * fRatioDifference * Time.deltaTime;
-
-                        if (fRatioDifference > 0.01f)
-                        {
-                            //Debug.LogError(fRatioDifference);
-                            cNeighbourFacilityAtmosphere.ChangeQuantityByAmount(fDeltaTransfer);
-                            ChangeQuantityByAmount(-fDeltaTransfer);
-                        }
-                        else
-                        {
-                            // Just set it to my percent
-                            //cNeighbourFacilityAtmosphere.SetQuanity(cNeighbourFacilityAtmosphere.Volume * QuantityRatio);
-                        }
-                    }
-                }
-            }
-        }
+//        foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
+//        {
+//            CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+//
+//            // Check door is open on this expansion port
+//            if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
+//            {
+//                GameObject cNeighbourFacilityObject = cExpansionPortBehaviour.AttachedFacility;
+//
+//                if (cNeighbourFacilityObject != null)
+//                {
+//                    CFacilityAtmosphere cNeighbourFacilityAtmosphere = cNeighbourFacilityObject.GetComponent<CFacilityAtmosphere>();
+//
+//                    // Check this facility atmosphere pressure is higher then nighbour facility
+//                    if (cNeighbourFacilityAtmosphere.QuantityRatio < QuantityRatio)
+//                    {
+//                        // Transfer atmosphere to neighbour facility
+//                        float fRatioDifference = QuantityRatio - cNeighbourFacilityAtmosphere.QuantityRatio;
+//                        float fDeltaTransfer = 500.0f * fRatioDifference * Time.deltaTime;
+//
+//                        if (fRatioDifference > 0.01f)
+//                        {
+//                            //Debug.LogError(fRatioDifference);
+//                            cNeighbourFacilityAtmosphere.ChangeQuantityByAmount(fDeltaTransfer);
+//                            ChangeQuantityByAmount(-fDeltaTransfer);
+//                        }
+//                        else
+//                        {
+//                            // Just set it to my percent
+//                            //cNeighbourFacilityAtmosphere.SetQuanity(cNeighbourFacilityAtmosphere.Volume * QuantityRatio);
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -339,22 +339,22 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
         }
         else
         {
-            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
-            {
-                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
-
-                // Check door is open on this expansion port
-                if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
-                {
-                    GameObject cAttachedFacilityObject = cExpansionPortBehaviour.AttachedFacility;
-
-                    // Check there is no a neighbouring facility and the door is open
-                    if (cAttachedFacilityObject == null)
-                    {
-                        bExposiveDecompressing = true;
-                    }
-                }
-            }
+//            foreach (GameObject cExpansionPort in GetComponent<CFacilityExpansion>().ExpansionPorts)
+//            {
+//                CExpansionPortBehaviour cExpansionPortBehaviour = cExpansionPort.GetComponent<CExpansionPortBehaviour>();
+//
+//                // Check door is open on this expansion port
+//                if (cExpansionPortBehaviour.Door.GetComponent<CDoorBehaviour>().IsOpened)
+//                {
+//                    GameObject cAttachedFacilityObject = cExpansionPortBehaviour.AttachedFacility;
+//
+//                    // Check there is no a neighbouring facility and the door is open
+//                    if (cAttachedFacilityObject == null)
+//                    {
+//                        bExposiveDecompressing = true;
+//                    }
+//                }
+//            }
         }
 
         if (bExposiveDecompressing &&

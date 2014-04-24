@@ -56,7 +56,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 		// Set the cubemap for the children
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
 		{
-			r.material.SetTexture("_Cube", transform.parent.GetComponent<CModulePortInterface>().CubeMapSnapshot);
+			r.material.SetTexture("_Cube", gameObject.GetComponent<CModuleInterface>().CubeMapSnapshot);
 		}
 
 		// Begin playing the sound.
@@ -79,7 +79,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 			combinedInitialHealth += m_MechanicalComponent1.GetComponent<CActorHealth>().health_initial;
 			combinedInitialHealth += m_MechanicalComponent2.GetComponent<CActorHealth>().health_initial;
 
-            m_cEngineInterface.SetPulposition( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
+            m_cEngineInterface.SetPropulsion( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
 		}
 	}
 

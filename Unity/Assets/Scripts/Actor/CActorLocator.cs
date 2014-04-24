@@ -103,6 +103,9 @@ public class CActorLocator : CNetworkMonoBehaviour
         if (m_aContainingFacilities.Count == 0)
         {
             m_tCurrentFacilityViewId.Value = null;
+
+			// Disembark the player from the ship
+			gameObject.GetComponent<CActorBoardable>().DisembarkActor();
         }
 	}
 

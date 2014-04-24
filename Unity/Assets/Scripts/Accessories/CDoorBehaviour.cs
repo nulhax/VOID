@@ -57,12 +57,6 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public CExpansionPortBehaviour ParentExpansionPortBehaviour
-    {
-        get { return (m_cParentExpansionPortBehaviour); }
-    }
-
-
     public float OpenedPercent
     {
         get { return (m_fMotorTimer / m_fOpenCloseInterval); }
@@ -81,12 +75,6 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
         m_cOpened = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
-    }
-
-
-    public void RegisterParentExpansionPort(CExpansionPortBehaviour _cExpansionPortBehaviour)
-    {
-        m_cParentExpansionPortBehaviour = _cExpansionPortBehaviour;
     }
 
 
@@ -192,9 +180,6 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 
     float m_fMotorTimer         = 0.0f;
     float m_fOpenCloseInterval  = 1.0f;
-
-
-    CExpansionPortBehaviour m_cParentExpansionPortBehaviour = null;
 
 
 };
