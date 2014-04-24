@@ -72,8 +72,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 	{
         m_cCockpitBehaviour = GetComponent<CCockpit>();
 
-		m_cCockpitBehaviour.EventPlayerEnter += OnCockpitMount;
-       	m_cCockpitBehaviour.EventPlayerLeave += OnCockpitUnmount;
+		m_cCockpitBehaviour.EventMounted += OnCockpitMount;
+       	m_cCockpitBehaviour.EventDismounted += OnCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);

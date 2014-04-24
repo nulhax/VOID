@@ -1,0 +1,107 @@
+fileFormatVersion: 2
+guid: 14a0a204fbf83c744bb2de604022ab30
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Module_Medium_Turret_Chasis
+    100004: Module_Medium_Turret_Chasis_Root
+    100006: Module_Medium_Turret_Chasis_Stem
+    100008: polySurface412
+    100010: polySurface413
+    100012: polySurface414
+    100014: polySurface415
+    100016: polySurface417
+    100018: polySurface418
+    100020: polySurface419
+    100022: polySurface462
+    100024: transform185
+    100026: transform186
+    100028: transform187
+    100030: transform188
+    100032: transform189
+    100034: transform190
+    400000: //RootNode
+    400002: Module_Medium_Turret_Chasis
+    400004: Module_Medium_Turret_Chasis_Root
+    400006: Module_Medium_Turret_Chasis_Stem
+    400008: polySurface412
+    400010: polySurface413
+    400012: polySurface414
+    400014: polySurface415
+    400016: polySurface417
+    400018: polySurface418
+    400020: polySurface419
+    400022: polySurface462
+    400024: transform185
+    400026: transform186
+    400028: transform187
+    400030: transform188
+    400032: transform189
+    400034: transform190
+    2300000: Module_Medium_Turret_Chasis
+    2300002: Module_Medium_Turret_Chasis_Root
+    2300004: Module_Medium_Turret_Chasis_Stem
+    2300006: polySurface462
+    3300000: Module_Medium_Turret_Chasis
+    3300002: Module_Medium_Turret_Chasis_Root
+    3300004: Module_Medium_Turret_Chasis_Stem
+    3300006: polySurface462
+    4300000: Module_Medium_Turret_Chasis_Root
+    4300002: Module_Medium_Turret_Chasis_Stem
+    4300004: Module_Medium_Turret_Chasis
+    4300006: polySurface462
+    7400000: Take 001
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .100000001
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

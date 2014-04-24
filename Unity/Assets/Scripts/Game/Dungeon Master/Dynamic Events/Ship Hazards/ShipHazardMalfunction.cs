@@ -38,7 +38,7 @@ static public class ShipHazardMalfunction
             foreach (CComponentInterface CompInt in LocalCompInterface)
             {
                 // If the component is functional
-                if (CompInt.IsFunctional)
+                if (CompInt.IsBroken)
                 {
                     // Add the component to the list
                     ListFunctionalComponents.Add(CompInt);

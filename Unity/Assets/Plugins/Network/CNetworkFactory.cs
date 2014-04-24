@@ -73,7 +73,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		// Ensure the prefab file exists
 		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!! PrefabId({0})({1})", _cPrefabId, (ushort)_cPrefabId);
 			
-		return (m_mPrefabs[(ushort)_cPrefabId]);
+		return ("Prefabs/" + m_mPrefabs[(ushort)_cPrefabId]);
 	}
 
 
@@ -149,24 +149,44 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 				// Extract the network view from this object
 				CNetworkView cSelfView = tEntry.Value.cGameObject.GetComponent<CNetworkView>();
 
-				// Only sync if position is not default
-				if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
-				{
-					cSelfView.SyncTransformPosition();
-				}
+                // Check has parent
+                if (tEntry.Value.cGameObject.transform.parent != null)
+                {
+                    cSelfView.SyncParent();
 
-				// Sync if rotation is not default
-				if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
-				{
-					cSelfView.SyncTransformRotation();
-				}
-				
-				// Sync if scale is not default
-				if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
-				{
-					// Sync object's scale
-					cSelfView.SyncTransformScale();
-				}
+                    // Only sync if position is not default
+                    if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformLocalPosition();
+                    }
+
+                    // Sync if rotation is not default
+                    if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformLocalEuler();
+                    }
+                }
+                else
+                {
+                    // Only sync if position is not default
+                    if (tEntry.Value.cGameObject.transform.position != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformPosition();
+                    }
+
+                    // Sync if rotation is not default
+                    if (tEntry.Value.cGameObject.transform.eulerAngles != Vector3.zero)
+                    {
+                        cSelfView.SyncTransformRotation();
+                    }
+                }
+
+                // Sync if scale is not default
+                if (tEntry.Value.cGameObject.transform.localScale != Vector3.one)
+                {
+                    // Sync object's scale
+                    cSelfView.SyncTransformScale();
+                }
 			}
 
 			// Sync network vars last
@@ -275,7 +295,6 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     void DestroyLocalObject(TNetworkViewId _cObjectNetworkViewId)
     {
         TObjectInfo tObject = m_mCreatedObjects[_cObjectNetworkViewId];
-
 
 		tObject.cGameObject.GetComponent<CNetworkView>().OnPreDestory();
         GameObject.Destroy(tObject.cGameObject);

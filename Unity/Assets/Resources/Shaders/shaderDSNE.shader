@@ -5,7 +5,7 @@ Shader "VOID/Diffuse Spec Normal Emis"
 		_Diffuse("Diffuse", 2D) = "white" {}
 		_Normal("Normal", 2D) = "blue" {}
 		_Specular("Specular", 2D) = "black" {}
-		_Emissive("Emissive", 2D) = "black" {}
+		_Emissive("Emissive", 2D) = "white" {}
 		_SpecPower("SpecPower", Float) = 1
 		_DiffuseCol("DiffuseCol", Color) = (1,1,1,1)
 		_SpecCol("SpecCol", Color) = (1,1,1,1)

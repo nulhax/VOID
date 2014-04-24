@@ -30,38 +30,20 @@ public class CComponentInterface : CNetworkMonoBehaviour
     {
         INVALID,
 
-		// Old Systems
-        //CellSlot,
-        //FuseBox,
-        //CircuitBox,
-
-		// Components
-		FluidComp,
-		CalibratorComp,
-		CircuitryComp,
-		MechanicalComp,
+		Fluid,
+		Calibrator,
+		Circuitry,
+		Mechanical,
 
         MAX
     }
 
 
 // Member Delegates & Events
-	// create the delegates
 
 
-	public delegate void NotifyComponentStateChange(CComponentInterface _Sender);
-
-	public event NotifyComponentStateChange EventComponentBreak;
-	public event NotifyComponentStateChange EventComponentFix;
-
-	public delegate void NotifyHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth);
-
-	public event NotifyHealthChange EventHealthChange;
-
-	public bool IsFunctional
-	{
-		get { return m_bIsFunctional.Get(); }
-	}
+	public delegate void BrokenStateChangeHandler(CComponentInterface _cSender, bool _bBroken);
+	public event BrokenStateChangeHandler EventBreakStateChange;
 
 
 // Member Properties
@@ -73,111 +55,21 @@ public class CComponentInterface : CNetworkMonoBehaviour
     }
 
 
+    public bool IsBroken
+    {
+        get { return (m_bBroken.Value); }
+    }
+
+
 // Member Methods
-	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
+
+
+	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
-		m_bIsFunctional = _cRegistrar.CreateReliableNetworkVar(OnNetworkVarSync, true);
+		m_bBroken = _cRegistrar.CreateReliableNetworkVar(OnNetworkVarSync, true);
 	}
 
 
-	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
-	{
-		if(_cSyncedNetworkVar == m_bIsFunctional)
-		{
-			if(IsFunctional)
-			{
-				if(EventComponentFix != null)
-				{
-					EventComponentFix(this);
-				}	
-			}
-			else
-			{
-				if(EventComponentBreak != null)
-				{
-					EventComponentBreak(this);
-				}
-			}
-		}
-	}
-
-
-
-    public static void RegisterPrefab(EType _eComponentType, CGameRegistrator.ENetworkPrefab _ePrefab)
-    {
-        s_mRegisteredPrefabs.Add(_eComponentType, _ePrefab);
-    }
-
-
-    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eModuleType)
-    {
-        if (!s_mRegisteredPrefabs.ContainsKey(_eModuleType))
-        {
-            Debug.LogError(string.Format("Component type ({0}) has not been registered a prefab", _eModuleType));
-
-            return (CGameRegistrator.ENetworkPrefab.INVALID);
-        }
-
-        return (s_mRegisteredPrefabs[_eModuleType]);
-    }
-
-
-	void Awake()
-	{
-		// Register health change from the CActorHealth
-		GetComponent<CActorHealth>().EventOnSetHealth += OnHealthChange;
-	}
-
-
-	void Start()
-	{
-        // Ensure a type of defined 
-        if (m_eComponentType == EType.INVALID)
-        {
-            Debug.LogError(string.Format("This component has not been given a component type. GameObjectName({0})", gameObject.name));
-        }
-
-		// Register self with parent module
-		CModuleInterface mi = CUtility.FindInParents<CModuleInterface>(gameObject);
-		
-		if(mi != null)
-		{
-			mi.RegisterAttachedComponent(this);
-		}
-		else
-		{
-			Debug.LogError(name + " has CComponentInterface, but could not find CModuleInterface in parent GameObjects.");
-		}
-
-        if (EventHealthChange != null)
-        {
-            EventHealthChange(this, GetComponent<CActorHealth>());
-        }
-	}
-
-
-	private void OnHealthChange(/*GameObject _Sender, */float _PreviousHealth, float _CurrentHealth)
-	{
-        if (EventHealthChange != null)
-        {
-            EventHealthChange(this, GetComponent<CActorHealth>());
-        }
-
-		if(CNetwork.IsServer) 
-		{
-			if(_CurrentHealth == 0.0f)
-			{
-				m_bIsFunctional.Set(false);
-			}
-			else if(_CurrentHealth == /*_Sender.*/GetComponent<CActorHealth>().health_max)
-			{
-				m_bIsFunctional.Set(true);
-			}
-		}
-	}
-
-
-    // Public trigger function for use by CHazardSystem
     [AServerOnly]
     public void TriggerMalfunction()
     {
@@ -193,15 +85,15 @@ public class CComponentInterface : CNetworkMonoBehaviour
         //      Consider other potential effects beyond explosions.
         //      Consider damaging both components and fire nodes instead of instant destruction
         //      Consider different actions based on component type. 
-        
+
         // Set component health to 0
         GetComponent<CActorHealth>().health = 0;
 
         // Set up the explosion game object
-        Explosion.particleSystem.transform.parent        = gameObject.transform;
+        Explosion.particleSystem.transform.parent = gameObject.transform;
         Explosion.particleSystem.transform.localPosition = transform.localPosition;
         Explosion.particleSystem.transform.localRotation = transform.localRotation;
-        Explosion.particleSystem.transform.localScale    = transform.localScale;
+        Explosion.particleSystem.transform.localScale = transform.localScale;
 
         // Explode!
         Explosion.particleEmitter.emit = true;
@@ -228,13 +120,101 @@ public class CComponentInterface : CNetworkMonoBehaviour
         CGameShips.GalaxyShip.GetComponent<CShipDamageOnCollision>().CreateExplosion(transform.position, fExplosionRadius, 100000.0f);
     }
 
-	void Update() { }
+
+    public static void RegisterPrefab(EType _eComponentType, CGameRegistrator.ENetworkPrefab _ePrefab)
+    {
+        s_mRegisteredPrefabs.Add(_eComponentType, _ePrefab);
+    }
+
+
+    public static CGameRegistrator.ENetworkPrefab GetPrefabType(EType _eModuleType)
+    {
+        if (!s_mRegisteredPrefabs.ContainsKey(_eModuleType))
+        {
+            Debug.LogError(string.Format("Component type ({0}) has not been registered a prefab", _eModuleType));
+
+            return (CGameRegistrator.ENetworkPrefab.INVALID);
+        }
+
+        return (s_mRegisteredPrefabs[_eModuleType]);
+    }
+
+
+    void Awake()
+    {
+        // Register self with parent module
+        CModuleInterface cModuleInterface = CUtility.FindInParents<CModuleInterface>(gameObject);
+
+        if (cModuleInterface == null)
+            Debug.LogError(name + " has CComponentInterface, but could not find CModuleInterface in parent GameObjects.");
+
+        cModuleInterface.RegisterAttachedComponent(this);
+    }
+
+
+	void Start()
+	{
+        // Ensure a type of defined 
+        if (m_eComponentType == EType.INVALID)
+            Debug.LogError(string.Format("This component has not been given a component type. GameObjectName({0})", gameObject.name));
+
+
+        // Register health change from the CActorHealth
+        GetComponent<CActorHealth>().EventOnSetHealth += OnEventHealthChange;
+
+        EventBreakStateChange += OnEventBreakStateChange;
+	}
+
+
+    void OnEventHealthChange(CActorHealth _cSender, float _fPreviousHealth, float _fNewHealth)
+    {
+        if (CNetwork.IsServer)
+        {
+            m_bBroken.Value = (_fNewHealth == 0.0f);
+        }
+
+        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.magenta, _fNewHealth / _cSender.health_initial);
+    }
+
+
+    // Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
+    void OnEventBreakStateChange(CComponentInterface _cSender, bool _bBroken)
+    {
+        if (_bBroken)
+        {
+            //TODO swap between broken to fixed
+            if (gameObject.GetComponent<CAudioCue>() != null)
+                gameObject.GetComponent<CAudioCue>().StopAllSound();
+        }
+        else
+        {
+            // TODO: swap between fixed to broken
+            if (gameObject.GetComponent<CAudioCue>() != null)
+                gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+    {
+        if (_cSyncedNetworkVar == m_bBroken)
+        {
+            if (EventBreakStateChange != null)
+                EventBreakStateChange(this, m_bBroken.Value);
+        }
+    }
 
 
 // Member Fields
+
+
     public EType m_eComponentType = EType.INVALID;
+
+
+	CNetworkVar<bool> m_bBroken = null;
+
 
     static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 
-	CNetworkVar<bool> m_bIsFunctional;
+
 };

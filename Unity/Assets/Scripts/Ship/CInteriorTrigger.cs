@@ -24,21 +24,23 @@ using System;
 public class CInteriorTrigger : MonoBehaviour 
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
+	// Member Delegates & Events
+	
+
+	// Member Fields
+	private CFacilityOnboardActors m_cFacilityOnboardActors = null;
 
 	
-// Member Properties
-	
-	
-// Member Methods
+	// Member Properties
 
-
-	void Awake()
+	
+	// Member Methods
+	public void SetParentFacility(GameObject _Facility)
 	{
-		m_cFacilityOnboardActors = transform.parent.GetComponent<CFacilityOnboardActors>();
+		m_cFacilityOnboardActors = _Facility.GetComponent<CFacilityOnboardActors>();
 	}
 
 
@@ -84,12 +86,4 @@ public class CInteriorTrigger : MonoBehaviour
 			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(cRigidBody.gameObject);
 		}
 	}
-
-
-// Member Fields
-
-
-    CFacilityOnboardActors m_cFacilityOnboardActors = null;
-
-
 }

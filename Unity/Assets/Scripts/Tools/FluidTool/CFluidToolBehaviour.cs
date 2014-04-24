@@ -125,7 +125,7 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.FluidComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Fluid)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

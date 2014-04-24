@@ -68,7 +68,7 @@ public class CDispenserBehaviour : MonoBehaviour
 
         // Set the tool's position
 		NewTool.GetComponent<CNetworkView>().SetPosition(m_cToolSpawnLocation.position);
-		NewTool.GetComponent<CNetworkView>().SetEulerAngles(m_cToolSpawnLocation.eulerAngles);
+		NewTool.GetComponent<CNetworkView>().SetEuler(m_cToolSpawnLocation.eulerAngles);
     }
 
 

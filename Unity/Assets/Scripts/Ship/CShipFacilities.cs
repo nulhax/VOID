@@ -23,130 +23,103 @@ using System.Collections.Generic;
 public class CShipFacilities : MonoBehaviour
 {
 
-// Member Types
+	// Member Types
 
 
-// Member Delegates & Events
-
-
-	public delegate void OnFacilityCreate(GameObject _cFacilty);
-	public delegate void OnFacilityDestroy(GameObject _cFacility);
+	// Member Delegates & Events
+	public delegate void HandleFacilityEvent(GameObject _Facilty);
 	
-	public event OnFacilityCreate EventOnFaciltiyCreate;
-	public event OnFacilityDestroy EventOnFaciltiyDestroy;
-
-
-// Member Properties
-
-
-	[AServerOnly]
-	public List<GameObject> Facilities
-	{
-		get { return (new List<GameObject>(m_mFacilityObjects.Values)); }
-	}
-
-
-// Member Methods
-
-
-    [AServerOnly]
-    public void RegisterFacility(GameObject _cFacilityObject)
-    {
-        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
-
-        // Generate id for facility
-        uint uiFacilityId = ++ m_uiFacilityIdCount;
-
-        // Give facility an id
-        cFacilityInterface.FacilityId = uiFacilityId;
-
-        // Add facility to dictionaries
-        m_mFacilityObjects.Add(uiFacilityId, _cFacilityObject);
-
-        if (!m_mFacilityTypes.ContainsKey(cFacilityInterface.FacilityType))
-        {
-            m_mFacilityTypes.Add(cFacilityInterface.FacilityType, new List<GameObject>());
-        }
-
-        m_mFacilityTypes[cFacilityInterface.FacilityType].Add(_cFacilityObject);
-
-        // Notify observers
-        if (EventOnFaciltiyCreate != null) EventOnFaciltiyCreate(_cFacilityObject);
-    }
-
-
-    [AServerOnly]
-    public void UnregisterFacility(GameObject _cFacilityObject)
-    {
-        CFacilityInterface cFacilityInterface = _cFacilityObject.GetComponent<CFacilityInterface>();
-
-        // Remove facility from dictionaries
-        m_mFacilityObjects.Remove(cFacilityInterface.FacilityId);
-        m_mFacilityTypes[cFacilityInterface.FacilityType].Remove(_cFacilityObject);
-
-        // Notify observers
-        if (EventOnFaciltiyDestroy != null) EventOnFaciltiyDestroy(_cFacilityObject);
-    }
-
-
-    [ALocalOnly]
-    public void AddNewlyCreatedFacility(GameObject _Facility, uint _FacilityId, CFacilityInterface.EType _FacilityType)
-    {
-        // Index facility against its Facility Id
-        m_mFacilityObjects.Add(_FacilityId, _Facility);
-
-        // Index facility against its Facility Type
-        if (!m_mFacilityTypes.ContainsKey(_FacilityType))
-        {
-            m_mFacilityTypes.Add(_FacilityType, new List<GameObject>());
-        }
-
-        m_mFacilityTypes[_FacilityType].Add(_Facility);
-    }
-
-
-    [AServerOnly]
-	public GameObject GetFacility(uint _uiFacilityId)
-	{
-        if (_uiFacilityId >= m_mFacilityObjects.Count)
-        {
-            return (null);
-        }
-        else
-        {
-            return (m_mFacilityObjects[_uiFacilityId]);
-        }
-	}
-
-
-    [AServerOnly]
-	public List<GameObject> FindFacilities(CFacilityInterface.EType _eType)
-	{
-        if (m_mFacilityTypes.ContainsKey(_eType))
-        {
-            return (m_mFacilityTypes[_eType]);
-        }
-        else
-        {
-            return (null);
-        }
-	}
-
-
-    void Start()
-    {
-        // Empty
-    }
+	public event HandleFacilityEvent EventFaciltiyCreated;
+	public event HandleFacilityEvent EventFaciltiyDestroyed;
 
 
 	// Member Fields
+	public CGrid m_ShipGrid = null;
+
+	private uint m_FacilityIdCount = 0;
+
+	private List<uint> m_UnusedFacilityIds = new List<uint>();
+	private Dictionary<uint, GameObject> m_FacilityObjects = new Dictionary<uint, GameObject>();
 
 
-	uint m_uiFacilityIdCount = 0;
+	// Member Properties
+	[AServerOnly]
+	public List<GameObject> Facilities
+	{
+		get { return (new List<GameObject>(m_FacilityObjects.Values)); }
+	}
 
 
-	Dictionary<uint, GameObject> m_mFacilityObjects = new Dictionary<uint, GameObject>();
-	Dictionary<CFacilityInterface.EType, List<GameObject>> m_mFacilityTypes = new Dictionary<CFacilityInterface.EType, List<GameObject>>();
+	// Member Methods
+	[AServerOnly]
+	public void ImportNewGridTiles(List<CTile> _AllTiles, List<List<CTile>> _FacilityTiles)
+	{
+		// Import all of the tiles to the ship
+		List<CTile> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
 
+		// Destoy all facilities
+		foreach(GameObject facility in Facilities)
+			DestoryFacility(facility);
 
+		// Create all new facilities
+		foreach(List<CTile> facilityTiles in _FacilityTiles)
+			CreateFacility(facilityTiles);
+	}
+
+	[AServerOnly]
+	public void CreateFacility(List<CTile> _FacilityTiles)
+	{
+		// Get the converted facility interior tiles
+		List<CTile> interiorTiles = new List<CTile>();
+		foreach(CTile tile in _FacilityTiles)
+		{
+			if(tile.GetTileTypeState(ETileType.Wall_Int))
+				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
+		}
+
+		// Instantiate an empty facility
+		GameObject newFacility = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Facility);
+		newFacility.transform.parent = transform;
+		newFacility.transform.localPosition = Vector3.zero;
+		newFacility.transform.localRotation = Quaternion.identity;
+
+		// Give the facility its tiles
+		newFacility.GetComponent<CFacilityTiles>().InteriorTiles = interiorTiles;
+
+		// Give facility an id
+		uint facilityId = ++m_FacilityIdCount;
+		newFacility.GetComponent<CFacilityInterface>().FacilityId = facilityId;
+		
+		// Add facility to dictionaries
+		m_FacilityObjects.Add(facilityId, newFacility);
+		
+		// Notify observers
+		if (EventFaciltiyCreated != null) 
+			EventFaciltiyCreated(newFacility);
+	}
+
+	private void DestoryFacility(GameObject _Facility)
+    {
+        // Remove facility from dictionaries
+		m_FacilityObjects.Remove(_Facility.GetComponent<CFacilityInterface>().FacilityId);
+
+        // Notify observers
+        if (EventFaciltiyDestroyed != null) 
+			EventFaciltiyDestroyed(_Facility);
+
+		// Destroy the facility
+		Destroy(_Facility);
+	}
+	
+	public GameObject GetFacility(uint _uiFacilityId)
+	{
+        if (_uiFacilityId >= m_FacilityObjects.Count)
+        {
+            return (null);
+        }
+        else
+        {
+            return (m_FacilityObjects[_uiFacilityId]);
+        }
+	}
 };

@@ -36,7 +36,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		
 		Atmosphere  = 50,
 		Crew        = 100,
-		Defence     = 150,
+		Turrets     = 150,
 		Exploration = 200,
         Gravity     = 250,
         Power       = 300,
@@ -49,8 +49,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	public enum EType
 	{
-		INVALID,
+		INVALID 			= -1,
 
+		Prefabricator		= 0,
 		AtmosphereGenerator = 50,
 		PlayerSpawner       = 100,
         TurretCockpit       = 150,
@@ -63,7 +64,12 @@ public class CModuleInterface : CNetworkMonoBehaviour
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
-        Starter             = 750
+        Starter             = 750,
+        TurretPulseSmall    = 800,
+        TurretPulseMedium   = 805,
+        TurretMissleSmall   = 850,
+        TurretMissileMedium = 855,
+
 	}
 
 
@@ -82,8 +88,16 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public delegate void BuiltHandler(GameObject _cModule);
+    public delegate void BuiltHandler(CModuleInterface _cSender);
     public event BuiltHandler EventBuilt;
+
+
+    public delegate void FuntionalRatioChangeHandler(CModuleInterface _cSender, float _fOldFuntionalRatio, float _fNewFunctionalRatio);
+    public event FuntionalRatioChangeHandler EventFunctionalRatioChange;
+
+
+    public delegate void EnableChangeHandler(CModuleInterface _cSender, bool _bEnabled);
+    public event EnableChangeHandler EventEnableChange;
 
 
 // Member Properties
@@ -105,6 +119,25 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	{
 		get { return (m_eModuleSize); }
 	}
+
+
+    public float FunctioanlRatio
+    {
+        get { return (m_fFunctionalRatio.Value); }
+    }
+
+
+    public bool IsEnabled
+    {
+        get { return (IsBuilt &&
+                      m_bEnabled.Value); }
+    }
+
+
+    public bool IsBroken
+    {
+        get { return (m_fFunctionalRatio.Value == 0.0f); }
+    }
 
 
 	public bool IsInternal
@@ -131,12 +164,20 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
+	public Cubemap CubeMapSnapshot
+	{
+		get { return (m_CubemapSnapshot); }
+	}
+
+
 // Member Methods
 
 
     public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
     {
+        m_fFunctionalRatio = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 1.0f);
         m_bBuiltPercent = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
+        m_bEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
 
 
@@ -152,6 +193,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
+    [AServerOnly]
     public void Build(float _fRatio)
     {
         // Incrmeent and cap
@@ -160,6 +202,31 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
         // Set built
         m_bBuiltPercent.Set((byte)(m_fServerBuiltRatio * 100.0f));
+    }
+
+
+	[AServerOnly]
+	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
+	{
+		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
+		moduleObject.transform.parent = _FacilityParent.transform;
+		moduleObject.transform.localPosition = _LocalPostion;
+
+		return(moduleObject);
+	}
+
+
+    [AServerOnly]
+    public void SetFuntionalRatio(float _fRatio)
+    {
+        m_fFunctionalRatio.Value = _fRatio;
+    }
+
+
+    [AServerOnly]
+    public void SetEnabled(bool _bEnabled)
+    {
+        m_bEnabled.Value = _bEnabled;
     }
 
 
@@ -318,6 +385,40 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		// Empty
 	}
 
+	public void UpdateCubemap()
+	{
+		// Disable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = false;
+		}
+		
+		if(m_CubemapSnapshot == null)
+		{
+			m_CubemapSnapshot = new Cubemap(16, TextureFormat.ARGB32, false);
+		}
+		
+		if(m_CubemapCam == null)
+		{
+			GameObject tempCam = new GameObject("Cubemap Renderer");
+			tempCam.transform.parent = transform;
+			tempCam.transform.localPosition = Vector3.up * 1.5f;
+			tempCam.transform.localRotation = Quaternion.identity;
+			m_CubemapCam = tempCam.AddComponent<Camera>();
+			m_CubemapCam.cullingMask = 1 << LayerMask.NameToLayer("Default");
+			m_CubemapCam.farClipPlane = 100;
+			m_CubemapCam.enabled = false;
+		}
+		
+		//m_CubemapCam.RenderToCubemap(m_CubemapSnapshot);
+		
+		// Re-enable all of the renderers for self
+		foreach(Renderer r in GetComponentsInChildren<Renderer>())
+		{
+			r.enabled = true;
+		}
+	}
+
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
@@ -325,6 +426,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         {
             GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
 
+            // Check is completely built
             if (m_bBuiltPercent.Value == 100)
             {
                 m_cModel.SetActive(true);
@@ -334,8 +436,22 @@ public class CModuleInterface : CNetworkMonoBehaviour
                     _cComponent.SetActive(true);
                 });
 
-                if (EventBuilt != null) EventBuilt(gameObject);
+                if (EventBuilt != null) EventBuilt(this);
+
+                // Enable module
+                if (CNetwork.IsServer)
+                {
+                    SetEnabled(true);
+                }
             }
+        }
+        else if (_cSyncedVar == m_bEnabled)
+        {
+            if (EventEnableChange != null) EventEnableChange(this, m_bEnabled.Value);
+        }
+        else if (_cSyncedVar == m_fFunctionalRatio)
+        {
+            if (EventFunctionalRatioChange != null) EventFunctionalRatioChange(this, m_fFunctionalRatio.PreviousValue, m_fFunctionalRatio.Value);
         }
     }
 
@@ -399,10 +515,14 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	public bool m_bBuildable = true;
 
 
+    CNetworkVar<float> m_fFunctionalRatio = null;
     CNetworkVar<byte> m_bBuiltPercent = null;
+    CNetworkVar<bool> m_bEnabled = null;
 
 
     GameObject m_cParentFacility = null;
+	Camera m_CubemapCam = null;
+	Cubemap m_CubemapSnapshot = null;
 
 
     List<GameObject> m_aAttachedComponents = new List<GameObject>();
