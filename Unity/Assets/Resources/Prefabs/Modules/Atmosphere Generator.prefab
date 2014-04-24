@@ -35,6 +35,8 @@ GameObject:
   - 114: {fileID: 11400044}
   - 114: {fileID: 11400046}
   - 114: {fileID: 11400062}
+  - 114: {fileID: 11400050}
+  - 114: {fileID: 11400048}
   - 114: {fileID: 11400024}
   m_Layer: 0
   m_Name: Atmosphere Generator
@@ -214,7 +216,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6, y: .250001729, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400014}
@@ -905,10 +907,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4005a8ed42e8f4b4b92d2d5f0b160e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MaxAtmosphereGenerationRate: 30
-  m_DUIConsole: {fileID: 11400010}
-  m_CircuitryComponent: {fileID: 11400026}
-  m_LiquidComponent: {fileID: 11400034}
+  m_cDuiConsole: {fileID: 0}
+  m_cCircuitryComponent: {fileID: 11400026}
+  m_cLiquidComponent: {fileID: 11400034}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -920,6 +921,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40bc52d1f6e9f60498d8475f5e1ba2a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_fInitialGenerationRate: 90
 --- !u!114 &11400024
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1075,6 +1077,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cPrecipitativeMesh: {fileID: 100000, guid: 5356046d426e5bd478b811f2c5ba341f, type: 2}
+--- !u!114 &11400048
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb7a1cb739f604846ae4f4045bb5ea4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AtmosphericConsumptionRate: 25
+  m_ConsumingAtmosphere: 0
+--- !u!114 &11400050
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eacd62c2462a324a94da700e153a380, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400056
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -21,35 +21,32 @@ using System.Collections.Generic;
 
 public class CFacilityWarningSystem : CNetworkMonoBehaviour
 {
-	// Member Types
+
+// Member Types
 
 	
-	// Member Delegates & Events
-	//private delegate void HandleWarningInstanceEvent(TWarningInstance _WarningInstance);
-	//private event HandleWarningInstanceEvent EventWarningEventStarted;
-	//private event HandleWarningInstanceEvent EventWarningEventEnded;
+// Member Delegates & Events
 
 
-	// Member Fields
-	private List<TWarningInstance> m_ActiveWarningInstances = new List<TWarningInstance>();
-
-	private bool[] m_ActiveAlarms = new bool[(int)EWarningSeverity.MAX];
-	
-	private CFacilityInterface m_CachedFacilityInterface = null;
-	private CFacilityAtmosphere m_CachedFacilityAtmosphere = null;
-
-	private CShipPowerSystem m_CachedShipPowerSystem = null;
-
-	// Member Properties
+    //private delegate void HandleWarningInstanceEvent(TWarningInstance _WarningInstance);
+    //private event HandleWarningInstanceEvent EventWarningEventStarted;
+    //private event HandleWarningInstanceEvent EventWarningEventEnded;
 
 
-	// Member Methods
+// Member Properties
+
+
+// Member Methods
+    
+
+   
 	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}
 
-	private void Start()
+     /*
+	void Start()
 	{
 		if(CNetwork.IsServer)
 		{
@@ -62,7 +59,8 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	private void Update()
+
+	void Update()
 	{
 		if(CNetwork.IsServer)
 		{
@@ -71,8 +69,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
-	private void CheckAtmosphericConditions()
+	void CheckAtmosphericConditions()
 	{
 		// Check if there is a atmospheric + major warning instance
 		if(DoesWarningInstanceExist(EWarningType.Atmosphere, EWarningSeverity.Major))
@@ -89,11 +88,12 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
-	private void CheckPowerConditions()
+	void CheckPowerConditions()
 	{
 		// Calculate the ships consumption vs generation
-		float diffGenCons = m_CachedShipPowerSystem.ShipCurentGenerationRate - m_CachedShipPowerSystem.ShipCurrentConsumptionRate;
+		float diffGenCons = m_CachedShipPowerSystem.TotalCapacity - m_CachedShipPowerSystem.ShipCurrentConsumptionRate;
 
 		// Calculate the ships current battery power percentage
 		float powerRatio = m_CachedShipPowerSystem.ShipCurrentCharge / m_CachedShipPowerSystem.ShipCurrentChargeCapacity;
@@ -129,8 +129,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 	
+
 	[AServerOnly]
-	private void AddWarningInstance(EWarningType _Type, EWarningSeverity _Severity)
+	void AddWarningInstance(EWarningType _Type, EWarningSeverity _Severity)
 	{
 		//Debug.Log("AddWarningInstance: " + _Type + ", " + _Severity);
 
@@ -151,8 +152,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
-	private void RemoveWarningInstance(EWarningType _Type, EWarningSeverity _Severity)
+	void RemoveWarningInstance(EWarningType _Type, EWarningSeverity _Severity)
 	{
 		//Debug.Log("RemoveWarningInstance: " + _Type + ", " + _Severity);
 
@@ -181,8 +183,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
-	private void OnAtmosphereDecompression(bool _Decompression, bool _Explosive)
+	void OnAtmosphereDecompression(bool _Decompression, bool _Explosive)
 	{
 		if(_Decompression)
 		{
@@ -196,8 +199,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
+
 	[AServerOnly]
-	private void SetAlarmsState(EWarningSeverity _Severity, bool _State)
+	void SetAlarmsState(EWarningSeverity _Severity, bool _State)
 	{
 		switch(_Severity) 
 		{
@@ -227,15 +231,32 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 		}
 	}
 
-	private bool DoesWarningInstanceExist(EWarningType _Type, EWarningSeverity _Severity)
+
+	bool DoesWarningInstanceExist(EWarningType _Type, EWarningSeverity _Severity)
 	{
 		return(m_ActiveWarningInstances.Exists(wi => 
 		                                     wi.m_WarningSeverity == _Severity && 
 		                                     wi.m_WarningType == _Type));
 	}
 
+
 	void OnNetworkVarSync(INetworkVar _cSynedVar)
 	{
 		// Empty
 	}
+    */
+
+
+// Member Fields
+
+
+    List<TWarningInstance> m_ActiveWarningInstances = new List<TWarningInstance>();
+
+    bool[] m_ActiveAlarms = new bool[(int)EWarningSeverity.MAX];
+
+    CFacilityInterface m_CachedFacilityInterface = null;
+    CFacilityAtmosphere m_CachedFacilityAtmosphere = null;
+
+    CShipPowerSystem m_CachedShipPowerSystem = null;
+
 };

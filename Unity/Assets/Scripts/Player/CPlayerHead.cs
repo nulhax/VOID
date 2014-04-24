@@ -82,7 +82,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
         get { return (Head.transform.localRotation); }
     }
 
-	public bool InputDisabled
+	public bool IsInputDisabled
 	{
 		get { return (m_cInputDisableQueue.Count > 0); }
 	}
@@ -95,6 +95,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
     {
 		m_fHeadEulerX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
         m_fHeadEulerY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
+
+        _cRegistrar.RegisterRpc(this, "RemoteSetLookDirection");
     }
 
 
@@ -112,12 +114,23 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	}
 
 
+    [AServerOnly]
+    public void SetLookDirection(float _fX, float _fY)
+    {
+        m_fHeadEulerX.Value = _fX;
+        m_fHeadEulerY.Value = _fY;
+
+        InvokeRpcAll("RemoteSetLookDirection", _fX, _fY);
+    }
+
+
     [ALocalOnly]
 	public static void SerializeOutbound(CNetworkStream _cStream)
 	{
         GameObject cSelfActor = CGamePlayers.SelfActor;
 
-        if (cSelfActor != null)
+        if ( cSelfActor != null &&
+            !cSelfActor.GetComponent<CPlayerHead>().IsInputDisabled)
         {
             _cStream.Write(ENetworkAction.SyncLocalEuler);
             _cStream.Write(cSelfActor.GetComponent<CPlayerHead>().Head.transform.localEulerAngles.x);
@@ -144,8 +157,15 @@ public class CPlayerHead : CNetworkMonoBehaviour
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.SyncLocalEuler:
-                        cPlayerHead.m_fHeadEulerX.Value = _cStream.Read<float>();
-                        cPlayerHead.m_fHeadEulerY.Value = _cStream.Read<float>();
+                        if (cPlayerHead.IsInputDisabled)
+                        {
+                            cPlayerHead.m_fHeadEulerX.Value = _cStream.Read<float>();
+                            cPlayerHead.m_fHeadEulerY.Value = _cStream.Read<float>();
+                        }
+                        else
+                        {
+                            _cStream.IgnoreBytes(2 * sizeof(float));
+                        }
                         break;
 
                     default:
@@ -167,15 +187,12 @@ public class CPlayerHead : CNetworkMonoBehaviour
             // Setup the HUD
             CGameHUD.SetupHUD();
 
-            // Set the ship view perspective of the camera to the actors head
-            TransferPlayerPerspectiveToShipSpace();
-
             // Register event handler for entering/exiting ship
-            gameObject.GetComponent<CActorBoardable>().EventBoard     += TransferPlayerPerspectiveToShipSpace;
-            gameObject.GetComponent<CActorBoardable>().EventDisembark += TransferPlayerPerspectiveToGalaxySpace;
+            gameObject.GetComponent<CActorLocator>().EventEnterShip += OnPlayerEnterShip;
+			gameObject.GetComponent<CActorLocator>().EventLeaveShip += OnPlayerLeaveShip;
 
             // Add audoio listener to head
-            Head.AddComponent<AudioListener>();
+            //Head.AddComponent<AudioListener>();
         }
 
         if (CNetwork.IsServer)
@@ -199,8 +216,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
         // Unregister
         if (CGamePlayers.SelfActor == gameObject)
         {
-            gameObject.GetComponent<CActorBoardable>().EventBoard     -= TransferPlayerPerspectiveToShipSpace;
-            gameObject.GetComponent<CActorBoardable>().EventDisembark -= TransferPlayerPerspectiveToGalaxySpace;
+			gameObject.GetComponent<CActorLocator>().EventEnterShip -= OnPlayerEnterShip;
+			gameObject.GetComponent<CActorLocator>().EventLeaveShip -= OnPlayerLeaveShip;
         }
 
         if (CNetwork.IsServer)
@@ -251,7 +268,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void UpdateFeelookRotation()
     {
-        if (InputDisabled)
+        if (IsInputDisabled)
             return;
 
         if (m_fMouseDeltaX == 0.0f &&
@@ -307,7 +324,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-	void TransferPlayerPerspectiveToShipSpace()
+	void OnPlayerEnterShip(GameObject _Player)
 	{
 		CGameCameras.SetObserverSpace(true);
 
@@ -317,13 +334,20 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	
 
     [ALocalOnly]
-	void TransferPlayerPerspectiveToGalaxySpace()
+	void OnPlayerLeaveShip(GameObject _Player)
 	{
 		CGameCameras.SetObserverSpace(false);
 
 		// Add the galaxy observer component
 		gameObject.AddComponent<GalaxyObserver>();
 	}
+
+
+    [ANetworkRpc]
+    void RemoteSetLookDirection(float _fX, float _fY)
+    {
+        Head.transform.localRotation = Quaternion.Euler(_fX, _fY, Head.transform.localEulerAngles.z);
+    }
 
 
     [AOwnerAndServerOnly]

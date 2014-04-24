@@ -29,7 +29,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 // Member Constants
 
 
-	public const uint k_uiOutboundRate = 60; // 50ms
+	public const float k_fOutboundRate = 60.0f; // 50ms
 
 
 // Member Types
@@ -707,7 +707,7 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 	float m_fConnectionElapsedTime = 0.0f;
 	float m_fTickTimer = 0.0f;
     float m_fPacketOutboundTimer = 0.0f;
-	float m_fPacketOutboundInterval = 1.0f / k_uiOutboundRate;
+	float m_fPacketOutboundInterval = 1.0f / k_fOutboundRate;
 	float m_fTick = 0;
 	float m_fTickTotal = 0;
 

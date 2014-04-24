@@ -4,11 +4,45 @@ ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Module_Spawner_Door_1
+    100004: Module_Spawner_Door_2
+    100006: Module_Spawner_Door_3
+    100008: Module_Spawner_Door_4
+    100010: Module_Spawner_Door_5
+    100012: Module_Spawner_Main
     400000: //RootNode
+    400002: Module_Spawner_Door_1
+    400004: Module_Spawner_Door_2
+    400006: Module_Spawner_Door_3
+    400008: Module_Spawner_Door_4
+    400010: Module_Spawner_Door_5
+    400012: Module_Spawner_Main
     2300000: //RootNode
+    2300002: Module_Spawner_Door_1
+    2300004: Module_Spawner_Door_2
+    2300006: Module_Spawner_Door_3
+    2300008: Module_Spawner_Door_4
+    2300010: Module_Spawner_Door_5
+    2300012: Module_Spawner_Main
     3300000: //RootNode
+    3300002: Module_Spawner_Door_1
+    3300004: Module_Spawner_Door_2
+    3300006: Module_Spawner_Door_3
+    3300008: Module_Spawner_Door_4
+    3300010: Module_Spawner_Door_5
+    3300012: Module_Spawner_Main
     4300000: Spawner_2:Lowpoly_3:Lowpoly
+    4300002: Module_Spawner_Main
+    4300004: Module_Spawner_Door_5
+    4300006: Module_Spawner_Door_4
+    4300008: Module_Spawner_Door_3
+    4300010: Module_Spawner_Door_2
+    4300012: Module_Spawner_Door_1
+    7400000: Take 001
+    7400002: Open
+    7400004: Close
     9500000: //RootNode
+    11100000: //RootNode
   materials:
     importMaterials: 1
     materialName: 0
@@ -23,11 +57,131 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 300
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Module_Spawner_Door_1
+        weight: 1
+      - path: Module_Spawner_Door_2
+        weight: 1
+      - path: Module_Spawner_Door_3
+        weight: 1
+      - path: Module_Spawner_Door_4
+        weight: 1
+      - path: Module_Spawner_Door_5
+        weight: 1
+      - path: Module_Spawner_Main
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Open
+      takeName: Take 001
+      firstFrame: 200
+      lastFrame: 250
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Module_Spawner_Door_1
+        weight: 1
+      - path: Module_Spawner_Door_2
+        weight: 1
+      - path: Module_Spawner_Door_3
+        weight: 1
+      - path: Module_Spawner_Door_4
+        weight: 1
+      - path: Module_Spawner_Door_5
+        weight: 1
+      - path: Module_Spawner_Main
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Close
+      takeName: Take 001
+      firstFrame: 250
+      lastFrame: 300
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Module_Spawner_Door_1
+        weight: 1
+      - path: Module_Spawner_Door_2
+        weight: 1
+      - path: Module_Spawner_Door_3
+        weight: 1
+      - path: Module_Spawner_Door_4
+        weight: 1
+      - path: Module_Spawner_Door_5
+        weight: 1
+      - path: Module_Spawner_Main
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: .0250000004
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -59,5 +213,5 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 1
   userData: 

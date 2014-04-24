@@ -188,7 +188,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	public void EnableInput(object _cRequester)
 	{
 		m_cInputDisableQueue.Remove(_cRequester.GetType());
-        gameObject.GetComponent<CThirdPersonAnimController>().EnableAnimation();
+
+        if (m_cInputDisableQueue.Count == 0)
+        {
+            gameObject.GetComponent<CThirdPersonAnimController>().EnableAnimation();
+        }
 	}
 
 
@@ -204,7 +208,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	{
         GameObject cSelfActor = CGamePlayers.SelfActor;
 
-        if (cSelfActor != null)
+        if ( cSelfActor != null &&
+            !cSelfActor.GetComponent<CPlayerMotor>().IsInputDisabled)
         {
             _cStream.Write(ENetworkAction.SyncRotation);
             _cStream.Write(cSelfActor.transform.position.x);
@@ -234,12 +239,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.SyncRotation:
-                        cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationX.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationY.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationZ.Value = _cStream.Read<float>();
+                        if (!cPlayerActorMotor.IsInputDisabled)
+                        {
+                            cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationX.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationY.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationZ.Value = _cStream.Read<float>();
+                        }
+                        else
+                        {
+                            _cStream.IgnoreBytes(6 * sizeof(float));
+                        }
                         break;
 
                     default:
@@ -453,9 +465,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             }
         }
 
-        if (gameObject != CGamePlayers.SelfActor ||
+        if (gameObject != CGamePlayers.SelfActor /*||
             (State != EState.AligningBodyToShipInternal &&
-             State != EState.AligningBodyToShipExternal))
+             State != EState.AligningBodyToShipExternal)*/)
         {
             UpdatePositionRotationLerping();
         }
@@ -655,6 +667,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
     void UpdatePositionRotationLerping()
     {
+        if (IsInputDisabled)
+            return;
+
         // Generate remote position
         Vector3 vRemotePosition = new Vector3(m_fRemotePositionX.Value, m_fRemotePositionY.Value, m_fRemotePositionZ.Value);
         Vector3 vRemoteEuler = new Vector3(m_fRemoteRotationX.Value, m_fRemoteRotationY.Value, m_fRemoteRotationZ.Value);

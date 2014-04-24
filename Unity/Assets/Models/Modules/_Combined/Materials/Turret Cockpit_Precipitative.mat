@@ -46,6 +46,10 @@ Material:
       data:
         first:
           name: _Brightness
+        second: 4
+      data:
+        first:
+          name: _GlowIntensity
         second: 2
       data:
         first:
@@ -54,7 +58,7 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 3.1500001
+        second: 1
       data:
         first:
           name: _Amount
@@ -62,7 +66,11 @@ Material:
       data:
         first:
           name: _FadeDist
-        second: 1
+        second: .300000012
+      data:
+        first:
+          name: _FadeDistRatio
+        second: .5
       data:
         first:
           name: _NoiseFreq
@@ -83,4 +91,4 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .375, g: .741379321, b: 1, a: .196078435}
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}

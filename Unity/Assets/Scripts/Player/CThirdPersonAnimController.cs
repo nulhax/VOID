@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -112,6 +112,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
 			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
+			
 
 			if(bStrafeLeft)
 			{

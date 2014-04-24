@@ -17,7 +17,7 @@ using System.Collections;
 [System.Serializable]
 public class CActorHealth : CNetworkMonoBehaviour
 {
-	public delegate void OnSetHealth(float prevHealth, float currHealth);
+	public delegate void OnSetHealth(CActorHealth _cSender, float prevHealth, float currHealth);
 	public event OnSetHealth EventOnSetHealth;
 
 	public delegate void OnSetState(byte prevState, byte currState);
@@ -36,14 +36,14 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[HideInInspector] public float health_previous;
 	private float health_current;
 	protected CNetworkVar<float> health_internal = null;
-	public float health { get { return health_current; } set { value = value > health_max ? health_max : value < health_min ? health_min : value; if (value == health) return; if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
+	public float health { get { return health_current; } set { value = value > health_max ? health_max : value < health_min ? health_min : value; if (value == health) return; if (syncNetworkHealth && CNetwork.IsServer)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
 
 	[SerializeField] public byte state_initial = 0;
 	[SerializeField] public float[] stateTransitions;
 	[HideInInspector] public byte state_previous;
 	private byte state_current;
 	protected CNetworkVar<byte> state_internal = null;
-	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
+	public byte state { get { return state_current; } set { if (syncNetworkState && CNetwork.IsServer)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
 
 	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
@@ -65,7 +65,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		if (callEventsOnStart)
 		{
 			if (EventOnSetHealth != null)
-				EventOnSetHealth(health_previous, health_current);
+				EventOnSetHealth(this, health_previous, health_current);
 
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
@@ -113,7 +113,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 		}
 
 		if (EventOnSetHealth != null && health_current != health_previous)
-			EventOnSetHealth(health_previous, health_current);
+			EventOnSetHealth(this, health_previous, health_current);
 
 		health_previous = health_current;
 
@@ -170,14 +170,14 @@ public class CActorHealth_Embedded
 	public float health_previous;
 	private float health_current;
 	protected CNetworkVar<float> health_internal = null;
-	public float health { get { return health_current; } set { value = value > health_max ? health_max : value < health_min ? health_min : value; if (value == health) return; if (syncNetworkHealth)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
+	public float health { get { return health_current; } set { value = value > health_max ? health_max : value < health_min ? health_min : value; if (value == health) return; if (syncNetworkHealth && CNetwork.IsServer)health_internal.Set(value); else { health_current = value; OnSyncHealth(null); } } }
 
 	public byte state_initial = 0;
 	public float[] stateTransitions;
 	public byte state_previous;
 	private byte state_current;
 	protected CNetworkVar<byte> state_internal = null;
-	public byte state { get { return state_current; } set { if (syncNetworkState)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
+	public byte state { get { return state_current; } set { if (syncNetworkState && CNetwork.IsServer)state_internal.Set(value); else { state_current = value; OnSyncState(null); } } }
 
 	public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
