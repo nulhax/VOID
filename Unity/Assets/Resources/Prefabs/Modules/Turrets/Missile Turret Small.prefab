@@ -270,7 +270,7 @@ Camera:
   m_GameObject: {fileID: 100012}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -444,7 +444,7 @@ MonoBehaviour:
   m_cGalaxyCamera: {fileID: 2000002}
   m_cBaseTrans: {fileID: 400008}
   m_cBarrelTrans: {fileID: 400006}
-  m_cProjectileNodes:
+  m_caProjectileNodes:
   - {fileID: 400014}
   m_fRotationSpeed: 2
   m_fBarrelEulerMinX: -15

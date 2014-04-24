@@ -93,6 +93,8 @@ public class CGameRegistrator : MonoBehaviour
         TurretPulseMedium,
         TurretMissileSmall      = 645,
         TurretMissileMedium,
+        MissileProjectile                 = 660,
+        MissileHitParticles     = 662,
 
 		
 		// Components
@@ -255,6 +257,8 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Turrets/Pulse Turret Medium");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileSmall,          "Modules/Turrets/Missile Turret Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileMedium,         "Modules/Turrets/Missile Turret Medium");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileProjectile,           "Modules/Turrets/Missile Projectile");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileHitParticles,         "Modules/Turrets/Missile Hit Particles");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");

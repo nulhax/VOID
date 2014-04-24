@@ -123,9 +123,6 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-    public GameObject m_cLaserProjectile = null;
-
-
     CTurretBehaviour m_cTurretBehaviour = null;
 
 
