@@ -27,7 +27,7 @@ public class CGrid : MonoBehaviour
 
 	
 	// Member Delegates & Events
-	public delegate void HandleGridTileEvent(CTile _Tile);
+	public delegate void HandleGridTileEvent(CTileRoot _Tile);
 
 	public event HandleGridTileEvent EventTilePlaced;
 	public event HandleGridTileEvent EventTileRemoved;
@@ -39,7 +39,7 @@ public class CGrid : MonoBehaviour
 	private Transform m_TileContainer = null;
 	private CTileFactory m_TileFactory = null;
 
-	private Dictionary<string, CTile> m_GridBoard = new Dictionary<string, CTile>();
+	private Dictionary<string, CTileRoot> m_GridBoard = new Dictionary<string, CTileRoot>();
 
 	
 	// Member Properties
@@ -53,9 +53,9 @@ public class CGrid : MonoBehaviour
 		get { return(m_TileFactory); } 
 	}
 
-	public List<CTile> Tiles
+	public List<CTileRoot> Tiles
 	{
-		get { return(new List<CTile>(m_GridBoard.Values)); }
+		get { return(new List<CTileRoot>(m_GridBoard.Values)); }
 	}
 
 
@@ -116,9 +116,9 @@ public class CGrid : MonoBehaviour
 		return(_WorldPosition * m_TileSize);
 	}
 
-	public CTile GetTile(TGridPoint _GridPoint)
+	public CTileRoot GetTile(TGridPoint _GridPoint)
 	{
-		CTile tile = null;
+		CTileRoot tile = null;
 		if(m_GridBoard.ContainsKey(_GridPoint.ToString()))
 		{
 			tile = m_GridBoard[_GridPoint.ToString()];
@@ -126,31 +126,31 @@ public class CGrid : MonoBehaviour
 		return(tile);
 	}
 
-	public List<CTile> ImportTileInformation(List<CTile> _Tiles)
+	public List<CTileRoot> ImportTileInformation(List<CTileRoot> _Tiles)
 	{
 		// Keep a list of tiles which werent modified
-		List<CTile> unmodifiedTiles = Tiles;
-		List<CTile> newTiles = new List<CTile>();
+		List<CTileRoot> unmodifiedTiles = Tiles;
+		List<CTileRoot> newTiles = new List<CTileRoot>();
 	
 		// Iterate all the new tiles to use
-		foreach(CTile tile in _Tiles)
+		foreach(CTileRoot tile in _Tiles)
 		{
 			// Get the meta information of the tile
 			int typeIdentifier = tile.m_TileTypeIdentifier;
 
 			// If the tile exists, remove from the list of unmodified tiles
-			CTile existingTile = GetTile(tile.m_GridPosition);
+			CTileRoot existingTile = GetTile(tile.m_GridPosition);
 			if(existingTile != null)
 				unmodifiedTiles.Remove(existingTile);
 
 			// Place the tile and clone the info from the original
-			CTile newTile = PlaceTile(tile.m_GridPosition, new List<ETileType>());
+			CTileRoot newTile = PlaceTile(tile.m_GridPosition, new List<CTile.EType>());
 			newTile.CloneTileMetaData(tile);
 			newTiles.Add(newTile);
 		}
 
 		// Remove all tiles that dont exist anymore
-		foreach(CTile tile in unmodifiedTiles)
+		foreach(CTileRoot tile in unmodifiedTiles)
 		{
 			RemoveTile(tile.m_GridPosition);
 		}
@@ -158,9 +158,9 @@ public class CGrid : MonoBehaviour
 		return(newTiles);
 	}
 	
-	public CTile PlaceTile(TGridPoint _Position, List<ETileType> _TileTypes)
+	public CTileRoot PlaceTile(TGridPoint _Position, List<CTile.EType> _TileTypes)
 	{
-		CTile tile = null;
+		CTileRoot tile = null;
 
 		// If it exists, destory it
 		if(m_GridBoard.ContainsKey(_Position.ToString()))
@@ -174,12 +174,12 @@ public class CGrid : MonoBehaviour
 		newtile.transform.localScale = Vector3.one;
 		newtile.transform.localRotation = Quaternion.identity;
 		newtile.transform.localPosition = GetLocalPosition(_Position.ToVector);
-		tile = newtile.AddComponent<CTile>();
+		tile = newtile.AddComponent<CTileRoot>();
 		tile.m_Grid = this;
 		tile.m_GridPosition = _Position;
 
 		// Set the active tile types
-		foreach(ETileType type in _TileTypes)
+		foreach(CTile.EType type in _TileTypes)
 		{
 			tile.SetTileTypeState(type, true);
 		}
@@ -197,7 +197,7 @@ public class CGrid : MonoBehaviour
 		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
 			return;
 
-		CTile tile = m_GridBoard[_GridPoint.ToString()];
+		CTileRoot tile = m_GridBoard[_GridPoint.ToString()];
 		m_GridBoard.Remove(_GridPoint.ToString());
 
 		// Release

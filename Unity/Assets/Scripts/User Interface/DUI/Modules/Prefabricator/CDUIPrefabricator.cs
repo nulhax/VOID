@@ -308,9 +308,9 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 			if(pair.Value == button)
 			{
 				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
+				foreach(CTileRoot tile in m_GridUI.m_SelectedTiles)
 				{
-					tile.SetTileTypeVariant(ETileType.Floor, pair.Key);
+					tile.SetTileTypeVariant(CTile.EType.Floor, pair.Key);
 				}
 				return;
 			}
@@ -328,9 +328,9 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 			if(pair.Value == button)
 			{
 				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
+				foreach(CTileRoot tile in m_GridUI.m_SelectedTiles)
 				{
-					tile.SetTileTypeVariant(ETileType.Wall_Ext, pair.Key);
+					tile.SetTileTypeVariant(CTile.EType.Wall_Ext, pair.Key);
 				}
 				return;
 			}
@@ -348,9 +348,9 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 			if(pair.Value == button)
 			{
 				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
+				foreach(CTileRoot tile in m_GridUI.m_SelectedTiles)
 				{
-					tile.SetTileTypeVariant(ETileType.Ceiling, pair.Key);
+					tile.SetTileTypeVariant(CTile.EType.Ceiling, pair.Key);
 				}
 				return;
 			}

@@ -48,7 +48,7 @@ public class CNeighbour
 	
 	public EDirection m_Direction;
 	public TGridPoint m_GridPointOffset;
-	public CTile m_Tile;
+	public CTileRoot m_Tile;
 
 	public static EDirection GetOppositeDirection(EDirection _Direction)
 	{

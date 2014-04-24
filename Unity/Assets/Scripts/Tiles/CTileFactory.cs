@@ -26,14 +26,14 @@ public class CTileFactory : MonoBehaviour
 	// Member Types
 	public struct TTileIdentifier
 	{
-		public TTileIdentifier(ETileType _TileType, ETileMetaType _TileMetaType, ETileVariant _TileVariant)
+		public TTileIdentifier(CTile.EType _TileType, ETileMetaType _TileMetaType, ETileVariant _TileVariant)
 		{
 			m_TileType = _TileType;
 			m_TileMetaType = _TileMetaType;
 			m_TileVariant = _TileVariant;
 		}
 
-		public ETileType m_TileType;
+		public CTile.EType m_TileType;
 		public ETileMetaType m_TileMetaType;
 		public ETileVariant m_TileVariant;
 	}
@@ -98,54 +98,54 @@ public class CTileFactory : MonoBehaviour
 		// Fill floor tiles
 		for(int i = 0; i < m_FloorTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Floor, m_FloorTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Floor, m_FloorTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_FloorTilePrefabs[i];
 		}
 
 		// Fill Wall Ext tiles
 		for(int i = 0; i < m_WallExtTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Ext, m_WallExtTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Wall_Ext, m_WallExtTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_WallExtTilePrefabs[i];
 		}
 
 		//  Fill Wall Ext Opening tiles
 		for(int i = 0; i < m_WallExtTileTypes_Opening.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Ext, m_WallExtTileTypes[i], ETileVariant.Opening);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Wall_Ext, m_WallExtTileTypes[i], ETileVariant.Opening);
 			m_TilePrefabPairs[identifier] = m_WallExtTilePrefabs_Opening[i];
 		}
 
 		// Fill Wall Int tiles
 		for(int i = 0; i < m_WallIntTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Int, m_WallIntTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Wall_Int, m_WallIntTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_WallIntTilePrefabs[i];
 		}
 
 		// Fill Ceiling tiles
 		for(int i = 0; i < m_CeilingTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Ceiling, m_CeilingTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Ceiling, m_CeilingTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_CeilingTilePrefabs[i];
 		}
 
 		// Wall Ext Cap Ceiling tiles
 		for(int i = 0; i < m_WallExtCapTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Ext_Cap, m_WallExtCapTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Wall_Ext_Cap, m_WallExtCapTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_WallExtCapTilePrefabs[i];
 		}
 
 		// Wall Int Cap Ceiling tiles
 		for(int i = 0; i < m_WallIntCapTileTypes.Count; ++i)
 		{
-			TTileIdentifier identifier = new TTileIdentifier(ETileType.Wall_Int_Cap, m_WallIntCapTileTypes[i], ETileVariant.Default);
+			TTileIdentifier identifier = new TTileIdentifier(CTile.EType.Wall_Int_Cap, m_WallIntCapTileTypes[i], ETileVariant.Default);
 			m_TilePrefabPairs[identifier] = m_WallIntCapTilePrefabs[i];
 		}
 	}
 
-	public GameObject InstanceNewTile(ETileType _TileType, ETileMetaType _TileMetaType, ETileVariant _TileVariant)
+	public GameObject InstanceNewTile(CTile.EType _TileType, ETileMetaType _TileMetaType, ETileVariant _TileVariant)
 	{
 		TTileIdentifier identifier = new TTileIdentifier(_TileType, _TileMetaType, _TileVariant);
 

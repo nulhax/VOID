@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -40,15 +40,15 @@ public class CPreplacedFacility : MonoBehaviour
 	private void Start()
 	{
 		// Get the tiles which reside under this facility
-		List<CTile> tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
+		List<CTileRoot> tiles = new List<CTileRoot>(gameObject.GetComponentsInChildren<CTileRoot>());
 		
 		// Find the tiles which are internal only
-		List<CTile> interiorTiles = new List<CTile>(
+		List<CTileRoot> interiorTiles = new List<CTileRoot>(
 			from ineriorTile in tiles
-			where ineriorTile.GetTileTypeState(ETileType.Wall_Int)
+			where ineriorTile.GetTileTypeState(CTile.EType.Wall_Int)
 			select ineriorTile);
 
-		List<List<CTile>> facilities = new List<List<CTile>>();
+		List<List<CTileRoot>> facilities = new List<List<CTileRoot>>();
 		facilities.Add(interiorTiles);
 
 		// Import the facility to the ship

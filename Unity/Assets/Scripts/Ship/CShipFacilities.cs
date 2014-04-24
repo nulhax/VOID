@@ -52,28 +52,28 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Methods
 	[AServerOnly]
-	public void ImportNewGridTiles(List<CTile> _AllTiles, List<List<CTile>> _FacilityTiles)
+	public void ImportNewGridTiles(List<CTileRoot> _AllTiles, List<List<CTileRoot>> _FacilityTiles)
 	{
 		// Import all of the tiles to the ship
-		List<CTile> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
+		List<CTileRoot> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
 
 		// Destoy all facilities
 		foreach(GameObject facility in Facilities)
 			DestoryFacility(facility);
 
 		// Create all new facilities
-		foreach(List<CTile> facilityTiles in _FacilityTiles)
+		foreach(List<CTileRoot> facilityTiles in _FacilityTiles)
 			CreateFacility(facilityTiles);
 	}
 
 	[AServerOnly]
-	public void CreateFacility(List<CTile> _FacilityTiles)
+	public void CreateFacility(List<CTileRoot> _FacilityTiles)
 	{
 		// Get the converted facility interior tiles
-		List<CTile> interiorTiles = new List<CTile>();
-		foreach(CTile tile in _FacilityTiles)
+		List<CTileRoot> interiorTiles = new List<CTileRoot>();
+		foreach(CTileRoot tile in _FacilityTiles)
 		{
-			if(tile.GetTileTypeState(ETileType.Wall_Int))
+			if(tile.GetTileTypeState(CTile.EType.Wall_Int))
 				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
 		}
 
