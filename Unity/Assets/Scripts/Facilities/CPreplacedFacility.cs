@@ -45,7 +45,7 @@ public class CPreplacedFacility : MonoBehaviour
 		// Find the tiles which are internal only
 		List<CTileRoot> interiorTiles = new List<CTileRoot>(
 			from ineriorTile in tiles
-			where ineriorTile.GetTileTypeState(CTile.EType.Wall_Int)
+			where ineriorTile.GetTileTypeState(CTile.EType.InteriorWall)
 			select ineriorTile);
 
 		List<List<CTileRoot>> facilities = new List<List<CTileRoot>>();

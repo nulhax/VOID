@@ -55,6 +55,20 @@ public class CUtility
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
     // Member Methods
+	static public bool GetMaskState(int _Id, int _Mask)
+	{
+		bool state = ((_Mask & (1 << _Id)) != 0);
+		return(state);
+	}
+
+	static public void SetMaskState(int _Id, bool _State, ref int _Mask)
+	{
+		if(_State)
+			_Mask |= (1 << _Id);
+		else
+			_Mask &= ~(1 << _Id);
+	}
+
 	static public IEnumerable<IEnumerable<T>> GetPowerSet<T>(List<T> list)  
 	{  
 		return from m in Enumerable.Range(0, 1 << list.Count)  

@@ -22,17 +22,17 @@ using System;
 
 
 [System.Serializable]
-public class TGridPoint
+public class CGridPoint
 {
 	public int x, y, z;
-	public TGridPoint(int _x, int _y, int _z)
+	public CGridPoint(int _x, int _y, int _z)
 	{
 		x = _x;
 		y = _y;
 		z = _z;
 	}
 
-	public TGridPoint(Vector3 _Pos)
+	public CGridPoint(Vector3 _Pos)
 	{
 		x = Mathf.RoundToInt(_Pos.x);
 		y = Mathf.RoundToInt(_Pos.y);

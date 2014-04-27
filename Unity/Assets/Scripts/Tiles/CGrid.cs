@@ -88,7 +88,7 @@ public class CGrid : MonoBehaviour
 		m_TileFactory = tileFactory.GetComponent<CTileFactory>();
 	}
 
-	public TGridPoint GetGridPoint(Vector3 worldPosition)
+	public CGridPoint GetGridPoint(Vector3 worldPosition)
 	{
 		Vector3 gridPos = GetGridPosition(worldPosition);
 
@@ -96,7 +96,7 @@ public class CGrid : MonoBehaviour
 		gridPos.y = Mathf.Round(gridPos.y);
 		gridPos.z = Mathf.Round(gridPos.z);
 
-		return(new TGridPoint(gridPos));
+		return(new CGridPoint(gridPos));
 	}
 
 	public Vector3 GetGridPosition(Vector3 _WorldPosition)
@@ -116,7 +116,7 @@ public class CGrid : MonoBehaviour
 		return(_WorldPosition * m_TileSize);
 	}
 
-	public CTileRoot GetTile(TGridPoint _GridPoint)
+	public CTileRoot GetTile(CGridPoint _GridPoint)
 	{
 		CTileRoot tile = null;
 		if(m_GridBoard.ContainsKey(_GridPoint.ToString()))
@@ -136,7 +136,7 @@ public class CGrid : MonoBehaviour
 		foreach(CTileRoot tile in _Tiles)
 		{
 			// Get the meta information of the tile
-			int typeIdentifier = tile.m_TileTypeIdentifier;
+			int typeIdentifier = tile.m_TileTypeMask;
 
 			// If the tile exists, remove from the list of unmodified tiles
 			CTileRoot existingTile = GetTile(tile.m_GridPosition);
@@ -145,7 +145,7 @@ public class CGrid : MonoBehaviour
 
 			// Place the tile and clone the info from the original
 			CTileRoot newTile = PlaceTile(tile.m_GridPosition, new List<CTile.EType>());
-			newTile.CloneTileMetaData(tile);
+			newTile.Clone(tile);
 			newTiles.Add(newTile);
 		}
 
@@ -158,41 +158,47 @@ public class CGrid : MonoBehaviour
 		return(newTiles);
 	}
 	
-	public CTileRoot PlaceTile(TGridPoint _Position, List<CTile.EType> _TileTypes)
+	public CTileRoot PlaceTile(CGridPoint _Position, List<CTile.EType> _TileTypes)
 	{
 		CTileRoot tile = null;
 
-		// If it exists, destory it
-		if(m_GridBoard.ContainsKey(_Position.ToString()))
+		// If it exists, remove all tile types that shouln't exist
+		if(GetTile(_Position) != null)
 		{
-			RemoveTile(_Position);
-		}
+			tile = GetTile(_Position);
 
-		// Create the new tile
-		GameObject newtile = new GameObject("Tile");
-		newtile.transform.parent = m_TileContainer;
-		newtile.transform.localScale = Vector3.one;
-		newtile.transform.localRotation = Quaternion.identity;
-		newtile.transform.localPosition = GetLocalPosition(_Position.ToVector);
-		tile = newtile.AddComponent<CTileRoot>();
-		tile.m_Grid = this;
-		tile.m_GridPosition = _Position;
+			for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
+				tile.SetTileTypeState((CTile.EType)i, _TileTypes.Contains((CTile.EType)i));
+		}
+		else
+		{
+			// Create the new tile
+			GameObject newtile = new GameObject("Tile");
+			newtile.transform.parent = m_TileContainer;
+			newtile.transform.localScale = Vector3.one;
+			newtile.transform.localRotation = Quaternion.identity;
+			newtile.transform.localPosition = GetLocalPosition(_Position.ToVector);
+			tile = newtile.AddComponent<CTileRoot>();
+			tile.m_Grid = this;
+			tile.m_GridPosition = _Position;
+
+			m_GridBoard.Add(_Position.ToString(), tile);
+
+			// Update neighbours
+			tile.FindNeighbours();
+			tile.UpdateNeighbourhood();
+		}
 
 		// Set the active tile types
 		foreach(CTile.EType type in _TileTypes)
 		{
 			tile.SetTileTypeState(type, true);
 		}
-		m_GridBoard.Add(_Position.ToString(), tile);
-
-		// Update neighbours
-		tile.FindNeighbours();
-		tile.UpdateNeighbourhood();
 	
 		return(tile);
 	}
 
-	public void RemoveTile(TGridPoint _GridPoint)
+	public void RemoveTile(CGridPoint _GridPoint)
 	{
 		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
 			return;

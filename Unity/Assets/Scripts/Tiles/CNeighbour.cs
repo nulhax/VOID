@@ -40,15 +40,15 @@ public enum EDirection
 [System.Serializable]
 public class CNeighbour
 {
-	public CNeighbour(TGridPoint _GridPointOffset, EDirection _Newdirection)
+	public CNeighbour(CGridPoint _GridPointOffset, EDirection _Newdirection)
 	{
 		m_Direction = _Newdirection;
 		m_GridPointOffset = _GridPointOffset;
 	}
 	
 	public EDirection m_Direction;
-	public TGridPoint m_GridPointOffset;
-	public CTileRoot m_Tile;
+	public CGridPoint m_GridPointOffset;
+	public CTileRoot m_TileRoot;
 
 	public static EDirection GetOppositeDirection(EDirection _Direction)
 	{
