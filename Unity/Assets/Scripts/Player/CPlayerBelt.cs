@@ -347,10 +347,10 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot3, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);
 
-            m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
-			m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
+            //m_vToolEquipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform.localPosition;
+			//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
 
-            m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
+            //m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
         }
 
         // Signup to pre destroy
@@ -396,55 +396,55 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateToolSwitching();		
+        //UpdateToolSwitching();		
     }
 
 
-    void UpdateToolSwitching()
-    {
-        // Check we are currently unequping a tool
-        if (m_eSwitchToolState == ESwitchToolState.UnequippingTool)
-        {
-            // Increment timer
-            m_fUnequipToolTimer += Time.deltaTime;
-
-            // Update position lerp - For testing only
-            PreviousActiveTool.transform.localPosition = Vector3.Lerp(m_vToolEquipedPosition, m_vToolUnequipedPosition, m_fUnequipToolTimer / m_fUnequipToolDuration);
-
-            // Check uneuiping has finished
-            if (m_fUnequipToolTimer >= m_fUnequipToolDuration)
-            {
-                // Check current tool is valid
-                if (ActiveToolId != k_bInvalidToolId)
-                {
-                    // Change state to equping tool
-                    SetSwitchingToolState(ESwitchToolState.EquippingTool);
-                }
-                else
-                {
-                    // Change state to equping tool
-                    SetSwitchingToolState(ESwitchToolState.INVALID);
-                }
-            }
-        }
-
-        // Check we are currently equiping a tool
-        else if (m_eSwitchToolState == ESwitchToolState.EquippingTool)
-        {
-            // Increment timer
-            m_fEquipToolTimer += Time.deltaTime;
-
-            // Update position lerp - For testing only
-            ActiveTool.transform.localPosition = Vector3.Lerp(m_vToolUnequipedPosition, m_vToolEquipedPosition, m_fEquipToolTimer / m_fEquipToolDuration);
-
-            // Check euiping has finished
-            if (m_fEquipToolTimer >= m_fEquipToolDuration)
-            {
-                // Change state to finished
-                SetSwitchingToolState(ESwitchToolState.INVALID);
-            }
-        }
-    }	
+//    void UpdateToolSwitching()
+//    {
+//        // Check we are currently unequping a tool
+//        if (m_eSwitchToolState == ESwitchToolState.UnequippingTool)
+//        {
+//            // Increment timer
+//            m_fUnequipToolTimer += Time.deltaTime;
+//
+//            // Update position lerp - For testing only
+//            PreviousActiveTool.transform.localPosition = Vector3.Lerp(m_vToolEquipedPosition, m_vToolUnequipedPosition, m_fUnequipToolTimer / m_fUnequipToolDuration);
+//
+//            // Check uneuiping has finished
+//            if (m_fUnequipToolTimer >= m_fUnequipToolDuration)
+//            {
+//                // Check current tool is valid
+//                if (ActiveToolId != k_bInvalidToolId)
+//                {
+//                    // Change state to equping tool
+//                    SetSwitchingToolState(ESwitchToolState.EquippingTool);
+//                }
+//                else
+//                {
+//                    // Change state to equping tool
+//                    SetSwitchingToolState(ESwitchToolState.INVALID);
+//                }
+//            }
+//        }
+//
+//        // Check we are currently equiping a tool
+//        else if (m_eSwitchToolState == ESwitchToolState.EquippingTool)
+//        {
+//            // Increment timer
+//            m_fEquipToolTimer += Time.deltaTime;
+//
+//            // Update position lerp - For testing only
+//            ActiveTool.transform.localPosition = Vector3.Lerp(m_vToolUnequipedPosition, m_vToolEquipedPosition, m_fEquipToolTimer / m_fEquipToolDuration);
+//
+//            // Check euiping has finished
+//            if (m_fEquipToolTimer >= m_fEquipToolDuration)
+//            {
+//                // Change state to finished
+//                SetSwitchingToolState(ESwitchToolState.INVALID);
+//            }
+//        }
+//    }	
 
     [ALocalOnly]
     void SwitchTool(byte _bSlotId)
@@ -740,12 +740,17 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         // Check tool was added to slot
         else
         {
+            Transform tool = cToolViewId.Get().GameObject.transform;
+
             // Hide newly pickedup tool
-            cToolViewId.Get().GameObject.GetComponent<CToolInterface>().SetVisible(false);
+            tool.GetComponent<CToolInterface>().SetVisible(false);
 
             // Position tool at unequiped position (To prevent glitching when equiping)
-            cToolViewId.Get().GameObject.transform.parent = GetComponent<CPlayerInterface>().Model.transform;
-            cToolViewId.Get().GameObject.transform.localPosition = m_vToolUnequipedPosition;
+            tool.parent = GetComponent<CPlayerInterface>().PlayerHand.transform;
+            tool.localRotation = Quaternion.identity;
+            tool.localPosition = Vector3.zero;
+            //tool.position -= tool.rotation * tool.GetComponent<CToolInterface>().m_RightHandPos.transform.localPosition;
+            //-cToolViewId.Get().GameObject.GetComponent<CToolInterface>().m_RightHandPos.transform.localPosition;
 
             // Notify observers
             if (EventToolPickedup != null) EventToolPickedup(cToolViewId.GetPrevious().GameObject);
@@ -818,9 +823,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 	CNetworkVar<byte> m_bActiveToolId = null;
 
 
-	Vector3 m_vInitialToolEquipedPosition;
-    Vector3 m_vToolEquipedPosition;
-    Vector3 m_vToolUnequipedPosition;
+	//Vector3 m_vInitialToolEquipedPosition;
+    //Vector3 m_vToolEquipedPosition;
+    //Vector3 m_vToolUnequipedPosition;
 	
 
     [AServerOnly]

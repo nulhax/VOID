@@ -60,15 +60,23 @@ public class CGrid : MonoBehaviour
 
 
 	// Member Methods
-	private void Awake() 
+	private void Start() 
 	{
 		// Create the grid objects
 		CreateGridObjects();
+
+		// Register for when players join
+		CGamePlayers.Instance.EventPlayerJoin += OnPlayerJoin;
 	}
 
-	private void Update()
+	[AServerOnly]
+	private void OnPlayerJoin(ulong _PlayerId)
 	{
-
+		// Sync each tile to the player
+		foreach(CTileInterface tileInterface in Tiles)
+		{
+			tileInterface.SyncAllTilesToPlayer(_PlayerId);
+		}
 	}
 
 	private void CreateGridObjects()
@@ -135,7 +143,7 @@ public class CGrid : MonoBehaviour
 				unmodifiedTiles.Remove(existingTile);
 
 			// Place the tile and clone the info from the original
-			CTileInterface newTile = PlaceTile(tile.m_GridPosition, new List<CTile.EType>());
+			CTileInterface newTile = PlaceTile(tile.m_GridPosition);
 			newTile.Clone(tile);
 			newTiles.Add(newTile);
 		}
@@ -146,11 +154,11 @@ public class CGrid : MonoBehaviour
 			RemoveTile(tile.m_GridPosition);
 		}
 
-		return(newTiles);
+ 		return(newTiles);
 	}
 
 	[AServerOnly]
-	public CTileInterface PlaceTile(CGridPoint _Position, List<CTile.EType> _TileTypes)
+	public CTileInterface PlaceTile(CGridPoint _Position)
 	{
 		CTileInterface tileInterface = GetTile(_Position);
 
@@ -167,9 +175,9 @@ public class CGrid : MonoBehaviour
 
 			CNetworkView tileNetworkView = newtile.GetComponent<CNetworkView>();
 			tileNetworkView.SyncParent();
-			tileNetworkView.SyncTransformPosition();
-			tileNetworkView.SyncTransformRotation();
 			tileNetworkView.SyncTransformScale();
+			tileNetworkView.SyncTransformLocalPosition();
+			tileNetworkView.SyncTransformLocalEuler();
 
 			tileInterface = newtile.GetComponent<CTileInterface>();
 			tileInterface.m_Grid = this;
@@ -184,32 +192,26 @@ public class CGrid : MonoBehaviour
 			if(EventTileInterfaceCreated != null)
 				EventTileInterfaceCreated(tileInterface);
 		}
-
-		// Set the tile types
-		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
-			tileInterface.SetTileTypeState((CTile.EType)i, _TileTypes.Contains((CTile.EType)i));
-
-		// Update tile meta data
-		tileInterface.UpdateAllCurrentTileMetaData();
 	
 		return(tileInterface);
 	}
 
 	[AServerOnly]
-	public void RemoveTile(CGridPoint _GridPoint)
+	public void RemoveTile(CGridPoint _Position)
 	{
-		if(!m_GridBoard.ContainsKey(_GridPoint.ToString()))
+		CTileInterface tileInterface = GetTile(_Position);
+		
+		// Create if it doesnt exist yet
+		if(tileInterface == null)
 			return;
 
-		CTileInterface tile = m_GridBoard[_GridPoint.ToString()];
-		m_GridBoard.Remove(_GridPoint.ToString());
+		m_GridBoard.Remove(_Position.ToString());
 
-		// Release
-		tile.UpdateNeighbourhood();
-		tile.Release();
+		// Update the neighbourhood
+		tileInterface.UpdateNeighbourhood();
 
 		// Destroy
-		Destroy(tile.gameObject);
+		CNetwork.Factory.DestoryObject(tileInterface.gameObject);
 	}
 }
 

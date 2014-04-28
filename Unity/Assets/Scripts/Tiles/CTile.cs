@@ -56,6 +56,15 @@ public abstract class CTile : MonoBehaviour
 			m_Variant = 0;
 		}
 
+		public CMeta(CMeta _Other)
+		{
+			m_TileMask = _Other.m_TileMask;
+			m_NeighbourMask = _Other.m_NeighbourMask;
+			m_MetaType = _Other.m_MetaType;
+			m_Rotations = _Other.m_Rotations;
+			m_Variant = _Other.m_Variant;
+		}
+
 		public int m_TileMask;
 		public int m_NeighbourMask;
 		public int m_MetaType;
@@ -132,7 +141,12 @@ public abstract class CTile : MonoBehaviour
 		if(m_ActiveTileMeta.Equals(m_CurrentTileMeta))
 			return;
 
+		// Update the visible tile object
 		UpdateTileObject();
+
+		// Invoke network RPC to update current meta for all clients
+		if(CNetwork.IsServer)
+			m_TileInterface.InvokeTileCurrentMetaUpdate(this);
 	}
 
 	protected void OnDestroy()
@@ -235,7 +249,7 @@ public abstract class CTile : MonoBehaviour
 		}
 		
 		// Update the tiles active meta data
-		m_ActiveTileMeta = m_CurrentTileMeta;
+		m_ActiveTileMeta = new CTile.CMeta(m_CurrentTileMeta);
 	}
 
 	[AServerOnly]
@@ -280,7 +294,9 @@ public abstract class CTile : MonoBehaviour
 		if(m_TileObject == null)
 			return;
 
-		m_TileInterface.m_Grid.TileFactory.ReleaseTileObject(m_TileObject);
+		if(m_TileInterface.m_Grid != null)
+			m_TileInterface.m_Grid.TileFactory.ReleaseTileObject(m_TileObject);
+
 		m_TileObject = null;
 	}
 	

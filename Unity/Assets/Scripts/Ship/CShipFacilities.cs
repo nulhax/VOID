@@ -109,7 +109,7 @@ public class CShipFacilities : MonoBehaviour
 			EventFaciltiyDestroyed(_Facility);
 
 		// Destroy the facility
-		Destroy(_Facility);
+		CNetwork.Factory.DestoryObject(_Facility);
 	}
 	
 	public GameObject GetFacility(uint _uiFacilityId)

@@ -70,6 +70,18 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		get { return (m_fLeftHandIKWeight); }
 	}
 	
+    public float RightHandIKWeightTarget
+    {
+        set { m_fRightIKTargetWeight = value; m_fRightHandWeightLerpTimer = 0.0f; }
+        get { return (m_fRightIKTargetWeight); }
+    }
+    
+    public float LeftHandIKWeightTarget
+    {
+        set { m_fLeftIKTargetWeight = value; m_fLeftHandWeightLerpTimer = 0.0f; }
+        get { return (m_fLeftIKTargetWeight); }
+    }
+
 	//Member variables
 	Animator m_ThirdPersonAnim;
     CNetworkVar<Vector3>    m_RightHandNetworkedPos;
@@ -241,7 +253,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
             float LerpFactor = m_fRightHandWeightLerpTimer / m_kfRightHandWeightLerpTime;
             
             RightHandIKWeight = Mathf.Lerp(RightHandIKWeight, m_fRightIKTargetWeight, LerpFactor);
-        }       
+        }      
     }   
 
 	void LerpLeftHandWeight()

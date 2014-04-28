@@ -39,9 +39,16 @@ public class CPreplacedFacility : MonoBehaviour
 	// Member Methods
 	private void Start()
 	{
-		if(!CNetwork.IsServer)
-			return;
+		if(CNetwork.IsServer)
+			InitialisePreplacedTiles();
 
+		// Destroy self
+		Destroy(gameObject);
+	}
+
+	[AServerOnly]
+	private void InitialisePreplacedTiles()
+	{
 		// Get the tiles which reside under this facility
 		List<CTileInterface> tiles = new List<CTileInterface>(gameObject.GetComponentsInChildren<CTileInterface>());
 		
@@ -50,22 +57,19 @@ public class CPreplacedFacility : MonoBehaviour
 			from ineriorTile in tiles
 			where ineriorTile.GetTileTypeState(CTile.EType.InteriorWall)
 			select ineriorTile);
-
+		
 		List<List<CTileInterface>> facilities = new List<List<CTileInterface>>();
 		facilities.Add(interiorTiles);
-
+		
 		// Import the facility to the ship
 		CShipFacilities shipFacilities = CUtility.FindInParents<CShipFacilities>(gameObject);
 		shipFacilities.ImportNewGridTiles(tiles, facilities);
-
+		
 		// Create all of the preplaced modules and add to the facility
 		GameObject facility = shipFacilities.Facilities.First();
 		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
 		{
 			preplacedModule.CreateModule(facility);
 		}
-
-		// Destroy self
-		Destroy(gameObject);
 	}
 };

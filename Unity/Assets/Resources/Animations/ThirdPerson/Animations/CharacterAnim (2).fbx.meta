@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 9d214666babfe4c4ea92f019131c90e7
+guid: 879fc65b038c05a4baf090d2484e10b8
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
@@ -136,6 +136,13 @@ ModelImporter:
     400128: Space_Dude_Rigged:Spine1
     400130: Space_Dude_Rigged:Spine2
     7400000: Take 001
+    7400002: Activate
+    7400004: Idle
+    7400006: Shooting
+    7400008: StartLookAtWrist
+    7400010: IdleLookAtwrist
+    7400012: EndLookAtWrist
+    7400014: Deactivate
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -145,13 +152,1325 @@ ModelImporter:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
     optimizeGameObjects: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 170
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Activate
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 30
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle
+      takeName: Take 001
+      firstFrame: 30
+      lastFrame: 90
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Shooting
+      takeName: Take 001
+      firstFrame: 90
+      lastFrame: 97
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: StartLookAtWrist
+      takeName: Take 001
+      firstFrame: 97
+      lastFrame: 104
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: IdleLookAtwrist
+      takeName: Take 001
+      firstFrame: 104
+      lastFrame: 132
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 1
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: EndLookAtWrist
+      takeName: Take 001
+      firstFrame: 132
+      lastFrame: 139
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Deactivate
+      takeName: Take 001
+      firstFrame: 139
+      lastFrame: 170
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: nurbsCircle3
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2
+        weight: 0
+      - path: nurbsCircle3/nurbsCircle2/nurbsCircle1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:LeftUpLeg/Space_Dude_Rigged:LeftLeg/Space_Dude_Rigged:LeftFoot/Space_Dude_Rigged:LeftToeBase/Space_Dude_Rigged:LeftFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:RightUpLeg/Space_Dude_Rigged:RightLeg/Space_Dude_Rigged:RightFoot/Space_Dude_Rigged:RightToeBase/Space_Dude_Rigged:RightFootToeBase_End
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Index01/Space_Dude_Rigged:Left_Index02/Space_Dude_Rigged:Left_Index03/Space_Dude_Rigged:Left_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Middle01/Space_Dude_Rigged:Left_Middle02/Space_Dude_Rigged:Left_Middle03/Space_Dude_Rigged:Left_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring01/Space_Dude_Rigged:Left_Ring02/Space_Dude_Rigged:Left_Ring03/Space_Dude_Rigged:Left_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Ring05/Space_Dude_Rigged:Left_Ring02
+          1/Space_Dude_Rigged:Left_Ring03 1/Space_Dude_Rigged:Left_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:LeftShoulder/Space_Dude_Rigged:pasted__LeftArm/Space_Dude_Rigged:pasted__LeftForeArm/Space_Dude_Rigged:pasted__LeftHand/Space_Dude_Rigged:Left_Thumb01/Space_Dude_Rigged:Left_Thumb02/Space_Dude_Rigged:Left_Thumb03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:Neck
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Index01/Space_Dude_Rigged:Right_Index02/Space_Dude_Rigged:Right_Index03/Space_Dude_Rigged:Right_Index04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Middle01/Space_Dude_Rigged:Right_Middle02/Space_Dude_Rigged:Right_Middle03/Space_Dude_Rigged:Right_Middle04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring01/Space_Dude_Rigged:Right_Ring02/Space_Dude_Rigged:Right_Ring03/Space_Dude_Rigged:Right_Ring04
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Ring05/Space_Dude_Rigged:Right_Ring02
+          1/Space_Dude_Rigged:Right_Ring03 1/Space_Dude_Rigged:Right_Ring04 1
+        weight: 0
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02
+        weight: 1
+      - path: Space_Dude_Rigged:Skeleton/Space_Dude_Rigged:Hips/Space_Dude_Rigged:Spine/Space_Dude_Rigged:Spine1/Space_Dude_Rigged:Spine2/Space_Dude_Rigged:RightShoulder/Space_Dude_Rigged:RightArm/Space_Dude_Rigged:pasted__RightForeArm/Space_Dude_Rigged:pasted__RightHand/Space_Dude_Rigged:Right_Thumb01/Space_Dude_Rigged:Right_Thumb02/Space_Dude_Rigged:Right_Thumb03
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []
@@ -176,8 +1495,738 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    human: []
-    skeleton: []
+    human:
+    - boneName: Space_Dude_Rigged:Hips
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftUpLeg
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightUpLeg
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftLeg
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightLeg
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftFoot
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightFoot
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Spine
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Spine1
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftShoulder
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightShoulder
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftArm
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightArm
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftForeArm
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__RightForeArm
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftHand
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__RightHand
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftToeBase
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightToeBase
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb01
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb02
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb03
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index01
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index02
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index03
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle01
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle02
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle03
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring01
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring02
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring03
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring05
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring02 1
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring03 1
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb01
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb02
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb03
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index01
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index02
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index03
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle01
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle02
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle03
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring01
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring02
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring03
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring05
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring02 1
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring03 1
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Neck
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: CharacterAnim (2)(Clone)
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: nurbsCircle3
+      position: {x: .18463318, y: 1.42841351, z: -.0481939875}
+      rotation: {x: 1.11194902e-08, y: -5.78843995e-09, z: -.46174863, w: .887010872}
+      scale: {x: 1.00000012, y: .99999994, z: 1}
+      transformModified: 1
+    - name: nurbsCircle2
+      position: {x: .312018156, y: .0238427129, z: .0055709146}
+      rotation: {x: -.128797814, y: .865712285, z: .351073861, w: .332716823}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: nurbsCircle1
+      position: {x: -.17792207, y: 2.72922709e-11, z: -2.83458135e-11}
+      rotation: {x: -.507418871, y: -.0729711875, z: .0553737953, w: .856816828}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Skeleton
+      position: {x: 0, y: .864667654, z: .101865984}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Hips
+      position: {x: -3.72340422e-18, y: .123150647, z: -.101865984}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftUpLeg
+      position: {x: -.0963378921, y: -.0327325426, z: -7.15255721e-09}
+      rotation: {x: -.0917485952, y: -.100611672, z: .66753608, w: .732021213}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftLeg
+      position: {x: -.413336068, y: .00230454304, z: -.0082602175}
+      rotation: {x: .134425595, y: .0637926236, z: -.703801453, w: .694639325}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftFoot
+      position: {x: -.000126047133, y: -.391899973, z: -.00847686734}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftToeBase
+      position: {x: .00183286658, y: -.120640054, z: .0828226358}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftFootToeBase_End
+      position: {x: -3.5527136e-17, y: .00180875987, z: .10362336}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightUpLeg
+      position: {x: .0963378921, y: -.0327325426, z: -7.15255721e-09}
+      rotation: {x: .668183565, y: .732255816, z: -.0887397826, w: -.0972490534}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightLeg
+      position: {x: -.413378209, y: .00222968194, z: .00828094967}
+      rotation: {x: .704089165, y: .695242584, z: -.131250963, w: .0605756752}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightFoot
+      position: {x: -.00012606621, y: -.391899973, z: -.00847686734}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightToeBase
+      position: {x: .00183309556, y: -.120640054, z: .0828226358}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightFootToeBase_End
+      position: {x: -3.19480896e-05, y: .00180875987, z: .10362336}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine
+      position: {x: 2.6469779e-25, y: .0922631845, z: .0157713313}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine1
+      position: {x: 4.93038055e-34, y: .162540287, z: -.00165605545}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine2
+      position: {x: -4.93038055e-34, y: .136396483, z: -.0129230497}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftShoulder
+      position: {x: -.0614422597, y: .101870112, z: -.0379324332}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftArm
+      position: {x: -.123190917, y: -.0284505095, z: -.0179345682}
+      rotation: {x: -.00225562695, y: -.00433300016, z: .0303346831, w: .999527931}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftForeArm
+      position: {x: -.30701977, y: .00625578733, z: .00278636394}
+      rotation: {x: .342062563, y: .0191947352, z: -.0379798301, w: .938713133}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftHand
+      position: {x: -.188154429, y: 2.22044592e-17, z: 1.02140514e-16}
+      rotation: {x: .143017739, y: .374761254, z: -.276575863, w: .873273015}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index01
+      position: {x: -.113741703, y: -.0455818884, z: -.0678071752}
+      rotation: {x: .0905539542, y: -.175148234, z: .318025053, w: .927352786}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index02
+      position: {x: -.0515766591, y: 8.881784e-18, z: 4.440892e-18}
+      rotation: {x: .149506345, y: .0322725847, z: -.00638962956, w: .988213301}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index03
+      position: {x: -.0331264734, y: 2.37587712e-16, z: -1.398881e-16}
+      rotation: {x: .1189055, y: .0279025361, z: -.0127802826, w: .992431223}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index04
+      position: {x: -.022815587, y: -1.28404226e-16, z: 6.21724896e-17}
+      rotation: {x: .177287877, y: .980667353, z: .0147351874, w: -.081507653}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle01
+      position: {x: -.0969019458, y: -.0759506598, z: -.0728959143}
+      rotation: {x: .149434909, y: -.159564346, z: .38326937, w: .897392392}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle02
+      position: {x: -.0525432713, y: .00465993304, z: 2.67627024e-06}
+      rotation: {x: .160556108, y: .0030529506, z: -.110594623, w: .98080647}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle03
+      position: {x: -.036881566, y: -.00360407564, z: .00168543414}
+      rotation: {x: .0398742035, y: .0645771995, z: .053962227, w: .995654523}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle04
+      position: {x: -.0264411531, y: 5.8286707e-18, z: 3.10862448e-17}
+      rotation: {x: .230763048, y: .961053789, z: .0355041213, w: -.147863239}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring01
+      position: {x: -.0718986914, y: -.088218607, z: -.0714786723}
+      rotation: {x: .198145241, y: -.139937684, z: .372156471, w: .895910501}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring02
+      position: {x: -.0584322326, y: 8.881784e-18, z: -1.99840136e-17}
+      rotation: {x: .217056096, y: .0196664482, z: -.0199945141, w: .975756228}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring03
+      position: {x: -.041919332, y: 1.13797857e-16, z: 7.54951665e-17}
+      rotation: {x: .0406479873, y: .0284524448, z: -.0257355422, w: .998436749}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring04
+      position: {x: -.0236467887, y: 1.33920649e-17, z: 5.71764842e-17}
+      rotation: {x: .201879025, y: .97216028, z: .0241853483, w: -.116465963}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring05
+      position: {x: -.0416494347, y: -.100806303, z: -.0517661572}
+      rotation: {x: .0725928769, y: -.165937513, z: .369658649, w: .911343813}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring02 1
+      position: {x: -.0468357988, y: 7.31542168e-05, z: -.00257585244}
+      rotation: {x: .394132376, y: .061825633, z: -.00861368701, w: .916931331}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring03 1
+      position: {x: -.0312654264, y: -.00193215674, z: -.00370506081}
+      rotation: {x: .0616753437, y: -.0385401882, z: .0135763409, w: .997259557}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring04 1
+      position: {x: -.0147825414, y: -9.7005191e-17, z: -9.48546802e-17}
+      rotation: {x: .105418064, y: .994312406, z: -.00159845501, w: .0150767677}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb01
+      position: {x: -.0823056549, y: .00462914351, z: -.00622049393}
+      rotation: {x: .055550646, y: -.0155607341, z: .00829653256, w: .998300195}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb02
+      position: {x: -.0497523248, y: -6.661338e-18, z: -1.3322676e-17}
+      rotation: {x: -.0149183972, y: -.0027290287, z: .0312782191, w: .999395669}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb03
+      position: {x: -.0392989144, y: 5.55111512e-17, z: 2.88657976e-17}
+      rotation: {x: .370619386, y: .818461478, z: .181108221, w: -.399952382}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Neck
+      position: {x: -0, y: .13877441, z: -.0435418673}
+      rotation: {x: -.391897261, y: .588571608, z: -.391897261, w: .588571608}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightShoulder
+      position: {x: .0614019744, y: .101870112, z: -.0379324332}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightArm
+      position: {x: .123231195, y: -.0284505095, z: -.0179345682}
+      rotation: {x: -.00433819694, y: .00833357871, z: -.0596671663, w: .998174191}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__RightForeArm
+      position: {x: .312018156, y: .0238427129, z: .0055709146}
+      rotation: {x: -.0640230849, y: .932131052, z: .356218517, w: .0118848272}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__RightHand
+      position: {x: -.17792207, y: -2.12191375e-16, z: 5.10702568e-17}
+      rotation: {x: -.196662232, y: -.411793977, z: -.193310976, w: .868550897}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index01
+      position: {x: -.107713446, y: -.0413124077, z: .0808762312}
+      rotation: {x: .23256588, y: .0255098175, z: .932801247, w: -.274124593}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index02
+      position: {x: .0515746623, y: -2.87021044e-06, z: 2.00590904e-07}
+      rotation: {x: .149500057, y: .0322706215, z: -.00640770188, w: .988214195}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index03
+      position: {x: .0331255905, y: -3.59744774e-07, z: 2.89400475e-07}
+      rotation: {x: .118905373, y: .0278892927, z: -.0127854887, w: .992431462}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index04
+      position: {x: .0228159614, y: 5.37710889e-08, z: -3.68217428e-07}
+      rotation: {x: .177287832, y: .980667353, z: .0147351827, w: -.0815076381}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle01
+      position: {x: -.0956035405, y: -.0742131919, z: .0824102014}
+      rotation: {x: .21357806, y: .0800895616, z: .909754992, w: -.346865922}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle02
+      position: {x: .0525433384, y: -.00465942826, z: -1.80343397e-06}
+      rotation: {x: .160557151, y: .00304287486, z: -.110589013, w: .980806947}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle03
+      position: {x: .0368819945, y: .0036041541, z: -.00168561086}
+      rotation: {x: .0398739763, y: .0645788535, z: .0539655909, w: .995654285}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle04
+      position: {x: .0264410637, y: -4.56530813e-07, z: -9.6567419e-08}
+      rotation: {x: .230763122, y: .961053789, z: .0355041362, w: -.147863254}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring01
+      position: {x: -.0737116486, y: -.0903446674, z: .0762270615}
+      rotation: {x: .196449786, y: .124282472, z: .91109556, w: -.340391457}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring02
+      position: {x: .0584327839, y: -1.92137133e-08, z: 2.51963343e-07}
+      rotation: {x: .217054874, y: .0196638536, z: -.0199900977, w: .975756586}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring03
+      position: {x: .0419196635, y: -3.30330096e-07, z: 4.91317742e-08}
+      rotation: {x: .0406482369, y: .0284537263, z: -.0257444549, w: .998436511}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring04
+      position: {x: .0236464273, y: 3.15105495e-07, z: -2.74258074e-08}
+      rotation: {x: .201879039, y: .97216028, z: .024185352, w: -.116465963}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring05
+      position: {x: -.0501203239, y: -.106884286, z: .0510892235}
+      rotation: {x: .217707783, y: -.00788750406, z: .918608248, w: -.329696804}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring02 1
+      position: {x: .0468362458, y: -7.3449839e-05, z: .00257523661}
+      rotation: {x: .394130439, y: .0618337542, z: -.0086172102, w: .91693157}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring03 1
+      position: {x: .0312646441, y: .00193204579, z: .00370522263}
+      rotation: {x: .0616826937, y: -.0385745205, z: .0135766156, w: .99725771}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring04 1
+      position: {x: .014783036, y: -2.54549963e-08, z: -9.21133278e-07}
+      rotation: {x: .105418012, y: .994312406, z: -.00159845408, w: .0150767677}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb01
+      position: {x: -.0799799785, y: .00560712488, z: .0150568662}
+      rotation: {x: .0930409133, y: .0424063578, z: .994043052, w: .0377301537}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb02
+      position: {x: .0497541241, y: 2.90684989e-06, z: 1.39176677e-07}
+      rotation: {x: -.0149184186, y: -.00273368927, z: .0313505083, w: .999393404}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb03
+      position: {x: .039295435, y: -3.14893168e-06, z: -2.86934323e-07}
+      rotation: {x: .370619416, y: .818461478, z: .181108236, w: -.399952382}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
     armTwist: .5
     foreArmTwist: .5
     upperLegTwist: .5
@@ -187,5 +2236,5 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 3
   userData: 
