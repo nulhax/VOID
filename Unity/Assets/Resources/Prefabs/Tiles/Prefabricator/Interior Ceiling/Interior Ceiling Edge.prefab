@@ -12,7 +12,7 @@ GameObject:
   - 23: {fileID: 2300000}
   - 64: {fileID: 6400000}
   m_Layer: 0
-  m_Name: Exterior Ceiling Corner
+  m_Name: Interior Ceiling Edge
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 0182c3dfeb15c0740a4053faac21bcf7, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 710da1a8a72151745ace135dbb2f4dbc, type: 3}
 --- !u!64 &6400000
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -69,7 +69,7 @@ MeshCollider:
   serializedVersion: 2
   m_SmoothSphereCollisions: 0
   m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 0182c3dfeb15c0740a4053faac21bcf7, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 710da1a8a72151745ace135dbb2f4dbc, type: 3}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

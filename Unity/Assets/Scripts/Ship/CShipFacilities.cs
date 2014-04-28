@@ -52,26 +52,26 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Methods
 	[AServerOnly]
-	public void ImportNewGridTiles(List<CTileRoot> _AllTiles, List<List<CTileRoot>> _FacilityTiles)
+	public void ImportNewGridTiles(List<CTileInterface> _AllTiles, List<List<CTileInterface>> _FacilityTiles)
 	{
 		// Import all of the tiles to the ship
-		List<CTileRoot> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
+		List<CTileInterface> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
 
 		// Destoy all facilities
 		foreach(GameObject facility in Facilities)
 			DestoryFacility(facility);
 
 		// Create all new facilities
-		foreach(List<CTileRoot> facilityTiles in _FacilityTiles)
+		foreach(List<CTileInterface> facilityTiles in _FacilityTiles)
 			CreateFacility(facilityTiles);
 	}
 
 	[AServerOnly]
-	public void CreateFacility(List<CTileRoot> _FacilityTiles)
+	public void CreateFacility(List<CTileInterface> _FacilityTiles)
 	{
 		// Get the converted facility interior tiles
-		List<CTileRoot> interiorTiles = new List<CTileRoot>();
-		foreach(CTileRoot tile in _FacilityTiles)
+		List<CTileInterface> interiorTiles = new List<CTileInterface>();
+		foreach(CTileInterface tile in _FacilityTiles)
 		{
 			if(tile.GetTileTypeState(CTile.EType.InteriorWall))
 				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
@@ -98,6 +98,7 @@ public class CShipFacilities : MonoBehaviour
 			EventFaciltiyCreated(newFacility);
 	}
 
+	[AServerOnly]
 	private void DestoryFacility(GameObject _Facility)
     {
         // Remove facility from dictionaries

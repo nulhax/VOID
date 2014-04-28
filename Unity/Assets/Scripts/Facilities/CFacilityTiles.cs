@@ -30,11 +30,11 @@ public class CFacilityTiles : MonoBehaviour
 
 
 	// Member Fields
-	public List<CTileRoot> m_InteriorTiles = new List<CTileRoot>();
+	public List<CTileInterface> m_InteriorTiles = new List<CTileInterface>();
 
 	
 	// Member Properties
-	public List<CTileRoot> InteriorTiles
+	public List<CTileInterface> InteriorTiles
 	{
 		get { return(m_InteriorTiles); }
 		set { m_InteriorTiles = value; }
@@ -50,7 +50,7 @@ public class CFacilityTiles : MonoBehaviour
 	private void ConfigureFacilityTiles()
 	{
 		// Add an interior trigger to all interior tiles
-		foreach(CTileRoot tile in m_InteriorTiles)
+		foreach(CTileInterface tile in m_InteriorTiles)
 		{
 			// Add a trigger box collider
 			BoxCollider boxCollider = tile.gameObject.AddMissingComponent<BoxCollider>();

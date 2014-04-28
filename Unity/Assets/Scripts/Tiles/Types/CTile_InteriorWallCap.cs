@@ -55,23 +55,11 @@ public class CTile_InteriorWallCap : CTile
 	
 	
 	// Member Fields
-	static protected CTile.EType s_RelevantType = new CTile.EType();
 	static protected List<EDirection> s_RelevantDirections = new List<EDirection>();
-	
 	static protected Dictionary<int, CTile.CMeta> s_MetaDictionary = new Dictionary<int, CTile.CMeta>();
 	
 	
 	// Member Properties
-	public override CTile.EType RelevantType
-	{
-		get { return(s_RelevantType); }
-	}
-	
-	public override List<EDirection> RelevantDirections
-	{
-		get { return(s_RelevantDirections); }
-	}
-	
 	public override Dictionary<int, CTile.CMeta> TileMetaDictionary
 	{
 		get { return(s_MetaDictionary); }
@@ -80,9 +68,6 @@ public class CTile_InteriorWallCap : CTile
 	// Member Methods
 	static CTile_InteriorWallCap()
 	{
-		// Set relevant type
-		s_RelevantType = CTile.EType.InteriorWall;
-
 		// Fill relevant neighbours
 		s_RelevantDirections.AddRange(new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West, 
 			EDirection.NorthEast, EDirection.NorthWest, EDirection.SouthEast, EDirection.SouthWest });
@@ -180,5 +165,24 @@ public class CTile_InteriorWallCap : CTile
 	private void Awake()
 	{
 		m_TileType = CTile.EType.InteriorWallCap;
+	}
+
+	protected override bool IsNeighbourRelevant(CNeighbour _Neighbour)
+	{
+		if(!s_RelevantDirections.Contains(_Neighbour.m_Direction))
+			return(false);
+		
+		if(!_Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
+			return(false);
+		
+		if(CUtility.GetMaskState((int)_Neighbour.m_Direction, m_CurrentTileMeta.m_NeighbourMask))
+			return(false);
+
+		CTile internalWallTile = m_TileInterface.GetTile(CTile.EType.InteriorWall);
+		if(internalWallTile != null && 
+		   CUtility.GetMaskState((int)_Neighbour.m_Direction, internalWallTile.m_CurrentTileMeta.m_NeighbourMask))
+			return(false);
+
+		return(true);
 	}
 }

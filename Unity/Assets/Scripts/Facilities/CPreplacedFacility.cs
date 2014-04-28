@@ -39,16 +39,19 @@ public class CPreplacedFacility : MonoBehaviour
 	// Member Methods
 	private void Start()
 	{
+		if(!CNetwork.IsServer)
+			return;
+
 		// Get the tiles which reside under this facility
-		List<CTileRoot> tiles = new List<CTileRoot>(gameObject.GetComponentsInChildren<CTileRoot>());
+		List<CTileInterface> tiles = new List<CTileInterface>(gameObject.GetComponentsInChildren<CTileInterface>());
 		
 		// Find the tiles which are internal only
-		List<CTileRoot> interiorTiles = new List<CTileRoot>(
+		List<CTileInterface> interiorTiles = new List<CTileInterface>(
 			from ineriorTile in tiles
 			where ineriorTile.GetTileTypeState(CTile.EType.InteriorWall)
 			select ineriorTile);
 
-		List<List<CTileRoot>> facilities = new List<List<CTileRoot>>();
+		List<List<CTileInterface>> facilities = new List<List<CTileInterface>>();
 		facilities.Add(interiorTiles);
 
 		// Import the facility to the ship
