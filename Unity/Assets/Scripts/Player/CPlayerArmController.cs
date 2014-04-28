@@ -33,6 +33,8 @@ public class CPlayerArmController : MonoBehaviour
 	}
 
 	//Member Delegates & Events
+    public delegate void DisableToolRotation(bool _bUseHeadRotation);
+    public event DisableToolRotation EventDisableToolRotation;
 		
 	// Member Properties
 
@@ -48,11 +50,16 @@ public class CPlayerArmController : MonoBehaviour
     Vector3 m_vInitialToolEquipedPosition;
     Vector3 m_vToolEquipedPosition;
     Vector3 m_vToolUnequipedPosition;
+    Transform m_EquipTransform;
 
     float m_fLateralDeviation = 0.3f;
     float m_fVerticalDeviation = 0.4f;    
     float m_fLateralRotationThreshold = 60.0f;
     float m_fVerticalRotationThreshold = 45.0f;
+
+    float m_fMovementWeight = 1.0f;
+
+    ushort m_MovementState;
 
 	// Use this for initialization
 	void Start () 
@@ -72,7 +79,45 @@ public class CPlayerArmController : MonoBehaviour
         m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
         
         m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
+
+        m_EquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
+
+        gameObject.GetComponent<CPlayerMotor>().EventInputStatesChange += NotifyMovementStateChange;
 	}
+
+    void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
+    {
+        if (m_heldTool == null)
+        {
+            return;
+        }
+
+        m_MovementState = _usNewSates;        
+        bool bRunForward;
+        bool bRunBack;
+        bool bSprint;              
+        
+        bRunForward     =   ((m_MovementState & (uint)CPlayerMotor.EInputState.Forward)     > 0) ? true : false;   
+        bRunBack        =   ((m_MovementState & (uint)CPlayerMotor.EInputState.Backward)    > 0) ? true : false;         
+        bSprint         =   ((m_MovementState & (uint)CPlayerMotor.EInputState.Run)         > 0) ? true : false;  
+
+
+        if (bRunForward || bRunBack && !bSprint)
+        {
+            m_IKController.RightHandIKWeightTarget = 0.5f;   
+            EventDisableToolRotation(true);
+        }
+        if (bRunForward && bSprint)
+        {
+            m_IKController.RightHandIKWeightTarget = 0.0f;
+            EventDisableToolRotation(false);           
+        } 
+        if(!bRunForward && !bSprint)
+        {
+            m_IKController.RightHandIKWeightTarget = 1.0f;      
+            EventDisableToolRotation(true);          
+        }
+    }   
 
     void Update()
     {
@@ -93,7 +138,7 @@ public class CPlayerArmController : MonoBehaviour
 
 			Vector3 handPos = _RaycastHit.point - (cameraRay.direction * 0.05f);
 				
-				switch (m_eHoldState)
+		    switch (m_eHoldState)
             {
                 case HoldState.NoTool:
                 {
@@ -116,39 +161,6 @@ public class CPlayerArmController : MonoBehaviour
 
     void FixedUpdate()
     {
-        //Handle placement of hands
-        if (m_heldTool != null)
-        {
-            switch (m_eHoldState)
-            {
-                case HoldState.OneHandedTool:
-                {
-                    Vector3 rightHandPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
-
-                    m_IKController.RightHandIKPos = rightHandPos + rigidbody.GetPointVelocity(rightHandPos) * Time.fixedDeltaTime;
-                    m_IKController.RightHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.rotation;
-                    m_IKController.RightHandIKWeight = 1.0f;
-                    break;  
-                }
-                case HoldState.TwoHandedTool:
-                {
-                    Vector3 rightHandPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
-                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
-
-                    m_IKController.RightHandIKPos = rightHandPos + rigidbody.GetPointVelocity(rightHandPos) * Time.fixedDeltaTime;
-                    m_IKController.RightHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.rotation;
-
-                    m_IKController.LeftHandIKPos = leftHandPos + rigidbody.GetPointVelocity(leftHandPos) * Time.fixedDeltaTime;
-                    m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;
-
-                    m_IKController.RightHandIKWeight = 1.0f;
-                    m_IKController.LeftHandIKWeight = 1.0f;
-
-                    break;
-                }
-            }
-        }
-
         if (m_heldTool != null) 
         {
             //Get variables from current tool's orientation script
@@ -161,7 +173,52 @@ public class CPlayerArmController : MonoBehaviour
             
             UpdateVerticalToolPositioning ();
             UpdateLateralToolPositioning ();
+            
+            m_EquipTransform.localPosition = m_vToolEquipedPosition;
         }
+
+        //Handle placement of hands
+        if (m_heldTool != null)
+        {
+            switch (m_eHoldState)
+            {
+                case HoldState.OneHandedTool:
+                {
+//                  Vector3 rightHandPos = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.position;
+
+                    Quaternion handRotation;
+                    Vector3 toolOffset = m_heldTool.GetComponent<CToolInterface>().m_RightHandPos.transform.localRotation.eulerAngles;
+
+                    handRotation = m_EquipTransform.rotation * Quaternion.Euler(toolOffset.x, toolOffset.y, toolOffset.z);
+                    
+                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.velocity * Time.fixedDeltaTime;
+
+                    m_IKController.RightHandIKPos = rightHandPos;
+                    m_IKController.RightHandIKRot = handRotation;
+                    
+                    break;  
+                }
+                case HoldState.TwoHandedTool:
+                {
+                    Quaternion handRotation;
+                    handRotation = CGameCameras.MainCamera.transform.rotation * Quaternion.Euler(0,0,270);
+
+                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.velocity * Time.fixedDeltaTime;
+                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
+
+                    m_IKController.RightHandIKPos = rightHandPos;
+                    m_IKController.RightHandIKRot = handRotation;
+
+                    m_IKController.LeftHandIKPos = leftHandPos + rigidbody.GetPointVelocity(leftHandPos) * Time.fixedDeltaTime;
+                    m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;
+
+                    //m_IKController.RightHandIKWeight = m_fMovementWeight;
+                    m_IKController.LeftHandIKWeight = 1.0f;
+
+                    break;
+                }
+            }
+        }       
     }
 
     void UpdateVerticalToolPositioning()
@@ -186,7 +243,7 @@ public class CPlayerArmController : MonoBehaviour
         
         Vector3 newOffset =  Vector3.Lerp(minPositionY, maxPositionY, lerpFactor);
         m_vToolEquipedPosition.y = newOffset.y;
-        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
+        //m_heldTool.transform.localPosition = m_vToolEquipedPosition;
     }
     
     void UpdateLateralToolPositioning()
@@ -219,7 +276,7 @@ public class CPlayerArmController : MonoBehaviour
         
         Vector3 newOffset =  Vector3.Lerp(minPositionX, maxPositionX, lerpFactor);
         m_vToolEquipedPosition.x = newOffset.x;
-        m_heldTool.transform.localPosition = m_vToolEquipedPosition;
+        //m_heldTool.transform.localPosition = m_vToolEquipedPosition;
     }
 			
 	void OnUse(CPlayerInteractor.EInputInteractionType _eInteractionType, GameObject _cActorInteractable, RaycastHit _cRaycastHit, bool _bDown)
@@ -292,12 +349,14 @@ public class CPlayerArmController : MonoBehaviour
 		if (_Tool != null) 
 		{
             m_heldTool = _Tool;
+            CToolInterface toolInterface = _Tool.GetComponent<CToolInterface> ();
 
-			switch (_Tool.GetComponent<CToolInterface> ().m_eToolCategory)
+            switch (toolInterface.m_eToolCategory)
 			{
 				case CToolInterface.EToolCategory.OneHanded:
-				{
-                    m_eHoldState = HoldState.OneHandedTool;                   
+				{  
+                    m_eHoldState = HoldState.OneHandedTool;  
+                    m_IKController.RightHandIKWeightTarget = 1.0f;
                     EndInteraction();
 					break;
 				}
@@ -305,6 +364,8 @@ public class CPlayerArmController : MonoBehaviour
 				case CToolInterface.EToolCategory.TwoHanded:
 				{
 					m_eHoldState = HoldState.TwoHandedTool;
+                    m_IKController.RightHandIKWeightTarget = 1.0f;
+                    m_IKController.LeftHandIKWeightTarget = 1.0f;
                     EndInteraction();
 					break;
 				}

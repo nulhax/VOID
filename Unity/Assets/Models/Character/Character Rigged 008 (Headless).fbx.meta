@@ -564,7 +564,7 @@ ModelImporter:
       transformModified: 1
     - name: pasted__LeftHand
       position: {x: -.188154608, y: -2.96543789e-07, z: 1.04994896e-07}
-      rotation: {x: .143017724, y: .374761283, z: -.276575834, w: .873272955}
+      rotation: {x: .143017739, y: .374761313, z: -.276575863, w: .873273015}
       scale: {x: 1.00000036, y: 1.00000012, z: 1.00000012}
       transformModified: 1
     - name: pasted__LeftHandIndex1
@@ -629,12 +629,12 @@ ModelImporter:
       transformModified: 1
     - name: pasted__RightForeArm
       position: {x: .312017739, y: .0238432568, z: .00557089364}
-      rotation: {x: -.0641230047, y: .9324857, z: .355271906, w: .0118524507}
+      rotation: {x: -.0641230121, y: .932485759, z: .355271935, w: .0118524516}
       scale: {x: 1.00000012, y: .99999994, z: 1.00000012}
       transformModified: 1
     - name: pasted__RightHand
-      position: {x: -.17792201, y: -5.94612466e-08, z: -7.14631243e-09}
-      rotation: {x: -.196662173, y: -.411793888, z: -.193310961, w: .868550837}
+      position: {x: -.188297838, y: -.0176742207, z: .00380226155}
+      rotation: {x: -.196662188, y: -.411793917, z: -.193310976, w: .868550897}
       scale: {x: 1.00000048, y: .999999881, z: 1.00000024}
       transformModified: 1
     - name: pasted__RightHandIndex1
@@ -659,7 +659,7 @@ ModelImporter:
       transformModified: 1
     - name: pasted__RightHandThumb1
       position: {x: -.033918988, y: -1.73802178e-07, z: -8.16431722e-08}
-      rotation: {x: -.013079212, y: -.650679171, z: -.681454182, w: .334762514}
+      rotation: {x: -.0130792102, y: -.650679111, z: -.681454122, w: .334762484}
       scale: {x: .99999994, y: 1.00000012, z: .999999762}
       transformModified: 1
     - name: pasted__RightHandThumb2_End
