@@ -14,4 +14,12 @@ public class CAsteroidBehaviour : MonoBehaviour
 
 	//    gameObject.AddMissingComponent<CNetworkView>();
 	//}
+
+
+    void Start()
+    {
+        
+    }
+
+
 }

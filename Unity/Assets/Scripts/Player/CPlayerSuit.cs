@@ -191,7 +191,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 //    void OnGUI()
 //    {
-//        if (gameObject == CGamePlayers.SelfActor)
+//        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
 //        {
 ////            if (IsVisorDown)
 ////            {

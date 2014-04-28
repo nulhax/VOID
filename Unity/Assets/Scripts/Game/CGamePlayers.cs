@@ -24,6 +24,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 {
 
 // Member Types
+
+
 	enum ENetworkAction
 	{
 		INVALID,
@@ -33,7 +35,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		MAX
 	}
 
+
 // Member Delegates & Events
+
 
 	public delegate void NotifyPlayerActivity(ulong _PlayerId);
 
@@ -46,7 +50,10 @@ public class CGamePlayers : CNetworkMonoBehaviour
     public event NotifyPlayerActorRegister EventActorRegister;
     public event NotifyPlayerActorUnregister EventActorUnregister;
 
+
 // Member Properties
+
+
 	public string LocalPlayerName
 	{
 		get
@@ -140,6 +147,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         _cRegistrar.RegisterRpc(this, "RemoteUnregisterPlayerActor");
 	}
 
+
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
 		if(_cSyncedNetworkVar == m_sNetworkedPlayerName)
@@ -166,6 +174,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 		
+
 	public static void SerializeData(CNetworkStream _cStream)
 	{
 		if(m_bSerializeName)
@@ -217,6 +226,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
 
+
 	public static TNetworkViewId GetPlayerActorViewId(ulong _ulPlayerId)
 	{
 		if (!s_cInstance.m_mPlayersActors.ContainsKey(_ulPlayerId))
@@ -226,6 +236,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		
 		return (s_cInstance.m_mPlayersActors[_ulPlayerId]);
 	}
+
 
 	public static ulong GetPlayerActorsPlayerId(TNetworkViewId _PlayerActorViewId)
 	{
@@ -237,6 +248,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayerActorsPlayers[_PlayerActorViewId]);
 	}
 
+
 	public static ulong GetPlayerActorsPlayerId(GameObject _PlayerActor)
 	{
 		if(_PlayerActor.GetComponent<CNetworkView>() == null)
@@ -244,6 +256,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		else
 			return(GetPlayerActorsPlayerId(_PlayerActor.GetComponent<CNetworkView>().ViewId));
 	}
+
 
 	public static string GetPlayerName(ulong _ulPlayerId)
 	{
@@ -255,6 +268,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayersNames[_ulPlayerId]);
 	}
 
+
 	public void Awake()
 	{
 		Application.runInBackground = true;
@@ -264,10 +278,10 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnPlayerJoin);
-		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
-		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
-		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
+		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnEventServerPlayerJoin);
+		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnEventServerPlayerDisconnect);
+		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnEventServerShutdown);
+		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnEventConnectionDisconnect);
 		CGame.Instance.EventNameChange += new CGame.NotifyNameChange(OnPlayerNameChange);
 	}
 
@@ -320,6 +334,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+
     void RespawnPlayer(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
     {
         // If the previous health state was DEAD
@@ -358,7 +373,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
         }
     }
 
-	void OnPlayerJoin(CNetworkPlayer _cPlayer)
+
+	void OnEventServerPlayerJoin(CNetworkPlayer _cPlayer)
 	{
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
@@ -404,7 +420,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 	
 	
-	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
+	void OnEventServerPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
 		TNetworkViewId cPlayerActorNetworkViewId = GetPlayerActorViewId(_cPlayer.PlayerId);
 
@@ -423,7 +439,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	void OnServerShutdown()
+	void OnEventServerShutdown()
 	{
 		m_mPlayersActors.Clear();
 		m_mPlayerActorsPlayers.Clear();
@@ -431,7 +447,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	void OnDisconnect()
+	void OnEventConnectionDisconnect()
 	{
 		if (!CNetwork.IsServer)
 		{
@@ -442,6 +458,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		m_bSerializeName = true;
 	}
+
 
 	// Create RPC Call to take in playerID (ulong) and string (player username)
 	[ANetworkRpc]
@@ -462,6 +479,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(EventPlayerJoin != null)
 			EventPlayerJoin(_ulPlayerID);
 	}
+
+
 	[ANetworkRpc]
 	void UnregisterPlayerName(ulong _ulPlayerID)
 	{
@@ -474,6 +493,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(EventPlayerLeave != null)
 			EventPlayerLeave(_ulPlayerID);
 	}
+
 
 	[ANetworkRpc]
 	void RemoteRegisterPlayerActor(ulong _ulPlayerId, TNetworkViewId _cPlayerActorId)
@@ -530,6 +550,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         }
     }
 
+
 	void OnPlayerNameChange(string _sPlayerName)
 	{
 		ulong ulPlayerID = CNetwork.PlayerId;
@@ -539,6 +560,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		CGamePlayers.m_bSerializeName = true;
 	}
+
+
 // Member Fields
 
 
@@ -556,4 +579,6 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	static CGamePlayers s_cInstance = null;
 
 	static bool m_bSerializeName = true;
+
+
 };

@@ -3237,6 +3237,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!1 &100374
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400374}
+  - 114: {fileID: 11400194}
+  m_Layer: 0
+  m_Name: PreplacedModule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -3291,7 +3307,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100008}
   m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
-  m_LocalPosition: {x: 5, y: 4, z: 6}
+  m_LocalPosition: {x: 5, y: 4, z: 2.16728973}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400014}
@@ -3331,8 +3347,9 @@ Transform:
   - {fileID: 400010}
   - {fileID: 400370}
   - {fileID: 400372}
-  - {fileID: 400008}
+  - {fileID: 400374}
   - {fileID: 400368}
+  - {fileID: 400008}
   - {fileID: 400366}
   m_Father: {fileID: 400000}
 --- !u!4 &400016
@@ -5477,6 +5494,17 @@ Transform:
   m_GameObject: {fileID: 100372}
   m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
   m_LocalPosition: {x: 5, y: 0, z: 6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400014}
+--- !u!4 &400374
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100374}
+  m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
+  m_LocalPosition: {x: 5, y: 4, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400014}
@@ -10136,7 +10164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a640917334713c40b6200b977600cb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PreplacedModuleType: 800
+  m_PreplacedModuleType: 850
   m_PreplacedModuleBuilt: 1
 --- !u!114 &11400008
 MonoBehaviour:
@@ -13705,6 +13733,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PreplacedModuleType: 150
+  m_PreplacedModuleBuilt: 1
+--- !u!114 &11400194
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100374}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a640917334713c40b6200b977600cb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PreplacedModuleType: 800
   m_PreplacedModuleBuilt: 1
 --- !u!1001 &100100000
 Prefab:

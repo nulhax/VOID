@@ -344,8 +344,12 @@ public class CUserInput : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateStates();
-        ProcessEvents();
+        if ( CNetwork.Connection.IsConnected &&
+            !CNetwork.Connection.IsDownloadingInitialGameData)
+        {
+            UpdateStates();
+            ProcessEvents();
+        }
 
         if (CNetwork.IsServer)
         {

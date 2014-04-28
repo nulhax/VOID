@@ -334,7 +334,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         m_ulOwnerPlayerId = GetComponent<CPlayerInterface>().PlayerId;
 
         // Owner player subscribe to events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse += OnEventInteractionUse;
 
@@ -376,7 +376,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         }
 
         // Owner player unsubscribe from events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse -= OnEventInteractionUse;
 
@@ -548,7 +548,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                     m_bUnequipingToolId = k_bInvalidToolId;
 
                     // Run owner player specific functionality
-                    if (gameObject == CGamePlayers.SelfActor &&
+                    if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe &&
                         ActiveTool != null)
                     {
                         // Set equiped
@@ -582,7 +582,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             string sToolText = "";
 

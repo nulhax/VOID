@@ -214,6 +214,11 @@ public class CNetworkView : CNetworkMonoBehaviour
 			if (ViewId.Id == 0)
 				Debug.LogError("I do not have a view id!");
 		}
+
+        if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
+        {
+            s_mViewIdOwnerNames.Add(ViewId.Id, gameObject.name);
+        }
     }
 
 
@@ -224,7 +229,20 @@ public class CNetworkView : CNetworkMonoBehaviour
 			EventPreDestory();
 		}
 
-		s_cNetworkViews.Remove(ViewId.Id);
+        foreach (INetworkVar cVar in m_mNetworkVars.Values)
+        {
+            cVar.SetSendInterval(0.0f);
+        }
+
+        foreach (CNetworkView cChild in m_mChildrenNetworkViews.Values)
+        {
+            cChild.OnPreDestory();
+        }
+
+        if (!ViewId.IsChildViewId)
+        {
+            s_cNetworkViews.Remove(ViewId.Id);
+        }
 	}
 
 
@@ -600,13 +618,17 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
+    static ushort m_uiNextDynamicId = k_usMaxStaticViewId + 1;
+
+
     public static TNetworkViewId GenerateDynamicViewId()
     {
 		// Ensure servers only generate dynamic view ids
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot generate network view ids!!!");
 
-        TNetworkViewId cViewId = new TNetworkViewId();
-
+        TNetworkViewId cViewId = new TNetworkViewId(m_uiNextDynamicId++, 0);
+        s_cNetworkViews.Add((ushort)(m_uiNextDynamicId - 1), null);
+        /*
         for (ushort i = k_usMaxStaticViewId; i < k_usMaxDynamicViewId; ++i)
         {
             // Check the dynamic view id is free
@@ -620,6 +642,7 @@ public class CNetworkView : CNetworkMonoBehaviour
                 break;
             }
         }
+        */
 
 		// Ensure id was generated
 		Logger.WriteErrorOn(cViewId.Id == 0, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
@@ -654,9 +677,11 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 				*/
 
+                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+
 				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 
-				Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+				
 			}
 		}
 
@@ -713,6 +738,12 @@ public class CNetworkView : CNetworkMonoBehaviour
 
             // Retrieve network view instance
             CNetworkView cNetworkView = CNetworkView.FindUsingViewId(cNetworkViewId);
+
+            if (cNetworkView == null)
+            {
+                Debug.LogWarning(string.Format("Network view id invalid. NetworkViewId({0}) OwnerObjectName({1})", cNetworkViewId.Id, s_mViewIdOwnerNames[cNetworkViewId.Id]));
+                continue;
+            }
 			
             // Process network var sync procedure
             if (eProcedure == EProdecure.SyncNetworkVar)
@@ -926,6 +957,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
 
 	static Dictionary<ushort, CNetworkView> s_cNetworkViews = new Dictionary<ushort, CNetworkView>();
+    static Dictionary<ushort, string> s_mViewIdOwnerNames = new Dictionary<ushort, string>();
 
 
 };

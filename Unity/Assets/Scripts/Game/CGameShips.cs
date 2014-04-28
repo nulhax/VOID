@@ -46,13 +46,25 @@ public class CGameShips : CNetworkMonoBehaviour
 
 	public static CShipGalaxySimulatior ShipGalaxySimulator
 	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>()); }
+		get 
+        {
+            if (Ship == null)
+                return (null);
+
+            return (Ship.GetComponent<CShipGalaxySimulatior>()); 
+        }
 	}
 
 
 	public static GameObject GalaxyShip
 	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
+		get 
+        {
+            if (Ship == null)
+                return (null);
+
+            return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); 
+        }
 	}
 
 

@@ -165,7 +165,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
 		{
             CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
@@ -176,7 +176,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);

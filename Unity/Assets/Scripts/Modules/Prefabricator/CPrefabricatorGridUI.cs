@@ -182,36 +182,39 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	
 	private void Update() 
 	{
-		// Get the raycast hits against all grid objects
-		RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
-		if(lastRaycastHits == null)
-			return;
+        if (CGamePlayers.SelfActor != null)
+        {
+            // Get the raycast hits against all grid objects
+            RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
+            if (lastRaycastHits == null)
+                return;
 
-		m_RaycastHits = lastRaycastHits.ToList();
-		m_RaycastHits.RemoveAll(hit => CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
+            m_RaycastHits = lastRaycastHits.ToList();
+            m_RaycastHits.RemoveAll(hit => CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
 
-		// Get the plane hit
-		m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
+            // Get the plane hit
+            m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
 
-		// Get the current grid point and hit point
-		if(m_PlaneHit.collider != null)
-		{
-			m_CurrentMouseHitPoint = m_PlaneHit.point;
-			m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
-		}
-		
-		// Update cursor
-		UpdateCursor();
+            // Get the current grid point and hit point
+            if (m_PlaneHit.collider != null)
+            {
+                m_CurrentMouseHitPoint = m_PlaneHit.point;
+                m_CurrentMouseGridPoint = m_Grid.GetGridPoint(m_CurrentMouseHitPoint - (m_Grid.TileContainer.rotation * m_TilesOffset * m_GridScale));
+            }
 
-		// Update input
-		UpdateInput();
+            // Update cursor
+            UpdateCursor();
 
-		// Update the material variables
-		Vector3 up = m_Grid.transform.up;
-		Vector3 pos = m_Grid.transform.position;
-		m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
-		m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
-		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
+            // Update input
+            UpdateInput();
+
+            // Update the material variables
+            Vector3 up = m_Grid.transform.up;
+            Vector3 pos = m_Grid.transform.position;
+            m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
+            m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
+            m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
+        }
 	}
 
 	private void LateUpdate()

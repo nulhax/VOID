@@ -201,7 +201,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
             CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
         }
-        else if (gameObject == CGamePlayers.SelfActor)
+        else if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Register for mouse movement input
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
@@ -226,7 +226,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
             CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
         }
-        else if (gameObject == CGamePlayers.SelfActor)
+        else if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Register for mouse movement input
             CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
@@ -245,7 +245,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void FixedUpdate()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             switch (gameObject.GetComponent<CPlayerMotor>().State)
             {

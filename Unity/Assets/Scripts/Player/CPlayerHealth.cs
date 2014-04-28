@@ -413,7 +413,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         const float kBoxHeight = 22.0f;
 
         
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             GUIStyle cStyle = new GUIStyle();
             cStyle.alignment = TextAnchor.UpperLeft;

@@ -137,7 +137,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnEventInputChange);
 
@@ -160,7 +160,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Use, OnEventInputChange);
 
@@ -176,7 +176,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
             UpdateState();
         }
 
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             ProcessTargetRange();
         }
