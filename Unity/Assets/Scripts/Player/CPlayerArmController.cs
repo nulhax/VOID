@@ -194,19 +194,16 @@ public class CPlayerArmController : MonoBehaviour
                 }
                 case HoldState.TwoHandedTool:
                 {
-                    Quaternion handRotation;
-                    handRotation = CGameCameras.MainCamera.transform.rotation * Quaternion.Euler(0,0,270);
-
                     Vector3 rightHandPos = m_EquipTransform.position + rigidbody.velocity * Time.fixedDeltaTime;
-                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
-
+                    
                     m_IKController.RightHandIKPos = rightHandPos;
-                    m_IKController.RightHandIKRot = handRotation;
+                    m_IKController.RightHandIKRot = m_EquipTransform.rotation;   
+                
+                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
 
                     m_IKController.LeftHandIKPos = leftHandPos + rigidbody.GetPointVelocity(leftHandPos) * Time.fixedDeltaTime;
                     m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;
-
-                    //m_IKController.RightHandIKWeight = m_fMovementWeight;
+                  
                     m_IKController.LeftHandIKWeight = 1.0f;
 
                     break;
@@ -332,6 +329,7 @@ public class CPlayerArmController : MonoBehaviour
 			}
 			case HoldState.TwoHandedTool:
 			{
+                m_IKController.EndRightHandIK();
 				m_IKController.EndLeftHandIK();				
 				break;
 			}
@@ -367,9 +365,9 @@ public class CPlayerArmController : MonoBehaviour
 		} 
 		else 
 		{
-			m_eHoldState = HoldState.NoTool;
-            m_heldTool = null;
             EndInteraction();
+			m_eHoldState = HoldState.NoTool;
+            m_heldTool = null;           
 		}
 	}
 }
