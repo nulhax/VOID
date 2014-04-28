@@ -147,7 +147,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: -.0102143334, y: -.0121392393, z: -.643752515, w: .765069306}
-  m_LocalPosition: {x: .0852755159, y: -.0285382811, z: -.131079406}
+  m_LocalPosition: {x: -.00155189633, y: -.00558780506, z: -.0232303366}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400014}
@@ -227,9 +227,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100014}
-  m_LocalRotation: {x: .260420412, y: .155880958, z: -.0426470079, w: .951873779}
-  m_LocalPosition: {x: .24402988, y: 1.29888415, z: .36482361}
-  m_LocalScale: {x: .999999881, y: 1, z: .999999821}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400012}
   - {fileID: 400010}
@@ -448,8 +448,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_bCanBoard: 1
-  m_bCanDisembark: 1
+  m_CanBoard: 1
+  m_CanDisembark: 1
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
