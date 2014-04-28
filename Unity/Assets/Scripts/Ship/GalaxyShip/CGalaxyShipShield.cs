@@ -169,6 +169,8 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				if(_Collider.gameObject.tag == "Asteroid")
 				{
 					m_ShieldPower -= fDamage;
+
+					m_fVarShieldPower.Set(m_ShieldPower);
 				}
 			}
 
