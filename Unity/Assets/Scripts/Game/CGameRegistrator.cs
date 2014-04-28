@@ -55,6 +55,9 @@ public class CGameRegistrator : MonoBehaviour
 		Facility				= 300,
 		Facility_Preplaced,
 
+		// Tiles
+		Tile					= 350,
+
 		// Facility Miniature
 		MiniFacilityBridge		= 400, 
 		MiniHallwayStraight,
@@ -205,6 +208,9 @@ public class CGameRegistrator : MonoBehaviour
 		// Facilities
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility,              		"Facilities/Facility");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility_Preplaced,          "Facilities/Preplaced_Facility");
+
+		// Tile
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Tile,              			"Tiles/Tile");
 
 		// Facilities Mini
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");

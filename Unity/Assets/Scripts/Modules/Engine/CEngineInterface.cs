@@ -64,6 +64,9 @@ public class CEngineInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
+		if(!CNetwork.IsServer)
+			return;
+
         CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangeMaxPropolsion(m_fInitialPropulsion);
 
         SetPropulsion(m_fInitialPropulsion);

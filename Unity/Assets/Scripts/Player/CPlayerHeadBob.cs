@@ -44,11 +44,14 @@ public class CPlayerHeadBob : MonoBehaviour {
 	float m_fHeadBobAmount = 0;
 	float m_fHeadBobSpeed = 0;
 
+    bool m_bUseHeadBob = true;
+
 	// Use this for initialization
 	void Start () 
 	{
 		//Initialise head bob
 		gameObject.GetComponent<CPlayerMotor>().EventInputStatesChange += NotifyMovementStateChange;
+		gameObject.GetComponent<CPlayerMotor>().EventStateChange += NotifyMotorStateChange;
 
 		m_initialOffset = gameObject.GetComponent<CPlayerHead> ().Head.transform.localPosition;
 	}
@@ -62,7 +65,7 @@ public class CPlayerHeadBob : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate ()
 	{
-		if (CGamePlayers.SelfActor == gameObject) 
+		if (CGamePlayers.SelfActor == gameObject && m_bUseHeadBob) 
 		{
 			HeadBob ();
 		}
@@ -71,7 +74,29 @@ public class CPlayerHeadBob : MonoBehaviour {
 	void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
 	{
 		m_MovementState = _usNewSates;         
-	}   
+	}
+
+	void NotifyMotorStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
+	{
+		switch(_eNew) 
+		{
+            case CPlayerMotor.EState.WalkingShipExterior:
+            {
+                m_bUseHeadBob = true;
+                break;
+            }
+            case CPlayerMotor.EState.WalkingWithinShip:
+            {
+                m_bUseHeadBob = true;
+                break;
+            }
+            default:
+            {
+                m_bUseHeadBob = false;
+                break;
+            }
+		}
+	}
 
 	void HeadBob()
 	{
