@@ -81,13 +81,13 @@ public class CTile_InteriorCeiling : CTile
 		             new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 		
 		AddMetaEntry(EType.Hall,
-		             new EDirection[]{ EDirection.East, EDirection.West });
+		             new EDirection[]{ EDirection.North, EDirection.South });
 		
 		AddMetaEntry(EType.Edge,
-		             new EDirection[]{ EDirection.North, EDirection.South, EDirection.East });
+		             new EDirection[]{ EDirection.North, EDirection.South, EDirection.West });
 		
 		AddMetaEntry(EType.Corner,
-		             new EDirection[]{ EDirection.South, EDirection.East });
+		             new EDirection[]{ EDirection.North, EDirection.West });
 		
 		AddMetaEntry(EType.End,
 		             new EDirection[]{ EDirection.West });
@@ -104,17 +104,26 @@ public class CTile_InteriorCeiling : CTile
 		m_TileType = CTile.EType.InteriorCeiling;
 	}
 
-	protected override bool IsNeighbourRelevant(CNeighbour _Neighbour)
+	protected override int DetirmineTileMask()
 	{
-		if(!s_RelevantDirections.Contains(_Neighbour.m_Direction))
-			return(false);
+		int tileMask = 0;
 		
-		if(!_Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorCeiling))
-			return(false);
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorCeiling) &&
+			   !neighbour.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
 		
-		if(CUtility.GetMaskState((int)_Neighbour.m_Direction, m_CurrentTileMeta.m_NeighbourMask))
-			return(false);
-		
-		return(true);
+		return(tileMask);
 	}
 }

@@ -50,7 +50,6 @@ public abstract class CTile : MonoBehaviour
 		public CMeta(int _TileMask, int _MetaType)
 		{
 			m_TileMask = _TileMask;
-			m_NeighbourMask = 0;
 			m_MetaType = _MetaType;
 			m_Rotations = 0;
 			m_Variant = 0;
@@ -59,14 +58,12 @@ public abstract class CTile : MonoBehaviour
 		public CMeta(CMeta _Other)
 		{
 			m_TileMask = _Other.m_TileMask;
-			m_NeighbourMask = _Other.m_NeighbourMask;
 			m_MetaType = _Other.m_MetaType;
 			m_Rotations = _Other.m_Rotations;
 			m_Variant = _Other.m_Variant;
 		}
 
 		public int m_TileMask;
-		public int m_NeighbourMask;
 		public int m_MetaType;
 		public int m_Rotations;
 		public int m_Variant;
@@ -83,8 +80,7 @@ public abstract class CTile : MonoBehaviour
 				return false;
 			
 			// Return true if the fields match:
-			return ((m_TileMask == p.m_TileMask) && 
-			        (m_NeighbourMask == p.m_NeighbourMask) &&
+			return ((m_TileMask == p.m_TileMask) &&
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
 			        (m_Variant == p.m_Variant));
@@ -98,7 +94,6 @@ public abstract class CTile : MonoBehaviour
 			
 			// Return true if the fields match:
 			return ((m_TileMask == p.m_TileMask) && 
-			        (m_NeighbourMask == p.m_NeighbourMask) &&
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
 			        (m_Variant == p.m_Variant));
@@ -155,19 +150,11 @@ public abstract class CTile : MonoBehaviour
 			ReleaseTileObject();
 	}
 
+	[ContextMenu("Update Current Tile Meta Data")]
 	[AServerOnly]
 	public void UpdateCurrentTileMetaData()
 	{
-		int tileMask = 0;
-
-		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
-		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
-		{
-			if(!IsNeighbourRelevant(neighbour))
-				continue;
-
-			tileMask |= 1 << (int)neighbour.m_Direction;
-		}
+		int tileMask = DetirmineTileMask();
 		
 		// Update the tile meta info
 		bool metaChanged = RetrieveTileMetaEntry(tileMask);
@@ -183,7 +170,7 @@ public abstract class CTile : MonoBehaviour
 		}
 	}
 
-	protected abstract bool IsNeighbourRelevant(CNeighbour _Neighbour);
+	protected abstract int DetirmineTileMask();
 
 	[AServerOnly]
 	protected bool RetrieveTileMetaEntry(int _TileMask)
@@ -216,7 +203,6 @@ public abstract class CTile : MonoBehaviour
 			CTile.CMeta newTileMeta = new CMeta(TileMetaDictionary[tileMask].m_TileMask, TileMetaDictionary[tileMask].m_MetaType);
 			newTileMeta.m_Rotations = i;
 			newTileMeta.m_Variant = m_CurrentTileMeta.m_Variant;
-			newTileMeta.m_NeighbourMask = m_CurrentTileMeta.m_NeighbourMask;
 			
 			// Update the current tile meta data
 			currentMetaChanged = !m_CurrentTileMeta.Equals(newTileMeta);
@@ -230,6 +216,7 @@ public abstract class CTile : MonoBehaviour
 		Debug.LogWarning("Tile Meta data wasn't found for: " + m_TileType + " Mask: " + _TileMask);
 	}
 
+	[ContextMenu("Update Tile Object")]
 	protected void UpdateTileObject()
 	{
 		// Release the tile object
@@ -280,13 +267,12 @@ public abstract class CTile : MonoBehaviour
 		{
 			m_NeighbourExemptions.Remove(_Direction);
 		}
-
-		CUtility.SetMaskState((int)_Direction, _State, ref m_CurrentTileMeta.m_NeighbourMask);
 	}
-	
+
+	[AServerOnly]
 	public bool GetNeighbourExemptionState(EDirection _Direction)
 	{
-		return(CUtility.GetMaskState((int)_Direction, m_CurrentTileMeta.m_NeighbourMask));
+		return(m_NeighbourExemptions.Contains(_Direction));
 	}
 
 	public void ReleaseTileObject()

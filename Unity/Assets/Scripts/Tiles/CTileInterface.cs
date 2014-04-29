@@ -118,11 +118,17 @@ public class CTileInterface : CNetworkMonoBehaviour
 			Destroy(tile);
 	}
 
+	public CTile GetTile(CTile.EType _TileType)
+	{
+		Type tileClassType = CTile.GetTileClassType(_TileType);
+		return((CTile)gameObject.GetComponent(tileClassType));
+	}
+
 	[AServerOnly]
 	public void InvokeTileCurrentMetaUpdate(CTile _Tile)
 	{
 		// Invoke all clients to set the current meta for this tile
-		InvokeRpcAll("RemoteSetCurrentMeta", _Tile.m_TileType, _Tile.m_CurrentTileMeta.m_TileMask, _Tile.m_CurrentTileMeta.m_NeighbourMask, 
+		InvokeRpcAll("RemoteSetCurrentMeta", _Tile.m_TileType, _Tile.m_CurrentTileMeta.m_TileMask, 
 		             _Tile.m_CurrentTileMeta.m_MetaType, _Tile.m_CurrentTileMeta.m_Rotations, _Tile.m_CurrentTileMeta.m_Variant);
 	}
 
@@ -132,17 +138,16 @@ public class CTileInterface : CNetworkMonoBehaviour
 		foreach(CTile tile in GetComponents<CTile>())
 		{
 			// Invoke all clients to set the current meta for this tile
-			InvokeRpc(_PlayerId, "RemoteSetCurrentMeta", tile.m_TileType, tile.m_CurrentTileMeta.m_TileMask, tile.m_CurrentTileMeta.m_NeighbourMask, 
+			InvokeRpc(_PlayerId, "RemoteSetCurrentMeta", tile.m_TileType, tile.m_CurrentTileMeta.m_TileMask, 
 			          tile.m_CurrentTileMeta.m_MetaType, tile.m_CurrentTileMeta.m_Rotations, tile.m_CurrentTileMeta.m_Variant);
 		}
 	}
 
 	[ANetworkRpc]
-	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _NeighbourMask, int _MetaType, int _Rotations, int _Variant)
+	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _Variant)
 	{
 		CTile tile = GetTile(_TileType);
 		tile.m_CurrentTileMeta.m_TileMask = _TileMask;
-		tile.m_CurrentTileMeta.m_NeighbourMask = _NeighbourMask;
 		tile.m_CurrentTileMeta.m_MetaType = _MetaType;
 		tile.m_CurrentTileMeta.m_Rotations = _Rotations;
 		tile.m_CurrentTileMeta.m_Variant = _Variant;
@@ -180,6 +185,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 		}
 	}
 
+	[ContextMenu("Update All Current Tile Meta Data")]
 	[AServerOnly]
 	public void UpdateAllCurrentTileMetaData()
 	{
@@ -191,12 +197,6 @@ public class CTileInterface : CNetworkMonoBehaviour
 		{
 			tile.UpdateCurrentTileMetaData();
 		}
-	}
-
-	public CTile GetTile(CTile.EType _TileType)
-	{
-		Type tileClassType = CTile.GetTileClassType(_TileType);
-		return((CTile)gameObject.GetComponent(tileClassType));
 	}
 
 	[AServerOnly]
@@ -217,22 +217,29 @@ public class CTileInterface : CNetworkMonoBehaviour
 			m_TileTypes.Remove(_TileType);
 		}
 	}
-	
+
+	[AServerOnly]
 	public bool GetTileTypeState(CTile.EType _TileType)
 	{
-		if(CNetwork.IsServer)
-			return(m_TileTypes.Contains(_TileType));
-
-		return(CUtility.GetMaskState((int)_TileType, (int)m_RemoteTileTypeMask.Value));
+		return(m_TileTypes.Contains(_TileType));
 	}
 
+	[AServerOnly]
 	public void UpdateTileTypeMask()
 	{
 		// Set the remote mask state
 		int newMask = 0;
 		foreach(CTile.EType tileType in m_TileTypes)
 			CUtility.SetMaskState((int)tileType, true, ref newMask);
+		bool changed = m_RemoteTileTypeMask.Value != (byte)newMask;
 		m_RemoteTileTypeMask.Value = (byte)newMask;
+
+		if(!changed)
+			return;
+
+		// Update all neighbour meta data if the mask has changed
+		foreach(CNeighbour neighbour in m_NeighbourHood)
+			neighbour.m_TileInterface.UpdateAllCurrentTileMetaData();
 	}
 
 	[AServerOnly]

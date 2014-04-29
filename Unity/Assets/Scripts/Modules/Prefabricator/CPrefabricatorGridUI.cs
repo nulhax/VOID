@@ -303,15 +303,28 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 			tile1.UpdateAllCurrentTileMetaData();
 			tile2.UpdateAllCurrentTileMetaData();
+			return;
 		}
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
 		{
-			CTileInterface tile = m_Grid.GetTile(m_CurrentMouseGridPoint);
-			if(tile != null)
-			{
-				tile.SetTileTypeState(CTile.EType.InteriorFloor, !IsCtrlKeyDown);
-			}
+			CTileInterface tile1 = m_Grid.GetTile(m_CurrentMouseGridPoint);
+			CTileInterface tile2 = m_Grid.GetTile(new CGridPoint(m_CurrentMouseGridPoint.ToVector - Vector3.up));
+
+			if(tile1 == null || tile2 == null)
+				return;
+
+			if(!tile1.GetTileTypeState(CTile.EType.InteriorFloor) || !tile2.GetTileTypeState(CTile.EType.InteriorCeiling))
+				return;
+
+			if(tile1.m_NeighbourHood.Exists(n => n.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall)))
+				return;
+
+			tile1.SetTileTypeState(CTile.EType.InteriorFloor, !IsCtrlKeyDown);
+			tile2.SetTileTypeState(CTile.EType.InteriorCeiling, !IsCtrlKeyDown);
+
+			tile1.UpdateAllCurrentTileMetaData();
+			tile2.UpdateAllCurrentTileMetaData();
 			return;
 		}
 	}
@@ -483,54 +496,15 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			m_GridCursor.renderer.enabled = false;
 		}
 
-//		if(m_CurrentMode == EToolMode.PlaceModulePort)
-//		{
-//			m_ModulePortCursors[CModuleInterface.ESize.Small].renderer.enabled = true;
-//		}
-//		else
-//		{
-//			m_ModulePortCursors[CModuleInterface.ESize.Small].renderer.enabled = false;
-//		}
-
-//		if(m_CurrentMode == EToolMode.PlaceModulePort)
-//		{
-//			Vector3 centerPos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.transform.rotation * m_TilesOffset));
-//			centerPos.x = Mathf.Round(centerPos.x * 2.0f) / 2.0f; 
-//			centerPos.z = Mathf.Round(centerPos.z * 2.0f) / 2.0f; 
-//
-//			centerPos = m_Grid.GetLocalPosition(centerPos) + m_TilesOffset;
-//			centerPos.y += 0.25f;
-//			m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localScale = new Vector3(3.0f, 0.5f, 3.0f);
-//			m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition = centerPos;
-//			return;
-//		}
-
-		if(m_CurrentMode == EToolMode.Paint_Exterior)
+		if(m_CurrentMode == EToolMode.Paint_Exterior ||
+		   m_CurrentMode == EToolMode.Paint_Interior_Floors)
 		{
-			if(IsShiftKeyDown)
-			{
-				Vector3 point1 = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector * m_GridScale) + m_TilesOffset;
-				Vector3 point2 = m_Grid.GetLocalPosition(m_MouseDownGridPoint.ToVector * m_GridScale) + m_TilesOffset;
-
-				Vector3 centerPos = (point1 + point2) * 0.5f;
-				float width = Mathf.Abs(m_CurrentMouseGridPoint.x - m_MouseDownGridPoint.x) + 1.0f;
-				float height = Mathf.Abs(m_CurrentMouseGridPoint.y - m_MouseDownGridPoint.y) + 1.0f;
-				float depth = Mathf.Abs(m_CurrentMouseGridPoint.z - m_MouseDownGridPoint.z) + 1.0f;
-				centerPos.y += m_Grid.m_TileSize * 0.5f;
-
-				m_GridCursor.transform.localScale = new Vector3(width, height, depth) * m_Grid.m_TileSize;
-				m_GridCursor.transform.localPosition = centerPos;
-				return;
-			}
-			else
-			{
-				Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector) + m_TilesOffset;
-				centerPos.y += m_Grid.m_TileSize * 0.5f;
-				
-				m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
-				m_GridCursor.transform.localPosition = centerPos;
-				return;
-			}
+			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector) + m_TilesOffset;
+			centerPos.y += m_Grid.m_TileSize * 0.5f;
+			
+			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
+			m_GridCursor.transform.localPosition = centerPos;
+			return;
 		}
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Walls)
@@ -722,6 +696,10 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.ExteriorWall, CTile.EType.ExteriorWallCap }.ToList();
 			for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 				tileInterface.SetTileTypeState((CTile.EType)i, tileTypes.Contains((CTile.EType)i));
+
+			// Clear all existing neighbour exemptions
+			foreach(CTile tile in tileInterface.GetComponents<CTile>())
+				tile.m_NeighbourExemptions.Clear();
 
 			// Update the tiles meta data
 			tileInterface.UpdateAllCurrentTileMetaData();

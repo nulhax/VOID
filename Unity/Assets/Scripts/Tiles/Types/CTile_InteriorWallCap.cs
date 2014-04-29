@@ -167,22 +167,30 @@ public class CTile_InteriorWallCap : CTile
 		m_TileType = CTile.EType.InteriorWallCap;
 	}
 
-	protected override bool IsNeighbourRelevant(CNeighbour _Neighbour)
+	protected override int DetirmineTileMask()
 	{
-		if(!s_RelevantDirections.Contains(_Neighbour.m_Direction))
-			return(false);
+		int tileMask = 0;
 		
-		if(!_Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
-			return(false);
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			CTile internalWallTile = m_TileInterface.GetTile(CTile.EType.InteriorWall);
+			if(internalWallTile != null && 
+			   internalWallTile.GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
 		
-		if(CUtility.GetMaskState((int)_Neighbour.m_Direction, m_CurrentTileMeta.m_NeighbourMask))
-			return(false);
-
-		CTile internalWallTile = m_TileInterface.GetTile(CTile.EType.InteriorWall);
-		if(internalWallTile != null && 
-		   CUtility.GetMaskState((int)_Neighbour.m_Direction, internalWallTile.m_CurrentTileMeta.m_NeighbourMask))
-			return(false);
-
-		return(true);
+		return(tileMask);
 	}
 }
