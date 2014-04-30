@@ -137,10 +137,7 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	{
 		if(_Collider.gameObject.tag == "Asteroid")
 		{
-			Debug.Log("Collider entered Trigger as asteroid");
-				
 			// Take the ship velocity and add it to the asteroid velocity
-			//TODO: Make this betterer 
 			Vector3 Move = CGameShips.GalaxyShip.rigidbody.velocity;
 				
 			_Collider.gameObject.transform.rigidbody.velocity = Move * 2.0f;
@@ -164,7 +161,6 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				// Set the network var
 				m_fVarShieldPower.Set(m_ShieldPower);
 
-				
 				// Set the network var
 				m_bVarIsActive.Set (m_Active);
 			}
@@ -173,13 +169,15 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 				if(_Collider.gameObject.tag == "Asteroid")
 				{
 					m_ShieldPower -= fDamage;
+
+					m_fVarShieldPower.Set(m_ShieldPower);
 				}
 			}
 
 			// Save the asteroid for the raycast to fire at
 			AsteroidPos = _Collider.transform.position;
 
-			//Debug.Log ("Shield Health is at: " + m_ShieldPower);
+			Debug.Log ("Shield Health is at: " + m_ShieldPower);
 		}
 	}
 	
@@ -207,30 +205,24 @@ public class CGalaxyShipShield : CNetworkMonoBehaviour
 	{
 		RaycastHit hit;
 
-//		if(_Collider.gameObject.tag == "Asteroid")
-//		{
-
 		// Get the direction of the asteroid from the origin
 		Vector3 dir = (AsteroidPos - transform.position).normalized;
 
-
-
-        return; // Commit files that you need to add
-		if(Physics.Raycast(transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude))
+		if (bActive == true) 
 		{
-			Debug.DrawLine(gameObject.transform.position, hit.point, Color.red, 10.0f);
+			if (Physics.Raycast (transform.position, dir, out hit, (AsteroidPos - transform.position).magnitude)) {
+					Debug.DrawLine (gameObject.transform.position, hit.point, Color.red, 10.0f);
 
-			GameObject shieldCollision = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Ship/Shield Collision"));
+					GameObject shieldCollision = (GameObject)GameObject.Instantiate (Resources.Load ("Prefabs/Ship/Shield Collision"));
 
-			shieldCollision.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(hit.point);
-			shieldCollision.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.LookRotation(dir));
-			shieldCollision.transform.parent = CGameShips.Ship.transform;
+					shieldCollision.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos (hit.point);
+					shieldCollision.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot (Quaternion.LookRotation (dir));
+					shieldCollision.transform.parent = CGameShips.Ship.transform;
 
-			Destroy(shieldCollision, 2.0f);
+					Destroy (shieldCollision, 0.5f);
+			}
 		}
-		//}
-
-		Debug.Log ("Spaned Shield Collision at " + hit.point + "Galaxy Ship Pos: " + transform.position);
+		// Debug.Log ("Spaned Shield Collision at " + hit.point + "Galaxy Ship Pos: " + transform.position);
 	}
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
