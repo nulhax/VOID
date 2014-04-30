@@ -1081,8 +1081,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	ushort m_usInputStates = 0;
 
-
-    bool m_bRealignBodyWithHead = false;
+    public bool m_bRealignBodyWithHead = false;
 	bool m_bGrounded = false;
     bool m_bInSpace  = false;
 
