@@ -55,6 +55,9 @@ public class CGameRegistrator : MonoBehaviour
 		Facility				= 300,
 		Facility_Preplaced,
 
+		// Tiles
+		Tile					= 350,
+
 		// Facility Miniature
 		MiniFacilityBridge		= 400, 
 		MiniHallwayStraight,
@@ -72,14 +75,9 @@ public class CGameRegistrator : MonoBehaviour
 		AtmosphereGenerator		= 600,
 		PlayerSpawner,
 		TurretCockpit,
-		LaserTurret,
 		PilotCockpit,
 		PowerGenerator,
 		PowerCapacitor,
-		MiningTurret,
-		MiningCockpit,
-		AtmosphereConditioner,
-        OxygenRefiller,
         Dispenser,
 		NaniteSilo,
         Engine,
@@ -208,6 +206,9 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility,              		"Facilities/Facility");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility_Preplaced,          "Facilities/Preplaced_Facility");
 
+		// Tile
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Tile,              			"Tiles/Tile");
+
 		// Facilities Mini
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayStraight,          "Facilities/Hallways/HallwayStraightMini");
@@ -221,19 +222,15 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereGenerator,			"Modules/Atmosphere Generator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereConditioner,		"Modules/Atmosphere Conditioner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereGenerator,			"Modules/Atmosphere Generator Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,				"Modules/Player Spawner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,					"Modules/Laser Turret");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,				"Modules/Turret Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Pilot Cockpit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Capacitor");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Mining Turret");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Mining Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Capacitor Small");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo Small");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,               "Modules/Prefabricator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Turrets/Pulse Turret Small");
@@ -374,13 +371,10 @@ public class CGameRegistrator : MonoBehaviour
     {
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereGenerator  , ENetworkPrefab.AtmosphereGenerator);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner        , ENetworkPrefab.PlayerSpawner);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.TurretCockpit);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret          , ENetworkPrefab.LaserTurret);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.TurretCockpit);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit         , ENetworkPrefab.PilotCockpit);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerGenerator       , ENetworkPrefab.PowerGenerator);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerCapacitor       , ENetworkPrefab.PowerCapacitor);			
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret         , ENetworkPrefab.MiningTurret);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit        , ENetworkPrefab.MiningCockpit);	
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        	, ENetworkPrefab.NaniteSilo);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);

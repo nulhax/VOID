@@ -908,7 +908,7 @@ public class CNetworkView : CNetworkMonoBehaviour
         }
         else
         {
-            transform.parent = transform.parent = _cParentViewId.GameObject.transform;
+            transform.parent = _cParentViewId.GameObject.transform;
         }
         
     }

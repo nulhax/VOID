@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -39,30 +39,37 @@ public class CPreplacedFacility : MonoBehaviour
 	// Member Methods
 	private void Start()
 	{
+		if(CNetwork.IsServer)
+			InitialisePreplacedTiles();
+
+		// Destroy self
+		Destroy(gameObject);
+	}
+
+	[AServerOnly]
+	private void InitialisePreplacedTiles()
+	{
 		// Get the tiles which reside under this facility
-		List<CTile> tiles = new List<CTile>(gameObject.GetComponentsInChildren<CTile>());
+		List<CTileInterface> tiles = new List<CTileInterface>(gameObject.GetComponentsInChildren<CTileInterface>());
 		
 		// Find the tiles which are internal only
-		List<CTile> interiorTiles = new List<CTile>(
+		List<CTileInterface> interiorTiles = new List<CTileInterface>(
 			from ineriorTile in tiles
-			where ineriorTile.GetTileTypeState(ETileType.Wall_Int)
+			where ineriorTile.GetTileTypeState(CTile.EType.InteriorWall)
 			select ineriorTile);
-
-		List<List<CTile>> facilities = new List<List<CTile>>();
+		
+		List<List<CTileInterface>> facilities = new List<List<CTileInterface>>();
 		facilities.Add(interiorTiles);
-
+		
 		// Import the facility to the ship
 		CShipFacilities shipFacilities = CUtility.FindInParents<CShipFacilities>(gameObject);
 		shipFacilities.ImportNewGridTiles(tiles, facilities);
-
+		
 		// Create all of the preplaced modules and add to the facility
 		GameObject facility = shipFacilities.Facilities.First();
 		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
 		{
 			preplacedModule.CreateModule(facility);
 		}
-
-		// Destroy self
-		Destroy(gameObject);
 	}
 };

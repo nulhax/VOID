@@ -5676,6 +5676,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sDisplayName: Starter
+  m_sDescription: 
   m_cModel: {fileID: 100324}
   m_eModuleType: 750
   m_eModuleCategory: 350

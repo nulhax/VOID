@@ -55,12 +55,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		AtmosphereGenerator = 50,
 		PlayerSpawner       = 100,
         TurretCockpit       = 150,
-        LaserTurret         = 200,
         PilotCockpit        = 250,
         PowerGenerator      = 300,
         PowerCapacitor      = 350,
-        MiningTurret        = 400,
-        MiningCockpit       = 450,
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
@@ -230,6 +227,12 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
+    public void SetModelVisible(bool _bVisible)
+    {
+        m_cModel.SetActive(_bVisible);
+    }
+
+
 	public static List<GameObject> GetAllModules()
 	{
 		return (s_mModules);
@@ -279,7 +282,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     {
         if (!s_mRegisteredPrefabs.ContainsKey(_eModuleType))
         {
-            Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eModuleType));
+            //Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eModuleType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
@@ -347,12 +350,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         // Hide model if not built
         if (!IsBuilt)
         {
-            m_cModel.SetActive(false);
-
-            m_aAttachedComponents.ForEach((GameObject _cComponent) =>
-            {
-                _cComponent.SetActive(false);
-            });
+            SetModelVisible(false);
         }
 
 		// Register self with parent facility
@@ -429,7 +427,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
             // Check is completely built
             if (m_bBuiltPercent.Value == 100)
             {
-                m_cModel.SetActive(true);
+                SetModelVisible(true);
 
                 m_aAttachedComponents.ForEach((GameObject _cComponent) =>
                 {
@@ -506,6 +504,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public string m_sDisplayName = "";
+    public string m_sDescription = "";
     public GameObject m_cModel = null;
 	public EType m_eModuleType = EType.INVALID;
 	public ECategory m_eModuleCategory = ECategory.INVALID;

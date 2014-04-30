@@ -465,11 +465,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sDisplayName: Pulse Turret Small
+  m_sDescription: Single shot laser turret that deals small amount of damage
   m_cModel: {fileID: 100010}
   m_eModuleType: 800
   m_eModuleCategory: 150
   m_eModuleSize: 1
-  m_fNanitesCost: 100.124001
+  m_fNanitesCost: 280
   m_bInternal: 0
   m_bBuildable: 1
 --- !u!114 &11400004
@@ -517,7 +519,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c31368f730616941b2429c07a880838, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cLaserProjectile: {fileID: 100000, guid: 2a756109c8788a644b546e887c0020aa, type: 2}
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1

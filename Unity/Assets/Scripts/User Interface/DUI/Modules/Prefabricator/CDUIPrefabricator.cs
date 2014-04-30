@@ -49,9 +49,9 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 	private CModuleInterface.ESize m_SelectedModuleSize = CModuleInterface.ESize.INVALID;
 	private int m_SelectedModuleCost = 0;
 
-	private Dictionary<ETileVariant, GameObject> m_CurrentFloorVariations = new Dictionary<ETileVariant, GameObject>();
-	private Dictionary<ETileVariant, GameObject> m_CurrentWallVariations = new Dictionary<ETileVariant, GameObject>();
-	private Dictionary<ETileVariant, GameObject> m_CurrentCeilingVariations = new Dictionary<ETileVariant, GameObject>();
+	private Dictionary<int, GameObject> m_CurrentFloorVariations = new Dictionary<int, GameObject>();
+	private Dictionary<int, GameObject> m_CurrentWallVariations = new Dictionary<int, GameObject>();
+	private Dictionary<int, GameObject> m_CurrentCeilingVariations = new Dictionary<int, GameObject>();
 
 	private CNetworkVar<CModuleInterface.EType> m_CurrentModuleType = null;
 
@@ -193,14 +193,14 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		}
 
 		// Instance all default variants
-		if(!m_CurrentFloorVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewFloorTileVariantSelection(ETileVariant.Default, "Item 01");
+		if(!m_CurrentFloorVariations.ContainsKey(0))
+			InstanceNewFloorTileVariantSelection(0, "Item 01");
 		
-		if(!m_CurrentWallVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewWallTileVariantSelection(ETileVariant.Default, "Item 01");
+		if(!m_CurrentWallVariations.ContainsKey(0))
+			InstanceNewWallTileVariantSelection(0, "Item 01");
 		
-		if(!m_CurrentCeilingVariations.ContainsKey(ETileVariant.Default))
-			InstanceNewCeilingTileVariantSelection(ETileVariant.Default, "Item 01");
+		if(!m_CurrentCeilingVariations.ContainsKey(0))
+			InstanceNewCeilingTileVariantSelection(0, "Item 01");
 
 		// Reposition all items
 		m_FloorVartiationsGrid.Reposition();
@@ -255,7 +255,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		m_ModuleCostLabel.text = m_SelectedModuleCost.ToString() + "N";
 	}
 
-	private void InstanceNewFloorTileVariantSelection(ETileVariant _TileVariant, string _ItemName)
+	private void InstanceNewFloorTileVariantSelection(int _TileVariant, string _ItemName)
 	{
 		GameObject newSelection = (GameObject)GameObject.Instantiate(m_VariantItemTemplate);
 		newSelection.name = _ItemName;
@@ -269,7 +269,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		m_CurrentFloorVariations.Add(_TileVariant, newSelection);
 	}
 	
-	private void InstanceNewWallTileVariantSelection(ETileVariant _TileVariant, string _ItemName)
+	private void InstanceNewWallTileVariantSelection(int _TileVariant, string _ItemName)
 	{
 		GameObject newSelection = (GameObject)GameObject.Instantiate(m_VariantItemTemplate);
 		newSelection.name = _ItemName;
@@ -283,7 +283,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 		m_CurrentWallVariations.Add(_TileVariant, newSelection);
 	}
 
-	private void InstanceNewCeilingTileVariantSelection(ETileVariant _TileVariant, string _ItemName)
+	private void InstanceNewCeilingTileVariantSelection(int _TileVariant, string _ItemName)
 	{
 		GameObject newSelection = (GameObject)GameObject.Instantiate(m_VariantItemTemplate);
 		newSelection.name = _ItemName;
@@ -299,61 +299,61 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 
 	private void OnFloorVariantModification()
 	{
-		GameObject button = UIButton.current.gameObject;
-
-		// Find the variant type
-		foreach(KeyValuePair<ETileVariant, GameObject> pair in m_CurrentFloorVariations)
-		{
-			// If the button was found
-			if(pair.Value == button)
-			{
-				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
-				{
-					tile.SetTileTypeVariant(ETileType.Floor, pair.Key);
-				}
-				return;
-			}
-		}
+//		GameObject button = UIButton.current.gameObject;
+//
+//		// Find the variant type
+//		foreach(KeyValuePair<int, GameObject> pair in m_CurrentFloorVariations)
+//		{
+//			// If the button was found
+//			if(pair.Value == button)
+//			{
+//				// Iterate each tile and set its variation
+//				foreach(CTileInterface tile in m_GridUI.m_SelectedTiles)
+//				{
+//					tile.SetTileTypeVariant(CTile.EType.InteriorFloor, pair.Key);
+//				}
+//				return;
+//			}
+//		}
 	}
 
 	private void OnWallVariantModification()
 	{
-		GameObject button = UIButton.current.gameObject;
-		
-		// Find the variant type
-		foreach(KeyValuePair<ETileVariant, GameObject> pair in m_CurrentWallVariations)
-		{
-			// If the button was found
-			if(pair.Value == button)
-			{
-				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
-				{
-					tile.SetTileTypeVariant(ETileType.Wall_Ext, pair.Key);
-				}
-				return;
-			}
-		}
+//		GameObject button = UIButton.current.gameObject;
+//		
+//		// Find the variant type
+//		foreach(KeyValuePair<ETileVariant, GameObject> pair in m_CurrentWallVariations)
+//		{
+//			// If the button was found
+//			if(pair.Value == button)
+//			{
+//				// Iterate each tile and set its variation
+//				foreach(CTileInterface tile in m_GridUI.m_SelectedTiles)
+//				{
+//					tile.SetTileTypeVariant(CTile.EType.ExteriorWall, pair.Key);
+//				}
+//				return;
+//			}
+//		}
 	}
 
 	private void OnCeilingVariantModification()
 	{
-		GameObject button = UIButton.current.gameObject;
-		
-		// Find the variant type
-		foreach(KeyValuePair<ETileVariant, GameObject> pair in m_CurrentCeilingVariations)
-		{
-			// If the button was found
-			if(pair.Value == button)
-			{
-				// Iterate each tile and set its variation
-				foreach(CTile tile in m_GridUI.m_SelectedTiles)
-				{
-					tile.SetTileTypeVariant(ETileType.Ceiling, pair.Key);
-				}
-				return;
-			}
-		}
+//		GameObject button = UIButton.current.gameObject;
+//		
+//		// Find the variant type
+//		foreach(KeyValuePair<ETileVariant, GameObject> pair in m_CurrentCeilingVariations)
+//		{
+//			// If the button was found
+//			if(pair.Value == button)
+//			{
+//				// Iterate each tile and set its variation
+//				foreach(CTileInterface tile in m_GridUI.m_SelectedTiles)
+//				{
+//					tile.SetTileTypeVariant(CTile.EType.InteriorCeiling, pair.Key);
+//				}
+//				return;
+//			}
+//		}
 	}
 }

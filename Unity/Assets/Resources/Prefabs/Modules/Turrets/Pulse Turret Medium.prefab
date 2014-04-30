@@ -924,11 +924,7 @@ MonoBehaviour:
   m_cGalaxyCamera: {fileID: 2000000}
   m_cBaseTrans: {fileID: 400022}
   m_cBarrelTrans: {fileID: 400020}
-  m_cProjectileNodes:
-  - {fileID: 400034}
-  - {fileID: 400032}
-  - {fileID: 400028}
-  - {fileID: 400030}
+  m_caProjectileNodes: []
   m_fRotationSpeed: 2
   m_fBarrelEulerMinX: -15
   m_fBarrelEulerMaxX: 80
@@ -945,11 +941,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sDisplayName: Pulse Turret Medium
+  m_sDescription: Multi shot laser turret that deals medium amount of damage
   m_cModel: {fileID: 100024}
   m_eModuleType: 805
   m_eModuleCategory: 150
   m_eModuleSize: 2
-  m_fNanitesCost: 100.124001
+  m_fNanitesCost: 500
   m_bInternal: 0
   m_bBuildable: 1
 --- !u!114 &11400004

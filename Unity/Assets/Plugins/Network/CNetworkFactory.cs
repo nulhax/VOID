@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -71,7 +71,12 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	public string GetRegisteredPrefabFile(object _cPrefabId)
 	{
 		// Ensure the prefab file exists
-		Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!! PrefabId({0})({1})", _cPrefabId, (ushort)_cPrefabId);
+		//Logger.WriteErrorOn(!m_mPrefabs.ContainsKey((ushort)_cPrefabId), "The requested prefab has not been registered yet!!! PrefabId({0})({1})", _cPrefabId, (ushort)_cPrefabId);
+
+        if (!m_mPrefabs.ContainsKey((ushort)_cPrefabId))
+        {
+            return (null);
+        }
 			
 		return ("Prefabs/" + m_mPrefabs[(ushort)_cPrefabId]);
 	}

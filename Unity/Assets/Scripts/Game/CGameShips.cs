@@ -34,13 +34,22 @@ public class CGameShips : CNetworkMonoBehaviour
 
 	public static GameObject Ship
 	{
-		get { return (CNetwork.Factory.FindObject(s_cInstance.m_cShipViewId)); }
+		get 
+        {
+            if (s_cInstance.m_cShipViewId == null)
+                return (null);
+
+            return (CNetwork.Factory.FindObject(s_cInstance.m_cShipViewId)); 
+        }
 	}
 
 
 	public static TNetworkViewId ShipViewId
 	{
-		get { return (s_cInstance.m_cShipViewId); }
+		get 
+        { 
+            return (s_cInstance.m_cShipViewId); 
+        }
 	}
 
 
