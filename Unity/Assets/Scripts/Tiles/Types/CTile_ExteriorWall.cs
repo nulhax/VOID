@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -27,16 +27,12 @@ public class CTile_ExteriorWall : CTile
 	// Member Types
 	public enum EType
 	{
-		INVALID = -1,
-		
 		None,
 		Corner, 
 		Edge,
 		End,
 		Hall,
 		Cell,
-		
-		MAX,
 	}
 	
 	public enum EVariant
@@ -55,7 +51,7 @@ public class CTile_ExteriorWall : CTile
 	
 	
 	// Member Fields
-	static protected List<EDirection> s_RelevantDirections = new List<EDirection>();
+	static public List<EDirection> s_RelevantDirections = new List<EDirection>();
 	static protected Dictionary<int, CTile.CMeta> s_MetaDictionary = new Dictionary<int, CTile.CMeta>();
 	
 	
@@ -100,7 +96,7 @@ public class CTile_ExteriorWall : CTile
 	
 	private void Awake()
 	{
-		m_TileType = CTile.EType.ExteriorWall;
+		m_TileType = CTile.EType.Exterior_Wall;
 	}
 
 	protected override int DetirmineTileMask()
@@ -113,7 +109,7 @@ public class CTile_ExteriorWall : CTile
 			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
 				continue;
 			
-			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
 				continue;
 			
 			if(GetNeighbourExemptionState(neighbour.m_Direction))

@@ -131,7 +131,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		// Default enums
 		m_CurrentMode = EToolMode.Nothing;
 		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
-		m_CurrentlySelectedType = CTile.EType.InteriorFloor;
+		m_CurrentlySelectedType = CTile.EType.Interior_Floor;
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
@@ -293,8 +293,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			if(tile1 == null || tile2 == null)
 				return;
 
-			CTile tileInteriorWall1 = tile1.GetTile(CTile.EType.InteriorWall);
-			CTile tileInteriorWall2 = tile2.GetTile(CTile.EType.InteriorWall);
+			CTile tileInteriorWall1 = tile1.GetTile(CTile.EType.Interior_Wall);
+			CTile tileInteriorWall2 = tile2.GetTile(CTile.EType.Interior_Wall);
 			
 			if(tileInteriorWall1 == null || tileInteriorWall2 == null)
 				return;
@@ -308,23 +308,48 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
 		{
-			CTileInterface tile1 = m_Grid.GetTile(m_CurrentMouseGridPoint);
-			CTileInterface tile2 = m_Grid.GetTile(new CGridPoint(m_CurrentMouseGridPoint.ToVector - Vector3.up));
+			Vector3 cursorPos = (m_GridCursor.transform.localPosition - m_TilesOffset) / m_Grid.m_TileSize;
 
-			if(tile1 == null || tile2 == null)
-				return;
+			CGridPoint tilePosNE = new CGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
+			CGridPoint tilePosNW = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
+			CGridPoint tilePosSE = new CGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
+			CGridPoint tilePosSW = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
 
-			if(!tile1.GetTileTypeState(CTile.EType.InteriorFloor) || !tile2.GetTileTypeState(CTile.EType.InteriorCeiling))
-				return;
+			List<CTileInterface> floorTiles = new List<CTileInterface>();
 
-			if(tile1.m_NeighbourHood.Exists(n => n.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall)))
-				return;
+			if(m_Grid.GetTile(tilePosNE) != null)
+				floorTiles.Add(m_Grid.GetTile(tilePosNE));
+			if(m_Grid.GetTile(tilePosNW) != null)
+				floorTiles.Add(m_Grid.GetTile(tilePosNW));
+			if(m_Grid.GetTile(tilePosSE) != null)
+       			floorTiles.Add(m_Grid.GetTile(tilePosSE));
+			if(m_Grid.GetTile(tilePosSW) != null)
+       			floorTiles.Add(m_Grid.GetTile(tilePosSW));
 
-			tile1.SetTileTypeState(CTile.EType.InteriorFloor, !IsCtrlKeyDown);
-			tile2.SetTileTypeState(CTile.EType.InteriorCeiling, !IsCtrlKeyDown);
+			tilePosNE.y -= 1;
+			tilePosNW.y -= 1;
+			tilePosSE.y -= 1;
+			tilePosSW.y -= 1;
 
-			tile1.UpdateAllCurrentTileMetaData();
-			tile2.UpdateAllCurrentTileMetaData();
+			List<CTileInterface> ceilingTiles = new List<CTileInterface>();
+
+			if(m_Grid.GetTile(tilePosNE) != null)
+				ceilingTiles.Add(m_Grid.GetTile(tilePosNE));
+			if(m_Grid.GetTile(tilePosNW) != null)
+				ceilingTiles.Add(m_Grid.GetTile(tilePosNW));
+			if(m_Grid.GetTile(tilePosSE) != null)
+				ceilingTiles.Add(m_Grid.GetTile(tilePosSE));
+			if(m_Grid.GetTile(tilePosSW) != null)
+				ceilingTiles.Add(m_Grid.GetTile(tilePosSW));
+
+			ModifyInteriorFloorAndCeiling(!IsCtrlKeyDown, floorTiles, ceilingTiles);
+
+			foreach(CTileInterface tileInterface in floorTiles)
+				tileInterface.UpdateAllCurrentTileMetaData();
+
+			foreach(CTileInterface tileInterface in ceilingTiles)
+				tileInterface.UpdateAllCurrentTileMetaData();
+
 			return;
 		}
 	}
@@ -353,17 +378,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 				EventTileSelectionChange();
 
 			return;
-		}
-
-		if(m_CurrentMode == EToolMode.PlaceModulePort)
-		{
-			// Placeholder as fuck
-//			Vector3 modulePosition = m_ModulePortCursors[CModuleInterface.ESize.Small].transform.localPosition;
-//			CModuleInterface.EType moduleType = CUtility.FindInParents<CPrefabricatorBehaviour>(gameObject).PrefabricatorUI.SelectedModuleType;
-//			CFacilityInterface facility = CGameShips.Ship.GetComponent<CShipFacilities>().FindFacilities(
-//				CFacilityInterface.EType.Bridge).FirstOrDefault().GetComponent<CFacilityInterface>();
-//			CModuleInterface.CreateNewModule(moduleType, facility, modulePosition);
-//			return;
 		}
 	}
 
@@ -496,11 +510,28 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			m_GridCursor.renderer.enabled = false;
 		}
 
-		if(m_CurrentMode == EToolMode.Paint_Exterior ||
-		   m_CurrentMode == EToolMode.Paint_Interior_Floors)
+		if(m_CurrentMode == EToolMode.Paint_Exterior)
 		{
 			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector) + m_TilesOffset;
 			centerPos.y += m_Grid.m_TileSize * 0.5f;
+			
+			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
+			m_GridCursor.transform.localPosition = centerPos;
+			return;
+		}
+
+		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
+		{
+			Vector3 tilePos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.transform.rotation * m_TilesOffset * m_GridScale));
+
+			float tileU = tilePos.x - Mathf.Round(tilePos.x);
+			float tileV = tilePos.z - Mathf.Round(tilePos.z);
+
+			tilePos.x = Mathf.Round(tilePos.x) + Mathf.Sign(tileU) * 0.5f;
+			tilePos.z = Mathf.Round(tilePos.z) + Mathf.Sign(tileV) * 0.5f;
+
+			Vector3 centerPos = m_Grid.GetLocalPosition(tilePos) + m_TilesOffset;
+			centerPos.y = 0.0f;
 			
 			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
 			m_GridCursor.transform.localPosition = centerPos;
@@ -622,7 +653,9 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		CTileInterface tileInterface = m_Grid.PlaceTile(_GridPoint);
 
 		// Set the tile types
-		List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.InteriorFloor, CTile.EType.InteriorWall, CTile.EType.InteriorWallCap, CTile.EType.InteriorCeiling }.ToList();
+		List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.Interior_Floor, 
+			CTile.EType.Interior_Wall, CTile.EType.Interior_Wall_Inverse_Corner, CTile.EType.Interior_Ceiling }.ToList();
+
 		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 			tileInterface.SetTileTypeState((CTile.EType)i, tileTypes.Contains((CTile.EType)i));
 
@@ -635,7 +668,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 				CTileInterface neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
 
 				// Set the tile types
-				tileTypes = new CTile.EType[]{ CTile.EType.ExteriorWall, CTile.EType.ExteriorWallCap }.ToList();
+				tileTypes = new CTile.EType[]{ CTile.EType.Exterior_Wall, CTile.EType.Exterior_Wall_Inverse_Corner }.ToList();
 				for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 					neighbourTileInterface.SetTileTypeState((CTile.EType)i, tileTypes.Contains((CTile.EType)i));
 			}
@@ -643,9 +676,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		// Update the tiles type mask
 		tileInterface.UpdateTileTypeMask();
-
-		// Check for interior wall cap exemptions
-		UpdateTileInternalWallCapExemptions(tileInterface);
 
 		// Update tile meta data
 		tileInterface.UpdateAllCurrentTileMetaData();
@@ -656,7 +686,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	{
 		// Only internal tile can be erased
 		CTileInterface tileInterface = m_Grid.GetTile(_GridPoint);
-		if(tileInterface == null || !tileInterface.GetTileTypeState(CTile.EType.InteriorWall))
+		if(tileInterface == null || !tileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
 			return;
 
 		// Get all the tiles within this tiles neighbourhood
@@ -664,15 +694,15 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		foreach(CNeighbour neighbour in tileInterface.m_NeighbourHood)
 		{
 			// Remove any internal wall exemption states
-			if(neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
-				ModifyInteriorWall(false, tileInterface.GetTile(CTile.EType.InteriorWall), neighbour.m_TileInterface.GetTile(CTile.EType.InteriorWall));
+			if(neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
+				ModifyInteriorWall(false, tileInterface.GetTile(CTile.EType.Interior_Wall), neighbour.m_TileInterface.GetTile(CTile.EType.Interior_Wall));
 
 			// Skip non exterior walls
-			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall))
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall))
 				continue;
 
 			// Get all neighbours of this tile which are internal
-			List<CNeighbour> internalNeighbours = neighbour.m_TileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall));
+			List<CNeighbour> internalNeighbours = neighbour.m_TileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
 
 			// If this was the only neighbour, release it
 			if(internalNeighbours.Count == 1)
@@ -680,7 +710,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		}
 
 		// Get all neighbours of this tile which are external
-		List<CNeighbour> externalNeighbours = tileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall));
+		List<CNeighbour> externalNeighbours = tileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall));
 
 		// Remove the tiles that arent needed
 		foreach(CGridPoint tilePos in tileToRemove)
@@ -693,7 +723,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			tileInterface = m_Grid.PlaceTile(_GridPoint);
 			
 			// Set the tile types
-			List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.ExteriorWall, CTile.EType.ExteriorWallCap }.ToList();
+			List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.Exterior_Wall, CTile.EType.Exterior_Wall_Inverse_Corner }.ToList();
 			for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 				tileInterface.SetTileTypeState((CTile.EType)i, tileTypes.Contains((CTile.EType)i));
 
@@ -728,61 +758,46 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		
 		_TileInteriorWall1.SetNeighbourExemptionState(dir1, _State);
 		_TileInteriorWall2.SetNeighbourExemptionState(dir2, _State);
-		
-		EDirection tile1LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir1);
-		EDirection tile1RightDir = CNeighbour.GetRightDirectionNeighbour(dir1);
-		EDirection tile2LeftDir = CNeighbour.GetLeftDirectionNeighbour(dir2);
-		EDirection tile2RightDir = CNeighbour.GetRightDirectionNeighbour(dir2);
-		
-		CNeighbour tile1NeighbourLeft = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1LeftDir);
-		CNeighbour tile1NeighbourRight = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile1RightDir);
-		CNeighbour tile2NeighbourLeft = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2LeftDir);
-		CNeighbour tile2NeighbourRight = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_Direction == tile2RightDir);
-
-		if(tile1NeighbourLeft != null)
-			UpdateTileInternalWallCapExemptions(tile1NeighbourLeft.m_TileInterface);
-
-		if(tile1NeighbourRight != null)
-			UpdateTileInternalWallCapExemptions(tile1NeighbourRight.m_TileInterface);
-
-		if(tile2NeighbourLeft != null)
-			UpdateTileInternalWallCapExemptions(tile2NeighbourLeft.m_TileInterface);
-
-		if(tile2NeighbourRight != null)
-			UpdateTileInternalWallCapExemptions(tile2NeighbourRight.m_TileInterface);
 	}
 
 	[AServerOnly]
-	private void UpdateTileInternalWallCapExemptions(CTileInterface _TileInterface)
+	private void ModifyInteriorFloorAndCeiling(bool _State, List<CTileInterface> _FloorTiles,  List<CTileInterface> _CeilingTiles)
 	{
-		EDirection[] diagonalDirections = new EDirection[]{ EDirection.NorthEast, EDirection.NorthWest, EDirection.SouthEast, EDirection.SouthWest };
-		CTile interiorWallCap = _TileInterface.GetTile(CTile.EType.InteriorWallCap);
-
-		if(interiorWallCap == null)
-			return;
-
-		foreach(EDirection diagonalDir in diagonalDirections)
+		foreach(CTileInterface tileInterface in _FloorTiles)
 		{
-			CNeighbour neighbour = _TileInterface.m_NeighbourHood.Find(n => n.m_Direction == diagonalDir);
+			foreach(CNeighbour neighbour in tileInterface.m_NeighbourHood)
+			{
+				if(!_FloorTiles.Exists(t => t == neighbour.m_TileInterface))
+					continue;
 
-			if(neighbour == null)
-				continue;
+				CTile tileFloor = tileInterface.GetTile(CTile.EType.Interior_Floor);
+				CTile tileOtherFloor = neighbour.m_TileInterface.GetTile(CTile.EType.Interior_Floor);
 
-			CTile neighbourInteriorWall = neighbour.m_TileInterface.GetTile(CTile.EType.InteriorWall);
+				if(tileFloor == null || tileOtherFloor == null)
+					continue;
 
-			if(neighbourInteriorWall == null)
-				continue;
+				tileFloor.SetNeighbourExemptionState(neighbour.m_Direction, _State);
+			}
+		}
 
-			EDirection left = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetOppositeDirection(diagonalDir));
-			EDirection right = CNeighbour.GetRightDirectionNeighbour(CNeighbour.GetOppositeDirection(diagonalDir));
-
-			bool state = neighbourInteriorWall.GetNeighbourExemptionState(left) || 
-				neighbourInteriorWall.GetNeighbourExemptionState(right);
-
-			interiorWallCap.SetNeighbourExemptionState(diagonalDir, state);
+		foreach(CTileInterface tileInterface in _CeilingTiles)
+		{
+			foreach(CNeighbour neighbour in tileInterface.m_NeighbourHood)
+			{
+				if(!_CeilingTiles.Exists(t => t == neighbour.m_TileInterface))
+					continue;
+				
+				CTile tileCeiling = tileInterface.GetTile(CTile.EType.Interior_Ceiling);
+				CTile tileOtherCeiling = neighbour.m_TileInterface.GetTile(CTile.EType.Interior_Ceiling);
+				
+				if(tileCeiling == null || tileOtherCeiling == null)
+					continue;
+				
+				tileCeiling.SetNeighbourExemptionState(neighbour.m_Direction, _State);
+			}
 		}
 	}
-	
+
 	[AServerOnly]
 	private void SelectMultipleTiles()
 	{
@@ -848,7 +863,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		m_FacilityTiles.Clear();
 
 		// Find each of the tiles facility parent
-		List<CTileInterface> interiorTiles = m_Grid.Tiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.InteriorWall));
+		List<CTileInterface> interiorTiles = m_Grid.Tiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.Interior_Wall));
 		foreach(CTileInterface tile in interiorTiles)
 		{
 			// If there are facilities then we need to check if this tile belongs in one of them

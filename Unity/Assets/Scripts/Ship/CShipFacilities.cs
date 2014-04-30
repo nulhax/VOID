@@ -73,7 +73,7 @@ public class CShipFacilities : MonoBehaviour
 		List<CTileInterface> interiorTiles = new List<CTileInterface>();
 		foreach(CTileInterface tile in _FacilityTiles)
 		{
-			if(tile.GetTileTypeState(CTile.EType.InteriorWall))
+			if(tile.GetTileTypeState(CTile.EType.Interior_Wall))
 				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
 		}
 

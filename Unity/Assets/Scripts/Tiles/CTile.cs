@@ -29,12 +29,12 @@ public abstract class CTile : MonoBehaviour
 	{
 		INVALID = -1,
 		
-		InteriorFloor,
-		InteriorWall,
-		InteriorWallCap,
-		InteriorCeiling,
-		ExteriorWall,
-		ExteriorWallCap,
+		Interior_Floor,
+		Interior_Wall,
+		Interior_Wall_Inverse_Corner,
+		Interior_Ceiling,
+		Exterior_Wall,
+		Exterior_Wall_Inverse_Corner,
 		
 		MAX
 	}
@@ -304,12 +304,12 @@ public abstract class CTile : MonoBehaviour
 		
 		switch(_TileType)
 		{
-		case EType.InteriorFloor: 		classType = typeof(CTile_InteriorFloor); break;
-		case EType.ExteriorWall: 		classType = typeof(CTile_ExteriorWall); break;
-		case EType.InteriorWall: 		classType = typeof(CTile_InteriorWall); break;
-		case EType.InteriorCeiling: 	classType = typeof(CTile_InteriorCeiling); break;
-		case EType.ExteriorWallCap: 	classType = typeof(CTile_ExternalWallCap); break;
-		case EType.InteriorWallCap: 	classType = typeof(CTile_InteriorWallCap); break;
+		case EType.Interior_Floor: 		classType = typeof(CTile_InteriorFloor); break;
+		case EType.Exterior_Wall: 		classType = typeof(CTile_ExteriorWall); break;
+		case EType.Interior_Wall: 		classType = typeof(CTile_InteriorWall); break;
+		case EType.Interior_Ceiling: 	classType = typeof(CTile_InteriorCeiling); break;
+		case EType.Exterior_Wall_Inverse_Corner: 	classType = typeof(CTile_ExteriorWallCap); break;
+		case EType.Interior_Wall_Inverse_Corner: 	classType = typeof(CTile_InteriorWallCap); break;
 		}
 		
 		return(classType);

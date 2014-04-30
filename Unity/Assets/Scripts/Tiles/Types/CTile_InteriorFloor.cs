@@ -27,8 +27,6 @@ public class CTile_InteriorFloor : CTile
 	// Member Types
 	public enum EType
 	{
-		INVALID = -1,
-		
 		None,
 		Middle, 
 		Corner, 
@@ -36,8 +34,6 @@ public class CTile_InteriorFloor : CTile
 		End,
 		Hall,
 		Cell,
-		
-		MAX,
 	}
 	
 	public enum EVariant
@@ -54,7 +50,7 @@ public class CTile_InteriorFloor : CTile
 	
 	
 	// Member Fields
-	static protected List<EDirection> s_RelevantDirections = new List<EDirection>();
+	static public List<EDirection> s_RelevantDirections = new List<EDirection>();
 	static protected Dictionary<int, CTile.CMeta> s_MetaDictionary = new Dictionary<int, CTile.CMeta>();
 	
 	
@@ -72,23 +68,23 @@ public class CTile_InteriorFloor : CTile
 		s_RelevantDirections.AddRange(new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 		
 		// Fill meta dictionary
-		AddMetaEntry(EType.Cell,
+		AddMetaEntry(EType.None,
 		             new EDirection[]{ });
 		
 		AddMetaEntry(EType.Middle,
 		             new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 		
 		AddMetaEntry(EType.Hall,
-		             new EDirection[]{ EDirection.North, EDirection.South });
+		             new EDirection[]{ EDirection.East, EDirection.West });
 		
 		AddMetaEntry(EType.Edge,
-		             new EDirection[]{ EDirection.North, EDirection.South, EDirection.West });
+		             new EDirection[]{ EDirection.East });
 		
 		AddMetaEntry(EType.Corner,
-		             new EDirection[]{ EDirection.North, EDirection.West });
+		             new EDirection[]{ EDirection.East, EDirection.South });
 		
 		AddMetaEntry(EType.End,
-		             new EDirection[]{ EDirection.West });
+		             new EDirection[]{ EDirection.East, EDirection.North, EDirection.South });
 	}
 	
 	private static void AddMetaEntry(EType _Type, EDirection[] _MaskNeighbours)
@@ -99,21 +95,21 @@ public class CTile_InteriorFloor : CTile
 	
 	private void Awake()
 	{
-		m_TileType = CTile.EType.InteriorFloor;
+		m_TileType = CTile.EType.Interior_Floor;
 	}
 
 	protected override int DetirmineTileMask()
 	{
 		int tileMask = 0;
-		
+	
 		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
 		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
 		{
 			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
 				continue;
 			
-			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorFloor) &&
-			   !neighbour.m_TileInterface.GetTileTypeState(CTile.EType.ExteriorWall))
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Floor) &&
+			   !neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall))
 				continue;
 			
 			if(GetNeighbourExemptionState(neighbour.m_Direction))

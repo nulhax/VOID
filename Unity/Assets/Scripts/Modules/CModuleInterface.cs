@@ -205,17 +205,6 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
-	[AServerOnly]
-	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
-	{
-		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
-		moduleObject.transform.parent = _FacilityParent.transform;
-		moduleObject.transform.localPosition = _LocalPostion;
-
-		return(moduleObject);
-	}
-
-
     [AServerOnly]
     public void SetFuntionalRatio(float _fRatio)
     {
