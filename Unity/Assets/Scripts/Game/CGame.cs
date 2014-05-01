@@ -266,12 +266,6 @@ public class CGame : CNetworkMonoBehaviour
 
 	void DebugProcessInputs()
 	{
-		// Lock Cursor toggle
-		if(Input.GetKeyDown(KeyCode.F1))
-		{
-			Screen.lockCursor = !Screen.lockCursor;
-		}
-
 		// Quick quit game
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
@@ -303,11 +297,6 @@ public class CGame : CNetworkMonoBehaviour
 		{
 			CUserInput.UnsubscribeAll();
 		}
-	}
-
-
-	void OnApplicationFocus(bool _bFocused)
-	{
 	}
 
 

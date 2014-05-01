@@ -157,7 +157,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 			AttachEmitterToChildren(child.gameObject);
 
 		MeshFilter mf = go.GetComponent<MeshFilter>();
-		if (mf == null)
+		if (mf == null ||
+            mf.sharedMesh == null)
 			return;
 
 		float emissionRate = emissionsPerUnitOfSurfaceArea * CUtility.GetMeshSurfaceArea(mf.sharedMesh, go.transform.lossyScale);

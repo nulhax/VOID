@@ -42,6 +42,7 @@ public class CPreplacedModule : MonoBehaviour
     public GameObject CreateModule(GameObject _FacilityParent)
     {
 		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(m_PreplacedModuleType));
+
         moduleObject.GetComponent<CNetworkView>().SetPosition(transform.position);
         moduleObject.GetComponent<CNetworkView>().SetRotation(transform.rotation);
 		moduleObject.GetComponent<CNetworkView>().SetParent(_FacilityParent.GetComponent<CNetworkView>().ViewId);

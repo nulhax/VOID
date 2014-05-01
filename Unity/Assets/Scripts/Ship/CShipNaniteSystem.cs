@@ -130,7 +130,8 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 	public void OnGUI()
 	{
-        if (CNetwork.IsConnectedToServer)
+        if (CCursorControl.IsCursorLocked && 
+            CNetwork.IsConnectedToServer)
         {
             float boxWidth = 150;
             float boxHeight = 40;

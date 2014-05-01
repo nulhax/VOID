@@ -87,8 +87,11 @@ public class CUserInput : CNetworkMonoBehaviour
         Tool_EquipToolSlot4,      // 4
 		Tool_Reload,              // R
         Tool_Drop,                // G
+
+        ModuleMenu_ToggleDisplay, // B
                                 
         ReturnKey,                // Enter
+        Escape,                   // P... (LOL) Nah Esc bra
 
         MAX
 	}
@@ -505,12 +508,6 @@ public class CUserInput : CNetworkMonoBehaviour
     {
         m_mPlayerStates.Clear();
     }
-
-
-	void OnApplicationFocus(bool _Focus)
-	{
-		m_InFocus = _Focus;
-	}
 
 
 // Member Fields

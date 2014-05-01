@@ -307,7 +307,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializeOutbound               , CPlayerMotor.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializeOutbound                , CPlayerHead.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions  , CBridgeCockpit.UnserializeCockpitInteractions);
-		CNetworkConnection.RegisterSerializationTarget(CCockpit.SerializeOutbound                   , CCockpit.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CCockpitBehaviour.SerializeOutbound                   , CCockpitBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget	    , CPlayerIKController.UnserializeIKTarget);
 		CNetworkConnection.RegisterSerializationTarget(CGamePlayers.SerializeData                   , CGamePlayers.UnserializeData);
         CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
@@ -471,7 +471,10 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Reload, KeyCode.R);
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
+        CUserInput.SetKeyBinding(CUserInput.EInput.ModuleMenu_ToggleDisplay, KeyCode.B);
+
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);
     }
 
 

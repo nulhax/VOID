@@ -358,7 +358,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnEventPreDestroy()
+    void OnEventPreDestroy(GameObject _cSender)
     {
         // Drop all tools
         if (CNetwork.IsServer)
@@ -582,7 +582,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
+        if (CCursorControl.IsCursorLocked && 
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             string sToolText = "";
 

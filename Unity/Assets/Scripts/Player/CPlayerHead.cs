@@ -247,12 +247,15 @@ public class CPlayerHead : CNetworkMonoBehaviour
     {
         if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
-            switch (gameObject.GetComponent<CPlayerMotor>().State)
+            if (CCursorControl.IsCursorLocked)
             {
-                case CPlayerMotor.EState.AligningBodyToShipInternal:
-                case CPlayerMotor.EState.WalkingWithinShip:
-                    UpdateFeelookRotation();
-                    break;
+                switch (gameObject.GetComponent<CPlayerMotor>().State)
+                {
+                    case CPlayerMotor.EState.AligningBodyToShipInternal:
+                    case CPlayerMotor.EState.WalkingWithinShip:
+                        UpdateFeelookRotation();
+                        break;
+                }
             }
         }
         else

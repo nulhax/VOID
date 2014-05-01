@@ -296,7 +296,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-			    List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			    List<GameObject> aPlayerSpawners = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByType(CModuleInterface.EType.PlayerSpawner);
 
                 if (aPlayerSpawners == null ||
                     aPlayerSpawners.Count == 0)
@@ -342,7 +342,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         if (_eHealthCurrentState == CPlayerHealth.HealthState.DEAD)
         {
             // Save a list of currently constructed spawners
-            List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+            List<GameObject> aPlayerSpawners = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByType(CModuleInterface.EType.PlayerSpawner);
 
             // Iterate through every spawner
             foreach (GameObject cPlayerSpawner in aPlayerSpawners)

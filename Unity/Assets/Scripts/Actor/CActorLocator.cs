@@ -150,7 +150,8 @@ public class CActorLocator : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (CCursorControl.IsCursorLocked &&
+            gameObject == CGamePlayers.SelfActor)
         {
             string sFacilityText = "";
             GameObject cCurrentFacilityObject = GetComponent<CActorLocator>().CurrentFacility;

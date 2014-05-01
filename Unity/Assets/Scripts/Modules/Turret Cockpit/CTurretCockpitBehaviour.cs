@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CCockpit))]
+[RequireComponent(typeof(CCockpitBehaviour))]
 public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 {
 
@@ -107,7 +107,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	void Start()
 	{
         m_cModuleInterface = GetComponent<CModuleInterface>();
-        m_cCockpit = GetComponent<CCockpit>();
+        m_cCockpit = GetComponent<CCockpitBehaviour>();
 
         // Subscribe to cockpit events - Does not need to Unsubscribe
         m_cCockpit.EventMounted    += OnEventCockpitMounted;
@@ -179,7 +179,8 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
         if (CNetwork.IsServer)
         {
-            List<GameObject> acTurrets = CModuleInterface.FindModulesByCategory(CModuleInterface.ECategory.Turrets);
+            /*
+            List<GameObject> acTurrets = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByCategory(CModuleInterface.ECategory.Turrets);
 
             if (acTurrets != null &&
                 acTurrets.Count > 0)
@@ -193,6 +194,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
                     }
                 }
             }
+             * */
         }
 	}
 
@@ -256,7 +258,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
     CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
 
     CModuleInterface m_cModuleInterface = null;
-    CCockpit m_cCockpit = null;
+    CCockpitBehaviour m_cCockpit = null;
 
 
     static CTurretCockpitBehaviour s_cLocalOwnedTurretCockpitBehaviour = null;

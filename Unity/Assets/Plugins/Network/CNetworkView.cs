@@ -137,7 +137,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-	public delegate void NotiftyPreDestory();
+	public delegate void NotiftyPreDestory(GameObject _cSender);
 	public event NotiftyPreDestory EventPreDestory;
 
 
@@ -145,6 +145,12 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		get { return (m_mChildrenNetworkViews); }
 	}
+
+
+    public bool Ready
+    {
+        get { return (m_bReady); }
+    }
 
 
 // Member Functions
@@ -226,7 +232,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	{
 		if (EventPreDestory != null)
 		{
-			EventPreDestory();
+			EventPreDestory(gameObject);
 		}
 
         foreach (INetworkVar cVar in m_mNetworkVars.Values)
@@ -841,6 +847,8 @@ public class CNetworkView : CNetworkMonoBehaviour
         {
             cNetworkMonoBehaviour.InstanceNetworkVars(cRegistrar);
         }
+
+        m_bReady = true;
     }
 
 
@@ -954,6 +962,9 @@ public class CNetworkView : CNetworkMonoBehaviour
     Dictionary<byte, INetworkVar> m_mNetworkVars = new Dictionary<byte, INetworkVar>();
     Dictionary<byte, TRpcMethod> m_mNetworkRpcs = new Dictionary<byte, TRpcMethod>();
 	Dictionary<byte, CNetworkView> m_mChildrenNetworkViews = new Dictionary<byte, CNetworkView>();
+
+
+    bool m_bReady = false;
 
 
 	static Dictionary<ushort, CNetworkView> s_cNetworkViews = new Dictionary<ushort, CNetworkView>();

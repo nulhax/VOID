@@ -53,7 +53,7 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 		{
 			GenerateMinerals();
 
-			GetComponent<CNetworkView>().EventPreDestory += () =>
+			GetComponent<CNetworkView>().EventPreDestory += (GameObject _cSender) =>
 			{
 				foreach (GameObject cMineralObject in m_aDeposits)
 				{

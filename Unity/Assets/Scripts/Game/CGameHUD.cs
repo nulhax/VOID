@@ -58,6 +58,9 @@ public class CGameHUD : MonoBehaviour
 	public void Awake()
 	{	
 		s_Instance = this;
+
+        CNetwork.Connection.EventConnectionAccepted += OnEventConnectionConnect;
+        CNetwork.Connection.EventDisconnect += OnEventConnectionDisconnect;
 	}
 
 	public static void SetHUDState(bool _State)
@@ -90,4 +93,22 @@ public class CGameHUD : MonoBehaviour
 			s_Instance.m_Visor.transform.localPosition = Vector3.forward * -0.05f;
 		}
 	}
+
+
+    void OnEventConnectionConnect()
+    {
+
+    }
+
+
+    void OnEventConnectionDisconnect()
+    {
+        if (m_HUD3D != null)
+        {
+            Destroy(s_Instance.m_HUD3D);
+            m_Visor = null;
+        }
+    }
+
+
 };

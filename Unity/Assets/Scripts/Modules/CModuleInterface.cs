@@ -233,45 +233,6 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
-	public static List<GameObject> GetAllModules()
-	{
-		return (s_mModules);
-	}
-
-
-	public static List<GameObject> FindModulesByType(EType _eModuleType)
-	{
-		if (!s_mModulesByType.ContainsKey(_eModuleType))
-		{
-			return (new List<GameObject>());
-		}
-
-		return (s_mModulesByType[_eModuleType]);
-	}
-
-
-	public static List<GameObject> FindModulesByCategory(ECategory _eModuleCategory)
-	{
-		if (!s_mModulesByCategory.ContainsKey(_eModuleCategory))
-		{
-			return (new List<GameObject>());
-		}
-		
-		return (s_mModulesByCategory[_eModuleCategory]);
-	}
-
-
-	public static List<GameObject> FindModulesBySize(ESize _eModuleSize)
-	{
-		if (!s_mModulesBySize.ContainsKey(_eModuleSize))
-		{
-			return (new List<GameObject>());
-		}
-		
-		return (s_mModulesBySize[_eModuleSize]);
-	}
-
-
     public static void RegisterPrefab(EType _eModuleType, CGameRegistrator.ENetworkPrefab _ePrefab)
     {
         s_mRegisteredPrefabs.Add(_eModuleType, _ePrefab);
@@ -293,32 +254,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		// Add self to the list of modules
-		s_mModules.Add(gameObject);
-
-		// Add self to the global list of module types
-		if (!s_mModulesByType.ContainsKey(m_eModuleType))
-		{
-			s_mModulesByType.Add(m_eModuleType, new List<GameObject>());
-		}
-	
-		s_mModulesByType[m_eModuleType].Add(gameObject);
-
-		// Add self to the global list of module categories
-		if (!s_mModulesByCategory.ContainsKey(m_eModuleCategory))
-		{
-			s_mModulesByCategory.Add(m_eModuleCategory, new List<GameObject>());
-		}
-		
-		s_mModulesByCategory[m_eModuleCategory].Add(gameObject);
-
-		// Add self to the global list of module sizes
-		if (!s_mModulesBySize.ContainsKey(m_eModuleSize))
-		{
-			s_mModulesBySize.Add(m_eModuleSize, new List<GameObject>());
-		}
-		
-		s_mModulesBySize[m_eModuleSize].Add(gameObject);
+        CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
 	}
 
 
@@ -370,11 +306,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-		// Remove self from global list of modules
-		s_mModules.Remove(gameObject);
-		s_mModulesByType[ModuleType].Remove(gameObject);
-		s_mModulesByCategory[ModuleCategory].Remove(gameObject);
-		s_mModulesBySize[ModuleSize].Remove(gameObject);
+        // Empty
 	}
 
 
@@ -528,11 +460,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     List<GameObject> m_aAttachedComponents = new List<GameObject>();
 
 
-	static List<GameObject> s_mModules                                                  = new List<GameObject>();
-	static Dictionary<EType,     List<GameObject>> s_mModulesByType                     = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory                 = new Dictionary<ECategory, List<GameObject>>();
-	static Dictionary<ESize,     List<GameObject>> s_mModulesBySize                     = new Dictionary<ESize, List<GameObject>>();
-    static Dictionary<EType,     CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs  = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+    static Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab>();
 
 
 // Server Member Fields
