@@ -176,7 +176,7 @@ public class CTorchLight : CNetworkMonoBehaviour
             }
             else
             {
-                light.intensity = 2;
+                light.intensity = 1.2f;
             }
 
         }
@@ -188,13 +188,13 @@ public class CTorchLight : CNetworkMonoBehaviour
                     light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 1:
-                    light.color = new Color(1.0f, 0, 0);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 2:
-                    light.color = new Color(0, 1.0f, 0);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 3:
-                    light.color = new Color(0, 0, 1.0f);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
             }
         }
