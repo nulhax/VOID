@@ -150,6 +150,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Awake()
 	{
+		CCannon[] cannons = GetComponentsInChildren<CCannon>();
+		foreach (CCannon cannon in cannons) cannon.parent = rigidbody;
+
 		gameObject.AddMissingComponent<CNetworkView>();
 
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
@@ -179,6 +182,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 		if (mTarget != null)	// All targets expire after some time.
 		{
+			CCannon[] cannons = GetComponentsInChildren<CCannon>();
+			foreach (CCannon cannon in cannons) cannon.Fire(mTarget.worldCenterOfMass);
+
 			mTargetExpireTime -= Time.deltaTime;
 			if (mTargetExpireTime <= 0.0f)	// If the target expire time is met...
 			{
@@ -504,8 +510,10 @@ public class CEnemyShip : CNetworkMonoBehaviour
 								while (mTimeoutSecondary <= 0.0f)
 								{
 									mTimeoutSecondary += (mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity);
-									// Todo: Shoot prey. Bang bang.
 									GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
+
+									CCannon[] cannons = GetComponentsInChildren<CCannon>();
+									foreach(CCannon cannon in cannons) cannon.Fire(mTarget.worldCenterOfMass);
 								}
 							}
 

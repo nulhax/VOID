@@ -26,8 +26,14 @@ public class CToolOrientation : MonoBehaviour
 	// Member Properties
 	public Vector3 Position
 	{
-		get{ return(new Vector3(m_fLocalOffsetX,m_fLocalOffsetY,m_fLocalOffsetZ));}
+		get{ return(new Vector3(m_fEquipOffsetX,m_fEquipOffsetY,m_fEquipOffsetZ));}
 	}
+
+    public Vector3 ModifiedPosition
+    {
+        set { m_vModifiedOffset = value;}
+        get { return(m_vModifiedOffset);}
+    }
 
 	public float VerticalDeviation
 	{
@@ -40,9 +46,16 @@ public class CToolOrientation : MonoBehaviour
 	}
 
 	// Member Fields
-	public float m_fLocalOffsetX;
-	public float m_fLocalOffsetY;
-	public float m_fLocalOffsetZ;
+
+    //These fields dictate where the tool will be held relative to the player
+	public float m_fEquipOffsetX;
+	public float m_fEquipOffsetY;
+	public float m_fEquipOffsetZ;
+
+    //This vector will store the location where external scripts have placed the tool
+    Vector3 m_vModifiedOffset;
+
+    //These fields dictate how far the tool can roam, depending on where the player is aiming
 	public float m_fVerticalDeviation;
 	public float m_fLateralDeviation;
 }

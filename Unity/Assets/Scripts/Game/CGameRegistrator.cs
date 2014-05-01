@@ -49,7 +49,7 @@ public class CGameRegistrator : MonoBehaviour
 		Ship					= 200,
 		GalaxyShip,
 		EnemyShip_FIRST,
-		EnemyShip_LAST			= EnemyShip_FIRST + 14,
+		EnemyShip_LAST			= EnemyShip_FIRST + 13,
 		
 		// Facilities
 		Facility				= 300,

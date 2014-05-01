@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.0275251865, y: .205668092, z: 1.16943955}
+  m_LocalPosition: {x: -.0603517629, y: .205668092, z: 1.35311258}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -107,7 +107,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -.0328265727, y: 0, z: .183672711}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -118,7 +118,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.0135401655, y: .106791675, z: .144841164}
+  m_LocalPosition: {x: -.0463667437, y: .106791675, z: .328513652}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -129,7 +129,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_LocalRotation: {x: -9.75281989e-09, y: 3.95677324e-10, z: -.689648032, w: .724144757}
-  m_LocalPosition: {x: 1.81726534e-07, y: -.013114362, z: -.182039961}
+  m_LocalPosition: {x: -.0328263938, y: -.013114362, z: .00163268298}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -201,8 +201,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: .100000001, y: .600000024, z: 2.20000005}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: .100000001, y: .270000011, z: .800000012}
+  m_Center: {x: 0, y: 0, z: .189999998}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -292,8 +292,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_bCanBoard: 1
-  m_bCanDisembark: 1
+  m_CanBoard: 1
+  m_CanDisembark: 1
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -340,9 +340,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fLocalOffsetX: .25
-  m_fLocalOffsetY: 1.35000002
-  m_fLocalOffsetZ: .230000004
+  m_fEquipOffsetX: .25
+  m_fEquipOffsetY: 1.39999998
+  m_fEquipOffsetZ: .310000002
   m_fVerticalDeviation: .300000012
   m_fLateralDeviation: .200000003
 --- !u!1001 &100100000
