@@ -35,17 +35,6 @@ public class CTile_InteriorWallCap : CTile
 		Cap_4,
 	}
 	
-	public enum EVariant
-	{
-		INVALID = -1,
-		
-		Wall,
-		Door,
-		Window,
-		
-		MAX
-	}
-	
 	
 	// Member Delegates & Events
 	
@@ -176,8 +165,11 @@ public class CTile_InteriorWallCap : CTile
 			leftDir = CNeighbour.GetLeftDirectionNeighbour(_Neighbour.m_Direction);
 			rightDir = CNeighbour.GetRightDirectionNeighbour(_Neighbour.m_Direction);
 
-			leftExemption = interiorWall.GetNeighbourExemptionState(leftDir);
-			rightExemption = interiorWall.GetNeighbourExemptionState(rightDir);
+			leftExemption = interiorWall.GetNeighbourExemptionState(leftDir) || interiorWall.m_TileInterface.m_NeighbourHood.Exists(
+				n => n.m_Direction == leftDir && n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall));
+
+			rightExemption = interiorWall.GetNeighbourExemptionState(rightDir) || interiorWall.m_TileInterface.m_NeighbourHood.Exists(
+				n => n.m_Direction == rightDir && n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall));
 
 			if(leftExemption || rightExemption)
 				returnState = false;
