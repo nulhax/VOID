@@ -374,6 +374,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 		
 		// Placeholder Test stuff
+		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolMiningDrill);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
 		//CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Fire);
@@ -389,11 +390,11 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//Place module gun
 		//GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
-		//tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
-		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -9.0f, -13.0f));
+        GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 		//Place Ratchet
-		//GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
-		//ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -11.0f, -13.0f));
+		GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
+		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);

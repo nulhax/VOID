@@ -349,13 +349,12 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot1, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot2, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot3, OnEventInput);
-            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);
-
-            m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
-			//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
-
-            m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);           
         }
+
+		m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
+		//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;		
+		m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
 
         // Signup to pre destroy
         gameObject.GetComponent<CNetworkView>().EventPreDestory += OnEventPreDestroy;

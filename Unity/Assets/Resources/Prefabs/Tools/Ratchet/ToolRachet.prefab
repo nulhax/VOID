@@ -121,7 +121,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400014}
-  - 95: {fileID: 9500000}
   - 65: {fileID: 6500000}
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400012}
@@ -374,20 +373,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: .150000006, y: .469999999, z: 1}
   m_Center: {x: 0, y: .119999997, z: 0}
---- !u!95 &9500000
-Animator:
-  serializedVersion: 2
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100014}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 143976cdc48b3924c9fee58e5bdbdd1a, type: 3}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_ApplyRootMotion: 1
-  m_AnimatePhysics: 0
-  m_HasTransformHierarchy: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -496,9 +481,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fEquipOffsetX: .300000012
-  m_fEquipOffsetY: 1.38
-  m_fEquipOffsetZ: .25
+  m_fFirstPersonEquipOffsetX: .200000003
+  m_fFirstPersonEquipOffsetY: 1.35000002
+  m_fFirstPersonEquipOffsetZ: .200000003
+  m_fThirdPersonEquipOffsetX: .200000003
+  m_fThirdPersonEquipOffsetY: 1.35000002
+  m_fThirdPersonEquipOffsetZ: .200000003
   m_fVerticalDeviation: .5
   m_fLateralDeviation: .5
 --- !u!1001 &100100000
