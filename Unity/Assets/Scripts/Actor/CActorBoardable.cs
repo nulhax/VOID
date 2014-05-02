@@ -133,13 +133,10 @@ public class CActorBoardable : CNetworkMonoBehaviour
 	void SetGalaxyLayer()
 	{
 		// Resursively set the galaxy layer on the actor
-		CUtility.SetLayerRecursively(gameObject, LayerMask.NameToLayer("Galaxy"));
+		CUtility.SetLayerRecursively(gameObject, CGalaxy.layerEnum_Gubbin);
 
 		// Add the galaxy shiftable component
-        if (gameObject.GetComponent<GalaxyShiftable>() == null)
-        {
-            gameObject.AddComponent<GalaxyShiftable>();
-        }
+		gameObject.AddMissingComponent<GalaxyShiftable>();
 	}
 	
 

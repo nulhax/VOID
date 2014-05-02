@@ -172,7 +172,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             Ray cRay = new Ray(vGalaxyBarrelPosition, vGalaxyBarrelRotation);
 			
 			// Raycast against object
-			if (Physics.Raycast(cRay, out cRaycast, 300.0f, 1 << LayerMask.NameToLayer("Galaxy")))
+			if (Physics.Raycast(cRay, out cRaycast, 300.0f, CGalaxy.layerBit_Gubbin))
 			{
 				GameObject cHitObject = cRaycast.collider.gameObject;
                 CAsteroidChunkBehaviour cAsteroidChunkBehaviour = cHitObject.GetComponent<CAsteroidChunkBehaviour>();
@@ -259,7 +259,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             Ray cRay = new Ray(vGalaxyBarrelPosition, vGalaxyBarrelRotation);
 
             // Raycast against object
-            if (Physics.Raycast(cRay, out cRaycastHit, 300.0f, 1 << LayerMask.NameToLayer("Galaxy")))
+            if (Physics.Raycast(cRay, out cRaycastHit, 300.0f, CGalaxy.layerBit_Gubbin))
             {
                 Vector3 cDirection = cRaycastHit.point - vGalaxyBarrelPosition;
                 m_cExtractorBeamObject.transform.rotation = Quaternion.LookRotation(cDirection.normalized);
