@@ -35,17 +35,6 @@ public class CTile_ExteriorWallCap : CTile
 		Cap_4,
 	}
 	
-	public enum EVariant
-	{
-		INVALID = -1,
-		
-		Wall,
-		Door,
-		Window,
-		
-		MAX
-	}
-	
 	
 	// Member Delegates & Events
 	

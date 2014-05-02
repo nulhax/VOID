@@ -35,18 +35,7 @@ public class CTile_InteriorCeiling : CTile
 		Hall,
 		Cell,
 	}
-	
-	public enum EVariant
-	{
-		INVALID = -1,
-		
-		Wall,
-		Door,
-		Window,
-		
-		MAX
-	}
-	
+
 	
 	// Member Delegates & Events
 	

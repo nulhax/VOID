@@ -12,6 +12,7 @@
 
 
 // Namespaces
+using System.Reflection;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -65,22 +66,58 @@ public class CTileFactory : MonoBehaviour
 		{
 			Type tileClassType = CTile.GetTileClassType(tileType);
 			Type tileMetaTypes = tileClassType.GetNestedType("EType");
+			Type tileVariants = tileClassType.GetNestedType("EVariant");
 
-			// Fill floor tiles
-			foreach(var value in Enum.GetValues(tileMetaTypes))
+			// Fill tiles based on type
+			foreach(var type in Enum.GetValues(tileMetaTypes))
 			{
-				if((int)value == 0)
+				if((int)type == 0)
 					continue;
 
-				Transform tile = m_TilesPrefab.transform.FindChild(tileType + "_" + value);
+				Transform tile = m_TilesPrefab.transform.FindChild(tileType + "_" + type);
 				if(tile == null)
 				{
-					Debug.LogError("Tile was not found! Type: " + tileType + " MetaType: " + value);
+					Debug.LogError("Tile was not found! Type: " + tileType + " MetaType: " + type);
 					continue;
 				}
 
-				TTileIdentifier identifier = new TTileIdentifier(tileType, (int)value, 0);
+				TTileIdentifier identifier = new TTileIdentifier(tileType, (int)type, 0);
 				m_TilePrefabPairs[identifier] = tile.gameObject;
+
+				if(tileVariants == null)
+					continue;
+
+				// Find all other variants
+				var relevantDirectionsFeild = tileClassType.GetField("s_RelevantDirections", BindingFlags.Static | BindingFlags.Public | BindingFlags.GetField);
+
+				if(relevantDirectionsFeild == null)
+					continue;
+
+				List<EDirection> relevantDirections = (List<EDirection>)relevantDirectionsFeild.GetValue(null);
+				var directionCombinations = CUtility.GetPowerSet(relevantDirections);
+				foreach(var variant in Enum.GetValues(tileVariants))
+				{
+					foreach(var directionSet in directionCombinations)
+					{
+						string childName = tileType + "_" + type + "_" + variant;
+						foreach(EDirection dir in directionSet)
+							childName += "_" + dir;
+
+						tile = m_TilesPrefab.transform.FindChild(childName);
+
+						if(tile == null || directionSet.Count<EDirection>() == 0)
+							continue;
+
+						int variantMask = 0;
+						foreach(EDirection dir in directionSet)
+							variantMask |= 1 << (int)dir + ((int)variant * (int)EDirection.MAX);
+
+						Debug.Log("Created Tile: " + childName + " with variant mask: " + variantMask);
+
+						identifier = new TTileIdentifier(tileType, (int)type, variantMask);
+						m_TilePrefabPairs[identifier] = tile.gameObject;
+					}
+				}
 			}
 		}
 	}
@@ -89,7 +126,7 @@ public class CTileFactory : MonoBehaviour
 	{
 		TTileIdentifier identifier = new TTileIdentifier(_TileType, _TileMetaType, _TileVariant);
 
-		// Create new list for variant if it doesnt exist yet
+		// Create new list tiles if none exisit yet
 		if(!m_TileInstances.ContainsKey(identifier))
 			m_TileInstances[identifier] = new List<GameObject>();
 
@@ -100,13 +137,18 @@ public class CTileFactory : MonoBehaviour
 
 		// If not found create a new instance
 		if(tileObject == null)
-		{
 			tileObject = CreateTileInstance(identifier);
-		}
-		
-		tileObject.SetActive(true);
+		else
+			tileObject.SetActive(true);
 		
 		return(tileObject);
+	}
+
+	public bool DoesTileExist(CTile.EType _TileType, int _TileMetaType, int _TileVariant)
+	{
+		TTileIdentifier identifier = new TTileIdentifier(_TileType, _TileMetaType, _TileVariant);
+
+		return(m_TilePrefabPairs.ContainsKey(identifier));
 	}
 	
 	public void ReleaseTileObject(GameObject _TileToRelease)
@@ -128,7 +170,6 @@ public class CTileFactory : MonoBehaviour
 
 		GameObject newObject = (GameObject)GameObject.Instantiate(m_TilePrefabPairs[_TileIdentifier]);
 		newObject.transform.parent = transform;
-		newObject.gameObject.SetActive(false);
 		
 		// Add it to list for later use
 		m_TileInstances[_TileIdentifier].Add(newObject);

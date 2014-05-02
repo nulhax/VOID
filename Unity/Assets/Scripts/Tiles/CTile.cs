@@ -241,13 +241,23 @@ public abstract class CTile : MonoBehaviour
 		m_ActiveTileMeta = new CTile.CMeta(m_CurrentTileMeta);
 	}
 
+	public EDirection GetUnrotatedDirection(EDirection _RotatedDirection)
+	{
+		for(int i = m_CurrentTileMeta.m_Rotations; i > 0; --i)
+		{
+			_RotatedDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_RotatedDirection));
+		}
+		
+		return(_RotatedDirection);
+	}
+
 	[AServerOnly]
-	public void SetTileTypeVariant(int _TileVariant)
+	public void SetTileVariant(int _TileVariant, EDirection _Side)
 	{
 		m_CurrentTileMeta.m_Variant = _TileVariant;
 	}
 	
-	public int GetTileTypeVariant()
+	public int GetTileVariant()
 	{
 		return(m_CurrentTileMeta.m_Variant);
 	}

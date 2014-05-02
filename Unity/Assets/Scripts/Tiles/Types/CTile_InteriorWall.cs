@@ -37,13 +37,8 @@ public class CTile_InteriorWall : CTile
 
 	public enum EVariant
 	{
-		INVALID = -1,
-		
-		Wall,
 		Door,
 		Window,
-		
-		MAX
 	}
 
 

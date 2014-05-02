@@ -42,7 +42,7 @@ public class CDUIButtonSelectModule : MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Inform the stage to change model
-			m_ModuleCreationRoot.SetSelectedModuleType(m_ModuleType);
+			//m_ModuleCreationRoot.SetSelectedModuleType(m_ModuleType);
 		}
 	}
 }

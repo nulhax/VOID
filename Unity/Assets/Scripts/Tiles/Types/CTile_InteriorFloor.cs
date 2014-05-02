@@ -36,15 +36,6 @@ public class CTile_InteriorFloor : CTile
 		Cell,
 	}
 	
-	public enum EVariant
-	{
-		INVALID = -1,
-		
-		Floor,
-		
-		MAX
-	}
-	
 	
 	// Member Delegates & Events
 	
