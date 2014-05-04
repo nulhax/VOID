@@ -1099,6 +1099,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100138
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400138}
+  m_Layer: 0
+  m_Name: Palm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -1419,6 +1434,7 @@ Transform:
   m_LocalPosition: {x: -.17792207, y: -2.12191375e-16, z: 5.10702568e-17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 400138}
   - {fileID: 400028}
   - {fileID: 400032}
   m_Father: {fileID: 400062}
@@ -1926,6 +1942,17 @@ Transform:
   m_LocalScale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
   m_Children: []
   m_Father: {fileID: 400000}
+--- !u!4 &400138
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100138}
+  m_LocalRotation: {x: .245304227, y: -.441700399, z: .0814277157, w: .859125257}
+  m_LocalPosition: {x: -.0453407168, y: -.0747582763, z: .0246324036}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 400050}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -2325,7 +2352,7 @@ MonoBehaviour:
   m_ragdollHead: {fileID: 100030}
   m_playerHead: {fileID: 100086}
   m_playerNeck: {fileID: 100036}
-  m_playerRightHand: {fileID: 100014}
+  m_playerRightHand: {fileID: 100138}
   m_headlessAvatar: {fileID: 9000000, guid: bbc63a354b778224094d3f0205d03c3c, type: 3}
 --- !u!135 &13500000
 SphereCollider:
@@ -3061,7 +3088,7 @@ SkinnedMeshRenderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 61fc819a0d193c14d87b59059b22dfd9, type: 2}
+  - {fileID: 2100000, guid: 2bea51e269d67814ebcab99b7f1b46cc, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -3095,7 +3122,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.00782692805, y: .51865077, z: .0452583581}
+  m_ConnectedAnchor: {x: 3.10340269e-08, y: .53225565, z: .00352502428}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -40

@@ -171,8 +171,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_bCanBoard: 1
-  m_bCanDisembark: 1
+  m_CanBoard: 1
+  m_CanDisembark: 1
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -324,6 +324,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d6110cba975b243a0d9d7f9f1adc84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bRealignBodyWithHead: 0
 --- !u!114 &11400036
 MonoBehaviour:
   m_ObjectHideFlags: 1
