@@ -42,6 +42,46 @@ public abstract class CTile : MonoBehaviour
 	}
 
 	[System.Serializable]
+	public class CModification
+	{
+		public CModification(int _Modification, EDirection _Side)
+		{
+			m_Modification = _Modification;
+			m_Side = _Side;
+		}
+
+		public int m_Modification;
+		public EDirection m_Side;
+		
+		public override bool Equals(System.Object obj)
+		{
+			// If parameter is null return false.
+			if (obj == null)
+				return false;
+			
+			// If parameter cannot be cast to Point return false.
+			CModification p = (CModification)obj;
+			if ((System.Object)p == null)
+				return false;
+			
+			// Return true if the fields match:
+			return ((m_Modification == p.m_Modification) &&
+			        (m_Side == p.m_Side));
+		}
+		
+		public bool Equals(CModification p)
+		{
+			// If parameter is null return false:
+			if ((object)p == null)
+				return false;
+			
+			// Return true if the fields match:
+			return ((m_Modification == p.m_Modification) &&
+			        (m_Side == p.m_Side));
+		}
+	}
+
+	[System.Serializable]
 	public class CMeta
 	{
 		public static CMeta Default
@@ -54,7 +94,7 @@ public abstract class CTile : MonoBehaviour
 			m_TileMask = _TileMask;
 			m_MetaType = _MetaType;
 			m_Rotations = 0;
-			m_Variant = 0;
+			m_ModificationMask = 0;
 		}
 
 		public CMeta(CMeta _Other)
@@ -62,13 +102,13 @@ public abstract class CTile : MonoBehaviour
 			m_TileMask = _Other.m_TileMask;
 			m_MetaType = _Other.m_MetaType;
 			m_Rotations = _Other.m_Rotations;
-			m_Variant = _Other.m_Variant;
+			m_ModificationMask = _Other.m_ModificationMask;
 		}
 
 		public int m_TileMask;
 		public int m_MetaType;
 		public int m_Rotations;
-		public int m_Variant;
+		public int m_ModificationMask;
 
 		public override bool Equals(System.Object obj)
 		{
@@ -85,7 +125,7 @@ public abstract class CTile : MonoBehaviour
 			return ((m_TileMask == p.m_TileMask) &&
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
-			        (m_Variant == p.m_Variant));
+			        (m_ModificationMask == p.m_ModificationMask));
 		}
 
 		public bool Equals(CMeta p)
@@ -98,7 +138,7 @@ public abstract class CTile : MonoBehaviour
 			return ((m_TileMask == p.m_TileMask) && 
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
-			        (m_Variant == p.m_Variant));
+			        (m_ModificationMask == p.m_ModificationMask));
 		}
 	}
 
@@ -118,6 +158,7 @@ public abstract class CTile : MonoBehaviour
 	public GameObject m_TileObject = null;
 
 	public List<EDirection> m_NeighbourExemptions = new List<EDirection>();
+	public List<CModification> m_Modifications = new List<CModification>();
 
 
 	// Member Properties
@@ -204,7 +245,7 @@ public abstract class CTile : MonoBehaviour
 			// Get the meta entry for the result with a correct rotation
 			CTile.CMeta newTileMeta = new CMeta(TileMetaDictionary[tileMask].m_TileMask, TileMetaDictionary[tileMask].m_MetaType);
 			newTileMeta.m_Rotations = i;
-			newTileMeta.m_Variant = m_CurrentTileMeta.m_Variant;
+			newTileMeta.m_ModificationMask = GetModificationsMask();
 			
 			// Update the current tile meta data
 			currentMetaChanged = !m_CurrentTileMeta.Equals(newTileMeta);
@@ -227,7 +268,7 @@ public abstract class CTile : MonoBehaviour
 		// Create the new tile type object as long as it is not marked as none ("0")
 		if(m_CurrentTileMeta.m_MetaType != 0)
 		{
-			m_TileObject = m_TileInterface.m_Grid.TileFactory.InstanceNewTile(m_TileType, m_CurrentTileMeta.m_MetaType, m_CurrentTileMeta.m_Variant);
+			m_TileObject = m_TileInterface.m_Grid.TileFactory.InstanceNewTile(m_TileType, m_CurrentTileMeta.m_MetaType, 0);
 			m_TileObject.transform.parent = transform;
 			m_TileObject.transform.localPosition = Vector3.zero;
 			m_TileObject.transform.localScale = Vector3.one;
@@ -254,12 +295,12 @@ public abstract class CTile : MonoBehaviour
 	[AServerOnly]
 	public void SetTileVariant(int _TileVariant, EDirection _Side)
 	{
-		m_CurrentTileMeta.m_Variant = _TileVariant;
+		m_CurrentTileMeta.m_ModificationMask = _TileVariant;
 	}
 	
 	public int GetTileVariant()
 	{
-		return(m_CurrentTileMeta.m_Variant);
+		return(m_CurrentTileMeta.m_ModificationMask);
 	}
 
 	[AServerOnly]
@@ -308,6 +349,16 @@ public abstract class CTile : MonoBehaviour
 		}
 		
 		return(new CMeta(mask, (int)_MetaType));
+	}
+
+	protected int GetModificationsMask()
+	{
+		int modMask = 0;
+		foreach(CModification mod in m_Modifications)
+		{
+			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_Side;
+		}
+		return(modMask);
 	}
 	
 	public static Type GetTileClassType(EType _TileType)

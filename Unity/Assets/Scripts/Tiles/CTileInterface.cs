@@ -129,7 +129,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 	{
 		// Invoke all clients to set the current meta for this tile
 		InvokeRpcAll("RemoteSetCurrentMeta", _Tile.m_TileType, _Tile.m_CurrentTileMeta.m_TileMask, 
-		             _Tile.m_CurrentTileMeta.m_MetaType, _Tile.m_CurrentTileMeta.m_Rotations, _Tile.m_CurrentTileMeta.m_Variant);
+		             _Tile.m_CurrentTileMeta.m_MetaType, _Tile.m_CurrentTileMeta.m_Rotations, _Tile.m_CurrentTileMeta.m_ModificationMask);
 	}
 
 	[AServerOnly]
@@ -139,18 +139,18 @@ public class CTileInterface : CNetworkMonoBehaviour
 		{
 			// Invoke all clients to set the current meta for this tile
 			InvokeRpc(_PlayerId, "RemoteSetCurrentMeta", tile.m_TileType, tile.m_CurrentTileMeta.m_TileMask, 
-			          tile.m_CurrentTileMeta.m_MetaType, tile.m_CurrentTileMeta.m_Rotations, tile.m_CurrentTileMeta.m_Variant);
+			          tile.m_CurrentTileMeta.m_MetaType, tile.m_CurrentTileMeta.m_Rotations, tile.m_CurrentTileMeta.m_ModificationMask);
 		}
 	}
 
 	[ANetworkRpc]
-	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _Variant)
+	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _ModificationMask)
 	{
 		CTile tile = GetTile(_TileType);
 		tile.m_CurrentTileMeta.m_TileMask = _TileMask;
 		tile.m_CurrentTileMeta.m_MetaType = _MetaType;
 		tile.m_CurrentTileMeta.m_Rotations = _Rotations;
-		tile.m_CurrentTileMeta.m_Variant = _Variant;
+		tile.m_CurrentTileMeta.m_ModificationMask = _ModificationMask;
 	}
 
 	[AServerOnly]

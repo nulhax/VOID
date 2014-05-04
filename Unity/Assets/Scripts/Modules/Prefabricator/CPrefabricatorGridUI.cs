@@ -788,87 +788,87 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	[AServerOnly]
 	private void ModifyInteriorWallDoor(bool _State, CTile _TileInteriorWall1, CTile _TileInteriorWall2)
 	{
-		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
-		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
-		
-		if(neighbour1 == null || neighbour2 == null)
-			return;
-		
-		EDirection dir1 = neighbour1.m_Direction;
-		EDirection dir2 = neighbour2.m_Direction;
-		
-		if(!(_TileInteriorWall1.GetNeighbourExemptionState(dir1) == true &&
-		     _TileInteriorWall2.GetNeighbourExemptionState(dir2) == true))
-			return;
-
-		EDirection unRotDir1 = _TileInteriorWall1.GetUnrotatedDirection(dir1);
-		EDirection unRotDir2 = _TileInteriorWall2.GetUnrotatedDirection(dir2);
-
-		int variantMask1 = _TileInteriorWall1.m_CurrentTileMeta.m_Variant;
-		int variantMask2 = _TileInteriorWall2.m_CurrentTileMeta.m_Variant;
-
-		if(_State)
-		{
-			variantMask1 |= 1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX);
-			variantMask2 |= 1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX);
-		}
-		else
-		{
-			variantMask1 &= ~(1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX));
-			variantMask2 &= ~(1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX));
-		}
-
-		bool variantExisits1 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall1.m_CurrentTileMeta.m_MetaType, variantMask1);
-		bool variantExisits2 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall2.m_CurrentTileMeta.m_MetaType, variantMask2);
-
-		if(!(variantExisits1 && variantExisits2))
-			return;
-
-		_TileInteriorWall1.m_CurrentTileMeta.m_Variant = variantMask1;
-		_TileInteriorWall2.m_CurrentTileMeta.m_Variant = variantMask2;
+//		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
+//		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
+//		
+//		if(neighbour1 == null || neighbour2 == null)
+//			return;
+//		
+//		EDirection dir1 = neighbour1.m_Direction;
+//		EDirection dir2 = neighbour2.m_Direction;
+//		
+//		if(!(_TileInteriorWall1.GetNeighbourExemptionState(dir1) == true &&
+//		     _TileInteriorWall2.GetNeighbourExemptionState(dir2) == true))
+//			return;
+//
+//		EDirection unRotDir1 = _TileInteriorWall1.GetUnrotatedDirection(dir1);
+//		EDirection unRotDir2 = _TileInteriorWall2.GetUnrotatedDirection(dir2);
+//
+//		int variantMask1 = _TileInteriorWall1.m_CurrentTileMeta.m_Variant;
+//		int variantMask2 = _TileInteriorWall2.m_CurrentTileMeta.m_Variant;
+//
+//		if(_State)
+//		{
+//			variantMask1 |= 1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX);
+//			variantMask2 |= 1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX);
+//		}
+//		else
+//		{
+//			variantMask1 &= ~(1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX));
+//			variantMask2 &= ~(1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Door * (int)EDirection.MAX));
+//		}
+//
+//		bool variantExisits1 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall1.m_CurrentTileMeta.m_MetaType, variantMask1);
+//		bool variantExisits2 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall2.m_CurrentTileMeta.m_MetaType, variantMask2);
+//
+//		if(!(variantExisits1 && variantExisits2))
+//			return;
+//
+//		_TileInteriorWall1.m_CurrentTileMeta.m_Variant = variantMask1;
+//		_TileInteriorWall2.m_CurrentTileMeta.m_Variant = variantMask2;
 	}
 
 	[AServerOnly]
 	private void ModifyInteriorWallWindow(bool _State, CTile _TileInteriorWall1, CTile _TileInteriorWall2)
 	{
-		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
-		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
-		
-		if(neighbour1 == null || neighbour2 == null)
-			return;
-		
-		EDirection dir1 = neighbour1.m_Direction;
-		EDirection dir2 = neighbour2.m_Direction;
-		
-		if(!(_TileInteriorWall1.GetNeighbourExemptionState(dir1) == true &&
-		     _TileInteriorWall2.GetNeighbourExemptionState(dir2) == true))
-			return;
-		
-		EDirection unRotDir1 =_TileInteriorWall1.GetUnrotatedDirection(dir1);
-		EDirection unRotDir2 = _TileInteriorWall2.GetUnrotatedDirection(dir2);
-		
-		int variantMask1 = _TileInteriorWall1.m_CurrentTileMeta.m_Variant;
-		int variantMask2 = _TileInteriorWall2.m_CurrentTileMeta.m_Variant;
-		
-		if(_State)
-		{
-			variantMask1 |= 1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX);
-			variantMask2 |= 1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX);
-		}
-		else
-		{
-			variantMask1 &= ~(1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX));
-			variantMask2 &= ~(1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX));
-		}
-		
-		bool variantExisits1 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall1.m_CurrentTileMeta.m_MetaType, variantMask1);
-		bool variantExisits2 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall2.m_CurrentTileMeta.m_MetaType, variantMask2);
-		
-		if(!(variantExisits1 && variantExisits2))
-			return;
-		
-		_TileInteriorWall1.m_CurrentTileMeta.m_Variant = variantMask1;
-		_TileInteriorWall2.m_CurrentTileMeta.m_Variant = variantMask2;
+//		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
+//		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
+//		
+//		if(neighbour1 == null || neighbour2 == null)
+//			return;
+//		
+//		EDirection dir1 = neighbour1.m_Direction;
+//		EDirection dir2 = neighbour2.m_Direction;
+//		
+//		if(!(_TileInteriorWall1.GetNeighbourExemptionState(dir1) == true &&
+//		     _TileInteriorWall2.GetNeighbourExemptionState(dir2) == true))
+//			return;
+//		
+//		EDirection unRotDir1 =_TileInteriorWall1.GetUnrotatedDirection(dir1);
+//		EDirection unRotDir2 = _TileInteriorWall2.GetUnrotatedDirection(dir2);
+//		
+//		int variantMask1 = _TileInteriorWall1.m_CurrentTileMeta.m_Variant;
+//		int variantMask2 = _TileInteriorWall2.m_CurrentTileMeta.m_Variant;
+//		
+//		if(_State)
+//		{
+//			variantMask1 |= 1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX);
+//			variantMask2 |= 1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX);
+//		}
+//		else
+//		{
+//			variantMask1 &= ~(1 << (int)unRotDir1 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX));
+//			variantMask2 &= ~(1 << (int)unRotDir2 + ((int)CTile_InteriorWall.EVariant.Window * (int)EDirection.MAX));
+//		}
+//		
+//		bool variantExisits1 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall1.m_CurrentTileMeta.m_MetaType, variantMask1);
+//		bool variantExisits2 = m_Grid.TileFactory.DoesTileExist(CTile.EType.Interior_Wall, _TileInteriorWall2.m_CurrentTileMeta.m_MetaType, variantMask2);
+//		
+//		if(!(variantExisits1 && variantExisits2))
+//			return;
+//		
+//		_TileInteriorWall1.m_CurrentTileMeta.m_Variant = variantMask1;
+//		_TileInteriorWall2.m_CurrentTileMeta.m_Variant = variantMask2;
 	}
 
 	[AServerOnly]

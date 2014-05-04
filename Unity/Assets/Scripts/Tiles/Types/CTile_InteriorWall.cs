@@ -35,12 +35,11 @@ public class CTile_InteriorWall : CTile
 		Cell,
 	}
 
-	public enum EVariant
+	public enum EModifications
 	{
 		Door,
 		Window,
 	}
-
 
 	// Member Delegates & Events
 	
@@ -92,6 +91,8 @@ public class CTile_InteriorWall : CTile
 	private void Awake()
 	{
 		m_TileType = CTile.EType.Interior_Wall;
+
+		EventTileObjectChanged += UpdateWallModifications;
 	}
 
 	protected override int DetirmineTileMask()
@@ -114,5 +115,31 @@ public class CTile_InteriorWall : CTile
 		}
 		
 		return(tileMask);
+	}
+
+	protected void UpdateWallModifications(CTile _Self)
+	{
+		List<CModification> modifications = GetModificationsFromMask(m_CurrentTileMeta.m_ModificationMask);
+
+
+	}
+
+	public List<CModification> GetModificationsFromMask(int _ModificationMask)
+	{
+		List<CModification> modifications = new List<CModification>();
+
+		foreach(var mod in Enum.GetValues(typeof(EModifications)))
+		{
+			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
+			{
+				int value = ((int)mod * (int)EDirection.MAX) + i;
+				if(CUtility.GetMaskState(value, _ModificationMask))
+				{
+					modifications.Add(new CModification((int)mod, (EDirection)i));
+				}
+			}
+		}
+
+		return(modifications);
 	}
 }

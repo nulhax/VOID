@@ -34,13 +34,7 @@ public class CTile_ExteriorWall : CTile
 		Hall,
 		Cell,
 	}
-	
-	public enum EVariant
-	{
-		Door,
-		Window,
-	}
-	
+
 
 	// Member Delegates & Events
 	
