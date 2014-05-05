@@ -55,7 +55,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		
 	public Quaternion LeftHandIKRot
 	{
-        set { m_LeftHandRot = value;    }			 
+        set { m_LeftHandRot = value;    m_bLeftHandModified = true;}			 
         get { return (m_LeftHandRot);   }
 	}
 	
@@ -67,7 +67,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 
 	public float LeftHandIKWeight
 	{
-        set { m_fLeftHandIKWeight = value;  }
+        set { m_fLeftHandIKWeight = value;  m_bLeftHandModified = true;}
 		get { return (m_fLeftHandIKWeight); }
 	}
 	
@@ -118,7 +118,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 
     bool                    m_bLeftHandModified = false;
 
-    static CNetworkStream m_IKNetworkStream = new CNetworkStream();
+    CNetworkStream m_IKNetworkStream = new CNetworkStream();
 
     //Member Methods
 	
@@ -144,8 +144,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{ 
 		if(_cSyncedNetworkVar == m_RightHandNetworkedPos)
         {
-            RightHandIKPos = m_RightHandNetworkedPos.Get();
-            Debug.Log("Pos set");
+            RightHandIKPos = m_RightHandNetworkedPos.Get();           
         }
         if(_cSyncedNetworkVar == m_LeftHandNetworkedPos)
         {
@@ -180,8 +179,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
         {
             CPlayerIKController cSelfIKController = cSelfActor.GetComponent<CPlayerIKController>();
     				
-            _cStream.Write(m_IKNetworkStream);
-            m_IKNetworkStream.Clear();
+            _cStream.Write(cSelfActor.GetComponent<CPlayerIKController>().m_IKNetworkStream);
+            cSelfActor.GetComponent<CPlayerIKController>().m_IKNetworkStream.Clear();
         }
 	}
 	
@@ -199,8 +198,6 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 			{
                 case ENetworkAction.SetAllIKStates:
                 {
-                    Debug.Log("Pos received on server");
-
                     //Right hand states
                     Vector3 pos = new Vector3();
                     Vector3 rot = new Vector3();
@@ -318,10 +315,10 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{ 	
-        if (CGamePlayers.SelfActor != gameObject) return;        
-
         LerpRightHandWeight(); 
         LerpLeftHandWeight();
+
+        if (CGamePlayers.SelfActor != gameObject) return;               
 
         if (m_bLeftHandModified && m_bRightHandModified)
         {             
@@ -385,10 +382,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
     {
         if (m_fRightHandWeightLerpTimer < m_kfRightHandWeightLerpTime)
         {
-            m_fRightHandWeightLerpTimer += Time.deltaTime;   
-            
-            float LerpFactor = m_fRightHandWeightLerpTimer / m_kfRightHandWeightLerpTime;
-            
+            m_fRightHandWeightLerpTimer += Time.deltaTime;            
+            float LerpFactor = m_fRightHandWeightLerpTimer / m_kfRightHandWeightLerpTime;            
             RightHandIKWeight = Mathf.Lerp(RightHandIKWeight, m_fRightIKTargetWeight, LerpFactor);
         }      
     }   
@@ -397,14 +392,13 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 	{
         if (m_fLeftHandWeightLerpTimer < m_kfLeftHandWeightLerpTime)
         {
-            m_fLeftHandWeightLerpTimer += Time.deltaTime;   
-            
-            float LerpFactor = m_fLeftHandWeightLerpTimer / m_kfLeftHandWeightLerpTime;
-            
+            m_fLeftHandWeightLerpTimer += Time.deltaTime;           
+            float LerpFactor = m_fLeftHandWeightLerpTimer / m_kfLeftHandWeightLerpTime;            
             LeftHandIKWeight = Mathf.Lerp(LeftHandIKWeight, m_fLeftIKTargetWeight, LerpFactor);
         }     
 	}
 	
+    //Reset timer determines whether the timer for lerping position is reset. Only reset when first setting position
     public void SetRightHandTarget(Vector3 _position, Quaternion _rotation, bool _bResetTimer)
     {
         RightHandIKPos = _position;
@@ -423,7 +417,8 @@ public class CPlayerIKController : CNetworkMonoBehaviour
        	m_fRightIKTargetWeight = 0;	    
 	   	m_fRightHandWeightLerpTimer = 0.0f;      
     }
-    
+
+    //Reset timer determines whether the timer for lerping position is reset. Only reset when first setting position
     public void SetLeftHandTarget(Vector3 _position, Quaternion _rotation, bool _bResetTimer)
     {
         LeftHandIKPos = _position;
