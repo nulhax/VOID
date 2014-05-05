@@ -116,6 +116,19 @@ public class CGalaxy : CNetworkMonoBehaviour
 	protected CNetworkVar<int> mCentreCellZ;
 	public SCellPos centreCell { get { return mCentreCell; } }
 
+	private static int mLayerEnum_Gubbin = LayerMask.NameToLayer("Galaxy_Gubbin");
+	public static int layerEnum_Gubbin { get { return mLayerEnum_Gubbin; } }
+	private static int mLayerBit_Gubbin = 1 << layerEnum_Gubbin;
+	public static int layerBit_Gubbin { get { return mLayerBit_Gubbin; } }
+
+	private static int mLayerEnum_Projectile = LayerMask.NameToLayer("Galaxy_Projectile");
+	public static int layerEnum_Projectile { get { return mLayerEnum_Projectile; } }
+	private static int mLayerBit_Projectile = 1 << layerEnum_Projectile;
+	public static int layerBit_Projectile { get { return mLayerBit_Projectile; } }
+
+	private static int mLayerBit_All = mLayerBit_Gubbin | mLayerBit_Projectile;
+	public static int layerBit_All { get { return mLayerBit_All; } }
+
 	public event EventOnGalaxyShift eventPreGalaxyShift;
 	public event EventOnGalaxyShift eventPostGalaxyShift;
 
@@ -169,7 +182,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public ulong numCells { get { /*return (uint)Mathf.Pow(8, muiNumCellSubsets);*/ ulong ul = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ul *= 8u; return ul; } }
 	public uint numCellsInRow { get { /*return (uint)Mathf.Pow(2, muiNumCellSubsets);*/ uint ui = 1; for (uint ui2 = 0; ui2 < muiNumCellSubsets; ++ui2)ui *= 2; return ui; } }
 
-	public bool debug_GalaxyStuff = false;
+	[HideInInspector] public bool debug_GalaxyStuff = false;
 
 	///////////////////////////////////////////////////////////////////////////
 	// Functions:
@@ -672,7 +685,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		Vector3 gubbinPosition = RelativeCellToRelativePoint(gubbin.mParentAbsoluteCell - mCentreCell) + gubbin.mPosition;
 
 		// Check if the new gubbin has room to spawn.
-		if (Physics.CheckSphere(gubbinPosition, CUtility.GetBoundingRadius(gubbinObject)))
+		if (Physics.CheckSphere(gubbinPosition, CUtility.GetBoundingRadius(gubbinObject), 1 << LayerMask.NameToLayer("Galaxy")))
 		{
 			CNetwork.Factory.DestoryObject(gubbinObject);
 			return false;

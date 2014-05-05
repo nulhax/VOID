@@ -81,8 +81,8 @@ public class CHUDToolTip : MonoBehaviour
 	protected void UpdateSelectedCameras()
 	{
 		// Figure out which camera to use
-		bool useMainCamera = CGameCameras.IsObserverInsideShip && m_Target.gameObject.layer != LayerMask.NameToLayer("Galaxy") ||
-							!CGameCameras.IsObserverInsideShip && m_Target.gameObject.layer == LayerMask.NameToLayer("Galaxy");
+		// Use main camera if the observer and target are both inside or both outside the ship.
+		bool useMainCamera = CGameCameras.IsObserverInsideShip == (((1 << m_Target.gameObject.layer) & CGalaxy.layerBit_All) == 0);
 		
 		// Select the camera depending on which layer the target is
 		Transform gameCamera = null;

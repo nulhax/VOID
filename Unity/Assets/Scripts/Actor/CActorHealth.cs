@@ -23,6 +23,8 @@ public class CActorHealth : CNetworkMonoBehaviour
 	public delegate void OnSetState(byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	public static System.Collections.Generic.List<CActorHealth> allInstances = new System.Collections.Generic.List<CActorHealth>();
+
 	[SerializeField] public bool flammable = true;
 	[SerializeField] public bool callEventsOnStart = false;
 	[SerializeField] public bool syncNetworkHealth = true;
@@ -58,6 +60,8 @@ public class CActorHealth : CNetworkMonoBehaviour
 	{
 		health_previous = health_current = health_initial;
 		state_previous = state_current = state_initial;
+
+		allInstances.Add(this);
 	}
 
 	void Start()
@@ -70,6 +74,11 @@ public class CActorHealth : CNetworkMonoBehaviour
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
 		}
+	}
+
+	void OnDestroy()
+	{
+		allInstances.Remove(this);
 	}
 
 	void Update()
@@ -157,6 +166,8 @@ public class CActorHealth_Embedded
 	public delegate void OnSetState(byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	public static System.Collections.Generic.List<CActorHealth_Embedded> allInstances = new System.Collections.Generic.List<CActorHealth_Embedded>();
+
 	public bool flammable;
 	public bool callEventsOnStart;
 	public bool syncNetworkHealth;
@@ -182,7 +193,7 @@ public class CActorHealth_Embedded
 	public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
 
-	GameObject gameObject;
+	public GameObject gameObject;
 
 	public CActorHealth_Embedded(GameObject _gameObject, bool _flammable, bool _callEventsOnStart, bool _syncNetworkHealth, bool _syncNetworkState, bool _destroyOnZeroHealth, bool _takeDamageOnImpact,
 		float _health_max, float _health_min, float _health_initial, byte _state_initial, float[] _stateTransitions, float _timeBetweenNetworkSyncs)
@@ -200,6 +211,8 @@ public class CActorHealth_Embedded
 		state_previous = state_current = state_initial = _state_initial;
 		stateTransitions = _stateTransitions;
 		timeBetweenNetworkSyncs = _timeBetweenNetworkSyncs;
+
+		allInstances.Add(this);
 	}
 
 	public void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -218,6 +231,11 @@ public class CActorHealth_Embedded
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
 		}
+	}
+
+	public void OnDestroy()
+	{
+		allInstances.Remove(this);
 	}
 
 	public void Update()
