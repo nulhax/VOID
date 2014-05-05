@@ -93,14 +93,17 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public float mTimeout2 = 0.0f;
 	public float mMinTimeSpentIdling = 2.0f;
 	public float mMaxTimeSpentIdling = 10.0f;
-	public float mTimeSpentChargingScanner = 10.0f;
-	public float mTimeSpentScanningForHeatSignatures = 15.0f;
+	public float mTimeSpentChargingScanner = 2.5f;
+	public float mTimeSpentScanningForHeatSignatures = 2.5f;
 	public float mTimeSpentExaminingTarget = 10.0f;
 	public float mTimeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
 	public float mTimeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
 	public float mTimeSpentTravelling = 5.0f;
+	public float mTimeUntilScannedTargetExpires = 30.0f;	// X seconds to reach the target location, after which mTimeUntilHostileTargetExpires will take over while it is in view.
+	public float mTimeUntilHostileTargetExpires = 20.0f;	// X seconds after the target disappears from view, the target will expire.
+	public float mTimeUntilExaminedTargetExpires = 5.0f;
 	public float mTimeBetweenWeaponFire = 1.0f / 3.0f;
-	public float mMinVelocityOfSuspiciousGubbin = 0.0f;
+	public float mMinVelocityOfSuspiciousGubbin = 5.0f;
 	public float mTimeUntilSuspiciousGubbinExpires = 15.0f;
 
 	public Rigidbody mTarget { get { return mTarget_InternalSource == null ? null : mTargetVisible ? mTarget_InternalSource : mTarget_InternalLastKnownPosition; } set { mTargetVisible = false; mTarget_InternalSource = value; mTarget_InternalLastKnownPosition.transform.position = (value == null ? Vector3.zero : value.worldCenterOfMass); } }
@@ -199,6 +202,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void FixedUpdate()
 	{
+		// Reset variables.
+		mTargetWithinViewCone = mTargetWithinViewSphere = mTargetDirectLineOfSight = false;
+		mTorque = Vector3.zero;
+
+		// Begin update.
 		ProcessWhiskers();
 
 		mTimeUntilNextLosCheck -= Time.fixedDeltaTime;
@@ -208,8 +216,17 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			FindTargetsInLineOfSight();
 		}
 
-		if (mTarget != null && (mFaceTarget || mFollowTarget))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
+		if (mTarget != null)	// If there is prey or a disturbance to target...
 		{
+			// Determine if the original target is in view.
+			mTargetWithinViewCone = IsWithinViewCone(mTarget_InternalSource);
+			mTargetWithinViewSphere = IsWithinViewRadius(mTarget_InternalSource);
+			mTargetDirectLineOfSight = HasDirectLineOfSight(mTarget_InternalSource, viewConeLength);
+
+			// Update last known position of the original target if it is visible.
+			if (mTargetVisible)
+				mTarget_InternalLastKnownPosition.transform.position = mTarget_InternalSource.worldCenterOfMass;
+
 			Vector3 targetPos = mTarget.rigidbody.worldCenterOfMass;
 
 			// Get the location of the target in local space of this ship (i.e. relative location).
@@ -219,12 +236,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			Vector3 relativeDirection = (Quaternion.Inverse(transform.rotation) * (targetPos - rigidbody.worldCenterOfMass)).normalized;
 			Vector3 relativeRotation = new Vector3(Mathf.Atan2(relativeDirection.y, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.y));
 
-			mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
-			mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
-			mTorque.z = relativeRotation.z * 0.0f;
-
 			if(mFaceTarget)
 			{
+				mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
+				mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
+				mTorque.z = relativeRotation.z * 0.0f;
+
 				// Rotate to face target.
 				rigidbody.AddRelativeTorque(mTorque, ForceMode.Force);
 			}
@@ -236,15 +253,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				float maxLinearAccelerationScale = Mathf.Clamp(distanceToDesiredDistance / desiredDistanceToTarget, -1.0f, 1.0f);	// From no deviation to maximum deviation from desired distance; acceleration is scaled from 0 to max.
 				rigidbody.AddForce(absoluteDirection * maxLinearAcceleration * maxLinearAccelerationScale, ForceMode.Force);
 			}
-
-			// Determine if the target is in view.
-			mTargetWithinViewCone = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
-			mTargetWithinViewSphere = IsWithinViewRadius(targetPos);
-			mTargetDirectLineOfSight = HasDirectLineOfSight(mTarget);
-
-			// Check if there is a direct line of sight to the target.
-			if(mTargetVisible)
-				mTarget_InternalLastKnownPosition.transform.position = mTarget_InternalSource.worldCenterOfMass;
 		}
 	}
 
@@ -283,19 +291,28 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		Rigidbody targetRigidbody = collision.gameObject.rigidbody;
-		if (targetRigidbody == null)
-			targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+		GameObject collidingObject = collision.gameObject;
+		CCannonProjectile cannonProjectile = collidingObject.GetComponent<CCannonProjectile>();
+		if (cannonProjectile != null)	// If the colliding object is a projectile...
+		{
+			mTarget = cannonProjectile.parent;
+		}
+		else	// The colliding object is not a projectile...
+		{
+			Rigidbody targetRigidbody = collision.gameObject.rigidbody;
+			if (targetRigidbody == null)
+				targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
 
-		if(targetRigidbody != null)
-			mTarget = targetRigidbody;
+			if (targetRigidbody != null)
+				mTarget = targetRigidbody;
+		}
 
 		ProcessEvent(EEvent.HostileTarget);
 	}
 
 	public bool IsWithinLineOfSight(Rigidbody target)
 	{
-		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target);
+		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target, viewConeLength);
 	}
 
 	public bool IsWithinViewCone(Rigidbody target) { return IsWithinViewCone(target.worldCenterOfMass); }
@@ -323,10 +340,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		return (pos - rigidbody.worldCenterOfMass).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
 	}
 
-	public bool HasDirectLineOfSight(Rigidbody target)
+	public bool HasDirectLineOfSight(Rigidbody target, float maxRange)
 	{
 		Vector3 deltaPos = target.worldCenterOfMass - rigidbody.worldCenterOfMass;
-		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, deltaPos.magnitude, CGalaxy.layerBit_Gubbin);
+		float distance = deltaPos.magnitude;
+
+		if (distance > maxRange)	// if the target is too far away...
+			return false;	// No line of sight.
+
+		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, distance, CGalaxy.layerBit_Gubbin);
 		for (int i = 0; i < rayHits.Length; ++i)	// For each object the ray hit...
 		{
 			RaycastHit rayHit = rayHits[i];
@@ -338,7 +360,10 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship or the target...
 				continue;	// Ignore this object.
 			else	// The object is not part of the enemy ship or target...
+			{
+				Debug.LogError(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
 				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
+			}
 		}
 
 		return true;	// There are no objects between the enemy ship and the target.
@@ -416,9 +441,16 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				{
 					case EEvent.none:	// Normal process.
 						if (mTarget != null)	// Switch to checking out the target if there is one.
+						{
 							ProcessEvent(EEvent.transition_ExamineTarget);
-						else if(mTimeout1 <= 0.0f)	// No target; if this state expired...
-							ProcessEvent(EEvent.transition_Travel);
+						}
+						else	// Idling...
+						{
+							if (mTimeout1 <= 0.0f)	// No target; if this state expired...
+							{
+								ProcessEvent(EEvent.transition_Travel);
+							}
+						}
 						return;
 
 					default:	// Shutdown the state.
@@ -448,11 +480,18 @@ public class CEnemyShip : CNetworkMonoBehaviour
 					case EEvent.none:	// Normal process.
 						if (mTarget != null)	// If there is a valid target...
 						{
+							if (mTargetVisible)
+							{
+								mTargetExpireTime = mTimeUntilExaminedTargetExpires;	// Reset the expiry timer.
+							}
+
 							if (mTargetWithinViewCone)	// If facing the target...
 							{
 								if (mTargetVisible)	// If the target is in sight...
 								{
-									ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
+									// Spend time examining the target.
+									if (mTimeout1 <= 0.0f)
+										ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
 								}
 								else	// Target is not in sight...
 								{
@@ -470,7 +509,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 										else	// Going to the target...
 										{
 											// Wait until the target is reached.
-											if (mTimeout1 < 0.0f)	// If it took so long to reach the target the timer timed out...
+											if (mTimeout1 <= 0.0f)	// If it took so long to reach the target the timer timed out...
 												ProcessEvent(EEvent.transition_Idle);	// Give up (can't reach the target).
 										}
 									}
@@ -515,7 +554,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 						{
 							if (mTargetVisible)	// If the target is in sight...
 							{
-								mTargetExpireTime = 20.0f;	// Reset the expire time.
+								mTargetExpireTime = mTimeUntilHostileTargetExpires;	// Reset the expire time.
 
 								while (mTimeout2 <= 0.0f)
 								{
@@ -523,7 +562,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 									GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
 
 									CCannon[] cannons = GetComponentsInChildren<CCannon>();
-									foreach(CCannon cannon in cannons) cannon.Fire(mTarget.worldCenterOfMass);
+									foreach (CCannon cannon in cannons) cannon.Fire(mTarget.worldCenterOfMass);
 								}
 							}
 							else	// The target is not in sight...
@@ -539,11 +578,15 @@ public class CEnemyShip : CNetworkMonoBehaviour
 									mTimeout1 = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
 								}
 								else	// Not chasing the target...
+								{
 									ProcessEvent(EEvent.transition_ChargeScanner);	// Search for something nearby to kill.
+								}
 							}
 						}
 						else	// The target has expired...
+						{
 							ProcessEvent(EEvent.transition_ChargeScanner);
+						}
 						return;
 
 					case EEvent.HostileTarget:
@@ -569,14 +612,19 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				StateInitialisation(EState.chargingScanner, false, false, mTimeSpentChargingScanner, mTimeout2, "Charging Scanner");
 				return;
 
-			case EState.scanningForHeatSignature:	// Process state.
+			case EState.chargingScanner:	// Process state.
 				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mTarget != null)	// Switch to checking out the target if there is one.
-							ProcessEvent(EEvent.transition_ExamineTarget);
-						else if (mTimeout1 <= 0.0f)
-							ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						//if (mTarget != null)	// Switch to checking out the target if there is one.
+						//{
+						//    ProcessEvent(EEvent.transition_ExamineTarget);
+						//}
+						//else	// No target...
+						{
+							if (mTimeout1 <= 0.0f)
+								ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						}
 						return;
 
 					default:	// Shutdown the state.
@@ -596,26 +644,43 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		switch (mState)
 		{
 			case EState.none:	// Initialise state.
-				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, mTimeout2, "Scanning For Heat Signature");
+				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, 0.0f, "Scanning For Heat Signature");
 				return;
 
 			case EState.scanningForHeatSignature:	// Process state.
 				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mTarget != null)	// Switch to checking out the target if there is one.
-							ProcessEvent(EEvent.transition_ExamineTarget);
-						else	// No target.
+						//if (mTarget != null)	// Switch to checking out the target if there is one.
+						//{
+						//    ProcessEvent(EEvent.transition_ExamineTarget);
+						//}
+						//else	// No target.
 						{
-							// Scan for heat signature.
-							Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
-							if (targetWithHeatSignature != null)
+							if (mTimeout1 <= 0.0f)	// If the timer times out...
 							{
-								mTarget = targetWithHeatSignature;
-								ProcessEvent(EEvent.transition_AttackTarget);
-							}
-							else if (mTimeout1 <= 0.0f)	// If the timer times out...
 								ProcessEvent(EEvent.transition_Idle);	// Nothing found - give up.
+							}
+							else	// Timer has not run out...
+							{
+								// Perform scan over time.
+								if (mTimeout2 <= 0.0f)	// If it is time to perform a scan burst.
+								{
+									// Scan for heat signature.
+									GameObject playerShip = CGameShips.GalaxyShip;
+									if (playerShip != null)
+									{
+										Rigidbody playerShipRigidbody = playerShip.rigidbody;
+										if (HasDirectLineOfSight(playerShipRigidbody, float.PositiveInfinity))	// So long as the target is not hiding behind something, it will be picked up by the scanner.
+										{
+											// Detected by enemy ship!
+											mTarget = playerShipRigidbody;
+											mTargetExpireTime = mTimeUntilScannedTargetExpires;
+											ProcessEvent(EEvent.transition_AttackTarget);
+										}
+									}
+								}
+							}
 						}
 						return;
 
