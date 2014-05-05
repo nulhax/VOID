@@ -187,7 +187,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         {
             GameObject cHitTile = tTileRaycastHit.transform.gameObject;
 
-            if (cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject) == CTile.EType.InteriorFloor)
+            CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
+
+            if (eTileType == CTile.EType.InteriorFloor ||
+                eTileType == CTile.EType.ExteriorWall)
             {
                 m_cPreviewModulePrecipitative.transform.position = tTileRaycastHit.point;
                 m_cPreviewModulePrecipitative.SetActive(true);
@@ -203,7 +206,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                         break;
 
                     case CModuleInterface.ESize.Medium:
-                        fSphereRadius = 4.0f;
+                        fSphereRadius = 3.0f;
                         break;
 
                     default:

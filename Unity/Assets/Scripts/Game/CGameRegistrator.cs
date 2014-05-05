@@ -473,6 +473,7 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ModuleMenu_ToggleDisplay, KeyCode.B);
+        CUserInput.SetKeyBinding(CUserInput.EInput.TurretMenu_ToggleDisplay, KeyCode.Tab);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
         CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);

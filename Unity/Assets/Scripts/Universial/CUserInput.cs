@@ -89,6 +89,7 @@ public class CUserInput : CNetworkMonoBehaviour
         Tool_Drop,                // G
 
         ModuleMenu_ToggleDisplay, // B
+        TurretMenu_ToggleDisplay, // Tab
                                 
         ReturnKey,                // Enter
         Escape,                   // P... (LOL) Nah Esc bra

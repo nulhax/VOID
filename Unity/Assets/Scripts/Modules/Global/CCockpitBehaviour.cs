@@ -291,7 +291,7 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
             if (CNetwork.IsServer &&
                 m_ulMountedPlayerId.PreviousValue != 0)
             {
-                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(NetworkViewId);
+                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(null);
             }
         }
 
