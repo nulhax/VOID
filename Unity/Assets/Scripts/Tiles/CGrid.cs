@@ -150,9 +150,11 @@ public class CGrid : MonoBehaviour
 
 		// Remove all tiles that dont exist anymore
 		foreach(CTileInterface tile in unmodifiedTiles)
-		{
 			RemoveTile(tile.m_GridPosition);
-		}
+
+		// Update all tiles meta data
+		foreach(CTileInterface tile in newTiles)
+			tile.UpdateAllCurrentTileMetaData();
 
  		return(newTiles);
 	}

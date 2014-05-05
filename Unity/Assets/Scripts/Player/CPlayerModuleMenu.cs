@@ -119,7 +119,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                     {
                         bool bCreated = CGameShips.Ship.GetComponent<CShipModules>().CreateModule(_cStream.Read<CModuleInterface.EType>(),
                                                                                                   _cStream.Read<Vector3>(),
-                                                                                                  _cStream.Read<float>());
+				                                                                          		  Quaternion.Euler(_cStream.Read<Vector3>()));
 
                         cPlayerActor.GetComponent<CPlayerModuleMenu>().InvokeRpc(_cNetworkPlayer.PlayerId, "RemoteNotifyBuildResponse", bCreated);
                     }
@@ -189,8 +189,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
             CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
 
-            if (eTileType == CTile.EType.InteriorFloor ||
-                eTileType == CTile.EType.ExteriorWall)
+            if (eTileType == CTile.EType.Interior_Floor ||
+                eTileType == CTile.EType.Exterior_Wall)
             {
                 m_cPreviewModulePrecipitative.transform.position = tTileRaycastHit.point;
                 m_cPreviewModulePrecipitative.SetActive(true);
@@ -292,7 +292,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         s_cSerializedStream.Write(ENetworkAction.CreateModule);
         s_cSerializedStream.Write(m_ePreviewModuleType);
         s_cSerializedStream.Write(m_vPreviewPosition);
-        s_cSerializedStream.Write(m_fPreviewRotationY);
+        s_cSerializedStream.Write(m_fPreviewEuler);
 
         DestroyModulePreview();
     }
@@ -326,7 +326,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         m_ePreviewModuleSize = CModuleInterface.ESize.INVALID;
         m_cPreviewModulePrecipitative = null;
         m_vPreviewPosition = Vector3.zero;
-        m_fPreviewRotationY = 0.0f;
+		m_fPreviewEuler = Vector3.zero;
         m_bPreviewPlacementValid = false;
     }
 
@@ -402,7 +402,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     CModuleInterface.ESize m_ePreviewModuleSize = CModuleInterface.ESize.INVALID;
     GameObject m_cPreviewModulePrecipitative = null;
     Vector3 m_vPreviewPosition = Vector3.zero;
-    float m_fPreviewRotationY = 0.0f;
+	Vector3 m_fPreviewEuler = Vector3.zero;
     bool m_bPreviewPlacementValid = false;
 
 

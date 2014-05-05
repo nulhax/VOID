@@ -29,14 +29,56 @@ public abstract class CTile : MonoBehaviour
 	{
 		INVALID = -1,
 		
-		InteriorFloor,
-		InteriorWall,
-		InteriorWallCap,
-		InteriorCeiling,
-		ExteriorWall,
-		ExteriorWallCap,
+		Interior_Floor,
+		Interior_Floor_Inverse_Corner,
+		Interior_Wall,
+		Interior_Wall_Inverse_Corner,
+		Interior_Ceiling,
+		Interior_Ceiling_Inverse_Corner,
+		Exterior_Wall,
+		Exterior_Wall_Inverse_Corner,
 		
 		MAX
+	}
+
+	[System.Serializable]
+	public class CModification
+	{
+		public CModification(int _Modification, EDirection _Side)
+		{
+			m_Modification = _Modification;
+			m_Side = _Side;
+		}
+
+		public int m_Modification;
+		public EDirection m_Side;
+		
+		public override bool Equals(System.Object obj)
+		{
+			// If parameter is null return false.
+			if (obj == null)
+				return false;
+			
+			// If parameter cannot be cast to Point return false.
+			CModification p = (CModification)obj;
+			if ((System.Object)p == null)
+				return false;
+			
+			// Return true if the fields match:
+			return ((m_Modification == p.m_Modification) &&
+			        (m_Side == p.m_Side));
+		}
+		
+		public bool Equals(CModification p)
+		{
+			// If parameter is null return false:
+			if ((object)p == null)
+				return false;
+			
+			// Return true if the fields match:
+			return ((m_Modification == p.m_Modification) &&
+			        (m_Side == p.m_Side));
+		}
 	}
 
 	[System.Serializable]
@@ -50,26 +92,23 @@ public abstract class CTile : MonoBehaviour
 		public CMeta(int _TileMask, int _MetaType)
 		{
 			m_TileMask = _TileMask;
-			m_NeighbourMask = 0;
 			m_MetaType = _MetaType;
 			m_Rotations = 0;
-			m_Variant = 0;
+			m_ModificationMask = 0;
 		}
 
 		public CMeta(CMeta _Other)
 		{
 			m_TileMask = _Other.m_TileMask;
-			m_NeighbourMask = _Other.m_NeighbourMask;
 			m_MetaType = _Other.m_MetaType;
 			m_Rotations = _Other.m_Rotations;
-			m_Variant = _Other.m_Variant;
+			m_ModificationMask = _Other.m_ModificationMask;
 		}
 
 		public int m_TileMask;
-		public int m_NeighbourMask;
 		public int m_MetaType;
 		public int m_Rotations;
-		public int m_Variant;
+		public int m_ModificationMask;
 
 		public override bool Equals(System.Object obj)
 		{
@@ -83,11 +122,10 @@ public abstract class CTile : MonoBehaviour
 				return false;
 			
 			// Return true if the fields match:
-			return ((m_TileMask == p.m_TileMask) && 
-			        (m_NeighbourMask == p.m_NeighbourMask) &&
+			return ((m_TileMask == p.m_TileMask) &&
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
-			        (m_Variant == p.m_Variant));
+			        (m_ModificationMask == p.m_ModificationMask));
 		}
 
 		public bool Equals(CMeta p)
@@ -98,10 +136,9 @@ public abstract class CTile : MonoBehaviour
 			
 			// Return true if the fields match:
 			return ((m_TileMask == p.m_TileMask) && 
-			        (m_NeighbourMask == p.m_NeighbourMask) &&
 			        (m_MetaType == p.m_MetaType) &&
 			        (m_Rotations == p.m_Rotations) &&
-			        (m_Variant == p.m_Variant));
+			        (m_ModificationMask == p.m_ModificationMask));
 		}
 	}
 
@@ -121,6 +158,7 @@ public abstract class CTile : MonoBehaviour
 	public GameObject m_TileObject = null;
 
 	public List<EDirection> m_NeighbourExemptions = new List<EDirection>();
+	public List<CModification> m_Modifications = new List<CModification>();
 
 
 	// Member Properties
@@ -155,19 +193,11 @@ public abstract class CTile : MonoBehaviour
 			ReleaseTileObject();
 	}
 
+	[ContextMenu("Update Current Tile Meta Data")]
 	[AServerOnly]
 	public void UpdateCurrentTileMetaData()
 	{
-		int tileMask = 0;
-
-		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
-		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
-		{
-			if(!IsNeighbourRelevant(neighbour))
-				continue;
-
-			tileMask |= 1 << (int)neighbour.m_Direction;
-		}
+		int tileMask = DetirmineTileMask();
 		
 		// Update the tile meta info
 		bool metaChanged = RetrieveTileMetaEntry(tileMask);
@@ -183,7 +213,7 @@ public abstract class CTile : MonoBehaviour
 		}
 	}
 
-	protected abstract bool IsNeighbourRelevant(CNeighbour _Neighbour);
+	protected abstract int DetirmineTileMask();
 
 	[AServerOnly]
 	protected bool RetrieveTileMetaEntry(int _TileMask)
@@ -215,8 +245,7 @@ public abstract class CTile : MonoBehaviour
 			// Get the meta entry for the result with a correct rotation
 			CTile.CMeta newTileMeta = new CMeta(TileMetaDictionary[tileMask].m_TileMask, TileMetaDictionary[tileMask].m_MetaType);
 			newTileMeta.m_Rotations = i;
-			newTileMeta.m_Variant = m_CurrentTileMeta.m_Variant;
-			newTileMeta.m_NeighbourMask = m_CurrentTileMeta.m_NeighbourMask;
+			newTileMeta.m_ModificationMask = CalculateModificationsMask();
 			
 			// Update the current tile meta data
 			currentMetaChanged = !m_CurrentTileMeta.Equals(newTileMeta);
@@ -230,7 +259,8 @@ public abstract class CTile : MonoBehaviour
 		Debug.LogWarning("Tile Meta data wasn't found for: " + m_TileType + " Mask: " + _TileMask);
 	}
 
-	protected void UpdateTileObject()
+	[ContextMenu("Update Tile Object")]
+	public void UpdateTileObject()
 	{
 		// Release the tile object
 		ReleaseTileObject();
@@ -238,7 +268,7 @@ public abstract class CTile : MonoBehaviour
 		// Create the new tile type object as long as it is not marked as none ("0")
 		if(m_CurrentTileMeta.m_MetaType != 0)
 		{
-			m_TileObject = m_TileInterface.m_Grid.TileFactory.InstanceNewTile(m_TileType, m_CurrentTileMeta.m_MetaType, m_CurrentTileMeta.m_Variant);
+			m_TileObject = m_TileInterface.m_Grid.TileFactory.InstanceNewTile(m_TileType, m_CurrentTileMeta.m_MetaType, 0);
 			m_TileObject.transform.parent = transform;
 			m_TileObject.transform.localPosition = Vector3.zero;
 			m_TileObject.transform.localScale = Vector3.one;
@@ -253,14 +283,34 @@ public abstract class CTile : MonoBehaviour
 	}
 
 	[AServerOnly]
-	public void SetTileTypeVariant(int _TileVariant)
+	public void AddTileModification(int _ModificationType, EDirection _Side, bool _State)
 	{
-		m_CurrentTileMeta.m_Variant = _TileVariant;
+		if(_State)
+		{
+			m_Modifications.RemoveAll(m => m.m_Side == _Side);
+			m_Modifications.Add(new CModification(_ModificationType, _Side));
+		}
+		else
+		{
+			m_Modifications.RemoveAll(m => m.m_Modification == _ModificationType && m.m_Side == _Side);
+		}
+
+		m_CurrentTileMeta.m_ModificationMask = CalculateModificationsMask();
 	}
 	
-	public int GetTileTypeVariant()
+	public int GetTileModificationMask()
 	{
-		return(m_CurrentTileMeta.m_Variant);
+		return(m_CurrentTileMeta.m_ModificationMask);
+	}
+
+	protected int CalculateModificationsMask()
+	{
+		int modMask = 0;
+		foreach(CModification mod in m_Modifications)
+		{
+			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_Side;
+		}
+		return(modMask);
 	}
 
 	[AServerOnly]
@@ -280,13 +330,22 @@ public abstract class CTile : MonoBehaviour
 		{
 			m_NeighbourExemptions.Remove(_Direction);
 		}
-
-		CUtility.SetMaskState((int)_Direction, _State, ref m_CurrentTileMeta.m_NeighbourMask);
 	}
-	
+
+	[AServerOnly]
 	public bool GetNeighbourExemptionState(EDirection _Direction)
 	{
-		return(CUtility.GetMaskState((int)_Direction, m_CurrentTileMeta.m_NeighbourMask));
+		return(m_NeighbourExemptions.Contains(_Direction));
+	}
+
+	public EDirection GetUnrotatedDirection(EDirection _RotatedDirection)
+	{
+		for(int i = m_CurrentTileMeta.m_Rotations; i > 0; --i)
+		{
+			_RotatedDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_RotatedDirection));
+		}
+		
+		return(_RotatedDirection);
 	}
 
 	public void ReleaseTileObject()
@@ -311,19 +370,21 @@ public abstract class CTile : MonoBehaviour
 		
 		return(new CMeta(mask, (int)_MetaType));
 	}
-	
+
 	public static Type GetTileClassType(EType _TileType)
 	{
 		Type classType = null;
 		
 		switch(_TileType)
 		{
-		case EType.InteriorFloor: 		classType = typeof(CTile_InteriorFloor); break;
-		case EType.ExteriorWall: 		classType = typeof(CTile_ExteriorWall); break;
-		case EType.InteriorWall: 		classType = typeof(CTile_InteriorWall); break;
-		case EType.InteriorCeiling: 	classType = typeof(CTile_InteriorCeiling); break;
-		case EType.ExteriorWallCap: 	classType = typeof(CTile_ExternalWallCap); break;
-		case EType.InteriorWallCap: 	classType = typeof(CTile_InteriorWallCap); break;
+		case EType.Interior_Floor: 						classType = typeof(CTile_InteriorFloor); break;
+		case EType.Interior_Floor_Inverse_Corner: 		classType = typeof(CTile_InteriorFloorCap); break;
+		case EType.Interior_Wall: 						classType = typeof(CTile_InteriorWall); break;
+		case EType.Interior_Wall_Inverse_Corner: 		classType = typeof(CTile_InteriorWallCap); break;
+		case EType.Interior_Ceiling: 					classType = typeof(CTile_InteriorCeiling); break;
+		case EType.Interior_Ceiling_Inverse_Corner: 	classType = typeof(CTile_InteriorCeilingCap); break;
+		case EType.Exterior_Wall: 						classType = typeof(CTile_ExteriorWall); break;
+		case EType.Exterior_Wall_Inverse_Corner: 		classType = typeof(CTile_ExteriorWallCap); break;
 		}
 		
 		return(classType);

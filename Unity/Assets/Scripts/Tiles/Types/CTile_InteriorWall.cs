@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -27,35 +27,26 @@ public class CTile_InteriorWall : CTile
 	// Member Types
 	public enum EType
 	{
-		INVALID = -1,
-
 		None,
 		Corner, 
 		Edge,
 		End,
 		Hall,
 		Cell,
-
-		MAX,
 	}
 
-	public enum EVariant
+	public enum EModification
 	{
-		INVALID = -1,
-		
-		Wall,
+		Default = -1,
 		Door,
 		Window,
-		
-		MAX
 	}
-
 
 	// Member Delegates & Events
 	
 	
 	// Member Fields
-	static protected List<EDirection> s_RelevantDirections = new List<EDirection>();
+	static public List<EDirection> s_RelevantDirections = new List<EDirection>();
 	static protected Dictionary<int, CTile.CMeta> s_MetaDictionary = new Dictionary<int, CTile.CMeta>();
 
 	
@@ -100,20 +91,94 @@ public class CTile_InteriorWall : CTile
 
 	private void Awake()
 	{
-		m_TileType = CTile.EType.InteriorWall;
+		m_TileType = CTile.EType.Interior_Wall;
+
+		EventTileObjectChanged += UpdateWallModifications;
 	}
 
-	protected override bool IsNeighbourRelevant(CNeighbour _Neighbour)
+	protected override int DetirmineTileMask()
 	{
-		if(!s_RelevantDirections.Contains(_Neighbour.m_Direction))
-			return(false);
+		int tileMask = 0;
 		
-		if(!_Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.InteriorWall))
-			return(false);
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
 		
-		if(CUtility.GetMaskState((int)_Neighbour.m_Direction, m_CurrentTileMeta.m_NeighbourMask))
-			return(false);
-		
-		return(true);
+		return(tileMask);
+	}
+
+	protected void UpdateWallModifications(CTile _Self)
+	{
+		List<CModification> currentModifications = GetModificationsFromMask(m_CurrentTileMeta.m_ModificationMask);
+		List<EDirection> defaultSides = new List<EDirection>(s_RelevantDirections);
+		foreach(CModification mod in currentModifications)
+			defaultSides.Remove(mod.m_Side);
+
+		foreach(Transform child in m_TileObject.transform)
+		{
+			child.gameObject.SetActive(false);
+
+			EDirection side = EDirection.INVALID;
+			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
+			{
+				if(child.name.Contains(((EDirection)i).ToString()))
+				{
+					side = (EDirection)i; 
+					break;
+				}
+			}
+
+			EModification modType = EModification.Default;
+			foreach(var mod in Enum.GetValues(typeof(EModification)))
+			{
+				if(child.name.Contains(((EModification)mod).ToString()))
+				{
+					modType = (EModification)mod; 
+					break;
+				}
+			}
+
+			if(currentModifications.Exists(m => m.m_Modification == (int)modType && m.m_Side == side))
+			{
+				child.gameObject.SetActive(true);
+				continue;
+			}
+
+			if(defaultSides.Contains(side) && modType == EModification.Default)
+			{
+				child.gameObject.SetActive(true); 
+				continue;
+			}
+		}
+	}
+
+	public List<CModification> GetModificationsFromMask(int _ModificationMask)
+	{
+		List<CModification> modifications = new List<CModification>();
+
+		foreach(var mod in Enum.GetValues(typeof(EModification)))
+		{
+			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
+			{
+				int value = ((int)mod * (int)EDirection.MAX) + i;
+				if(CUtility.GetMaskState(value, _ModificationMask))
+				{
+					modifications.Add(new CModification((int)mod, GetUnrotatedDirection((EDirection)i)));
+				}
+			}
+		}
+
+		return(modifications);
 	}
 }

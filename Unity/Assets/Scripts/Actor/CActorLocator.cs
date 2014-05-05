@@ -85,6 +85,11 @@ public class CActorLocator : CNetworkMonoBehaviour
     [AServerOnly]
 	public void NotifyEnteredFacility(GameObject _cFacility)
 	{
+		if(m_tCurrentFacilityViewId.Value == null && gameObject.GetComponent<CActorBoardable>() != null)
+		{
+			gameObject.GetComponent<CActorBoardable>().BoardActor();
+		}
+
         // Add containing facility to list
 		m_aContainingFacilities.Add(_cFacility);
 
@@ -100,12 +105,12 @@ public class CActorLocator : CNetworkMonoBehaviour
 		m_aContainingFacilities.Remove(_cFacility);
 
         // Check still in the ship
-        if (m_aContainingFacilities.Count == 0)
+        if(m_aContainingFacilities.Count == 0)
         {
             m_tCurrentFacilityViewId.Value = null;
 
-			// Disembark the player from the ship
-			gameObject.GetComponent<CActorBoardable>().DisembarkActor();
+			if(gameObject.GetComponent<CActorBoardable>() != null)
+				gameObject.GetComponent<CActorBoardable>().DisembarkActor();
         }
 	}
 

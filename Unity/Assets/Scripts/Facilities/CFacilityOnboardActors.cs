@@ -50,9 +50,6 @@ public class CFacilityOnboardActors : MonoBehaviour
     [AServerOnly]
 	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
 	{
-        if(!CNetwork.IsServer)
-            Debug.LogError("This is a server only function");
-
         // Check actor is not already contained in this facility
 		if(!m_ContainingActors.ContainsKey(_Actor))
 		{
@@ -61,9 +58,6 @@ public class CFacilityOnboardActors : MonoBehaviour
 			// Tell actor 
 			if(_Actor.GetComponent<CActorLocator>() != null)
 				_Actor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
-
-            //if (_Actor.GetComponent<CActorBoardable>() != null)
-            //    _Actor.GetComponent<CActorBoardable>().NotifyExitedFacility(gameObject);
 
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
@@ -78,10 +72,6 @@ public class CFacilityOnboardActors : MonoBehaviour
     [AServerOnly]
 	public void OnActorExitedFacilityTrigger(GameObject _Actor)
 	{
-        if(!CNetwork.IsServer)
-            Debug.LogError("This is a server only function");
-
-        // Make sure actor is contained within this facility
 		if(!m_ContainingActors.ContainsKey(_Actor))
 			return;
 
@@ -96,12 +86,21 @@ public class CFacilityOnboardActors : MonoBehaviour
 			// Call ActorExitedFacility for the locator
 			if(_Actor.GetComponent<CActorLocator>() != null)
 				_Actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
-
-            //if (_Actor.GetComponent<CActorBoardable>() != null)
-            //    _Actor.GetComponent<CActorBoardable>().NotifyExitedFacility(gameObject);
 			
 			if(EventActorExitedFacility != null)
 				EventActorExitedFacility(gameObject, _Actor);
+		}
+	}
+
+	private void OnDestroy()
+	{
+		foreach(GameObject actor in ActorsOnboard)
+		{
+			if(actor.GetComponent<CActorLocator>() != null)
+				actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
+			
+			if(EventActorExitedFacility != null)
+				EventActorExitedFacility(gameObject, actor);
 		}
 	}
 }

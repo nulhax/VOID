@@ -31,7 +31,7 @@ public class CPreplacedFacility : MonoBehaviour
 	
 	
 	// Member Fields
-	
+	public GameObject m_TilesCollection = null;
 	
 	// Member Properties
 
@@ -49,13 +49,15 @@ public class CPreplacedFacility : MonoBehaviour
 	[AServerOnly]
 	private void InitialisePreplacedTiles()
 	{
+		m_TilesCollection = (GameObject)GameObject.Instantiate(m_TilesCollection);
+
 		// Get the tiles which reside under this facility
-		List<CTileInterface> tiles = new List<CTileInterface>(gameObject.GetComponentsInChildren<CTileInterface>());
+		List<CTileInterface> tiles = new List<CTileInterface>(m_TilesCollection.GetComponentsInChildren<CTileInterface>());
 		
 		// Find the tiles which are internal only
 		List<CTileInterface> interiorTiles = new List<CTileInterface>(
 			from ineriorTile in tiles
-			where ineriorTile.GetTileTypeState(CTile.EType.InteriorWall)
+			where ineriorTile.GetTileTypeState(CTile.EType.Interior_Wall)
 			select ineriorTile);
 		
 		List<List<CTileInterface>> facilities = new List<List<CTileInterface>>();
@@ -69,7 +71,13 @@ public class CPreplacedFacility : MonoBehaviour
 		GameObject facility = shipFacilities.Facilities.First();
 		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
 		{
-			preplacedModule.CreateModule(facility);
+			CModuleInterface module = CGameShips.Ship.GetComponent<CShipModules>().CreateModule(preplacedModule.m_PreplacedModuleType, 
+			                                                                                    preplacedModule.transform.position, 
+			                                                                                    preplacedModule.transform.rotation);
+
+			module.Build(1.0f);
 		}
+
+		Destroy(m_TilesCollection);
 	}
 };
