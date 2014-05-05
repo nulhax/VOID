@@ -245,7 +245,7 @@ public abstract class CTile : MonoBehaviour
 			// Get the meta entry for the result with a correct rotation
 			CTile.CMeta newTileMeta = new CMeta(TileMetaDictionary[tileMask].m_TileMask, TileMetaDictionary[tileMask].m_MetaType);
 			newTileMeta.m_Rotations = i;
-			newTileMeta.m_ModificationMask = GetModificationsMask();
+			newTileMeta.m_ModificationMask = CalculateModificationsMask();
 			
 			// Update the current tile meta data
 			currentMetaChanged = !m_CurrentTileMeta.Equals(newTileMeta);
@@ -282,25 +282,30 @@ public abstract class CTile : MonoBehaviour
 		m_ActiveTileMeta = new CTile.CMeta(m_CurrentTileMeta);
 	}
 
-	public EDirection GetUnrotatedDirection(EDirection _RotatedDirection)
-	{
-		for(int i = m_CurrentTileMeta.m_Rotations; i > 0; --i)
-		{
-			_RotatedDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_RotatedDirection));
-		}
-		
-		return(_RotatedDirection);
-	}
-
 	[AServerOnly]
-	public void SetTileVariant(int _TileVariant, EDirection _Side)
+	public void AddTileModification(int _ModificationType, EDirection _Side, bool _State)
 	{
-		m_CurrentTileMeta.m_ModificationMask = _TileVariant;
+		if(_State)
+			m_Modifications.Add(new CModification(_ModificationType, _Side));
+		else
+			m_Modifications.RemoveAll(m => m.m_Modification == _ModificationType && m.m_Side == _Side);
+
+		m_CurrentTileMeta.m_ModificationMask = CalculateModificationsMask();
 	}
 	
-	public int GetTileVariant()
+	public int GetTileModificationMask()
 	{
 		return(m_CurrentTileMeta.m_ModificationMask);
+	}
+
+	protected int CalculateModificationsMask()
+	{
+		int modMask = 0;
+		foreach(CModification mod in m_Modifications)
+		{
+			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_Side;
+		}
+		return(modMask);
 	}
 
 	[AServerOnly]
@@ -328,6 +333,16 @@ public abstract class CTile : MonoBehaviour
 		return(m_NeighbourExemptions.Contains(_Direction));
 	}
 
+	public EDirection GetUnrotatedDirection(EDirection _RotatedDirection)
+	{
+		for(int i = m_CurrentTileMeta.m_Rotations; i > 0; --i)
+		{
+			_RotatedDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_RotatedDirection));
+		}
+		
+		return(_RotatedDirection);
+	}
+
 	public void ReleaseTileObject()
 	{
 		if(m_TileObject == null)
@@ -351,16 +366,6 @@ public abstract class CTile : MonoBehaviour
 		return(new CMeta(mask, (int)_MetaType));
 	}
 
-	protected int GetModificationsMask()
-	{
-		int modMask = 0;
-		foreach(CModification mod in m_Modifications)
-		{
-			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_Side;
-		}
-		return(modMask);
-	}
-	
 	public static Type GetTileClassType(EType _TileType)
 	{
 		Type classType = null;

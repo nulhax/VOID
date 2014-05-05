@@ -35,8 +35,9 @@ public class CTile_InteriorWall : CTile
 		Cell,
 	}
 
-	public enum EModifications
+	public enum EModification
 	{
+		Default = -1,
 		Door,
 		Window,
 	}
@@ -119,23 +120,61 @@ public class CTile_InteriorWall : CTile
 
 	protected void UpdateWallModifications(CTile _Self)
 	{
-		List<CModification> modifications = GetModificationsFromMask(m_CurrentTileMeta.m_ModificationMask);
+		List<CModification> currentModifications = GetModificationsFromMask(m_CurrentTileMeta.m_ModificationMask);
+		List<EDirection> defaultSides = new List<EDirection>(s_RelevantDirections);
+		foreach(CModification mod in currentModifications)
+			defaultSides.Remove(mod.m_Side);
 
+		foreach(Transform child in m_TileObject.transform)
+		{
+			child.gameObject.SetActive(false);
 
+			EDirection side = EDirection.INVALID;
+			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
+			{
+				if(child.name.Contains(((EDirection)i).ToString()))
+				{
+					side = (EDirection)i; 
+					break;
+				}
+			}
+
+			EModification modType = EModification.Default;
+			foreach(var mod in Enum.GetValues(typeof(EModification)))
+			{
+				if(child.name.Contains(((EModification)mod).ToString()))
+				{
+					modType = (EModification)mod; 
+					break;
+				}
+			}
+
+			if(currentModifications.Exists(m => m.m_Modification == (int)modType && m.m_Side == side))
+			{
+				child.gameObject.SetActive(true);
+				continue;
+			}
+
+			if(defaultSides.Contains(side) && modType == EModification.Default)
+			{
+				child.gameObject.SetActive(true); 
+				continue;
+			}
+		}
 	}
 
 	public List<CModification> GetModificationsFromMask(int _ModificationMask)
 	{
 		List<CModification> modifications = new List<CModification>();
 
-		foreach(var mod in Enum.GetValues(typeof(EModifications)))
+		foreach(var mod in Enum.GetValues(typeof(EModification)))
 		{
 			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
 			{
 				int value = ((int)mod * (int)EDirection.MAX) + i;
 				if(CUtility.GetMaskState(value, _ModificationMask))
 				{
-					modifications.Add(new CModification((int)mod, (EDirection)i));
+					modifications.Add(new CModification((int)mod, GetUnrotatedDirection((EDirection)i)));
 				}
 			}
 		}
