@@ -985,8 +985,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mState: 0
-  mTimeout: 0
-  mTimeoutSecondary: 0
+  mTimeout1: 0
+  mTimeout2: 0
   mMinTimeSpentIdling: 2
   mMaxTimeSpentIdling: 10
   mTimeSpentChargingScanner: 10
@@ -995,7 +995,7 @@ MonoBehaviour:
   mTimeSpentAttackingTargetBeforeStopping: 15
   mTimeSpentAttackingTargetAfterStopping: 20
   mTimeSpentTravelling: 5
-  mFireRate: 1.5
+  mTimeBetweenWeaponFire: .333333343
   mMinVelocityOfSuspiciousGubbin: 0
   mTimeUntilSuspiciousGubbinExpires: 15
   mTarget_InternalSource: {fileID: 0}
@@ -1004,9 +1004,9 @@ MonoBehaviour:
   mFollowTarget: 0
   mTargetExpireTime: 0
   mAudioWeaponFireID: -1
-  mFacingTarget: 0
-  mCloseToTarget: 0
-  mVisibleTarget: 0
+  mTargetWithinViewCone: 0
+  mTargetWithinViewSphere: 0
+  mTargetDirectLineOfSight: 0
   viewConeRadiusInDegrees: 30
   viewConeLength_Extension: 1000
   viewSphereRadius_Extension: 300

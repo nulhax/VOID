@@ -9,7 +9,7 @@ public class CCannonProjectile : MonoBehaviour
 
 	void Awake()
 	{
-
+		transform.parent = CGalaxy.instance.transform;
 	}
 
 	void Start()

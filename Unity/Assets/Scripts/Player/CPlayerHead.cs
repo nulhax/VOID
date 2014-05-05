@@ -157,7 +157,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.SyncLocalEuler:
-                        if (cPlayerHead.IsInputDisabled)
+                        if (!cPlayerHead.IsInputDisabled)
                         {
                             cPlayerHead.m_fHeadEulerX.Value = _cStream.Read<float>();
                             cPlayerHead.m_fHeadEulerY.Value = _cStream.Read<float>();
