@@ -349,16 +349,17 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot1, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot2, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot3, OnEventInput);
-            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);
-
-            m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
-			//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
-
-            m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);           
         }
+
+		m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
+		//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;		
+		m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
 
         // Signup to pre destroy
         gameObject.GetComponent<CNetworkView>().EventPreDestory += OnEventPreDestroy;
+
+        gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += HandleHealthStateChanged;
     }
 
 
@@ -817,6 +818,26 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         // Notify observers
         if (EventEquipedToolChanged != null) EventEquipedToolChanged(ActiveTool);
+    }
+
+
+    void HandleHealthStateChanged(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
+    {  
+        switch (_eHealthCurrentState)
+        {
+            case CPlayerHealth.HealthState.DOWNED:
+            {
+                DropTool(0);
+                             
+                break;
+            }           
+            case CPlayerHealth.HealthState.ALIVE:
+            {   
+                DropTool(1);
+               
+                break;
+            }
+        }          
     }
 
 

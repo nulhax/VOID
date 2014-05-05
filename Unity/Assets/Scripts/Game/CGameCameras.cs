@@ -268,7 +268,7 @@ public class CGameCameras : MonoBehaviour
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Skybox;
-		_Camera.cullingMask = 1 << LayerMask.NameToLayer("Galaxy");
+		_Camera.cullingMask = CGalaxy.layerBit_All;
 
 		// Set the depth
 		_Camera.depth = _Depth;
@@ -283,7 +283,7 @@ public class CGameCameras : MonoBehaviour
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Nothing;
 		_Camera.cullingMask = int.MaxValue;
-		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Galaxy"));
+		_Camera.cullingMask &= ~CGalaxy.layerBit_All;
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Background"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 2D"));

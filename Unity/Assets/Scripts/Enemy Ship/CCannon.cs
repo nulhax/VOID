@@ -4,7 +4,7 @@ using System.Collections;
 public class CCannon : MonoBehaviour
 {
 	[HideInInspector] public Rigidbody parent = null;
-	float velocity = 100.0f;
+	float velocity = 5000.0f;
 
 	public void Fire(Vector3 targetPos)
 	{

@@ -3,8 +3,12 @@ using System.Collections;
 
 public class CFireHazard : CNetworkMonoBehaviour
 {
+	private static System.Collections.Generic.List<CFireHazard> allInstances = new System.Collections.Generic.List<CFireHazard>();
+
 	private int audioClipIndex = -1;
-	private float spreadRadius = 3.0f;
+	private float spreadRadius = 6.0f;
+	private float maxDamagePerSecond = 5.0f;
+	private float damageExponentiation = 1.0f / 3.0f;	// Damage dealt by fire is scaled by proximity^this. 1 is linear, <1 damage drops at the end, >1 damage drops off at the start.
 	private float emissionsPerUnitOfSurfaceArea = 1;
 	private float emissionsPerUnitOfSurfaceAreaDiscrepancy = 0.05f;	// Variance percentage in particle emission rate.
 	private float particleLifetime = 1.0f;
@@ -15,8 +19,11 @@ public class CFireHazard : CNetworkMonoBehaviour
 	private CActorHealth_Embedded fireHealth = null;
 	public CActorHealth_Embedded health { get { return fireHealth; } }
 
+	private float timeBetweenProcess = 0.2f;
+	private float timeUntilProcess = 0.0f;
+
 	private CFacilityAtmosphere cache_FacilityAtmosphere = null;
-	private System.Collections.Generic.List<CActorHealth> cache_ActorHealths = new System.Collections.Generic.List<CActorHealth>();
+	//private System.Collections.Generic.List<CActorHealth> cache_ActorHealths = new System.Collections.Generic.List<CActorHealth>();
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
@@ -33,6 +40,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 		gameObject.AddMissingComponent<CActorAtmosphericConsumer>();
 		gameObject.AddMissingComponent<CNetworkView>();
 
+		allInstances.Add(this);
+
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate += 25.0f;
 
 		particleEmitterTemplate = Resources.Load<GameObject>("Prefabs/Hazards/ParticleEmitter");
@@ -46,6 +55,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
+			spreadRadius += CUtility.GetBoundingRadius(gameObject);
+
 			CActorLocator actorLocator = GetComponent<CActorLocator>();
 			if (actorLocator != null)
 			{
@@ -54,8 +65,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 					cache_FacilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
 			}
 
-			cache_ActorHealths.AddRange(GetComponentsInChildren<CActorHealth>());
-			cache_ActorHealths.AddRange(GetComponents<CActorHealth>());
+			//cache_ActorHealths.AddRange(GetComponentsInChildren<CActorHealth>());
+			//cache_ActorHealths.AddRange(GetComponents<CActorHealth>());
 		}
 
 		fireHealth.Start();
@@ -66,6 +77,10 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
+		allInstances.Remove(this);
+
+		fireHealth.OnDestroy();
+
 		fireHealth.EventOnSetState -= OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
@@ -77,17 +92,31 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 		if (CNetwork.IsServer && burning)
 		{
-			if(cache_FacilityAtmosphere != null)
+			float prevTime = timeUntilProcess;
+			timeUntilProcess -= Time.deltaTime;
+
+			while(timeUntilProcess <= 0.0f)
 			{
-				float thresholdPercentage = 0.25f;
-				if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
-					fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
+				timeUntilProcess += timeBetweenProcess;
+
+				if(cache_FacilityAtmosphere != null)
+				{
+					float thresholdPercentage = 0.25f;
+					if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
+						fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * timeBetweenProcess;
+				}
+
+				//foreach (CActorHealth actorHealth in cache_ActorHealths)
+				//	actorHealth.health -= Time.deltaTime;
+
+				foreach (CActorHealth actorHealth in CActorHealth.allInstances)
+					if(actorHealth.flammable)
+						actorHealth.health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((actorHealth.gameObject.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
+
+				foreach (CActorHealth_Embedded actorHealth in CActorHealth_Embedded.allInstances)
+					if(actorHealth.flammable)
+						actorHealth.health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((actorHealth.gameObject.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
 			}
-
-			fireHealth.health -= Time.deltaTime;	// Self damage over time. Seek help.
-
-			foreach (CActorHealth actorHealth in cache_ActorHealths)
-				actorHealth.health -= Time.deltaTime;
 		}
 
 		fireHealth.Update();
