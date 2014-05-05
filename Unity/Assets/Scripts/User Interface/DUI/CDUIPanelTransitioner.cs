@@ -38,16 +38,16 @@ public class CDUIPanelTransitioner : CNetworkMonoBehaviour
 	// Member Properties
 	public GameObject ActivePanel
 	{
-		get { return(CNetwork.Factory.FindObject(m_ActivePanelId.Get())); }
+		get { return(CNetwork.Factory.FindGameObject(m_ActivePanelId.Get())); }
 	}
 
 	public GameObject PreviouslyActivePanel
 	{
-		get { return(CNetwork.Factory.FindObject(m_ActivePanelId.GetPrevious())); }
+		get { return(CNetwork.Factory.FindGameObject(m_ActivePanelId.GetPrevious())); }
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_ActivePanelId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}

@@ -62,6 +62,9 @@ public class CFacilityOnboardActors : MonoBehaviour
 			if(_Actor.GetComponent<CActorLocator>() != null)
 				_Actor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
 
+            //if (_Actor.GetComponent<CActorBoardable>() != null)
+            //    _Actor.GetComponent<CActorBoardable>().NotifyExitedFacility(gameObject);
+
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
 				EventActorEnteredFacility(gameObject, _Actor);
@@ -93,6 +96,9 @@ public class CFacilityOnboardActors : MonoBehaviour
 			// Call ActorExitedFacility for the locator
 			if(_Actor.GetComponent<CActorLocator>() != null)
 				_Actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
+
+            //if (_Actor.GetComponent<CActorBoardable>() != null)
+            //    _Actor.GetComponent<CActorBoardable>().NotifyExitedFacility(gameObject);
 			
 			if(EventActorExitedFacility != null)
 				EventActorExitedFacility(gameObject, _Actor);

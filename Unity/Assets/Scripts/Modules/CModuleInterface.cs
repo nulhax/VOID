@@ -55,12 +55,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		AtmosphereGenerator = 50,
 		PlayerSpawner       = 100,
         TurretCockpit       = 150,
-        LaserTurret         = 200,
         PilotCockpit        = 250,
         PowerGenerator      = 300,
-        PowerCapacitor      = 350,
-        MiningTurret        = 400,
-        MiningCockpit       = 450,
+        PowerBattery        = 350,
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
@@ -69,6 +66,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
+        TusterSmall         = 900,
 
 	}
 
@@ -148,7 +146,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
     public bool IsBuilt
     {
-        get { return (m_bBuiltPercent.Value == 100); }
+        get { return (m_bBuilt); }
     }
 
 
@@ -173,23 +171,11 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_fFunctionalRatio = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 1.0f);
         m_bBuiltPercent = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
         m_bEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
-    }
-
-
-    public List<GameObject> GetAttachedComponents()
-    {
-        return (m_aAttachedComponents);
-    }
-
-
-    public void RegisterAttachedComponent(CComponentInterface _cComponentInterface)
-    {
-        m_aAttachedComponents.Add(_cComponentInterface.gameObject);
     }
 
 
@@ -208,7 +194,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	[AServerOnly]
 	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
 	{
-		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
+		GameObject moduleObject = CNetwork.Factory.CreateGameObject(CModuleInterface.GetPrefabType(_ModuleType));
 		moduleObject.transform.parent = _FacilityParent.transform;
 		moduleObject.transform.localPosition = _LocalPostion;
 
@@ -230,43 +216,10 @@ public class CModuleInterface : CNetworkMonoBehaviour
     }
 
 
-	public static List<GameObject> GetAllModules()
-	{
-		return (s_mModules);
-	}
-
-
-	public static List<GameObject> FindModulesByType(EType _eModuleType)
-	{
-		if (!s_mModulesByType.ContainsKey(_eModuleType))
-		{
-			return (new List<GameObject>());
-		}
-
-		return (s_mModulesByType[_eModuleType]);
-	}
-
-
-	public static List<GameObject> FindModulesByCategory(ECategory _eModuleCategory)
-	{
-		if (!s_mModulesByCategory.ContainsKey(_eModuleCategory))
-		{
-			return (new List<GameObject>());
-		}
-		
-		return (s_mModulesByCategory[_eModuleCategory]);
-	}
-
-
-	public static List<GameObject> FindModulesBySize(ESize _eModuleSize)
-	{
-		if (!s_mModulesBySize.ContainsKey(_eModuleSize))
-		{
-			return (new List<GameObject>());
-		}
-		
-		return (s_mModulesBySize[_eModuleSize]);
-	}
+    public void SetModelVisible(bool _bVisible)
+    {
+        m_cModel.SetActive(_bVisible);
+    }
 
 
     public static void RegisterPrefab(EType _eModuleType, CGameRegistrator.ENetworkPrefab _ePrefab)
@@ -279,7 +232,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     {
         if (!s_mRegisteredPrefabs.ContainsKey(_eModuleType))
         {
-            Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eModuleType));
+            //Debug.LogError(string.Format("Module type ({0}) has not been registered a prefab", _eModuleType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
@@ -290,32 +243,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		// Add self to the list of modules
-		s_mModules.Add(gameObject);
-
-		// Add self to the global list of module types
-		if (!s_mModulesByType.ContainsKey(m_eModuleType))
-		{
-			s_mModulesByType.Add(m_eModuleType, new List<GameObject>());
-		}
-	
-		s_mModulesByType[m_eModuleType].Add(gameObject);
-
-		// Add self to the global list of module categories
-		if (!s_mModulesByCategory.ContainsKey(m_eModuleCategory))
-		{
-			s_mModulesByCategory.Add(m_eModuleCategory, new List<GameObject>());
-		}
-		
-		s_mModulesByCategory[m_eModuleCategory].Add(gameObject);
-
-		// Add self to the global list of module sizes
-		if (!s_mModulesBySize.ContainsKey(m_eModuleSize))
-		{
-			s_mModulesBySize.Add(m_eModuleSize, new List<GameObject>());
-		}
-		
-		s_mModulesBySize[m_eModuleSize].Add(gameObject);
+        CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
 	}
 
 
@@ -347,14 +275,10 @@ public class CModuleInterface : CNetworkMonoBehaviour
         // Hide model if not built
         if (!IsBuilt)
         {
-            m_cModel.SetActive(false);
-
-            m_aAttachedComponents.ForEach((GameObject _cComponent) =>
-            {
-                _cComponent.SetActive(false);
-            });
+            SetModelVisible(false);
         }
 
+        /*
 		// Register self with parent facility
 		CFacilityInterface cFacilityInterface = CUtility.FindInParents<CFacilityInterface>(gameObject);
 
@@ -367,16 +291,13 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		{
 			Debug.LogError("Could not find facility to register to");
 		}
+         * */
 	}
 
 
 	void OnDestroy()
 	{
-		// Remove self from global list of modules
-		s_mModules.Remove(gameObject);
-		s_mModulesByType[ModuleType].Remove(gameObject);
-		s_mModulesByCategory[ModuleCategory].Remove(gameObject);
-		s_mModulesBySize[ModuleSize].Remove(gameObject);
+        // Empty
 	}
 
 
@@ -415,7 +336,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		// Re-enable all of the renderers for self
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
 		{
-			r.enabled = true;
+			r.enabled = true; 
 		}
 	}
 
@@ -424,17 +345,18 @@ public class CModuleInterface : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_bBuiltPercent)
         {
-            GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+            if (GetComponent<CModulePrecipitation>() != null)
+            {
+                GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+            }
 
             // Check is completely built
-            if (m_bBuiltPercent.Value == 100)
+            if (!m_bBuilt &&
+                 m_bBuiltPercent.Value == 100)
             {
-                m_cModel.SetActive(true);
+                m_bBuilt = true;
 
-                m_aAttachedComponents.ForEach((GameObject _cComponent) =>
-                {
-                    _cComponent.SetActive(true);
-                });
+                SetModelVisible(true);
 
                 if (EventBuilt != null) EventBuilt(this);
 
@@ -493,7 +415,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		
 		// Use this material and save an instance of the prefab
 		mr.sharedMaterial = precipitateMat;
-		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+
+        GameObject cParticles = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/_Particle System2222.prefab", (GameObject)Resources.Load("Prefabs/Modules/_Precipitative/_Particle System", typeof(GameObject)));
 		
 		// Save assets and reposition original
 		AssetDatabase.SaveAssets();
@@ -506,6 +430,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public string m_sDisplayName = "";
+    public string m_sDescription = "";
     public GameObject m_cModel = null;
 	public EType m_eModuleType = EType.INVALID;
 	public ECategory m_eModuleCategory = ECategory.INVALID;
@@ -525,14 +451,10 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	Cubemap m_CubemapSnapshot = null;
 
 
-    List<GameObject> m_aAttachedComponents = new List<GameObject>();
+    bool m_bBuilt = false;
 
 
-	static List<GameObject> s_mModules                                                  = new List<GameObject>();
-	static Dictionary<EType,     List<GameObject>> s_mModulesByType                     = new Dictionary<EType, List<GameObject>>();
-	static Dictionary<ECategory, List<GameObject>> s_mModulesByCategory                 = new Dictionary<ECategory, List<GameObject>>();
-	static Dictionary<ESize,     List<GameObject>> s_mModulesBySize                     = new Dictionary<ESize, List<GameObject>>();
-    static Dictionary<EType,     CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs  = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
+    static Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab>();
 
 
 // Server Member Fields

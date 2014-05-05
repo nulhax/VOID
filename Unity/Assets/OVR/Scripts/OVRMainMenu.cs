@@ -249,8 +249,7 @@ public class OVRMainMenu : MonoBehaviour
 		// Make sure to hide cursor 
 		if(Application.isEditor == false)
 		{
-			Screen.showCursor = false; 
-			Screen.lockCursor = true;
+            CCursorControl.Instance.SetLocked(true);
 		}
 		
 		// Add delegates to update; useful for ordering menu tasks, if required

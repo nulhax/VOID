@@ -45,14 +45,14 @@ MonoBehaviour:
     y: 263
     width: 168
     height: 249
-    borderLeft: 0
-    borderRight: 0
-    borderTop: 0
-    borderBottom: 0
-    paddingLeft: 52
-    paddingRight: 36
-    paddingTop: 4
-    paddingBottom: 3
+    borderLeft: 14
+    borderRight: 14
+    borderTop: 14
+    borderBottom: 14
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
   - name: LockIcon
     x: 0
     y: 134

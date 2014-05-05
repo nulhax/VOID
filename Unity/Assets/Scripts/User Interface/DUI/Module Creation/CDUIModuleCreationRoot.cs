@@ -87,11 +87,11 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 
 	public GameObject CurrentPortSelected
 	{
-		get {return(CNetwork.Factory.FindObject(m_CurrentPortSelected.Get())); }
+		get {return(CNetwork.Factory.FindGameObject(m_CurrentPortSelected.Get())); }
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
 		m_CurrentPortSelected = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);

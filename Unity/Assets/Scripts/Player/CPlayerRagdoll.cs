@@ -47,7 +47,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     static CNetworkStream   s_cSerializeStream = new CNetworkStream();  
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
        m_bRagdollState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, (byte)ERagdollState.Invalid);
     }
@@ -214,7 +214,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             if(body.gameObject.GetComponent<Rigidbody>())
             {
                 body.rigidbody.isKinematic = false;
-				body.rigidbody.useGravity = false;
+				body.rigidbody.useGravity = true;
                 body.rigidbody.velocity = rigidbody.velocity;
 				body.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }

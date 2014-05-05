@@ -41,39 +41,39 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 	public float TotalGenerationRate
 	{
-        get { return (m_fTotalGenerationRate.Value); } 
+        get { return (m_fCurrentGenerationRate.Value); } 
 	}
 
 
 	public float TotalCapacity
 	{
-        get { return (m_fTotalCapacity.Value); } 
+        get { return (m_fCurrentCapacity.Value); } 
 	}
 
 
     public float TotalCharge
     {
-        get { return (m_fTotalCharge.Value); }
+        get { return (m_fCurrentCharge.Value); }
     }
 
 
     public float TotalConsumptionRate
     {
-        get { return (m_fTotalConsumptionRate.Value); }
+        get { return (m_fCurrentConsumptionRate.Value); }
     }
 
 	
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fMaxGenerationRate    = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fTotalConsumptionRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fTotalGenerationRate  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCurrentConsumptionRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCurrentGenerationRate  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_fMaxCapacity          = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fTotalCapacity        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fTotalCharge          = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCurrentCapacity        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCurrentCharge          = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 
@@ -87,17 +87,17 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
     public void ChangeGenerationRate(float _fValue)
     {
-        m_fTotalGenerationRate.Value += _fValue;
+        m_fCurrentGenerationRate.Value += _fValue;
 
-        Debug.Log(string.Format("Ship power generation total change({0}) total generation({1})", _fValue, m_fTotalGenerationRate.Value));
+        Debug.Log(string.Format("Ship power generation total change({0}) total generation({1})", _fValue, m_fCurrentGenerationRate.Value));
     }
 
 
     public void ChangeConsumptionRate(float _fValue)
     {
-        m_fTotalConsumptionRate.Value += _fValue;
+        m_fCurrentConsumptionRate.Value += _fValue;
 
-        Debug.Log(string.Format("Ship power consumption total change({0}) total consumption({1})", _fValue, m_fTotalConsumptionRate.Value));
+        Debug.Log(string.Format("Ship power consumption total change({0}) total consumption({1})", _fValue, m_fCurrentConsumptionRate.Value));
     }
 
 
@@ -111,9 +111,9 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
     public void ChangeCapacity(float _fValue)
     {
-        m_fTotalCapacity.Value += _fValue;
+        m_fCurrentCapacity.Value += _fValue;
 
-        Debug.Log(string.Format("Ship power capacity total change({0}) total capacity({1})", _fValue, m_fTotalCapacity.Value));
+        Debug.Log(string.Format("Ship power capacity total change({0}) total capacity({1})", _fValue, m_fCurrentCapacity.Value));
     }
 
 
@@ -388,11 +388,11 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 
     CNetworkVar<float> m_fMaxGenerationRate = null;
-    CNetworkVar<float> m_fTotalConsumptionRate = null;
-    CNetworkVar<float> m_fTotalGenerationRate = null;
+    CNetworkVar<float> m_fCurrentConsumptionRate = null;
+    CNetworkVar<float> m_fCurrentGenerationRate = null;
     CNetworkVar<float> m_fMaxCapacity = null;
-    CNetworkVar<float> m_fTotalCapacity = null;
-    CNetworkVar<float> m_fTotalCharge = null;
+    CNetworkVar<float> m_fCurrentCapacity = null;
+    CNetworkVar<float> m_fCurrentCharge = null;
 
 
 }

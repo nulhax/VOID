@@ -333,7 +333,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 29, z: 0}
+  m_LocalPosition: {x: 0, y: 18.8999939, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -344,7 +344,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 45, z: 0}
+  m_LocalPosition: {x: 0, y: 34.8999939, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -355,7 +355,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 77, z: 0}
+  m_LocalPosition: {x: 0, y: 66.8999939, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -366,7 +366,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100020}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 0}
+  m_LocalPosition: {x: 0, y: -10.1000061, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -377,7 +377,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100018}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 150, z: 0}
+  m_LocalPosition: {x: 0, y: 139.899994, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -388,7 +388,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -33, z: 0}
+  m_LocalPosition: {x: 0, y: -43.1000061, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400028}
@@ -399,7 +399,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100022}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -85, z: 0}
+  m_LocalPosition: {x: 0, y: -95.1000061, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400006}
@@ -579,7 +579,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 0, y: 0, z: 0}
+  m_ViewPortPos: {x: -266, y: -20, z: 0}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -648,7 +648,7 @@ MonoBehaviour:
     absolute: -63
   mColor: {r: 1, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 322
+  mWidth: 330
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
@@ -747,7 +747,7 @@ MonoBehaviour:
     absolute: -47
   mColor: {r: 1, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 322
+  mWidth: 330
   mHeight: 16
   mDepth: 0
   autoResizeBoxCollider: 0
@@ -807,7 +807,7 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 1, b: 0, a: 1}
   mPivot: 4
-  mWidth: 522
+  mWidth: 530
   mHeight: 46
   mDepth: 0
   autoResizeBoxCollider: 0
@@ -915,8 +915,8 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 7
-  mWidth: 26
-  mHeight: 14
+  mWidth: 38
+  mHeight: 20
   mDepth: 5
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
@@ -1083,7 +1083,7 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 522
+  mWidth: 530
   mHeight: 100
   mDepth: 0
   autoResizeBoxCollider: 0
@@ -1283,8 +1283,8 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 0, g: 0, b: 0, a: 1}
   mPivot: 4
-  mWidth: 522
-  mHeight: 400
+  mWidth: 530
+  mHeight: 380
   mDepth: -3
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
@@ -1331,8 +1331,8 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .343283594, g: .343283594, b: .343283594, a: .360784322}
   mPivot: 4
-  mWidth: 522
-  mHeight: 400
+  mWidth: 530
+  mHeight: 380
   mDepth: -2
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
@@ -1384,10 +1384,10 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3001
   mAlpha: 1
-  mClipping: 0
-  mClipRange: {x: 0, y: 0, z: 20, w: 20}
+  mClipping: 4
+  mClipRange: {x: 0, y: 0, z: 529.880005, w: 379.799988}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 1
 --- !u!114 &11400042
@@ -1456,11 +1456,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce32e11994ad974499d64f553b95c379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GenerationBar: {fileID: 11400032}
-  m_GenerationRate: {fileID: 11400018}
-  m_GenerationActive: {fileID: 11400010}
-  m_ErrorReport: {fileID: 11400008}
-  m_WarningReport: {fileID: 11400004}
 --- !u!114 &11400048
 MonoBehaviour:
   m_ObjectHideFlags: 1

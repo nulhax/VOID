@@ -1,0 +1,773 @@
+fileFormatVersion: 2
+guid: 16817d493b7cb9d4da55e2183ebd3f1d
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Arm_Bottom
+    100002: Arm_Left
+    100004: Arm_Right
+    100006: Arm_Top
+    100008: //RootNode
+    100010: WiringKit_Arm_Bottom_Back
+    100012: WiringKit_Arm_Bottom_Front
+    100014: WiringKit_Arm_Left_Back
+    100016: WiringKit_Arm_Left_Front
+    100018: WiringKit_Arm_Right_Back
+    100020: WiringKit_Arm_Right_Front
+    100022: WiringKit_Arm_Top_Back
+    100024: WiringKit_Arm_Top_Bone_Base
+    100026: WiringKit_Arm_Top_Bone_Base001
+    100028: WiringKit_Arm_Top_Bone_Base002
+    100030: WiringKit_Arm_Top_Bone_Base003
+    100032: WiringKit_Arm_Top_Bone_Laser
+    100034: WiringKit_Arm_Top_Bone_Laser001
+    100036: WiringKit_Arm_Top_Bone_Laser002
+    100038: WiringKit_Arm_Top_Bone_Laser003
+    100040: WiringKit_Arm_Top_Bone_Middle
+    100042: WiringKit_Arm_Top_Bone_Middle001
+    100044: WiringKit_Arm_Top_Bone_Middle002
+    100046: WiringKit_Arm_Top_Bone_Middle003
+    100048: WiringKit_Arm_Top_Front
+    100050: WiringKit_Body
+    100052: WiringKit_Laser_Bottom
+    100054: WiringKit_Laser_Left
+    100056: WiringKit_Laser_Middle
+    100058: WiringKit_Laser_Right
+    100060: WiringKit_Laser_Top
+    400000: Arm_Bottom
+    400002: Arm_Left
+    400004: Arm_Right
+    400006: Arm_Top
+    400008: //RootNode
+    400010: WiringKit_Arm_Bottom_Back
+    400012: WiringKit_Arm_Bottom_Front
+    400014: WiringKit_Arm_Left_Back
+    400016: WiringKit_Arm_Left_Front
+    400018: WiringKit_Arm_Right_Back
+    400020: WiringKit_Arm_Right_Front
+    400022: WiringKit_Arm_Top_Back
+    400024: WiringKit_Arm_Top_Bone_Base
+    400026: WiringKit_Arm_Top_Bone_Base001
+    400028: WiringKit_Arm_Top_Bone_Base002
+    400030: WiringKit_Arm_Top_Bone_Base003
+    400032: WiringKit_Arm_Top_Bone_Laser
+    400034: WiringKit_Arm_Top_Bone_Laser001
+    400036: WiringKit_Arm_Top_Bone_Laser002
+    400038: WiringKit_Arm_Top_Bone_Laser003
+    400040: WiringKit_Arm_Top_Bone_Middle
+    400042: WiringKit_Arm_Top_Bone_Middle001
+    400044: WiringKit_Arm_Top_Bone_Middle002
+    400046: WiringKit_Arm_Top_Bone_Middle003
+    400048: WiringKit_Arm_Top_Front
+    400050: WiringKit_Body
+    400052: WiringKit_Laser_Bottom
+    400054: WiringKit_Laser_Left
+    400056: WiringKit_Laser_Middle
+    400058: WiringKit_Laser_Right
+    400060: WiringKit_Laser_Top
+    2300000: WiringKit_Body
+    2300002: WiringKit_Laser_Middle
+    3300000: WiringKit_Body
+    3300002: WiringKit_Laser_Middle
+    4300000: WiringKit_Body
+    4300002: WiringKit_Laser_Middle
+    4300004: WiringKit_Arm_Top_Back
+    4300006: WiringKit_Arm_Top_Front
+    4300008: WiringKit_Laser_Top
+    4300010: WiringKit_Laser_Left
+    4300012: WiringKit_Arm_Left_Back
+    4300014: WiringKit_Arm_Left_Front
+    4300016: WiringKit_Laser_Bottom
+    4300018: WiringKit_Arm_Bottom_Back
+    4300020: WiringKit_Arm_Bottom_Front
+    4300022: WiringKit_Laser_Right
+    4300024: WiringKit_Arm_Right_Back
+    4300026: WiringKit_Arm_Right_Front
+    7400000: Take 001
+    7400002: Activating
+    7400004: Idle Start
+    7400006: Idle Loop
+    7400008: Idle End
+    7400010: Deactivating
+    7400012: Inactive
+    9500000: //RootNode
+    13700000: WiringKit_Arm_Bottom_Back
+    13700002: WiringKit_Arm_Bottom_Front
+    13700004: WiringKit_Arm_Left_Back
+    13700006: WiringKit_Arm_Left_Front
+    13700008: WiringKit_Arm_Right_Back
+    13700010: WiringKit_Arm_Right_Front
+    13700012: WiringKit_Arm_Top_Back
+    13700014: WiringKit_Arm_Top_Front
+    13700016: WiringKit_Laser_Bottom
+    13700018: WiringKit_Laser_Left
+    13700020: WiringKit_Laser_Right
+    13700022: WiringKit_Laser_Top
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 10
+      lastFrame: 624
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 0
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Activating
+      takeName: Take 001
+      firstFrame: 10
+      lastFrame: 231
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle Start
+      takeName: Take 001
+      firstFrame: 232
+      lastFrame: 271
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle Loop
+      takeName: Take 001
+      firstFrame: 271
+      lastFrame: 311
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Idle End
+      takeName: Take 001
+      firstFrame: 371
+      lastFrame: 406
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Deactivating
+      takeName: Take 001
+      firstFrame: 411
+      lastFrame: 571
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Inactive
+      takeName: Take 001
+      firstFrame: 10
+      lastFrame: 11
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Arm_Bottom
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Back
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Bottom_Front
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Arm_Top_Bone_Base002/WiringKit_Arm_Top_Bone_Middle002/WiringKit_Arm_Top_Bone_Laser002
+        weight: 1
+      - path: Arm_Bottom/WiringKit_Laser_Bottom
+        weight: 1
+      - path: Arm_Left
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Back
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Left_Front
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001
+        weight: 1
+      - path: Arm_Left/WiringKit_Arm_Top_Bone_Base001/WiringKit_Arm_Top_Bone_Middle001/WiringKit_Arm_Top_Bone_Laser001
+        weight: 1
+      - path: Arm_Left/WiringKit_Laser_Left
+        weight: 1
+      - path: Arm_Right
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Back
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Right_Front
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003
+        weight: 1
+      - path: Arm_Right/WiringKit_Arm_Top_Bone_Base003/WiringKit_Arm_Top_Bone_Middle003/WiringKit_Arm_Top_Bone_Laser003
+        weight: 1
+      - path: Arm_Right/WiringKit_Laser_Right
+        weight: 1
+      - path: Arm_Top
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Back
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Bone_Base/WiringKit_Arm_Top_Bone_Middle/WiringKit_Arm_Top_Bone_Laser
+        weight: 1
+      - path: Arm_Top/WiringKit_Arm_Top_Front
+        weight: 1
+      - path: Arm_Top/WiringKit_Laser_Top
+        weight: 1
+      - path: WiringKit_Body
+        weight: 1
+      - path: WiringKit_Laser_Middle
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .100000001
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

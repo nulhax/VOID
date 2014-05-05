@@ -125,7 +125,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifySwitchingTool");
 
@@ -338,7 +338,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         m_ulOwnerPlayerId = GetComponent<CPlayerInterface>().PlayerId;
 
         // Owner player subscribe to events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse += OnEventInteractionUse;
 
@@ -349,20 +349,21 @@ public class CPlayerBelt : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot1, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot2, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot3, OnEventInput);
-            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);
-
-            m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
-			//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
-
-            m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_EquipToolSlot4, OnEventInput);           
         }
+
+		m_vToolEquipTransform = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolActive").transform;
+		//m_vInitialToolEquipedPosition = m_vToolEquipedPosition;		
+		m_vToolUnequipedPosition = GetComponent<CPlayerInterface>().Model.transform.FindChild("ToolDeactive").transform.localPosition;
 
         // Signup to pre destroy
         gameObject.GetComponent<CNetworkView>().EventPreDestory += OnEventPreDestroy;
+
+        gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += HandleHealthStateChanged;
     }
 
 
-    void OnEventPreDestroy()
+    void OnEventPreDestroy(GameObject _cSender)
     {
         // Drop all tools
         if (CNetwork.IsServer)
@@ -380,7 +381,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         }
 
         // Owner player unsubscribe from events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse -= OnEventInteractionUse;
 
@@ -556,7 +557,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                     m_bUnequipingToolId = k_bInvalidToolId;
 
                     // Run owner player specific functionality
-                    if (gameObject == CGamePlayers.SelfActor &&
+                    if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe &&
                         ActiveTool != null)
                     {
                         // Set equiped
@@ -591,7 +592,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (CCursorControl.IsCursorLocked && 
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             string sToolText = "";
 
@@ -817,6 +819,26 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         // Notify observers
         if (EventEquipedToolChanged != null) EventEquipedToolChanged(ActiveTool);
+    }
+
+
+    void HandleHealthStateChanged(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
+    {  
+        switch (_eHealthCurrentState)
+        {
+            case CPlayerHealth.HealthState.DOWNED:
+            {
+                DropTool(0);
+                             
+                break;
+            }           
+            case CPlayerHealth.HealthState.ALIVE:
+            {   
+                DropTool(1);
+               
+                break;
+            }
+        }          
     }
 
 

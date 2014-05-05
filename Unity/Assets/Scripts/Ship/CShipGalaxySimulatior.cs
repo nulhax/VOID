@@ -44,7 +44,7 @@ public class CShipGalaxySimulatior : MonoBehaviour
 	{
 		if(CNetwork.IsServer)
 		{
-			m_GalaxyShip = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.GalaxyShip);
+			m_GalaxyShip = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.GalaxyShip);
 		}
 		else
 		{

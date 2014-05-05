@@ -28,7 +28,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, true, false, true, 25, 0, 25, 2, healthStateTransitions, 0.1f);
 		fireHealth.InstanceNetworkVars(_cRegistrar);
@@ -186,7 +186,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 			AttachEmitterToChildren(child.gameObject);
 
 		MeshFilter mf = go.GetComponent<MeshFilter>();
-		if (mf == null)
+		if (mf == null ||
+            mf.sharedMesh == null)
 			return;
 
 		float emissionRate = emissionsPerUnitOfSurfaceArea * CUtility.GetMeshSurfaceArea(mf.sharedMesh, go.transform.lossyScale);

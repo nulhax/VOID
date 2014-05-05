@@ -158,16 +158,19 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		if(!CNetwork.IsServer)
 			return;
 
+        if (CGamePlayers.SelfActor == null)
+            return;
+
 		// Get the raycast hits against all grid objects
 		RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
 		if(lastRaycastHits == null)
 			return;
 
 		m_RaycastHits = lastRaycastHits.ToList();
-		m_RaycastHits.RemoveAll(hit => CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
+        m_RaycastHits.RemoveAll(hit => hit.collider != null && CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
 
 		// Get the plane hit
-		m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
+        m_PlaneHit = m_RaycastHits.Find(hit => hit.collider != null && hit.collider.gameObject == m_GridPlane);
 
 		// Get the current grid point and hit point
 		if(m_PlaneHit.collider != null)

@@ -15,6 +15,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System;
 
 
 /* Implementation */
@@ -74,14 +76,14 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     }
 
 
-    public CCockpit OwnerCockpitBehaviour
+    public CCockpitBehaviour OwnerCockpitBehaviour
     {
         get
         {
             if (OwnerTurretCockpit == null)
                 return (null);
 
-            return (OwnerTurretCockpit.GetComponent<CCockpit>());
+            return (OwnerTurretCockpit.GetComponent<CCockpitBehaviour>());
         }
     }
 
@@ -148,7 +150,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_cOwnerCockpitViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
         m_fRemoteRotationX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
@@ -192,7 +194,18 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 
     public Transform GetRandomProjectileNode()
     {
-        return (m_caProjectileNodes[Random.Range(0, m_caProjectileNodes.Length - 1)]);
+        return (m_caProjectileNodes[UnityEngine.Random.Range(0, m_caProjectileNodes.Length)]);
+    }
+
+    
+    [ALocalOnly]
+    public RaycastHit[] ScanTargets(float _fRayRange)
+    {
+        Ray cRay = new Ray(m_cGalaxyCamera.transform.position, m_cGalaxyCamera.transform.forward);
+        RaycastHit[] taRaycastHits = Physics.RaycastAll(cRay, _fRayRange, 1 << LayerMask.NameToLayer("Galaxy"));
+        taRaycastHits.OrderBy((_tRaycastHit) => _tRaycastHit.distance);
+
+        return (taRaycastHits);
     }
 
 
@@ -289,7 +302,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 	void LateUpdate()
 	{
 		// Update the camera position
-		//CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_cShipCamera.transform.position, m_cShipCamera.transform.rotation, m_cGalaxyCamera.transform);
+		CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(m_cShipCamera.transform.position, m_cShipCamera.transform.rotation, m_cGalaxyCamera.transform);
 	}
 
 

@@ -35,7 +35,7 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
 	}
@@ -53,11 +53,11 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 		{
 			GenerateMinerals();
 
-			GetComponent<CNetworkView>().EventPreDestory += () =>
+			GetComponent<CNetworkView>().EventPreDestory += (GameObject _cSender) =>
 			{
 				foreach (GameObject cMineralObject in m_aDeposits)
 				{
-					CNetwork.Factory.DestoryObject(cMineralObject);
+					CNetwork.Factory.DestoryGameObject(cMineralObject);
 				}
 			};
 		}
@@ -95,7 +95,7 @@ public class CMineralDeposits : CNetworkMonoBehaviour
 
 			if (gameObject.collider.Raycast(cRay, out cRaycastHit, fRayLength))
 			{
-				GameObject cCrystal = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Crystal);
+				GameObject cCrystal = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Crystal);
 				cCrystal.GetComponent<CNetworkView>().SetScale(Vector3.one * 2.0f * Mathf.Pow(mineralResourceAmount, 1.0f / 3.0f));
 				cCrystal.GetComponent<CNetworkView>().SetPosition(cRaycastHit.point);
 				cCrystal.GetComponent<CNetworkView>().SetRotation(Quaternion.LookRotation(vRayDirection) * Quaternion.AngleAxis(90.0f, Vector3.right));

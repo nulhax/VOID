@@ -161,7 +161,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_ulOwnerPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
@@ -325,12 +325,11 @@ public class CToolInterface : CNetworkMonoBehaviour
         {
             if (IsOwned)
             {                        
-                // Turn off dynamic physics
-                if (CNetwork.IsServer)
-                {
-                    rigidbody.isKinematic = true;
-                    rigidbody.detectCollisions = false;
-                }
+                // Turn off dynamic physics                
+	            rigidbody.isKinematic = true;
+	            rigidbody.detectCollisions = false;
+				collider.isTrigger = true;
+                
 
                 // Stop receiving synchronizations
                 GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
@@ -342,11 +341,11 @@ public class CToolInterface : CNetworkMonoBehaviour
             else
             {
                 // Turn on dynamic physics
-                if (CNetwork.IsServer)
-                {
-                    rigidbody.isKinematic = false;
-                    rigidbody.detectCollisions = true;
-                }
+               
+            	rigidbody.isKinematic = false;
+            	rigidbody.detectCollisions = true;
+				collider.isTrigger = false;
+                
 
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);

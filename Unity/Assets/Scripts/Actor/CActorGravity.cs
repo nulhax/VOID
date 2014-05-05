@@ -44,7 +44,7 @@ public class CActorGravity : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bGravityActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 	}

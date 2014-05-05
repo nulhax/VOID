@@ -493,11 +493,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sDisplayName: Turret Cockpit
+  m_sDescription: Allows the crew controlling of external offensive turrets
   m_cModel: {fileID: 100008}
   m_eModuleType: 150
   m_eModuleCategory: 100
-  m_eModuleSize: 2
-  m_fNanitesCost: 20
+  m_eModuleSize: 1
+  m_fNanitesCost: 180
   m_bInternal: 1
   m_bBuildable: 1
 --- !u!114 &11400012
@@ -522,7 +524,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 99f209b7c7c7621499a8a3c71ce3f222, type: 2}
+  m_cPrecipitativeMesh: {fileID: 100000, guid: 5014024c81a3d4044b737615ac66df31, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

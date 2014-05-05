@@ -42,19 +42,13 @@ public class CNaniteSiloSmallBehaviour: MonoBehaviour
 		m_cNaniteStorage = gameObject.GetComponent<CNaniteStorage>();
 		
 		// Get the DUI of the power generator
-		m_cDuiNaniteCapsuleRoot = m_cDuiConsole.DUIRoot.GetComponent<CDUINaniteCapsuleRoot>();
-		m_cDuiNaniteCapsuleRoot.RegisterNaniteCapsule(gameObject);
 	}
 
 
 // Member Fields
 
 
-    public CDUIConsole m_cDuiConsole = null;
-
-
     CNaniteStorage m_cNaniteStorage = null;
-    CDUINaniteCapsuleRoot m_cDuiNaniteCapsuleRoot = null;
 
 
 }

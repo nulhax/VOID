@@ -123,6 +123,10 @@ public class SU_SpaceParticles : MonoBehaviour
 	
 	void Update () 
 	{
+        if (CGameCameras.MainCamera == null)
+            return;
+
+
 		m_density = CGalaxy.instance.DebrisDensity(CGalaxy.instance.RelativePointToAbsoluteCell(CGameCameras.MainCamera.transform.position));
 
 		if(m_density < 0.2f)

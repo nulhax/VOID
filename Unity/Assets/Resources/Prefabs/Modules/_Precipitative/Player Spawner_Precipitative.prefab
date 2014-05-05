@@ -10,8 +10,6 @@ GameObject:
   - 4: {fileID: 400000}
   - 23: {fileID: 2300000}
   - 33: {fileID: 3300000}
-  - 64: {fileID: 6400000}
-  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: Player Spawner_Precipitative
   m_TagString: Untagged
@@ -30,7 +28,7 @@ GameObject:
   - 198: {fileID: 19800000}
   - 199: {fileID: 19900000}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: _Particle System2222
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +69,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: f1ab2c688ee59f340ac4ac909181e677, type: 2}
+  - {fileID: 2100000, guid: c5603f10d8909ca40bf1c666b1e23932, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -86,33 +84,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 4300000, guid: 431316ed071db934395c7b587a408f64, type: 2}
---- !u!64 &6400000
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 431316ed071db934395c7b587a408f64, type: 2}
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90260b50d9c519f4599fb9fbb8ebd744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ToolTipPrefab: {fileID: 0}
-  m_ToolTipPosition: {fileID: 0}
+  m_Mesh: {fileID: 4300000, guid: a389bf8bb7e574f4492817e012f030e7, type: 2}
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -125,7 +97,7 @@ ParticleSystem:
   randomSeed: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   moveWithTransform: 1
   InitialModule:
     enabled: 1
@@ -359,7 +331,7 @@ ParticleSystem:
     boxY: 3
     boxZ: 0
     placementMode: 2
-    m_Mesh: {fileID: 4300000, guid: 431316ed071db934395c7b587a408f64, type: 2}
+    m_Mesh: {fileID: 4300000, guid: a389bf8bb7e574f4492817e012f030e7, type: 2}
     randomDirection: 0
   EmissionModule:
     enabled: 1

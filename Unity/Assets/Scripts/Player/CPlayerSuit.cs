@@ -74,7 +74,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fOxygen = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fOxygenCapacity);
         m_EnviromentalOxygen = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
@@ -191,7 +191,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 
 //    void OnGUI()
 //    {
-//        if (gameObject == CGamePlayers.SelfActor)
+//        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
 //        {
 ////            if (IsVisorDown)
 ////            {

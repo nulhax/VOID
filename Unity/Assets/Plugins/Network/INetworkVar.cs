@@ -44,6 +44,7 @@ public abstract class INetworkVar
     public abstract void Initialise(CNetworkView _cOwnerNetworkView, byte _bNetworkVarId, EReliabilityType _eReliabilityType);
 	public abstract void InvokeSyncCallback();
 	public abstract void SyncValue(object _cValue, float _fSyncTime);
+    public abstract void SetSendInterval(float _fInterval);
 
 
 	public abstract object GetValueObject();

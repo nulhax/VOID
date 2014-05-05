@@ -76,7 +76,7 @@ public class CActorLocator : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_tCurrentFacilityViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
@@ -150,7 +150,8 @@ public class CActorLocator : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (CCursorControl.IsCursorLocked &&
+            gameObject == CGamePlayers.SelfActor)
         {
             string sFacilityText = "";
             GameObject cCurrentFacilityObject = GetComponent<CActorLocator>().CurrentFacility;
