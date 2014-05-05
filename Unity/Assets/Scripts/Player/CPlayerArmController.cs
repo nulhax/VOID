@@ -192,7 +192,16 @@ public class CPlayerArmController : MonoBehaviour
         {
             //Get variables from current tool's orientation script
             CToolOrientation cToolOrientation = m_heldTool.GetComponent<CToolOrientation>();
-            m_vToolEquipedPosition = cToolOrientation.FirstPersonPosition;
+
+            if(gameObject == CGamePlayers.SelfActor)
+            {
+                m_vToolEquipedPosition = cToolOrientation.FirstPersonPosition;
+            }
+            else
+            {
+                m_vToolEquipedPosition = cToolOrientation.ThirdPersonPosition;
+            }
+
             m_vInitialToolEquipedPosition = m_vToolEquipedPosition;
             
             m_fLateralDeviation = cToolOrientation.LateralDeviation;

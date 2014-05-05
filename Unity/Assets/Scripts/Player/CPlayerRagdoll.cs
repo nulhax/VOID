@@ -214,7 +214,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             if(body.gameObject.GetComponent<Rigidbody>())
             {
                 body.rigidbody.isKinematic = false;
-				body.rigidbody.useGravity = false;
+				body.rigidbody.useGravity = true;
                 body.rigidbody.velocity = rigidbody.velocity;
 				body.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }

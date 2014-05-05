@@ -358,6 +358,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         // Signup to pre destroy
         gameObject.GetComponent<CNetworkView>().EventPreDestory += OnEventPreDestroy;
+
+        gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += HandleHealthStateChanged;
     }
 
 
@@ -816,6 +818,26 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
         // Notify observers
         if (EventEquipedToolChanged != null) EventEquipedToolChanged(ActiveTool);
+    }
+
+
+    void HandleHealthStateChanged(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
+    {  
+        switch (_eHealthCurrentState)
+        {
+            case CPlayerHealth.HealthState.DOWNED:
+            {
+                DropTool(0);
+                             
+                break;
+            }           
+            case CPlayerHealth.HealthState.ALIVE:
+            {   
+                DropTool(1);
+               
+                break;
+            }
+        }          
     }
 
 
