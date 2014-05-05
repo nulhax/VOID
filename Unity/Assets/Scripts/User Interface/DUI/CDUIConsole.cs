@@ -59,7 +59,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _Registrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _Registrar)
 	{
 		m_DUIViewId = _Registrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
@@ -94,7 +94,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 		if(m_DUI != CDUIRoot.EType.INVALID)
 		{
 			// Instantiate the DUI object
-			GameObject DUIObj = CNetwork.Factory.CreateObject(CDUIRoot.GetPrefabType(m_DUI));
+			GameObject DUIObj = CNetwork.Factory.CreateGameObject(CDUIRoot.GetPrefabType(m_DUI));
 			
 			// Set the view ids
 			CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();

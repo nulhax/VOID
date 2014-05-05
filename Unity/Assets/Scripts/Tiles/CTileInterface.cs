@@ -59,7 +59,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _Registrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _Registrar)
 	{
 		m_RemoteTileTypeMask = _Registrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
 

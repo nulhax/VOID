@@ -62,7 +62,7 @@ public class CDispenserBehaviour : MonoBehaviour
     void SpawnTool(CToolInterface.EType _ToolType)
     {
         // Create a new object
-		GameObject NewTool = CNetwork.Factory.CreateObject(CToolInterface.GetPrefabType(_ToolType));
+		GameObject NewTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_ToolType));
 
         gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
 

@@ -33,6 +33,7 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400030}
   - 114: {fileID: 11400006}
+  - 114: {fileID: 11400032}
   m_Layer: 0
   m_Name: Player Actor
   m_TagString: Untagged
@@ -326,6 +327,17 @@ MonoBehaviour:
   m_fHeadBobSprintAmount: 3
   m_fHeadBobRunSpeed: 8
   m_fHeadBobSprintSpeed: 10
+--- !u!114 &11400032
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4994e896ac86b3e4e847092f89f7040a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11400034
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -337,6 +349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d6110cba975b243a0d9d7f9f1adc84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bRealignBodyWithHead: 0
 --- !u!114 &11400036
 MonoBehaviour:
   m_ObjectHideFlags: 1

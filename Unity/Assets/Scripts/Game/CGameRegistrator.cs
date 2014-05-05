@@ -227,16 +227,16 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,				"Modules/Turret Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Pilot Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator Small");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Capacitor Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Battery");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo Small");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,               "Modules/Prefabricator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Turrets/Pulse Turret Small");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Turrets/Pulse Turret Medium");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileSmall,          "Modules/Turrets/Missile Turret Small");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileMedium,         "Modules/Turrets/Missile Turret Medium");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Pulse Turret Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Pulse Turret Medium");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileSmall,          "Modules/Missile Turret Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileMedium,         "Modules/Missile Turret Medium");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileProjectile,           "Modules/Turrets/Missile Projectile");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileHitParticles,         "Modules/Turrets/Missile Hit Particles");
 
@@ -297,7 +297,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,		"Modules/Turrets/Laser Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,		        "Modules/Turrets/Laser Projectile");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Turrets/Laser Hit Particles");
 	}
 
@@ -307,7 +307,7 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializeOutbound               , CPlayerMotor.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializeOutbound                , CPlayerHead.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions  , CBridgeCockpit.UnserializeCockpitInteractions);
-		CNetworkConnection.RegisterSerializationTarget(CCockpitBehaviour.SerializeOutbound                   , CCockpitBehaviour.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CCockpitBehaviour.SerializeOutbound          , CCockpitBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget	    , CPlayerIKController.UnserializeIKTarget);
 		CNetworkConnection.RegisterSerializationTarget(CGamePlayers.SerializeData                   , CGamePlayers.UnserializeData);
         CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
@@ -334,6 +334,7 @@ public class CGameRegistrator : MonoBehaviour
         // Player
         CNetworkConnection.RegisterSerializationTarget(CPlayerInteractor.SerializeOutbound          , CPlayerInteractor.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CPlayerNaniteLaser.SerializeOutbound         , CPlayerNaniteLaser.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerModuleMenu.SerializeOutbound          , CPlayerModuleMenu.UnserializeInbound);
         
         // Tools
         CNetworkConnection.RegisterSerializationTarget(CAk47Behaviour.SerializeOutbound             , CAk47Behaviour.UnserializeInbound);
@@ -374,7 +375,7 @@ public class CGameRegistrator : MonoBehaviour
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.TurretCockpit);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit         , ENetworkPrefab.PilotCockpit);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerGenerator       , ENetworkPrefab.PowerGenerator);			
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerCapacitor       , ENetworkPrefab.PowerCapacitor);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerBattery         , ENetworkPrefab.PowerCapacitor);			
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        	, ENetworkPrefab.NaniteSilo);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);

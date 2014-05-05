@@ -162,7 +162,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fRemotePositionX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, k_fPositionSendInterval);
         m_fRemotePositionY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, k_fPositionSendInterval);

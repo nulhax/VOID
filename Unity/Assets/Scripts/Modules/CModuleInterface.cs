@@ -57,7 +57,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         TurretCockpit       = 150,
         PilotCockpit        = 250,
         PowerGenerator      = 300,
-        PowerCapacitor      = 350,
+        PowerBattery        = 350,
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
@@ -66,6 +66,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
+        TusterSmall         = 900,
 
 	}
 
@@ -145,7 +146,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
     public bool IsBuilt
     {
-        get { return (m_bBuiltPercent.Value == 100); }
+        get { return (m_bBuilt); }
     }
 
 
@@ -170,23 +171,11 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_fFunctionalRatio = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 1.0f);
         m_bBuiltPercent = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
         m_bEnabled = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
-    }
-
-
-    public List<GameObject> GetAttachedComponents()
-    {
-        return (m_aAttachedComponents);
-    }
-
-
-    public void RegisterAttachedComponent(CComponentInterface _cComponentInterface)
-    {
-        m_aAttachedComponents.Add(_cComponentInterface.gameObject);
     }
 
 
@@ -205,7 +194,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	[AServerOnly]
 	public static GameObject CreateNewModule(EType _ModuleType, CFacilityInterface _FacilityParent, Vector3 _LocalPostion)
 	{
-		GameObject moduleObject = CNetwork.Factory.CreateObject(CModuleInterface.GetPrefabType(_ModuleType));
+		GameObject moduleObject = CNetwork.Factory.CreateGameObject(CModuleInterface.GetPrefabType(_ModuleType));
 		moduleObject.transform.parent = _FacilityParent.transform;
 		moduleObject.transform.localPosition = _LocalPostion;
 
@@ -289,6 +278,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
             SetModelVisible(false);
         }
 
+        /*
 		// Register self with parent facility
 		CFacilityInterface cFacilityInterface = CUtility.FindInParents<CFacilityInterface>(gameObject);
 
@@ -301,6 +291,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		{
 			Debug.LogError("Could not find facility to register to");
 		}
+         * */
 	}
 
 
@@ -345,7 +336,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		// Re-enable all of the renderers for self
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
 		{
-			r.enabled = true;
+			r.enabled = true; 
 		}
 	}
 
@@ -354,17 +345,18 @@ public class CModuleInterface : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_bBuiltPercent)
         {
-            GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+            if (GetComponent<CModulePrecipitation>() != null)
+            {
+                GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+            }
 
             // Check is completely built
-            if (m_bBuiltPercent.Value == 100)
+            if (!m_bBuilt &&
+                 m_bBuiltPercent.Value == 100)
             {
-                SetModelVisible(true);
+                m_bBuilt = true;
 
-                m_aAttachedComponents.ForEach((GameObject _cComponent) =>
-                {
-                    _cComponent.SetActive(true);
-                });
+                SetModelVisible(true);
 
                 if (EventBuilt != null) EventBuilt(this);
 
@@ -423,7 +415,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		
 		// Use this material and save an instance of the prefab
 		mr.sharedMaterial = precipitateMat;
-		PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+		GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+
+        GameObject cParticles = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/_Particle System2222.prefab", (GameObject)Resources.Load("Prefabs/Modules/_Precipitative/_Particle System", typeof(GameObject)));
 		
 		// Save assets and reposition original
 		AssetDatabase.SaveAssets();
@@ -457,7 +451,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 	Cubemap m_CubemapSnapshot = null;
 
 
-    List<GameObject> m_aAttachedComponents = new List<GameObject>();
+    bool m_bBuilt = false;
 
 
     static Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab>();

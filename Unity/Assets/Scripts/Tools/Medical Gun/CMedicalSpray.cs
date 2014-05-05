@@ -46,7 +46,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }

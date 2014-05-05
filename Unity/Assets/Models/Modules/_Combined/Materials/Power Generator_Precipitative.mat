@@ -17,28 +17,24 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 951c9942f7a92ee48ab8e6b1c0bc3ec7, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 2800000, guid: 1d34b088ae31b154b84385b134ad342a, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Specular
         second:
-          m_Texture: {fileID: 2800000, guid: f15855083addd5c46acd33a81319293a, type: 3}
+          m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
-      data:
-        first:
-          name: _SpecPower
-        second: 1
       data:
         first:
           name: _Saturation
@@ -46,11 +42,11 @@ Material:
       data:
         first:
           name: _Brightness
-        second: 2
+        second: 4
       data:
         first:
-          name: _GlowIntensity
-        second: 2
+          name: _SpecPower
+        second: 1
       data:
         first:
           name: _MinHeight
@@ -58,27 +54,31 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 2.5
+        second: 1
       data:
         first:
           name: _Amount
         second: 0
       data:
         first:
+          name: _GlowIntensity
+        second: 2
+      data:
+        first:
           name: _FadeDist
-        second: 2.5
+        second: .300000012
       data:
         first:
           name: _FadeDistRatio
-        second: .657500029
+        second: .5
       data:
         first:
           name: _NoiseFreq
-        second: 5
+        second: 10
       data:
         first:
           name: _NoiseSpeed
-        second: .0199999996
+        second: .25
     m_Colors:
       data:
         first:
@@ -91,4 +91,4 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .375, g: .741379321, b: 1, a: .196078435}
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}

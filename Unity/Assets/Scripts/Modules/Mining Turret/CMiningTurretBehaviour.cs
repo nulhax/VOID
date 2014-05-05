@@ -62,7 +62,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_cTargetAsteroidViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 		m_bFractureLaserVisible = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
@@ -84,7 +84,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		while (_cStream.HasUnreadData)
 		{
 			TNetworkViewId cTurretViewId = _cStream.Read<TNetworkViewId>();
-			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
+			GameObject cTurretObject = CNetwork.Factory.FindGameObject(cTurretViewId);
 
 			if (cTurretObject != null)
 			{

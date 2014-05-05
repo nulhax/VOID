@@ -158,7 +158,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     // public:
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
         _cRegistrar.RegisterRpc(this, "RemoteSetEuler");
@@ -176,59 +176,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 	}
 
 
-    public void Awake()
-    {
-        // Run class initialisers
-        InitialiseNetworkMonoBehaviours();
-
-		// Since I have a parent on creation, I am a child network view 
-		// and i need to register with the main network view which was
-		// created through the network factory
-		if (transform.parent != null)
-		{
-			Transform cParent = transform.parent;
-			
-			for (int i = 0; cParent.parent != null && i < 25; ++ i)
-			{
-				cParent = cParent.parent;
-
-					//Logger.WriteError("Could not find parent to register for sub view id");
-					//break;
-				//}
-			}
-
-			// Register for sub network view id
-			cParent.GetComponent<CNetworkView>().RegisterChildNetworkView(this);
-			
-			if (ViewId.ChildId == 0)
-				Debug.LogError("I do not have a sub view id!");
-		}
-    }
-
-
-    public void Start()
-    {
-		if (m_cNetworkViewId == null)
-		{
-			// Generate static view id if server did not
-			// provide one when this object was created
-			if (transform.parent == null)
-			{
-				this.ViewId = GenerateStaticViewId();
-			}
-
-			if (ViewId.Id == 0)
-				Debug.LogError("I do not have a view id!");
-		}
-
-        if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
-        {
-            s_mViewIdOwnerNames.Add(ViewId.Id, gameObject.name);
-        }
-    }
-
-
-	public void OnPreDestory() // Call in CNetworkFactory
+	public void NotifyPreDestory() // Call in CNetworkFactory
 	{
 		if (EventPreDestory != null)
 		{
@@ -242,7 +190,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
         foreach (CNetworkView cChild in m_mChildrenNetworkViews.Values)
         {
-            cChild.OnPreDestory();
+            cChild.NotifyPreDestory();
         }
 
         if (!ViewId.IsChildViewId)
@@ -250,18 +198,6 @@ public class CNetworkView : CNetworkMonoBehaviour
             s_cNetworkViews.Remove(ViewId.Id);
         }
 	}
-
-
-    public void OnDestroy()
-    {
-        
-    }
-
-
-    public void Update()
-    {
-		// Empty
-    }
 
 
     public void InvokeRpc(ulong _ulPlayerId, Component _cComponent, string _sFunction, params object[] _caParameterValues)
@@ -806,35 +742,68 @@ public class CNetworkView : CNetworkMonoBehaviour
     }
 
 
-    // protected:
+    void Awake()
+    {
+        // Run class initialisers
+        InitialiseNetworkMonoBehaviours();
+
+        // Since I have a parent on creation, I am a child network view 
+        // and i need to register with the main network view which was
+        // created through the network factory
+        if (transform.parent != null)
+        {
+            Transform cParent = transform.parent;
+
+            for (int i = 0; cParent.parent != null && i < 25; ++i)
+            {
+                cParent = cParent.parent;
+
+                //Logger.WriteError("Could not find parent to register for sub view id");
+                //break;
+                //}
+            }
+
+            // Register for sub network view id
+            cParent.GetComponent<CNetworkView>().RegisterChildNetworkView(this);
+
+            if (ViewId.ChildId == 0)
+                Debug.LogError("I do not have a sub view id!");
+        }
+    }
 
 
-	protected static TNetworkViewId GenerateStaticViewId()
-	{
-		TNetworkViewId cViewId = null;
+    void Start()
+    {
+        if (m_cNetworkViewId == null)
+        {
+            // Generate static view id if server did not
+            // provide one when this object was created
+            if (transform.parent == null)
+            {
+                this.ViewId = GenerateStaticViewId();
+            }
 
-		for (ushort i = 5; i < k_usMaxStaticViewId; ++i)
-		{
-			// Check the static view id is free
-			if (!s_cNetworkViews.ContainsKey(i))
-			{
-				cViewId = new TNetworkViewId(i, 0);
+            if (ViewId.Id == 0)
+                Debug.LogError("I do not have a view id!");
+        }
 
-				// Add id into list without owner so someone else does not claim the id
-				s_cNetworkViews.Add(i, null);
-
-				break;
-			}
-		}
-
-		// Ensure id was generated
-		Logger.WriteErrorOn(cViewId == null, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
-
-		return (cViewId);
-	}
+        if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
+        {
+            s_mViewIdOwnerNames.Add(ViewId.Id, gameObject.name);
+        }
+    }
 
 
-    // private:
+    void OnDestroy()
+    {
+
+    }
+
+
+    void Update()
+    {
+        // Empty
+    }
 
 
     void InitialiseNetworkMonoBehaviours()
@@ -845,7 +814,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
         foreach (CNetworkMonoBehaviour cNetworkMonoBehaviour in aComponents)
         {
-            cNetworkMonoBehaviour.InstanceNetworkVars(cRegistrar);
+            cNetworkMonoBehaviour.RegisterNetworkEntities(cRegistrar);
         }
 
         m_bReady = true;
@@ -946,6 +915,31 @@ public class CNetworkView : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+
+    static TNetworkViewId GenerateStaticViewId()
+    {
+        TNetworkViewId cViewId = null;
+
+        for (ushort i = 5; i < k_usMaxStaticViewId; ++i)
+        {
+            // Check the static view id is free
+            if (!s_cNetworkViews.ContainsKey(i))
+            {
+                cViewId = new TNetworkViewId(i, 0);
+
+                // Add id into list without owner so someone else does not claim the id
+                s_cNetworkViews.Add(i, null);
+
+                break;
+            }
+        }
+
+        // Ensure id was generated
+        Logger.WriteErrorOn(cViewId == null, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
+
+        return (cViewId);
+    }
 
 
 // Member Variables

@@ -78,7 +78,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			if(SelfActorViewId != null)
 			{
-				playerActor = CNetwork.Factory.FindObject(SelfActorViewId);
+				playerActor = CNetwork.Factory.FindGameObject(SelfActorViewId);
 			}
 			
 			return(playerActor); 
@@ -93,7 +93,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			if(SelfActorViewId != null)
 			{
-				playerActorHead = CNetwork.Factory.FindObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
+				playerActorHead = CNetwork.Factory.FindGameObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
 			}
 			
 			return(playerActorHead); 
@@ -126,7 +126,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			foreach(TNetworkViewId playerID in s_cInstance.m_mPlayersActors.Values)
 			{
-				actors.Add(CNetwork.Factory.FindObject(playerID));
+				actors.Add(CNetwork.Factory.FindGameObject(playerID));
 			}
 			
 			return (actors); 
@@ -137,7 +137,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_sNetworkedPlayerName = _cRegistrar.CreateReliableNetworkVar<string>(OnNetworkVarSync, "");
 
@@ -223,7 +223,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			return (null);
 		}
 		
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
+		return (CNetwork.Factory.FindGameObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
 
 
@@ -311,7 +311,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
                         m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 
 						// Create new player's actor
-						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)CGameRegistrator.ENetworkPrefab.PlayerActor);
+						GameObject cPlayerActor = CNetwork.Factory.CreateGameObject((ushort)CGameRegistrator.ENetworkPrefab.PlayerActor);
 						
 						// Set the parent as the ship
 						//cPlayerActor.GetComponent<CNetworkView>().SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
@@ -426,7 +426,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		if (cPlayerActorNetworkViewId != null)
 		{
-			CNetwork.Factory.DestoryObject(cPlayerActorNetworkViewId);
+			CNetwork.Factory.DestoryGameObject(cPlayerActorNetworkViewId);
 			
 			// Sync unregister player actor view id with everyone
 			InvokeRpcAll("RemoteUnregisterPlayerActor", _cPlayer.PlayerId);

@@ -27,7 +27,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 // Member Types
 
 
-    const string ksPrefabDir = "Prefabs/";
+    const string k_sPrefabDir = "Prefabs/";
 
 
     public struct TObjectInfo
@@ -48,17 +48,10 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
-        _cRegistrar.RegisterRpc(this, "CreateLocalObject");
-        _cRegistrar.RegisterRpc(this, "DestroyLocalObject");
-    }
-
-
-    public void Start()
-    {
-        CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
-        CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnConnectionDisconnect);
+        _cRegistrar.RegisterRpc(this, "RemoteCreateLocalObject");
+        _cRegistrar.RegisterRpc(this, "RemoteDestroyLocalObject");
     }
 
 
@@ -82,7 +75,8 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	}
 
 
-	public GameObject CreateObject(object _cPrefabId)
+    [AServerOnly]
+	public GameObject CreateGameObject(object _cPrefabId)
 	{
 		// Ensure only servers call this function
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Only the server can create objects");
@@ -91,13 +85,14 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 		TNetworkViewId cObjectViewId = CNetworkView.GenerateDynamicViewId();
 
 		// Invoke create local object call on all connected players
-		InvokeRpcAll("CreateLocalObject", (ushort)_cPrefabId, cObjectViewId);
+		InvokeRpcAll("RemoteCreateLocalObject", (ushort)_cPrefabId, cObjectViewId);
 
         return (CNetworkView.FindUsingViewId(cObjectViewId).gameObject);
     }
 
 
-	public void DestoryObject(GameObject _cObject)
+    [AServerOnly]
+	public void DestoryGameObject(GameObject _cObject)
 	{
         if (_cObject != null)
         {
@@ -106,21 +101,23 @@ public class CNetworkFactory : CNetworkMonoBehaviour
                 Debug.Log(string.Format("A game object with no network view cnanot be destroyed thorugh the network factory. GameObjectName({0})", _cObject.name));
             }
 
-            DestoryObject(_cObject.GetComponent<CNetworkView>().ViewId);
+            DestoryGameObject(_cObject.GetComponent<CNetworkView>().ViewId);
         }
 	}
 
 
-    public void DestoryObject(TNetworkViewId _cObjectNetworkViewId)
+    [AServerOnly]
+    public void DestoryGameObject(TNetworkViewId _cObjectNetworkViewId)
     {
 		// Ensure only servers call this function
 		Logger.WriteErrorOn(!CNetwork.IsServer, "On the server can destroy objects");
 
         // Tell player to instantiate already created object
-		InvokeRpcAll("DestroyLocalObject", _cObjectNetworkViewId);
+		InvokeRpcAll("RemoteDestroyLocalObject", _cObjectNetworkViewId);
 	}
-	
-	
+
+
+    [AServerOnly]
 	public void SyncPlayer(CNetworkPlayer _cNetworkPlayer)
     {
 		// Ensure only servers call this function
@@ -134,7 +131,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
             foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
             {
                 // Tell player to instantiate already created object
-                InvokeRpc(_cNetworkPlayer.PlayerId, "CreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
+                InvokeRpc(_cNetworkPlayer.PlayerId, "RemoteCreateLocalObject", tEntry.Value.usPrefab, tEntry.Key);
             }
 			
 			// Sync parents for each transform
@@ -213,7 +210,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     }
 
 
-	public GameObject FindObject(TNetworkViewId _cNetworkViewId)
+	public GameObject FindGameObject(TNetworkViewId _cNetworkViewId)
 	{
 		CNetworkView cObjectNetworkView = CNetworkView.FindUsingViewId(_cNetworkViewId);
 		GameObject cGameObject = null;
@@ -231,10 +228,14 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	}
 
 
-    // protected:
+    void Start()
+    {
+        CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnEventServerShutdown);
+        CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnEventConnectionDisconnect);
+    }
 
 
-    protected void OnConnectionDisconnect()
+    void OnEventConnectionDisconnect()
     {
 		// Ensure we are not the server
         if (!CNetwork.IsServer)
@@ -244,13 +245,13 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     }
 
 
-    protected void OnServerShutdown()
+    void OnEventServerShutdown()
     {
 		DestoryAllCreatedObjects();
     }
 
 
-	protected void DestoryAllCreatedObjects()
+	void DestoryAllCreatedObjects()
 	{
 		foreach (KeyValuePair<TNetworkViewId, TObjectInfo> tEntry in m_mCreatedObjects)
 		{
@@ -261,18 +262,15 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	}
 
 
-    // private:
-
-
     [ANetworkRpc]
-    void CreateLocalObject(ushort _usPrefabId, TNetworkViewId _cNetworkViewId)
+    void RemoteCreateLocalObject(ushort _usPrefabId, TNetworkViewId _cNetworkViewId)
     {
 		//((APrefabInfo)typeof(EPrefab).GetField(_ePrefab.ToString()).GetCustomAttributes(typeof(APrefabInfo), true)[0]).GetResourceName()
         // Extract prefab resource name
         string sPrefabName = m_mPrefabs[_usPrefabId];
 
         // Create the game object
-        GameObject cNewgameObject = Resources.Load(ksPrefabDir + sPrefabName, typeof(GameObject)) as GameObject;
+        GameObject cNewgameObject = Resources.Load(k_sPrefabDir + sPrefabName, typeof(GameObject)) as GameObject;
 
         if (cNewgameObject == null)
         {
@@ -297,11 +295,11 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 
 
     [ANetworkRpc]
-    void DestroyLocalObject(TNetworkViewId _cObjectNetworkViewId)
+    void RemoteDestroyLocalObject(TNetworkViewId _cObjectNetworkViewId)
     {
         TObjectInfo tObject = m_mCreatedObjects[_cObjectNetworkViewId];
 
-		tObject.cGameObject.GetComponent<CNetworkView>().OnPreDestory();
+		tObject.cGameObject.GetComponent<CNetworkView>().NotifyPreDestory();
         GameObject.Destroy(tObject.cGameObject);
 
 

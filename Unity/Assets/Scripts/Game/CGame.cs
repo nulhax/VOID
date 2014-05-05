@@ -55,7 +55,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
 	}
@@ -281,7 +281,7 @@ public class CGame : CNetworkMonoBehaviour
 	void OnServerStartup()
 	{
         // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+		CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
 	}
 
 

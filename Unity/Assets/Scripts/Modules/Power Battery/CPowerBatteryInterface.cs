@@ -37,12 +37,6 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     {
         get { return (m_fInitialCapacity); }
     }
-
-
-	public float ChargedAmount
-	{ 
-		get { return (m_fChargedAmount.Value); }
-	}
 	
 
 	public float ChargeCapacity
@@ -51,20 +45,27 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
 	}
 
 
-	public bool IsFullyCharged
-	{
-		get { return (ChargedAmount == ChargeCapacity); }
-	}
-	
-
 // Member Functions
 	
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fChargedAmount = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fInitialCapacity * m_fInitialChargeRatio);
-		m_fCapacity      = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fInitialCapacity);
+		m_fCapacity      = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
+
+
+    void Awake()
+    {
+        m_cModuleInterface = GetComponent<CModuleInterface>();
+
+        if (CNetwork.IsServer)
+        {
+            // Signup for module events
+            m_cModuleInterface.EventBuilt += OnEventBuilt;
+            m_cModuleInterface.EventEnableChange += OnEventModuleEnableChange;
+            m_cModuleInterface.EventFunctionalRatioChange += OnEventModuleFunctionalRatioChange;
+        }
+    }
 
 
     void Start()
@@ -73,15 +74,46 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     }
 
 
-    void OnNetworkVarSync(INetworkVar _VarInstance)
+    [AServerOnly]
+    void OnEventBuilt(CModuleInterface _cSender)
     {
-        if (_VarInstance == m_fCapacity)
+        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeMaxCapacity(m_fInitialCapacity);
+    }
+
+
+    [AServerOnly]
+    void OnEventModuleEnableChange(CModuleInterface _cSender, bool _bEnabled)
+    {
+        if (_bEnabled)
         {
-            // Empty
+            m_fCapacity.Value = m_fInitialCapacity * m_cModuleInterface.FunctioanlRatio;
         }
-        else if (_VarInstance == m_fChargedAmount)
+        else
         {
-            // Empty
+            m_fCapacity.Value = 0.0f;
+        }
+    }
+
+
+    [AServerOnly]
+    void OnEventModuleFunctionalRatioChange(CModuleInterface _cSender, float _fPreviousRatio, float _fNewRatio)
+    {
+        if (m_cModuleInterface.IsEnabled)
+        {
+            m_fCapacity.Value = m_fInitialCapacity * _fNewRatio;
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_fCapacity)
+        {
+            // Update ship power capacity
+            if (CNetwork.IsServer)
+            {
+                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeCapacity(m_fCapacity.Value - m_fCapacity.PreviousValue);
+            }
         }
     }
 
@@ -90,11 +122,12 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
 
 
     public float m_fInitialCapacity = 0.0f;
-    public float m_fInitialChargeRatio = 0.0f;
 
-
-    CNetworkVar<float> m_fChargedAmount = null;
+    
     CNetworkVar<float> m_fCapacity = null;
+
+
+    CModuleInterface m_cModuleInterface = null;
 
 
 }

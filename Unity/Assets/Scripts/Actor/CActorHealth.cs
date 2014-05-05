@@ -48,7 +48,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		health_internal = _cRegistrar.CreateReliableNetworkVar<float>(OnSyncHealth, health_initial);
 		state_internal = _cRegistrar.CreateReliableNetworkVar<byte>(OnSyncState, state_initial);
@@ -119,7 +119,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 
 		if (health <= 0.0f && destroyOnZeroHealth)
 		{
-			CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+			CNetwork.Factory.DestoryGameObject(gameObject.GetComponent<CNetworkView>().ViewId);
 			destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
 		}
 	}
@@ -266,7 +266,7 @@ public class CActorHealth_Embedded
 
 		if (health <= 0.0f && destroyOnZeroHealth)
 		{
-			CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+			CNetwork.Factory.DestoryGameObject(gameObject.GetComponent<CNetworkView>().ViewId);
 			destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
 		}
 	}

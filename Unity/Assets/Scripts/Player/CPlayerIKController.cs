@@ -118,7 +118,7 @@ public class CPlayerIKController : CNetworkMonoBehaviour
 		m_ThirdPersonAnim = GetComponent<Animator>();          
    	} 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_RightHandNetworkedPos = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);
 		m_RightHandNetworkedRot = _cRegistrar.CreateReliableNetworkVar<UnityEngine.Vector3>(OnNetworkVarSync);

@@ -43,7 +43,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         // Empty
     }
@@ -72,7 +72,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
             {
                 case ENetworkAction.FireMissileTarget:
                     {
-                        GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
+                        GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
                         cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitWithTarget", cRandomProjectileNode.transform.position,
                                                                                                                      cRandomProjectileNode.transform.eulerAngles,
                                                                                                                      _cStream.Read<TNetworkViewId>(),
@@ -82,7 +82,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 
                 case ENetworkAction.FireMissileNoTarget:
                     {
-                        GameObject cProjectile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
+                        GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
                         cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitNoTarget", cRandomProjectileNode.transform.position,
                                                                                                                    cRandomProjectileNode.transform.eulerAngles);
                     }

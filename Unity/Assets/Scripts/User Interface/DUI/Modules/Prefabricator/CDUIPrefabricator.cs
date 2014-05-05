@@ -78,7 +78,7 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
 	}

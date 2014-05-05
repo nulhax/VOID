@@ -121,7 +121,7 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 			mRawNoises[ui] = new PerlinSimplexNoise();
 	}
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		for (uint ui = 0; ui < (uint)ENoiseLayer.MAX; ++ui)
 			mNoiseSeeds[ui] = _cRegistrar.CreateReliableNetworkVar<int>(SyncNoiseSeed);
