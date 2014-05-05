@@ -129,7 +129,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 	{
 		// Invoke all clients to set the current meta for this tile
 		InvokeRpcAll("RemoteSetCurrentMeta", _Tile.m_TileType, _Tile.m_CurrentTileMeta.m_TileMask, 
-		             _Tile.m_CurrentTileMeta.m_MetaType, _Tile.m_CurrentTileMeta.m_Rotations, _Tile.m_CurrentTileMeta.m_Variant);
+		             _Tile.m_CurrentTileMeta.m_MetaType, _Tile.m_CurrentTileMeta.m_Rotations, _Tile.m_CurrentTileMeta.m_ModificationMask);
 	}
 
 	[AServerOnly]
@@ -139,18 +139,18 @@ public class CTileInterface : CNetworkMonoBehaviour
 		{
 			// Invoke all clients to set the current meta for this tile
 			InvokeRpc(_PlayerId, "RemoteSetCurrentMeta", tile.m_TileType, tile.m_CurrentTileMeta.m_TileMask, 
-			          tile.m_CurrentTileMeta.m_MetaType, tile.m_CurrentTileMeta.m_Rotations, tile.m_CurrentTileMeta.m_Variant);
+			          tile.m_CurrentTileMeta.m_MetaType, tile.m_CurrentTileMeta.m_Rotations, tile.m_CurrentTileMeta.m_ModificationMask);
 		}
 	}
 
 	[ANetworkRpc]
-	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _Variant)
+	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _ModificationMask)
 	{
 		CTile tile = GetTile(_TileType);
 		tile.m_CurrentTileMeta.m_TileMask = _TileMask;
 		tile.m_CurrentTileMeta.m_MetaType = _MetaType;
 		tile.m_CurrentTileMeta.m_Rotations = _Rotations;
-		tile.m_CurrentTileMeta.m_Variant = _Variant;
+		tile.m_CurrentTileMeta.m_ModificationMask = _ModificationMask;
 	}
 
 	[AServerOnly]
@@ -253,10 +253,15 @@ public class CTileInterface : CNetworkMonoBehaviour
 		UpdateTileTypeMask();
 
 		// Copy all tile meta data and exemption states
-		foreach(CTile.EType tileType in _From.m_TileTypes)
+		foreach(CTile otherTile in _From.GetComponents<CTile>())
 		{
-			CTile tile = GetTile(tileType);
-			CTile otherTile = _From.GetTile(tileType);
+			CTile tile = GetTile(otherTile.m_TileType);
+
+			if(tile == null)
+			{
+				Debug.LogError("Tile clone cannot happen as something went wrong with this tile type mask! Missing Type: " + otherTile.m_TileType);
+				continue;
+			}
 
 			// Copy over the current meta data
 			tile.m_CurrentTileMeta = new CTile.CMeta(otherTile.m_CurrentTileMeta);
@@ -264,6 +269,10 @@ public class CTileInterface : CNetworkMonoBehaviour
 			// Copy the neighbour exemptions
 			tile.m_NeighbourExemptions.Clear();
 			tile.m_NeighbourExemptions.AddRange(otherTile.m_NeighbourExemptions);
+
+			// Copy the tile modifications
+			tile.m_Modifications.Clear();
+			tile.m_Modifications.AddRange(otherTile.m_Modifications);
 		}
 	}
 
