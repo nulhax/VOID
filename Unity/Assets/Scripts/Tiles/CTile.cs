@@ -260,7 +260,7 @@ public abstract class CTile : MonoBehaviour
 	}
 
 	[ContextMenu("Update Tile Object")]
-	protected void UpdateTileObject()
+	public void UpdateTileObject()
 	{
 		// Release the tile object
 		ReleaseTileObject();
@@ -286,9 +286,14 @@ public abstract class CTile : MonoBehaviour
 	public void AddTileModification(int _ModificationType, EDirection _Side, bool _State)
 	{
 		if(_State)
+		{
+			m_Modifications.RemoveAll(m => m.m_Side == _Side);
 			m_Modifications.Add(new CModification(_ModificationType, _Side));
+		}
 		else
+		{
 			m_Modifications.RemoveAll(m => m.m_Modification == _ModificationType && m.m_Side == _Side);
+		}
 
 		m_CurrentTileMeta.m_ModificationMask = CalculateModificationsMask();
 	}

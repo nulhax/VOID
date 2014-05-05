@@ -71,7 +71,11 @@ public class CPreplacedFacility : MonoBehaviour
 		GameObject facility = shipFacilities.Facilities.First();
 		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
 		{
-			CGameShips.Ship.GetComponent<CShipModules>().CreateModule(preplacedModule.m_PreplacedModuleType, preplacedModule.transform.position, 0.0f);
+			CModuleInterface module = CGameShips.Ship.GetComponent<CShipModules>().CreateModule(preplacedModule.m_PreplacedModuleType, 
+			                                                                                    preplacedModule.transform.position, 
+			                                                                                    preplacedModule.transform.rotation);
+
+			module.Build(1.0f);
 		}
 
 		Destroy(m_TilesCollection);

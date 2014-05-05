@@ -52,7 +52,7 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Methods
 	[AServerOnly]
-	public void ImportNewGridTiles(List<CTileInterface> _AllTiles, List<List<CTileInterface>> _FacilityTiles)
+	public void ImportNewGridTiles(List<CTileInterface> _AllTiles, List<List<CTileInterface>> _FacilityInteriorTiles)
 	{
 		// Import all of the tiles to the ship
 		List<CTileInterface> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
@@ -62,8 +62,11 @@ public class CShipFacilities : MonoBehaviour
 			DestoryFacility(facility);
 
 		// Create all new facilities
-		foreach(List<CTileInterface> facilityTiles in _FacilityTiles)
+		foreach(List<CTileInterface> facilityTiles in _FacilityInteriorTiles)
 			CreateFacility(facilityTiles);
+
+		// Reconfigure the entry triggers
+		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureEntryTriggers(this);
 	}
 
 	[AServerOnly]
@@ -79,6 +82,7 @@ public class CShipFacilities : MonoBehaviour
 
 		// Instantiate an empty facility
 		GameObject newFacility = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Facility);
+		newFacility.name = "Facility " + m_FacilityIdCount;
 		newFacility.transform.parent = transform;
 		newFacility.transform.localPosition = Vector3.zero;
 		newFacility.transform.localRotation = Quaternion.identity;

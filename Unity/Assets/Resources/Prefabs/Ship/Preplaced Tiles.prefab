@@ -69627,9 +69627,7 @@ MonoBehaviour:
   m_TileObject: {fileID: 100164}
   m_NeighbourExemptions: 
   m_Modifications:
-  - m_Modification: 1
-    m_Side: 1
-  - m_Modification: 1
+  - m_Modification: 0
     m_Side: 1
 --- !u!114 &11400032
 MonoBehaviour:
@@ -70539,9 +70537,7 @@ MonoBehaviour:
   m_TileObject: {fileID: 100980}
   m_NeighbourExemptions: 
   m_Modifications:
-  - m_Modification: 1
-    m_Side: 5
-  - m_Modification: 1
+  - m_Modification: 0
     m_Side: 5
 --- !u!114 &11400096
 MonoBehaviour:
@@ -81678,10 +81674,6 @@ MonoBehaviour:
   m_TileObject: {fileID: 101116}
   m_NeighbourExemptions: 
   m_Modifications:
-  - m_Modification: 1
-    m_Side: 7
-  - m_Modification: 1
-    m_Side: 7
   - m_Modification: 1
     m_Side: 7
 --- !u!114 &11400934
@@ -104930,8 +104922,6 @@ MonoBehaviour:
   m_TileObject: {fileID: 100038}
   m_NeighbourExemptions: 
   m_Modifications:
-  - m_Modification: 1
-    m_Side: 3
   - m_Modification: 1
     m_Side: 3
 --- !u!114 &11402358

@@ -214,6 +214,17 @@ public class CTileInterface : CNetworkMonoBehaviour
 		}
 	}
 
+	[ContextMenu("Update All Tile Objects")]
+	[AServerOnly]
+	public void UpdateAllTileObjects()
+	{
+		// Update all tiles meta data
+		foreach(CTile tile in GetComponents<CTile>())
+		{
+			tile.UpdateTileObject();
+		}
+	}
+
 	[AServerOnly]
 	public void SetTileTypeState(CTile.EType _TileType, bool _State)
 	{

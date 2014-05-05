@@ -152,7 +152,7 @@ public class CGrid : MonoBehaviour
 		foreach(CTileInterface tile in unmodifiedTiles)
 			RemoveTile(tile.m_GridPosition);
 
-		// Update all tiles
+		// Update all tiles meta data
 		foreach(CTileInterface tile in newTiles)
 			tile.UpdateAllCurrentTileMetaData();
 

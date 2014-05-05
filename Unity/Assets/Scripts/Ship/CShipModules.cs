@@ -40,26 +40,23 @@ public class CShipModules : CNetworkMonoBehaviour
     }
 
 
-    public bool CreateModule(CModuleInterface.EType _cType, Vector3 _vPosition, float _fRotationY)
+	[AServerOnly]
+    public CModuleInterface CreateModule(CModuleInterface.EType _cType, Vector3 _Position, Quaternion _Rotation)
     {
-        bool bModuleBuilt = false;
+		CModuleInterface moduleInterface = null;
 
-        // Check ship has enough nanites to build module
         CGameRegistrator.ENetworkPrefab eModuleNetworkPrefab = CModuleInterface.GetPrefabType(_cType);
+        GameObject cModulePrefab = Resources.Load(CNetwork.Factory.GetRegisteredPrefabFile(eModuleNetworkPrefab), typeof(GameObject)) as GameObject;
 
-        GameObject cModulePRefab = Resources.Load(CNetwork.Factory.GetRegisteredPrefabFile(eModuleNetworkPrefab), typeof(GameObject)) as GameObject;
+		// Create the module
+		moduleInterface = CNetwork.Factory.CreateGameObject(eModuleNetworkPrefab).GetComponent<CModuleInterface>();
 
-        if (CGameShips.Ship.GetComponent<CShipNaniteSystem>().NanaiteQuanity > cModulePRefab.GetComponent<CModuleInterface>().m_fNanitesCost)
-        {
-            GameObject cBuiltModule = CNetwork.Factory.CreateGameObject(eModuleNetworkPrefab);
+    	// Set module position and rotation
+		moduleInterface.GetComponent<CNetworkView>().SetParent(CGameShips.ShipViewId);
+		moduleInterface.GetComponent<CNetworkView>().SetPosition(_Position);
+		moduleInterface.GetComponent<CNetworkView>().SetRotation(_Rotation);
 
-            // Set module position
-            cBuiltModule.GetComponent<CNetworkView>().SetPosition(_vPosition);
-
-            bModuleBuilt = true;
-        }
-
-        return (bModuleBuilt);
+		return(moduleInterface);
     }
 
 
