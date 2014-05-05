@@ -2136,8 +2136,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: .0307110585
-  m_Center: {x: 0, y: .0307110585, z: 0}
+  m_Radius: .119999997
+  m_Center: {x: 0, y: -.0299999993, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -2785,24 +2785,24 @@ CharacterJoint:
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -40
-    bounciness: 0
-    spring: 0
-    damper: 0
+    bounciness: .200000003
+    spring: .100000001
+    damper: .300000012
   m_HighTwistLimit:
     limit: 25
-    bounciness: 0
-    spring: 0
-    damper: 0
+    bounciness: .200000003
+    spring: .100000001
+    damper: .300000012
   m_Swing1Limit:
-    limit: 25
-    bounciness: 0
-    spring: 0
-    damper: 0
+    limit: .100000001
+    bounciness: .200000003
+    spring: .100000001
+    damper: .300000012
   m_Swing2Limit:
-    limit: 0
-    bounciness: 0
-    spring: 0
-    damper: 0
+    limit: .100000001
+    bounciness: .200000003
+    spring: .100000001
+    damper: .300000012
   m_BreakForce: Infinity
   m_BreakTorque: Infinity
 --- !u!144 &14400002

@@ -411,6 +411,15 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//Place Ratchet
         GameObject ratchet = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
 		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        //Place extinguisher
+        GameObject extinguisher = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
+        extinguisher.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        //Place circuitry tool?
+        GameObject circuitry = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolCircuitryKit);
+        circuitry.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        //Place torch
+        GameObject torch = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+        torch.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);

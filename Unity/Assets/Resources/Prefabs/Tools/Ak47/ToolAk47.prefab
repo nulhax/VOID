@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.0603517629, y: .205668092, z: 1.35311258}
+  m_LocalPosition: {x: -.033491455, y: .0858411789, z: .603513122}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -117,8 +117,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.0463667437, y: .106791675, z: .328513652}
+  m_LocalRotation: {x: 5.38847871e-07, y: 3.11277375e-07, z: .687021434, w: .726637244}
+  m_LocalPosition: {x: -.109729946, y: .079704456, z: .177311927}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -340,9 +340,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fc1f1f4ba630a34b87f836d8aa8b846, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fEquipOffsetX: .25
-  m_fEquipOffsetY: 1.39999998
-  m_fEquipOffsetZ: .310000002
+  m_fFirstPersonEquipOffsetX: .170000002
+  m_fFirstPersonEquipOffsetY: 1.29999995
+  m_fFirstPersonEquipOffsetZ: .140000001
+  m_fThirdPersonEquipOffsetX: .170000002
+  m_fThirdPersonEquipOffsetY: 1.11000001
+  m_fThirdPersonEquipOffsetZ: .140000001
   m_fVerticalDeviation: .300000012
   m_fLateralDeviation: .200000003
 --- !u!1001 &100100000
