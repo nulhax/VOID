@@ -292,18 +292,12 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			if(tile1 == null || tile2 == null)
 				return;
 
-			CTile tileInteriorWall1 = tile1.GetTile(CTile.EType.Interior_Wall);
-			CTile tileInteriorWall2 = tile2.GetTile(CTile.EType.Interior_Wall);
-			
-			if(tileInteriorWall1 == null || tileInteriorWall2 == null)
-				return;
-
 			if(IsShiftKeyDown)
-				ModifyInteriorWallMod(!IsCtrlKeyDown, CTile_InteriorWall.EModification.Door, tileInteriorWall1, tileInteriorWall2);
+				ModifyWallModification(!IsCtrlKeyDown, CTile_InteriorWall.EModification.Door, tile1, tile2);
 			else if(IsAltKeyDown)
-				ModifyInteriorWallMod(!IsCtrlKeyDown, CTile_InteriorWall.EModification.Window, tileInteriorWall1, tileInteriorWall2);
+				ModifyWallModification(!IsCtrlKeyDown, CTile_InteriorWall.EModification.Window, tile1, tile2);
 			else
-				ModifyInteriorWall(!IsCtrlKeyDown, tileInteriorWall1, tileInteriorWall2);
+				ModifyInteriorWall(!IsCtrlKeyDown, tile1, tile2);
 
 			tile1.UpdateAllCurrentTileMetaData();
 			tile2.UpdateAllCurrentTileMetaData();
@@ -739,8 +733,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		foreach(CNeighbour neighbour in tileInterface.m_NeighbourHood)
 		{
 			// Remove any internal wall exemption states
-			if(neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
-				ModifyInteriorWall(false, tileInterface.GetTile(CTile.EType.Interior_Wall), neighbour.m_TileInterface.GetTile(CTile.EType.Interior_Wall));
+			ModifyInteriorWall(false, tileInterface, neighbour.m_TileInterface);
 
 			// Skip non exterior walls
 			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall))
@@ -786,36 +779,46 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	}
 
 	[AServerOnly]
-	private void ModifyInteriorWallMod(bool _State, CTile_InteriorWall.EModification _Modifier, CTile _TileInteriorWall1, CTile _TileInteriorWall2)
+	private void ModifyWallModification(bool _State, CTile_InteriorWall.EModification _Modifier, CTileInterface _TileInterface1, CTileInterface _TileInterface2)
 	{
-		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
-		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
+		CTile wall1 = _TileInterface1.GetTile(CTile.EType.Interior_Wall);
+		if(wall1 == null)
+			wall1 = _TileInterface1.GetTile(CTile.EType.Exterior_Wall);
+
+		CTile wall2 = _TileInterface2.GetTile(CTile.EType.Interior_Wall);
+		if(wall2 == null)
+			wall2 = _TileInterface2.GetTile(CTile.EType.Exterior_Wall);
+
+		if(wall1 == null || wall2 == null)
+			return;
+
+		CNeighbour neighbour1 = _TileInterface1.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInterface2);
+		CNeighbour neighbour2 = _TileInterface2.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInterface1);
 		
 		if(neighbour1 == null || neighbour2 == null)
 			return;
 		
 		EDirection dir1 = neighbour1.m_Direction;
 		EDirection dir2 = neighbour2.m_Direction;
-		
-		if(!(_TileInteriorWall1.GetNeighbourExemptionState(dir1) == true &&
-		     _TileInteriorWall2.GetNeighbourExemptionState(dir2) == true))
-			return;
 
-		_TileInteriorWall1.AddTileModification((int)_Modifier, dir1, _State);
-		_TileInteriorWall2.AddTileModification((int)_Modifier, dir2, _State);
+		wall1.AddTileModification((int)_Modifier, dir1, _State);
+		wall2.AddTileModification((int)_Modifier, dir2, _State);
 	}
 
 	[AServerOnly]
-	private void ModifyInteriorWall(bool _State, CTile _TileInteriorWall1, CTile _TileInteriorWall2)
+	private void ModifyInteriorWall(bool _State, CTileInterface _TileInterface1, CTileInterface _TileInterface2)
 	{
 		if(!_State)
 		{
-			ModifyInteriorWallMod(false, CTile_InteriorWall.EModification.Door, _TileInteriorWall1, _TileInteriorWall2);
-			ModifyInteriorWallMod(false, CTile_InteriorWall.EModification.Window, _TileInteriorWall1, _TileInteriorWall2);
+			ModifyWallModification(false, CTile_InteriorWall.EModification.Door, _TileInterface1, _TileInterface2);
+			ModifyWallModification(false, CTile_InteriorWall.EModification.Window, _TileInterface1, _TileInterface2);
 		}
 
-		CNeighbour neighbour1 = _TileInteriorWall1.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall2.m_TileInterface);
-		CNeighbour neighbour2 = _TileInteriorWall2.m_TileInterface.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInteriorWall1.m_TileInterface);
+		if(!_TileInterface1.GetTileTypeState(CTile.EType.Interior_Wall) || !_TileInterface2.GetTileTypeState(CTile.EType.Interior_Wall))
+			return;
+
+		CNeighbour neighbour1 = _TileInterface1.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInterface2);
+		CNeighbour neighbour2 = _TileInterface2.m_NeighbourHood.Find(neighbour => neighbour.m_TileInterface == _TileInterface1);
 		
 		if(neighbour1 == null || neighbour2 == null)
 			return;
@@ -823,11 +826,11 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		EDirection dir1 = neighbour1.m_Direction;
 		EDirection dir2 = neighbour2.m_Direction;
 
-		_TileInteriorWall1.SetNeighbourExemptionState(dir1, _State);
-		_TileInteriorWall2.SetNeighbourExemptionState(dir2, _State);
+		_TileInterface1.GetTile(CTile.EType.Interior_Wall).SetNeighbourExemptionState(dir1, _State);
+		_TileInterface2.GetTile(CTile.EType.Interior_Wall).SetNeighbourExemptionState(dir2, _State);
 
-		_TileInteriorWall1.UpdateCurrentTileMetaData();
-		_TileInteriorWall2.UpdateCurrentTileMetaData();
+		_TileInterface1.GetTile(CTile.EType.Interior_Wall).UpdateCurrentTileMetaData();
+		_TileInterface2.GetTile(CTile.EType.Interior_Wall).UpdateCurrentTileMetaData();
 	}
 
 	[AServerOnly]
