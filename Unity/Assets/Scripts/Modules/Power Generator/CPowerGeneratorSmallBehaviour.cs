@@ -49,16 +49,6 @@ public class CPowerGeneratorSmallBehaviour: MonoBehaviour
 	{
         m_cModuleInterface = GetComponent<CModuleInterface>();
 
-        if (CNetwork.IsServer)
-        {
-            // Register for when the calibrator breaks/fixes
-            m_CalibrationComponent.GetComponent<CActorHealth>().EventOnSetHealth += OnEventComponentHealthChange;
-
-            // Register for when the circuitry breaks/fixes
-            m_CircuitryComponent.EventBreakStateChange += HandleCircuitryBreaking;
-            m_CircuitryComponent.EventBreakStateChange += HandleCircuitryFixing;
-        }
-
 		// Set the cubemap for the children
 		foreach (Renderer r in GetComponentsInChildren<Renderer>())
 		{
@@ -76,34 +66,13 @@ public class CPowerGeneratorSmallBehaviour: MonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-            m_cModuleInterface.SetFuntionalRatio(_fNewHealth / _cSender.health_initial);
+            //m_cModuleInterface.SetFuntionalRatio(_fNewHealth / _cSender.health_initial);
 		}
 	}
 
 
-    [AServerOnly]
-    void HandleCircuitryBreaking(CComponentInterface _cSender, bool _bBroken)
-	{
-		//m_PowerGenerator.DeactivatePowerGeneration();
-        GetComponent<CAudioCue>().StopAllSound();
-	}
-
-
-    [AServerOnly]
-    void HandleCircuitryFixing(CComponentInterface _cSender, bool _bBroken)
-	{
-		//m_PowerGenerator.ActivatePowerGeneration();
-        GetComponent<CAudioCue>().Play(transform, 0.25f, true, 0);
-	}
-
 
 // Member Fields
-
-
-    public CDUIConsole m_DUIConsole = null;
-
-    public CComponentInterface m_CircuitryComponent = null;
-    public CComponentInterface m_CalibrationComponent = null;
 
 
     CModuleInterface m_cModuleInterface = null;

@@ -53,7 +53,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 	
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_Value = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
@@ -79,7 +79,7 @@ public class CDUISlider : CNetworkMonoBehaviour
 		while(_cStream.HasUnreadData)
 		{
 			// Get the DUISlider and its network view
-			CDUISlider duiSlider = CNetwork.Factory.FindObject(_cStream.Read<TNetworkViewId>()).GetComponent<CDUISlider>();
+			CDUISlider duiSlider = CNetwork.Factory.FindGameObject(_cStream.Read<TNetworkViewId>()).GetComponent<CDUISlider>();
 			
 			// Get the interaction notification
 			ESliderNotificationType notification = (ESliderNotificationType)_cStream.Read<byte>();

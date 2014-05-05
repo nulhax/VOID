@@ -121,7 +121,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			return;
 
 		// Set a default rotation
-		m_Grid.transform.localRotation = Quaternion.Euler(20.0f, 0.0f, 0.0f);
+		m_Grid.transform.localRotation = Quaternion.Euler(10.0f, 0.0f, 0.0f);
 		
 		// Update scale and clamp
 		m_GridScale = Mathf.Clamp(m_GridScale, m_GridScaleLimits.x, m_GridScaleLimits.y);
@@ -157,16 +157,19 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		if(!CNetwork.IsServer)
 			return;
 
+        if (CGamePlayers.SelfActor == null)
+            return;
+
 		// Get the raycast hits against all grid objects
 		RaycastHit[] lastRaycastHits = CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().LastRaycastHits;
 		if(lastRaycastHits == null)
 			return;
 
 		m_RaycastHits = lastRaycastHits.ToList();
-		m_RaycastHits.RemoveAll(hit => CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
+        m_RaycastHits.RemoveAll(hit => hit.collider != null && CUtility.FindInParents<CGrid>(hit.collider.transform) == null);
 
 		// Get the plane hit
-		m_PlaneHit = m_RaycastHits.Find(hit => hit.collider.gameObject == m_GridPlane);
+        m_PlaneHit = m_RaycastHits.Find(hit => hit.collider != null && hit.collider.gameObject == m_GridPlane);
 
 		// Get the current grid point and hit point
 		if(m_PlaneHit.collider != null)
@@ -182,8 +185,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		UpdateInput();
 
 		// Update the material variables
-		Vector3 up = m_Grid.transform.up;
-		Vector3 pos = m_Grid.transform.position;
+		Vector3 up = m_GridPlane.transform.up;
+		Vector3 pos = m_GridPlane.transform.position;
 		m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
 		m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
 		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
@@ -336,50 +339,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			tileLower1.UpdateAllCurrentTileMetaData();
 			tileLower2.UpdateAllCurrentTileMetaData();
 			return;
-
-//			Vector3 cursorPos = (m_GridCursor.transform.localPosition - m_TilesOffset) / m_Grid.m_TileSize;
-//
-//			CGridPoint tilePosNE = new CGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
-//			CGridPoint tilePosNW = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
-//			CGridPoint tilePosSE = new CGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
-//			CGridPoint tilePosSW = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
-//
-//			List<CTileInterface> floorTiles = new List<CTileInterface>();
-//
-//			if(m_Grid.GetTile(tilePosNE) != null)
-//				floorTiles.Add(m_Grid.GetTile(tilePosNE));
-//			if(m_Grid.GetTile(tilePosNW) != null)
-//				floorTiles.Add(m_Grid.GetTile(tilePosNW));
-//			if(m_Grid.GetTile(tilePosSE) != null)
-//       			floorTiles.Add(m_Grid.GetTile(tilePosSE));
-//			if(m_Grid.GetTile(tilePosSW) != null)
-//       			floorTiles.Add(m_Grid.GetTile(tilePosSW));
-//
-//			tilePosNE.y -= 1;
-//			tilePosNW.y -= 1;
-//			tilePosSE.y -= 1;
-//			tilePosSW.y -= 1;
-//
-//			List<CTileInterface> ceilingTiles = new List<CTileInterface>();
-//
-//			if(m_Grid.GetTile(tilePosNE) != null)
-//				ceilingTiles.Add(m_Grid.GetTile(tilePosNE));
-//			if(m_Grid.GetTile(tilePosNW) != null)
-//				ceilingTiles.Add(m_Grid.GetTile(tilePosNW));
-//			if(m_Grid.GetTile(tilePosSE) != null)
-//				ceilingTiles.Add(m_Grid.GetTile(tilePosSE));
-//			if(m_Grid.GetTile(tilePosSW) != null)
-//				ceilingTiles.Add(m_Grid.GetTile(tilePosSW));
-//
-//			ModifyInteriorFloorAndCeiling(!IsCtrlKeyDown, floorTiles, ceilingTiles);
-//
-//			foreach(CTileInterface tileInterface in floorTiles)
-//				tileInterface.UpdateAllCurrentTileMetaData();
-//
-//			foreach(CTileInterface tileInterface in ceilingTiles)
-//				tileInterface.UpdateAllCurrentTileMetaData();
-//
-//			return;
 		}
 	}
 	
@@ -548,31 +507,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			m_GridCursor.transform.localPosition = centerPos;
 			return;
 		}
-
-//		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
-//		{
-//			Vector3 centerPos = m_Grid.GetLocalPosition(m_CurrentMouseGridPoint.ToVector) + m_TilesOffset;
-//			centerPos.y += m_Grid.m_TileSize * 0.5f;
-//			
-//			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
-//			m_GridCursor.transform.localPosition = centerPos;
-//			return;
-//
-//			Vector3 tilePos = m_Grid.GetGridPosition(m_CurrentMouseHitPoint - (m_Grid.TileContainer.transform.rotation * m_TilesOffset * m_GridScale));
-//
-//			float tileU = tilePos.x - Mathf.Round(tilePos.x);
-//			float tileV = tilePos.z - Mathf.Round(tilePos.z);
-//
-//			tilePos.x = Mathf.Round(tilePos.x) + Mathf.Sign(tileU) * 0.5f;
-//			tilePos.z = Mathf.Round(tilePos.z) + Mathf.Sign(tileV) * 0.5f;
-//
-//			Vector3 centerPos = m_Grid.GetLocalPosition(tilePos) + m_TilesOffset;
-//			centerPos.y = 0.0f;
-//			
-//			m_GridCursor.transform.localScale = Vector3.one * m_Grid.m_TileSize;
-//			m_GridCursor.transform.localPosition = centerPos;
-//			return;
-//		}
 
 		if(m_CurrentMode == EToolMode.Paint_Interior_Walls ||
 		   m_CurrentMode == EToolMode.Paint_Interior_Floors)

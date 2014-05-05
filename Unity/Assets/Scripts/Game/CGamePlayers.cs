@@ -24,6 +24,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 {
 
 // Member Types
+
+
 	enum ENetworkAction
 	{
 		INVALID,
@@ -33,7 +35,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		MAX
 	}
 
+
 // Member Delegates & Events
+
 
 	public delegate void NotifyPlayerActivity(ulong _PlayerId);
 
@@ -46,7 +50,10 @@ public class CGamePlayers : CNetworkMonoBehaviour
     public event NotifyPlayerActorRegister EventActorRegister;
     public event NotifyPlayerActorUnregister EventActorUnregister;
 
+
 // Member Properties
+
+
 	public string LocalPlayerName
 	{
 		get
@@ -71,7 +78,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			if(SelfActorViewId != null)
 			{
-				playerActor = CNetwork.Factory.FindObject(SelfActorViewId);
+				playerActor = CNetwork.Factory.FindGameObject(SelfActorViewId);
 			}
 			
 			return(playerActor); 
@@ -86,7 +93,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			if(SelfActorViewId != null)
 			{
-				playerActorHead = CNetwork.Factory.FindObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
+				playerActorHead = CNetwork.Factory.FindGameObject(SelfActorViewId).GetComponent<CPlayerHead>().Head;
 			}
 			
 			return(playerActorHead); 
@@ -119,7 +126,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			
 			foreach(TNetworkViewId playerID in s_cInstance.m_mPlayersActors.Values)
 			{
-				actors.Add(CNetwork.Factory.FindObject(playerID));
+				actors.Add(CNetwork.Factory.FindGameObject(playerID));
 			}
 			
 			return (actors); 
@@ -130,7 +137,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_sNetworkedPlayerName = _cRegistrar.CreateReliableNetworkVar<string>(OnNetworkVarSync, "");
 
@@ -139,6 +146,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         _cRegistrar.RegisterRpc(this, "RemoteRegisterPlayerActor");
         _cRegistrar.RegisterRpc(this, "RemoteUnregisterPlayerActor");
 	}
+
 
 	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
 	{
@@ -166,6 +174,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 		
+
 	public static void SerializeData(CNetworkStream _cStream)
 	{
 		if(m_bSerializeName)
@@ -214,8 +223,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 			return (null);
 		}
 		
-		return (CNetwork.Factory.FindObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
+		return (CNetwork.Factory.FindGameObject(s_cInstance.m_mPlayersActors[_ulPlayerId]));
 	}
+
 
 	public static TNetworkViewId GetPlayerActorViewId(ulong _ulPlayerId)
 	{
@@ -227,6 +237,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayersActors[_ulPlayerId]);
 	}
 
+
 	public static ulong GetPlayerActorsPlayerId(TNetworkViewId _PlayerActorViewId)
 	{
 		if (!s_cInstance.m_mPlayerActorsPlayers.ContainsKey(_PlayerActorViewId))
@@ -237,6 +248,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayerActorsPlayers[_PlayerActorViewId]);
 	}
 
+
 	public static ulong GetPlayerActorsPlayerId(GameObject _PlayerActor)
 	{
 		if(_PlayerActor.GetComponent<CNetworkView>() == null)
@@ -244,6 +256,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		else
 			return(GetPlayerActorsPlayerId(_PlayerActor.GetComponent<CNetworkView>().ViewId));
 	}
+
 
 	public static string GetPlayerName(ulong _ulPlayerId)
 	{
@@ -255,6 +268,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		return (s_cInstance.m_mPlayersNames[_ulPlayerId]);
 	}
 
+
 	public void Awake()
 	{
 		Application.runInBackground = true;
@@ -264,10 +278,10 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnPlayerJoin);
-		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnPlayerDisconnect);
-		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnServerShutdown);
-		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
+		CNetwork.Server.EventPlayerConnect += new CNetworkServer.NotifyPlayerConnect(OnEventServerPlayerJoin);
+		CNetwork.Server.EventPlayerDisconnect += new CNetworkServer.NotifyPlayerDisconnect(OnEventServerPlayerDisconnect);
+		CNetwork.Server.EventShutdown += new CNetworkServer.NotifyShutdown(OnEventServerShutdown);
+		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnEventConnectionDisconnect);
 		CGame.Instance.EventNameChange += new CGame.NotifyNameChange(OnPlayerNameChange);
 	}
 
@@ -282,7 +296,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		{
 			foreach (ulong ulUnspawnedPlayerId in m_aUnspawnedPlayers.ToArray())
 			{
-			    List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+			    List<GameObject> aPlayerSpawners = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByType(CModuleInterface.EType.PlayerSpawner);
 
                 if (aPlayerSpawners == null ||
                     aPlayerSpawners.Count == 0)
@@ -297,7 +311,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
                         m_aUnspawnedPlayers.Remove(ulUnspawnedPlayerId);
 
 						// Create new player's actor
-						GameObject cPlayerActor = CNetwork.Factory.CreateObject((ushort)CGameRegistrator.ENetworkPrefab.PlayerActor);
+						GameObject cPlayerActor = CNetwork.Factory.CreateGameObject((ushort)CGameRegistrator.ENetworkPrefab.PlayerActor);
 						
 						// Set the parent as the ship
 						//cPlayerActor.GetComponent<CNetworkView>().SetParent(CGameShips.Ship.GetComponent<CNetworkView>().ViewId);
@@ -320,6 +334,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		}
 	}
 
+
     void RespawnPlayer(GameObject _SourcePlayer, CPlayerHealth.HealthState _eHealthCurrentState, CPlayerHealth.HealthState _eHealthPreviousState)
     {
         // If the previous health state was DEAD
@@ -327,7 +342,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         if (_eHealthCurrentState == CPlayerHealth.HealthState.DEAD)
         {
             // Save a list of currently constructed spawners
-            List<GameObject> aPlayerSpawners = CModuleInterface.FindModulesByType(CModuleInterface.EType.PlayerSpawner);
+            List<GameObject> aPlayerSpawners = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByType(CModuleInterface.EType.PlayerSpawner);
 
             // Iterate through every spawner
             foreach (GameObject cPlayerSpawner in aPlayerSpawners)
@@ -358,7 +373,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
         }
     }
 
-	void OnPlayerJoin(CNetworkPlayer _cPlayer)
+
+	void OnEventServerPlayerJoin(CNetworkPlayer _cPlayer)
 	{
 		// Send created objects to new player
 		CNetwork.Factory.SyncPlayer(_cPlayer);
@@ -390,19 +406,19 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//Place module gun
 		//GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
-        GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+        GameObject tool = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
 		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 		//Place Ratchet
-		GameObject ratchet = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
+        GameObject ratchet = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
 		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
         //Place extinguisher
-        GameObject extinguisher = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
+        GameObject extinguisher = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
         extinguisher.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
         //Place circuitry tool?
-        GameObject circuitry = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolCircuitryKit);
+        GameObject circuitry = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolCircuitryKit);
         circuitry.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
         //Place torch
-        GameObject torch = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+        GameObject torch = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
         torch.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 
 
@@ -414,13 +430,13 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 	
 	
-	void OnPlayerDisconnect(CNetworkPlayer _cPlayer)
+	void OnEventServerPlayerDisconnect(CNetworkPlayer _cPlayer)
 	{
 		TNetworkViewId cPlayerActorNetworkViewId = GetPlayerActorViewId(_cPlayer.PlayerId);
 
 		if (cPlayerActorNetworkViewId != null)
 		{
-			CNetwork.Factory.DestoryObject(cPlayerActorNetworkViewId);
+			CNetwork.Factory.DestoryGameObject(cPlayerActorNetworkViewId);
 			
 			// Sync unregister player actor view id with everyone
 			InvokeRpcAll("RemoteUnregisterPlayerActor", _cPlayer.PlayerId);
@@ -433,7 +449,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	void OnServerShutdown()
+	void OnEventServerShutdown()
 	{
 		m_mPlayersActors.Clear();
 		m_mPlayerActorsPlayers.Clear();
@@ -441,7 +457,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	}
 
 
-	void OnDisconnect()
+	void OnEventConnectionDisconnect()
 	{
 		if (!CNetwork.IsServer)
 		{
@@ -452,6 +468,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		m_bSerializeName = true;
 	}
+
 
 	// Create RPC Call to take in playerID (ulong) and string (player username)
 	[ANetworkRpc]
@@ -472,6 +489,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(EventPlayerJoin != null)
 			EventPlayerJoin(_ulPlayerID);
 	}
+
+
 	[ANetworkRpc]
 	void UnregisterPlayerName(ulong _ulPlayerID)
 	{
@@ -484,6 +503,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		if(EventPlayerLeave != null)
 			EventPlayerLeave(_ulPlayerID);
 	}
+
 
 	[ANetworkRpc]
 	void RemoteRegisterPlayerActor(ulong _ulPlayerId, TNetworkViewId _cPlayerActorId)
@@ -540,6 +560,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
         }
     }
 
+
 	void OnPlayerNameChange(string _sPlayerName)
 	{
 		ulong ulPlayerID = CNetwork.PlayerId;
@@ -549,6 +570,8 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
 		CGamePlayers.m_bSerializeName = true;
 	}
+
+
 // Member Fields
 
 
@@ -566,4 +589,6 @@ public class CGamePlayers : CNetworkMonoBehaviour
 	static CGamePlayers s_cInstance = null;
 
 	static bool m_bSerializeName = true;
+
+
 };

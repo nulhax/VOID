@@ -76,6 +76,8 @@ public class CNetwork : MonoBehaviour
 
 	public void Update()
 	{
+        if (CNetwork.Connection.IsConnected ||
+            CNetwork.IsServer)
         if (EventNetworkUpdate != null) EventNetworkUpdate(Time.deltaTime);
 	}
 

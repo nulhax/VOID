@@ -105,7 +105,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 // Member Methods
 	
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_fQuantity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, Volume / 2);
     }

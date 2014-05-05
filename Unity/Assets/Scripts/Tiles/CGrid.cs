@@ -168,7 +168,7 @@ public class CGrid : MonoBehaviour
 		if(tileInterface == null)
 		{
 			// Instantiate the new tile
-			GameObject newtile = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Tile);
+			GameObject newtile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Tile);
 
 			newtile.transform.parent = m_TileContainer.transform;
 			newtile.transform.localScale = Vector3.one;
@@ -213,7 +213,7 @@ public class CGrid : MonoBehaviour
 		tileInterface.UpdateNeighbourhood();
 
 		// Destroy
-		CNetwork.Factory.DestoryObject(tileInterface.gameObject);
+		CNetwork.Factory.DestoryGameObject(tileInterface.gameObject);
 	}
 }
 

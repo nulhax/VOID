@@ -48,7 +48,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bAmmo = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
 

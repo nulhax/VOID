@@ -47,37 +47,72 @@ public class CEngineInterface : CNetworkMonoBehaviour
 // Member Functions
 	
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_fPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 
-    [AServerOnly]
-    public void SetPropulsion(float _fValue)
+    void Awake()
     {
-        m_fPropulsion.Value = _fValue;
+        m_cModuleInterface = GetComponent<CModuleInterface>();
 
-        CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangePropulsion(m_fPropulsion.Value - m_fPropulsion.PreviousValue);
+        if (CNetwork.IsServer)
+        {
+            // Signup for module events
+            m_cModuleInterface.EventBuilt += OnEventBuilt;
+            m_cModuleInterface.EventEnableChange += OnEventModuleEnableChange;
+            m_cModuleInterface.EventFunctionalRatioChange += OnEventModuleFunctionalRatioChange;
+        }
     }
 	
 
 	void Start()
 	{
-		if(!CNetwork.IsServer)
-			return;
-
-        CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangeMaxPropolsion(m_fInitialPropulsion);
-
-        SetPropulsion(m_fInitialPropulsion);
+        // Empty
 	}
 
 
-    void OnNetworkVarSync(INetworkVar _VarInstance)
+    [AServerOnly]
+    void OnEventBuilt(CModuleInterface _cSender)
     {
-        if (m_fPropulsion == _VarInstance)
+        CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangeMaxPropolsion(m_fInitialPropulsion);
+    }
+
+
+    [AServerOnly]
+    void OnEventModuleEnableChange(CModuleInterface _cSender, bool _bEnabled)
+    {
+        if (_bEnabled)
         {
-            // Empty
+            m_fPropulsion.Value = m_fInitialPropulsion * m_cModuleInterface.FunctioanlRatio;
+        }
+        else
+        {
+            m_fPropulsion.Value = 0.0f;
+        }
+    }
+
+
+    [AServerOnly]
+    void OnEventModuleFunctionalRatioChange(CModuleInterface _cSender, float _fPreviousRatio, float _fNewRatio)
+    {
+        if (m_cModuleInterface.IsEnabled)
+        {
+            m_fPropulsion.Value = m_fInitialPropulsion * _fNewRatio;
+        }
+    }
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_fPropulsion)
+        {
+            // Update ship power system
+            if (CNetwork.IsServer)
+            {
+                CGameShips.Ship.GetComponent<CShipPropulsionSystem>().ChangePropulsion(m_fPropulsion.Value - m_fPropulsion.PreviousValue);
+            }
         }
     }
 
@@ -89,6 +124,9 @@ public class CEngineInterface : CNetworkMonoBehaviour
 
 
     CNetworkVar<float> m_fPropulsion = null;
+
+
+    CModuleInterface m_cModuleInterface = null;
 
 
 }

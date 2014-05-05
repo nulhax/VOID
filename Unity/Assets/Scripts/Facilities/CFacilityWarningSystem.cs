@@ -40,7 +40,7 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
     
 
    
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

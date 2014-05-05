@@ -42,7 +42,7 @@ public class CNaniteStorage : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0);
 	}
@@ -68,7 +68,7 @@ public class CNaniteStorage : CNetworkMonoBehaviour
     void OnEventBuilt(CModuleInterface _cSender)
     {
         // Add nanite capacity to ship
-        CGameShips.Ship.GetComponent<CShipNaniteSystem>().ChangeCapacity(m_fCapacity.Value);
+        CGameShips.Ship.GetComponent<CShipNaniteSystem>().ChangeCapacity(m_fInitialCapacity);
     }
 
 
@@ -82,6 +82,9 @@ public class CNaniteStorage : CNetworkMonoBehaviour
 
  
 // Member Fields
+
+
+    public float m_fInitialCapacity = 0.0f;
 
 
     CNetworkVar<float> m_fCapacity = null;

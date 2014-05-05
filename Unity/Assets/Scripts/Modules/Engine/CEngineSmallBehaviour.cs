@@ -49,9 +49,6 @@ public class CEngineSmallBehaviour: MonoBehaviour
 	{
 		m_cEngineInterface = gameObject.GetComponent<CEngineInterface>();
 
-		// Register for changes in mechanical health
-        m_MechanicalComponent1.GetComponent<CActorHealth>().EventOnSetHealth += OnEventComponentHealthChange;
-        m_MechanicalComponent2.GetComponent<CActorHealth>().EventOnSetHealth += OnEventComponentHealthChange;
 
 		// Set the cubemap for the children
 		foreach(Renderer r in GetComponentsInChildren<Renderer>())
@@ -70,16 +67,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 		if(CNetwork.IsServer)
 		{
 			// Get the combined health of the mechanical components
-			float currentCombinedHealth = 0.0f;
-			float combinedInitialHealth = 0.0f;
-
-			currentCombinedHealth += m_MechanicalComponent1.GetComponent<CActorHealth>().health;
-			currentCombinedHealth += m_MechanicalComponent2.GetComponent<CActorHealth>().health;
-
-			combinedInitialHealth += m_MechanicalComponent1.GetComponent<CActorHealth>().health_initial;
-			combinedInitialHealth += m_MechanicalComponent2.GetComponent<CActorHealth>().health_initial;
-
-            m_cEngineInterface.SetPropulsion( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
+            //m_cEngineInterface.SetPropulsion( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
 		}
 	}
 
@@ -122,11 +110,6 @@ public class CEngineSmallBehaviour: MonoBehaviour
 // Member Fields
 
 
-    public CDUIConsole m_DUIConsole = null;
-
-    public CComponentInterface m_MechanicalComponent1 = null;
-    public CComponentInterface m_MechanicalComponent2 = null;
-
     public Transform m_OuterRing = null;
     public Transform m_MiddleRing = null;
     public Transform m_InnerRing = null;
@@ -139,7 +122,6 @@ public class CEngineSmallBehaviour: MonoBehaviour
     float m_VarianceTimer3 = 0.0f;
 
     CEngineInterface m_cEngineInterface = null;
-    CDUIPropulsionEngineRoot m_DUIPropulsionRoot = null;
 
     int m_AmbientHumSoundIndex = -1;
 

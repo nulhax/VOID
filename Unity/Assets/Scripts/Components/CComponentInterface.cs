@@ -64,7 +64,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bBroken = _cRegistrar.CreateReliableNetworkVar(OnNetworkVarSync, true);
 	}
@@ -148,7 +148,7 @@ public class CComponentInterface : CNetworkMonoBehaviour
         if (cModuleInterface == null)
             Debug.LogError(name + " has CComponentInterface, but could not find CModuleInterface in parent GameObjects.");
 
-        cModuleInterface.RegisterAttachedComponent(this);
+        //cModuleInterface.RegisterAttachedComponent(this);
     }
 
 

@@ -50,7 +50,7 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         // Empty
     }
@@ -82,6 +82,11 @@ public class CModulePrecipitation : CNetworkMonoBehaviour
             m_cPrecipitativeMesh.transform.parent = transform;
             m_cPrecipitativeMesh.transform.localPosition = Vector3.zero;
             m_cPrecipitativeMesh.transform.localRotation = Quaternion.identity;
+
+            foreach (ParticleSystem cChild in m_cPrecipitativeMesh.GetComponentsInChildren<ParticleSystem>())
+            {
+                cChild.Play();
+            }
 
             m_bInstanced = true;
         }

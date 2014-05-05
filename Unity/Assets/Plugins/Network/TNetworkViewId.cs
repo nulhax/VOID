@@ -67,7 +67,7 @@ public class TNetworkViewId
 	{
 		get 
 		{ 
-			return (CNetwork.Factory.FindObject(this)); 
+			return (CNetwork.Factory.FindGameObject(this)); 
 		}
 	}
 

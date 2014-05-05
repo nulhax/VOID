@@ -27,7 +27,6 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400006}
-  - 114: {fileID: 11400000}
   m_Layer: 0
   m_Name: Prefabricator
   m_TagString: Untagged
@@ -451,18 +450,6 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100018}
   m_Enabled: 1
---- !u!114 &11400000
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 5356046d426e5bd478b811f2c5ba341f, type: 2}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -490,8 +477,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GridPlane: {fileID: 100014}
   m_GridCursor: {fileID: 100010}
-  m_GridScale: .0500000007
-  m_GridScaleLimits: {x: .0500000007, y: .200000003}
+  m_GridScale: .0299999993
+  m_GridScaleLimits: {x: .0199999996, y: .0500000007}
   m_TilesOffset: {x: 0, y: 0, z: 0}
   m_CurrentMode: 0
   m_CurrentPlaneInteraction: 0
@@ -533,13 +520,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_sDisplayName: Prefabricator
+  m_sDescription: Used for watching porn
   m_cModel: {fileID: 100002}
   m_eModuleType: 0
   m_eModuleCategory: 350
   m_eModuleSize: 1
-  m_fNanitesCost: 100.124001
+  m_fNanitesCost: 9001
   m_bInternal: 1
-  m_bBuildable: 1
+  m_bBuildable: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1

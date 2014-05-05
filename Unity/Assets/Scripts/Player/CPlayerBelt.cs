@@ -125,7 +125,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifySwitchingTool");
 
@@ -338,7 +338,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         m_ulOwnerPlayerId = GetComponent<CPlayerInterface>().PlayerId;
 
         // Owner player subscribe to events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse += OnEventInteractionUse;
 
@@ -363,7 +363,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
     }
 
 
-    void OnEventPreDestroy()
+    void OnEventPreDestroy(GameObject _cSender)
     {
         // Drop all tools
         if (CNetwork.IsServer)
@@ -381,7 +381,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
         }
 
         // Owner player unsubscribe from events
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             gameObject.GetComponent<CPlayerInteractor>().EventUse -= OnEventInteractionUse;
 
@@ -557,7 +557,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
                     m_bUnequipingToolId = k_bInvalidToolId;
 
                     // Run owner player specific functionality
-                    if (gameObject == CGamePlayers.SelfActor &&
+                    if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe &&
                         ActiveTool != null)
                     {
                         // Set equiped
@@ -592,7 +592,8 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (CCursorControl.IsCursorLocked && 
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             string sToolText = "";
 

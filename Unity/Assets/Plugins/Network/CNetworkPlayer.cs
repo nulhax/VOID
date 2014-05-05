@@ -80,12 +80,6 @@ public class CNetworkPlayer : MonoBehaviour
 // Member Functions
 
 
-    public void Start()
-    {
-		// Empty
-    }
-
-
 	public void Initialise(RakNet.SystemAddress _cSystemAddress, RakNet.RakNetGUID _cGuid, bool _bHost)
 	{
 		ResetBufferedSteam();
@@ -121,6 +115,12 @@ public class CNetworkPlayer : MonoBehaviour
     {
         m_cUnbufferedStream.Clear();
         m_cUnbufferedStream.Write((byte)CNetworkConnection.EPacketId.NetworkView);
+    }
+
+
+    void Start()
+    {
+        // Empty
     }
 
 

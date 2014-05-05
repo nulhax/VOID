@@ -186,7 +186,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
         //                                              Type   Callback          Initial Vlaue
 		m_fHealth        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);
@@ -412,8 +412,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         const float kBoxWidth = 200.0f;
         const float kBoxHeight = 22.0f;
 
-        
-        if (gameObject == CGamePlayers.SelfActor)
+
+        if (CCursorControl.IsCursorLocked && 
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             GUIStyle cStyle = new GUIStyle();
             cStyle.alignment = TextAnchor.UpperLeft;

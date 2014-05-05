@@ -221,7 +221,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		sGalaxy = null;
 	}
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 		mCentreCellX = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.x);
 		mCentreCellY = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.y);
@@ -675,7 +675,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 	public bool LoadGubbin(CGubbinMeta gubbin)
 	{
 		// Create object.
-		GameObject gubbinObject = CNetwork.Factory.CreateObject((ushort)gubbin.mPrefabID);
+		GameObject gubbinObject = CNetwork.Factory.CreateGameObject((ushort)gubbin.mPrefabID);
 
 		if (gubbinObject == null)
 		{
@@ -687,7 +687,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		// Check if the new gubbin has room to spawn.
 		if (Physics.CheckSphere(gubbinPosition, CUtility.GetBoundingRadius(gubbinObject), 1 << LayerMask.NameToLayer("Galaxy")))
 		{
-			CNetwork.Factory.DestoryObject(gubbinObject);
+			CNetwork.Factory.DestoryGameObject(gubbinObject);
 			return false;
 		}
 
@@ -738,7 +738,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 		gubbin.mEntity.GetComponent<GalaxyGubbin>().registeredWithGalaxy = false;
 		mGubbins.Remove(gubbin);
-		CNetwork.Factory.DestoryObject(gubbin.mNetworkViewID);
+		CNetwork.Factory.DestoryGameObject(gubbin.mNetworkViewID);
 	}
 
 	public Vector3 RelativeCellToRelativePoint(SCellPos relativeCell)

@@ -130,13 +130,14 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-    public virtual void SetSendInterval(float _fInterval)
+    public override void SetSendInterval(float _fInterval)
     {
         if (CNetwork.IsServer)
         {
             m_fSendInterval = _fInterval;
 
-            if (m_fSendInterval > 0.0f)
+            if (m_fSendInterval > 0.0f &&
+                !m_bSendIntervalEnabled)
             {
                 CNetwork.EventNetworkUpdate += UpdateSendInterval;
 

@@ -54,7 +54,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
     // Member Functions
     
     
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
     }

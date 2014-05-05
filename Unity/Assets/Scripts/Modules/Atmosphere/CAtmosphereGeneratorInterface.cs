@@ -42,7 +42,7 @@ public class CAtmosphereGeneratorInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_fGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
@@ -55,6 +55,7 @@ public class CAtmosphereGeneratorInterface : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             // Signup for module events
+            m_cModuleInterface.EventBuilt += OnEventBuilt;
             m_cModuleInterface.EventEnableChange += OnEventModuleEnableChange;
             m_cModuleInterface.EventFunctionalRatioChange += OnEventModuleFunctionalRatioChange;
         }
@@ -63,11 +64,14 @@ public class CAtmosphereGeneratorInterface : CNetworkMonoBehaviour
 
     void Start()
     {
-        if (CNetwork.IsServer)
-        {
-            // Increase the ships max generation rate
-            CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().ChangeMaxGenerationRate(m_fInitialGenerationRate);
-        }
+        // Empty
+    }
+
+
+    [AServerOnly]
+    void OnEventBuilt(CModuleInterface _cSender)
+    {
+        CGameShips.Ship.GetComponent<CShipAtmosphereSystem>().ChangeMaxGenerationRate(m_fInitialGenerationRate);
     }
 
 

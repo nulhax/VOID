@@ -98,38 +98,35 @@ public class CNetworkServer : MonoBehaviour
 	public uint SendCounter { get; set; }
 
 
-// Member Methods
-
-
-    public void Start()
+    public bool IsActive
     {
-        // Empty
-    }
-
-
-	public void OnDestroy()
-	{
-		Shutdown();
-	}
-
-
-	public void Update()
-    {
-        if (IsActive)
+        get
         {
-            ProcessInboundPackets();
-			ProcessMasterServerRegistration();
+            if (m_cRnPeer != null)
+            {
+                return (m_cRnPeer.IsActive());
+            }
+            else
+            {
+                return (false);
+            }
         }
     }
 
 
-	public void LateUpdate()
-	{
-		if (IsActive)
-		{
-			ProcessOutgoingPackets();
-		}
-	}
+    public RakNet.RakPeer RakPeer
+    {
+        get { return (m_cRnPeer); }
+    }
+
+
+    public ushort Port
+    {
+        get { return (m_usPort); }
+    }
+
+
+// Member Methods
 
 
     public bool Startup(ushort _usPort, string _sTitle, string _sPlayerName, uint _uiNumSlots)
@@ -204,74 +201,35 @@ public class CNetworkServer : MonoBehaviour
 	}
 
 
-    public void OnGUI()
+    void Start()
     {
-        if (m_bShowStats &&
-            IsActive)
+        // Empty
+    }
+
+
+    void OnDestroy()
+    {
+        Shutdown();
+    }
+
+
+    void Update()
+    {
+        if (IsActive)
         {
-            RakNet.SystemAddress[] aRemoteSystems = null;
-            ushort sSystemsCount = 100;
-            m_cRnPeer.GetConnectionList(out aRemoteSystems, ref sSystemsCount);
-
-
-            uint uiSendBufferCount = 0;
-            uint uiSendBufferSize = 0;
-            uint uiReceieveBufferCount = 0;
-            uint uiReceieveBufferSize = 0;
-
-
-            foreach (RakNet.SystemAddress cSystemAddress in aRemoteSystems)
-            {
-                RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(cSystemAddress);
-
-                uiSendBufferCount += cStatistics.messageInSendBuffer[0];
-                uiSendBufferSize += (uint)cStatistics.bytesInSendBuffer[0];
-                uiReceieveBufferCount = cStatistics.messagesInResendBuffer;
-                uiReceieveBufferSize = (uint)cStatistics.bytesInResendBuffer;
-            }
-
-
-            string sStatistics = "";
-            sStatistics += string.Format("Server Statistics\n");
-            sStatistics += string.Format("Player Count ({0})\n", aRemoteSystems.Length);
-            sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", uiSendBufferCount, uiSendBufferSize);
-            sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", uiReceieveBufferCount, uiReceieveBufferSize);
-            //sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
-           // sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
-            //sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
-
-
-            GUI.Label(new Rect(Screen.width - 500, 0.0f, 250, 200), sStatistics);
+            ProcessInboundPackets();
+            ProcessMasterServerRegistration();
         }
     }
 
 
-    public bool IsActive
+    void LateUpdate()
     {
-		get
-		{
-			if (m_cRnPeer != null)
-			{
-				return (m_cRnPeer.IsActive());
-			}
-			else
-			{
-				return (false);
-			}
-		}
+        if (IsActive)
+        {
+            ProcessOutgoingPackets();
+        }
     }
-
-
-    public RakNet.RakPeer RakPeer
-    {
-		get { return (m_cRnPeer); }
-    }
-
-
-	public ushort Port
-	{
-		get { return (m_usPort); }
-	}
 
 
     void ProcessInboundPackets()
@@ -529,6 +487,48 @@ public class CNetworkServer : MonoBehaviour
         }
 
         return (bPeerStarted);
+    }
+
+
+    void OnGUI()
+    {
+        if (m_bShowStats &&
+            IsActive)
+        {
+            RakNet.SystemAddress[] aRemoteSystems = null;
+            ushort sSystemsCount = 100;
+            m_cRnPeer.GetConnectionList(out aRemoteSystems, ref sSystemsCount);
+
+
+            uint uiSendBufferCount = 0;
+            uint uiSendBufferSize = 0;
+            uint uiReceieveBufferCount = 0;
+            uint uiReceieveBufferSize = 0;
+
+
+            foreach (RakNet.SystemAddress cSystemAddress in aRemoteSystems)
+            {
+                RakNet.RakNetStatistics cStatistics = m_cRnPeer.GetStatistics(cSystemAddress);
+
+                uiSendBufferCount += cStatistics.messageInSendBuffer[0];
+                uiSendBufferSize += (uint)cStatistics.bytesInSendBuffer[0];
+                uiReceieveBufferCount = cStatistics.messagesInResendBuffer;
+                uiReceieveBufferSize = (uint)cStatistics.bytesInResendBuffer;
+            }
+
+
+            string sStatistics = "";
+            sStatistics += string.Format("Server Statistics\n");
+            sStatistics += string.Format("Player Count ({0})\n", aRemoteSystems.Length);
+            sStatistics += string.Format("Send Buffer ({0} Messages) ({1}b)\n", uiSendBufferCount, uiSendBufferSize);
+            sStatistics += string.Format("Resend Buffer ({0} Messages) ({1}b)\n", uiReceieveBufferCount, uiReceieveBufferSize);
+            //sStatistics += string.Format("Packet Loss ({0}%/s) ({1}% Total)\n", cStatistics.packetlossLastSecond * 100.0f, cStatistics.packetlossTotal * 100.0f);
+            // sStatistics += string.Format("Inbound ({0}B/s {1} Messages)\n", m_tInboundRateData.uiLastTotalBytes, m_tInboundRateData.uiLastTotalEntries);
+            //sStatistics += string.Format("Outbound ({0}B/s {1} Messages)\n", m_tOutboundRateData.uiLastTotalBytes, m_tOutboundRateData.uiLastTotalEntries);
+
+
+            GUI.Label(new Rect(Screen.width - 500, 0.0f, 250, 200), sStatistics);
+        }
     }
 
 

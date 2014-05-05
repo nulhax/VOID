@@ -68,7 +68,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
     {
         m_eState = _cRegistrar.CreateReliableNetworkVar<EState>(OnNetworkVarSync, EState.Idle);
     }
@@ -137,7 +137,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnEventInputChange);
 
@@ -160,7 +160,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Use, OnEventInputChange);
 
@@ -176,7 +176,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
             UpdateState();
         }
 
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             ProcessTargetRange();
         }
@@ -284,7 +284,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
             if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
             {
-                CModuleInterface cModule = tRaycastHit.collider.gameObject.transform.parent.GetComponent<CModuleInterface>();
+                CModuleInterface cModule = tRaycastHit.collider.gameObject.transform.GetComponent<CModuleInterface>();
 
                 if ( cModule != null &&
                     !cModule.IsBuilt)

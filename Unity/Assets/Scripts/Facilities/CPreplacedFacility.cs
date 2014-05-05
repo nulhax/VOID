@@ -71,7 +71,7 @@ public class CPreplacedFacility : MonoBehaviour
 		GameObject facility = shipFacilities.Facilities.First();
 		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
 		{
-			preplacedModule.CreateModule(facility);
+			CGameShips.Ship.GetComponent<CShipModules>().CreateModule(preplacedModule.m_PreplacedModuleType, preplacedModule.transform.position, 0.0f);
 		}
 
 		Destroy(m_TilesCollection);

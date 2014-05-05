@@ -35,7 +35,7 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     // public:
 
 
-    public abstract void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar);
+    public abstract void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar);
 
 
     public void InvokeRpc(ulong _ulPlayerId, string _sMethodName, params object[] _caParameters)
@@ -69,12 +69,6 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     {
         get { return (NetworkView.ViewId); }
     }
-
-
-	public void EnableOutboundSending()
-	{
-
-	}
 
 
     // protected:

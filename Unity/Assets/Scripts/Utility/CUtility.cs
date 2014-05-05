@@ -294,6 +294,11 @@ public class CUtility
 	/// <returns></returns>
 	public static float GetMeshSurfaceArea(Mesh mesh, Vector3 scale)
 	{
+        if (mesh == null)
+        {
+            Debug.LogError(mesh.name);
+        }
+
 		int[] triangles = mesh.triangles;
 		Vector3[] vertices = mesh.vertices;
 

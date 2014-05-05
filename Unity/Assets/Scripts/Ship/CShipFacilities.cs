@@ -78,7 +78,7 @@ public class CShipFacilities : MonoBehaviour
 		}
 
 		// Instantiate an empty facility
-		GameObject newFacility = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Facility);
+		GameObject newFacility = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Facility);
 		newFacility.transform.parent = transform;
 		newFacility.transform.localPosition = Vector3.zero;
 		newFacility.transform.localRotation = Quaternion.identity;
@@ -109,7 +109,7 @@ public class CShipFacilities : MonoBehaviour
 			EventFaciltiyDestroyed(_Facility);
 
 		// Destroy the facility
-		CNetwork.Factory.DestoryObject(_Facility);
+		CNetwork.Factory.DestoryGameObject(_Facility);
 	}
 	
 	public GameObject GetFacility(uint _uiFacilityId)
