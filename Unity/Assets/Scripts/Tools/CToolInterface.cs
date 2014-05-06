@@ -246,7 +246,7 @@ public class CToolInterface : CNetworkMonoBehaviour
         Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
         // Check currently held
-        if (IsOwned)
+		if (IsOwned && m_bReloading != null)	// m_bReloading is null when the tool can not be reloaded (e.g. a torch).
         {
             m_bReloading.Set(true);
         }
