@@ -23,7 +23,6 @@ public class CFireHazard : CNetworkMonoBehaviour
 	private float timeUntilProcess = 0.0f;
 
 	private CFacilityAtmosphere cache_FacilityAtmosphere = null;
-	//private System.Collections.Generic.List<CActorHealth> cache_ActorHealths = new System.Collections.Generic.List<CActorHealth>();
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
@@ -64,9 +63,6 @@ public class CFireHazard : CNetworkMonoBehaviour
 				if (currentFacility != null)
 					cache_FacilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
 			}
-
-			//cache_ActorHealths.AddRange(GetComponentsInChildren<CActorHealth>());
-			//cache_ActorHealths.AddRange(GetComponents<CActorHealth>());
 		}
 
 		fireHealth.Start();
@@ -106,8 +102,10 @@ public class CFireHazard : CNetworkMonoBehaviour
 						fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * timeBetweenProcess;
 				}
 
-				//foreach (CActorHealth actorHealth in cache_ActorHealths)
-				//	actorHealth.health -= Time.deltaTime;
+				System.Collections.Generic.List<GameObject> players = CGamePlayers.PlayerActors;
+				foreach(GameObject player in players)
+					if(player.layer == LayerMask.NameToLayer("Default"))
+						player.GetComponent<CPlayerHealth>().Health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((player.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
 
 				foreach (CActorHealth actorHealth in CActorHealth.allInstances)
 					if(actorHealth.flammable)
@@ -227,12 +225,14 @@ public class CFireHazard : CNetworkMonoBehaviour
 				// ParticleAnimator.
 				ParticleAnimator particleAnimator = newParticleSystem.GetComponent<ParticleAnimator>(); if (particleAnimator == null) particleAnimator = newParticleSystem.AddComponent<ParticleAnimator>();	// Get or create ParticleAnimator (there must be one).
 				Color[] newColourAnimation = new Color[5];
-				newColourAnimation[0] = new Color(1, 0, 0, 1);
-				newColourAnimation[1] = new Color(0, 1, 0, 1);
-				newColourAnimation[2] = new Color(0, 0, 1, 1);
-				newColourAnimation[3] = new Color(1, 0, 1, 1);
-				newColourAnimation[4] = new Color(1, 1, 0, 0);
+				newColourAnimation[0] = new Color(0.30f, 0.20f, 0.95f, 1.00f);
+				newColourAnimation[1] = new Color(1.00f, 0.25f, 0.00f, 1.00f);
+				newColourAnimation[2] = new Color(1.00f, 0.60f, 0.00f, 1.00f);
+				newColourAnimation[3] = new Color(1.00f, 0.80f, 0.00f, 1.00f);
+				newColourAnimation[4] = new Color(1.00f, 0.80f, 0.00f, 0.00f);
 				particleAnimator.colorAnimation = newColourAnimation;
+				particleAnimator.force.Set(0.0f, 1.0f, 0.0f);
+				particleAnimator.rndForce.Set(10.0f, 10.0f, 10.0f);
 				particleAnimator.doesAnimateColor = true;
 			}
 
