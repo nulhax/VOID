@@ -96,7 +96,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: .540096045, y: -.456394851, z: .456394911, w: -.540096045}
-  m_LocalPosition: {x: -1.09294474, y: .353289217, z: .0661958382}
+  m_LocalPosition: {x: .0179640632, y: -.0141543718, z: .00263595534}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 400006}
@@ -118,7 +118,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_LocalRotation: {x: -.436522901, y: .899693131, z: -1.9081023e-08, w: -3.93268387e-08}
-  m_LocalPosition: {x: -.0398919471, y: -.10999985, z: .00635599811}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .100000016, y: .100000009, z: .100000016}
   m_Children:
   - {fileID: 400002}
@@ -359,8 +359,9 @@ MonoBehaviour:
   m_eToolType: 40
   m_eToolCategory: 1
   m_cModel: {fileID: 100006}
-  m_sDescription: This is the default tool description
-  m_iNaniteCost: 50
+  m_sName: Torch
+  m_sDescription: Great for showing off with fancy light
+  m_fNaniteCost: 40
   m_bDispensable: 1
   m_RightHandPos: {fileID: 100004}
   m_LeftHandPos: {fileID: 0}

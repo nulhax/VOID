@@ -161,7 +161,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: -.0102143334, y: -.0121392393, z: -.643752515, w: .765069306}
-  m_LocalPosition: {x: -.00155189633, y: -.00558780506, z: -.0232303366}
+  m_LocalPosition: {x: -.000546120456, y: -.0113844303, z: -.208577484}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400014}
@@ -216,7 +216,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100010}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.629523337, y: .320912153, z: .261573851}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400008}
@@ -231,7 +231,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.629523337, y: .320912153, z: .261573851}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400016}
@@ -255,7 +255,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .629523337, y: -.270912141, z: -.121573836}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400012}
@@ -399,7 +399,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: .150000006, y: .280000001, z: .5}
-  m_Center: {x: 0, y: .0500000007, z: .129999995}
+  m_Center: {x: 0, y: 0, z: -.0199999996}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -425,8 +425,9 @@ MonoBehaviour:
   m_eToolType: 10
   m_eToolCategory: 1
   m_cModel: {fileID: 100016}
-  m_sDescription: This is the default tool description
-  m_iNaniteCost: -1
+  m_sName: Ratchet
+  m_sDescription: Used to fix damaged modules
+  m_fNaniteCost: 120
   m_bDispensable: 1
   m_RightHandPos: {fileID: 100000}
   m_LeftHandPos: {fileID: 0}

@@ -354,8 +354,9 @@ MonoBehaviour:
   m_eToolType: 30
   m_eToolCategory: 2
   m_cModel: {fileID: 100000}
-  m_sDescription: This is the default tool description
-  m_iNaniteCost: -1
+  m_sName: Fire Extinguisher
+  m_sDescription: Used to put out fires
+  m_fNaniteCost: 70
   m_bDispensable: 1
   m_RightHandPos: {fileID: 100002}
   m_LeftHandPos: {fileID: 100004}

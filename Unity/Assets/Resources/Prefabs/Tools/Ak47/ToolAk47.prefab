@@ -285,9 +285,9 @@ MonoBehaviour:
   m_eToolType: 50
   m_eToolCategory: 2
   m_cModel: {fileID: 100010}
-  m_sName: Unnamed tool
-  m_sDescription: This is the default tool description
-  m_fNaniteCost: -1
+  m_sName: Ak 47
+  m_sDescription: Can be used to kill other crew members
+  m_fNaniteCost: 2000
   m_bDispensable: 1
   m_RightHandPos: {fileID: 100006}
   m_LeftHandPos: {fileID: 100004}

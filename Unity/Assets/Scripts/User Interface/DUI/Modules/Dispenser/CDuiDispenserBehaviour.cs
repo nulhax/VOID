@@ -30,11 +30,11 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-	public delegate void NotifyDUIEvent(CDuiDispenserBehaviour _Sender);
-	public event NotifyDUIEvent EventBuildToolButtonPressed;
+    public delegate void BuildToolHandler(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType);
+    public event BuildToolHandler EventToolBuild;
 
 
-    public delegate void ToolSelectHandler(CToolInterface.EType _eType);
+    public delegate void ToolSelectHandler(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType);
     public event ToolSelectHandler EventToolSelect;
 	
 	
@@ -54,28 +54,27 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			if (EventBuildToolButtonPressed != null)
-				EventBuildToolButtonPressed(this);
+            if (EventToolBuild != null)
+                EventToolBuild(this, m_eSelectedToolType.Value);
 		}
 	}
 
 	
-	public void OnEventSelectTool(CToolInterface.EType _eToolType)
+	public void OnEventSelectTool(GameObject _cItem)
 	{
         if (CNetwork.IsServer)
         {
-            m_eSelectedToolType.Set(_eToolType);
+            m_eSelectedToolType.Value = _cItem.GetComponent<CMetaData>().GetMeta<CToolInterface.EType>("ToolType");
         }
+
+        m_ToolNameLabel.text = _cItem.GetComponent<CMetaData>().GetMeta<string>("Name");
+        m_ToolDescLabel.text = _cItem.GetComponent<CMetaData>().GetMeta<string>("Description");
+        m_ToolCostLabel.text = _cItem.GetComponent<CMetaData>().GetMeta<float>("NaniteCost").ToString() + " Nanites";
 	}
 
 
     void Start()
     {
-        if (CNetwork.IsServer)
-        {
-            OnEventSelectTool(m_eStartingToolType);
-        }
-        
         // Hide tool item template
         m_cTemplateToolItem.transform.parent = null;
         m_cTemplateToolItem.SetActive(false);
@@ -96,6 +95,7 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
 
 	void UpdateToolPresentation()
 	{
+        /*
 		// Create a temp module
 		string toolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CToolInterface.GetPrefabType(m_eSelectedToolType.Get()));
 		GameObject toolObject = (GameObject)Resources.Load("Prefabs/" + toolPrefabFile);
@@ -130,33 +130,13 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
 		
 		// Set the scale a lot smaller
 		toolObjectMesh.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
-	}
-
-	
-	void UpdateToolInfo(CToolInterface _cToolInterface)
-	{
-        /*
-		// DEBUG: Make a random sentance to describe it
-		string desc = CUtility.LoremIpsum(6, 12, 2, 4, 1);
-		
-		m_SelectedToolType = _cToolInterface.ToolType;
-		m_SelectedToolCost = 100;
-		
-		// Set the name
-		string name = CUtility.SplitCamelCase(m_SelectedToolType.ToString());
-		m_ToolNameLabel.text = name;
-		
-		// Set the desc
-		m_ToolDescLabel.text = desc;
-		
-		// Set the cost
-		m_ToolCostLabel.text = m_SelectedToolCost.ToString();
          * */
 	}
 
 
     void LoadToolGridItems()
     {
+        // Load every tool
         foreach (CToolInterface.EType eToolType in Enum.GetValues(typeof(CToolInterface.EType)))
         {
             string sToolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CToolInterface.GetPrefabType(eToolType));
@@ -167,12 +147,13 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
             GameObject cToolPrefab = Resources.Load(sToolPrefabFile, typeof(GameObject)) as GameObject;
             CToolInterface cToolInferface = cToolPrefab.GetComponent<CToolInterface>();
 
+            // Skip non dispensable tools
+            if (cToolInferface.m_bDispensable == false)
+                continue;
+
             // Clone template item
             GameObject cNewItem = GameObject.Instantiate(m_cTemplateToolItem) as GameObject;
             cNewItem.SetActive(true);
-
-            // Set tool type
-            cNewItem.GetComponent<CDUIButtonSelectTool>().m_ToolType = cToolInferface.ToolType;
 
             // Set tool name
             cNewItem.transform.FindChild("Label").GetComponent<UILabel>().text = cToolInferface.m_sName;
@@ -184,6 +165,8 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
             cNewItem.transform.localRotation = Quaternion.identity;
 
             // Set meta data
+            cNewItem.GetComponent<CMetaData>().SetMeta("ToolType", cToolInferface.m_eToolType);
+            cNewItem.GetComponent<CMetaData>().SetMeta("Name", cToolInferface.m_sName);
             cNewItem.GetComponent<CMetaData>().SetMeta("Description", cToolInferface.m_sDescription);
             cNewItem.GetComponent<CMetaData>().SetMeta("NaniteCost", cToolInferface.m_fNaniteCost);
 
@@ -197,7 +180,8 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_eSelectedToolType)
         {
-            UpdateToolPresentation();
+            if (EventToolSelect != null)
+                EventToolSelect(this, m_eSelectedToolType.Value);
         }
     }
 
@@ -209,7 +193,7 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
     public UILabel m_ToolDescLabel = null;
     public UILabel m_ToolCostLabel = null;
 
-    public CToolInterface.EType m_eStartingToolType = CToolInterface.EType.INVALID;
+
     public GameObject m_ToolObject = null;
     public GameObject m_cTemplateToolItem = null;
     public UIGrid m_cGrid = null;

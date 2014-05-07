@@ -925,7 +925,15 @@ public class CNetworkView : CNetworkMonoBehaviour
 			if (!m_mChildrenNetworkViews.ContainsKey(i))
 			{
 				m_mChildrenNetworkViews.Add(i, _cChildView);
-				_cChildView.ViewId = new TNetworkViewId(0, i);
+
+                if (ViewId == null)
+                {
+                    _cChildView.ViewId = new TNetworkViewId(0, i);
+                }
+                else
+                {
+                    _cChildView.ViewId = new TNetworkViewId(ViewId.Id, i);
+                }
 
 				//Debug.LogError(string.Format("Registered ({0}) sub newwork view with ViewId({1}) SubViewId({2})", _cSubView.gameObject.name, _cSubView.ViewId.Id, _cSubView.ViewId.ChildId));
 

@@ -88,15 +88,15 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    public void CreateUserInterface()
+    public TNetworkViewId CreateUserInterface()
     {
         if (IsDuiCreated)
-            return;
+            return (null);
 
         if (m_DUI == CDUIRoot.EType.INVALID)
         {
             Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
-            return;
+            return (null);
         }
 
         // Instantiate the DUI object
@@ -107,6 +107,8 @@ public class CDUIConsole : CNetworkMonoBehaviour
         cDuiRoot.ConsoleViewId = NetworkViewId;
 
         m_tDuiViewId.Value = cDuiRoot.NetworkViewId;
+
+        return (cDuiRoot.NetworkViewId);
     }
 
 
