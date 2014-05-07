@@ -361,7 +361,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				continue;	// Ignore this object.
 			else	// The object is not part of the enemy ship or target...
 			{
-				Debug.LogError(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
+				//Debug.Log(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
 				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
 			}
 		}
