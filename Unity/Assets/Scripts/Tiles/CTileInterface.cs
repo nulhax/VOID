@@ -40,7 +40,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 	public List<CTile.EType> m_TileTypes = new List<CTile.EType>();
 	public List<CNeighbour> m_NeighbourHood = new List<CNeighbour>();
 
-	private CNetworkVar<byte> m_RemoteTileTypeMask = null;
+	private CNetworkVar<ushort> m_RemoteTileTypeMask = null;
 
 
 	// Member Properties
@@ -61,7 +61,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 	// Member Methods
 	public override void RegisterNetworkEntities(CNetworkViewRegistrar _Registrar)
 	{
-		m_RemoteTileTypeMask = _Registrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
+		m_RemoteTileTypeMask = _Registrar.CreateReliableNetworkVar<ushort>(OnNetworkVarSync, 0);
 
 		_Registrar.RegisterRpc(this, "RemoteSetCurrentMeta");
 	}
@@ -179,7 +179,7 @@ public class CTileInterface : CNetworkMonoBehaviour
 			                                               m_GridPosition.y + pn.m_GridPointOffset.y, 
 			                                               m_GridPosition.z + pn.m_GridPointOffset.z);
 			
-			CTileInterface tile = m_Grid.GetTile(possibleNeightbour);
+			CTileInterface tile = m_Grid.GetTileInterface(possibleNeightbour);
 			if(tile != null)
 			{
 				CNeighbour newNeighbour = new CNeighbour(pn.m_GridPointOffset, pn.m_Direction);
@@ -257,8 +257,8 @@ public class CTileInterface : CNetworkMonoBehaviour
 		int newMask = 0;
 		foreach(CTile.EType tileType in m_TileTypes)
 			CUtility.SetMaskState((int)tileType, true, ref newMask);
-		bool changed = m_RemoteTileTypeMask.Value != (byte)newMask;
-		m_RemoteTileTypeMask.Value = (byte)newMask;
+		bool changed = m_RemoteTileTypeMask.Value != (ushort)newMask;
+		m_RemoteTileTypeMask.Value = (ushort)newMask;
 
 		if(!changed)
 			return;

@@ -77,7 +77,7 @@ public class CShipFacilities : MonoBehaviour
 		foreach(CTileInterface tile in _FacilityTiles)
 		{
 			if(tile.GetTileTypeState(CTile.EType.Interior_Wall))
-				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
+				interiorTiles.Add(m_ShipGrid.GetTileInterface(tile.m_GridPosition));
 		}
 
 		// Instantiate an empty facility
