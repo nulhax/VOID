@@ -66,7 +66,7 @@ public class CShipFacilities : MonoBehaviour
 			CreateFacility(facilityTiles);
 
 		// Reconfigure the entry triggers
-		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureEntryTriggers(this);
+		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers(this);
 	}
 
 	[AServerOnly]
@@ -77,7 +77,7 @@ public class CShipFacilities : MonoBehaviour
 		foreach(CTileInterface tile in _FacilityTiles)
 		{
 			if(tile.GetTileTypeState(CTile.EType.Interior_Wall))
-				interiorTiles.Add(m_ShipGrid.GetTile(tile.m_GridPosition));
+				interiorTiles.Add(m_ShipGrid.GetTileInterface(tile.m_GridPosition));
 		}
 
 		// Instantiate an empty facility
