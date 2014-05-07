@@ -74,7 +74,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fOxygen = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fOxygenCapacity);
         m_EnviromentalOxygen = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);

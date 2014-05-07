@@ -517,7 +517,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400064}
   m_Layer: 0
-  m_Name: Tool_WiringKit_Model
+  m_Name: Circuitry Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1010,7 +1010,7 @@ Animator:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 16817d493b7cb9d4da55e2183ebd3f1d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 77764ae0a16fe8e47aae9cf81b39c040, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_ApplyRootMotion: 1
   m_AnimatePhysics: 0
@@ -1037,8 +1037,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eToolType: 2
+  m_eToolType: 20
   m_eToolCategory: 1
+  m_cModel: {fileID: 100064}
+  m_sDescription: This is the default tool description
+  m_iNaniteCost: -1
+  m_bDispensable: 1
   m_RightHandPos: {fileID: 100004}
   m_LeftHandPos: {fileID: 0}
 --- !u!114 &11400004

@@ -91,7 +91,7 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
 		m_CurrentPortSelected = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);

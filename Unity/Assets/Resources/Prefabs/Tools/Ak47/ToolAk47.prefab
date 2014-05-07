@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &100000
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -17,7 +17,7 @@ GameObject:
   m_IsActive: 1
 --- !u!1 &100002
 GameObject:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 4
@@ -89,6 +89,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100010
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400010}
+  m_Layer: 0
+  m_Name: Ak47 Model
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -96,10 +111,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.033491455, y: .0858411789, z: .603513122}
+  m_LocalPosition: {x: -.0322344378, y: .0858411789, z: .419840395}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 400008}
+  m_Father: {fileID: 400010}
 --- !u!4 &400002
 Transform:
   m_ObjectHideFlags: 1
@@ -107,10 +122,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100002}
   m_LocalRotation: {x: 0, y: -.707106829, z: 0, w: .707106829}
-  m_LocalPosition: {x: -.0328265727, y: 0, z: .183672711}
+  m_LocalPosition: {x: -.0315695554, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 2, z: 1}
   m_Children: []
-  m_Father: {fileID: 400008}
+  m_Father: {fileID: 400010}
 --- !u!4 &400004
 Transform:
   m_ObjectHideFlags: 1
@@ -118,7 +133,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 5.38847871e-07, y: 3.11277375e-07, z: .687021434, w: .726637244}
-  m_LocalPosition: {x: -.109729946, y: .079704456, z: .177311927}
+  m_LocalPosition: {x: -.109729946, y: .079704456, z: -.00624707341}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -129,7 +144,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100006}
   m_LocalRotation: {x: -9.75281989e-09, y: 3.95677324e-10, z: -.689648032, w: .724144757}
-  m_LocalPosition: {x: -.0328263938, y: -.013114362, z: .00163268298}
+  m_LocalPosition: {x: -.0328263938, y: -.013114362, z: -.18192631}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -143,11 +158,23 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400006}
+  - {fileID: 400010}
   - {fileID: 400004}
+  - {fileID: 400006}
+  m_Father: {fileID: 0}
+--- !u!4 &400010
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -.00125701539, y: 0, z: .000113725662}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
   - {fileID: 400002}
   - {fileID: 400000}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 400008}
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -202,7 +229,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: .100000001, y: .270000011, z: .800000012}
-  m_Center: {x: 0, y: 0, z: .189999998}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -243,6 +270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43b1a9e6a9ead324c8ea1fa5fca0a907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cNossle: {fileID: 100000}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -254,8 +282,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eToolType: 9
+  m_eToolType: 50
   m_eToolCategory: 2
+  m_cModel: {fileID: 100010}
+  m_sName: Unnamed tool
+  m_sDescription: This is the default tool description
+  m_fNaniteCost: -1
+  m_bDispensable: 1
   m_RightHandPos: {fileID: 100006}
   m_LeftHandPos: {fileID: 100004}
 --- !u!114 &11400006

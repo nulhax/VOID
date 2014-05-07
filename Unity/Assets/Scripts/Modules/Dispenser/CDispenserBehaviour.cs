@@ -41,11 +41,13 @@ public class CDispenserBehaviour : MonoBehaviour
         if (CNetwork.IsServer)
         {
             // Register the event for building a tool
-            m_cDuiConsole.DUIRoot.GetComponent<CDUIDispenserRoot>().EventBuildToolButtonPressed += OnEventDuiButtonPressed;
+            //m_cDuiConsole.DUIRoot.GetComponent<CDUIDispenserRoot>().EventBuildToolButtonPressed += OnEventDuiButtonPressed;
 
             // Register for parent facility power active change
-            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
+            //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
         }
+
+        GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
     }
 
 
@@ -53,7 +55,7 @@ public class CDispenserBehaviour : MonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
+            //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
         }
     }
 	
@@ -67,14 +69,15 @@ public class CDispenserBehaviour : MonoBehaviour
         gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
 
         // Set the tool's position
-		NewTool.GetComponent<CNetworkView>().SetPosition(m_cToolSpawnLocation.position);
-		NewTool.GetComponent<CNetworkView>().SetEuler(m_cToolSpawnLocation.eulerAngles);
+		NewTool.GetComponent<CNetworkView>().SetPosition(m_cTransToolSpawn.position);
+		NewTool.GetComponent<CNetworkView>().SetEuler(m_cTransToolSpawn.eulerAngles);
     }
 
 
     [AServerOnly]
-    void OnEventDuiButtonPressed(CDUIDispenserRoot _cDui)
+    void OnEventDuiButtonPressed(CDuiDispenserBehaviour _cDui)
     {
+        /*
         CShipNaniteSystem cShipNaniteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
 
         // Check there is enough nanites for the selected tool
@@ -85,6 +88,17 @@ public class CDispenserBehaviour : MonoBehaviour
 
             // Spawn the selected tool
             SpawnTool(_cDui.SelectedToolType);
+        }
+         * */
+    }
+
+
+    void OnEventBuilt(CModuleInterface _cSender)
+    {
+        // Create console on build
+        if (CNetwork.IsServer)
+        {
+            m_cDuiScreen.GetComponent<CDUIConsole>().CreateUserInterface();
         }
     }
 
@@ -99,13 +113,11 @@ public class CDispenserBehaviour : MonoBehaviour
 // Member Fields
 
 
-    public CDUIConsole m_cDuiConsole = null;
-    public Transform m_cToolSpawnLocation = null;
+    public GameObject m_cDuiScreen = null;
+    public Transform m_cTransToolSpawn = null;
 
-    public CComponentInterface m_cCircuitryComponent = null;
-    public CComponentInterface m_cMechanicalComponent = null;
 
-    CDUIDispenserRoot m_DUIDispenser = null;
+    CDuiDispenserBehaviour m_DUIDispenser = null;
 
 
 };

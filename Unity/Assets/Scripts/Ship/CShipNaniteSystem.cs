@@ -61,7 +61,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fNanaiteQuantity  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fStartNanaiteQuantity);
         m_fNanaiteCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fStartNanaiteCapacity);

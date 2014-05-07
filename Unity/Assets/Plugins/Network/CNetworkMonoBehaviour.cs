@@ -35,7 +35,7 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     // public:
 
 
-    public abstract void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar);
+    public abstract void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar);
 
 
     public void InvokeRpc(ulong _ulPlayerId, string _sMethodName, params object[] _caParameters)

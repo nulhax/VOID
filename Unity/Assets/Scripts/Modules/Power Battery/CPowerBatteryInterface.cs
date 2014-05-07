@@ -48,7 +48,7 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
 // Member Functions
 	
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_fCapacity      = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}

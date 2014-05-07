@@ -37,16 +37,16 @@ Material:
     m_Floats:
       data:
         first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
           name: _Saturation
         second: .5
       data:
         first:
           name: _Brightness
         second: 4
+      data:
+        first:
+          name: _SpecPower
+        second: 1
       data:
         first:
           name: _GlowIntensity
@@ -58,7 +58,7 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 1
+        second: 2.68903494
       data:
         first:
           name: _Amount
@@ -82,13 +82,13 @@ Material:
     m_Colors:
       data:
         first:
+          name: _Tint
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
+      data:
+        first:
           name: _DiffuseCol
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Tint
-        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}

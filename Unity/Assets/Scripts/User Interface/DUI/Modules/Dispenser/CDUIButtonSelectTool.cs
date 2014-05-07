@@ -31,7 +31,7 @@ public class CDUIButtonSelectTool : MonoBehaviour
 	
 	// Member Fields
 	public CToolInterface.EType m_ToolType = CToolInterface.EType.INVALID;
-	public CDUIDispenserRoot m_DispenserRoot = null;
+	public CDuiDispenserBehaviour m_DispenserRoot = null;
 	
 	// Member Properties
 	
@@ -42,7 +42,7 @@ public class CDUIButtonSelectTool : MonoBehaviour
 		if(CNetwork.IsServer && _IsSelected)
 		{
 			// Inform the stage to change model
-			m_DispenserRoot.SetSelectedToolType(m_ToolType);
+			m_DispenserRoot.OnEventSelectTool(m_ToolType);
 		}
 	}
 }

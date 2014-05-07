@@ -44,16 +44,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		INVALID,
 
-		Ratchet,
-		CircuitryKit,
-		Calibrator,
-		Fluidizer,
-		ModuleCreator,
-		FireExtinguisher,
-		Norbert,
-		HealingKit,
-		AK47,
-		MiningDrill,
+		Ratchet          = 10,
+		CircuitryKit     = 20,
+		FireExtinguisher = 30,
+		Torch            = 40,
+		AK47             = 50,
+		MiningDrill      = 60,
 
 		MAX
 	}
@@ -161,7 +157,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_ulOwnerPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
@@ -225,7 +221,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     [ALocalOnly]
     public void SetPrimaryActive(bool _bActive)
     {
-        m_bPrimaryActive = _bActive;
+        m_bPrimaryActive = _bActive;    
 
         if (EventPrimaryActiveChange != null) EventPrimaryActiveChange(_bActive);
     }
@@ -310,7 +306,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
         {
-            Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
+            //Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
@@ -388,6 +384,11 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public EType m_eToolType = EType.INVALID;
 	public EToolCategory m_eToolCategory = EToolCategory.INVALID;
+    public GameObject m_cModel = null;
+    public string m_sName = "Unnamed tool";
+    public string m_sDescription = "This is the default tool description";
+    public float m_fNaniteCost = -1.0f;
+    public bool m_bDispensable = false;
 
 
     public GameObject m_RightHandPos;

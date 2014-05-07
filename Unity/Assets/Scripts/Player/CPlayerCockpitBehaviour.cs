@@ -53,7 +53,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_cMountedCockpitViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync);
     }
@@ -70,7 +70,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 	{
         if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
-            CUserInput.SubscribeInputChange(CUserInput.EInput.ModuleMenu_ToggleDisplay, OnEventInput);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
 
 
             m_cTurretSelectMenu = GameObject.Instantiate(m_cTurretSelectMenu) as GameObject;
@@ -85,7 +85,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 	{
         if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
-            CUserInput.UnsubscribeInputChange(CUserInput.EInput.ModuleMenu_ToggleDisplay, OnEventInput);
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
 
             Destroy(m_cTurretSelectMenu);
         }

@@ -177,7 +177,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 400020}
   m_Layer: 0
-  m_Name: ToolSpawn
+  m_Name: Tool Spawn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,13 +218,11 @@ GameObject:
   m_Component:
   - 4: {fileID: 400024}
   - 114: {fileID: 11400018}
-  - 114: {fileID: 11400020}
   - 114: {fileID: 11400022}
   - 114: {fileID: 11400024}
   - 82: {fileID: 8200002}
-  - 114: {fileID: 11400026}
   m_Layer: 0
-  m_Name: CurvedMonitor_wide
+  m_Name: Dui Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -388,8 +386,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400024}
   - {fileID: 400018}
+  - {fileID: 400024}
   - {fileID: 400020}
   m_Father: {fileID: 0}
 --- !u!4 &400024
@@ -399,7 +397,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100024}
   m_LocalRotation: {x: 0, y: -1, z: 0, w: -4.37113883e-08}
-  m_LocalPosition: {x: -1.60891673e-08, y: 1.72864068, z: 1.11576855}
+  m_LocalPosition: {x: 0, y: 1.72864068, z: 1.11576855}
   m_LocalScale: {x: .5, y: .5, z: .100000001}
   m_Children:
   - {fileID: 400026}
@@ -909,10 +907,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034c522ba72d87449a75a9e907a249ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cDuiConsole: {fileID: 11400024}
-  m_cToolSpawnLocation: {fileID: 400020}
-  m_cCircuitryComponent: {fileID: 0}
-  m_cMechanicalComponent: {fileID: 0}
+  m_cDuiScreen: {fileID: 100024}
+  m_cTransToolSpawn: {fileID: 400020}
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -978,19 +974,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400020
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af9ecabd7ad6dd64e9bf1a24fcb8af5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SyncPosition: 1
-  m_SyncRotation: 1
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1015,32 +998,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ScreenObject: {fileID: 100026}
   m_DUI: 7
---- !u!114 &11400026
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b950a1c8ce86f41934f18b1f76ccdf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flammable: 1
-  callEventsOnStart: 0
-  syncNetworkHealth: 1
-  destroyOnZeroHealth: 0
-  takeDamageOnImpact: 1
-  syncNetworkState: 1
-  health_max: Infinity
-  health_min: 0
-  health_initial: 500
-  health_previous: 0
-  state_initial: 1
-  stateTransitions:
-  - 0
-  state_previous: 0
-  timeBetweenNetworkSyncs: .100000001
+  m_bCreateOnStart: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

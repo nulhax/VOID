@@ -29,25 +29,22 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     [ABitSize(4)]
     public enum ENetworkAction
     {
-        Invalid,
+        INVALID,
 
-        BuildModule,
-        RequireHullBreach,
-        MineMinerals,
-        Stop,
+        ChangeTarget,
 
-        Max,
+        MAX,
     }
 
 
-    public enum EState
+    public enum ETargetType
     {
         INVALID,
 
-        Idle,
-        BuildingModule,
-        RepairingHull,
-        Mining,
+        None,
+        Module,
+        Minerals,
+        Hull,
 
         MAX
     }
@@ -56,9 +53,27 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public EState State
+    public ETargetType TargetType
     {
-        get { return (m_eState.Get()); }
+        get { return (m_eTargetType.Get()); }
+    }
+
+
+    public TNetworkViewId TargetViewId
+    {
+        get { return (m_tTargetViewId.Value); }
+    }
+
+
+    public GameObject Target
+    {
+        get
+        {
+            if (TargetViewId == null)
+                return (null);
+
+            return (TargetViewId.GameObject);
+        }
     }
 
 
@@ -68,9 +83,10 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-        m_eState = _cRegistrar.CreateReliableNetworkVar<EState>(OnNetworkVarSync, EState.Idle);
+        m_eTargetType = _cRegistrar.CreateReliableNetworkVar<ETargetType>(OnNetworkVarSync, ETargetType.None);
+        m_tTargetViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
     }
 
 
@@ -86,44 +102,35 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     [AServerOnly]
     public static void UnserializeInbound(CNetworkPlayer _cNetworkPlayer, CNetworkStream _cStream)
     {
-        while (CGamePlayers.SelfActor != null &&
-               _cStream.HasUnreadData)
-        {
-            // Extract action
-            ENetworkAction eAction = _cStream.Read<ENetworkAction>();
+        // Get player actor
+        GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_cNetworkPlayer.PlayerId);
 
-            // Extract sending nanite pistol behaviour
-            CPlayerNaniteLaser cNaniteLaserBehaviour = CGamePlayers.SelfActor.GetComponent<CPlayerNaniteLaser>();
+        if (cPlayerActor == null)
+            return;
+
+        // Get component
+        CPlayerNaniteLaser cPlayerNaniteLaser = cPlayerActor.GetComponent<CPlayerNaniteLaser>();
+
+        // Process data
+        while (_cStream.HasUnreadData)
+        {
+            ENetworkAction eAction = _cStream.Read<ENetworkAction>();
 
             switch (eAction)
             {
-                case ENetworkAction.BuildModule:
+                case ENetworkAction.ChangeTarget:
                     {
-                        // Debug.LogError("Build modules start");
+                        ETargetType eTargetType = _cStream.Read<ETargetType>();
 
-                        cNaniteLaserBehaviour.m_eState.Set(EState.BuildingModule);
-                        cNaniteLaserBehaviour.m_cTargetModule = _cStream.Read<TNetworkViewId>().GameObject;
-                    }
-                    break;
-
-                case ENetworkAction.MineMinerals:
-                    {
-                        // Debug.LogError("Mine minerals start");
-
-                        cNaniteLaserBehaviour.m_eState.Set(EState.Mining);
-                        cNaniteLaserBehaviour.m_cTargetMinerals = _cStream.Read<TNetworkViewId>().GameObject;
-                    }
-                    break;
-
-                case ENetworkAction.RequireHullBreach:
-                    {
-                        // Debug.LogError("Reparing hull breach start");
-                    }
-                    break;
-
-                case ENetworkAction.Stop:
-                    {
-                        cNaniteLaserBehaviour.m_eState.Set(EState.Idle);
+                        if (eTargetType == ETargetType.None)
+                        {
+                            cPlayerNaniteLaser.SetTarget(eTargetType, null);
+                        }
+                        else
+                        {
+                            cPlayerNaniteLaser.SetTarget(eTargetType,
+                                                         _cStream.Read<TNetworkViewId>().GameObject);
+                        }
                     }
                     break;
 
@@ -171,148 +178,133 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 	void Update()
 	{
-        if (CNetwork.IsServer)
-        {
-            UpdateState();
-        }
-
         if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             ProcessTargetRange();
         }
 
-        UpdateMiningEffects();
-        UpdateBuildingEffects();
+        if (CNetwork.IsServer)
+        {
+            UpdateTarget();
+        }
+
+        UpdateEffects();
 	}
 
 
+    [ALocalOnly]
+    void ProcessTargetRange()
+    {
+        if (TargetType == ETargetType.None)
+            return;
+
+        // Get range to target module
+        RaycastHit cTargetRaycastHit = GetComponent<CPlayerInteractor>().TargetRaycastHit;
+
+        // Check we are still in range of module
+        if (TargetType == ETargetType.Module &&
+            cTargetRaycastHit.distance > k_fBuildRange)
+        {
+            SetTarget(ETargetType.None, null);
+        }
+
+        // Check we are still in range of minerals
+        else if (TargetType == ETargetType.Minerals != null &&
+                 cTargetRaycastHit.distance > k_fMineRange)
+        {
+            SetTarget(ETargetType.None, null);
+        }
+
+        // Check we are still in rnage of hull peice
+        else if (TargetType == ETargetType.Hull &&
+                 cTargetRaycastHit.distance > k_fHullRepaireRange)
+        {
+            SetTarget(ETargetType.None, null);
+        }
+    }
+
+
     [AServerOnly]
-    void UpdateState()
+    void UpdateTarget()
     {
-        if (State != EState.Idle)
+        if (TargetType == ETargetType.None)
+            return;
+
+        switch (TargetType)
         {
-            switch (State)
-            {
-                case EState.BuildingModule:
-                    if (m_cTargetModule != null)
+            case ETargetType.Module:
+                {
+                    Target.GetComponent<CModuleInterface>().Build(k_fBuildSpeed * Time.deltaTime);
+
+                    if (Target.GetComponent<CModuleInterface>().IsBuilt)
                     {
-                        m_cTargetModule.GetComponent<CModuleInterface>().Build(k_fBuildRatioPower * Time.deltaTime);
-
-                        if (m_cTargetModule.GetComponent<CModuleInterface>().IsBuilt)
-                        {
-                            m_eState.Set(EState.Idle);
-                        }
+                        SetTarget(ETargetType.None, null);
                     }
-                    break;
+                }
+                break;
 
-                case EState.RepairingHull:
-                    break;
+            case ETargetType.Hull:
+                Debug.LogError("TODO");
+                break;
 
-                case EState.Mining:
-                    if (m_cTargetMinerals != null)
+            case ETargetType.Minerals:
+                {
+                    Target.GetComponent<CMineralsBehaviour>().DecrementQuanity(k_fMineRate * Time.deltaTime);
+
+                    if (Target.GetComponent<CMineralsBehaviour>().IsDepleted)
                     {
-                        m_cTargetMinerals.GetComponent<CMineralsBehaviour>().DecrementQuanity(k_fMiningRate * Time.deltaTime);
-
-                        if (m_cTargetMinerals.GetComponent<CMineralsBehaviour>().IsDepleted)
-                        {
-                            m_eState.Set(EState.Idle);
-                        }
+                        SetTarget(ETargetType.None, null);
                     }
-                    break;
+                }
+                break;
 
-                default:
-                    Debug.LogError("Unknown state: " + State);
-                    break;
-            }
+            default:
+                Debug.LogError("Unknown state: " + TargetType);
+                break;
         }
     }
 
 
-    [ALocalOnly]
-    void UpdateMiningEffects()
+    void UpdateEffects()
     {
-        if (m_bShowMiningLaser)
+        if (TargetType == ETargetType.None)
+            return;
+
+        GameObject cEffectHitParticles = null;
+
+        switch (TargetType)
         {
-            Transform cActorHeadTransform = GetComponent<CPlayerHead>().Head.transform;
+            case ETargetType.Module:
+                cEffectHitParticles = m_cBuildingHitParticles;
+                break;
 
-            RaycastHit tRaycastHit = new RaycastHit();
-            Ray cRay = new Ray(cActorHeadTransform.position, cActorHeadTransform.forward);
+            case ETargetType.Minerals:
+                cEffectHitParticles = m_cMingingHitParticles;
+                break;
 
-            if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
-            {
-                CMineralsBehaviour cMinerals = tRaycastHit.collider.transform.parent.GetComponent<CMineralsBehaviour>();
-
-                if (cMinerals != null)
-                {
-                    // Make particles visible
-                    if (!m_cMingingHitParticles.activeSelf)
-                    {
-                        m_cMingingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
-                        m_cMingingHitParticles.SetActive(true);
-                    }
-
-                    // Position and rotate particles
-                    m_cMingingHitParticles.transform.position = tRaycastHit.point;
-                    m_cMingingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
-                }
-
-                // Make particles invisible
-                else if (m_cMingingHitParticles.activeSelf)
-                {
-                    m_cMingingHitParticles.SetActive(false);
-                }
-            }
-
-            // Make particles invisible
-            else if (m_cMingingHitParticles.activeSelf)
-            {
-                m_cMingingHitParticles.SetActive(false);
-            }
+            case ETargetType.Hull:
+                cEffectHitParticles = m_cRepairingHitParticles;
+                break;
         }
-    }
 
+        // Raycast to target based on player head direction
+        GameObject cActorHead = GetComponent<CPlayerHead>().Head;
 
-    [ALocalOnly]
-    void UpdateBuildingEffects()
-    {
-        if (m_bShowBuildingLaser)
+        RaycastHit tRaycastHit = new RaycastHit();
+        Ray cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+
+        if (Target.collider.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
         {
-            Transform cActorHeadTransform = GetComponent<CPlayerHead>().Head.transform;
-
-            RaycastHit tRaycastHit = new RaycastHit();
-            Ray cRay = new Ray(cActorHeadTransform.position, cActorHeadTransform.forward);
-
-            if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
+            // Make particles visible
+            if (!cEffectHitParticles.activeSelf)
             {
-                CModuleInterface cModule = tRaycastHit.collider.gameObject.transform.GetComponent<CModuleInterface>();
-
-                if ( cModule != null &&
-                    !cModule.IsBuilt)
-                {
-                    // Make particles visible
-                    if (!m_cBuildingHitParticles.activeSelf)
-                    {
-                        m_cBuildingHitParticles.layer = GetComponent<CPlayerHead>().Head.layer;
-                        m_cBuildingHitParticles.SetActive(true);
-                    }
-
-                    // Position and rotate particles
-                    m_cBuildingHitParticles.transform.position = tRaycastHit.point;
-                    m_cBuildingHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHeadTransform.position, tRaycastHit.normal);
-                }
-
-                // Make particles invisible
-                else if (m_cBuildingHitParticles.activeSelf)
-                {
-                    m_cBuildingHitParticles.SetActive(false);
-                }
+                cEffectHitParticles.layer = cActorHead.layer;
+                cEffectHitParticles.SetActive(true);
             }
 
-            // Make particles invisible
-            else if (m_cBuildingHitParticles.activeSelf)
-            {
-                m_cBuildingHitParticles.SetActive(false);
-            }
+            // Rotate particles relative to head
+            cEffectHitParticles.transform.position = tRaycastHit.point;
+            cEffectHitParticles.transform.eulerAngles = Vector3.Reflect(tRaycastHit.point - cActorHead.transform.position, tRaycastHit.normal);
         }
     }
 
@@ -322,8 +314,17 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     {
         switch (_eInput)
         {
-        case CUserInput.EInput.Use:
-            HandleUseKeyChange(_bDown);
+            case CUserInput.EInput.Use:
+            {
+                if (_bDown)
+                {
+                    HandleInputUseDown();
+                }
+                else
+                {
+                    HandleInputUseUp();
+                }
+            }
             break;
 
         default:
@@ -334,119 +335,85 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-    void HandleUseKeyChange(bool _bUseKeyDown)
+    void HandleInputUseDown()
     {
-        m_cTargetModule     = null;
-        m_cTargetMinerals   = null;
-        m_cTargetHullBreach = null;
+        GameObject cTargetActor      = GetComponent<CPlayerInteractor>().TargetActorObject;
+        RaycastHit cTargetRaycastHit = GetComponent<CPlayerInteractor>().TargetRaycastHit;
 
-        // Check primary is down
-        if (_bUseKeyDown)
+        // Check has target
+        if (cTargetActor == null)
+            return;
+
+        // Start building
+        if ( cTargetActor.GetComponent<CModuleInterface>() != null &&
+            !cTargetActor.GetComponent<CModuleInterface>().IsBuilt &&
+                cTargetRaycastHit.distance < k_fBuildRange)
         {
-            GameObject cTargetActor      = GetComponent<CPlayerInteractor>().TargetActorObject;
-            RaycastHit cTargetRaycastHit = GetComponent<CPlayerInteractor>().TargetRaycastHit;
-
-            // Check has target
-            if (cTargetActor != null)
-            {
-                // Start building
-                if ( cTargetActor.GetComponent<CModuleInterface>() != null &&
-                    !cTargetActor.GetComponent<CModuleInterface>().IsBuilt &&
-                     cTargetRaycastHit.distance < k_fBuildingRange)
-                {
-                    m_cTargetModule = cTargetActor;
-
-                    s_cSerializeStream.Write(ENetworkAction.BuildModule);
-                    s_cSerializeStream.Write(cTargetActor.GetComponent<CNetworkView>().ViewId);
-
-                    m_bLocalIdle = false;
-                }
-
-                // Start mining
-                else if (cTargetActor.GetComponent<CMineralsBehaviour>() != null &&
-                         cTargetRaycastHit.distance < k_fMiningRange)
-                {
-                    m_cTargetMinerals = cTargetActor;
-
-                    s_cSerializeStream.Write(ENetworkAction.MineMinerals);
-                    s_cSerializeStream.Write(m_cTargetMinerals.GetComponent<CNetworkView>().ViewId);
-
-                    m_bLocalIdle = false;
-
-                    // Subscribe to deplete event
-                    m_cTargetMinerals.GetComponent<CMineralsBehaviour>().EventDeplete += (GameObject _cMineral) =>
-                    {
-                        LocalStop();
-                    };
-                }
-
-                // Stop if target is not applicable to this tool
-                else
-                {
-                    LocalStop();
-                }
-            }
-
-            // Stop if no target
-            else
-            {
-                LocalStop();
-            }
+            SetTarget(ETargetType.Module, cTargetActor);
         }
 
-        // Stop if user key is not down
+        // Start mining
+        else if (cTargetActor.GetComponent<CMineralsBehaviour>() != null &&
+                    cTargetRaycastHit.distance < k_fMineRange)
+        {
+            SetTarget(ETargetType.Minerals, cTargetActor);
+        }
+
+        // Stop if target is not applicable to this tool
         else
         {
-            m_cTargetModule     = null;
-            m_cTargetMinerals   = null;
-            m_cTargetHullBreach = null;
-
-            LocalStop();
+            SetTarget(ETargetType.None, null);
         }
     }
 
 
-    [ALocalOnly]
-    void ProcessTargetRange()
+    [AServerOnly]
+    void HandleInputUseUp()
     {
-        if (!m_bLocalIdle)
+        if (m_eTargetType.Value != ETargetType.None)
         {
-            // Get range to target module
-            RaycastHit cTargetRaycastHit = GetComponent<CPlayerInteractor>().TargetRaycastHit;
-
-            // Check we are still in range of module
-            if (m_cTargetModule != null &&
-                cTargetRaycastHit.distance > k_fBuildingRange)
-            {
-                LocalStop();
-            }
-
-            // Check we are still in range of minerals
-            else if (m_cTargetMinerals != null &&
-                     cTargetRaycastHit.distance > k_fMiningRange)
-            {
-                LocalStop();
-            }
-
-            // Check we are still in rnage of hull peice
-            else if (m_cTargetHullBreach != null &&
-                     cTargetRaycastHit.distance > k_fHullRepairingRange)
-            {
-                LocalStop();
-            }
+            SetTarget(ETargetType.None, null);
         }
     }
 
 
-    [ALocalOnly]
-    void LocalStop()
+    [AOwnerAndServerOnly]
+    void SetTarget(ETargetType _eTargetType, GameObject _cTargetObject)
     {
-        // Dont send if we have not sent a non idle action to server
-        if (!m_bLocalIdle)
+        if (CNetwork.IsServer)
         {
-            s_cSerializeStream.Write(ENetworkAction.Stop);
+            m_eTargetType.Value = _eTargetType;
 
-            m_bLocalIdle = true;
+            if (_cTargetObject == null)
+            {
+                m_tTargetViewId.Value = null;
+            }
+            else
+            {
+                m_tTargetViewId.Value = _cTargetObject.GetComponent<CNetworkView>().ViewId;
+            }
+        }
+        else if (GetComponent<CPlayerInterface>().IsOwnedByMe)
+        {
+            switch (_eTargetType)
+            {
+                case ETargetType.Module:
+                case ETargetType.Minerals:
+                case ETargetType.Hull:
+                    s_cSerializeStream.Write(ENetworkAction.ChangeTarget);
+                    s_cSerializeStream.Write(_eTargetType);
+                    s_cSerializeStream.Write(_cTargetObject.GetComponent<CNetworkView>().ViewId);
+                    break;
+
+                case ETargetType.None:
+                    s_cSerializeStream.Write(ENetworkAction.ChangeTarget);
+                    s_cSerializeStream.Write(_eTargetType);
+                    break;
+
+                default:
+                    Debug.LogError("Unknown target type: " + _eTargetType);
+                    break;
+            }
         }
     }
 
@@ -455,31 +422,28 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     void OnEventActorInteractableTargetChange(GameObject _cOldTarget, GameObject _cNewTarget, RaycastHit _cRaycastHit)
     {
         // Stop if player changes target 
-        LocalStop();
+        if (m_eTargetType.Value != ETargetType.None)
+        {
+            SetTarget(ETargetType.None, null);
+        }
     }
 
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        if (_cSyncedVar == m_eState)
+        if (_cSyncedVar == m_eTargetType)
         {
-            if (State == EState.Idle)
-            {
-                m_cMingingHitParticles.SetActive(false);
+            if (m_cBuildingHitParticles.activeSelf)
                 m_cBuildingHitParticles.SetActive(false);
-                m_bShowMiningLaser = false;
-                m_bShowBuildingLaser = false;
-            }
-            else if (State == EState.Mining)
-            {
-                m_bShowMiningLaser = true;
-                m_bShowBuildingLaser = false;
-            }
-            else if (State == EState.BuildingModule)
-            {
-                m_bShowMiningLaser = false;
-                m_bShowBuildingLaser = true;
-            }
+
+            if (m_cMingingHitParticles.activeSelf)
+                m_cMingingHitParticles.SetActive(false);
+
+            if (m_cRepairingHitParticles.activeSelf)
+                m_cRepairingHitParticles.SetActive(false);
+        }
+        else if (_cSyncedVar == m_tTargetViewId)
+        {
         }
     }
 
@@ -487,11 +451,11 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fBuildRatioPower = 0.10f; // 5% per sec
-    const float k_fBuildingRange        = 3.0f;
-    const float k_fMiningRate           = 5.0f;
-    const float k_fMiningRange          = 10.0f;
-    const float k_fHullRepairingRange   = 5.0f;
+    const float k_fBuildSpeed       = 0.50f; // 5% per sec
+    const float k_fBuildRange       = 4.0f;
+    const float k_fMineRate         = 5.0f;
+    const float k_fMineRange        = 10.0f;
+    const float k_fHullRepaireRange = 5.0f;
 
 
     public GameObject m_cBuildingHitParticles   = null;
@@ -499,30 +463,11 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     public GameObject m_cRepairingHitParticles  = null;
 
 
-    CNetworkVar<EState> m_eState    = null;
-
-
-    GameObject m_cTargetModule      = null;
-    GameObject m_cTargetMinerals    = null;
-    GameObject m_cTargetHullBreach  = null;
-
-
-    bool m_bShowBuildingLaser   = false;
-    bool m_bShowMiningLaser     = false;
-    bool m_bShowRepairingLaser  = false;
-
-
-    bool m_bSubscribedToMineralsEvent = false;
+    CNetworkVar<ETargetType> m_eTargetType = null;
+    CNetworkVar<TNetworkViewId> m_tTargetViewId = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
-
-
-// Owner Member Variables
-
-
-    EState m_eLocalState = EState.Idle;
-    bool   m_bLocalIdle  = true;
 
 
 };

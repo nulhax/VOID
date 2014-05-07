@@ -48,7 +48,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteCreateLocalObject");
         _cRegistrar.RegisterRpc(this, "RemoteDestroyLocalObject");

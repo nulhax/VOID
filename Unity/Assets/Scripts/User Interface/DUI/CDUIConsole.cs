@@ -23,130 +23,168 @@ using System.Collections;
 [RequireComponent(typeof(CActorInteractable))]
 public class CDUIConsole : CNetworkMonoBehaviour 
 {
-	// Member Delegates & Events
+
+// Member Delegates & Events
 
 
-	// Member Fields 
+// Member Fields 
+
+
 	public GameObject m_ScreenObject = null;
 	public CDUIRoot.EType m_DUI = CDUIRoot.EType.INVALID;
+    public bool m_bCreateOnStart = true;
 
-	private CNetworkVar<TNetworkViewId> m_DUIViewId = null;
-	private CDUIRoot m_CachedDUIRoot = null;
 
-	private bool m_ScreenVisible = false;
-	private TNetworkViewId m_CurrentPlayer = null;
-	private bool m_bHovering = false;
+	CNetworkVar<TNetworkViewId> m_tDuiViewId = null;
+	CDUIRoot m_cDuiRoot = null;
+
+
+	TNetworkViewId m_CurrentPlayer = null;
+    bool m_ScreenVisible = false;
+	bool m_bHovering = false;
+    bool update = true;
 
 	
-    // Member Properties
+// Member Properties
+
+
 	public GameObject ConsoleScreen
 	{
 		get { return(m_ScreenObject); } 
 	}
 
-	public GameObject DUIRoot
+
+	public GameObject DuiRoot
 	{
 		get
 		{
 			// Create the UI if it hasnt been created already
-			if(CNetwork.IsServer && m_DUIViewId.Get() == null)
+			if(CNetwork.IsServer && m_tDuiViewId.Get() == null)
 			{
 				CreateUserInterface();
 			}
 
-			return(m_DUIViewId.Value.GameObject);
+			return(m_tDuiViewId.Value.GameObject);
 		}
 	}
+
+
+    public bool IsDuiCreated
+    {
+        get
+        {
+            return (m_tDuiViewId.Value != null);
+        }
+    }
 	
-	// Member Methods
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _Registrar)
-	{
-		m_DUIViewId = _Registrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
-	}
-	
-	public void OnNetworkVarSync(INetworkVar _SyncedVar)
-	{
 
-	}
-	
-	public void Awake()
+// Member Methods
+
+
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _Registrar)
 	{
-		// Register the interactable object events
-		CActorInteractable IO = GetComponent<CActorInteractable>();
-		IO.EventHover += HandlePlayerHover;
+		m_tDuiViewId = _Registrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
 
-	public void Start()
-	{
-		// Create the UI if it hasnt been created already
-		if(CNetwork.IsServer && m_DUIViewId.Get() == null)
-		{
-			CreateUserInterface();
-		}
 
-		// Cache the duiroot
-		m_CachedDUIRoot = DUIRoot.GetComponent<CDUIRoot>();
-	}
+    [AServerOnly]
+    public void CreateUserInterface()
+    {
+        if (IsDuiCreated)
+            return;
 
-	[AServerOnly]
-	private void CreateUserInterface()
-	{
-		if(m_DUI != CDUIRoot.EType.INVALID)
-		{
-			// Instantiate the DUI object
-			GameObject DUIObj = CNetwork.Factory.CreateGameObject(CDUIRoot.GetPrefabType(m_DUI));
-			
-			// Set the view ids
-			CDUIRoot dr = DUIObj.GetComponent<CDUIRoot>();
-			dr.ConsoleViewId = NetworkViewId;
-			m_DUIViewId.Value = dr.NetworkViewId;
-		}
-		else
-		{
-			Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
-		}
-	}
+        if (m_DUI == CDUIRoot.EType.INVALID)
+        {
+            Debug.LogWarning("DUIConsole has not had a UI defined for it! (" + gameObject.name + "). Check that it is set in the prefab.");
+            return;
+        }
 
-	static int count = 0;
-	bool update = true;
+        // Instantiate the DUI object
+        GameObject cDui = CNetwork.Factory.CreateGameObject(CDUIRoot.GetPrefabType(m_DUI));
+
+        // Set the view ids
+        CDUIRoot cDuiRoot = cDui.GetComponent<CDUIRoot>();
+        cDuiRoot.ConsoleViewId = NetworkViewId;
+
+        m_tDuiViewId.Value = cDuiRoot.NetworkViewId;
+    }
+
+
+    void Awake()
+    {
+        // Register the interactable object events
+        CActorInteractable cActorInteractable = GetComponent<CActorInteractable>();
+        cActorInteractable.EventHover += HandlePlayerHover;
+    }
+
+
+    void Start()
+    {
+        // Create the UI if it hasnt been created already
+        if (CNetwork.IsServer && 
+            m_bCreateOnStart)
+        {
+            CreateUserInterface();
+        }
+    }
+
 
     void Update()
     {
+        if (!IsDuiCreated)
+            return;
+
 		// Render the UI if the screen is in view
-		if(m_ScreenObject.renderer.isVisible && !m_ScreenVisible)
+		if (m_ScreenObject.renderer.isVisible && 
+            !m_ScreenVisible)
 		{
 			m_ScreenVisible = true;
-			m_CachedDUIRoot.SetCamerasRenderingState(m_ScreenVisible);
+			m_cDuiRoot.SetCamerasRenderingState(m_ScreenVisible);
 		}
 		// Else stop rendering completely
-		else if(!m_ScreenObject.renderer.isVisible && m_ScreenVisible)
+		else if (!m_ScreenObject.renderer.isVisible && 
+            m_ScreenVisible)
 		{
 			m_ScreenVisible = false;
-			m_CachedDUIRoot.SetCamerasRenderingState(m_ScreenVisible);
+			m_cDuiRoot.SetCamerasRenderingState(m_ScreenVisible);
 		}
 
 		// Update the position on screen for the DUI
-        if(m_bHovering)
+        if (m_bHovering)
         {
-			m_CachedDUIRoot.UpdateCameraViewportPositions(m_CurrentPlayer.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
+			m_cDuiRoot.UpdateCameraViewportPositions(m_CurrentPlayer.GameObject.GetComponent<CPlayerInteractor>().TargetRaycastHit.textureCoord);
         }
 
 		if(!update) update = true;
     }
 
+
 	void LateUpdate()
 	{
-		if(update)
+		if (update)
 		{
 			//Debug.Log(count);
 			update = false;
 		}
 	}
 
+
 	[ALocalOnly]
-	private void HandlePlayerHover(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bHover)
+	void HandlePlayerHover(RaycastHit _RayHit, TNetworkViewId _cPlayerActorViewId, bool _bHover)
 	{
 		m_CurrentPlayer = _cPlayerActorViewId;
         m_bHovering = _bHover;
 	}
+
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_tDuiViewId)
+        {
+            // Cache the duiroot
+            m_cDuiRoot = DuiRoot.GetComponent<CDUIRoot>();
+        }
+    }
+
+
 }

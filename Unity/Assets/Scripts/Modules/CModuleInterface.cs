@@ -171,7 +171,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_fFunctionalRatio = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 1.0f);
         m_bBuiltPercent = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
@@ -232,12 +232,20 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-        CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
+        if (CNetwork.IsServer)
+        {
+            CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
+        }
 	}
 
 
 	void Start()
 	{
+        if (!CNetwork.IsServer)
+        {
+            CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
+        }
+
 		// Ensure a type is defined 
 		if (m_eModuleType == EType.INVALID)
 		{

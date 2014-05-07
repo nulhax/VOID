@@ -70,7 +70,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_DUIActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
@@ -115,7 +115,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
 
 		// Register DUI events
-		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDUIModuleCreationRoot>();
+		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DuiRoot.GetComponent<CDUIModuleCreationRoot>();
 		m_DUIModuleCreationRoot.EventBuildModuleButtonPressed += OnDUIBuildButtonPressed;
 
 		// Configure DUI

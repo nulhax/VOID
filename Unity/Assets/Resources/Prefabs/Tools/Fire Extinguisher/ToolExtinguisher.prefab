@@ -11,9 +11,8 @@ GameObject:
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
   - 95: {fileID: 9500000}
-  - 64: {fileID: 6400000}
   m_Layer: 0
-  m_Name: Fire_Extingusher_Thridperson
+  m_Name: Fire Extinguisher Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -197,19 +196,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!64 &6400000
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 75e4117c98126854cb53427ddb52544e, type: 3}
 --- !u!65 &6500000
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -365,8 +351,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99e5dc5ae06fdcf4e823418edcee1973, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_eToolType: 6
+  m_eToolType: 30
   m_eToolCategory: 2
+  m_cModel: {fileID: 100000}
+  m_sDescription: This is the default tool description
+  m_iNaniteCost: -1
+  m_bDispensable: 1
   m_RightHandPos: {fileID: 100002}
   m_LeftHandPos: {fileID: 100004}
 --- !u!114 &11400012

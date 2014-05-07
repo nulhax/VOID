@@ -158,7 +158,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     // public:
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
         _cRegistrar.RegisterRpc(this, "RemoteSetEuler");
@@ -757,10 +757,6 @@ public class CNetworkView : CNetworkMonoBehaviour
             for (int i = 0; cParent.parent != null && i < 25; ++i)
             {
                 cParent = cParent.parent;
-
-                //Logger.WriteError("Could not find parent to register for sub view id");
-                //break;
-                //}
             }
 
             // Register for sub network view id
@@ -782,9 +778,31 @@ public class CNetworkView : CNetworkMonoBehaviour
             {
                 this.ViewId = GenerateStaticViewId();
             }
+            else
+            {
+                Transform cParent = transform.parent;
 
-            if (ViewId.Id == 0)
-                Debug.LogError("I do not have a view id!");
+                for (int i = 0; cParent.parent != null && i < 25; ++i)
+                {
+                    if ( cParent.GetComponent<CNetworkView>() != null &&
+                        !cParent.GetComponent<CNetworkView>().ViewId.IsChildViewId)
+                    {
+                        break;
+                    }
+   
+                    cParent = cParent.parent;
+                }
+
+                if (cParent.GetComponent<CNetworkView>() == null || 
+                    cParent.GetComponent<CNetworkView>().ViewId.IsChildViewId)
+                {
+                    Debug.LogError("could not find parent!!!");
+                }
+                else
+                {
+                    cParent.GetComponent<CNetworkView>().RegisterChildNetworkView(this);
+                }
+            }
         }
 
         if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
@@ -814,7 +832,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
         foreach (CNetworkMonoBehaviour cNetworkMonoBehaviour in aComponents)
         {
-            cNetworkMonoBehaviour.RegisterNetworkEntities(cRegistrar);
+            cNetworkMonoBehaviour.RegisterNetworkComponents(cRegistrar);
         }
 
         m_bReady = true;

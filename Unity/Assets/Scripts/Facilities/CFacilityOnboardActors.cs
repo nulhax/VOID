@@ -92,8 +92,15 @@ public class CFacilityOnboardActors : MonoBehaviour
 		}
 	}
 
-	private void OnDestroy()
-	{
+
+    void Start()
+    {
+        GetComponent<CNetworkView>().EventPreDestory += OnPreDestroy;
+    }
+
+
+	 void OnPreDestroy(GameObject _cSender)
+{
 		foreach(GameObject actor in ActorsOnboard)
 		{
 			if(actor.GetComponent<CActorLocator>() != null)

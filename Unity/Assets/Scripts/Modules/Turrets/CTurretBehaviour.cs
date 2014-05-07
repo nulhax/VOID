@@ -150,7 +150,7 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_cOwnerCockpitViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
         m_fRemoteRotationX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
