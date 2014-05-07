@@ -111,7 +111,7 @@ public class CTile_ExteriorUpperCap : CTile
 			if(GetNeighbourExemptionState(neighbour.m_Direction))
 				continue;
 			
-			bool neighbourCheck = NeighbourCheck(neighbour, lowerTileInterface);
+			bool neighbourCheck = NeighbourCheck(neighbour);
 
 			if(!neighbourCheck)
 				continue;
@@ -122,18 +122,18 @@ public class CTile_ExteriorUpperCap : CTile
 		return(tileMask);
 	}
 	
-	private bool NeighbourCheck(CNeighbour _Neighbour, CTileInterface _LowerTileInterface)
+	private bool NeighbourCheck(CNeighbour _Neighbour)
 	{
-		bool diagonalExisits = _Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall);
+		bool diagonalExisits = _Neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall);
 		
 		bool leftExisits = _Neighbour.m_TileInterface.m_NeighbourHood.Exists(
-			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) &&
+			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall) &&
 			n.m_Direction == CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetOppositeDirection(_Neighbour.m_Direction)));
 		
 		bool rightExisits = _Neighbour.m_TileInterface.m_NeighbourHood.Exists(
-			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) &&
+			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall) &&
 			n.m_Direction == CNeighbour.GetRightDirectionNeighbour(CNeighbour.GetOppositeDirection(_Neighbour.m_Direction)));
 		
-		return(leftExisits & rightExisits && !diagonalExisits);
+		return(!leftExisits && !rightExisits && diagonalExisits);
 	}
 }
