@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -34,7 +34,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 
 
 	// Member Methods
-	public void ReconfigureEntryTriggers(CShipFacilities _ShipFacilities)
+	public void ReconfigureCollidersAndTriggers(CShipFacilities _ShipFacilities)
 	{	
 		foreach(CInteriorTrigger interiorTrigger in m_EntryTrigger.GetComponentsInChildren<CInteriorTrigger>())
 			Destroy(interiorTrigger.gameObject);
@@ -67,29 +67,27 @@ public class CGalaxyShipFacilities : MonoBehaviour
 
 		foreach(CTileInterface tileInterface in _ShipFacilities.m_ShipGrid.Tiles)
 		{
-			if(!tileInterface.GetTileTypeState(CTile.EType.Exterior_Wall))
+			if(!tileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) &&
+			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Upper) &&
+			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Lower))
 				continue;
-
-			Vector3 pos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(tileInterface.transform.position);
-			Quaternion rot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(tileInterface.transform.rotation);
 
 			GameObject collider = new GameObject("Collider");
 			collider.transform.parent = m_Collider.transform;
-			collider.transform.position = pos;
-			collider.transform.rotation = rot;
+			collider.transform.localPosition = Vector3.zero;
+			collider.transform.rotation = Quaternion.identity;
 			collider.layer = gameObject.layer;
 
 			tileInterface.UpdateAllTileObjects();
 
-			Collider tileCollider = tileInterface.GetTile(CTile.EType.Exterior_Wall).collider;
-			if(tileCollider == null)
-				tileCollider = tileInterface.GetTile(CTile.EType.Exterior_Wall).GetComponentInChildren<Collider>();
-	
-			if(tileCollider != null && tileInterface.GetTile(CTile.EType.Exterior_Wall).m_Modifications.Count == 0)
+			foreach(Collider tileCollider in tileInterface.GetComponentsInChildren<Collider>())
 			{
-				BoxCollider boxCollider = collider.AddComponent<BoxCollider>();
-				boxCollider.size = tileCollider.bounds.size;
-				boxCollider.center = new Vector3(0.0f, 2.0f, 0.0f);
+				if(tileCollider.gameObject.activeSelf && !tileCollider.isTrigger)
+				{
+					BoxCollider boxCollider = collider.AddComponent<BoxCollider>();
+					boxCollider.size = tileCollider.bounds.size;
+					boxCollider.center = tileCollider.bounds.center;
+				}
 			}
 		}
 	}

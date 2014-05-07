@@ -66,7 +66,7 @@ public class CShipFacilities : MonoBehaviour
 			CreateFacility(facilityTiles);
 
 		// Reconfigure the entry triggers
-		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureEntryTriggers(this);
+		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers(this);
 	}
 
 	[AServerOnly]
