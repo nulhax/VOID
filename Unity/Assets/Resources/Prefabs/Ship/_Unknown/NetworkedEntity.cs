@@ -1,17 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CNetworkView))]
 public class NetworkedEntity : CNetworkMonoBehaviour
 {
-	[HideInInspector]
-	public bool Synchronise = true;
 	public bool Position = true;
 	public bool Angle = true;
 	public bool PositionalVelocity = false;
 	public bool AngularVelocity = false;
 	public float UpdatesPerSecond = 0.0f;
-	private float TimeUntilNextUpdate = float.PositiveInfinity;
+	private float TimeUntilNextUpdate = 0.0f;
 
 	protected CNetworkVar<float> mPositionX = null;
 	protected CNetworkVar<float> mPositionY = null;
@@ -59,30 +56,24 @@ public class NetworkedEntity : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		System.Diagnostics.Debug.Assert(UpdatesPerSecond >= 0.0f, "UpdatesPerSecond must be nonnegative");
-
-		if (UpdatesPerSecond > 0.0f)
-			TimeUntilNextUpdate = 1.0f / UpdatesPerSecond;
+		UpdateNetworkVars();
 	}
 
 	void Update()
 	{
-		if (CNetwork.IsServer)
+		if (CNetwork.IsServer && UpdatesPerSecond > 0.0f)
 		{
 			TimeUntilNextUpdate -= Time.deltaTime;
 			if (TimeUntilNextUpdate <= 0.0f)
+			{
 				UpdateNetworkVars();
+				TimeUntilNextUpdate = 1.0f / UpdatesPerSecond;
+			}
 		}
 	}
 
 	public void UpdateNetworkVars()
 	{
-		System.Diagnostics.Debug.Assert(CNetwork.IsServer, "Only the server can update network vars!");
-
-		if (!Synchronise)
-			return;
-
-		TimeUntilNextUpdate = 1.0f / UpdatesPerSecond;
 		if (Position)
 		{
 			Vector3 position = transform.position;
