@@ -243,16 +243,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     [ALocalOnly]
     bool RaycastFindTile(ref RaycastHit _rtTileRaycastHit, ref CTileInterface _rcTileInterface)
     {
-        Ray cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
+        Ray cMainCameraRay = new Ray(CGameCameras.ShipCamera.transform.position, CGameCameras.ShipCamera.transform.forward);
         bool bHitTile = false;
-        if (CGameCameras.MainCamera.layer == LayerMask.NameToLayer("Default"))
-        {
-            cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
-        }
-        else
-        {
-            cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.ProjectedCamera.transform.forward);
-        }
         
         RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, 10.0f, 1 << LayerMask.NameToLayer("Default"));
         cMainCameraRaycastHits = cMainCameraRaycastHits.OrderBy((_tItem) => _tItem.distance).ToArray();

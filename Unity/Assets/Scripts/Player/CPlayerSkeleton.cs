@@ -48,6 +48,16 @@ public class CPlayerSkeleton : MonoBehaviour
 	{
 		get { return(m_headlessAvatar);}
 	}
+
+    public GameObject PlayerNaniteArmBand
+    {
+        get { return (m_cNaniteArmBand); }
+    }
+
+    public GameObject PlayerNaniteArmBandLaserNode
+    {
+        get { return (m_cNaniteArmBandLaserNode); }
+    }
 	
 	//Member variables
 
@@ -57,4 +67,8 @@ public class CPlayerSkeleton : MonoBehaviour
     public GameObject   m_playerNeck;
 	public GameObject   m_playerRightHand;
 	public Avatar		m_headlessAvatar;
+
+    public GameObject m_cNaniteArmBand;
+    public GameObject m_cNaniteArmBandLaserNode;
+
 }
