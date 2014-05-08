@@ -632,71 +632,116 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		foreach(CTile.EType tileType in tileTypes)
 			tileInterface.SetTileTypeState(tileType, true);
 
+		// Get the surrounding tiles
+		List<CTileInterface> surroundingTiles = GetAllSurroundingTiles(_GridPoint, true);
+
+		// Detirmine the exterior tiles
+		foreach(CTileInterface surroundingTile in surroundingTiles)
+			DetirmineExternalTileTypes(surroundingTile);
+
+		// Update the meta data
+		tileInterface.UpdateAllCurrentTileMetaData();
+
+		foreach(CTileInterface surroundingTile in surroundingTiles)
+			surroundingTile.UpdateAllCurrentTileMetaData();
+	}
+
+	[AServerOnly]
+	private void DestroyInternalTile(CGridPoint _GridPoint)
+	{
+		// Only internal tile can be erased
+		CTileInterface tileInterface = m_Grid.GetTileInterface(_GridPoint);
+		if(tileInterface == null || !tileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
+			return;
+
+		// Replace the tile
+		tileInterface = m_Grid.PlaceTile(tileInterface.m_GridPosition);
+		DetirmineExternalTileTypes(tileInterface);
+
+		// Get the surrounding tiles
+		List<CTileInterface> surroundingTiles = GetAllSurroundingTiles(_GridPoint, false);
+
+		// Detirmine the exterior tiles
+		foreach(CTileInterface surroundingTile in surroundingTiles)
+			DetirmineExternalTileTypes(surroundingTile);
+
+		// Update the meta data
+		if(m_Grid.GetTileInterface(tileInterface.m_GridPosition) != null)
+			tileInterface.UpdateAllCurrentTileMetaData();
+
+		foreach(CTileInterface surroundingTile in surroundingTiles)
+			if(m_Grid.GetTileInterface(surroundingTile.m_GridPosition) != null)
+				surroundingTile.UpdateAllCurrentTileMetaData();
+	}
+
+	private List<CTileInterface> GetAllSurroundingTiles(CGridPoint _GridPoint, bool _CreateNewTiles)
+	{
+		List<CTileInterface> surroundingTiles = new List<CTileInterface>(27);
+
 		// Create tiles around in each direction as external walls
 		foreach(CNeighbour neighbour in CTileInterface.s_PossibleNeighbours)
 		{
 			CGridPoint neighboutGridPoint = new CGridPoint(_GridPoint.ToVector + neighbour.m_GridPointOffset.ToVector);
 			CTileInterface neighbourTileInterface = m_Grid.GetTileInterface(neighboutGridPoint);
-			if(neighbourTileInterface == null)
-			{
-				neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
-			}
 
-			DetirmineExternalTileInterfaceTileTypes(neighbourTileInterface);
+			if(neighbourTileInterface == null && _CreateNewTiles)
+				neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
+
+			if(neighbourTileInterface != null)
+				surroundingTiles.Add(neighbourTileInterface);
 		}
 
-		// Check the upper tiles if they are the correct type
+		// Get the upper tiles
 		CGridPoint upperGridPoint = new CGridPoint(_GridPoint.ToVector + Vector3.up);
 		CTileInterface upperTileInterface = m_Grid.GetTileInterface(upperGridPoint);
-		if(upperTileInterface == null)
-		{
+
+		if(upperTileInterface == null && _CreateNewTiles)
 			upperTileInterface = m_Grid.PlaceTile(upperGridPoint);
-		}
 
-		DetirmineExternalTileInterfaceTileTypes(upperTileInterface);
-
+		if(upperTileInterface != null)
+			surroundingTiles.Add(upperTileInterface);
+		
 		// Create tiles around in each direction as external upper
 		foreach(CNeighbour neighbour in CTileInterface.s_PossibleNeighbours)
 		{
 			CGridPoint neighboutGridPoint = new CGridPoint(upperGridPoint.ToVector + neighbour.m_GridPointOffset.ToVector);
 			CTileInterface neighbourTileInterface = m_Grid.GetTileInterface(neighboutGridPoint);
-			if(neighbourTileInterface == null)
-			{
+
+			if(neighbourTileInterface == null && _CreateNewTiles)
 				neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
-			}
 
-			DetirmineExternalTileInterfaceTileTypes(neighbourTileInterface);
+			if(neighbourTileInterface != null)
+				surroundingTiles.Add(neighbourTileInterface);
 		}
-
+		
 		// Check the lower tiles if they are the correct type
 		CGridPoint lowerGridPoint = new CGridPoint(_GridPoint.ToVector - Vector3.up);
 		CTileInterface lowerTileInterface = m_Grid.GetTileInterface(lowerGridPoint);
-		if(lowerTileInterface == null)
-		{
+
+		if(lowerTileInterface == null && _CreateNewTiles)
 			lowerTileInterface = m_Grid.PlaceTile(lowerGridPoint);
-		}
 
-		DetirmineExternalTileInterfaceTileTypes(lowerTileInterface);
-
+		if(lowerTileInterface != null)
+			surroundingTiles.Add(lowerTileInterface);
+		
 		// Create tiles around in each direction as external walls
 		foreach(CNeighbour neighbour in CTileInterface.s_PossibleNeighbours)
 		{
 			CGridPoint neighboutGridPoint = new CGridPoint(lowerGridPoint.ToVector + neighbour.m_GridPointOffset.ToVector);
 			CTileInterface neighbourTileInterface = m_Grid.GetTileInterface(neighboutGridPoint);
-			if(neighbourTileInterface == null)
-			{
-				neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
-			}
 
-			DetirmineExternalTileInterfaceTileTypes(neighbourTileInterface);
+			if(neighbourTileInterface == null && _CreateNewTiles)
+				neighbourTileInterface = m_Grid.PlaceTile(neighboutGridPoint);
+			
+			if(neighbourTileInterface != null)
+				surroundingTiles.Add(neighbourTileInterface);
 		}
 
-		// Update the meta data
-		tileInterface.UpdateAllCurrentTileMetaData();
+		return(surroundingTiles);
 	}
 
 	[AServerOnly]
-	private void DetirmineExternalTileInterfaceTileTypes(CTileInterface _TileInterface)
+	private void DetirmineExternalTileTypes(CTileInterface _TileInterface)
 	{
 		if(_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
 			return;
@@ -710,14 +755,10 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall) && CTile_ExteriorWallCap.s_RelevantDirections.Contains(n.m_Direction));
 
 		if(internalWallNeighbourExistsAdjacent)
-		{
 			tileTypes.Add(CTile.EType.Exterior_Wall);
-		}
 
 		if(internalWallNeighbourExistsDiagonal)
-		{
 			tileTypes.Add(CTile.EType.Exterior_Wall_Inverse_Corner);
-		}
 
 		CGridPoint lowerGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector - Vector3.up);
 		CTileInterface lowerTileInterface = m_Grid.GetTileInterface(lowerGridPoint);
@@ -725,86 +766,38 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		CGridPoint upperGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector + Vector3.up);
 		CTileInterface upperTileInterface = m_Grid.GetTileInterface(upperGridPoint);
 
-		if(lowerTileInterface == null || internalWallNeighbourExistsAdjacent || internalWallNeighbourExistsDiagonal)
-		{
-			tileTypes.Add(CTile.EType.Exterior_Lower);
-			tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
-		}
+		bool upperContainsWall = upperTileInterface != null && 
+			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || upperTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
 
-		if(upperTileInterface == null || internalWallNeighbourExistsAdjacent || internalWallNeighbourExistsDiagonal)
-		{
+		bool upperContainsWallCap = upperTileInterface != null && 
+			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
+
+		bool lowerContainsWall = lowerTileInterface != null &&
+			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || lowerTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
+
+		bool lowerContainsWallCap = lowerTileInterface != null &&
+			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
+
+		if(upperContainsWall)
+			tileTypes.Add(CTile.EType.Exterior_Lower);
+
+		if(upperContainsWallCap)
+			tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
+
+		if(lowerContainsWall)
 			tileTypes.Add(CTile.EType.Exterior_Upper);
+
+		if(lowerContainsWallCap)
 			tileTypes.Add(CTile.EType.Exterior_Upper_Inverse_Corner);
-		}
 
 		if(tileTypes.Count != 0)
 		{
 			for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 				_TileInterface.SetTileTypeState((CTile.EType)i, tileTypes.Contains((CTile.EType)i));
-
-			_TileInterface.UpdateAllCurrentTileMetaData();
 		}
 		else
 		{
 			m_Grid.RemoveTile(_TileInterface.m_GridPosition);
-		}
-	}
-
-	[AServerOnly]
-	private void DestroyInternalTile(CGridPoint _GridPoint)
-	{
-		// Only internal tile can be erased
-		CTileInterface tileInterface = m_Grid.GetTileInterface(_GridPoint);
-		if(tileInterface == null || !tileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
-			return;
-
-		// Get all the tiles within this tiles neighbourhood
-		List<CGridPoint> tileToRemove = new List<CGridPoint>();
-		foreach(CNeighbour neighbour in tileInterface.m_NeighbourHood)
-		{
-			// Remove any internal wall exemption states
-			ModifyInteriorWall(false, tileInterface, neighbour.m_TileInterface);
-
-			// Skip non exterior walls
-			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall))
-				continue;
-
-			// Get all neighbours of this tile which are internal
-			List<CNeighbour> internalNeighbours = neighbour.m_TileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
-
-			// If this was the only neighbour, release it
-			if(internalNeighbours.Count == 1)
-				tileToRemove.Add(neighbour.m_TileInterface.m_GridPosition);
-		}
-
-		// Get all neighbours of this tile which are external
-		List<CNeighbour> externalNeighbours = tileInterface.m_NeighbourHood.FindAll(n => n.m_TileInterface.GetTileTypeState(CTile.EType.Exterior_Wall));
-
-		// Remove the tiles that arent needed
-		foreach(CGridPoint tilePos in tileToRemove)
-			m_Grid.RemoveTile(tilePos);
-
-		// If this tile only has external tiles surrounding it, release it
-		if(externalNeighbours.Count != 8)
-		{
-			// Replace this tile with an external tile
-			tileInterface = m_Grid.PlaceTile(_GridPoint);
-			
-			// Set the tile types
-			List<CTile.EType> tileTypes = new CTile.EType[]{ CTile.EType.Exterior_Wall, CTile.EType.Exterior_Wall_Inverse_Corner }.ToList();
-			foreach(CTile.EType tileType in tileTypes)
-				tileInterface.SetTileTypeState(tileType, true);
-
-			// Clear all existing neighbour exemptions
-			foreach(CTile tile in tileInterface.GetComponents<CTile>())
-				tile.m_NeighbourExemptions.Clear();
-
-			// Update the tiles meta data
-			tileInterface.UpdateAllCurrentTileMetaData();
-		}
-		else
-		{
-			m_Grid.RemoveTile(tileInterface.m_GridPosition);
 		}
 	}
 

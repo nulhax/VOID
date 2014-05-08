@@ -206,17 +206,21 @@ public class CGrid : MonoBehaviour
 	public void RemoveTile(CGridPoint _Position)
 	{
 		CTileInterface tileInterface = GetTileInterface(_Position);
-		
-		// Create if it doesnt exist yet
+
 		if(tileInterface == null)
 			return;
 
+		// Remove from the board
 		m_GridBoard.Remove(_Position.ToString());
+
+		// Disable all tile types
+		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
+			tileInterface.SetTileTypeState((CTile.EType)i, false);
 
 		// Update the neighbourhood
 		tileInterface.UpdateNeighbourhood();
 
-		// Destroy
+		// Network destroy
 		CNetwork.Factory.DestoryGameObject(tileInterface.gameObject);
 	}
 }
