@@ -89,8 +89,9 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		{
 			m_DecodeThreads[i] = new Thread(new ParameterizedThreadStart(DecodeAudio));
 		}
-		
-		//m_DecodeThread = new Thread(new ParameterizedThreadStart(DecodeAudio));		
+
+
+		CUserInput.SubscribeInputChange(CUserInput.EInput.Push_To_Talk, HandlePushToTalk);
 	}
 
 	[AServerOnly]
@@ -132,29 +133,27 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 
 	void Update()
 	{	
-		//EncodingUpdate();	
-		//DecodingUpdate();
+		EncodingUpdate();	
+		DecodingUpdate();
 	}
-	
-	void EncodingUpdate()
-	{		
+
+	void HandlePushToTalk(CUserInput.EInput _eInput, bool _bDown)
+	{
 		if(Microphone.devices.Length != 0)
 		{
-			if(m_bRecording == false)
+			if(m_bRecording == false && _bDown)
 			{
-				//if(Input.GetKeyDown(KeyCode.LeftAlt))
-				{
-					m_acVoiceInput = Microphone.Start(Microphone.devices[0], true, m_kiRecordTime, 44000);
-					
-					//start timer
-					m_fRecordingTimer = 0.0f; 
-					m_bRecording = true;
-				}
+				m_acVoiceInput = Microphone.Start(Microphone.devices[0], true, m_kiRecordTime, 44000);
+
+				//start timer
+				m_fRecordingTimer = 0.0f; 
+				m_bRecording = true;
+
 			}			
 			else if(m_bRecording)
 			{
 				m_fRecordingTimer += Time.deltaTime;
-								
+				
 				if(m_fRecordingTimer >= (float)m_kiRecordTime)
 				{
 					Microphone.End(Microphone.devices[0]);
@@ -162,19 +161,19 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 					// Calculate sound size (To the nearest frame size)
 					int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
 					iAudioDataSize -= iAudioDataSize % m_iFrameSize;
-									
+					
 					// Extract audio data through the bum
 					float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
 					m_acVoiceInput.GetData(fAudioData, 0);
 					
 					// Convert to short
 					short[] saAudioData = new short[fAudioData.Length];
-			
+					
 					for (int i = 0; i < fAudioData.Length; ++i)
 					{
 						saAudioData[i] = (short)(fAudioData[i] * 32767.0f);
 					}					
-								
+					
 					AudioData voiceData = new AudioData();
 					voiceData.iAudioDataSize = iAudioDataSize;
 					voiceData.iFrequency = m_acVoiceInput.frequency;
@@ -189,6 +188,10 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 				}
 			}
 		}		
+	}
+	
+	void EncodingUpdate()
+	{
 		
 		if(!m_EncodeThread.IsAlive && m_bEncoding)
 		{
