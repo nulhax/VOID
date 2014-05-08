@@ -39,9 +39,9 @@ public class CMenuShipBehaviour : MonoBehaviour {
 			Ship.AddComponent<CLerpShip>();
 		}
 
-		// Lerp variables
-		isLerpActive = false;
-		m_fLerpTimer = 0.0f;
+//		// Lerp variables
+//		isLerpActive = false;
+//		m_fLerpTimer = 0.0f;
 	}
 	
 	// Update is called once per frame

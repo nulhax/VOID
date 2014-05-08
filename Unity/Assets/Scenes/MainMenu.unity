@@ -827,7 +827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a858fe5cf7aea02449cbd3f5d0082db5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnFreq: 5
+  SpawnFreq: 15
   fSpawnTimer: 0
 --- !u!1001 &457103425
 Prefab:
@@ -1908,7 +1908,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4df31385379812441bfc75a419c76729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelName: Default
+  levelName: 
 --- !u!1 &1042367855
 GameObject:
   m_ObjectHideFlags: 0
@@ -2109,7 +2109,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: -261, y: 591, z: 0}
+  m_ViewPortPos: {x: -336, y: 571, z: 0}
 --- !u!20 &1125349162
 Camera:
   m_ObjectHideFlags: 0
