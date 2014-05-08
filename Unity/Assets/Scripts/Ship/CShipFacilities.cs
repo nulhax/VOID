@@ -67,6 +67,9 @@ public class CShipFacilities : MonoBehaviour
 
 		// Reconfigure the entry triggers
 		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers(this);
+
+		// Static batch all tiles
+		//StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
 	}
 
 	[AServerOnly]

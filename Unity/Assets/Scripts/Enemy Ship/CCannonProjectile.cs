@@ -5,9 +5,9 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 {
 	[HideInInspector] public Rigidbody parent = null;
 	float lifetime = 4.0f;
-	float damage = 100.0f;
+	float damage = 1.0f;
 
-	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}
