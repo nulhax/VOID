@@ -74,9 +74,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	public Vector3 m_MouseDownHitPoint = Vector3.zero;
 	public CGridPoint m_MouseDownGridPoint;
 
-	public CTile.EType m_CurrentlySelectedType = CTile.EType.INVALID;
-	public List<CTileInterface> m_SelectedTiles = null;
-
 	public Material m_TileMaterial = null;
 
 	private List<RaycastHit> m_RaycastHits;
@@ -119,9 +116,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	{
 		if(!CNetwork.IsServer)
 			return;
-
-		// Set a default rotation
-		m_Grid.transform.localRotation = Quaternion.Euler(10.0f, 0.0f, 0.0f);
 		
 		// Update scale and clamp
 		m_GridScale = Mathf.Clamp(m_GridScale, m_GridScaleLimits.x, m_GridScaleLimits.y);
@@ -130,7 +124,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		// Default enums
 		m_CurrentMode = EToolMode.Nothing;
 		m_CurrentPlaneInteraction = EPlaneInteraction.Nothing;
-		m_CurrentlySelectedType = CTile.EType.Interior_Floor;
 
 		// Instance new material
 		m_TileMaterial = new Material(m_TileMaterial);
@@ -310,7 +303,11 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		if(m_CurrentMode == EToolMode.Paint_Interior_Floors)
 		{
 			Vector3 cursorPos = (m_GridCursor.transform.localPosition - m_TilesOffset) / m_Grid.m_TileSize;
-			
+
+			cursorPos.x = Mathf.Round(cursorPos.x * 2.0f) * 0.5f;
+			cursorPos.y = Mathf.Round(cursorPos.y * 2.0f) * 0.5f;
+			cursorPos.z = Mathf.Round(cursorPos.z * 2.0f) * 0.5f;
+
 			CGridPoint tilePosUpper1 = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.FloorToInt(cursorPos.z));
 			CGridPoint tilePosUpper2 = new CGridPoint(Mathf.CeilToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y), Mathf.CeilToInt(cursorPos.z));
 			CGridPoint tilePosLower1 = new CGridPoint(Mathf.FloorToInt(cursorPos.x), Mathf.FloorToInt(cursorPos.y) - 1, Mathf.FloorToInt(cursorPos.z));
@@ -355,36 +352,36 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 	private void HandleLeftClickUpSingle()
 	{
-		if(m_CurrentMode == EToolMode.Modify_Tile_Variants) 
-		{
-			if(!IsCtrlKeyDown)
-				m_SelectedTiles.Clear();
-
-			SelectTile(m_CurrentMouseGridPoint);
-
-			if(EventTileSelectionChange != null)
-				EventTileSelectionChange();
-
-			return;
-		}
+//		if(m_CurrentMode == EToolMode.Modify_Tile_Variants) 
+//		{
+//			if(!IsCtrlKeyDown)
+//				m_SelectedTiles.Clear();
+//
+//			SelectTile(m_CurrentMouseGridPoint);
+//
+//			if(EventTileSelectionChange != null)
+//				EventTileSelectionChange();
+//
+//			return;
+//		}
 	}
 
 	private void HandleLeftClickUpMulti()
 	{
 		switch(m_CurrentMode) 
 		{
-			case EToolMode.Modify_Tile_Variants: 
-			{
-				if (!IsCtrlKeyDown)
-					m_SelectedTiles.Clear();
-
-				SelectMultipleTiles();
-				
-				if(EventTileSelectionChange != null)
-					EventTileSelectionChange();
-
-				break;
-			}
+//			case EToolMode.Modify_Tile_Variants: 
+//			{
+//				if (!IsCtrlKeyDown)
+//					m_SelectedTiles.Clear();
+//
+//				SelectMultipleTiles();
+//				
+//				if(EventTileSelectionChange != null)
+//					EventTileSelectionChange();
+//
+//				break;
+//			}
 			case EToolMode.Paint_Exterior: 
 			{
 				SelectionManipulateTiles(IsCtrlKeyDown);
@@ -611,10 +608,10 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	[AServerOnly]
 	private void SelectTile(CGridPoint _GridPoint)
 	{
-		CTileInterface tile = m_Grid.GetTileInterface(_GridPoint);
-
-		if(tile != null)
-			m_SelectedTiles.Add(tile);
+//		CTileInterface tile = m_Grid.GetTileInterface(_GridPoint);
+//
+//		if(tile != null)
+//			m_SelectedTiles.Add(tile);
 	}
 
 	[AServerOnly]

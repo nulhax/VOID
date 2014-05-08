@@ -107,43 +107,43 @@ public class CDUIPrefabricator : CNetworkMonoBehaviour
 
 	private void UpdateSelectionWidget()
 	{
-		int count = m_GridUI.m_SelectedTiles.Count;
-		if(count == 0)
-		{
-			m_SelectionLabel.text = "No Tile(s) Selected.";
-			return;
-		}
-		
-		if(count == 1)
-		{
-			m_SelectionLabel.text = "1 Tile Selected.";
-			return;
-		}
-		
-		if(count > 1)
-		{
-			m_SelectionLabel.text = count + " Tiles Selected.";
-			return;
-		}
+//		int count = m_GridUI.m_SelectedTiles.Count;
+//		if(count == 0)
+//		{
+//			m_SelectionLabel.text = "No Tile(s) Selected.";
+//			return;
+//		}
+//		
+//		if(count == 1)
+//		{
+//			m_SelectionLabel.text = "1 Tile Selected.";
+//			return;
+//		}
+//		
+//		if(count > 1)
+//		{
+//			m_SelectionLabel.text = count + " Tiles Selected.";
+//			return;
+//		}
 	}
 
 	private void UpdateTileTypeVariants()
 	{
-		// If there are none selected then remove all items
-		if(m_GridUI.m_SelectedTiles.Count == 0)
-		{
-			foreach(GameObject item in m_CurrentWallVariations.Values)
-				Destroy(item);
-			m_CurrentWallVariations.Clear();
-			return;
-		}
-
-		// Instance all default variants
-		if(!m_CurrentWallVariations.ContainsKey(0))
-			InstanceNewWallTileVariantSelection(0, "Item 01");
-
-		// Reposition all items
-		m_WallVariationsGrid.Reposition();
+//		// If there are none selected then remove all items
+//		if(m_GridUI.m_SelectedTiles.Count == 0)
+//		{
+//			foreach(GameObject item in m_CurrentWallVariations.Values)
+//				Destroy(item);
+//			m_CurrentWallVariations.Clear();
+//			return;
+//		}
+//
+//		// Instance all default variants
+//		if(!m_CurrentWallVariations.ContainsKey(0))
+//			InstanceNewWallTileVariantSelection(0, "Item 01");
+//
+//		// Reposition all items
+//		m_WallVariationsGrid.Reposition();
 	}
 
 	private void InstanceNewWallTileVariantSelection(int _TileVariant, string _ItemName)

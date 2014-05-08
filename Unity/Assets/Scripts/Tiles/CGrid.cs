@@ -176,13 +176,13 @@ public class CGrid : MonoBehaviour
 
 			m_GridBoard.Add(_Position.ToString(), tileInterface);
 
-			// Update neighbours
-			tileInterface.FindNeighbours();
-			tileInterface.UpdateNeighbourhood();
-
 			if(EventTileInterfaceCreated != null)
 				EventTileInterfaceCreated(tileInterface);
 		}
+
+		// Update neighbours
+		tileInterface.FindNeighbours();
+		tileInterface.UpdateNeighbourhood();
 	
 		// Disable all tile types
 		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)

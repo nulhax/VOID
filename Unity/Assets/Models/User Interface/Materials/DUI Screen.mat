@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: lambert2
+  m_Name: DUI Screen
   m_Shader: {fileID: 4800000, guid: b7787ad515bc2414ea18fde89c35b973, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
@@ -69,20 +69,20 @@ Material:
         second: .699999988
       data:
         first:
-          name: _EmissionPow
-        second: 1
-      data:
-        first:
-          name: _Alpha
-        second: .949999988
-      data:
-        first:
           name: _Saturation
         second: .5
       data:
         first:
           name: _Brightness
         second: 1
+      data:
+        first:
+          name: _EmissionPow
+        second: 1
+      data:
+        first:
+          name: _Alpha
+        second: .949999988
       data:
         first:
           name: _BGAlpha
