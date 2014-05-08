@@ -290,16 +290,37 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         // Raycast to target based on player head direction
         GameObject cActorHead = GetComponent<CPlayerHead>().Head;
 
+        Ray cRay;
         RaycastHit tRaycastHit = new RaycastHit();
-        Ray cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+
+        if (cActorHead.layer != LayerMask.NameToLayer("Default"))
+        {
+            cRay = new Ray(CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(cActorHead.transform.position),
+                           CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(cActorHead.transform.rotation) * new Vector3(0, 0, 1));
+        }
+        else
+        {
+            cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+        }
+        
 
         if (Target.collider.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
         {
+            Quaternion qArmBandRotation = cActorHead.transform.rotation;
+            qArmBandRotation *= Quaternion.Euler(0.0f, 0.0f, 30.0f);
+
             // Make particles visible
             if (!cEffectHitParticles.activeSelf)
             {
-                cEffectHitParticles.layer = cActorHead.layer;
+                //cEffectHitParticles.layer = cActorHead.layer;
+                cEffectHitParticles.layer = LayerMask.NameToLayer("Default");
                 cEffectHitParticles.SetActive(true);
+
+                GetComponent<CPlayerIKController>().SetRightHandTarget(tRaycastHit.point, qArmBandRotation, true);
+            }
+            else
+            {
+                GetComponent<CPlayerIKController>().SetRightHandTarget(tRaycastHit.point, qArmBandRotation, false);
             }
 
             // Rotate particles relative to head
@@ -433,6 +454,12 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_eTargetType)
         {
+            // End arm IK
+            if (m_eTargetType.Value == ETargetType.None)
+            {
+                GetComponent<CPlayerIKController>().EndRightHandIK();
+            }
+
             if (m_cBuildingHitParticles.activeSelf)
                 m_cBuildingHitParticles.SetActive(false);
 
@@ -461,6 +488,9 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
     public GameObject m_cBuildingHitParticles   = null;
     public GameObject m_cMingingHitParticles    = null;
     public GameObject m_cRepairingHitParticles  = null;
+
+    public GameObject m_cNaniteArmBand = null;
+    public GameObject m_cNaniteArmBandLaserNode = null;
 
 
     CNetworkVar<ETargetType> m_eTargetType = null;
