@@ -51,6 +51,10 @@ public class CTile_ExteriorUpper : CTile
 		get { return(s_MetaDictionary); }
 	}
 
+	public override List<EDirection> RelevantDirections
+	{
+		get { return(s_RelevantDirections); }
+	}
 	
 	// Member Methods
 	static CTile_ExteriorUpper()

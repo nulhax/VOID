@@ -48,14 +48,16 @@ public abstract class CTile : MonoBehaviour
 	[System.Serializable]
 	public class CModification
 	{
-		public CModification(int _Modification, EDirection _Side)
+		public CModification(int _Modification, EDirection _WorldSide, EDirection _LocalSide)
 		{
 			m_Modification = _Modification;
-			m_Side = _Side;
+			m_WorldSide = _WorldSide;
+			m_LocalSide = _LocalSide;
 		}
 
 		public int m_Modification;
-		public EDirection m_Side;
+		public EDirection m_WorldSide;
+		public EDirection m_LocalSide;
 		
 		public override bool Equals(System.Object obj)
 		{
@@ -70,7 +72,8 @@ public abstract class CTile : MonoBehaviour
 			
 			// Return true if the fields match:
 			return ((m_Modification == p.m_Modification) &&
-			        (m_Side == p.m_Side));
+			        (m_WorldSide == p.m_WorldSide) &&
+			        (m_LocalSide == p.m_LocalSide));
 		}
 		
 		public bool Equals(CModification p)
@@ -81,7 +84,8 @@ public abstract class CTile : MonoBehaviour
 			
 			// Return true if the fields match:
 			return ((m_Modification == p.m_Modification) &&
-			        (m_Side == p.m_Side));
+			        (m_WorldSide == p.m_WorldSide) &&
+			        (m_LocalSide == p.m_LocalSide));
 		}
 	}
 
@@ -176,6 +180,11 @@ public abstract class CTile : MonoBehaviour
 		get;
 	}
 
+	public abstract List<EDirection> RelevantDirections
+	{
+		get;
+	}
+
 
 	// Member Methods
 	protected void Update()
@@ -249,7 +258,7 @@ public abstract class CTile : MonoBehaviour
 			// Get the meta entry for the result with a correct rotation
 			CTile.CMeta newTileMeta = new CMeta(TileMetaDictionary[tileMask].m_TileMask, TileMetaDictionary[tileMask].m_MetaType);
 			newTileMeta.m_Rotations = i;
-			newTileMeta.m_ModificationMask = CalculateModificationsMask();
+			newTileMeta.m_ModificationMask = m_CurrentTileMeta.m_ModificationMask;
 			
 			// Update the current tile meta data
 			currentMetaChanged = !m_CurrentTileMeta.Equals(newTileMeta);
@@ -278,6 +287,8 @@ public abstract class CTile : MonoBehaviour
 			m_TileObject.transform.localScale = Vector3.one;
 			m_TileObject.transform.localRotation = Quaternion.Euler(0.0f, m_CurrentTileMeta.m_Rotations * 90.0f, 0.0f);
 
+			UpdateTileModifications();
+
 			if(EventTileObjectChanged != null)
 				EventTileObjectChanged(this);
 		}
@@ -286,33 +297,110 @@ public abstract class CTile : MonoBehaviour
 		m_ActiveTileMeta = new CTile.CMeta(m_CurrentTileMeta);
 	}
 
+	protected void UpdateTileModifications()
+	{
+		Type classType = GetTileClassType(m_TileType);
+		Type enumModType = classType.GetNestedType("EModification");
+		
+		if(enumModType == null)
+			return;
+		
+		var enumModValues = Enum.GetValues(enumModType);
+		m_Modifications = GetCurrentModificationsFromMask(enumModValues);
+
+		List<EDirection> defaultSides = new List<EDirection>(RelevantDirections);
+		foreach(CModification mod in m_Modifications)
+			defaultSides.Remove(mod.m_WorldSide);
+
+		foreach(EDirection side in RelevantDirections)
+		{
+			GameObject child = GetModificationObject(0, GetUnrotatedDirection(side));
+			
+			if(child != null)
+			{
+				if(defaultSides.Contains(side))
+					child.gameObject.SetActive(true);
+				else
+					child.gameObject.SetActive(false);
+			}
+			
+			foreach(var modType in enumModValues)
+			{
+				if((int)modType == 0)
+					continue;
+
+				child = GetModificationObject((int)modType, GetUnrotatedDirection(side));
+				
+				if(child != null)
+				{
+					if(m_Modifications.Exists(m => m.m_WorldSide == side && m.m_Modification == (int)modType))
+						child.gameObject.SetActive(true);
+					else
+						child.gameObject.SetActive(false);
+				}
+			}
+		}
+	}
+
+	protected List<CModification> GetCurrentModificationsFromMask(Array _ModEnumValues)
+	{
+		List<CModification> modifications = new List<CModification>();
+		
+		foreach(var modType in _ModEnumValues)
+		{
+			for(int i = (int)EDirection.INVALID + 1; i < (int)EDirection.MAX; ++i)
+			{
+				int value = ((int)modType * (int)EDirection.MAX) + i;
+				if(CUtility.GetMaskState(value, m_CurrentTileMeta.m_ModificationMask))
+				{
+					modifications.Add(new CModification((int)modType, (EDirection)i, GetUnrotatedDirection((EDirection)i)));
+				}
+			}
+		}
+		
+		return(modifications);
+	}
+	
+	public GameObject GetModificationObject(int _ModificationType, EDirection _LocalSide)
+	{
+		Type classType = GetTileClassType(m_TileType);
+		Type enumModType = classType.GetNestedType("EModification");
+		
+		if(enumModType == null)
+			return(null);
+
+		string modName = Enum.GetName(enumModType, _ModificationType) + "_" + _LocalSide;
+		Transform child = m_TileObject.transform.FindChild(modName);
+		
+		if(child != null)
+			return(child.gameObject);
+		else
+			return(null);
+	}
+
 	[AServerOnly]
-	public void AddTileModification(int _ModificationType, EDirection _Side, bool _State)
+	public void AddTileModification(int _ModificationType, EDirection _WorldSide, bool _State)
 	{
 		if(_State)
 		{
-			m_Modifications.RemoveAll(m => m.m_Side == _Side);
-			m_Modifications.Add(new CModification(_ModificationType, _Side));
+			m_Modifications.RemoveAll(m => m.m_WorldSide == _WorldSide);
+			m_Modifications.Add(new CModification(_ModificationType, _WorldSide, GetUnrotatedDirection(_WorldSide)));
 		}
 		else
 		{
-			m_Modifications.RemoveAll(m => m.m_Modification == _ModificationType && m.m_Side == _Side);
+			m_Modifications.RemoveAll(m => m.m_Modification == _ModificationType && m.m_WorldSide == _WorldSide);
 		}
 
 		m_CurrentTileMeta.m_ModificationMask = CalculateModificationsMask();
 	}
-	
-	public int GetTileModificationMask()
-	{
-		return(m_CurrentTileMeta.m_ModificationMask);
-	}
 
+	[AServerOnly]
 	protected int CalculateModificationsMask()
 	{
 		int modMask = 0;
 		foreach(CModification mod in m_Modifications)
 		{
-			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_Side;
+			modMask |= 1 << (mod.m_Modification * (int)EDirection.MAX) + (int)mod.m_WorldSide;
 		}
 		return(modMask);
 	}
@@ -342,14 +430,14 @@ public abstract class CTile : MonoBehaviour
 		return(m_NeighbourExemptions.Contains(_Direction));
 	}
 
-	public EDirection GetUnrotatedDirection(EDirection _RotatedDirection)
+	public EDirection GetUnrotatedDirection(EDirection _WorldDirection)
 	{
 		for(int i = m_CurrentTileMeta.m_Rotations; i > 0; --i)
 		{
-			_RotatedDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_RotatedDirection));
+			_WorldDirection = CNeighbour.GetLeftDirectionNeighbour(CNeighbour.GetLeftDirectionNeighbour(_WorldDirection));
 		}
 		
-		return(_RotatedDirection);
+		return(_WorldDirection);
 	}
 
 	public void ReleaseTileObject()

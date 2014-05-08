@@ -68,7 +68,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Accessories
         Alarm					= 500,
         ControlConsole,
-		Door,
+		InteriorDoor,
         DuiMontior,
 		
 		// Modules
@@ -219,7 +219,7 @@ public class CGameRegistrator : MonoBehaviour
 
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/Monitors/CurvedMonitor_wide");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Door,                        "Accessories/Doors/Door");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.InteriorDoor,                "Accessories/Doors/InteriorDoor");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
