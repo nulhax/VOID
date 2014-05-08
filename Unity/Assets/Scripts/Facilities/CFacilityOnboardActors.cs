@@ -100,10 +100,9 @@ public class CFacilityOnboardActors : MonoBehaviour
 
 
 	 void OnPreDestroy(GameObject _cSender)
-{
+    {
 		foreach(GameObject actor in ActorsOnboard)
-<<<<<<< HEAD
-		{
+        {
 			if (actor != null)	// During shutdown, lists of GameObject may have null elements (if they got destroyed before this).
 			{
 				if (actor.GetComponent<CActorLocator>() != null)
@@ -111,16 +110,6 @@ public class CFacilityOnboardActors : MonoBehaviour
 
 				if (EventActorExitedFacility != null)
 					EventActorExitedFacility(gameObject, actor);
-=======
-		{
-			if (actor != null)	// During shutdown, lists of GameObject may have null elements (if they got destroyed before this).
-			{
-				if (actor.GetComponent<CActorLocator>() != null)
-					actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
-
-				if (EventActorExitedFacility != null)
-					EventActorExitedFacility(gameObject, actor);
->>>>>>> 1e1da5ec43f0ec2e1500fd866717234f237c7aa1
 			}
 		}
 	}
