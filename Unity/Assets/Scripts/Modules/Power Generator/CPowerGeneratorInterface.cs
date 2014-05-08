@@ -42,7 +42,7 @@ public class CPowerGeneratorInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}

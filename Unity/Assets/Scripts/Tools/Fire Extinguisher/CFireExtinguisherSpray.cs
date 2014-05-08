@@ -46,7 +46,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}

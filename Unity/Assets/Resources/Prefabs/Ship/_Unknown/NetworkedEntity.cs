@@ -23,7 +23,7 @@ public class NetworkedEntity : CNetworkMonoBehaviour
 	protected CNetworkVar<float> mAngularVelocityY = null;
 	protected CNetworkVar<float> mAngularVelocityZ = null;
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		mPositionX = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.x*/);
 		mPositionY = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f/*transform.position.y*/);

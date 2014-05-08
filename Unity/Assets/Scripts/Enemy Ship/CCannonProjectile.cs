@@ -7,7 +7,7 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 	float lifetime = 4.0f;
 	float damage = 1.0f;
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

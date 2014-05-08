@@ -32,7 +32,6 @@ GameObject:
   - 114: {fileID: 11400056}
   - 82: {fileID: 8200004}
   - 114: {fileID: 11400044}
-  - 114: {fileID: 11400046}
   - 114: {fileID: 11400062}
   - 114: {fileID: 11400050}
   - 114: {fileID: 11400024}
@@ -207,6 +206,8 @@ MonoBehaviour:
   m_sDisplayName: Atmosphere Generator Small
   m_sDescription: Generates a small amount of atmosphere that pressurizes your ship
   m_cModel: {fileID: 100000}
+  m_cPrecipitativeModel: {fileID: 100000, guid: 8a8427e6912da2849ae2c2473df7233d,
+    type: 2}
   m_eModuleType: 50
   m_eModuleCategory: 50
   m_eModuleSize: 1
@@ -259,18 +260,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_fConsumptionRate: 0
---- !u!114 &11400046
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 8a8427e6912da2849ae2c2473df7233d, type: 2}
 --- !u!114 &11400048
 MonoBehaviour:
   m_ObjectHideFlags: 1

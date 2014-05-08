@@ -48,7 +48,6 @@ GameObject:
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400010}
-  - 114: {fileID: 11400072}
   - 64: {fileID: 6400000}
   m_Layer: 0
   m_Name: Turret Cockpit
@@ -84,7 +83,7 @@ GameObject:
   - 4: {fileID: 400008}
   - 95: {fileID: 9500000}
   m_Layer: 0
-  m_Name: Model
+  m_Name: Turret Cockpit Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -496,6 +495,8 @@ MonoBehaviour:
   m_sDisplayName: Turret Cockpit
   m_sDescription: Allows the crew controlling of external offensive turrets
   m_cModel: {fileID: 100008}
+  m_cPrecipitativeModel: {fileID: 100000, guid: 5014024c81a3d4044b737615ac66df31,
+    type: 2}
   m_eModuleType: 150
   m_eModuleCategory: 100
   m_eModuleSize: 1
@@ -513,18 +514,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400072
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 5014024c81a3d4044b737615ac66df31, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

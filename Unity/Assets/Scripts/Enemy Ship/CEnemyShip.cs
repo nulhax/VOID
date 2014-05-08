@@ -148,7 +148,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public bool debug_Display = false;
 	public string debug_StateName;
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}

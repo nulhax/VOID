@@ -100,7 +100,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 
     // Member Methods
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_ConsoleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}

@@ -81,13 +81,13 @@ public class CGameRegistrator : MonoBehaviour
         Dispenser,
 		NaniteSilo,
         Engine,
-		Starter,
+		Thruster,
 		Prefabricator,
         TurretPulseSmall        = 640,
         TurretPulseMedium,
         TurretMissileSmall      = 645,
         TurretMissileMedium,
-        MissileProjectile                 = 660,
+        MissileProjectile      = 660,
         MissileHitParticles     = 662,
 
 		// Components
@@ -101,9 +101,6 @@ public class CGameRegistrator : MonoBehaviour
         ToolAk47,
         ToolMedical,
         ToolCircuitryKit,
-		ToolModuleGun,
-        ToolCalibrator,
-        ToolFluidizer,
         ToolMiningDrill,
 
         // Hazards
@@ -232,7 +229,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo Small");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine Small");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Thruster,                    "Modules/Thuster Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,               "Modules/Prefabricator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Pulse Turret Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Pulse Turret Medium");
@@ -254,16 +251,13 @@ public class CGameRegistrator : MonoBehaviour
 //        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
 
 		// Tools
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/Ratchet/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCalibrator,              "Tools/Calibrator/ToolCalibrator");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolFluidizer,               "Tools/FluidTool/ToolFluid");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/Mining Drill/ToolMiningDrill");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/ToolAk47");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/ToolExtinguisher");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/ToolMedical");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/ToolCircuitryKit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/ToolMiningDrill");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -359,14 +353,10 @@ public class CGameRegistrator : MonoBehaviour
 	{
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet         , ENetworkPrefab.ToolRatchet);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit    , ENetworkPrefab.ToolCircuitryKit);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator      , ENetworkPrefab.ToolCalibrator);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer       , ENetworkPrefab.ToolFluidizer);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator   , ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert         , ENetworkPrefab.ToolModuleGun);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.HealingKit      , ENetworkPrefab.ToolMedical);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47            , ENetworkPrefab.ToolAk47);   
 		CToolInterface.RegisterPrefab(CToolInterface.EType.MiningDrill     , ENetworkPrefab.ToolMiningDrill);
+        CToolInterface.RegisterPrefab(CToolInterface.EType.Torch           , ENetworkPrefab.ToolTorch);
 	}
 
 
@@ -381,8 +371,8 @@ public class CGameRegistrator : MonoBehaviour
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        	, ENetworkPrefab.NaniteSilo);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Prefabricator        , ENetworkPrefab.Prefabricator);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Thruster             , ENetworkPrefab.Thruster);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseSmall     , ENetworkPrefab.TurretPulseSmall);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseMedium    , ENetworkPrefab.TurretPulseMedium);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretMissleSmall    , ENetworkPrefab.TurretMissileSmall);
@@ -475,6 +465,7 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ModuleMenu_ToggleDisplay, KeyCode.B);
+        CUserInput.SetKeyBinding(CUserInput.EInput.TurretMenu_ToggleDisplay, KeyCode.Tab);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
         CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);

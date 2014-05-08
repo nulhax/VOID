@@ -50,7 +50,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		health_internal = _cRegistrar.CreateReliableNetworkVar<float>(OnSyncHealth, health_initial);
 		state_internal = _cRegistrar.CreateReliableNetworkVar<byte>(OnSyncState, state_initial);

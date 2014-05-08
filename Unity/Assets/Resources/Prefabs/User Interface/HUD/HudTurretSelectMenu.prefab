@@ -1424,7 +1424,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 500, y: 313, z: 0}
+  m_ViewPortPos: {x: 525, y: 312, z: 0}
 --- !u!114 &11400064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1502,10 +1502,7 @@ MonoBehaviour:
   duration: .200000003
   disabledColor: {r: .5, g: .5, b: .5, a: 1}
   dragHighlight: 0
-  onClick:
-  - mTarget: {fileID: 0}
-    mMethodName: OnEventModuleItemClicked
-    oneShot: 0
+  onClick: []
 --- !u!114 &11400072
 MonoBehaviour:
   m_ObjectHideFlags: 1

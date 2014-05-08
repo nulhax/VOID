@@ -47,7 +47,7 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fTotalPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_fMaxPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);

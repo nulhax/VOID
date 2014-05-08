@@ -12,10 +12,7 @@ GameObject:
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400002}
   - 64: {fileID: 6400002}
-  - 114: {fileID: 11400012}
-  - 114: {fileID: 11400014}
   m_Layer: 0
   m_Name: Thuster Small
   m_TagString: Untagged
@@ -542,18 +539,6 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: efbfa3f2192081742a5302f512b4d458, type: 2}
---- !u!114 &11400002
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 2f6707578c22ca34bbae0311673d6794, type: 2}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -565,10 +550,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6816199ec3694db80259603ba990c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sDisplayName: Turret Cockpit
-  m_sDescription: Allows the crew controlling of external offensive turrets
+  m_sDisplayName: Thuster
+  m_sDescription: Gives the ship the ability to move
   m_cModel: {fileID: 100030}
-  m_eModuleType: 900
+  m_cPrecipitativeModel: {fileID: 100000, guid: 2f6707578c22ca34bbae0311673d6794,
+    type: 2}
+  m_eModuleType: 750
   m_eModuleCategory: 100
   m_eModuleSize: 1
   m_fNanitesCost: 150
@@ -609,37 +596,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400012
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64bddf5367edeb843a606b8562809f85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cSeat: {fileID: 0}
-  m_Components:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!114 &11400014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46d8f6fa92c8a1a43896c7dcba8967c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cScreen: {fileID: 0}
-  m_cChairModelTrans: {fileID: 0}
-  m_fRotationMinX: -20
-  m_fRotationMaxX: 20
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

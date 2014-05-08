@@ -67,6 +67,8 @@ public class CPlayerHeadBob : MonoBehaviour {
 	{
 		if (CGamePlayers.SelfActor == gameObject && m_bUseHeadBob) 
 		{
+			if(gameObject.GetComponent<CPlayerMotor>().IsInputDisabled) return;
+
 			HeadBob ();
 		}
 	}

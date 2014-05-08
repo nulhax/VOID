@@ -186,7 +186,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 	}
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         //                                              Type   Callback          Initial Vlaue
 		m_fHealth        = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fMaxHealth);

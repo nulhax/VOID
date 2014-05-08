@@ -125,7 +125,7 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifySwitchingTool");
 

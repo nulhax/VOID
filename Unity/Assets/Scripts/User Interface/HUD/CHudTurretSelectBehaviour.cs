@@ -30,7 +30,7 @@ public class CHudTurretSelectBehaviour : MonoBehaviour
     {
         INVALID,
 
-        List,
+        TurretList,
         Dashboard,
 
         MAX
@@ -50,7 +50,7 @@ public class CHudTurretSelectBehaviour : MonoBehaviour
     {
         switch (_ePanel)
         {
-            case EPanel.List:
+            case EPanel.TurretList:
                 m_cTurretList.enabled = true;
                 m_cTurretDashboard.enabled = false;
                 break;
@@ -63,12 +63,17 @@ public class CHudTurretSelectBehaviour : MonoBehaviour
     }
 
 
+    public void OpenVisible(bool _bVisible)
+    {
+    }
+
+
 	void Start()
 	{
         m_cTemplateModuleGridItem.transform.parent = null;
         m_cTemplateModuleGridItem.SetActive(false);
 
-        SetActivePanel(EPanel.List);
+        SetActivePanel(EPanel.TurretList);
 	}
 
 
@@ -87,12 +92,12 @@ public class CHudTurretSelectBehaviour : MonoBehaviour
     }
 
 
-    void AddModuleGridItem(string _sTitle, CModuleInterface _eModuleInterface)
+    void AddGridItem(CTurretBehaviour _eTurretBehaviour)
     {
         GameObject cNewItem = GameObject.Instantiate(m_cTemplateModuleGridItem) as GameObject;
         cNewItem.SetActive(true);
 
-        cNewItem.transform.FindChild("Label_ModuleName").GetComponent<UILabel>().text = _sTitle;
+        cNewItem.transform.FindChild("Label_Name").GetComponent<UILabel>().text = _eTurretBehaviour.gameObject.name;
 
         // Append item to grid
         cNewItem.transform.parent = m_cTurretGrid.gameObject.transform;
@@ -101,9 +106,7 @@ public class CHudTurretSelectBehaviour : MonoBehaviour
         cNewItem.transform.localRotation = Quaternion.identity;
 
         // Set meta data
-        cNewItem.GetComponent<CMetaData>().SetMeta("ModuleType", _eModuleInterface.ModuleType);
-        cNewItem.GetComponent<CMetaData>().SetMeta("ModuleDescription", _eModuleInterface.m_sDescription);
-        cNewItem.GetComponent<CMetaData>().SetMeta("ModuleCost", _eModuleInterface.m_fNanitesCost);
+        cNewItem.GetComponent<CMetaData>().SetMeta("ViewId", _eTurretBehaviour.GetComponent<CNetworkView>().ViewId);
 
         // Refresh grid
         m_cTurretGrid.Reposition();
