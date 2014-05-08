@@ -120,7 +120,7 @@ GameObject:
   - 23: {fileID: 2300012}
   - 64: {fileID: 6400044}
   m_Layer: 0
-  m_Name: Door_East
+  m_Name: Cell_Door_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -138,7 +138,7 @@ GameObject:
   - 23: {fileID: 2300014}
   - 64: {fileID: 6400046}
   m_Layer: 0
-  m_Name: Default_East
+  m_Name: Cell_Default_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -156,7 +156,7 @@ GameObject:
   - 23: {fileID: 2300016}
   - 64: {fileID: 6400070}
   m_Layer: 0
-  m_Name: Default_North
+  m_Name: Cell_Default_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -174,7 +174,7 @@ GameObject:
   - 23: {fileID: 2300018}
   - 64: {fileID: 6400072}
   m_Layer: 0
-  m_Name: Window_East
+  m_Name: Cell_Window_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -192,7 +192,7 @@ GameObject:
   - 23: {fileID: 2300020}
   - 64: {fileID: 6400074}
   m_Layer: 0
-  m_Name: Window_West
+  m_Name: Cell_Window_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -390,7 +390,7 @@ GameObject:
   - 23: {fileID: 2300084}
   - 64: {fileID: 6400084}
   m_Layer: 0
-  m_Name: Default_West
+  m_Name: Cell_Default_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -787,7 +787,7 @@ GameObject:
   - 23: {fileID: 2300086}
   - 64: {fileID: 6400086}
   m_Layer: 0
-  m_Name: Door_West
+  m_Name: Cell_Door_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -805,7 +805,7 @@ GameObject:
   - 23: {fileID: 2300088}
   - 64: {fileID: 6400088}
   m_Layer: 0
-  m_Name: Door_East
+  m_Name: Hall_Door_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -841,7 +841,7 @@ GameObject:
   - 23: {fileID: 2300090}
   - 64: {fileID: 6400090}
   m_Layer: 0
-  m_Name: Default_East
+  m_Name: Hall_Default_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -859,7 +859,7 @@ GameObject:
   - 23: {fileID: 2300092}
   - 64: {fileID: 6400092}
   m_Layer: 0
-  m_Name: Window_East
+  m_Name: Hall_Window_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -877,7 +877,7 @@ GameObject:
   - 23: {fileID: 2300094}
   - 64: {fileID: 6400094}
   m_Layer: 0
-  m_Name: Window_East
+  m_Name: Edge_Window_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,7 +895,7 @@ GameObject:
   - 23: {fileID: 2300096}
   - 64: {fileID: 6400096}
   m_Layer: 0
-  m_Name: Default_East
+  m_Name: Edge_Default_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -913,7 +913,7 @@ GameObject:
   - 23: {fileID: 2300098}
   - 64: {fileID: 6400098}
   m_Layer: 0
-  m_Name: Door_East
+  m_Name: Edge_Door_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -931,7 +931,7 @@ GameObject:
   - 23: {fileID: 2300100}
   - 64: {fileID: 6400100}
   m_Layer: 0
-  m_Name: Default_South
+  m_Name: Cell_Default_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -964,7 +964,7 @@ GameObject:
   - 23: {fileID: 2300102}
   - 64: {fileID: 6400102}
   m_Layer: 0
-  m_Name: Door_South
+  m_Name: Cell_Door_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -982,7 +982,7 @@ GameObject:
   - 23: {fileID: 2300104}
   - 64: {fileID: 6400104}
   m_Layer: 0
-  m_Name: Window_North
+  m_Name: Cell_Window_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1000,7 +1000,7 @@ GameObject:
   - 23: {fileID: 2300106}
   - 64: {fileID: 6400106}
   m_Layer: 0
-  m_Name: Window_South
+  m_Name: Corner_Window_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1018,7 +1018,7 @@ GameObject:
   - 23: {fileID: 2300108}
   - 64: {fileID: 6400108}
   m_Layer: 0
-  m_Name: Window_East
+  m_Name: Corner_Window_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1036,7 +1036,7 @@ GameObject:
   - 23: {fileID: 2300110}
   - 64: {fileID: 6400110}
   m_Layer: 0
-  m_Name: Door_South
+  m_Name: Corner_Door_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1054,7 +1054,7 @@ GameObject:
   - 23: {fileID: 2300112}
   - 64: {fileID: 6400112}
   m_Layer: 0
-  m_Name: Door_East
+  m_Name: Corner_Door_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1072,7 +1072,7 @@ GameObject:
   - 23: {fileID: 2300114}
   - 64: {fileID: 6400114}
   m_Layer: 0
-  m_Name: Default_South
+  m_Name: Corner_Default_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1090,7 +1090,7 @@ GameObject:
   - 23: {fileID: 2300116}
   - 64: {fileID: 6400116}
   m_Layer: 0
-  m_Name: Default_East
+  m_Name: Corner_Default_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1108,7 +1108,7 @@ GameObject:
   - 23: {fileID: 2300118}
   - 64: {fileID: 6400118}
   m_Layer: 0
-  m_Name: Window_South
+  m_Name: End_Window_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1126,7 +1126,7 @@ GameObject:
   - 23: {fileID: 2300120}
   - 64: {fileID: 6400120}
   m_Layer: 0
-  m_Name: Door_North
+  m_Name: End_Door_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1144,7 +1144,7 @@ GameObject:
   - 23: {fileID: 2300122}
   - 64: {fileID: 6400122}
   m_Layer: 0
-  m_Name: Default_North
+  m_Name: End_Default_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1162,7 +1162,7 @@ GameObject:
   - 23: {fileID: 2300124}
   - 64: {fileID: 6400124}
   m_Layer: 0
-  m_Name: Default_East
+  m_Name: End_Default_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1180,7 +1180,7 @@ GameObject:
   - 23: {fileID: 2300126}
   - 64: {fileID: 6400126}
   m_Layer: 0
-  m_Name: Default_South
+  m_Name: End_Default_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1198,7 +1198,7 @@ GameObject:
   - 23: {fileID: 2300128}
   - 64: {fileID: 6400128}
   m_Layer: 0
-  m_Name: Door_East
+  m_Name: End_Door_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1216,7 +1216,7 @@ GameObject:
   - 23: {fileID: 2300130}
   - 64: {fileID: 6400130}
   m_Layer: 0
-  m_Name: Door_South
+  m_Name: End_Door_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1234,7 +1234,7 @@ GameObject:
   - 23: {fileID: 2300132}
   - 64: {fileID: 6400132}
   m_Layer: 0
-  m_Name: Window_East
+  m_Name: End_Window_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1252,7 +1252,7 @@ GameObject:
   - 23: {fileID: 2300134}
   - 64: {fileID: 6400134}
   m_Layer: 0
-  m_Name: Window_North
+  m_Name: End_Window_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1270,7 +1270,7 @@ GameObject:
   - 23: {fileID: 2300136}
   - 64: {fileID: 6400136}
   m_Layer: 0
-  m_Name: Window_West
+  m_Name: Hall_Window_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1288,7 +1288,7 @@ GameObject:
   - 23: {fileID: 2300138}
   - 64: {fileID: 6400138}
   m_Layer: 0
-  m_Name: Default_West
+  m_Name: Hall_Default_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1306,7 +1306,7 @@ GameObject:
   - 23: {fileID: 2300140}
   - 64: {fileID: 6400140}
   m_Layer: 0
-  m_Name: Door_West
+  m_Name: Hall_Door_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2418,7 +2418,7 @@ GameObject:
   - 23: {fileID: 2300404}
   - 64: {fileID: 6400200}
   m_Layer: 0
-  m_Name: Window_South
+  m_Name: Cell_Window_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2436,7 +2436,7 @@ GameObject:
   - 23: {fileID: 2300406}
   - 64: {fileID: 6400202}
   m_Layer: 0
-  m_Name: Door_North
+  m_Name: Cell_Door_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

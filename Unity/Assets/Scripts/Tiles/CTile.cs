@@ -301,7 +301,7 @@ public abstract class CTile : MonoBehaviour
 	{
 		Type classType = GetTileClassType(m_TileType);
 		Type enumModType = classType.GetNestedType("EModification");
-		
+
 		if(enumModType == null)
 			return;
 		
@@ -365,11 +365,12 @@ public abstract class CTile : MonoBehaviour
 	{
 		Type classType = GetTileClassType(m_TileType);
 		Type enumModType = classType.GetNestedType("EModification");
-		
+		Type enumTileMetaTypes = classType.GetNestedType("EType");
+
 		if(enumModType == null)
 			return(null);
 
-		string modName = Enum.GetName(enumModType, _ModificationType) + "_" + _LocalSide;
+		string modName =  Enum.GetName(enumTileMetaTypes, m_CurrentTileMeta.m_MetaType) + "_" + Enum.GetName(enumModType, _ModificationType) + "_" + _LocalSide;
 		Transform child = m_TileObject.transform.FindChild(modName);
 		
 		if(child != null)
