@@ -75,7 +75,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         // Empty
     }

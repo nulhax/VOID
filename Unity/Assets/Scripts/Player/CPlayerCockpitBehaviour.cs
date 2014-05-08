@@ -53,7 +53,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_cMountedCockpitViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync);
     }
@@ -68,17 +68,53 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
+        if (GetComponent<CPlayerInterface>().IsOwnedByMe)
+        {
+            CUserInput.SubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
+
+
+            m_cTurretSelectMenu = GameObject.Instantiate(m_cTurretSelectMenu) as GameObject;
+            m_cTurretSelectMenu.SetActive(false);
+
+            //m_cTurretSelectMenu.GetComponent<CHudModuleMenu>().EventCreateModule += OnEventCreateModule;
+        }
 	}
 
 
 	void OnDestroy()
 	{
+        if (GetComponent<CPlayerInterface>().IsOwnedByMe)
+        {
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
+
+            Destroy(m_cTurretSelectMenu);
+        }
 	}
 
 
 	void Update()
 	{
+        if (m_bMenuOpen)
+        {
+        }
 	}
+
+
+    void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
+    {
+        if (_bDown)
+        {
+            switch (_eInput)
+            {
+                case CUserInput.EInput.TurretMenu_ToggleDisplay:
+                    break;
+
+                default:
+                    Debug.LogError("Unknown input: " + _eInput);
+                    break;
+            }
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
@@ -89,7 +125,13 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public GameObject m_cTurretSelectMenu = null;
+
+
     CNetworkVar<TNetworkViewId> m_cMountedCockpitViewId = null;
+
+
+    bool m_bMenuOpen = false;
 
 
 };

@@ -221,7 +221,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		sGalaxy = null;
 	}
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		mCentreCellX = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.x);
 		mCentreCellY = _cRegistrar.CreateReliableNetworkVar<int>(SyncCentreCell, mCentreCell.y);

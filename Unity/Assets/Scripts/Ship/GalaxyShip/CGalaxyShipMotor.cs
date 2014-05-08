@@ -91,7 +91,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         for (int i = 0; i < (int)EThrusters.MAX; ++ i)
         {

@@ -338,6 +338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4994e896ac86b3e4e847092f89f7040a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cTurretSelectMenu: {fileID: 100002, guid: 928d770d03befff4cb4660d3b683e873, type: 2}
 --- !u!114 &11400034
 MonoBehaviour:
   m_ObjectHideFlags: 1

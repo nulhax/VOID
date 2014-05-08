@@ -74,7 +74,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 
 	void Update()
 	{
-		if(gameObject.GetComponent<CModulePrecipitation>().IsCompleted)
+		if(gameObject.GetComponent<CPrecipitativeMeshBehaviour>().IsCompleted)
 			UpdateAnimation();
 	}
 

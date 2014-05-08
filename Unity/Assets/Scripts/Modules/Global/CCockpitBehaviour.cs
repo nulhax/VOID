@@ -87,7 +87,7 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_ulMountedPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
 	}
@@ -291,7 +291,7 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
             if (CNetwork.IsServer &&
                 m_ulMountedPlayerId.PreviousValue != 0)
             {
-                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(NetworkViewId);
+                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(null);
             }
         }
 

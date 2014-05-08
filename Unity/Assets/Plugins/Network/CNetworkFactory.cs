@@ -48,7 +48,7 @@ public class CNetworkFactory : CNetworkMonoBehaviour
     // public:
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteCreateLocalObject");
         _cRegistrar.RegisterRpc(this, "RemoteDestroyLocalObject");
@@ -73,6 +73,17 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 			
 		return ("Prefabs/" + m_mPrefabs[(ushort)_cPrefabId]);
 	}
+
+
+    public GameObject LoadPrefab(object _cPrefabId)
+    {
+        string sToolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(_cPrefabId);
+
+        if (sToolPrefabFile == null)
+            return (null);
+
+        return (Resources.Load(sToolPrefabFile, typeof(GameObject)) as GameObject);
+    }
 
 
     [AServerOnly]

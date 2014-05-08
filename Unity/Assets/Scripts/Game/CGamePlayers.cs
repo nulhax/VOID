@@ -137,7 +137,7 @@ public class CGamePlayers : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_sNetworkedPlayerName = _cRegistrar.CreateReliableNetworkVar<string>(OnNetworkVarSync, "");
 

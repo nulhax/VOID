@@ -45,7 +45,6 @@ GameObject:
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400010}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400008}
   - 64: {fileID: 6400002}
@@ -220,18 +219,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100004}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 908b41ccafbfec245bd04fd5d3a81157, type: 2}
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -246,6 +233,8 @@ MonoBehaviour:
   m_sDisplayName: Pilot Cockpit
   m_sDescription: Used to fly the ship
   m_cModel: {fileID: 100006}
+  m_cPrecipitativeModel: {fileID: 100000, guid: 908b41ccafbfec245bd04fd5d3a81157,
+    type: 2}
   m_eModuleType: 250
   m_eModuleCategory: 200
   m_eModuleSize: 1

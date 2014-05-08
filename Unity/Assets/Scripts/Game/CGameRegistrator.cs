@@ -101,9 +101,6 @@ public class CGameRegistrator : MonoBehaviour
         ToolAk47,
         ToolMedical,
         ToolCircuitryKit,
-		ToolModuleGun,
-        ToolCalibrator,
-        ToolFluidizer,
         ToolMiningDrill,
 
         // Hazards
@@ -140,6 +137,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Other
 		LaserProjectile	= 1300,
 		LaserHitParticles,
+		CannonProjectile,
 
 		MAX
 	}
@@ -253,16 +251,13 @@ public class CGameRegistrator : MonoBehaviour
 //        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
 
 		// Tools
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/Ratchet/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCalibrator,              "Tools/Calibrator/ToolCalibrator");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolFluidizer,               "Tools/FluidTool/ToolFluid");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/Mining Drill/ToolMiningDrill");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/ToolAk47");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/ToolExtinguisher");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/ToolMedical");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/ToolCircuitryKit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/ToolMiningDrill");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -280,10 +275,10 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipResources,			"User Interface/DUI/Ship/DUIShipResources");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINaniteCapsule,			"User Interface/DUI/Modules/DUINaniteCapsule");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,					"User Interface/DUI/Modules/DUIPropulsionEngine");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiDoorControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,     	    "User Interface/DUI/Modules/DUIPrefabricator");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,			"User Interface/DUI/DuiAirlockInternal");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,				"User Interface/DUI/DuiDoorControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,			"User Interface/DUI/DUIFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,			"User Interface/DUI/Modules/DUIPrefabricator");
 
 
 		// NulOS
@@ -297,8 +292,9 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,		        "Modules/Turrets/Laser Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,				"Modules/Turrets/Laser Projectile");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Turrets/Laser Hit Particles");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CannonProjectile,			"EnemyShips/EnemyShipProjectile");
 	}
 
 
@@ -357,14 +353,10 @@ public class CGameRegistrator : MonoBehaviour
 	{
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet         , ENetworkPrefab.ToolRatchet);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit    , ENetworkPrefab.ToolCircuitryKit);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator      , ENetworkPrefab.ToolCalibrator);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer       , ENetworkPrefab.ToolFluidizer);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator   , ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert         , ENetworkPrefab.ToolModuleGun);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.HealingKit      , ENetworkPrefab.ToolMedical);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47            , ENetworkPrefab.ToolAk47);   
 		CToolInterface.RegisterPrefab(CToolInterface.EType.MiningDrill     , ENetworkPrefab.ToolMiningDrill);
+        CToolInterface.RegisterPrefab(CToolInterface.EType.Torch           , ENetworkPrefab.ToolTorch);
 	}
 
 
@@ -473,6 +465,7 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ModuleMenu_ToggleDisplay, KeyCode.B);
+        CUserInput.SetKeyBinding(CUserInput.EInput.TurretMenu_ToggleDisplay, KeyCode.Tab);
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
         CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);

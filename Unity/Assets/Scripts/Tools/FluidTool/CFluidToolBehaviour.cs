@@ -54,7 +54,7 @@ public class CFluidToolBehaviour : CNetworkMonoBehaviour
     // Member Functions
     
     
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
     }

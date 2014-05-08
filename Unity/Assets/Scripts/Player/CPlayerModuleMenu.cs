@@ -62,7 +62,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteNotifyBuildResponse");
     }
@@ -187,7 +187,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         {
             GameObject cHitTile = tTileRaycastHit.transform.gameObject;
 
-            if (cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject) == CTile.EType.Interior_Floor)
+            CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
+
+            if (eTileType == CTile.EType.Interior_Floor ||
+                eTileType == CTile.EType.Exterior_Wall)
             {
                 m_cPreviewModulePrecipitative.transform.position = tTileRaycastHit.point;
                 m_cPreviewModulePrecipitative.SetActive(true);
@@ -203,7 +206,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                         break;
 
                     case CModuleInterface.ESize.Medium:
-                        fSphereRadius = 4.0f;
+                        fSphereRadius = 3.0f;
                         break;
 
                     default:
@@ -300,10 +303,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     {
         m_ePreviewModuleType = _eType;
 
-        m_cPreviewModulePrecipitative = Resources.Load(CNetwork.Factory.GetRegisteredPrefabFile(CModuleInterface.GetPrefabType(m_ePreviewModuleType)), typeof(GameObject)) as GameObject;
+        m_cPreviewModulePrecipitative = CNetwork.Factory.LoadPrefab(CModuleInterface.GetPrefabType(m_ePreviewModuleType));
         m_ePreviewModuleSize = m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().ModuleSize;
 
-        m_cPreviewModulePrecipitative = GameObject.Instantiate(m_cPreviewModulePrecipitative.GetComponent<CModulePrecipitation>().m_cPrecipitativeMesh) as GameObject;
+        m_cPreviewModulePrecipitative = GameObject.Instantiate(m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().m_cPrecipitativeModel) as GameObject;
         m_cPreviewModulePrecipitative.SetActive(false);
 
         m_bPreviewPlacementValid = false;

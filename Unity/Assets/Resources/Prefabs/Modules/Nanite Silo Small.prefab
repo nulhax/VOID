@@ -376,7 +376,6 @@ GameObject:
   - 114: {fileID: 11400014}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400010}
-  - 114: {fileID: 11400008}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400004}
   - 114: {fileID: 11400000}
@@ -761,18 +760,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400008
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100048}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 159ebfa5e8fad494490b508ae9b7a731, type: 2}
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -835,6 +822,8 @@ MonoBehaviour:
   m_sDisplayName: Nanite Silo Small
   m_sDescription: Increases the maximum nanites capacity for the ship
   m_cModel: {fileID: 100046}
+  m_cPrecipitativeModel: {fileID: 100000, guid: 159ebfa5e8fad494490b508ae9b7a731,
+    type: 2}
   m_eModuleType: 650
   m_eModuleCategory: 500
   m_eModuleSize: 1

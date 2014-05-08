@@ -114,12 +114,6 @@ public class CHudModuleMenu : MonoBehaviour
 	}
 
 
-    void ClearModuleGrid()
-    {
-        m_iDepthCounter = 0;
-    }
-
-
     void AddModuleGridItem(string _sTitle, CModuleInterface _eModuleInterface)
     {
         GameObject cNewItem = GameObject.Instantiate(m_cTemplateModuleGridItem) as GameObject;
