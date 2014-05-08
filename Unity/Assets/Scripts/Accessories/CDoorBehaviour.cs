@@ -22,10 +22,7 @@ using System.Collections.Generic;
 
 public class CDoorBehaviour : CNetworkMonoBehaviour
 {
-
-// Member Types
-
-
+	// Member Types
     public enum EEventType
     {
         OpenStart,
@@ -35,151 +32,103 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
     }
 
 
-// Member Delegates & Events
+	// Member Delegates & Events
+    public delegate void HandleDoorEvent(CDoorBehaviour _Sender);
+
+	public event HandleDoorEvent EventOpenStart;
+	public event HandleDoorEvent EventOpenFinished;
+	public event HandleDoorEvent EventCloseStart;
+	public event HandleDoorEvent EventCloseFinish;
 
 
-    public delegate void HandleDoorOpenStart(CDoorBehaviour _cSenderDoorBehaviour, EEventType _eEventType);
-    public event HandleDoorOpenStart EventOpenStart;
+	// Member Fields
+	public float m_FlowVolume = 100.0f;
+	public float m_OpenCloseSpeed = 1.0f;
+
+	private CNetworkVar<bool> m_Opened = null;
 
 
-    public delegate void HandleDoorOpened(CDoorBehaviour _cSenderDoorBehaviour, EEventType _eEventType);
-    public event HandleDoorOpened EventOpened;
-
-
-    public delegate void HandleDoorCloseStart(CDoorBehaviour _cSenderDoorBehaviour, EEventType _eEventType);
-    public event HandleDoorCloseStart EventCloseStart;
-
-
-    public delegate void HandleDoorClosed(CDoorBehaviour _cSenderDoorBehaviour, EEventType _eEventType);
-    public event HandleDoorClosed EventClosed;
-
-
-// Member Properties
-
-
-    public float OpenedPercent
-    {
-        get { return (m_fMotorTimer / m_fOpenCloseInterval); }
-    }
-
-
+	// Member Properties
     public bool IsOpened
     {
-        get { if (m_cOpened == null) Debug.LogError(gameObject.name); return (m_cOpened.Get()); }
+        get { return(m_Opened.Value); }
     }
 
 
-// Member Methods
-
-
+	// Member Methods
     public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-        m_cOpened = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
+		m_Opened = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
 
-
-    [AServerOnly]
-    public void SetOpened(bool _bOpened)
-    {
-        m_cOpened.Set(_bOpened);
-    }
-
-
-	void Start()
+	private void OnNetworkVarSync(INetworkVar _SyncedVar)
 	{
-        m_vClosedPosition = transform.position;
-        m_vOpenedPosition = m_vClosedPosition + new Vector3(0.0f, 2.5f, 0.0f);
+		if(m_Opened == _SyncedVar)
+		{
+			if(IsOpened)
+			{
+				if(EventOpenStart != null)
+					EventOpenStart(this);
+
+				animation.CrossFadeQueued("Door_Open");
+			}
+			else
+			{
+				if(EventCloseStart != null) 
+					EventCloseStart(this);
+				
+				animation.CrossFadeQueued("Door_Close");
+			}
+		}
+	}
+	
+	[AServerOnly]
+	public void OnTriggerEnter(Collider _Collider)
+	{
+		if(!CNetwork.IsServer)
+			return;
+
+		bool isPlayer = _Collider.gameObject.GetComponent<CPlayerInterface>();
+
+		if(isPlayer)
+			m_Opened.Value = true;
 	}
 
-
-	void OnDestroy()
+	[AServerOnly]
+	public void OnTriggerExit(Collider _Collider)
 	{
-        // Empty
+		if(!CNetwork.IsServer)
+			return;
+
+		bool isPlayer = _Collider.gameObject.GetComponent<CPlayerInterface>();
+		
+		if(isPlayer)
+			m_Opened.Value = false;
 	}
 
-
-	void Update()
+	public void DoorOpenFinished()
 	{
-        if (m_fMotorTimer < m_fOpenCloseInterval)
-        {
-            m_fMotorTimer += Time.deltaTime;
-
-            if (IsOpened)
-            {
-                transform.position = Vector3.Lerp(m_vClosedPosition, m_vOpenedPosition, m_fMotorTimer);
-            }
-            else
-            {
-                transform.position = Vector3.Lerp(m_vOpenedPosition, m_vClosedPosition, m_fMotorTimer);
-            }
-
-            if (m_fMotorTimer > m_fOpenCloseInterval)
-            {
-                if (IsOpened)
-                {
-                    if (EventOpened != null) EventOpened(this, EEventType.Opened);
-                }
-                else
-                {
-                    if (EventClosed != null) EventClosed(this, EEventType.Closed);
-                }
-            }
-        }
+		if (EventOpenFinished != null) 
+			EventOpenFinished(this);
 	}
 
+	public void DoorCloseFinished()
+	{
+		if (EventOpenFinished != null) 
+			EventOpenFinished(this);
+	}
 
-    void OnEventDuiDoorControlClick(CDuiDoorControlBehaviour.EButton _eButton)
+    private void OnEventDuiDoorControlClick(CDuiDoorControlBehaviour.EButton _eButton)
     {
         switch (_eButton)
         {
             case CDuiDoorControlBehaviour.EButton.OpenDoor:
-                SetOpened(true);
+                m_Opened.Value = true;
                 break;
 
             case CDuiDoorControlBehaviour.EButton.CloseDoor:
-                SetOpened(false);
-                break;
-
-            default:
-                Debug.LogError("Unknown dui facility door behaviour button. " + _eButton);
+				m_Opened.Value = false;
                 break;
         }
     }
-
-
-    void OnNetworkVarSync(INetworkVar _cSyncedVar)
-    {
-        if (m_cOpened == _cSyncedVar)
-        {
-            if (m_cOpened.Get())
-            {
-                if (EventOpenStart != null) EventOpenStart(this, EEventType.OpenStart);
-            }
-            else
-            {
-                if (EventCloseStart != null) EventCloseStart(this, EEventType.CloseStart);
-            }
-
-            m_fMotorTimer = 0.0f;
-        }
-    }
-
-
-// Member Fields
-
-
-    public float m_fFlowVolume = 100.0f;
-
-
-    CNetworkVar<bool> m_cOpened = null;
-
-
-    Vector3 m_vClosedPosition;
-    Vector3 m_vOpenedPosition;
-
-
-    float m_fMotorTimer         = 0.0f;
-    float m_fOpenCloseInterval  = 1.0f;
-
-
 };

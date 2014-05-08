@@ -117,7 +117,6 @@ public class CPowerGeneratorSmallBehaviour: MonoBehaviour
     public Transform m_cTransInnterRing = null;
     public Transform m_cTransOuterRing  = null;
 
-
     CModuleInterface m_cModuleInterface = null;
 
     Vector3 m_vSphereTopPos    = Vector3.zero;

@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Power Generator Medium Sphere
-  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
+  m_Shader: {fileID: 4800000, guid: bc5737dcd896208499ede8ac5133995e, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -69,19 +69,19 @@ Material:
         first:
           name: _EmissivePowerA
         second: 1
+      data:
+        first:
+          name: _ScaleFactor
+        second: 1.625
+      data:
+        first:
+          name: _EmmisivePower
+        second: 3.5
     m_Colors:
       data:
         first:
           name: _Color
         second: {r: 1, g: .517241359, b: 0, a: 1}
-      data:
-        first:
-          name: _DiffuseCol
-        second: {r: .996078432, g: .678431392, b: 0, a: 1}
-      data:
-        first:
-          name: _SpecCol
-        second: {r: 1, g: .682758629, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorR
@@ -98,3 +98,19 @@ Material:
         first:
           name: _EmissiveColorA
         second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: .996078432, g: .678431392, b: 0, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: .682758629, b: 0, a: 1}
+      data:
+        first:
+          name: _Color1
+        second: {r: .00659602741, g: .155939087, b: .448529422, a: 1}
+      data:
+        first:
+          name: _Color2
+        second: {r: .492647052, g: 1, b: .979005992, a: 1}
