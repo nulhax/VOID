@@ -13,8 +13,10 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400004}
   - 64: {fileID: 6400002}
+  - 114: {fileID: 11400000}
+  - 114: {fileID: 11400002}
   m_Layer: 0
-  m_Name: Thuster Small
+  m_Name: Thruster Small
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -539,6 +541,30 @@ MeshCollider:
   m_SmoothSphereCollisions: 0
   m_Convex: 1
   m_Mesh: {fileID: 4300000, guid: efbfa3f2192081742a5302f512b4d458, type: 2}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64d1c7dec105dbc4ca2e521dfe99ecc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400002
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c39ca4350f5965d489342df093f0968a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cTransBase: {fileID: 400004}
+  m_cTransHead: {fileID: 400002}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
