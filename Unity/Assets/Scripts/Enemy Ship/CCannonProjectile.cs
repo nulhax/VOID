@@ -1,11 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CCannonProjectile : MonoBehaviour
+public class CCannonProjectile : CNetworkMonoBehaviour
 {
 	[HideInInspector] public Rigidbody parent = null;
 	float lifetime = 4.0f;
-	float damage = 1000.0f;
+	float damage = 100.0f;
+
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
+	{
+
+	}
 
 	void Awake()
 	{
@@ -29,7 +34,9 @@ public class CCannonProjectile : MonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		Rigidbody colliderRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+		Rigidbody colliderRigidbody = collision.rigidbody;
+		if(colliderRigidbody == null)
+			colliderRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
 
 		if (colliderRigidbody != parent)
 		{

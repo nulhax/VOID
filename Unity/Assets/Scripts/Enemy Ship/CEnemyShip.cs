@@ -155,6 +155,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Awake()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
+		CGalaxy galaxy = CGalaxy.instance;
+		if (galaxy != null)
+			galaxy.eventPreGalaxyShift += OnPreGalaxyShift;
+
 		CCannon[] cannons = GetComponentsInChildren<CCannon>();
 		foreach (CCannon cannon in cannons) cannon.parent = rigidbody;
 
@@ -171,16 +178,29 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void Start()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		mBoundingRadius = CUtility.GetBoundingRadius(gameObject);
 	}
 
 	void OnDestroy()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
+		CGalaxy galaxy = CGalaxy.instance;
+		if (galaxy != null)
+			galaxy.eventPreGalaxyShift -= OnPreGalaxyShift;
+
 		Destroy(mTarget_InternalLastKnownPosition);	// Destroy the GameObject mTarget_InternalLastKnownPosition.
 	}
 
 	void Update()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		if (Input.GetKeyDown(KeyCode.KeypadDivide))
 			debug_Display = !debug_Display;
 
@@ -202,6 +222,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void FixedUpdate()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		// Reset variables.
 		mTargetWithinViewCone = mTargetWithinViewSphere = mTargetDirectLineOfSight = false;
 		mTorque = Vector3.zero;
@@ -291,6 +314,9 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		GameObject collidingObject = collision.gameObject;
 		CCannonProjectile cannonProjectile = collidingObject.GetComponent<CCannonProjectile>();
 		if (cannonProjectile != null)	// If the colliding object is a projectile...
@@ -308,6 +334,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 
 		ProcessEvent(EEvent.HostileTarget);
+	}
+
+	void OnPreGalaxyShift(Vector3 translation)
+	{
+		mTarget_InternalLastKnownPosition.transform.position += translation;
 	}
 
 	public bool IsWithinLineOfSight(Rigidbody target)
@@ -361,7 +392,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				continue;	// Ignore this object.
 			else	// The object is not part of the enemy ship or target...
 			{
-				Debug.LogError(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
+				//Debug.Log(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
 				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
 			}
 		}
@@ -702,11 +733,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			case EState.none:	// Initialise state.
 				StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, mTimeout2, "Travelling");
-
 				mTarget = mTarget_InternalLastKnownPosition;
-				mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
-				mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
-
 				mTargetExpireTime = mTimeSpentTravelling;
 				return;
 
@@ -718,7 +745,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							ProcessEvent(mTarget == null ? EEvent.transition_Idle : EEvent.transition_ExamineTarget);
 						else	// The target is still the dummy.
 						{
-
+							mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
 						}
 						return;
 
@@ -770,7 +797,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnDrawGizmos()
 	{
-		if (!debug_Display)
+		if (!CNetwork.IsServer || !debug_Display)
 			return;
 
 		Color oldColour = Gizmos.color;

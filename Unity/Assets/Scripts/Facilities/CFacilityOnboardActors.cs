@@ -103,11 +103,14 @@ public class CFacilityOnboardActors : MonoBehaviour
 {
 		foreach(GameObject actor in ActorsOnboard)
 		{
-			if(actor.GetComponent<CActorLocator>() != null)
-				actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
-			
-			if(EventActorExitedFacility != null)
-				EventActorExitedFacility(gameObject, actor);
+			if (actor != null)	// During shutdown, lists of GameObject may have null elements (if they got destroyed before this).
+			{
+				if (actor.GetComponent<CActorLocator>() != null)
+					actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
+
+				if (EventActorExitedFacility != null)
+					EventActorExitedFacility(gameObject, actor);
+			}
 		}
 	}
 }

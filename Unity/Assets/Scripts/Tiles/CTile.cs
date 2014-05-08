@@ -37,7 +37,11 @@ public abstract class CTile : MonoBehaviour
 		Interior_Ceiling_Inverse_Corner,
 		Exterior_Wall,
 		Exterior_Wall_Inverse_Corner,
-		
+		Exterior_Upper,
+		Exterior_Upper_Inverse_Corner,
+		Exterior_Lower,
+		Exterior_Lower_Inverse_Corner,
+
 		MAX
 	}
 
@@ -385,6 +389,10 @@ public abstract class CTile : MonoBehaviour
 		case EType.Interior_Ceiling_Inverse_Corner: 	classType = typeof(CTile_InteriorCeilingCap); break;
 		case EType.Exterior_Wall: 						classType = typeof(CTile_ExteriorWall); break;
 		case EType.Exterior_Wall_Inverse_Corner: 		classType = typeof(CTile_ExteriorWallCap); break;
+		case EType.Exterior_Upper: 						classType = typeof(CTile_ExteriorUpper); break;
+		case EType.Exterior_Upper_Inverse_Corner: 		classType = typeof(CTile_ExteriorUpperCap); break;
+		case EType.Exterior_Lower: 						classType = typeof(CTile_ExteriorLower); break;
+		case EType.Exterior_Lower_Inverse_Corner: 		classType = typeof(CTile_ExteriorLowerCap); break;
 		}
 		
 		return(classType);

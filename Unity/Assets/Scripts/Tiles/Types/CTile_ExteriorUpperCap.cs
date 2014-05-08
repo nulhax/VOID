@@ -1,4 +1,4 @@
-//  Auckland
+﻿//  Auckland
 //  New Zealand
 //
 //  (c) 2013
@@ -22,7 +22,7 @@ using System.Linq;
 /* Implementation */
 
 
-public class CTile_ExteriorWallCap : CTile 
+public class CTile_ExteriorUpperCap : CTile 
 {
 	// Member Types
 	public enum EType
@@ -49,10 +49,10 @@ public class CTile_ExteriorWallCap : CTile
 	{
 		get { return(s_MetaDictionary); }
 	}
-
+	
 	
 	// Member Methods
-	static CTile_ExteriorWallCap()
+	static CTile_ExteriorUpperCap()
 	{
 		// Fill relevant neighbours
 		s_RelevantDirections.AddRange(new EDirection[]{ EDirection.NorthEast, EDirection.NorthWest, EDirection.SouthEast, EDirection.SouthWest });
@@ -88,15 +88,22 @@ public class CTile_ExteriorWallCap : CTile
 	
 	private void Awake()
 	{
-		m_TileType = CTile.EType.Exterior_Wall_Inverse_Corner;
+		m_TileType = CTile.EType.Exterior_Upper_Inverse_Corner;
 	}
-
+	
 	protected override int DetirmineTileMask()
 	{
 		int tileMask = 0;
-		
+
+		// Get lower tile interface
+		CGridPoint lowerTilePos = new CGridPoint(m_TileInterface.m_GridPosition.ToVector - Vector3.up);
+		CTileInterface lowerTileInterface = m_TileInterface.m_Grid.GetTileInterface(lowerTilePos);
+
+		if(lowerTileInterface == null)
+			return(tileMask);
+
 		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
-		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		foreach(CNeighbour neighbour in lowerTileInterface.m_NeighbourHood)
 		{
 			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
 				continue;
@@ -105,7 +112,7 @@ public class CTile_ExteriorWallCap : CTile
 				continue;
 			
 			bool neighbourCheck = NeighbourCheck(neighbour);
-			
+
 			if(!neighbourCheck)
 				continue;
 			

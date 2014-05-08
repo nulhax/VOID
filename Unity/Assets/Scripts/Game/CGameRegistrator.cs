@@ -137,6 +137,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Other
 		LaserProjectile	= 1300,
 		LaserHitParticles,
+		CannonProjectile,
 
 		MAX
 	}
@@ -274,10 +275,10 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipResources,			"User Interface/DUI/Ship/DUIShipResources");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINaniteCapsule,			"User Interface/DUI/Modules/DUINaniteCapsule");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,					"User Interface/DUI/Modules/DUIPropulsionEngine");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiDoorControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,     	    "User Interface/DUI/Modules/DUIPrefabricator");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,			"User Interface/DUI/DuiAirlockInternal");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,				"User Interface/DUI/DuiDoorControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,			"User Interface/DUI/DUIFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,			"User Interface/DUI/Modules/DUIPrefabricator");
 
 
 		// NulOS
@@ -291,8 +292,9 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,		        "Modules/Turrets/Laser Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,				"Modules/Turrets/Laser Projectile");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Turrets/Laser Hit Particles");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CannonProjectile,			"EnemyShips/EnemyShipProjectile");
 	}
 
 

@@ -118,7 +118,7 @@ public class CGrid : MonoBehaviour
 		return(_WorldPosition * m_TileSize);
 	}
 
-	public CTileInterface GetTile(CGridPoint _GridPoint)
+	public CTileInterface GetTileInterface(CGridPoint _GridPoint)
 	{
 		CTileInterface tile = null;
 		if(m_GridBoard.ContainsKey(_GridPoint.ToString()))
@@ -138,7 +138,7 @@ public class CGrid : MonoBehaviour
 		foreach(CTileInterface tile in _Tiles)
 		{
 			// If the tile exists, remove from the list of unmodified tiles
-			CTileInterface existingTile = GetTile(tile.m_GridPosition);
+			CTileInterface existingTile = GetTileInterface(tile.m_GridPosition);
 			if(existingTile != null)
 				unmodifiedTiles.Remove(existingTile);
 
@@ -162,7 +162,7 @@ public class CGrid : MonoBehaviour
 	[AServerOnly]
 	public CTileInterface PlaceTile(CGridPoint _Position)
 	{
-		CTileInterface tileInterface = GetTile(_Position);
+		CTileInterface tileInterface = GetTileInterface(_Position);
 
 		// Create if it doesnt exist yet
 		if(tileInterface == null)
@@ -195,13 +195,17 @@ public class CGrid : MonoBehaviour
 				EventTileInterfaceCreated(tileInterface);
 		}
 	
+		// Disable all tile types
+		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
+			tileInterface.SetTileTypeState((CTile.EType)i, false);
+
 		return(tileInterface);
 	}
 
 	[AServerOnly]
 	public void RemoveTile(CGridPoint _Position)
 	{
-		CTileInterface tileInterface = GetTile(_Position);
+		CTileInterface tileInterface = GetTileInterface(_Position);
 		
 		// Create if it doesnt exist yet
 		if(tileInterface == null)

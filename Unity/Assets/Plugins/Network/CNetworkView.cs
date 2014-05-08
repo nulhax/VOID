@@ -624,7 +624,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 				*/
 
-                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
 
 				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 
@@ -810,7 +810,8 @@ public class CNetworkView : CNetworkMonoBehaviour
             }
         }
 
-        if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
+        if (!ViewId.IsChildViewId &&
+            !s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
         {
             s_mViewIdOwnerNames.Add(ViewId.Id, gameObject.name);
         }

@@ -50,14 +50,14 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _Emissive
+          name: _ParallaxMap
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _ParallaxMap
+          name: _Emissive
         second:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
@@ -80,6 +80,10 @@ Material:
         second: 1
       data:
         first:
+          name: _Parallax
+        second: .0199999996
+      data:
+        first:
           name: _EmissivePowerR
         second: 1
       data:
@@ -94,10 +98,6 @@ Material:
         first:
           name: _EmissivePowerA
         second: 1
-      data:
-        first:
-          name: _Parallax
-        second: .0199999996
     m_Colors:
       data:
         first:
