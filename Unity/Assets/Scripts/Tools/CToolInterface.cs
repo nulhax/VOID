@@ -12,6 +12,10 @@
 
 
 // Namespaces
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -380,14 +384,66 @@ public class CToolInterface : CNetworkMonoBehaviour
     }
 
 
+#if UNITY_EDITOR
+    [ContextMenu("Create Tool Extras (Editor only)")]
+    void CreatePrecipitationObject()
+    {
+        Vector3 oldPos = transform.position;
+        transform.position = Vector3.zero;
+
+        GameObject combinationMesh = new GameObject("_CombinationObject");
+        combinationMesh.transform.localPosition = Vector3.zero;
+        combinationMesh.transform.localRotation = Quaternion.identity;
+
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; ++i)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+        }
+
+        Mesh mesh = new Mesh();
+        mesh.CombineMeshes(combine);
+
+        // Add the mesh renderer and filter to the prefab
+        MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
+        MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
+
+        // Save the mesh
+        AssetDatabase.CreateAsset(mesh, "Assets/Models/Tools/_Combined/" + gameObject.name + ".asset");
+        mf.sharedMesh = mesh;
+
+        // Save the precipitation mat
+        Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
+        AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Tools/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+
+        // Use this material and save an instance of the prefab
+        mr.sharedMaterial = precipitateMat;
+        GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Tools/_Precipitative/" + gameObject.name + " Precipitative Model" + ".prefab", combinationMesh);
+        cPrecipitativePrefab.AddComponent<CPrecipitativeMeshBehaviour>();
+
+        GameObject cParticles = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Tools/_Precipitative/_Particle System Copy.prefab", (GameObject)Resources.Load("Prefabs/Tools/_Precipitative/_Particle System", typeof(GameObject)));
+
+        // Save assets and reposition original
+        AssetDatabase.SaveAssets();
+        transform.position = oldPos;
+        DestroyImmediate(combinationMesh);
+    }
+#endif
+
+
 // Member Fields
 
 	public EType m_eToolType = EType.INVALID;
 	public EToolCategory m_eToolCategory = EToolCategory.INVALID;
     public GameObject m_cModel = null;
+    public GameObject m_cPrecipitativeModel = null;
     public string m_sName = "Unnamed tool";
     public string m_sDescription = "This is the default tool description";
     public float m_fNaniteCost = -1.0f;
+    public float m_fBuildDuration = 10.4f;
     public bool m_bDispensable = false;
 
 

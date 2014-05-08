@@ -303,10 +303,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     {
         m_ePreviewModuleType = _eType;
 
-        m_cPreviewModulePrecipitative = Resources.Load(CNetwork.Factory.GetRegisteredPrefabFile(CModuleInterface.GetPrefabType(m_ePreviewModuleType)), typeof(GameObject)) as GameObject;
+        m_cPreviewModulePrecipitative = CNetwork.Factory.LoadPrefab(CModuleInterface.GetPrefabType(m_ePreviewModuleType));
         m_ePreviewModuleSize = m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().ModuleSize;
 
-        m_cPreviewModulePrecipitative = GameObject.Instantiate(m_cPreviewModulePrecipitative.GetComponent<CModulePrecipitation>().m_cPrecipitativeMesh) as GameObject;
+        m_cPreviewModulePrecipitative = GameObject.Instantiate(m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().m_cPrecipitativeModel) as GameObject;
         m_cPreviewModulePrecipitative.SetActive(false);
 
         m_bPreviewPlacementValid = false;

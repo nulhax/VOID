@@ -233,16 +233,21 @@ public class CNetworkView : CNetworkMonoBehaviour
         cRpcStream.Write(tMethodInfo, _caParameterValues);
 
         // Send to all players
-        if (_ulPlayerId == 0)
+        if (_ulPlayerId == 0 ||
+            _ulPlayerId == ulong.MaxValue)
         {
-			// Process on server straight away
-			CNetworkView.ProcessInboundStream(0, cRpcStream);
-			cRpcStream.SetReadOffset(0);
+            // Skip server
+            if (_ulPlayerId != ulong.MaxValue)
+            {
+			    // Process on server straight away
+			    CNetworkView.ProcessInboundStream(0, cRpcStream);
+			    cRpcStream.SetReadOffset(0);
+            }
 
 			// Append rpc stream to connected non-host players
             foreach (KeyValuePair<ulong, CNetworkPlayer> tEntry in CNetwork.Server.GetNetworkPlayers())
             {
-                // Make host execute RPC straight away
+                // Server has already processed the RPC call
                 if (!tEntry.Value.IsHost)
                 {
                     // Append packet data

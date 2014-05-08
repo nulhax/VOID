@@ -75,6 +75,17 @@ public class CNetworkFactory : CNetworkMonoBehaviour
 	}
 
 
+    public GameObject LoadPrefab(object _cPrefabId)
+    {
+        string sToolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(_cPrefabId);
+
+        if (sToolPrefabFile == null)
+            return (null);
+
+        return (Resources.Load(sToolPrefabFile, typeof(GameObject)) as GameObject);
+    }
+
+
     [AServerOnly]
 	public GameObject CreateGameObject(object _cPrefabId)
 	{

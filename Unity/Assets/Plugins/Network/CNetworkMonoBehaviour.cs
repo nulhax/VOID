@@ -50,12 +50,20 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     }
 
 
+    public void InvokeRpcAllButServer(string _sMethodName, params object[] _caParameters)
+    {
+        NetworkView.InvokeRpc(ulong.MaxValue, this, _sMethodName, _caParameters);
+    }
+
+
     public void InvokeRpcThisAll(params object[] _caParameters)
     {
         System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace();
         System.Diagnostics.StackFrame sf = st.GetFrame(1);
         System.Reflection.MethodBase currentMethodName = sf.GetMethod();
         Debug.LogError("Method name: " + currentMethodName.Name);
+
+        NetworkView.InvokeRpc(ulong.MaxValue, this, currentMethodName.Name, _caParameters);
     }
 
 

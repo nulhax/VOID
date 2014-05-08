@@ -250,13 +250,13 @@ public class CGameRegistrator : MonoBehaviour
 //        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
 
 		// Tools
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/Ratchet/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/Mining Drill/ToolMiningDrill");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/ToolAk47");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/ToolExtinguisher");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/ToolMedical");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/ToolCircuitryKit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/ToolMiningDrill");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -354,6 +354,7 @@ public class CGameRegistrator : MonoBehaviour
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47            , ENetworkPrefab.ToolAk47);   
 		CToolInterface.RegisterPrefab(CToolInterface.EType.MiningDrill     , ENetworkPrefab.ToolMiningDrill);
+        CToolInterface.RegisterPrefab(CToolInterface.EType.Torch           , ENetworkPrefab.ToolTorch);
 	}
 
 

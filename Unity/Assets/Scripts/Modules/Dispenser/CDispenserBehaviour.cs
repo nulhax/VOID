@@ -46,9 +46,6 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            // Register the event for building a tool
-            //m_cDuiConsole.DUIRoot.GetComponent<CDUIDispenserRoot>().EventBuildToolButtonPressed += OnEventDuiButtonPressed;
-
             // Register for parent facility power active change
             //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
         }
@@ -72,20 +69,13 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
         {
             m_cPreviewTool.transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
         }
-    }
-	
 
-    [AServerOnly]
-    void SpawnTool(CToolInterface.EType _ToolType)
-    {
-        // Create a new object
-		GameObject NewTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_ToolType));
-
-        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
-
-        // Set the tool's position
-		NewTool.GetComponent<CNetworkView>().SetPosition(m_cTransToolSpawn.position);
-		NewTool.GetComponent<CNetworkView>().SetEuler(m_cTransToolSpawn.eulerAngles);
+        if (m_cDuiDispenserBehaviour != null &&
+            m_cDuiDispenserBehaviour.CurrentPanel == CDuiDispenserBehaviour.EPanel.BuildProgress)
+        {
+            CPrecipitativeMeshBehaviour cPrecipitativeMeshBehaviour = m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>();
+            cPrecipitativeMeshBehaviour.SetProgressRatio(m_cDuiDispenserBehaviour.BuildProgressRatio);
+        }
     }
 
 
@@ -96,25 +86,6 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
             Destroy(m_cPreviewTool);
             m_cPreviewTool = null;
         }
-    }
-
-
-    [AServerOnly]
-    void OnEventDuiButtonPressed(CDuiDispenserBehaviour _cDui)
-    {
-        /*
-        CShipNaniteSystem cShipNaniteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-
-        // Check there is enough nanites for the selected tool
-		if(cShipNaniteSystem.NanaiteQuanity >= (float)_cDui.SelectedToolCost)
-        {
-            // Deduct the amount
-            cShipNaniteSystem.ChangeQuanity(-_cDui.SelectedToolCost);
-
-            // Spawn the selected tool
-            SpawnTool(_cDui.SelectedToolType);
-        }
-         * */
     }
 
 
@@ -132,21 +103,41 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     {
         DestroyToolPreview();
 
-        string sToolPrefabFile = CNetwork.Factory.GetRegisteredPrefabFile(CToolInterface.GetPrefabType(_eType));
-
-        m_cPreviewTool = Resources.Load(sToolPrefabFile, typeof(GameObject)) as GameObject;
-        m_cPreviewTool = GameObject.Instantiate(m_cPreviewTool.GetComponent<CToolInterface>().m_cModel) as GameObject;
+        m_cPreviewTool = CNetwork.Factory.LoadPrefab(CToolInterface.GetPrefabType(_eType));
+        m_cPreviewTool = GameObject.Instantiate(m_cPreviewTool.GetComponent<CToolInterface>().m_cPrecipitativeModel) as GameObject;
         m_cPreviewTool.transform.parent = m_cTransToolSpawn;
         m_cPreviewTool.transform.localPosition = Vector3.zero;
-        m_cPreviewTool.transform.localScale = Vector3.one / 2;
+        //m_cPreviewTool.transform.localScale = Vector3.one / 2;
     }
 
 
-    [AServerOnly]
     void OnEventDuiToolBuild(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType)
     {
-        GameObject cTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_eType));
-        cTool.GetComponent<CNetworkView>().SetPosition(m_cTransToolSpawn.position);
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles.Play();
+
+        if ( CNetwork.IsServer &&
+            !m_bBuildingTool)
+        {
+            m_cDuiDispenserBehaviour.SimulateBuildProgress(_eType);
+            m_bBuildingTool = true;
+        }
+    }
+
+
+    void OnEventDuiBuildProgressFinished(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType)
+    {
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
+
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles.Stop();
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().SetProgressRatio(0.0f);
+
+        if (CNetwork.IsServer)
+        {
+            GameObject cTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_eType));
+            cTool.GetComponent<CNetworkView>().SetPosition(m_cTransToolSpawn.position);
+
+            m_bBuildingTool = false;
+        }
     }
 
 
@@ -161,11 +152,11 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_tDuiConsoleViewId)
         {
-            if (CNetwork.IsServer)
-            {
-                m_tDuiConsoleViewId.Value.GameObject.GetComponent<CDuiDispenserBehaviour>().EventToolSelect += OnEventDuiToolSelectChange;
-                m_tDuiConsoleViewId.Value.GameObject.GetComponent<CDuiDispenserBehaviour>().EventToolBuild += OnEventDuiToolBuild;
-            }
+            m_cDuiDispenserBehaviour = m_tDuiConsoleViewId.Value.GameObject.GetComponent<CDuiDispenserBehaviour>();
+
+            m_cDuiDispenserBehaviour.EventToolBuild += OnEventDuiToolBuild;
+            m_cDuiDispenserBehaviour.EventToolSelect += OnEventDuiToolSelectChange;
+            m_cDuiDispenserBehaviour.EventBuildProgressFinished += OnEventDuiBuildProgressFinished;
         }
     }
 
@@ -180,7 +171,9 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     CNetworkVar<TNetworkViewId> m_tDuiConsoleViewId = null;
 
     GameObject m_cPreviewTool = null;
-    CDuiDispenserBehaviour m_DUIDispenser = null;
+    CDuiDispenserBehaviour m_cDuiDispenserBehaviour = null;
+
+    bool m_bBuildingTool = false;
 
 
 };

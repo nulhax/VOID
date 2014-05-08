@@ -2355,7 +2355,6 @@ GameObject:
   - 114: {fileID: 11400014}
   - 82: {fileID: 8200000}
   - 114: {fileID: 11400012}
-  - 114: {fileID: 11400010}
   - 114: {fileID: 11400008}
   - 114: {fileID: 11400006}
   - 114: {fileID: 11400004}
@@ -4407,18 +4406,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf17b969d6ded141a756f3d4ecbd41c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &11400010
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100312}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78338b348953b274787e409756fc3c30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_cPrecipitativeMesh: {fileID: 100000, guid: 5dead2cd3e4815b41ab48a99f2efa20f, type: 2}
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4471,6 +4458,8 @@ MonoBehaviour:
   m_sDisplayName: Power Battery Small
   m_sDescription: Generates a small amount of atmosphere that pressurizes your ship
   m_cModel: {fileID: 100310}
+  m_cPrecipitativeModel: {fileID: 100000, guid: 5dead2cd3e4815b41ab48a99f2efa20f,
+    type: 2}
   m_eModuleType: 350
   m_eModuleCategory: 300
   m_eModuleSize: 1

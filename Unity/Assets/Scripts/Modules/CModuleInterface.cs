@@ -12,10 +12,11 @@
 
 
 // Namespaces
-using UnityEngine;
 #if UNITY_EDITOR
-    using UnityEditor;
+using UnityEditor;
 #endif
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -246,6 +247,19 @@ public class CModuleInterface : CNetworkMonoBehaviour
             CGameShips.Ship.GetComponent<CShipModules>().RegisterModule(gameObject);
         }
 
+        if (!IsBuilt)
+        {
+            m_cPrecipitativeModel = GameObject.Instantiate(m_cPrecipitativeModel) as GameObject;
+            m_cPrecipitativeModel.transform.parent = gameObject.transform;
+            m_cPrecipitativeModel.transform.localPosition = Vector3.zero;
+            m_bPrecipitativeModelInstanced = true;
+
+            if (m_cPrecipitativeModel.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles != null)
+            {
+                m_cPrecipitativeModel.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles.Play();
+            }
+        }
+
 		// Ensure a type is defined 
 		if (m_eModuleType == EType.INVALID)
 		{
@@ -342,9 +356,9 @@ public class CModuleInterface : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_bBuiltPercent)
         {
-            if (GetComponent<CModulePrecipitation>() != null)
+            if (m_cPrecipitativeModel != null)
             {
-                GetComponent<CModulePrecipitation>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
+                m_cPrecipitativeModel.GetComponent<CPrecipitativeMeshBehaviour>().SetProgressRatio(m_bBuiltPercent.Value / 100.0f);
             }
 
             // Check is completely built
@@ -354,6 +368,13 @@ public class CModuleInterface : CNetworkMonoBehaviour
                 m_bBuilt = true;
 
                 SetModelVisible(true);
+
+                if (m_bPrecipitativeModelInstanced)
+                {
+                    Destroy(m_cPrecipitativeModel);
+                    m_cPrecipitativeModel = null;
+                    m_bPrecipitativeModelInstanced = false;
+                }
 
                 if (EventBuilt != null) EventBuilt(this);
 
@@ -412,7 +433,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
 		
 		// Use this material and save an instance of the prefab
 		mr.sharedMaterial = precipitateMat;
-		GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + "_Precipitative" + ".prefab", combinationMesh);
+        GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/" + gameObject.name + " Precipitative Model" + ".prefab", combinationMesh);
+        cPrecipitativePrefab.AddComponent<CPrecipitativeMeshBehaviour>();
 
         GameObject cParticles = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Modules/_Precipitative/_Particle System2222.prefab", (GameObject)Resources.Load("Prefabs/Modules/_Precipitative/_Particle System", typeof(GameObject)));
 		
@@ -430,6 +452,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
     public string m_sDisplayName = "";
     public string m_sDescription = "";
     public GameObject m_cModel = null;
+    public GameObject m_cPrecipitativeModel = null;
 	public EType m_eModuleType = EType.INVALID;
 	public ECategory m_eModuleCategory = ECategory.INVALID;
 	public ESize m_eModuleSize = ESize.INVALID;
@@ -449,6 +472,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
 
 
     bool m_bBuilt = false;
+    bool m_bPrecipitativeModelInstanced = false;
 
 
     static Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<CModuleInterface.EType, CGameRegistrator.ENetworkPrefab>();
