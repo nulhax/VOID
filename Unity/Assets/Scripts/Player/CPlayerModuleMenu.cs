@@ -190,12 +190,14 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
 
             if (eTileType == CTile.EType.Interior_Floor ||
+                eTileType == CTile.EType.Exterior_Upper ||
+                eTileType == CTile.EType.Exterior_Lower ||
                 eTileType == CTile.EType.Exterior_Wall)
             {
+                //m_cPreviewModulePrecipitative.layer = CGameCameras.MainCamera.layer;
                 m_cPreviewModulePrecipitative.transform.position = tTileRaycastHit.point;
                 m_cPreviewModulePrecipitative.SetActive(true);
-                m_vPreviewPosition = tTileRaycastHit.point;
-
+                m_cPreviewModulePrecipitative.transform.rotation = Quaternion.FromToRotation(Vector3.up, tTileRaycastHit.normal);
 
                 float fSphereRadius = 0.0f;
     
@@ -214,9 +216,13 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                         break;
                 }
 
-                RaycastHit[] atRaycastHits = Physics.SphereCastAll(m_vPreviewPosition, fSphereRadius / 2, Vector3.up, 0.1f, 1 << LayerMask.NameToLayer("Default"));
+                RaycastHit[] atRaycastHits = Physics.SphereCastAll(m_cPreviewModulePrecipitative.transform.position, fSphereRadius / 2, Vector3.up, 0.1f, 1 << LayerMask.NameToLayer("Default"));
 
-                if (atRaycastHits.Length > 0)
+                if ((eTileType != CTile.EType.Interior_Floor &&
+                     m_bPreviewModuleInternal) ||
+                    (eTileType == CTile.EType.Interior_Floor &&
+                     !m_bPreviewModuleInternal) ||
+                     atRaycastHits.Length > 0)
                 {
                     m_cPreviewModulePrecipitative.renderer.material.SetVector("_Tint", new Vector4(1.0f, 0.0f, 0.0f, 0.2f));
                 }
@@ -237,10 +243,18 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     [ALocalOnly]
     bool RaycastFindTile(ref RaycastHit _rtTileRaycastHit, ref CTileInterface _rcTileInterface)
     {
-        bool bHitTile = false;
-
         Ray cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
-        RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, 10.0f, 1 << CGameCameras.MainCamera.layer);
+        bool bHitTile = false;
+        if (CGameCameras.MainCamera.layer == LayerMask.NameToLayer("Default"))
+        {
+            cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.MainCamera.transform.forward);
+        }
+        else
+        {
+            cMainCameraRay = new Ray(CGameCameras.MainCamera.transform.position, CGameCameras.ProjectedCamera.transform.forward);
+        }
+        
+        RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, 10.0f, 1 << LayerMask.NameToLayer("Default"));
         cMainCameraRaycastHits = cMainCameraRaycastHits.OrderBy((_tItem) => _tItem.distance).ToArray();
 
 
@@ -265,6 +279,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     [ALocalOnly]
     void SetMenuOpened(bool _bOpen)
     {
+        if (_bOpen &&
+            m_eState == EState.BrowsingMenu)
+            return;
+
         m_cModuleMenu.SetActive(_bOpen);
         
         // Unlock cursor if opened
@@ -273,6 +291,15 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         if (_bOpen)
         {
             m_eState = EState.BrowsingMenu;
+        }
+
+        if (_bOpen)
+        {
+            GetComponent<CPlayerMotor>().DisableInput(this);
+        }
+        else
+        {
+            GetComponent<CPlayerMotor>().EnableInput(this);
         }
     }
 
@@ -291,8 +318,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
         s_cSerializedStream.Write(ENetworkAction.CreateModule);
         s_cSerializedStream.Write(m_ePreviewModuleType);
-        s_cSerializedStream.Write(m_vPreviewPosition);
-        s_cSerializedStream.Write(m_fPreviewEuler);
+        s_cSerializedStream.Write(m_cPreviewModulePrecipitative.transform.position);
+        s_cSerializedStream.Write(m_cPreviewModulePrecipitative.transform.eulerAngles);
 
         DestroyModulePreview();
     }
@@ -305,6 +332,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
         m_cPreviewModulePrecipitative = CNetwork.Factory.LoadPrefab(CModuleInterface.GetPrefabType(m_ePreviewModuleType));
         m_ePreviewModuleSize = m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().ModuleSize;
+        m_bPreviewModuleInternal = m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().m_bInternal;
 
         m_cPreviewModulePrecipitative = GameObject.Instantiate(m_cPreviewModulePrecipitative.GetComponent<CModuleInterface>().m_cPrecipitativeModel) as GameObject;
         m_cPreviewModulePrecipitative.SetActive(false);
@@ -325,9 +353,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         m_ePreviewModuleType = CModuleInterface.EType.INVALID;
         m_ePreviewModuleSize = CModuleInterface.ESize.INVALID;
         m_cPreviewModulePrecipitative = null;
-        m_vPreviewPosition = Vector3.zero;
-		m_fPreviewEuler = Vector3.zero;
         m_bPreviewPlacementValid = false;
+        m_bPreviewModuleInternal = false;
     }
 
 
@@ -384,7 +411,6 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         }
         else
         {
-            Debug.LogError("Module Built!!!! ");
         }
     }
 
@@ -401,8 +427,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     CModuleInterface.EType m_ePreviewModuleType = CModuleInterface.EType.INVALID;
     CModuleInterface.ESize m_ePreviewModuleSize = CModuleInterface.ESize.INVALID;
     GameObject m_cPreviewModulePrecipitative = null;
-    Vector3 m_vPreviewPosition = Vector3.zero;
-	Vector3 m_fPreviewEuler = Vector3.zero;
+    bool m_bPreviewModuleInternal = false;
     bool m_bPreviewPlacementValid = false;
 
 

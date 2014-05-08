@@ -66,6 +66,7 @@ public class CPrecipitativeMeshBehaviour : MonoBehaviour
 
 	void Update()
 	{
+        /*
         if (m_fProgressRatio < m_fTargetProgressRatio)
         {
             m_fProgressRatio += k_fProgressIncrementRate * Time.deltaTime;
@@ -77,7 +78,7 @@ public class CPrecipitativeMeshBehaviour : MonoBehaviour
 
             if (m_fTargetProgressRatio >= 1.0f)
             {
-                m_fProgressRatio = 1.0f;
+                //m_fProgressRatio = 1.0f;
             }
             else
             {
@@ -85,7 +86,9 @@ public class CPrecipitativeMeshBehaviour : MonoBehaviour
             }
         }
         else
+         * */
         {
+            m_fProgressRatio = m_fTargetProgressRatio;
             renderer.material.SetFloat("_Amount", m_fTargetProgressRatio);
         }
 	}
