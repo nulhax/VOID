@@ -86,9 +86,8 @@ public class CGameRegistrator : MonoBehaviour
         TurretPulseSmall        = 640,
         TurretPulseMedium,
         TurretMissileSmall      = 645,
-        TurretMissileMedium,
-        MissileProjectile                = 660,
-        MissileProjectile      = 660,
+        TurretMissileMedium,        
+        MissileProjectile      	= 660,
         MissileHitParticles     = 662,
 
 		// Components
@@ -477,5 +476,4 @@ public class CGameRegistrator : MonoBehaviour
 // Member Fields
 
 
-};
 };

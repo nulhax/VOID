@@ -133,6 +133,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 
 	void Update()
 	{	
+		UpdateRecording ();
 		EncodingUpdate();	
 		DecodingUpdate();
 	}
@@ -149,46 +150,50 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 				m_fRecordingTimer = 0.0f; 
 				m_bRecording = true;
 
-			}			
-			else if(m_bRecording)
-			{
-				m_fRecordingTimer += Time.deltaTime;
-				
-				if(m_fRecordingTimer >= (float)m_kiRecordTime)
-				{
-					Microphone.End(Microphone.devices[0]);
-					
-					// Calculate sound size (To the nearest frame size)
-					int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
-					iAudioDataSize -= iAudioDataSize % m_iFrameSize;
-					
-					// Extract audio data through the bum
-					float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
-					m_acVoiceInput.GetData(fAudioData, 0);
-					
-					// Convert to short
-					short[] saAudioData = new short[fAudioData.Length];
-					
-					for (int i = 0; i < fAudioData.Length; ++i)
-					{
-						saAudioData[i] = (short)(fAudioData[i] * 32767.0f);
-					}					
-					
-					AudioData voiceData = new AudioData();
-					voiceData.iAudioDataSize = iAudioDataSize;
-					voiceData.iFrequency = m_acVoiceInput.frequency;
-					voiceData.saData = saAudioData;				
-					
-					m_bEncoding = true;
-					
-					m_EncodeThread = new Thread(new ParameterizedThreadStart(EncodeAudio));
-					m_EncodeThread.Start((object)voiceData);
-					
-					m_bRecording = false;
-				}
 			}
 		}		
 	}
+
+	void UpdateRecording()
+	{
+		if (m_bRecording) 
+		{
+			m_fRecordingTimer += Time.deltaTime;
+
+			if (m_fRecordingTimer >= (float)m_kiRecordTime) 
+			{
+					Microphone.End (Microphone.devices [0]);
+	
+					// Calculate sound size (To the nearest frame size)
+					int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
+					iAudioDataSize -= iAudioDataSize % m_iFrameSize;
+	
+					// Extract audio data through the bum
+					float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
+					m_acVoiceInput.GetData (fAudioData, 0);
+	
+					// Convert to short
+					short[] saAudioData = new short[fAudioData.Length];
+	
+					for (int i = 0; i < fAudioData.Length; ++i) 
+                    {
+							saAudioData [i] = (short)(fAudioData [i] * 32767.0f);
+					}					
+	
+					AudioData voiceData = new AudioData ();
+					voiceData.iAudioDataSize = iAudioDataSize;
+					voiceData.iFrequency = m_acVoiceInput.frequency;
+					voiceData.saData = saAudioData;				
+	
+					m_bEncoding = true;
+	
+					m_EncodeThread = new Thread (new ParameterizedThreadStart (EncodeAudio));
+					m_EncodeThread.Start ((object)voiceData);
+	
+					m_bRecording = false;
+				}
+		    }
+		}
 	
 	void EncodingUpdate()
 	{
