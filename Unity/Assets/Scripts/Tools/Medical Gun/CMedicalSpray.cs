@@ -46,7 +46,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
@@ -136,7 +136,7 @@ public class CMedicalSpray : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.SprayEnd);
         }
 
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
     }
 
 

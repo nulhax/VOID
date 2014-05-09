@@ -216,7 +216,7 @@ ParticleSystem:
         rgba: 676615252
       maxColor:
         serializedVersion: 2
-        rgba: 2048263955
+        rgba: 32394272
       minMaxState: 0
     startSize:
       scalar: 200
@@ -266,7 +266,7 @@ ParticleSystem:
       minMaxState: 3
     gravityModifier: 0
     inheritVelocity: 0
-    maxNumParticles: 2000
+    maxNumParticles: 1000
   ShapeModule:
     serializedVersion: 2
     enabled: 1
@@ -1095,14 +1095,14 @@ ParticleSystemRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
-  m_RenderMode: 1
-  m_MaxParticleSize: 10000
+  m_RenderMode: 0
+  m_MaxParticleSize: 9999999830000
   m_CameraVelocityScale: 0
   m_VelocityScale: 50
   m_LengthScale: 2
   m_SortingFudge: 0
   m_NormalDirection: 1
-  m_SortMode: 1
+  m_SortMode: 2
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}

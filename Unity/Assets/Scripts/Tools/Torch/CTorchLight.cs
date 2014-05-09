@@ -47,7 +47,7 @@ public class CTorchLight : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bTorchLit = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
 		m_bTorchColour = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, 0);
@@ -106,12 +106,12 @@ public class CTorchLight : CNetworkMonoBehaviour
                 if (m_bTorchLit.Get())
                 {
                     s_cSerializeStream.Write((byte)ENetworkAction.TurnOffLight);
-                    s_cSerializeStream.Write(SelfNetworkView.ViewId);
+                    s_cSerializeStream.Write(NetworkView.ViewId);
                 }
                 else
                 {
                     s_cSerializeStream.Write((byte)ENetworkAction.TurnOnLight);
-                    s_cSerializeStream.Write(SelfNetworkView.ViewId);
+                    s_cSerializeStream.Write(NetworkView.ViewId);
                 }
             }
         };
@@ -121,7 +121,7 @@ public class CTorchLight : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.ToggleColour);
-                s_cSerializeStream.Write(SelfNetworkView.ViewId);
+                s_cSerializeStream.Write(NetworkView.ViewId);
             }
         };
 
@@ -176,7 +176,7 @@ public class CTorchLight : CNetworkMonoBehaviour
             }
             else
             {
-                light.intensity = 2;
+                light.intensity = 1.2f;
             }
 
         }
@@ -188,13 +188,13 @@ public class CTorchLight : CNetworkMonoBehaviour
                     light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 1:
-                    light.color = new Color(1.0f, 0, 0);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 2:
-                    light.color = new Color(0, 1.0f, 0);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
                 case 3:
-                    light.color = new Color(0, 0, 1.0f);
+                    light.color = new Color(174.0f / 255.0f, 208.0f / 255.0f, 1.0f);
                     break;
             }
         }

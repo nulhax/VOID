@@ -580,7 +580,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DUICamera2D: {fileID: 100030}
   m_DUICamera3D: {fileID: 0}
-  m_DUIType: 16
+  m_DUIType: 100
   m_AspectRatio: 1
 --- !u!114 &11400038
 MonoBehaviour:

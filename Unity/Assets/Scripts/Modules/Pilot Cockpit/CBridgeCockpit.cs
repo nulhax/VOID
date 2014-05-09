@@ -50,7 +50,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         // Empty
     }
@@ -70,10 +70,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cCockpitBehaviour = GetComponent<CCockpit>();
+        m_cCockpitBehaviour = GetComponent<CCockpitBehaviour>();
 
-		m_cCockpitBehaviour.EventPlayerEnter += OnCockpitMount;
-       	m_cCockpitBehaviour.EventPlayerLeave += OnCockpitUnmount;
+		m_cCockpitBehaviour.EventMounted += OnCockpitMount;
+       	m_cCockpitBehaviour.EventDismounted += OnCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);
@@ -287,7 +287,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CCockpit m_cCockpitBehaviour = null;
+    CCockpitBehaviour m_cCockpitBehaviour = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();

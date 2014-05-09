@@ -62,7 +62,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_cTargetAsteroidViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 		m_bFractureLaserVisible = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
@@ -84,7 +84,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		while (_cStream.HasUnreadData)
 		{
 			TNetworkViewId cTurretViewId = _cStream.Read<TNetworkViewId>();
-			GameObject cTurretObject = CNetwork.Factory.FindObject(cTurretViewId);
+			GameObject cTurretObject = CNetwork.Factory.FindGameObject(cTurretViewId);
 
 			if (cTurretObject != null)
 			{
@@ -120,7 +120,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange += OnTurretControllerChange;
 
 		if(m_MiningLaserPrefab == null)
 			Debug.LogError("MiningLaser prefab has not been assigned!");
@@ -133,14 +133,12 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 		m_cExtractorBeamObject.GetComponentInChildren<Light>().color = new Color(0.5f, 0.5f, 1.0f, 1.0f);
 		m_cFractureLaserObject.SetActive(false);
 		m_cExtractorBeamObject.SetActive(false);
-
-		m_cBarrelObject = GetComponent<CTurretBehaviour>().m_cBarrel;
 	}
 	
 	
 	void OnDestroy()
 	{
-		GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
+		//GetComponent<CTurretBehaviour>().EventControllerChange -= OnTurretControllerChange;
 	}
 
 
@@ -165,7 +163,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
         bool bLaserVisible = false;
         bool bExtractorBeamVisible = false;
 
-		if (GetComponent<CTurretBehaviour>().ControllerPlayerId != 0)
+		if (GetComponent<CTurretBehaviour>().IsUnderControl)
 		{
             Vector3 vGalaxyBarrelPosition = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(m_cBarrelObject.transform.position);
             Vector3 vGalaxyBarrelRotation = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(m_cBarrelObject.transform.rotation) * Vector3.forward;
@@ -174,7 +172,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             Ray cRay = new Ray(vGalaxyBarrelPosition, vGalaxyBarrelRotation);
 			
 			// Raycast against object
-			if (Physics.Raycast(cRay, out cRaycast, 300.0f, 1 << LayerMask.NameToLayer("Galaxy")))
+			if (Physics.Raycast(cRay, out cRaycast, 300.0f, CGalaxy.layerBit_Gubbin))
 			{
 				GameObject cHitObject = cRaycast.collider.gameObject;
                 CAsteroidChunkBehaviour cAsteroidChunkBehaviour = cHitObject.GetComponent<CAsteroidChunkBehaviour>();
@@ -261,7 +259,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
             Ray cRay = new Ray(vGalaxyBarrelPosition, vGalaxyBarrelRotation);
 
             // Raycast against object
-            if (Physics.Raycast(cRay, out cRaycastHit, 300.0f, 1 << LayerMask.NameToLayer("Galaxy")))
+            if (Physics.Raycast(cRay, out cRaycastHit, 300.0f, CGalaxy.layerBit_Gubbin))
             {
                 Vector3 cDirection = cRaycastHit.point - vGalaxyBarrelPosition;
                 m_cExtractorBeamObject.transform.rotation = Quaternion.LookRotation(cDirection.normalized);
@@ -294,7 +292,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[ALocalOnly]
     void OnLaserCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 
         if (_bDown)
         {
@@ -310,7 +308,7 @@ public class CMiningTurretBehaviour : CNetworkMonoBehaviour
 	[ALocalOnly]
     void OnExtracterBeamCommand(CUserInput.EInput _eInput, bool _bDown)
 	{
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 
         if (_bDown)
         {

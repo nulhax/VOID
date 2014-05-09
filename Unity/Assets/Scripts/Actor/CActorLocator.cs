@@ -54,6 +54,9 @@ public class CActorLocator : CNetworkMonoBehaviour
 	{
 		get 
         {
+            if (m_tCurrentFacilityViewId == null)
+                Debug.LogError(gameObject.name + " is missing a network view? The network variables were not instanced");
+
             if (m_tCurrentFacilityViewId.Value == null)
             {
                 return (null);
@@ -73,7 +76,7 @@ public class CActorLocator : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_tCurrentFacilityViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
@@ -82,6 +85,11 @@ public class CActorLocator : CNetworkMonoBehaviour
     [AServerOnly]
 	public void NotifyEnteredFacility(GameObject _cFacility)
 	{
+		if(m_tCurrentFacilityViewId.Value == null && gameObject.GetComponent<CActorBoardable>() != null)
+		{
+			gameObject.GetComponent<CActorBoardable>().BoardActor();
+		}
+
         // Add containing facility to list
 		m_aContainingFacilities.Add(_cFacility);
 
@@ -97,9 +105,12 @@ public class CActorLocator : CNetworkMonoBehaviour
 		m_aContainingFacilities.Remove(_cFacility);
 
         // Check still in the ship
-        if (m_aContainingFacilities.Count == 0)
+        if(m_aContainingFacilities.Count == 0)
         {
             m_tCurrentFacilityViewId.Value = null;
+
+			if(gameObject.GetComponent<CActorBoardable>() != null)
+				gameObject.GetComponent<CActorBoardable>().DisembarkActor();
         }
 	}
 
@@ -144,7 +155,8 @@ public class CActorLocator : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (gameObject == CGamePlayers.SelfActor)
+        if (CCursorControl.IsCursorLocked &&
+            gameObject == CGamePlayers.SelfActor)
         {
             string sFacilityText = "";
             GameObject cCurrentFacilityObject = GetComponent<CActorLocator>().CurrentFacility;

@@ -41,7 +41,7 @@ public class GalaxyProjector : CNetworkMonoBehaviour
 
 	private bool mUpToDate = false;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		radius_internal = _cRegistrar.CreateReliableNetworkVar<float>(SyncNetworkVar, initialRadius);
 		zoom_internal = _cRegistrar.CreateReliableNetworkVar<float>(SyncNetworkVar, initialZoom);

@@ -13,7 +13,6 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CNetworkView))]
 public class CEnemyShip : CNetworkMonoBehaviour
 {
 	public enum EState
@@ -90,21 +89,24 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	// State machine data set by state machine.
 	public EState mState = EState.none;
-	public float mTimeout = 0.0f;
-	public float mTimeoutSecondary = 0.0f;
+	public float mTimeout1 = 0.0f;
+	public float mTimeout2 = 0.0f;
 	public float mMinTimeSpentIdling = 2.0f;
 	public float mMaxTimeSpentIdling = 10.0f;
-	public float mTimeSpentChargingScanner = 10.0f;
-	public float mTimeSpentScanningForHeatSignatures = 15.0f;
+	public float mTimeSpentChargingScanner = 2.5f;
+	public float mTimeSpentScanningForHeatSignatures = 2.5f;
 	public float mTimeSpentExaminingTarget = 10.0f;
 	public float mTimeSpentAttackingTargetBeforeStopping = 15.0f;	// Chase for x seconds.
 	public float mTimeSpentAttackingTargetAfterStopping = 20.0f;	// Remain hostile to the target if it approaches within x seconds.
 	public float mTimeSpentTravelling = 5.0f;
-	public float mFireRate = 1.5f;
-	public float mMinVelocityOfSuspiciousGubbin = 0.0f;
+	public float mTimeUntilScannedTargetExpires = 30.0f;	// X seconds to reach the target location, after which mTimeUntilHostileTargetExpires will take over while it is in view.
+	public float mTimeUntilHostileTargetExpires = 20.0f;	// X seconds after the target disappears from view, the target will expire.
+	public float mTimeUntilExaminedTargetExpires = 5.0f;
+	public float mTimeBetweenWeaponFire = 1.0f / 3.0f;
+	public float mMinVelocityOfSuspiciousGubbin = 5.0f;
 	public float mTimeUntilSuspiciousGubbinExpires = 15.0f;
 
-	public Rigidbody mTarget { get { return mTarget_InternalSource != null ? mVisibleTarget ? mTarget_InternalSource : mTarget_InternalLastKnownPosition : null; } set { InvalidateCache(); mTarget_InternalSource = value; } }
+	public Rigidbody mTarget { get { return mTarget_InternalSource == null ? null : mTargetVisible ? mTarget_InternalSource : mTarget_InternalLastKnownPosition; } set { mTargetVisible = false; mTarget_InternalSource = value; mTarget_InternalLastKnownPosition.transform.position = (value == null ? Vector3.zero : value.worldCenterOfMass); } }
 	public Rigidbody mTarget_InternalSource = null;	// Will be valid for as long as something is being targeted, visible or not.
 	public Rigidbody mTarget_InternalLastKnownPosition = null;	// Always valid, but only ever referenced if there is a real target.
 	public bool mFaceTarget = false;
@@ -114,9 +116,11 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public int mAudioWeaponFireID = -1;
 
 	// State machine data set by physics.
-	public bool mFacingTarget = false;		// Is looking in the general direction of the target.
-	public bool mCloseToTarget = false;	// Is within acceptable range of the target.
-	public bool mVisibleTarget = false;	// Has direct line of sight to the target.
+	public bool mTargetWithinViewCone = false;
+	public bool mTargetWithinViewSphere = false;
+	public bool mTargetDirectLineOfSight = false;
+	public bool mTargetingSource { get { return mTarget_InternalSource == null ? false : mTargetVisible; } }
+	public bool mTargetVisible { get { return (mTargetWithinViewCone || mTargetWithinViewSphere) && mTargetDirectLineOfSight; } set { if (value)Debug.LogError("Can only be false"); mTargetWithinViewCone = mTargetWithinViewSphere = mTargetDirectLineOfSight = false; } }
 	public float viewConeRadiusInDegrees = 30.0f;
 	public float viewConeLength_Extension = 1000.0f;
 	public float viewConeLength { get { return mBoundingRadius + viewConeLength_Extension; } }
@@ -144,37 +148,64 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public bool debug_Display = false;
 	public string debug_StateName;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 
 	}
 
 	void Awake()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
+		CGalaxy galaxy = CGalaxy.instance;
+		if (galaxy != null)
+			galaxy.eventPreGalaxyShift += OnPreGalaxyShift;
+
+		CCannon[] cannons = GetComponentsInChildren<CCannon>();
+		foreach (CCannon cannon in cannons) cannon.parent = rigidbody;
+
+		gameObject.AddMissingComponent<CNetworkView>();
+
 		if (viewConeLength < viewSphereRadius) Debug.LogError("CEnemyShip: View cone length must be greater than view sphere radius");
 		if (viewSphereRadius < maxAcceptableDistanceToTarget) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
 		mTarget_InternalLastKnownPosition = ((GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"))).rigidbody;	// Create the RigidBody mTarget_InternalLastKnownPosition.
+		mTarget_InternalLastKnownPosition.transform.parent = CGalaxy.instance.transform;
 
 		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
 	}
 
 	void Start()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		mBoundingRadius = CUtility.GetBoundingRadius(gameObject);
 	}
 
 	void OnDestroy()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
+		CGalaxy galaxy = CGalaxy.instance;
+		if (galaxy != null)
+			galaxy.eventPreGalaxyShift -= OnPreGalaxyShift;
+
 		Destroy(mTarget_InternalLastKnownPosition);	// Destroy the GameObject mTarget_InternalLastKnownPosition.
 	}
 
 	void Update()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
 		if (Input.GetKeyDown(KeyCode.KeypadDivide))
 			debug_Display = !debug_Display;
 
-		mTimeout -= Time.deltaTime;
+		mTimeout1 -= Time.deltaTime;
+		mTimeout2 -= Time.deltaTime;
 
 		if (mTarget != null)	// All targets expire after some time.
 		{
@@ -191,6 +222,14 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void FixedUpdate()
 	{
+		if (!CNetwork.IsServer)
+			return;
+
+		// Reset variables.
+		mTargetWithinViewCone = mTargetWithinViewSphere = mTargetDirectLineOfSight = false;
+		mTorque = Vector3.zero;
+
+		// Begin update.
 		ProcessWhiskers();
 
 		mTimeUntilNextLosCheck -= Time.fixedDeltaTime;
@@ -200,8 +239,17 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			FindTargetsInLineOfSight();
 		}
 
-		if (mTarget != null && (mFaceTarget || mFollowTarget))	// If told to move to and/or look at the target, and there is prey or a disturbance to target...
+		if (mTarget != null)	// If there is prey or a disturbance to target...
 		{
+			// Determine if the original target is in view.
+			mTargetWithinViewCone = IsWithinViewCone(mTarget_InternalSource);
+			mTargetWithinViewSphere = IsWithinViewRadius(mTarget_InternalSource);
+			mTargetDirectLineOfSight = HasDirectLineOfSight(mTarget_InternalSource, viewConeLength);
+
+			// Update last known position of the original target if it is visible.
+			if (mTargetVisible)
+				mTarget_InternalLastKnownPosition.transform.position = mTarget_InternalSource.worldCenterOfMass;
+
 			Vector3 targetPos = mTarget.rigidbody.worldCenterOfMass;
 
 			// Get the location of the target in local space of this ship (i.e. relative location).
@@ -211,12 +259,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			Vector3 relativeDirection = (Quaternion.Inverse(transform.rotation) * (targetPos - rigidbody.worldCenterOfMass)).normalized;
 			Vector3 relativeRotation = new Vector3(Mathf.Atan2(relativeDirection.y, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.z), Mathf.Atan2(relativeDirection.x, relativeDirection.y));
 
-			mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
-			mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
-			mTorque.z = relativeRotation.z * 0.0f;
-
 			if(mFaceTarget)
 			{
+				mTorque.x = relativeRotation.x * -maxAngularAcceleration / Mathf.PI;
+				mTorque.y = relativeRotation.y * +maxAngularAcceleration / Mathf.PI;
+				mTorque.z = relativeRotation.z * 0.0f;
+
 				// Rotate to face target.
 				rigidbody.AddRelativeTorque(mTorque, ForceMode.Force);
 			}
@@ -228,17 +276,6 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				float maxLinearAccelerationScale = Mathf.Clamp(distanceToDesiredDistance / desiredDistanceToTarget, -1.0f, 1.0f);	// From no deviation to maximum deviation from desired distance; acceleration is scaled from 0 to max.
 				rigidbody.AddForce(absoluteDirection * maxLinearAcceleration * maxLinearAccelerationScale, ForceMode.Force);
 			}
-
-			// Determine if the target is in view.
-			mFacingTarget = IsWithinViewCone(targetPos);	// Is looking at target if within line of sight.
-
-			// Determine if the target is within range.
-			mCloseToTarget = distanceToTarget < maxAcceptableDistanceToTarget;
-
-			// Check if there is a direct line of sight to the target.
-			mVisibleTarget = IsWithinLineOfSight(mTarget);
-			if(mVisibleTarget)
-				mTarget_InternalLastKnownPosition.transform.position = mTarget.rigidbody.worldCenterOfMass;
 		}
 	}
 
@@ -256,7 +293,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				float radians = Mathf.Sqrt(1.0f - y * y);
 				float phi = ui * increment;
 				Vector3 direction = new Vector3(Mathf.Cos(phi) * radians, y, Mathf.Sin(phi) * radians);
-				RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, direction, whiskerLength, 1 << LayerMask.NameToLayer("Galaxy"));
+				RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, direction, whiskerLength, CGalaxy.layerBit_Gubbin);
 				for (int i = 0; i < rayHits.Length; ++i )
 				{
 					RaycastHit rayHit = rayHits[i];
@@ -277,51 +314,72 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnCollisionEnter(Collision collision)
 	{
-		Rigidbody targetRigidbody = collision.gameObject.rigidbody;
-		if (targetRigidbody == null)
-			targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+		if (!CNetwork.IsServer)
+			return;
 
-		if(targetRigidbody != null)
-			mTarget = targetRigidbody;
+		GameObject collidingObject = collision.gameObject;
+		CCannonProjectile cannonProjectile = collidingObject.GetComponent<CCannonProjectile>();
+		if (cannonProjectile != null)	// If the colliding object is a projectile...
+		{
+			mTarget = cannonProjectile.parent;
+		}
+		else	// The colliding object is not a projectile...
+		{
+			Rigidbody targetRigidbody = collision.gameObject.rigidbody;
+			if (targetRigidbody == null)
+				targetRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
+
+			if (targetRigidbody != null)
+				mTarget = targetRigidbody;
+		}
 
 		ProcessEvent(EEvent.HostileTarget);
 	}
 
-	void InvalidateCache()
+	void OnPreGalaxyShift(Vector3 translation)
 	{
-		mFacingTarget = false;
-		mCloseToTarget = false;
-		mVisibleTarget = false;
+		mTarget_InternalLastKnownPosition.transform.position += translation;
 	}
 
-	bool IsWithinLineOfSight(Rigidbody target)
+	public bool IsWithinLineOfSight(Rigidbody target)
 	{
-		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target);
+		return (IsWithinViewCone(target) || IsWithinViewRadius(target)) && HasDirectLineOfSight(target, viewConeLength);
 	}
 
-	bool IsWithinViewCone(Rigidbody target) { return IsWithinViewCone(target.worldCenterOfMass); }
-	bool IsWithinViewCone(Vector3 pos)
+	public bool IsWithinViewCone(Rigidbody target) { return IsWithinViewCone(target.worldCenterOfMass); }
+	public bool IsWithinViewCone(Vector3 pos)
 	{
-		Vector3 deltaPos = pos - rigidbody.worldCenterOfMass;
-		if (deltaPos == Vector3.zero)
-			return true;
-		else
-		{
-			float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
-			return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
-		}
+		//Vector3 deltaPos = pos - rigidbody.worldCenterOfMass;
+		//if (deltaPos == Vector3.zero)
+		//    return true;
+		//else
+		//{
+		//    deltaPos.Normalize();
+		//    float degreesToTarget = Quaternion.Angle(transform.rotation, Quaternion.LookRotation(deltaPos));
+		//    return degreesToTarget < viewConeRadiusInDegrees;	// Is looking at target if within view cone.
+		//}
+
+		Vector3 A = transform.forward;
+		Vector3 B = (pos - rigidbody.worldCenterOfMass).normalized;
+		float angle = Mathf.Acos(Vector3.Dot(A, B)) * Mathf.Rad2Deg;
+		return angle <= viewConeRadiusInDegrees;
 	}
 
-	bool IsWithinViewRadius(Rigidbody target) { return IsWithinViewRadius(target.worldCenterOfMass); }
-	bool IsWithinViewRadius(Vector3 pos)
+	public bool IsWithinViewRadius(Rigidbody target) { return IsWithinViewRadius(target.worldCenterOfMass); }
+	public bool IsWithinViewRadius(Vector3 pos)
 	{
 		return (pos - rigidbody.worldCenterOfMass).sqrMagnitude <= viewSphereRadius * viewSphereRadius;
 	}
 
-	bool HasDirectLineOfSight(Rigidbody target)
+	public bool HasDirectLineOfSight(Rigidbody target, float maxRange)
 	{
 		Vector3 deltaPos = target.worldCenterOfMass - rigidbody.worldCenterOfMass;
-		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, deltaPos.magnitude, 1 << LayerMask.NameToLayer("Galaxy"));
+		float distance = deltaPos.magnitude;
+
+		if (distance > maxRange)	// if the target is too far away...
+			return false;	// No line of sight.
+
+		RaycastHit[] rayHits = Physics.RaycastAll(rigidbody.worldCenterOfMass, deltaPos.normalized, distance, CGalaxy.layerBit_Gubbin);
 		for (int i = 0; i < rayHits.Length; ++i)	// For each object the ray hit...
 		{
 			RaycastHit rayHit = rayHits[i];
@@ -333,7 +391,10 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			if (collidedObjectRigidbody == rigidbody || collidedObjectRigidbody == target)	// If the object in the ray is this enemy ship or the target...
 				continue;	// Ignore this object.
 			else	// The object is not part of the enemy ship or target...
+			{
+				//Debug.Log(target.gameObject.name + ' ' + target.gameObject.GetInstanceID().ToString() + " obscured by " + rayHit.transform.gameObject.GetInstanceID().ToString() + ' ' + rayHit.transform.gameObject.name);
 				return false;	// There was something between this enemy ship and the target, thus there is no line of sight.
+			}
 		}
 
 		return true;	// There are no objects between the enemy ship and the target.
@@ -349,7 +410,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			return;	// Do not set a new target, as the current one is still valid.
 
 		// Find all objects within short range sphere and long-range cone.
-		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength, 1 << LayerMask.NameToLayer("Galaxy"));
+		Collider[] colliders = Physics.OverlapSphere(rigidbody.worldCenterOfMass, viewConeLength, CGalaxy.layerBit_Gubbin);
 		for (int i = 0; i < colliders.Length; ++i)
 		{
 			Rigidbody entityRigidbody = colliders[i].rigidbody != null ? colliders[i].rigidbody : CUtility.FindInParents<Rigidbody>(colliders[i].gameObject);
@@ -384,13 +445,13 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		}
 	}
 
-	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout, string _stateName)
+	void StateInitialisation(EState _state, bool _lookAtTarget, bool _moveToTarget, float _timeout1, float _timeout2, string _stateName)
 	{
 		mState = _state;
 		mFaceTarget = _lookAtTarget;
 		mFollowTarget = _moveToTarget;
-		mTimeout = _timeout;
-		mTimeoutSecondary = 0.0f;
+		mTimeout1 = _timeout1;
+		mTimeout2 = _timeout2;
 
 		debug_StateName = _stateName;
 	}
@@ -402,7 +463,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.idling, false, false, Random.Range(mMinTimeSpentIdling, mMaxTimeSpentIdling), "Idling");
+				StateInitialisation(EState.idling, false, false, Random.Range(mMinTimeSpentIdling, mMaxTimeSpentIdling), mTimeout2, "Idling");
 				return;
 
 			// Process state.
@@ -411,9 +472,16 @@ public class CEnemyShip : CNetworkMonoBehaviour
 				{
 					case EEvent.none:	// Normal process.
 						if (mTarget != null)	// Switch to checking out the target if there is one.
+						{
 							ProcessEvent(EEvent.transition_ExamineTarget);
-						else if(mTimeout <= 0.0f)	// No target; if this state expired...
-							ProcessEvent(EEvent.transition_Travel);
+						}
+						else	// Idling...
+						{
+							if (mTimeout1 <= 0.0f)	// No target; if this state expired...
+							{
+								ProcessEvent(EEvent.transition_Travel);
+							}
+						}
 						return;
 
 					default:	// Shutdown the state.
@@ -433,7 +501,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		{
 			// Initialise state.
 			case EState.none:
-				StateInitialisation(EState.examiningTarget, true, false, mTimeSpentExaminingTarget, "Examining Target");
+				StateInitialisation(EState.examiningTarget, true, false, mTimeSpentExaminingTarget, mTimeout2, "Examining Target");
 				return;
 
 			// Process state.
@@ -443,25 +511,47 @@ public class CEnemyShip : CNetworkMonoBehaviour
 					case EEvent.none:	// Normal process.
 						if (mTarget != null)	// If there is a valid target...
 						{
-							if (mFacingTarget)	// If facing the target...
+							if (mTargetVisible)
 							{
-								if (mVisibleTarget)	// If there is a direct line of sight to the target...
-									ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
-								else	// Facing the target, but target is not visible...
+								mTargetExpireTime = mTimeUntilExaminedTargetExpires;	// Reset the expiry timer.
+							}
+
+							if (mTargetWithinViewCone)	// If facing the target...
+							{
+								if (mTargetVisible)	// If the target is in sight...
 								{
-									if (mCloseToTarget)	// If already close to the target...
-										ProcessEvent(EEvent.transition_Idle);	// Ignore the target.
-									else if (!mFollowTarget)	// If not following the target...
+									// Spend time examining the target.
+									if (mTimeout1 <= 0.0f)
+										ProcessEvent(EEvent.transition_ChargeScanner);	// Scan for heat signatures.
+								}
+								else	// Target is not in sight...
+								{
+									if (mTargetWithinViewSphere)	// If close enough to the target to see it from any angle, but it still can't be seen...
 									{
-										mFollowTarget = true;	// Go to the target.
-										mTimeout = 10.0f;	// 10 seconds to reach the target.
+										ProcessEvent(EEvent.transition_Idle);	// Give up on the target. It may be hiding behind an asteroid or something.
 									}
-									else if (mTimeout < 0.0f)	// Following the target; If it took so long to reach the target the timer timed out...
-										ProcessEvent(EEvent.transition_Idle);	// Give up (can't reach the target).
+									else	// Target is not close enough to be seen from any angle...
+									{
+										if (!mFollowTarget)	// If not following the target...
+										{
+											mFollowTarget = true;	// Go to the target.
+											mTimeout1 = 10.0f;	// 10 seconds to reach the target.
+										}
+										else	// Going to the target...
+										{
+											// Wait until the target is reached.
+											if (mTimeout1 <= 0.0f)	// If it took so long to reach the target the timer timed out...
+												ProcessEvent(EEvent.transition_Idle);	// Give up (can't reach the target).
+										}
+									}
 								}
 							}
-							else if (mTimeout <= 0.0f)	// Not facing the target; If it took so long to face the target the timer timed out...
-								ProcessEvent(EEvent.transition_Idle);	// Give up (can't face the target).
+							else	// Not facing the target...
+							{
+								// Wait until facing the target.
+								if (mTimeout1 <= 0.0f)	// If it took so long to face the target the timer timed out...
+									ProcessEvent(EEvent.transition_Idle);	// Give up (can't face the target).
+							}
 						}
 						else	// The target has expired...
 							ProcessEvent(EEvent.transition_Idle);	// Move on to other things.
@@ -484,7 +574,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		switch (mState)
 		{
 			case EState.none:	// Initialise state.
-				StateInitialisation(EState.attackingTarget, true, true, mTimeSpentAttackingTargetBeforeStopping, "Attacking Target");
+				StateInitialisation(EState.attackingTarget, true, true, mTimeSpentAttackingTargetBeforeStopping, Mathf.Max(mTimeout2, 0.0f), "Attacking Target");
 				return;
 
 			case EState.attackingTarget:	// Process state.
@@ -493,34 +583,41 @@ public class CEnemyShip : CNetworkMonoBehaviour
 					case EEvent.none:	// Normal process.
 						if (mTarget != null)
 						{
-							if(mTimeoutSecondary > 0.0f)
-								mTimeoutSecondary -= Time.deltaTime;	// Time between firing bullets.
-
-							if (mVisibleTarget)	// If the target is in sight...
+							if (mTargetVisible)	// If the target is in sight...
 							{
-								mTargetExpireTime = 20.0f;	// Reset the expire time.
+								mTargetExpireTime = mTimeUntilHostileTargetExpires;	// Reset the expire time.
 
-								while (mTimeoutSecondary <= 0.0f)
+								while (mTimeout2 <= 0.0f)
 								{
-									mTimeoutSecondary += (mFireRate != 0.0f ? 1.0f / mFireRate : float.PositiveInfinity);
-									// Todo: Shoot prey. Bang bang.
+									mTimeout2 += mTimeBetweenWeaponFire;
 									GetComponent<CAudioCue>().Play(transform, 1.0f, false, mAudioWeaponFireID);
+
+									CCannon[] cannons = GetComponentsInChildren<CCannon>();
+									foreach (CCannon cannon in cannons) cannon.Fire(mTarget.worldCenterOfMass);
 								}
 							}
+							else	// The target is not in sight...
+							{
+								mTimeout2 = Mathf.Max(mTimeout2, 0.0f);	// Prevent the timer from accumulating while not firing.
+							}
 
-							if (mTimeout <= 0.0f)	// If the timer runs out...
+							if (mTimeout1 <= 0.0f)	// If the timer runs out...
 							{
 								if (mFollowTarget)	// If chasing the target...
 								{
 									mFollowTarget = false;	// Stop chasing the target
-									mTimeout = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
+									mTimeout1 = mTimeSpentAttackingTargetAfterStopping;	// Stop chasing for x seconds.
 								}
 								else	// Not chasing the target...
+								{
 									ProcessEvent(EEvent.transition_ChargeScanner);	// Search for something nearby to kill.
+								}
 							}
 						}
 						else	// The target has expired...
+						{
 							ProcessEvent(EEvent.transition_ChargeScanner);
+						}
 						return;
 
 					case EEvent.HostileTarget:
@@ -543,17 +640,22 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		switch (mState)
 		{
 			case EState.none:	// Initialise state.
-				StateInitialisation(EState.chargingScanner, false, false, mTimeSpentChargingScanner, "Charging Scanner");
+				StateInitialisation(EState.chargingScanner, false, false, mTimeSpentChargingScanner, mTimeout2, "Charging Scanner");
 				return;
 
-			case EState.scanningForHeatSignature:	// Process state.
+			case EState.chargingScanner:	// Process state.
 				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mTarget != null)	// Switch to checking out the target if there is one.
-							ProcessEvent(EEvent.transition_ExamineTarget);
-						else if (mTimeout <= 0.0f)
-							ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						//if (mTarget != null)	// Switch to checking out the target if there is one.
+						//{
+						//    ProcessEvent(EEvent.transition_ExamineTarget);
+						//}
+						//else	// No target...
+						{
+							if (mTimeout1 <= 0.0f)
+								ProcessEvent(EEvent.transition_ScanForHeatSignature);
+						}
 						return;
 
 					default:	// Shutdown the state.
@@ -573,26 +675,43 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		switch (mState)
 		{
 			case EState.none:	// Initialise state.
-				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, "Scanning For Heat Signature");
+				StateInitialisation(EState.scanningForHeatSignature, false, false, mTimeSpentScanningForHeatSignatures, 0.0f, "Scanning For Heat Signature");
 				return;
 
 			case EState.scanningForHeatSignature:	// Process state.
 				switch (_event)	// Process events.
 				{
 					case EEvent.none:	// Normal process.
-						if (mTarget != null)	// Switch to checking out the target if there is one.
-							ProcessEvent(EEvent.transition_ExamineTarget);
-						else	// No target.
+						//if (mTarget != null)	// Switch to checking out the target if there is one.
+						//{
+						//    ProcessEvent(EEvent.transition_ExamineTarget);
+						//}
+						//else	// No target.
 						{
-							// Scan for heat signature.
-							Rigidbody targetWithHeatSignature = null;	// Todo: call function that returns a player, enemy, ship, or nothing.
-							if (targetWithHeatSignature != null)
+							if (mTimeout1 <= 0.0f)	// If the timer times out...
 							{
-								mTarget = targetWithHeatSignature;
-								ProcessEvent(EEvent.transition_AttackTarget);
-							}
-							else if (mTimeout <= 0.0f)	// If the timer times out...
 								ProcessEvent(EEvent.transition_Idle);	// Nothing found - give up.
+							}
+							else	// Timer has not run out...
+							{
+								// Perform scan over time.
+								if (mTimeout2 <= 0.0f)	// If it is time to perform a scan burst.
+								{
+									// Scan for heat signature.
+									GameObject playerShip = CGameShips.GalaxyShip;
+									if (playerShip != null)
+									{
+										Rigidbody playerShipRigidbody = playerShip.rigidbody;
+										if (HasDirectLineOfSight(playerShipRigidbody, float.PositiveInfinity))	// So long as the target is not hiding behind something, it will be picked up by the scanner.
+										{
+											// Detected by enemy ship!
+											mTarget = playerShipRigidbody;
+											mTargetExpireTime = mTimeUntilScannedTargetExpires;
+											ProcessEvent(EEvent.transition_AttackTarget);
+										}
+									}
+								}
+							}
 						}
 						return;
 
@@ -613,12 +732,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		switch (mState)
 		{
 			case EState.none:	// Initialise state.
-				StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, "Travelling");
-
+				StateInitialisation(EState.travelling, true, true, mTimeSpentTravelling, mTimeout2, "Travelling");
 				mTarget = mTarget_InternalLastKnownPosition;
-				mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
-				mTarget_InternalLastKnownPosition.transform.parent = gameObject.transform;
-
 				mTargetExpireTime = mTimeSpentTravelling;
 				return;
 
@@ -630,12 +745,12 @@ public class CEnemyShip : CNetworkMonoBehaviour
 							ProcessEvent(mTarget == null ? EEvent.transition_Idle : EEvent.transition_ExamineTarget);
 						else	// The target is still the dummy.
 						{
-
+							mTarget_InternalLastKnownPosition.transform.position = rigidbody.worldCenterOfMass + gameObject.transform.forward * (desiredDistanceToTarget + (viewConeLength - desiredDistanceToTarget) * 0.75f);
 						}
 						return;
 
 					default:	// Shutdown the state.
-						mTarget_InternalLastKnownPosition.transform.parent = null;
+						mTarget_InternalLastKnownPosition.transform.parent = CGalaxy.instance.transform;
 						mState = EState.none;
 						ProcessEvent(_event);
 						return;
@@ -682,7 +797,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 
 	void OnDrawGizmos()
 	{
-		if (!debug_Display)
+		if (!CNetwork.IsServer || !debug_Display)
 			return;
 
 		Color oldColour = Gizmos.color;

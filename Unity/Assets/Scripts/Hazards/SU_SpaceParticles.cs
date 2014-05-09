@@ -26,7 +26,7 @@ public class SU_SpaceParticles : MonoBehaviour
 	// parent they will respawn (relocate) to within range at distanceSpawn of range.
 	public float range = 2000.0f;
 	// Distance percentile of range to relocate/spawn particles to
-	public float distanceSpawn = 0.95f;	
+	public float distanceSpawn = 0.98f;	
 	// Minimum size of particles
 	public float minParticleSize = 0.5f;
 	// Maximum size of particles
@@ -43,7 +43,7 @@ public class SU_SpaceParticles : MonoBehaviour
 	public bool fadeParticles = true;
 
 	// Distance percentile of range to start fading particles (should be lower than distanceSpawn)
-	public float distanceFade = 0.5f;
+	public float distanceFade = 0.99f;
 
 	// CGalaxy desity. Value between 0 - 1
 	public float m_density = 0.0f;
@@ -73,18 +73,15 @@ public class SU_SpaceParticles : MonoBehaviour
 	
 	void StormEffect()
 	{
-		int _numParticles = particleSystem.particleCount;
+		//m_IsStorm = true;
 
-		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
-
-		particleSystem.GetParticles(_particles);
-
-		for (int i = 0; i < _particles.Length; i++) 
-		{
-			//_particles[i].
-		}
-
-		particleSystem.SetParticles(_particles, _numParticles); 
+//		int _numParticles = particleSystem.particleCount;
+//
+//		ParticleSystem.Particle[] _particles = new ParticleSystem.Particle[_numParticles];
+//
+//		particleSystem.GetParticles(_particles);
+//
+//		particleSystem.SetParticles(_particles, _numParticles); 
 	}
 
 	void Start () 
@@ -93,6 +90,7 @@ public class SU_SpaceParticles : MonoBehaviour
 		CGalaxyStorm galaxystorm = CGalaxy.instance.gameObject.GetComponent<CGalaxyStorm>();
 		galaxystorm.EventStartStorm += StormEffect;
 
+		// Take the position of the particles and shift them to the new galaxy cell
 		CGalaxy.instance.eventPostGalaxyShift += ShiftParticles;
 
 		// Cache transform and particle system to improve performance
@@ -105,8 +103,7 @@ public class SU_SpaceParticles : MonoBehaviour
 		// Scale particles
 		if (_cacheParticleSystem == null) {
 			// Throw an error if the object of this script has no particle system
-			Debug.LogError("This script must be attached to a GameObject with a particle system. It is strongly recommended " +
-							"that you use the SpaceParticles or SpaceFog prefab which have suitable particle systems)");
+			Debug.LogError("Attach to game object with aprticle system - SpaceFog, SpaceParticles work");
 		}
 		
 		// Spawn all new particles within a sphere in range of the object
@@ -126,6 +123,10 @@ public class SU_SpaceParticles : MonoBehaviour
 	
 	void Update () 
 	{
+        if (CGameCameras.MainCamera == null)
+            return;
+
+
 		m_density = CGalaxy.instance.DebrisDensity(CGalaxy.instance.RelativePointToAbsoluteCell(CGameCameras.MainCamera.transform.position));
 
 		if(m_density < 0.2f)
@@ -178,18 +179,19 @@ public class SU_SpaceParticles : MonoBehaviour
 				else 
 				{
 					// Particle is within range so ensure it has full alpha value
-					_particles[i].color = new Color(_col.r, _col.g, _col.b, 1.0f);						
+					_particles[i].color = new Color(_col.r, _col.g, _col.b, 0.01f);						
 				}
 			}
 
 			// Make sure the particles alpha with the galaxy density value
 			Color _colour = _particles[i].color;
-			_particles[i].color = new Color(_colour.r, _colour.g, _colour.b, m_density);
+			_particles[i].color = new Color(_colour.r, _colour.g, _colour.b, 0.02f);
        	}        
-		
+
 		// Set the particles according to above modifications
-    	particleSystem.SetParticles(_particles, _numParticles);    
+		particleSystem.SetParticles (_particles, _numParticles);
 	}
 
 	ParticleSystem.Particle[] m_particles;
+	//bool m_IsStorm = false;
 }

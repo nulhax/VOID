@@ -79,6 +79,12 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
     }
 
 
+	public RaycastHit[] LastRaycastHits
+	{
+		get { return (m_LastRaycastHits); }
+	}
+
+
     public GameObject OldTargetActorObject
     {
         get { return (m_cTargetActorObject); }
@@ -94,7 +100,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
 		// Empty
 	}
@@ -159,7 +165,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
 		{
             CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
@@ -170,7 +176,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
@@ -211,14 +217,14 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         // Do the ray cast against all objects in path
         RaycastHit[] cProjectedCameraRaycastHits = Physics.RaycastAll(cProjectedCameraRay, s_fRayRange, 1 << CGameCameras.ProjectedCamera.layer);
 
-        RaycastHit[] cRaycastHits = new RaycastHit[cMainCameraRaycastHits.Length + cProjectedCameraRaycastHits.Length];
-        Array.Copy(cMainCameraRaycastHits, cRaycastHits, cMainCameraRaycastHits.Length);
-        Array.Copy(cProjectedCameraRaycastHits, 0, cRaycastHits, cMainCameraRaycastHits.Length, cProjectedCameraRaycastHits.Length);
+		m_LastRaycastHits = new RaycastHit[cMainCameraRaycastHits.Length + cProjectedCameraRaycastHits.Length];
+		Array.Copy(cMainCameraRaycastHits, m_LastRaycastHits, cMainCameraRaycastHits.Length);
+		Array.Copy(cProjectedCameraRaycastHits, 0, m_LastRaycastHits, cMainCameraRaycastHits.Length, cProjectedCameraRaycastHits.Length);
 
-        cRaycastHits = cRaycastHits.OrderBy(_cRay => _cRay.distance).ToArray();
+		m_LastRaycastHits = m_LastRaycastHits.OrderBy(_cRay => _cRay.distance).ToArray();
 
 		// Check each one for an interactable object
-        foreach (RaycastHit cRaycastHit in cRaycastHits)
+		foreach (RaycastHit cRaycastHit in m_LastRaycastHits)
         {
             // Get the game object which owns this mesh
             GameObject cHitObject = cRaycastHit.collider.gameObject;
@@ -334,7 +340,7 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
     GameObject m_cOldTargetActorObject = null;
     GameObject m_cTargetActorObject = null;
     RaycastHit m_cTargetRaycastHit;
-
+	RaycastHit[] m_LastRaycastHits;
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
 

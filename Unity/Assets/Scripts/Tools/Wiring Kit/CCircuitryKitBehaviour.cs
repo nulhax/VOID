@@ -54,7 +54,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
     // Member Functions
     
     
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
     }
@@ -125,7 +125,7 @@ public class CCircuitryKitBehaviour : CNetworkMonoBehaviour
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CircuitryComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Circuitry)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

@@ -47,7 +47,7 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		
 	}
@@ -76,7 +76,7 @@ public class CNOSPanelRoot : CNetworkMonoBehaviour
 	public void CreateWidget(CNOSWidget.EType _WidgetType)
 	{
 		// Create the widget
-		GameObject widget = CNetwork.Factory.CreateObject(CNOSWidget.GetPrefabType(_WidgetType));
+		GameObject widget = CNetwork.Factory.CreateGameObject(CNOSWidget.GetPrefabType(_WidgetType));
 		CNetworkView widgetNV = widget.GetComponent<CNetworkView>();
 
 		// Parent to grid initially

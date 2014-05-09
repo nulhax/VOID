@@ -55,7 +55,7 @@ public class CGame : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
 	}
@@ -266,12 +266,6 @@ public class CGame : CNetworkMonoBehaviour
 
 	void DebugProcessInputs()
 	{
-		// Lock Cursor toggle
-		if(Input.GetKeyDown(KeyCode.F1))
-		{
-			Screen.lockCursor = !Screen.lockCursor;
-		}
-
 		// Quick quit game
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
@@ -287,7 +281,7 @@ public class CGame : CNetworkMonoBehaviour
 	void OnServerStartup()
 	{
         // DO FIRST (i.e. before anything in the game world is created), as the galaxy has no dependencies, but some objects depend on the galaxy.
-		CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
+		CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Galaxy);    // The server manages the galaxy - the clients just receive notifications when stuff appears and disappears.
 	}
 
 
@@ -303,11 +297,6 @@ public class CGame : CNetworkMonoBehaviour
 		{
 			CUserInput.UnsubscribeAll();
 		}
-	}
-
-
-	void OnApplicationFocus(bool _bFocused)
-	{
 	}
 
 

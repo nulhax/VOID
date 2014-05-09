@@ -46,7 +46,7 @@ Material:
       data:
         first:
           name: _Brightness
-        second: 2
+        second: 4
       data:
         first:
           name: _MinHeight
@@ -54,31 +54,31 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 3.20000005
+        second: 3.267102
       data:
         first:
           name: _Amount
         second: 0
       data:
         first:
+          name: _GlowIntensity
+        second: 2
+      data:
+        first:
           name: _FadeDist
-        second: 1
-      data:
-        first:
-          name: _NoiseFreq
-        second: 5
-      data:
-        first:
-          name: _NoiseSpeed
-        second: .0199999996
+        second: .150000006
       data:
         first:
           name: _FadeDistRatio
-        second: .342500001
+        second: .832499981
       data:
         first:
-          name: _GlowIntensity
-        second: 4
+          name: _NoiseFreq
+        second: 10
+      data:
+        first:
+          name: _NoiseSpeed
+        second: .25
     m_Colors:
       data:
         first:
@@ -91,4 +91,4 @@ Material:
       data:
         first:
           name: _Tint
-        second: {r: .375, g: .741379321, b: 1, a: .196078435}
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}

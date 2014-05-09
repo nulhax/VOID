@@ -23,81 +23,80 @@ using System.Collections.Generic;
 
 public class CShipPropulsionSystem : CNetworkMonoBehaviour 
 {
-	// Member Types
+// Member Types
 	
 	
-	// Member Delegates & Events
-	
-	
-	// Member Fields
-	private List<GameObject> m_PropulsionGenerators = new List<GameObject>();
-	
-	private float m_ShipPropulsionPotential = 0.0f;
-	private float m_ShipCurrentPropulsion = 0.0f;
+// Member Delegates & Events
 
 
-	// Member Properties
-	public float ShipPropulsionPotential
+// Member Properties
+
+
+	public float TotalPropulsion
 	{
-		get { return (m_ShipPropulsionPotential); } 
-	}
-	
-	public float ShipCurentPropulsion
-	{
-		get { return (m_ShipCurrentPropulsion); } 
+        get { return (m_fTotalPropulsion.Value); } 
 	}
 
 
-	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
-	{
+    public float MaxPropulsion
+    {
+        get { return (m_fMaxPropulsion.Value); }
+    }
 
+
+// Member Methods
+
+
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
+	{
+        m_fTotalPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fMaxPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
+
+
+    [AServerOnly]
+
+
+    [AServerOnly]
+    public void ChangeMaxPropolsion(float _fAmount)
+    {
+        m_fMaxPropulsion.Value += _fAmount;
+
+        Debug.Log(string.Format("Ship propulsion change({0}) max propulsion({1})", _fAmount, m_fMaxPropulsion.Value));
+    }
+
+
+    [AServerOnly]
+    public void ChangePropulsion(float _fAmount)
+    {
+        m_fTotalPropulsion.Value += _fAmount;
+
+        Debug.Log(string.Format("Ship propulsion total change({0}) total propulsion({1})", _fAmount, m_fTotalPropulsion.Value));
+    }
+
 	
-	public void OnNetworkVarSync(INetworkVar _VarInstance)
+	void Start() 
 	{
-		
-	}
-	
-	public void Start() 
-	{
-		
+		// Empty
 	}
 
-	public void Update() 
+	void Update() 
 	{
-		// Update propulsion variables
-		UpdatePropulsionVariables();
+        // Empty
 	}
 
-	public void RegisterPropulsionGeneratorSystem(GameObject _PropulsionGeneratorSystem)
-	{
-		if(!m_PropulsionGenerators.Contains(_PropulsionGeneratorSystem))
-		{
-			m_PropulsionGenerators.Add(_PropulsionGeneratorSystem);
-		}
-	}
-	
-	public void UnregisterPropulsionGeneratorSystem(GameObject _PropulsionGeneratorSystem)
-	{
-		if(m_PropulsionGenerators.Contains(_PropulsionGeneratorSystem))
-		{
-			m_PropulsionGenerators.Remove(_PropulsionGeneratorSystem);
-		}
-	}
 
-	private void UpdatePropulsionVariables()
-	{
-		m_ShipPropulsionPotential = 0.0f;
-		m_ShipCurrentPropulsion = 0.0f;
-		foreach(GameObject pg in m_PropulsionGenerators)
-		{
-			CPropulsionGeneratorBehaviour pgs = pg.GetComponent<CPropulsionGeneratorBehaviour>();
-			if(pgs.IsPropulsionGeneratorActive)
-			{
-				m_ShipCurrentPropulsion += pgs.PropulsionForce;
-			}
-			m_ShipPropulsionPotential += pgs.PropulsionPotential;
-		}
-	}
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        // Empty
+    }
+
+
+// Member Fields
+
+
+    CNetworkVar<float> m_fTotalPropulsion = null;
+    CNetworkVar<float> m_fMaxPropulsion = null;
+
+
 }

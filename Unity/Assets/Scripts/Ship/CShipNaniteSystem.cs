@@ -48,7 +48,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
     public float NanaiteQuanity
 	{
-        get { return (m_fNanaiteQuanity.Value); } 
+        get { return (m_fNanaiteQuantity.Value); } 
 	}
 
 
@@ -61,10 +61,10 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fNanaiteQuanity  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fNanaiteCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fNanaiteQuantity  = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fStartNanaiteQuantity);
+        m_fNanaiteCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, m_fStartNanaiteCapacity);
 	}
 
 
@@ -78,7 +78,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 	public float ChangeQuanity(float _fNumNanites)
 	{
         float fChangeQuanity = 0.0f;
-        float fNewQuanity = m_fNanaiteQuanity.Value + _fNumNanites;
+        float fNewQuanity = m_fNanaiteQuantity.Value + _fNumNanites;
 
         // Check new quantity will be higher then capacity
         if (fNewQuanity > m_fNanaiteCapacity.Value)
@@ -89,7 +89,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
         // Check new quanity will be lower then zero
         else if (fNewQuanity < 0.0f)
         {
-            fChangeQuanity = m_fNanaiteQuanity.Value;
+            fChangeQuanity = m_fNanaiteQuantity.Value;
         }
 
         // All nanites accepted
@@ -101,7 +101,7 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
         // Make quanity change
         if (fChangeQuanity != 0.0f)
         {
-            m_fNanaiteQuanity.Value += fChangeQuanity;
+            m_fNanaiteQuantity.Value += fChangeQuanity;
         }
 
         return (fChangeQuanity);
@@ -112,31 +112,34 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
     public void ChangeCapacity(float _fCapacity)
     {
         m_fNanaiteCapacity.Value += _fCapacity;
+
+        Debug.Log(string.Format("Ship nanite capacity total change({0}) total capacity ({1})", _fCapacity, m_fNanaiteCapacity.Value));
     }
 
 
     public void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        if (_cSyncedVar == m_fNanaiteQuanity)
+        if (_cSyncedVar == m_fNanaiteQuantity)
         {
-            if (EventQuantityChange != null) EventQuantityChange(m_fNanaiteQuanity.PreviousValue, m_fNanaiteQuanity.Value);
+            if (EventQuantityChange != null) EventQuantityChange(m_fNanaiteQuantity.PreviousValue, m_fNanaiteQuantity.Value);
         }
         else if (_cSyncedVar == m_fNanaiteCapacity)
         {
-            if (EventCapacityChange != null) EventCapacityChange(m_fNanaiteQuanity.PreviousValue, m_fNanaiteQuanity.Value);
+            if (EventCapacityChange != null) EventCapacityChange(m_fNanaiteQuantity.PreviousValue, m_fNanaiteQuantity.Value);
         }
     }
 
 
 	public void OnGUI()
 	{
-        if (CNetwork.IsConnectedToServer)
+        if (CCursorControl.IsCursorLocked && 
+            CNetwork.IsConnectedToServer)
         {
             float boxWidth = 150;
             float boxHeight = 40;
 
             GUI.Box(new Rect(Screen.width - boxWidth - 10, Screen.height - boxHeight - 110, boxWidth, boxHeight),
-                             "[Ship Nanites]\n" + m_fNanaiteQuanity.Value.ToString() + " / " + m_fNanaiteCapacity.Value);
+                             "[Ship Nanites]\n" + m_fNanaiteQuantity.Value.ToString() + " / " + m_fNanaiteCapacity.Value);
         }
 	}
 
@@ -144,7 +147,11 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<float> m_fNanaiteQuanity  = null;
+    public float m_fStartNanaiteCapacity = -1.0f;
+    public float m_fStartNanaiteQuantity = -1.0f;
+
+
+    CNetworkVar<float> m_fNanaiteQuantity = null;
     CNetworkVar<float> m_fNanaiteCapacity = null;
 
 

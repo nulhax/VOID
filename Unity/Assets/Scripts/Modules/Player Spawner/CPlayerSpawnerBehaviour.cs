@@ -41,7 +41,7 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bBlocked = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
@@ -49,10 +49,7 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
-        m_ComponentCircuitry.EventComponentBreak += OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   += OnComponentRepaired;
+        // Empty
 
 		// Find owner facility
 		//		Signup to power evetns, requires power to operate
@@ -63,22 +60,25 @@ public class CPlayerSpawnerBehaviour : CNetworkMonoBehaviour
 
     void OnDestroy()
     {
-        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
-        m_ComponentCircuitry.EventComponentBreak -= OnComponentDamaged;
-        m_ComponentCircuitry.EventComponentFix   -= OnComponentRepaired;
+        // Empty
     }
 
 
     void OnComponentDamaged(CComponentInterface _Component)
     {
-        m_bBlocked.Set(true);
+		if (CNetwork.IsServer)
+		{
+			m_bBlocked.Set(true);
+		}
     }
 
 
     void OnComponentRepaired(CComponentInterface _Component)
     {
-        m_bBlocked.Set(false);
+		if (CNetwork.IsServer)
+		{
+			m_bBlocked.Set(false);
+		}
     }
 
 

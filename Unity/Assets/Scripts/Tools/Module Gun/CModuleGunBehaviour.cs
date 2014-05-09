@@ -70,7 +70,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_DUIActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
@@ -98,7 +98,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.OpenDui);
-                s_cSerializeStream.Write(SelfNetworkView.ViewId);
+                s_cSerializeStream.Write(NetworkView.ViewId);
             }
         };
 
@@ -107,7 +107,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             if (_bDown)
             {
                 s_cSerializeStream.Write((byte)ENetworkAction.CloseDui);
-                s_cSerializeStream.Write(SelfNetworkView.ViewId);
+                s_cSerializeStream.Write(NetworkView.ViewId);
             }
         };
 
@@ -115,7 +115,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		m_ToolInterface = gameObject.GetComponent<CToolInterface>();
 
 		// Register DUI events
-		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DUIRoot.GetComponent<CDUIModuleCreationRoot>();
+		m_DUIModuleCreationRoot = m_DUI.GetComponent<CDUIConsole>().DuiRoot.GetComponent<CDUIModuleCreationRoot>();
 		m_DUIModuleCreationRoot.EventBuildModuleButtonPressed += OnDUIBuildButtonPressed;
 
 		// Configure DUI
@@ -209,7 +209,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 		if(_InteractableObject != null && !IsDUIActive && !m_Transitioning)
 		{
 			// Only conserned with selecting module ports
-			CModulePortInterface mpi = _InteractableObject.GetComponent<CModulePortInterface>();
+			CPreplacedModule mpi = _InteractableObject.GetComponent<CPreplacedModule>();
 			if(mpi != null)
 			{
 				// Register movement events
@@ -247,7 +247,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
 	[AServerOnly]
 	private void OnDUIBuildButtonPressed()
 	{
-		CModulePortInterface currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CModulePortInterface>();
+		CPreplacedModule currentPort = m_DUIModuleCreationRoot.CurrentPortSelected.GetComponent<CPreplacedModule>();
 
 		CShipNaniteSystem cShipNanaiteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
 
@@ -256,7 +256,7 @@ public class CModuleGunBehaviour : CNetworkMonoBehaviour
             cShipNanaiteSystem.ChangeQuanity(m_DUIModuleCreationRoot.SelectedModuleCost);
 
 			// Debug: Create the module instantly
-			currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
+			//currentPort.CreateModule(m_DUIModuleCreationRoot.SelectedModuleType);
 		
 			// Deactivate the UI
 			m_DUIActive.Set(false);

@@ -43,7 +43,9 @@ public class CDUIRoot : CNetworkMonoBehaviour
         AirlockInternal,
         FacilityDoor,
 		FacilityControl,
-		NOSPanelWide,
+		Prefabricator,
+
+		NOSPanelWide = 100,
 
 		MAX
 	}
@@ -98,7 +100,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 
 
     // Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_ConsoleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
@@ -122,7 +124,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
 		{
 			// Offset its position
 			gameObject.GetComponent<CNetworkView>().SetPosition(new Vector3(0.0f, 0.0f, s_UIOffset));
-			gameObject.GetComponent<CNetworkView>().SetEulerAngles(Quaternion.identity.eulerAngles);
+			gameObject.GetComponent<CNetworkView>().SetEuler(Quaternion.identity.eulerAngles);
 
 			// Increment the offset
 			s_UIOffset += 10.0f;

@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[RequireComponent(typeof(CNetworkView))]
-[RequireComponent(typeof(CActorLocator))]
-[RequireComponent(typeof(CActorAtmosphericConsumer))]
 public class CFireHazard : CNetworkMonoBehaviour
 {
+	private static System.Collections.Generic.List<CFireHazard> allInstances = new System.Collections.Generic.List<CFireHazard>();
+
 	private int audioClipIndex = -1;
-	private float spreadRadius = 3.0f;
+	private float spreadRadius = 6.0f;
+	private float maxDamagePerSecond = 5.0f;
+	private float damageExponentiation = 1.0f / 3.0f;	// Damage dealt by fire is scaled by proximity^this. 1 is linear, <1 damage drops at the end, >1 damage drops off at the start.
 	private float emissionsPerUnitOfSurfaceArea = 1;
 	private float emissionsPerUnitOfSurfaceAreaDiscrepancy = 0.05f;	// Variance percentage in particle emission rate.
 	private float particleLifetime = 1.0f;
@@ -18,13 +19,15 @@ public class CFireHazard : CNetworkMonoBehaviour
 	private CActorHealth_Embedded fireHealth = null;
 	public CActorHealth_Embedded health { get { return fireHealth; } }
 
+	private float timeBetweenProcess = 0.2f;
+	private float timeUntilProcess = 0.0f;
+
 	private CFacilityAtmosphere cache_FacilityAtmosphere = null;
-	private System.Collections.Generic.List<CActorHealth> cache_ActorHealths = new System.Collections.Generic.List<CActorHealth>();
 
 	public bool burning { get { return burning_internal; } }
 	private bool burning_internal = false;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		fireHealth = new CActorHealth_Embedded(gameObject, true, false, false, true, false, true, 25, 0, 25, 2, healthStateTransitions, 0.1f);
 		fireHealth.InstanceNetworkVars(_cRegistrar);
@@ -32,9 +35,11 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		gameObject.AddMissingComponent<CNetworkView>();
 		gameObject.AddMissingComponent<CActorLocator>();
 		gameObject.AddMissingComponent<CActorAtmosphericConsumer>();
+		gameObject.AddMissingComponent<CNetworkView>();
+
+		allInstances.Add(this);
 
 		GetComponent<CActorAtmosphericConsumer>().AtmosphericConsumptionRate += 25.0f;
 
@@ -49,6 +54,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
+			spreadRadius += CUtility.GetBoundingRadius(gameObject);
+
 			CActorLocator actorLocator = GetComponent<CActorLocator>();
 			if (actorLocator != null)
 			{
@@ -56,9 +63,6 @@ public class CFireHazard : CNetworkMonoBehaviour
 				if (currentFacility != null)
 					cache_FacilityAtmosphere = currentFacility.GetComponent<CFacilityAtmosphere>();
 			}
-
-			cache_ActorHealths.AddRange(GetComponentsInChildren<CActorHealth>());
-			cache_ActorHealths.AddRange(GetComponents<CActorHealth>());
 		}
 
 		fireHealth.Start();
@@ -69,6 +73,10 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 	void OnDestroy()
 	{
+		allInstances.Remove(this);
+
+		fireHealth.OnDestroy();
+
 		fireHealth.EventOnSetState -= OnSetState;
 		GetComponent<CActorAtmosphericConsumer>().EventInsufficientAtmosphere -= OnInsufficientAtmosphere;
 	}
@@ -80,17 +88,33 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 		if (CNetwork.IsServer && burning)
 		{
-			if(cache_FacilityAtmosphere != null)
+			float prevTime = timeUntilProcess;
+			timeUntilProcess -= Time.deltaTime;
+
+			while(timeUntilProcess <= 0.0f)
 			{
-				float thresholdPercentage = 0.25f;
-				if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
-					fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * Time.deltaTime;
+				timeUntilProcess += timeBetweenProcess;
+
+				if(cache_FacilityAtmosphere != null)
+				{
+					float thresholdPercentage = 0.25f;
+					if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
+						fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * timeBetweenProcess;
+				}
+
+				System.Collections.Generic.List<GameObject> players = CGamePlayers.PlayerActors;
+				foreach(GameObject player in players)
+					if(player.layer == LayerMask.NameToLayer("Default"))
+						player.GetComponent<CPlayerHealth>().Health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((player.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
+
+				foreach (CActorHealth actorHealth in CActorHealth.allInstances)
+					if(actorHealth.flammable)
+						actorHealth.health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((actorHealth.gameObject.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
+
+				foreach (CActorHealth_Embedded actorHealth in CActorHealth_Embedded.allInstances)
+					if(actorHealth.flammable)
+						actorHealth.health -= Mathf.Pow(Mathf.Clamp01(1.0f - ((actorHealth.gameObject.transform.position - gameObject.transform.position).magnitude / spreadRadius)), damageExponentiation) * timeBetweenProcess * maxDamagePerSecond;
 			}
-
-			fireHealth.health -= Time.deltaTime;	// Self damage over time. Seek help.
-
-			foreach (CActorHealth actorHealth in cache_ActorHealths)
-				actorHealth.health -= Time.deltaTime;
 		}
 
 		fireHealth.Update();
@@ -160,7 +184,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 			AttachEmitterToChildren(child.gameObject);
 
 		MeshFilter mf = go.GetComponent<MeshFilter>();
-		if (mf == null)
+		if (mf == null ||
+            mf.sharedMesh == null)
 			return;
 
 		float emissionRate = emissionsPerUnitOfSurfaceArea * CUtility.GetMeshSurfaceArea(mf.sharedMesh, go.transform.lossyScale);
@@ -200,12 +225,14 @@ public class CFireHazard : CNetworkMonoBehaviour
 				// ParticleAnimator.
 				ParticleAnimator particleAnimator = newParticleSystem.GetComponent<ParticleAnimator>(); if (particleAnimator == null) particleAnimator = newParticleSystem.AddComponent<ParticleAnimator>();	// Get or create ParticleAnimator (there must be one).
 				Color[] newColourAnimation = new Color[5];
-				newColourAnimation[0] = new Color(1, 0, 0, 1);
-				newColourAnimation[1] = new Color(0, 1, 0, 1);
-				newColourAnimation[2] = new Color(0, 0, 1, 1);
-				newColourAnimation[3] = new Color(1, 0, 1, 1);
-				newColourAnimation[4] = new Color(1, 1, 0, 0);
+				newColourAnimation[0] = new Color(0.30f, 0.20f, 0.95f, 1.00f);
+				newColourAnimation[1] = new Color(1.00f, 0.25f, 0.00f, 1.00f);
+				newColourAnimation[2] = new Color(1.00f, 0.60f, 0.00f, 1.00f);
+				newColourAnimation[3] = new Color(1.00f, 0.80f, 0.00f, 1.00f);
+				newColourAnimation[4] = new Color(1.00f, 0.80f, 0.00f, 0.00f);
 				particleAnimator.colorAnimation = newColourAnimation;
+				particleAnimator.force.Set(0.0f, 1.0f, 0.0f);
+				particleAnimator.rndForce.Set(10.0f, 10.0f, 10.0f);
 				particleAnimator.doesAnimateColor = true;
 			}
 

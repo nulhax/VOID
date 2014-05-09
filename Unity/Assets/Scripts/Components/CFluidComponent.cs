@@ -23,102 +23,66 @@ using System.Collections.Generic;
 [RequireComponent(typeof(CComponentInterface))]
 public class CFluidComponent : CNetworkMonoBehaviour
 {
-	// Member Types
+
+// Member Types
 	
 	
-	// Member Delegates & Events
+// Member Delegates & Events
 	
 	
-	// Member Properties
+// Member Properties
+
+
 	public List<Transform> ComponentRepairPosition
 	{
 		get { return(m_RepairPositions);}
 	}
 
+	
+// Member Methods
 
-    public float CurrentHealth
+
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-        get { return (m_CurrentHealth); }
+        // Empty
     }
 
 	
-	// Member Methods
-	// Do the functionality in the on break. This will start when the eventcomponentbreak is triggered
-	void OnBreak(CComponentInterface _Sender)
-	{
-        // Commented out by Nathan to prevent null-reference exception.
-        //gameObject.GetComponent<CAudioCue>().Play(0.3f, true, 0);
-	}
-	
-
-	// Do the functionality in the onfix. This will start when the eventcomponentfix is triggered
-	void OnFix(CComponentInterface _Sender)
-	{
-		//TODO swap between broken to fixed
-        gameObject.GetComponent<CAudioCue>().StopAllSound();
-	}
-	
-
-	void OnHealthChange(CComponentInterface _Sender, CActorHealth _SenderHealth)
-	{
-		m_CurrentHealth = _SenderHealth.health;
-		m_PreviousHealth = _SenderHealth.health_previous;
-		float maxHealth = _SenderHealth.health_initial;
-		
-		transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, m_CurrentHealth / maxHealth);	
-	}
-	
-
 	void Start()
 	{
 		// Find all the children which are component transforms
-		foreach(Transform child in transform)
+		foreach (Transform child in transform)
 		{
-			if(child.tag == "ComponentTransform")
+			if (child.tag == "ComponentTransform")
 				m_RepairPositions.Add(child);
 		}
-
-        transform.FindChild("Model").renderer.material.color = Color.Lerp(Color.red, Color.green, GetComponent<CActorHealth>().health / GetComponent<CActorHealth>().health_initial);
-
-		// Register events created in the inherited class CComponentInterface
-		// This will call onbreak or onfix when the even is triggered.
-		gameObject.GetComponent<CComponentInterface>().EventComponentBreak += OnBreak;
-		gameObject.GetComponent<CComponentInterface>().EventComponentFix   += OnFix;
-		gameObject.GetComponent<CComponentInterface>().EventHealthChange   += OnHealthChange;
-
-        //gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 	
 
 	void OnDestroy()
 	{
-        gameObject.GetComponent<CComponentInterface>().EventComponentBreak -= OnBreak;
-        gameObject.GetComponent<CComponentInterface>().EventComponentFix   -= OnFix;
-        gameObject.GetComponent<CComponentInterface>().EventHealthChange   -= OnHealthChange;
+        // Empty
 	}
 	
+
 	void Update()
 	{
-		
+	    // Empty	
 	}
-	
 
-	void OnNetworkVarSync(INetworkVar _cSyncedNetworkVar)
+
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		
+		// Empty
 	}
 	
 
-	public override void InstanceNetworkVars (CNetworkViewRegistrar _cRegistrar)
-	{
-		
-	}
-	
+// Member Fields
 
-	// Member Fields
-	private List<Transform> m_RepairPositions = new List<Transform>();
-	private float m_CurrentHealth = 0.0f;
-	private float m_PreviousHealth = 0.0f;
+
+	List<Transform> m_RepairPositions = new List<Transform>();
 	
-	private bool m_IsLerping = false;
+	bool m_IsLerping = false;
+
+
 };

@@ -87,8 +87,12 @@ public class CUserInput : CNetworkMonoBehaviour
         Tool_EquipToolSlot4,      // 4
 		Tool_Reload,              // R
         Tool_Drop,                // G
+
+        ModuleMenu_ToggleDisplay, // B
+        TurretMenu_ToggleDisplay, // Tab
                                 
         ReturnKey,                // Enter
+        Escape,                   // P... (LOL) Nah Esc bra
 
         MAX
 	}
@@ -134,7 +138,7 @@ public class CUserInput : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         // Empty
     }
@@ -344,8 +348,12 @@ public class CUserInput : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateStates();
-        ProcessEvents();
+        if ( CNetwork.Connection.IsConnected &&
+            !CNetwork.Connection.IsDownloadingInitialGameData)
+        {
+            UpdateStates();
+            ProcessEvents();
+        }
 
         if (CNetwork.IsServer)
         {
@@ -501,12 +509,6 @@ public class CUserInput : CNetworkMonoBehaviour
     {
         m_mPlayerStates.Clear();
     }
-
-
-	void OnApplicationFocus(bool _Focus)
-	{
-		m_InFocus = _Focus;
-	}
 
 
 // Member Fields

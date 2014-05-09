@@ -55,7 +55,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
 	}
@@ -123,7 +123,7 @@ public class CRatchetBehaviour : CNetworkMonoBehaviour
 					CHullBreachNode cHullBreachNode = cTargetActorInteractable.GetComponent<CHullBreachNode>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.MechanicalComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Mechanical)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }

@@ -53,8 +53,6 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	private CModuleInterface.ESize m_SelectedModuleSize = CModuleInterface.ESize.INVALID;
 	private int m_SelectedModuleCost = 0;
 
-	private CModuleInterface.ESize m_SelectedPortSize = CModuleInterface.ESize.INVALID;
-
 	private CNetworkVar<CModuleInterface.EType> m_CurrentModuleType = null;
 	private CNetworkVar<TNetworkViewId> m_CurrentPortSelected = null;
 	
@@ -89,11 +87,11 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 
 	public GameObject CurrentPortSelected
 	{
-		get {return(CNetwork.Factory.FindObject(m_CurrentPortSelected.Get())); }
+		get {return(CNetwork.Factory.FindGameObject(m_CurrentPortSelected.Get())); }
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_CurrentModuleType = _cRegistrar.CreateReliableNetworkVar<CModuleInterface.EType>(OnNetworkVarSync, CModuleInterface.EType.INVALID);
 		m_CurrentPortSelected = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
@@ -178,10 +176,10 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 	private void UpdatePortPresentation()
 	{
 		// Get the port that was selected
-		GameObject port = CNetwork.Factory.FindObject(m_CurrentPortSelected.Get());
-
-		// Update the port info in the DUI
-		UpdatePortInfo(port.GetComponent<CModulePortInterface>());
+//		GameObject port = CNetwork.Factory.FindObject(m_CurrentPortSelected.Get());
+//
+//		// Update the port info in the DUI
+//		UpdatePortInfo(port.GetComponent<CPreplacedModule>());
 	}
 
 	private void UpdateModuleInfo(CModuleInterface _tempModuleInterface)
@@ -211,12 +209,12 @@ public class CDUIModuleCreationRoot : CNetworkMonoBehaviour
 		m_ModuleCostLabel.text = m_SelectedModuleCost.ToString() + "N";
 	}
 
-	private void UpdatePortInfo(CModulePortInterface _ModulePortInterface)
+	private void UpdatePortInfo(CModuleInterface _ModuleInterface)
 	{
-		m_SelectedPortSize = _ModulePortInterface.PortSize;
+		m_SelectedModuleSize = _ModuleInterface.ModuleSize;
 
 		// Set the size
-		UpdateSizeInfo(m_SelectedPortSize, m_SmallPortSprite, m_MediumPortSprite, m_LargePortSprite);
+		UpdateSizeInfo(m_SelectedModuleSize, m_SmallPortSprite, m_MediumPortSprite, m_LargePortSprite);
 	}
 	
 	private void UpdateSizeInfo(CModuleInterface.ESize _ModuleSize, UISprite _Small, UISprite _Medium, UISprite _Large)

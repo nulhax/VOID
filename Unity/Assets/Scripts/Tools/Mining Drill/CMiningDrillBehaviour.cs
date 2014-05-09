@@ -46,7 +46,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }
@@ -142,7 +142,7 @@ public class CMiningDrillBehaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.DrillEnd);
         }
 
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
     }
 
 

@@ -179,56 +179,6 @@ public class CNetworkStream
 		Write(_baData, (uint)_iLength);
 	}
 
-    /*
-	public void Write(byte _bValue)
-	{
-		m_cBitStream.Write(_bValue);
-	}
-
-
-	public void Write(short _sValue)
-	{
-		m_cBitStream.Write(_sValue);
-	}
-
-
-	public void Write(ushort _usValue)
-	{
-        Debug.LogError("WRITTING!!!: " + _usValue);
-		m_cBitStream.Write(_usValue);
-	}
-
-
-	public void Write(int _iValue)
-	{
-		m_cBitStream.Write(_iValue);
-	}
-
-
-	public void Write(uint _uiValue)
-	{
-		m_cBitStream.Write((int)_uiValue);
-	}
-
-
-	public void Write(long _lValue)
-	{
-		m_cBitStream.Write(_lValue);
-	}
-
-
-	public void Write(ulong _ulValue)
-	{
-		m_cBitStream.Write((long)_ulValue);
-	}
-	
-	
-	public void Write(float _fValue)
-	{
-		m_cBitStream.Write(_fValue);
-	}
-    */
-
 
 	public void IgnoreBytes(int _iNumBytes)
 	{

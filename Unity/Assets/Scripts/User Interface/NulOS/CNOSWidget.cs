@@ -66,7 +66,7 @@ public class CNOSWidget : CNetworkMonoBehaviour
 
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		
 	}

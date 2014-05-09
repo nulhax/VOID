@@ -31,21 +31,21 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 7eb4a065c2af596489cf7132c61501d8, type: 3}
+          m_Texture: {fileID: 2800000, guid: bcae238cd6f474f498f909d5b62deea7, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 2800000, guid: 1ceab10c346ea854f8c4f817c7aa44aa, type: 3}
+          m_Texture: {fileID: 2800000, guid: adb4db7823a30a34f99ffc34ed2bb5c8, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Specular
         second:
-          m_Texture: {fileID: 2800000, guid: 42df52e7eac9b2b4bb3f91046372b610, type: 3}
+          m_Texture: {fileID: 2800000, guid: cd22259ebe349694ebda18c15eff2e0c, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:

@@ -17,11 +17,13 @@ using System.Collections;
 [System.Serializable]
 public class CActorHealth : CNetworkMonoBehaviour
 {
-	public delegate void OnSetHealth(float prevHealth, float currHealth);
+	public delegate void OnSetHealth(CActorHealth _cSender, float prevHealth, float currHealth);
 	public event OnSetHealth EventOnSetHealth;
 
 	public delegate void OnSetState(byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
+
+	public static System.Collections.Generic.List<CActorHealth> allInstances = new System.Collections.Generic.List<CActorHealth>();
 
 	[SerializeField] public bool flammable = true;
 	[SerializeField] public bool callEventsOnStart = false;
@@ -48,7 +50,7 @@ public class CActorHealth : CNetworkMonoBehaviour
 	[SerializeField] public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		health_internal = _cRegistrar.CreateReliableNetworkVar<float>(OnSyncHealth, health_initial);
 		state_internal = _cRegistrar.CreateReliableNetworkVar<byte>(OnSyncState, state_initial);
@@ -58,6 +60,8 @@ public class CActorHealth : CNetworkMonoBehaviour
 	{
 		health_previous = health_current = health_initial;
 		state_previous = state_current = state_initial;
+
+		allInstances.Add(this);
 	}
 
 	void Start()
@@ -65,11 +69,16 @@ public class CActorHealth : CNetworkMonoBehaviour
 		if (callEventsOnStart)
 		{
 			if (EventOnSetHealth != null)
-				EventOnSetHealth(health_previous, health_current);
+				EventOnSetHealth(this, health_previous, health_current);
 
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
 		}
+	}
+
+	void OnDestroy()
+	{
+		allInstances.Remove(this);
 	}
 
 	void Update()
@@ -113,13 +122,13 @@ public class CActorHealth : CNetworkMonoBehaviour
 		}
 
 		if (EventOnSetHealth != null && health_current != health_previous)
-			EventOnSetHealth(health_previous, health_current);
+			EventOnSetHealth(this, health_previous, health_current);
 
 		health_previous = health_current;
 
 		if (health <= 0.0f && destroyOnZeroHealth)
 		{
-			CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+			CNetwork.Factory.DestoryGameObject(gameObject.GetComponent<CNetworkView>().ViewId);
 			destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
 		}
 	}
@@ -157,6 +166,8 @@ public class CActorHealth_Embedded
 	public delegate void OnSetState(byte prevState, byte currState);
 	public event OnSetState EventOnSetState;
 
+	public static System.Collections.Generic.List<CActorHealth_Embedded> allInstances = new System.Collections.Generic.List<CActorHealth_Embedded>();
+
 	public bool flammable;
 	public bool callEventsOnStart;
 	public bool syncNetworkHealth;
@@ -182,7 +193,7 @@ public class CActorHealth_Embedded
 	public float timeBetweenNetworkSyncs = 0.1f;
 	private float timeUntilNextNetworkSync = 0.0f;
 
-	GameObject gameObject;
+	public GameObject gameObject;
 
 	public CActorHealth_Embedded(GameObject _gameObject, bool _flammable, bool _callEventsOnStart, bool _syncNetworkHealth, bool _syncNetworkState, bool _destroyOnZeroHealth, bool _takeDamageOnImpact,
 		float _health_max, float _health_min, float _health_initial, byte _state_initial, float[] _stateTransitions, float _timeBetweenNetworkSyncs)
@@ -200,6 +211,8 @@ public class CActorHealth_Embedded
 		state_previous = state_current = state_initial = _state_initial;
 		stateTransitions = _stateTransitions;
 		timeBetweenNetworkSyncs = _timeBetweenNetworkSyncs;
+
+		allInstances.Add(this);
 	}
 
 	public void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
@@ -218,6 +231,11 @@ public class CActorHealth_Embedded
 			if (EventOnSetState != null)
 				EventOnSetState(state_previous, state_current);
 		}
+	}
+
+	public void OnDestroy()
+	{
+		allInstances.Remove(this);
 	}
 
 	public void Update()
@@ -266,7 +284,7 @@ public class CActorHealth_Embedded
 
 		if (health <= 0.0f && destroyOnZeroHealth)
 		{
-			CNetwork.Factory.DestoryObject(gameObject.GetComponent<CNetworkView>().ViewId);
+			CNetwork.Factory.DestoryGameObject(gameObject.GetComponent<CNetworkView>().ViewId);
 			destroyOnZeroHealth = false;    // To be totes sure destroy doesn't get called again.
 		}
 	}

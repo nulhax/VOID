@@ -55,7 +55,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_fQuantity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 300.0f);
 	}
@@ -79,7 +79,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
                 m_fQuantity.Set(0.0f);
                 m_bDepleted = true;
 
-                CNetwork.Factory.DestoryObject(gameObject);
+                CNetwork.Factory.DestoryGameObject(gameObject);
             }
 
             CGameShips.Ship.GetComponent<CShipNaniteSystem>().ChangeQuanity(_fQuantity);

@@ -44,7 +44,7 @@ public class TNetworkViewId
 
 		get
 		{ 
-			Logger.WriteErrorOn(m_usViewId == 0, "View id has not be registered for a view id");
+			//Logger.WriteErrorOn(m_usViewId == 0, "View id has not be registered for a view id");
 
 			return (m_usViewId); 
 		}
@@ -67,7 +67,7 @@ public class TNetworkViewId
 	{
 		get 
 		{ 
-			return (CNetwork.Factory.FindObject(this)); 
+			return (CNetwork.Factory.FindGameObject(this)); 
 		}
 	}
 

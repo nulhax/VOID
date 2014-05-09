@@ -70,7 +70,7 @@ public class CFacilityHull : CNetworkMonoBehaviour
 			m_bBreached.Set(false);
 	}
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bBreached = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
     }

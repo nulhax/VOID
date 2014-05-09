@@ -35,18 +35,24 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
     // public:
 
 
-    public abstract void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar);
+    public abstract void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar);
 
 
     public void InvokeRpc(ulong _ulPlayerId, string _sMethodName, params object[] _caParameters)
     {
-        SelfNetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
+        NetworkView.InvokeRpc(_ulPlayerId, this, _sMethodName, _caParameters);
     }
 
 
     public void InvokeRpcAll(string _sMethodName, params object[] _caParameters)
     {
-        SelfNetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
+        NetworkView.InvokeRpc(0, this, _sMethodName, _caParameters);
+    }
+
+
+    public void InvokeRpcAllButServer(string _sMethodName, params object[] _caParameters)
+    {
+        NetworkView.InvokeRpc(ulong.MaxValue, this, _sMethodName, _caParameters);
     }
 
 
@@ -56,10 +62,12 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
         System.Diagnostics.StackFrame sf = st.GetFrame(1);
         System.Reflection.MethodBase currentMethodName = sf.GetMethod();
         Debug.LogError("Method name: " + currentMethodName.Name);
+
+        NetworkView.InvokeRpc(ulong.MaxValue, this, currentMethodName.Name, _caParameters);
     }
 
 
-    public CNetworkView SelfNetworkView
+    public CNetworkView NetworkView
     {
         get { return (gameObject.GetComponent<CNetworkView>()); }
     }
@@ -67,14 +75,8 @@ public abstract class CNetworkMonoBehaviour : MonoBehaviour
 
     public TNetworkViewId NetworkViewId
     {
-        get { return (SelfNetworkView.ViewId); }
+        get { return (NetworkView.ViewId); }
     }
-
-
-	public void EnableOutboundSending()
-	{
-
-	}
 
 
     // protected:

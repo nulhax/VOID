@@ -15,8 +15,12 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+
 
 /* Implementation */
+
+
 public class CUtility
 {
     // Member Types
@@ -51,6 +55,29 @@ public class CUtility
     static public string GetXmlPathFacilities() { return (s_sXmlPathFacilities); }
 
     // Member Methods
+	static public bool GetMaskState(int _Value, int _Mask)
+	{
+		bool state = ((_Mask & (1 << _Value)) != 0);
+		return(state);
+	}
+
+	static public void SetMaskState(int _Value, bool _State, ref int _Mask)
+	{
+		if(_State)
+			_Mask |= (1 << _Value);
+		else
+			_Mask &= ~(1 << _Value);
+	}
+
+	static public IEnumerable<IEnumerable<T>> GetPowerSet<T>(List<T> list)  
+	{  
+		return from m in Enumerable.Range(0, 1 << list.Count)  
+			select  
+				from i in Enumerable.Range(0, list.Count)  
+				where (m & (1 << i)) != 0  
+				select list[i];  
+	}
+
 	static public GameObject CreateNewGameObject(Transform _Parent, string _Name)
 	{
 		GameObject go = new GameObject(_Name);
@@ -267,6 +294,11 @@ public class CUtility
 	/// <returns></returns>
 	public static float GetMeshSurfaceArea(Mesh mesh, Vector3 scale)
 	{
+        if (mesh == null)
+        {
+            Debug.LogError(mesh.name);
+        }
+
 		int[] triangles = mesh.triangles;
 		Vector3[] vertices = mesh.vertices;
 

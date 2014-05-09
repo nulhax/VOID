@@ -49,6 +49,12 @@ public class CNetworkVar<TYPE> : INetworkVar
 	}
 
 
+    public bool IsSyncEnabled
+    {
+        get { return (m_bSyncEnabled); }
+    }
+
+
 // Member Methods
 
 
@@ -124,13 +130,14 @@ public class CNetworkVar<TYPE> : INetworkVar
     }
 
 
-    public virtual void SetSendInterval(float _fInterval)
+    public override void SetSendInterval(float _fInterval)
     {
         if (CNetwork.IsServer)
         {
             m_fSendInterval = _fInterval;
 
-            if (m_fSendInterval > 0.0f)
+            if (m_fSendInterval > 0.0f &&
+                !m_bSendIntervalEnabled)
             {
                 CNetwork.EventNetworkUpdate += UpdateSendInterval;
 
@@ -146,6 +153,12 @@ public class CNetworkVar<TYPE> : INetworkVar
                 m_bSendIntervalEnabled = false;
             }
         }
+    }
+
+
+    public void SetSyncEnabled(bool _bEnabled)
+    {
+        m_bSyncEnabled = _bEnabled;
     }
 
 
@@ -235,7 +248,7 @@ public class CNetworkVar<TYPE> : INetworkVar
         {
             m_fSendTimer -= m_fSendInterval;
 
-            //if (m_bValueDirty)
+            if (m_bSyncEnabled)
             {
                 m_cOwnerNetworkView.SyncNetworkVar(0, m_bNetworkVarId);
 
@@ -272,6 +285,7 @@ public class CNetworkVar<TYPE> : INetworkVar
 	byte m_bNetworkVarId = 0;
     bool m_bSendIntervalEnabled = false;
     bool m_bValueDirty = false;
+    bool m_bSyncEnabled = true;
 
 
 };

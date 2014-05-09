@@ -49,16 +49,14 @@ public class CGameRegistrator : MonoBehaviour
 		Ship					= 200,
 		GalaxyShip,
 		EnemyShip_FIRST,
-		EnemyShip_LAST			= EnemyShip_FIRST + 14,
+		EnemyShip_LAST			= EnemyShip_FIRST + 13,
 		
 		// Facilities
-		FacilityBridge			= 300,
-        FacilityAirlock,
-        HallwayStraight,
-        HallwayCorner,
-        HallwayTSection,
-        HallwayXSection,
-        FacilityTest,
+		Facility				= 300,
+		Facility_Preplaced,
+
+		// Tiles
+		Tile					= 350,
 
 		// Facility Miniature
 		MiniFacilityBridge		= 400, 
@@ -70,38 +68,31 @@ public class CGameRegistrator : MonoBehaviour
 		// Accessories
         Alarm					= 500,
         ControlConsole,
-		Door,
+		InteriorDoor,
         DuiMontior,
 		
 		// Modules
 		AtmosphereGenerator		= 600,
 		PlayerSpawner,
-		LaserCockpit,
-		LaserTurret,
+		TurretCockpit,
 		PilotCockpit,
 		PowerGenerator,
 		PowerCapacitor,
-		MiningTurret,
-		MiningCockpit,
-		AtmosphereConditioner,
-        OxygenRefiller,
         Dispenser,
-        NaniteCapsule,
+		NaniteSilo,
         Engine,
-		Starter,
+		Thruster,
+		Prefabricator,
+        TurretPulseSmall        = 640,
+        TurretPulseMedium,
+        TurretMissileSmall      = 645,
+        TurretMissileMedium,
+        MissileProjectile      = 660,
+        MissileHitParticles     = 662,
 
-		
 		// Components
 		PanelFuseBox			= 700,
         CellSlot,
-
-        // Parts
-//        BlackMatterCell,
-//        FuelCell,
-//        PlasmaCell,
-//        PowerCell,
-//        BioCell,
-//        ReplicatorCell,
 
         // Tools
         ToolTorch				= 800,
@@ -110,9 +101,6 @@ public class CGameRegistrator : MonoBehaviour
         ToolAk47,
         ToolMedical,
         ToolCircuitryKit,
-		ToolModuleGun,
-        ToolCalibrator,
-        ToolFluidizer,
         ToolMiningDrill,
 
         // Hazards
@@ -134,6 +122,7 @@ public class CGameRegistrator : MonoBehaviour
         DUIAirlockInternal,
         DuiFacilityDoor,
 		DUIFacilityControl,
+		DUIPrefabricator,
 
 		// NulOS
 		NOSPanelWide			= 1100,
@@ -146,8 +135,9 @@ public class CGameRegistrator : MonoBehaviour
 		NOSWShipCrew,
 
 		// Other
-		LaserTurretProjectile	= 1300,
+		LaserProjectile	= 1300,
 		LaserHitParticles,
+		CannonProjectile,
 
 		MAX
 	}
@@ -171,7 +161,6 @@ public class CGameRegistrator : MonoBehaviour
 	void Start()
 	{
 		RegisterSerailizationTargets();
-        RegisterFacilities();
         RegisterAccessories();
         RegisterModules();
         RegisterComponents();
@@ -212,13 +201,11 @@ public class CGameRegistrator : MonoBehaviour
 			CNetwork.Factory.RegisterPrefab((ushort)((int)ENetworkPrefab.EnemyShip_FIRST + i), "EnemyShips/EnemyShip" + i.ToString());
 		
 		// Facilities
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityBridge,              "Facilities/Bridge/Bridge");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityAirlock,             "Facilities/FacilityAirlock");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayStraight,             "Facilities/Hallways/HallwayStraight");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayCorner,               "Facilities/Hallways/HallwayCorner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayTSection,             "Facilities/Hallways/HallwayTSection");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.HallwayXSection,             "Facilities/Hallways/HallwayXSection");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.FacilityTest,                "Facilities/Test Facility");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility,              		"Facilities/Facility");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Facility_Preplaced,          "Facilities/Preplaced_Facility");
+
+		// Tile
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Tile,              			"Tiles/Tile");
 
 		// Facilities Mini
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");
@@ -229,24 +216,27 @@ public class CGameRegistrator : MonoBehaviour
 
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/Monitors/CurvedMonitor_wide");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Door,                        "Accessories/Doors/Door");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.InteriorDoor,                "Accessories/Doors/InteriorDoor");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereGenerator,			"Modules/Atmosphere Generator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereConditioner,		"Modules/Atmosphere Conditioner");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.AtmosphereGenerator,			"Modules/Atmosphere Generator Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PlayerSpawner,				"Modules/Player Spawner");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserCockpit,				"Modules/Turret Cockpit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurret,					"Modules/Laser Turret");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretCockpit,				"Modules/Turret Cockpit");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PilotCockpit,				"Modules/Pilot Cockpit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Capacitor");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningTurret,				"Modules/Mining Turret");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiningCockpit,				"Modules/Mining Cockpit");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerGenerator,				"Modules/Power Generator Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PowerCapacitor,				"Modules/Power Battery");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteCapsule,               "Modules/Nanite Silo");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo Small");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine Small");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Thruster,                    "Modules/Thuster Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,               "Modules/Prefabricator");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Pulse Turret Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Pulse Turret Medium");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileSmall,          "Modules/Missile Turret Small");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretMissileMedium,         "Modules/Missile Turret Medium");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileProjectile,           "Modules/Turrets/Missile Projectile");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MissileHitParticles,         "Modules/Turrets/Missile Hit Particles");
 
         // Components
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.PanelFuseBox,                "Accessories/FuseBox");
@@ -261,16 +251,13 @@ public class CGameRegistrator : MonoBehaviour
 //        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ReplicatorCell,              "Parts/Cells/ReplicatorCell");
 
 		// Tools
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/Ak47/ToolAk47");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/Fire Extinguisher/ToolExtinguisher");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/Medical Gun/ToolMedical");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/Ratchet/ToolRachet");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/Torch/ToolTorch");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/Circuitry Kit/ToolCircuitryKit");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolModuleGun,               "Tools/Module Gun/ToolModuleGun");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCalibrator,              "Tools/Calibrator/ToolCalibrator");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolFluidizer,               "Tools/FluidTool/ToolFluid");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/Mining Drill/ToolMiningDrill");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolAk47,                    "Tools/ToolAk47");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolExtinguisher,            "Tools/ToolExtinguisher");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMedical,                 "Tools/ToolMedical");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolRatchet,                 "Tools/ToolRachet");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolTorch,                   "Tools/ToolTorch");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolCircuitryKit,            "Tools/ToolCircuitryKit");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ToolMiningDrill,             "Tools/ToolMiningDrill");
 
         // Hazards
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Fire,                        "Hazards/Fire/Fire_Old");
@@ -288,9 +275,10 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIShipResources,			"User Interface/DUI/Ship/DUIShipResources");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUINaniteCapsule,			"User Interface/DUI/Modules/DUINaniteCapsule");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIEngine,					"User Interface/DUI/Modules/DUIPropulsionEngine");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,          "User Interface/DUI/DuiAirlockInternal");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,     	    "User Interface/DUI/DuiDoorControl");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,     	    "User Interface/DUI/DUIFacilityControl");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIAirlockInternal,			"User Interface/DUI/DuiAirlockInternal");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,				"User Interface/DUI/DuiDoorControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,			"User Interface/DUI/DUIFacilityControl");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,			"User Interface/DUI/Modules/DUIPrefabricator");
 
 
 		// NulOS
@@ -304,17 +292,18 @@ public class CGameRegistrator : MonoBehaviour
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSWShipCrew,				"User Interface/NulOS/Widgets/WidgetShipCrew");
 
 		// Other
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserTurretProjectile,		"Modules/_Other/Laser Turret Projectile");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/_Other/Laser Hit Particles");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserProjectile,				"Modules/Turrets/Laser Projectile");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.LaserHitParticles,			"Modules/Turrets/Laser Hit Particles");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.CannonProjectile,			"EnemyShips/EnemyShipProjectile");
 	}
 
 
 	void RegisterSerailizationTargets()
 	{
-		CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializeOutbound      , CPlayerMotor.UnserializeInbound);
-		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializeOutbound             , CPlayerHead.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerMotor.SerializeOutbound               , CPlayerMotor.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CPlayerHead.SerializeOutbound                , CPlayerHead.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CBridgeCockpit.SerializeCockpitInteractions  , CBridgeCockpit.UnserializeCockpitInteractions);
-		CNetworkConnection.RegisterSerializationTarget(CCockpit.SerializeOutbound                   , CCockpit.UnserializeInbound);
+		CNetworkConnection.RegisterSerializationTarget(CCockpitBehaviour.SerializeOutbound          , CCockpitBehaviour.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerIKController.SerializeIKTarget	    , CPlayerIKController.UnserializeIKTarget);
 		CNetworkConnection.RegisterSerializationTarget(CGamePlayers.SerializeData                   , CGamePlayers.UnserializeData);
         CNetworkConnection.RegisterSerializationTarget(CGameChat.SerializeData                      , CGameChat.UnserializeData);
@@ -327,10 +316,21 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CUserInput.SerializeOutbound                 , CUserInput.UnserializeInbound);
 		CNetworkConnection.RegisterSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerRagdoll.Serialize                		, CPlayerRagdoll.Unserialize);
+        CNetworkConnection.RegisterSerializationTarget(CTurretCockpitBehaviour.SerializeOutbound    , CTurretCockpitBehaviour.UnserializeInbound);
+
+
+        CNetworkConnection.RegisterSerializationTarget(CTurretBehaviour.SerializeOutbound             , CTurretBehaviour.UnserializeInbound); // Process first so rotations can be updated before turret specialized behaviours process
+        CNetworkConnection.RegisterSerializationTarget(CPulseTurretSmallBehaviour.SerializeOutbound   , CPulseTurretSmallBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPulseTurretMediumBehaviour.SerializeOutbound  , CPulseTurretMediumBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMissileTurretSmallBehaviour.SerializeOutbound , CMissileTurretSmallBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CMissileTurretMediumBehaviour.SerializeOutbound, CMissileTurretMediumBehaviour.UnserializeInbound);
+
+
 
         // Player
         CNetworkConnection.RegisterSerializationTarget(CPlayerInteractor.SerializeOutbound          , CPlayerInteractor.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CPlayerNaniteLaser.SerializeOutbound         , CPlayerNaniteLaser.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerModuleMenu.SerializeOutbound          , CPlayerModuleMenu.UnserializeInbound);
         
         // Tools
         CNetworkConnection.RegisterSerializationTarget(CAk47Behaviour.SerializeOutbound             , CAk47Behaviour.UnserializeInbound);
@@ -340,26 +340,6 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CModuleGunBehaviour.SerializeOutbound        , CModuleGunBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CMiningDrillBehaviour.SerializeOutbound      , CMiningDrillBehaviour.UnserializeInbound);
 	}
-
-
-
-    void RegisterFacilities()
-    {
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Bridge                           , CGameRegistrator.ENetworkPrefab.FacilityBridge);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayStraight                  , CGameRegistrator.ENetworkPrefab.HallwayStraight);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayCorner                    , CGameRegistrator.ENetworkPrefab.HallwayCorner);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayTSection                  , CGameRegistrator.ENetworkPrefab.HallwayTSection);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.HallwayXSection                  , CGameRegistrator.ENetworkPrefab.HallwayXSection);
-
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.Bridge                    , CGameRegistrator.ENetworkPrefab.MiniFacilityBridge);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayStraight           , CGameRegistrator.ENetworkPrefab.MiniHallwayStraight);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayCorner             , CGameRegistrator.ENetworkPrefab.MiniHallwayCorner);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayTSection           , CGameRegistrator.ENetworkPrefab.MiniHallwayTSection);
-		CFacilityInterface.RegistMiniaturePrefab(CFacilityInterface.EType.HallwayXSection           , CGameRegistrator.ENetworkPrefab.MiniHallwayXSection);
-
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Airlock                          , CGameRegistrator.ENetworkPrefab.FacilityAirlock);
-        CFacilityInterface.RegisterPrefab(CFacilityInterface.EType.Test                             , CGameRegistrator.ENetworkPrefab.FacilityTest);
-    }
 
 
     void RegisterAccessories()
@@ -373,14 +353,10 @@ public class CGameRegistrator : MonoBehaviour
 	{
 		CToolInterface.RegisterPrefab(CToolInterface.EType.Ratchet         , ENetworkPrefab.ToolRatchet);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.CircuitryKit    , ENetworkPrefab.ToolCircuitryKit);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Calibrator      , ENetworkPrefab.ToolCalibrator);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Fluidizer       , ENetworkPrefab.ToolFluidizer);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.ModuleCreator   , ENetworkPrefab.ToolModuleGun);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.FireExtinguisher, ENetworkPrefab.ToolExtinguisher);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.Norbert         , ENetworkPrefab.ToolModuleGun);
-		CToolInterface.RegisterPrefab(CToolInterface.EType.HealingKit      , ENetworkPrefab.ToolMedical);
 		CToolInterface.RegisterPrefab(CToolInterface.EType.AK47            , ENetworkPrefab.ToolAk47);   
 		CToolInterface.RegisterPrefab(CToolInterface.EType.MiningDrill     , ENetworkPrefab.ToolMiningDrill);
+        CToolInterface.RegisterPrefab(CToolInterface.EType.Torch           , ENetworkPrefab.ToolTorch);
 	}
 
 
@@ -388,18 +364,19 @@ public class CGameRegistrator : MonoBehaviour
     {
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereGenerator  , ENetworkPrefab.AtmosphereGenerator);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PlayerSpawner        , ENetworkPrefab.PlayerSpawner);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit         , ENetworkPrefab.LaserCockpit);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.LaserTurret          , ENetworkPrefab.LaserTurret);			
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretCockpit        , ENetworkPrefab.TurretCockpit);			
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PilotCockpit         , ENetworkPrefab.PilotCockpit);		
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerGenerator       , ENetworkPrefab.PowerGenerator);			
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerCapacitor       , ENetworkPrefab.PowerCapacitor);			
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningTurret         , ENetworkPrefab.MiningTurret);		
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.MiningCockpit        , ENetworkPrefab.MiningCockpit);	
-		//CModuleInterface.RegisterPrefab(CModuleInterface.EType.AtmosphereConditioner, ENetworkPrefab.AtmosphereConditioner);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.PowerBattery         , ENetworkPrefab.PowerCapacitor);			
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
-        CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        , ENetworkPrefab.NaniteCapsule);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        	, ENetworkPrefab.NaniteSilo);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
+		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Prefabricator        , ENetworkPrefab.Prefabricator);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Thruster             , ENetworkPrefab.Thruster);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseSmall     , ENetworkPrefab.TurretPulseSmall);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseMedium    , ENetworkPrefab.TurretPulseMedium);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretMissleSmall    , ENetworkPrefab.TurretMissileSmall);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretMissileMedium  , ENetworkPrefab.TurretMissileMedium);
 
     }
 
@@ -429,6 +406,7 @@ public class CGameRegistrator : MonoBehaviour
         CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityDoor         , ENetworkPrefab.DuiFacilityDoor);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 		, ENetworkPrefab.NOSPanelWide);
+		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Prefabricator  		, ENetworkPrefab.DUIPrefabricator);
 	}
 
 
@@ -486,7 +464,11 @@ public class CGameRegistrator : MonoBehaviour
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Reload, KeyCode.R);
         CUserInput.SetKeyBinding(CUserInput.EInput.Tool_Drop, KeyCode.G);
 
+        CUserInput.SetKeyBinding(CUserInput.EInput.ModuleMenu_ToggleDisplay, KeyCode.B);
+        CUserInput.SetKeyBinding(CUserInput.EInput.TurretMenu_ToggleDisplay, KeyCode.Tab);
+
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
+        CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);
     }
 
 

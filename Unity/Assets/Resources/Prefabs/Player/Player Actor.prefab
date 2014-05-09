@@ -32,6 +32,8 @@ GameObject:
   - 114: {fileID: 11400052}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400030}
+  - 114: {fileID: 11400006}
+  - 114: {fileID: 11400032}
   m_Layer: 0
   m_Name: Player Actor
   m_TagString: Untagged
@@ -171,8 +173,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialBoardingState: 1
-  m_bCanBoard: 1
-  m_bCanDisembark: 1
+  m_CanBoard: 1
+  m_CanDisembark: 1
+--- !u!114 &11400006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23f5c0486ab86024d93896f3d8b6a827, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cModuleMenu: {fileID: 100002, guid: e05413fde391a6046a338e756f4233c8, type: 2}
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -309,10 +323,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3eb83591a70b4749b0770beb9ea63db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fHeadBobRunAmount: 1
-  m_fHeadBobSprintAmount: 2
+  m_fHeadBobRunAmount: 1.5
+  m_fHeadBobSprintAmount: 3
   m_fHeadBobRunSpeed: 8
   m_fHeadBobSprintSpeed: 10
+--- !u!114 &11400032
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4994e896ac86b3e4e847092f89f7040a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_cTurretSelectMenu: {fileID: 100002, guid: 928d770d03befff4cb4660d3b683e873, type: 2}
 --- !u!114 &11400034
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -324,6 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d6110cba975b243a0d9d7f9f1adc84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_bRealignBodyWithHead: 0
 --- !u!114 &11400036
 MonoBehaviour:
   m_ObjectHideFlags: 1

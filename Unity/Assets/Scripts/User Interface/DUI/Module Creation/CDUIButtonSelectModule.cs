@@ -31,18 +31,18 @@ public class CDUIButtonSelectModule : MonoBehaviour
 	
 	// Member Fields
 	public CModuleInterface.EType m_ModuleType = CModuleInterface.EType.INVALID;
-	public CDUIModuleCreationRoot m_ModuleCreationRoot = null;
+	public CDUIPrefabricator m_ModuleCreationRoot = null;
 
 	// Member Properties
 	
 	
 	// Member Methods
-	public void OnSelect(bool _IsSelected)
+	public void OnClick()
 	{
-		if(CNetwork.IsServer && _IsSelected)
+		if(CNetwork.IsServer)
 		{
 			// Inform the stage to change model
-			m_ModuleCreationRoot.SetSelectedModuleType(m_ModuleType);
+			//m_ModuleCreationRoot.SetSelectedModuleType(m_ModuleType);
 		}
 	}
 }

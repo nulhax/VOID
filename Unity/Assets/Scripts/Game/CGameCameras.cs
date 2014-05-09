@@ -98,6 +98,21 @@ public class CGameCameras : MonoBehaviour
 		get { return(s_OculusRiftActive); }
 	}
 
+    public static GameObject ShipCamera
+    {
+        get
+        {
+            if (MainCamera.layer == LayerMask.NameToLayer("Default"))
+            {
+                return (MainCamera);
+            }
+            else
+            {
+                return (ProjectedCamera);
+            }
+        }
+    }
+
 
 	// Member Methods
 	public void Awake()
@@ -191,26 +206,26 @@ public class CGameCameras : MonoBehaviour
 			s_ProjectedCamera = (GameObject)GameObject.Instantiate(s_MainCamera); 
 			s_ProjectedCamera.name = s_ProjectedCamera.name = "Camera_Projected";
 
-			//// Instantiate the background camera
-			//s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
-			//s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
+			// Instantiate the background camera
+			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
+			s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
 
-			//// Remove all image effects for background camera
-			//foreach(PostEffectsBase ieb in s_BackgroundCamera.GetComponents<PostEffectsBase>())
-			//    Destroy(ieb);
+			// Remove all image effects for background camera
+			foreach(PostEffectsBase ieb in s_BackgroundCamera.GetComponents<PostEffectsBase>())
+			    Destroy(ieb);
 
-			//// Set up the values for the bg camera
-			//s_BackgroundCamera.transform.position = Vector3.zero;
-			//s_BackgroundCamera.camera.clearFlags = CameraClearFlags.Skybox;
-			//s_BackgroundCamera.camera.cullingMask = 1 << LayerMask.NameToLayer("Background");
-			//s_BackgroundCamera.camera.depth = 49;
+			// Set up the values for the bg camera
+			s_BackgroundCamera.transform.position = Vector3.zero;
+			s_BackgroundCamera.camera.clearFlags = CameraClearFlags.Skybox;
+			s_BackgroundCamera.camera.cullingMask = 1 << LayerMask.NameToLayer("Background");
+			s_BackgroundCamera.camera.depth = 49;
 		}
 
 		// Move the camera to the head location
 		s_MainCamera.transform.position = CGamePlayers.SelfActorHead.transform.position;
 		s_MainCamera.transform.rotation = CGamePlayers.SelfActorHead.transform.rotation;
 
-		Debug.Log("Creating space fog");
+		//Debug.Log("Creating space fog");
 		s_SpaceFog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
 
 		// Set the defult view perspective
@@ -264,11 +279,11 @@ public class CGameCameras : MonoBehaviour
 		}
 	}
 
-	private static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
+	public static void SetCameraGalaxyValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
-		_Camera.clearFlags = CameraClearFlags.Skybox;
-		_Camera.cullingMask = 1 << LayerMask.NameToLayer("Galaxy");
+		_Camera.clearFlags = CameraClearFlags.Nothing;
+		_Camera.cullingMask = CGalaxy.layerBit_All;
 
 		// Set the depth
 		_Camera.depth = _Depth;
@@ -277,13 +292,13 @@ public class CGameCameras : MonoBehaviour
 		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
 			ieb.enabled = false;
 	}
-	
-	private static void SetCameraDefaultValues(Camera _Camera, float _Depth)
+
+    public static void SetCameraDefaultValues(Camera _Camera, float _Depth)
 	{
 		// Set the clear flags / culling mask
 		_Camera.clearFlags = CameraClearFlags.Nothing;
 		_Camera.cullingMask = int.MaxValue;
-		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Galaxy"));
+		_Camera.cullingMask &= ~CGalaxy.layerBit_All;
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("Background"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 		_Camera.cullingMask &= ~(1 << LayerMask.NameToLayer("UI 2D"));
@@ -305,7 +320,7 @@ public class CGameCameras : MonoBehaviour
 			CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);
 
 			// Update the background camera rotation
-			//s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
+			s_BackgroundCamera.transform.rotation = s_ProjectedCamera.transform.rotation;
 
 			// Move fog to projected camera
 			s_SpaceFog.transform.position = s_ProjectedCamera.transform.position;
@@ -315,7 +330,7 @@ public class CGameCameras : MonoBehaviour
 			CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(s_MainCamera.transform.position, s_MainCamera.transform.rotation, s_ProjectedCamera.transform);	
 
 			// Update the background camera rotation
-			//s_BackgroundCamera.transform.rotation = s_MainCamera.transform.rotation;
+			s_BackgroundCamera.transform.rotation = s_MainCamera.transform.rotation;
 
 			// Move fog to projected camera
 			s_SpaceFog.transform.position = s_MainCamera.transform.position;

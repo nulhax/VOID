@@ -12,6 +12,10 @@
 
 
 // Namespaces
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,16 +48,12 @@ public class CToolInterface : CNetworkMonoBehaviour
 	{
 		INVALID,
 
-		Ratchet,
-		CircuitryKit,
-		Calibrator,
-		Fluidizer,
-		ModuleCreator,
-		FireExtinguisher,
-		Norbert,
-		HealingKit,
-		AK47,
-		MiningDrill,
+		Ratchet          = 10,
+		CircuitryKit     = 20,
+		FireExtinguisher = 30,
+		Torch            = 40,
+		AK47             = 50,
+		MiningDrill      = 60,
 
 		MAX
 	}
@@ -161,7 +161,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_ulOwnerPlayerId = _cRegistrar.CreateReliableNetworkVar<ulong>(OnNetworkVarSync, 0);
     }
@@ -192,6 +192,8 @@ public class CToolInterface : CNetworkMonoBehaviour
                 SetSecondaryActive(false);
             }
         };
+
+        CGamePlayers.SelfActor.GetComponent<CPlayerArmController>().EventDisableToolRotation += OnDisableToolRotation;
 	}
 
 
@@ -203,7 +205,7 @@ public class CToolInterface : CNetworkMonoBehaviour
 
 	public void Update()
 	{
-		if (IsOwned)
+        if (IsOwned && m_bUseToolRotation)
         { 
             Transform ActorHead = OwnerPlayerActor.GetComponent<CPlayerHead>().Head.transform;
             gameObject.transform.rotation = ActorHead.rotation;
@@ -223,7 +225,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     [ALocalOnly]
     public void SetPrimaryActive(bool _bActive)
     {
-        m_bPrimaryActive = _bActive;
+        m_bPrimaryActive = _bActive;    
 
         if (EventPrimaryActiveChange != null) EventPrimaryActiveChange(_bActive);
     }
@@ -244,7 +246,7 @@ public class CToolInterface : CNetworkMonoBehaviour
         Logger.WriteErrorOn(!CNetwork.IsServer, "Only servers are allow to invoke this method");
 
         // Check currently held
-        if (IsOwned)
+		if (IsOwned && m_bReloading != null)	// m_bReloading is null when the tool can not be reloaded (e.g. a torch).
         {
             m_bReloading.Set(true);
         }
@@ -308,7 +310,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     {
         if (!s_mRegisteredPrefabs.ContainsKey(_ToolType))
         {
-            Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
+            //Debug.LogError(string.Format("Tool type ({0}) has not been registered a prefab", _ToolType));
 
             return (CGameRegistrator.ENetworkPrefab.INVALID);
         }
@@ -322,37 +324,12 @@ public class CToolInterface : CNetworkMonoBehaviour
         if (_cVarInstance == m_ulOwnerPlayerId)
         {
             if (IsOwned)
-            {
-//                if (!OwnerPlayerActor.GetComponent<CPlayerInterface>().IsOwnedByMe)
-//                {
-//                    GameObject cOwnerPlayerActor = OwnerPlayerActor;
-//
-//                    Transform[] children = OwnerPlayerActor.GetComponentsInChildren<Transform>();
-//                    foreach (Transform child in children)
-//                    {
-//                        if (child.name == "RightHandIndex2")
-//                        {
-//                            gameObject.transform.parent = child;
-//                        }
-//                    }
-//
-//                    if (gameObject.transform.parent.gameObject == null)
-//                    {
-//                        Debug.LogError("Could not find right hand transform of player model!");
-//                    }
-//
-//                    gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-//                }
-//                else
-//                {
-//                }
-
-                // Turn off dynamic physics
-                if (CNetwork.IsServer)
-                {
-                    rigidbody.isKinematic = true;
-                    rigidbody.detectCollisions = false;
-                }
+            {                        
+                // Turn off dynamic physics                
+	            rigidbody.isKinematic = true;
+	            rigidbody.detectCollisions = false;
+				collider.isTrigger = true;
+                
 
                 // Stop receiving synchronizations
                 GetComponent<CActorNetworkSyncronized>().m_SyncPosition = false;
@@ -364,11 +341,11 @@ public class CToolInterface : CNetworkMonoBehaviour
             else
             {
                 // Turn on dynamic physics
-                if (CNetwork.IsServer)
-                {
-                    rigidbody.isKinematic = false;
-                    rigidbody.detectCollisions = true;
-                }
+               
+            	rigidbody.isKinematic = false;
+            	rigidbody.detectCollisions = true;
+				collider.isTrigger = false;
+                
 
                 rigidbody.AddForce(transform.forward * 5.0f, ForceMode.VelocityChange);
                 rigidbody.AddForce(Vector3.up * 5.0f, ForceMode.VelocityChange);
@@ -401,11 +378,73 @@ public class CToolInterface : CNetworkMonoBehaviour
         }
     }
 
+    void OnDisableToolRotation(bool _bUseHeadRotation)
+    {
+        m_bUseToolRotation = _bUseHeadRotation;
+    }
+
+
+#if UNITY_EDITOR
+    [ContextMenu("Create Tool Extras (Editor only)")]
+    void CreatePrecipitationObject()
+    {
+        Vector3 oldPos = transform.position;
+        transform.position = Vector3.zero;
+
+        GameObject combinationMesh = new GameObject("_CombinationObject");
+        combinationMesh.transform.localPosition = Vector3.zero;
+        combinationMesh.transform.localRotation = Quaternion.identity;
+
+        MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+        for (int i = 0; i < meshFilters.Length; ++i)
+        {
+            combine[i].mesh = meshFilters[i].sharedMesh;
+            combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+        }
+
+        Mesh mesh = new Mesh();
+        mesh.CombineMeshes(combine);
+
+        // Add the mesh renderer and filter to the prefab
+        MeshRenderer mr = combinationMesh.AddComponent<MeshRenderer>();
+        MeshFilter mf = combinationMesh.AddComponent<MeshFilter>();
+
+        // Save the mesh
+        AssetDatabase.CreateAsset(mesh, "Assets/Models/Tools/_Combined/" + gameObject.name + ".asset");
+        mf.sharedMesh = mesh;
+
+        // Save the precipitation mat
+        Material precipitateMat = new Material(Shader.Find("VOID/Module Precipitate"));
+        AssetDatabase.CreateAsset(precipitateMat, "Assets/Models/Tools/_Combined/Materials/" + gameObject.name + "_Precipitative" + ".mat");
+
+        // Use this material and save an instance of the prefab
+        mr.sharedMaterial = precipitateMat;
+        GameObject cPrecipitativePrefab = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Tools/_Precipitative/" + gameObject.name + " Precipitative Model" + ".prefab", combinationMesh);
+        cPrecipitativePrefab.AddComponent<CPrecipitativeMeshBehaviour>();
+
+        GameObject cParticles = PrefabUtility.CreatePrefab("Assets/Resources/Prefabs/Tools/_Precipitative/_Particle System Copy.prefab", (GameObject)Resources.Load("Prefabs/Tools/_Precipitative/_Particle System", typeof(GameObject)));
+
+        // Save assets and reposition original
+        AssetDatabase.SaveAssets();
+        transform.position = oldPos;
+        DestroyImmediate(combinationMesh);
+    }
+#endif
+
 
 // Member Fields
 
 	public EType m_eToolType = EType.INVALID;
 	public EToolCategory m_eToolCategory = EToolCategory.INVALID;
+    public GameObject m_cModel = null;
+    public GameObject m_cPrecipitativeModel = null;
+    public string m_sName = "Unnamed tool";
+    public string m_sDescription = "This is the default tool description";
+    public float m_fNaniteCost = -1.0f;
+    public float m_fBuildDuration = 10.4f;
+    public bool m_bDispensable = false;
 
 
     public GameObject m_RightHandPos;
@@ -418,7 +457,7 @@ public class CToolInterface : CNetworkMonoBehaviour
     bool m_bEquipped = false;
     bool m_bPrimaryActive = false;
     bool m_bSecondaryActive = false;
-
+    bool m_bUseToolRotation = true;
 
 	static Dictionary<EType, CGameRegistrator.ENetworkPrefab> s_mRegisteredPrefabs = new Dictionary<EType, CGameRegistrator.ENetworkPrefab>();
 

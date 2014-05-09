@@ -24,28 +24,28 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 51c8f9ecd0941ed428d8191f56e2f72c, type: 3}
+          m_Texture: {fileID: 2800000, guid: e640e7512a9e41844804c8709615690a, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 2800000, guid: 2da20af669edad24a952cf6a1c4427ff, type: 3}
+          m_Texture: {fileID: 2800000, guid: e5235d17198fed34681f083c4a98e628, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Specular
         second:
-          m_Texture: {fileID: 2800000, guid: 8b30215f52754924eb1b7eea87b80bb1, type: 3}
+          m_Texture: {fileID: 2800000, guid: eafb64fed71b2d44e991413e5d55b016, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Emissive
         second:
-          m_Texture: {fileID: 2800000, guid: b5584d951402c4544bae092d0dba1944, type: 3}
+          m_Texture: {fileID: 2800000, guid: 6d05d876cbb47bb4d90b35eeced3f3f9, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -63,7 +63,7 @@ Material:
       data:
         first:
           name: _EmissivePowerR
-        second: 2
+        second: 1
       data:
         first:
           name: _EmissivePowerG
@@ -100,11 +100,11 @@ Material:
       data:
         first:
           name: _EmissiveColorG
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: .294982702, g: .911764681, b: .8351987, a: 1}
       data:
         first:
           name: _EmissiveColorB
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0, g: 1, b: .958620548, a: 1}
       data:
         first:
           name: _EmissiveColorA

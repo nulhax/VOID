@@ -60,24 +60,6 @@ public class CNetworkScanner : MonoBehaviour
     // public:
 
 
-    public void Start()
-    {
-		StartupPeer();
-    }
-    
-    
-    public void OnDestroy()
-    {
-		// Empty
-    }
-
-
-    public void Update()
-    {
-		ProcessInboundPackets();
-    }
-
-
 	public void RefreshOnlineServers()
 	{
 		if (m_cMasterServerAddress == null)
@@ -134,10 +116,25 @@ public class CNetworkScanner : MonoBehaviour
 	}
 
 
-    // protected:
+    void Start()
+    {
+        StartupPeer();
+    }
 
 
-	protected void ProcessInboundPackets()
+    void OnDestroy()
+    {
+        // Empty
+    }
+
+
+    void Update()
+    {
+        ProcessInboundPackets();
+    }
+
+
+	void ProcessInboundPackets()
 	{
 		RakNet.Packet cRnPacket = null;
 
@@ -189,7 +186,7 @@ public class CNetworkScanner : MonoBehaviour
 	}
 
 
-	protected void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
+	void HandleConnectionAccepted(RakNet.SystemAddress _cServerSystemAddress)
 	{
 		m_cMasterServerAddress = _cServerSystemAddress;
 
@@ -198,7 +195,7 @@ public class CNetworkScanner : MonoBehaviour
 	}
 
 
-	protected void HandleOnlineServerList(byte[] _baData)
+	void HandleOnlineServerList(byte[] _baData)
 	{
 		string sServerList = ASCIIEncoding.ASCII.GetString(_baData, 1, _baData.Length - 1);
 
@@ -219,7 +216,7 @@ public class CNetworkScanner : MonoBehaviour
 	}
 
 
-	protected void HandleUnconnectPong(byte[] _baData, RakNet.SystemAddress _cServerSystemAddress, RakNet.RakNetGUID _cServerGuid)
+	void HandleUnconnectPong(byte[] _baData, RakNet.SystemAddress _cServerSystemAddress, RakNet.RakNetGUID _cServerGuid)
 	{
 		// Create stream
 		CNetworkStream cStream = new CNetworkStream(_baData);
@@ -284,9 +281,6 @@ public class CNetworkScanner : MonoBehaviour
 			EventFoundServer(tLanServerInfo);
 		}
 	}
-
-
-    // private:
 
 
 	void StartupPeer()

@@ -18,7 +18,7 @@ RenderSettings:
   m_FogDensity: .000199999995
   m_LinearFogStart: 0
   m_LinearFogEnd: 0
-  m_AmbientLight: {r: .227941155, g: .227941155, b: .227941155, a: 1}
+  m_AmbientLight: {r: .0735294223, g: .0735294223, b: .0735294223, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: .5
   m_FlareStrength: 1
@@ -171,6 +171,7 @@ GameObject:
   - 114: {fileID: 1432749554}
   - 114: {fileID: 1432749555}
   - 114: {fileID: 1432749556}
+  - 114: {fileID: 1432749562}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -354,5 +355,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e8ffc7a7b368e54c877ffddf49bef5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1432749562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432749547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f95cae0accf0a2844a8e6a26cf4efcca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -67,7 +67,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 	}
 	
 	// Member Methods
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "InvokeOnClick");
         _cRegistrar.RegisterRpc(this, "InvokeOnDoubleClick");
@@ -195,7 +195,7 @@ public class CDUIElement : CNetworkMonoBehaviour
 		while(_cStream.HasUnreadData)
 		{
 			// Get the DUIElement and its network view
-			CDUIElement duiElement = CNetwork.Factory.FindObject(_cStream.Read<TNetworkViewId>()).GetComponent<CDUIElement>();
+			CDUIElement duiElement = CNetwork.Factory.FindGameObject(_cStream.Read<TNetworkViewId>()).GetComponent<CDUIElement>();
 
 			// Get the interaction notification
 			EElementNotificationType notification = (EElementNotificationType)_cStream.Read<byte>();

@@ -48,7 +48,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bAmmo = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
 
@@ -106,8 +106,6 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		m_cNossle = transform.FindChild("Nossle").gameObject;
-
         gameObject.GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryActiveChange;
 	}
 
@@ -158,14 +156,14 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
             s_cSerializeStream.Write((byte)ENetworkAction.ShootEnd);
         }
 
-        s_cSerializeStream.Write(SelfNetworkView.ViewId);
+        s_cSerializeStream.Write(NetworkView.ViewId);
 	}
 
 
 // Member Fields
 
 
-	GameObject m_cNossle = null;
+	public GameObject m_cNossle = null;
 
 
 	CNetworkVar<byte> m_bAmmo = null;

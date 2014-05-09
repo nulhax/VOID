@@ -54,7 +54,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
     // Member Functions
     
     
-    public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         m_bRepairState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync);
     }
@@ -125,7 +125,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
                     CComponentInterface cActorComponentInterface = cTargetActorInteractable.GetComponent<CComponentInterface>();
 
                     if (cActorComponentInterface != null &&
-                        cActorComponentInterface.ComponentType == CComponentInterface.EType.CalibratorComp)
+                        cActorComponentInterface.ComponentType == CComponentInterface.EType.Calibrator)
                     {
                         BeginRepair(cTargetActorInteractable);
                     }
@@ -173,7 +173,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
                 m_iTargetIndex = 0;
             }       
             
-            m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
+            m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation, true);            
             m_fTargetSwitchTimer = 0.0f;
             // Commented out by Nathan to avoid extraneous debug information.
             // Feel free to uncomment for debugging purposes when required.
@@ -200,7 +200,7 @@ public class CCalibratorBehaviour : CNetworkMonoBehaviour
         m_fTargetSwitchTimer = 0.0f;
         
         m_IKController = gameObject.GetComponent<CToolInterface>().OwnerPlayerActor.GetComponent<CPlayerIKController>();
-        m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation);            
+        m_IKController.SetLeftHandTarget(m_TargetList[m_iTargetIndex].position,m_TargetList[m_iTargetIndex].rotation, true);            
         
         TNetworkViewId senderID = gameObject.GetComponent<CNetworkView>().ViewId;
         TNetworkViewId targetID = _damagedComponent.GetComponent<CNetworkView>().ViewId;

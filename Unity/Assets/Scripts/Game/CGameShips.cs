@@ -34,32 +34,53 @@ public class CGameShips : CNetworkMonoBehaviour
 
 	public static GameObject Ship
 	{
-		get { return (CNetwork.Factory.FindObject(s_cInstance.m_cShipViewId)); }
+		get 
+        {
+            if (s_cInstance.m_cShipViewId == null)
+                return (null);
+
+            return (CNetwork.Factory.FindGameObject(s_cInstance.m_cShipViewId)); 
+        }
 	}
 
 
 	public static TNetworkViewId ShipViewId
 	{
-		get { return (s_cInstance.m_cShipViewId); }
+		get 
+        { 
+            return (s_cInstance.m_cShipViewId); 
+        }
 	}
 
 
 	public static CShipGalaxySimulatior ShipGalaxySimulator
 	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>()); }
+		get 
+        {
+            if (Ship == null)
+                return (null);
+
+            return (Ship.GetComponent<CShipGalaxySimulatior>()); 
+        }
 	}
 
 
 	public static GameObject GalaxyShip
 	{
-		get { return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); }
+		get 
+        {
+            if (Ship == null)
+                return (null);
+
+            return (Ship.GetComponent<CShipGalaxySimulatior>().GalaxyShip); 
+        }
 	}
 
 
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "SetShipNetworkViewId");
 	}
@@ -106,11 +127,11 @@ public class CGameShips : CNetworkMonoBehaviour
 	void OnServerStartup()
 	{
 		// Create ship object
-		GameObject cShipObject = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.Ship);
+		GameObject cShipObject = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.Ship);
 
 		m_cShipViewId = cShipObject.GetComponent<CNetworkView>().ViewId;
 
-        GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Bridge));
+        //GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Bridge));
         //cBirdgeObject.GetComponent<CFacilityExpansion>().GetExpansionPort(0).GetComponent<CExpansionPortBehaviour>().CreateFacility(CFacilityInterface.EType.Airlock, 0);
         //GameObject cBirdgeObject = CNetwork.Factory.CreateObject(CFacilityInterface.GetPrefabType(CFacilityInterface.EType.Airlock));
 

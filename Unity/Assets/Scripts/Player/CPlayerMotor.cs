@@ -162,7 +162,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void InstanceNetworkVars(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fRemotePositionX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, k_fPositionSendInterval);
         m_fRemotePositionY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, k_fPositionSendInterval);
@@ -188,7 +188,11 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	public void EnableInput(object _cRequester)
 	{
 		m_cInputDisableQueue.Remove(_cRequester.GetType());
-        gameObject.GetComponent<CThirdPersonAnimController>().EnableAnimation();
+
+        if (m_cInputDisableQueue.Count == 0)
+        {
+            gameObject.GetComponent<CThirdPersonAnimController>().EnableAnimation();
+        }
 	}
 
 
@@ -204,7 +208,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	{
         GameObject cSelfActor = CGamePlayers.SelfActor;
 
-        if (cSelfActor != null)
+        if ( cSelfActor != null &&
+            !cSelfActor.GetComponent<CPlayerMotor>().IsInputDisabled)
         {
             _cStream.Write(ENetworkAction.SyncRotation);
             _cStream.Write(cSelfActor.transform.position.x);
@@ -234,12 +239,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                 switch (eNetworkAction)
                 {
                     case ENetworkAction.SyncRotation:
-                        cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationX.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationY.Value = _cStream.Read<float>();
-                        cPlayerActorMotor.m_fRemoteRotationZ.Value = _cStream.Read<float>();
+                        if (!cPlayerActorMotor.IsInputDisabled)
+                        {
+                            cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationX.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationY.Value = _cStream.Read<float>();
+                            cPlayerActorMotor.m_fRemoteRotationZ.Value = _cStream.Read<float>();
+                        }
+                        else
+                        {
+                            _cStream.IgnoreBytes(6 * sizeof(float));
+                        }
                         break;
 
                     default:
@@ -269,31 +281,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         gameObject.GetComponent<CActorLocator>().EventEnterShip += OnEventEnterShip;
         gameObject.GetComponent<CActorLocator>().EventLeaveShip += OnEventLeaveShip;
 
-        if (CNetwork.IsServer)
-        {
-            // Subscribe to client axis events
-            CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
-            CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
-
-            // Subscribe to client input events
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Forward,      OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Backwards,    OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft,   OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight,  OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Run,          OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Crouch,       OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump,   OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.Move_Run,          OnEventClientInputChange);
-
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveFly_Down,      OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveFly_Up,        OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveFly_RollLeft,  OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveFly_RollRight, OnEventClientInputChange);
-            CUserInput.SubscribeClientInputChange(CUserInput.EInput.MoveFly_Stabilize, OnEventClientInputChange);
-
-            gameObject.GetComponent<CPlayerHead>().EventRotationYOverflow += OnEventHeadRotationYOverflow;
-        }
-        else if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Subscribe to axis events
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
@@ -326,7 +314,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	}
 
 
-    void OnDestory()
+    void OnDestroy()
     {
         // Unregister the entering/exiting gravity zones
         gameObject.GetComponent<CActorGravity>().EventEnteredGravityZone -= OnEventPlayerEnterGravityZone;
@@ -335,30 +323,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         gameObject.GetComponent<CActorLocator>().EventEnterShip -= OnEventEnterShip;
         gameObject.GetComponent<CActorLocator>().EventLeaveShip -= OnEventLeaveShip;
 
-        if (CNetwork.IsServer)
-        {
-            // Unsubscribe to client axis events
-            CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventClientAxisChange);
-            CUserInput.UnsubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventClientAxisChange);
-
-            // Unsubscribe from client input events
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Forward,      OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Backwards,    OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeLeft,   OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_StrafeRight,  OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Crouch,       OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveGround_Jump,   OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.Move_Run,          OnEventClientInputChange);
-
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveFly_Down,      OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveFly_Up,        OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveFly_RollLeft,  OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveFly_RollRight, OnEventClientInputChange);
-            CUserInput.UnsubscribeClientInputChange(CUserInput.EInput.MoveFly_Stabilize, OnEventClientInputChange);
-
-            gameObject.GetComponent<CPlayerHead>().EventRotationYOverflow -= OnEventHeadRotationYOverflow;
-        }
-        else if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Subscribe to axis events
             CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisChange);
@@ -387,7 +352,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 	
 	void Update()
 	{
-        if (gameObject == CGamePlayers.SelfActor &&
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe &&
             Input.GetKeyDown(KeyCode.O) &&
             CNetwork.IsServer)
         {
@@ -408,7 +373,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void FixedUpdate()
 	{
-        if (gameObject == CGamePlayers.SelfActor)
+        if (gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             UpdateGrounded();
             UpdateBodyHeadRealigning();
@@ -444,7 +409,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
         if (State == EState.AligningBodyToShipInternal &&
             (CNetwork.IsServer ||
-             gameObject == CGamePlayers.SelfActor))
+             gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe))
         {
             // Change state when angle has reached 0
             if (Quaternion.Angle(transform.rotation, Quaternion.Euler(0.0f, transform.eulerAngles.y, 0.0f)) == 0.0f)
@@ -453,9 +418,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             }
         }
 
-        if (gameObject != CGamePlayers.SelfActor ||
+        if (gameObject != CGamePlayers.SelfActor /*||
             (State != EState.AligningBodyToShipInternal &&
-             State != EState.AligningBodyToShipExternal))
+             State != EState.AligningBodyToShipExternal)*/)
         {
             UpdatePositionRotationLerping();
         }
@@ -655,6 +620,9 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
     void UpdatePositionRotationLerping()
     {
+        if (IsInputDisabled)
+            return;
+
         // Generate remote position
         Vector3 vRemotePosition = new Vector3(m_fRemotePositionX.Value, m_fRemotePositionY.Value, m_fRemotePositionZ.Value);
         Vector3 vRemoteEuler = new Vector3(m_fRemoteRotationX.Value, m_fRemoteRotationY.Value, m_fRemoteRotationZ.Value);
@@ -802,30 +770,19 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     [AOwnerAndServerOnly]
     void OnEventAxisChange(CUserInput.EAxis _eAxis, float _fValue)
     {
-        OnEventClientAxisChange(_eAxis, CNetwork.PlayerId, _fValue);
-    }
-
-
-    [AOwnerAndServerOnly]
-    void OnEventClientAxisChange(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
-    {
-        // Check player is the owner of this actor
-        if (_ulPlayerId == GetComponent<CPlayerInterface>().PlayerId)
+        switch (_eAxis)
         {
-            switch (_eAxis)
-            {
-                case CUserInput.EAxis.MouseX:
-                    m_fMouseDeltaX += _fValue;
-                    break;
+            case CUserInput.EAxis.MouseX:
+                m_fMouseDeltaX += _fValue;
+                break;
 
-                case CUserInput.EAxis.MouseY:
-                    m_fMouseDeltaY += _fValue;
-                    break;
+            case CUserInput.EAxis.MouseY:
+                m_fMouseDeltaY += _fValue;
+                break;
 
-                default:
-                    Debug.LogError("Unknown mouse axis: " + _eAxis);
-                    break;
-            }
+            default:
+                Debug.LogError("Unknown mouse axis: " + _eAxis);
+                break;
         }
     }
 
@@ -833,97 +790,86 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     [AOwnerAndServerOnly]
     void OnEventInputChange(CUserInput.EInput _eInput, bool _bDown)
     {
-        OnEventClientInputChange(_eInput, CNetwork.PlayerId, _bDown);
-    }
+        EInputState eTargetState = EInputState.INVALID;
 
-
-    [AOwnerAndServerOnly]
-    void OnEventClientInputChange(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
-    {
-        // Check player is the owner of this actor
-        if (_ulPlayerId == GetComponent<CPlayerInterface>().PlayerId)
+        // Match the input towards a movement state
+        switch (_eInput)
         {
-            EInputState eTargetState = EInputState.INVALID;
+            case CUserInput.EInput.Move_Forward:
+                eTargetState = EInputState.Forward;
+                break;
 
-            // Match the input towards a movement state
-            switch (_eInput)
+            case CUserInput.EInput.Move_Backwards:
+                eTargetState = EInputState.Backward;
+                break;
+
+            case CUserInput.EInput.Move_StrafeLeft:
+                eTargetState = EInputState.StrafeLeft;
+                break;
+
+            case CUserInput.EInput.Move_StrafeRight:
+                eTargetState = EInputState.StrafeRight;
+                break;
+
+            case CUserInput.EInput.Move_Crouch:
+                eTargetState = EInputState.Crouch;
+                break;
+
+            case CUserInput.EInput.MoveGround_Jump:
+                eTargetState = EInputState.Jump;
+                break;
+
+            case CUserInput.EInput.Move_Run:
+                eTargetState = EInputState.Run;
+                break;
+
+            case CUserInput.EInput.MoveFly_Down:
+                eTargetState = EInputState.FlyDown;
+                break;
+
+            case CUserInput.EInput.MoveFly_Up:
+                eTargetState = EInputState.FlyUp;
+                break;
+
+            case CUserInput.EInput.MoveFly_RollLeft:
+                eTargetState = EInputState.RollLeft;
+                break;
+
+            case CUserInput.EInput.MoveFly_RollRight:
+                eTargetState = EInputState.RollRight;
+                break;
+
+            case CUserInput.EInput.MoveFly_Stabilize:
+                eTargetState = EInputState.Stabilize;
+                break;
+
+            default:
+                Debug.LogError(string.Format("Unknown client input cange. Input({0})", _eInput));
+                break;
+        }
+
+        if (eTargetState != EInputState.INVALID)
+        {
+            ushort usPreviousInputStates = m_usInputStates;
+
+            // Update state
+            if (_bDown)
             {
-                case CUserInput.EInput.Move_Forward:
-                    eTargetState = EInputState.Forward;
-                    break;
-
-                case CUserInput.EInput.Move_Backwards:
-                    eTargetState = EInputState.Backward;
-                    break;
-
-                case CUserInput.EInput.Move_StrafeLeft:
-                    eTargetState = EInputState.StrafeLeft;
-                    break;
-
-                case CUserInput.EInput.Move_StrafeRight:
-                    eTargetState = EInputState.StrafeRight;
-                    break;
-
-                case CUserInput.EInput.Move_Crouch:
-                    eTargetState = EInputState.Crouch;
-                    break;
-
-                case CUserInput.EInput.MoveGround_Jump:
-                    eTargetState = EInputState.Jump;
-                    break;
-
-                case CUserInput.EInput.Move_Run:
-                    eTargetState = EInputState.Run;
-                    break;
-
-                case CUserInput.EInput.MoveFly_Down:
-                    eTargetState = EInputState.FlyDown;
-                    break;
-
-                case CUserInput.EInput.MoveFly_Up:
-                    eTargetState = EInputState.FlyUp;
-                    break;
-
-                case CUserInput.EInput.MoveFly_RollLeft:
-                    eTargetState = EInputState.RollLeft;
-                    break;
-
-                case CUserInput.EInput.MoveFly_RollRight:
-                    eTargetState = EInputState.RollRight;
-                    break;
-
-                case CUserInput.EInput.MoveFly_Stabilize:
-                    eTargetState = EInputState.Stabilize;
-                    break;
-
-                default:
-                    Debug.LogError(string.Format("Unknown client input cange. Input({0})", _eInput));
-                    break;
+                m_usInputStates |= (ushort)eTargetState;
+            }
+            else
+            {
+                m_usInputStates &= (ushort)~eTargetState;
             }
 
-            if (eTargetState != EInputState.INVALID)
+            // Set remote input states
+            if (CNetwork.IsServer)
             {
-                ushort usPreviousInputStates = m_usInputStates;
-
-                // Update state
-                if (_bDown)
-                {
-                    m_usInputStates |= (ushort)eTargetState;
-                }
-                else
-                {
-                    m_usInputStates &= (ushort)~eTargetState;
-                }
-
-                // Set remote input states
-                if (CNetwork.IsServer)
-                {
-                    m_usRemoteInputStates.Value = (ushort)m_usInputStates;
-                }
-
-                // Notify observers
-                if (EventInputStatesChange != null) EventInputStatesChange(usPreviousInputStates, m_usInputStates);
+                m_usRemoteInputStates.Value = (ushort)m_usInputStates;
             }
+
+            // Notify observers
+            if (EventInputStatesChange != null) EventInputStatesChange(usPreviousInputStates, m_usInputStates);
         }
     }
 
@@ -933,7 +879,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
         // Check this is the server or I own this actor
         if (CNetwork.IsServer ||
-            gameObject == CGamePlayers.SelfActor)
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Check we are using air thusters within the ship
             if (m_eState == EState.AirThustersInShip)
@@ -949,7 +895,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
         // Check this is the server or I own this actor
         if (CNetwork.IsServer ||
-            gameObject == CGamePlayers.SelfActor)
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Check if this actor is not in the ship
             if (!gameObject.GetComponent<CActorLocator>().IsInShip)
@@ -971,7 +917,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
         // Check this is the server or I own this actor
         if (CNetwork.IsServer ||
-            gameObject == CGamePlayers.SelfActor)
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Check facility has gravity
             if (GetComponent<CActorLocator>().CurrentFacility.GetComponent<CFacilityGravity>().IsGravityEnabled)
@@ -993,7 +939,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     {
         // Check this is the server or I own this actor
         if (CNetwork.IsServer ||
-            gameObject == CGamePlayers.SelfActor)
+            gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Check user was using air thusters within the ship (OnEventPlayerLeaveGravityZone() wont be called in this state)
             if (m_eState == EState.AirThustersInShip)
@@ -1066,8 +1012,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	ushort m_usInputStates = 0;
 
-
-    bool m_bRealignBodyWithHead = false;
+    public bool m_bRealignBodyWithHead = false;
 	bool m_bGrounded = false;
     bool m_bInSpace  = false;
 
