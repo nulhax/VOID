@@ -52,18 +52,21 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Methods
 	[AServerOnly]
-	public void ImportNewGridTiles(List<CTileInterface> _AllTiles, List<List<CTileInterface>> _FacilityInteriorTiles)
+	public void ImportNewGridTiles(List<CTileInterface> _AllTiles)
 	{
 		// Import all of the tiles to the ship
 		m_ShipGrid.ImportTileInformation(_AllTiles);
+
+		// Detirmine facilities
+		List<List<CTileInterface>> facilitTiles = DetirmineFacilityTiles(m_ShipGrid);
 
 		// Destoy all facilities
 		foreach(GameObject facility in Facilities)
 			DestoryFacility(facility);
 
 		// Create all new facilities
-		foreach(List<CTileInterface> facilityTiles in _FacilityInteriorTiles)
-			CreateFacility(facilityTiles);
+		foreach(List<CTileInterface> facility in facilitTiles)
+			CreateFacility(facility);
 
 		// Reconfigure the entry triggers
 		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers(this);
@@ -73,6 +76,96 @@ public class CShipFacilities : MonoBehaviour
 
 		// Static batch all tiles
 		//StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
+	}
+
+	[AServerOnly]
+	private List<List<CTileInterface>> DetirmineFacilityTiles(CGrid _Grid)
+	{
+		List<List<CTileInterface>> facilityTiles = new List<List<CTileInterface>>();
+
+		// Itterate each of the tiles which are interior within the ship
+		List<CTileInterface> interiorTiles = _Grid.GridTiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.Interior_Wall));
+		foreach(CTileInterface tile in interiorTiles)
+		{
+			// If there are facilities then we need to check if this tile belongs in one of them
+			List<List<CTileInterface>> tileFacilities = new List<List<CTileInterface>>();
+			foreach(CNeighbour neighbour in tile.m_NeighbourHood)
+			{
+
+
+
+
+//				// If there is no occlusion, find the list in which this neighbour belongs to
+//				List<CTileInterface> facilityTileList = facilityTiles.Find(list => list.Contains(neighbour.m_TileInterface));
+//				if(facilityTileList != null)
+//				{
+//					// Only add to the first facility found
+//					if(tileFacilities.Count == 0)
+//						facilityTileList.Add(tile);
+//					
+//					// Save the facilities this tile belongs to
+//					if(!tileFacilities.Contains(facilityTileList))
+//						tileFacilities.Add(facilityTileList);
+//				}
+				
+				
+				
+				
+				// Get the center of the tile and direction to the neighbout
+				Vector3 origin = tile.transform.position + _Grid.transform.up * 0.5f;
+				Vector3 dir = (neighbour.m_TileInterface.transform.position - tile.transform.position).normalized;
+				
+				// Raycast to check if the path is occluded
+				Ray ray = new Ray(origin, dir);
+				if(!Physics.Raycast(ray, 1))
+				{
+					// If there is no occlusion, find the list in which this neighbour belongs to
+					List<CTileInterface> facilityTileList = facilityTiles.Find(list => list.Contains(neighbour.m_TileInterface));
+					if(facilityTileList != null)
+					{
+						// Only add to the first facility found
+						if(tileFacilities.Count == 0)
+							facilityTileList.Add(tile);
+						
+						// Save the facilities this tile belongs to
+						if(!tileFacilities.Contains(facilityTileList))
+							tileFacilities.Add(facilityTileList);
+					}
+					
+					Debug.DrawLine(origin, origin + (dir * 0.45f), Color.green, 5.0f);
+				}
+				else
+					Debug.DrawLine(origin, origin + (dir * 0.45f), Color.red, 5.0f);
+			}
+			
+			// If there was no facilities added add this to a new list
+			if(tileFacilities.Count == 0)
+			{
+				List<CTileInterface> list = new List<CTileInterface>();
+				list.Add(tile);
+
+				facilityTiles.Add(list);
+				continue;
+			}
+			
+			// Check if this tile belongs to more than one list
+			if(tileFacilities.Count > 1)
+			{
+				List<CTileInterface> newList = new List<CTileInterface>();
+				
+				// Remove these lists from the main list and add to new list
+				foreach(List<CTileInterface> list in tileFacilities)
+				{
+					newList.AddRange(list);
+					facilityTiles.Remove(list);
+				}
+				
+				// Add combined list to the main list
+				facilityTiles.Add(newList);
+			}
+		}
+
+		return(facilityTiles);
 	}
 
 	private void ConfigureFacilityDoors()

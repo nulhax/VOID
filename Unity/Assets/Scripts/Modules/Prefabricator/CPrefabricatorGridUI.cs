@@ -82,9 +82,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	private Quaternion m_DragRotateStart = Quaternion.identity;
 	private Vector3 m_DragMovementStart = Vector3.zero;
 
-	private bool m_FacilityTilesDirty = false;
-	private List<List<CTileInterface>> m_FacilityTiles = new List<List<CTileInterface>>();
-
 
 	// Member Properties
 	public bool IsShiftKeyDown
@@ -143,7 +140,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			// Register events
 			tile.EventTileGeometryChanged += OnTileGeometryChange;
 		}
-		m_FacilityTilesDirty = true;
 	}
 	
 	private void Update() 
@@ -184,16 +180,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		m_TileMaterial.SetVector("_PlaneNormal", new Vector4(up.x, up.y, up.z));
 		m_TileMaterial.SetVector("_PlanePoint", new Vector4(pos.x, pos.y + 2.0f * m_GridScale, pos.z));
 		m_TileMaterial.SetFloat("_GlowDist", 0.3f * m_GridScale);
-	}
-
-	private void LateUpdate()
-	{
-		// Update the facilities tiles
-		if(m_FacilityTilesDirty)
-		{
-			UpdateFacilityTiles();
-			m_FacilityTilesDirty = false;
-		}
 	}
 
 	[AServerOnly]
@@ -936,74 +922,6 @@ public class CPrefabricatorGridUI : MonoBehaviour
 			childRenderer.castShadows = false;
 			childRenderer.receiveShadows = false;
 		}
-
-		m_FacilityTilesDirty = true;
-	}
-
-	[AServerOnly]
-	private void UpdateFacilityTiles()
-	{
-		// Clear the list of facility tiles
-		m_FacilityTiles.Clear();
-
-		// Find each of the tiles facility parent
-		List<CTileInterface> interiorTiles = m_Grid.GridTiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.Interior_Wall));
-		foreach(CTileInterface tile in interiorTiles)
-		{
-			// If there are facilities then we need to check if this tile belongs in one of them
-			List<List<CTileInterface>> tileFacilities = new List<List<CTileInterface>>();
-			foreach(CNeighbour neighbour in tile.m_NeighbourHood)
-			{
-				// Get the center of the tile and direction to the neighbout
-				Vector3 origin = tile.transform.position + m_Grid.transform.up * 0.5f * m_Grid.m_TileSize * m_GridScale;
-				Vector3 dir = (neighbour.m_TileInterface.transform.position - tile.transform.position).normalized;
-
-				// Raycast to check if the path is occluded
-				Ray ray = new Ray(origin, dir);
-				if(!Physics.Raycast(ray, m_Grid.m_TileSize * m_GridScale))
-				{
-					// If there is no occlusion, find the list in which this neighbour belongs to
-					List<CTileInterface> facilityTileList = m_FacilityTiles.Find(list => list.Contains(neighbour.m_TileInterface));
-					if(facilityTileList != null)
-					{
-						// Only add to the first facility found
-						if(tileFacilities.Count == 0)
-							facilityTileList.Add(tile);
-
-						// Save the facilities this tile belongs to
-						if(!tileFacilities.Contains(facilityTileList))
-							tileFacilities.Add(facilityTileList);
-					}
-
-					Debug.DrawLine(origin, origin + (dir * m_Grid.m_TileSize * m_GridScale * 0.45f), Color.green, 1.0f);
-				}
-				else
-					Debug.DrawLine(origin, origin + (dir * m_Grid.m_TileSize * m_GridScale * 0.45f), Color.red, 1.0f);
-			}
-
-			// If there was no facilities added add this to a new list
-			if(tileFacilities.Count == 0)
-			{
-				m_FacilityTiles.Add(new CTileInterface[]{ tile }.ToList());
-				continue;
-			}
-
-			// Check if this tile belongs to more than one list
-			if(tileFacilities.Count > 1)
-			{
-				List<CTileInterface> newList = new List<CTileInterface>();
-
-				// Remove these lists from the main list and add to new list
-				foreach(List<CTileInterface> list in tileFacilities)
-				{
-					newList.AddRange(list);
-					m_FacilityTiles.Remove(list);
-				}
-
-				// Add combined list to the main list
-				m_FacilityTiles.Add(newList);
-			}
-		}
 	}
 
 //	[AServerOnly]
@@ -1020,7 +938,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	[AServerOnly]
 	public void ExportTilesToShip()
 	{
-		CGameShips.Ship.GetComponent<CShipFacilities>().ImportNewGridTiles(m_Grid.GridTiles, m_FacilityTiles);
+		CShipFacilities shipFacility = CGameShips.Ship.GetComponent<CShipFacilities>();
+		shipFacility.ImportNewGridTiles(m_Grid.GridTiles);
 	}
 }
 

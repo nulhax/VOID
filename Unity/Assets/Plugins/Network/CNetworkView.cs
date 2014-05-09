@@ -624,7 +624,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 				*/
 
-                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
+                //Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
 
 				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 
