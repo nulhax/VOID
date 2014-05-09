@@ -130,31 +130,20 @@ public class CGrid : MonoBehaviour
 
 	public List<CTileInterface> ImportTileInformation(List<CTileInterface> _Tiles)
 	{
-		// Keep a list of tiles which werent modified
-		List<CTileInterface> unmodifiedTiles = Tiles;
 		List<CTileInterface> newTiles = new List<CTileInterface>();
 	
+		// Remove all tiles within the grid currently
+		foreach(CTileInterface tileInterface in Tiles)
+			RemoveTile(tileInterface.m_GridPosition);
+
 		// Iterate all the new tiles to use
 		foreach(CTileInterface tile in _Tiles)
 		{
-			// If the tile exists, remove from the list of unmodified tiles
-			CTileInterface existingTile = GetTileInterface(tile.m_GridPosition);
-			if(existingTile != null)
-				unmodifiedTiles.Remove(existingTile);
-
 			// Place the tile and clone the info from the original
 			CTileInterface newTile = PlaceTile(tile.m_GridPosition);
 			newTile.Clone(tile);
 			newTiles.Add(newTile);
 		}
-
-		// Remove all tiles that dont exist anymore
-		foreach(CTileInterface tile in unmodifiedTiles)
-			RemoveTile(tile.m_GridPosition);
-
-		// Update all tiles meta data
-		foreach(CTileInterface tile in newTiles)
-			tile.UpdateAllCurrentTileMetaData();
 
  		return(newTiles);
 	}
@@ -187,13 +176,13 @@ public class CGrid : MonoBehaviour
 
 			m_GridBoard.Add(_Position.ToString(), tileInterface);
 
-			// Update neighbours
-			tileInterface.FindNeighbours();
-			tileInterface.UpdateNeighbourhood();
-
 			if(EventTileInterfaceCreated != null)
 				EventTileInterfaceCreated(tileInterface);
 		}
+
+		// Update neighbours
+		tileInterface.FindNeighbours();
+		tileInterface.UpdateNeighbourhood();
 	
 		// Disable all tile types
 		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)

@@ -50,7 +50,7 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
             //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
         }
 
-        GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
+		GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
     }
 
 

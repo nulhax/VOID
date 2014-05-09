@@ -68,7 +68,7 @@ public class CGameRegistrator : MonoBehaviour
 		// Accessories
         Alarm					= 500,
         ControlConsole,
-		Door,
+		InteriorDoor,
         DuiMontior,
 		
 		// Modules
@@ -81,13 +81,13 @@ public class CGameRegistrator : MonoBehaviour
         Dispenser,
 		NaniteSilo,
         Engine,
-		Starter,
+		Thruster,
 		Prefabricator,
         TurretPulseSmall        = 640,
         TurretPulseMedium,
         TurretMissileSmall      = 645,
         TurretMissileMedium,
-        MissileProjectile                 = 660,
+        MissileProjectile      = 660,
         MissileHitParticles     = 662,
 
 		// Components
@@ -216,7 +216,7 @@ public class CGameRegistrator : MonoBehaviour
 
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/Monitors/CurvedMonitor_wide");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Door,                        "Accessories/Doors/Door");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.InteriorDoor,                "Accessories/Doors/InteriorDoor");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules
@@ -229,7 +229,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Dispenser,                   "Modules/Dispenser");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NaniteSilo,               	"Modules/Nanite Silo Small");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Engine,                      "Modules/Engine Small");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Starter,                     "Modules/Starter");
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Thruster,                    "Modules/Thuster Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Prefabricator,               "Modules/Prefabricator");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseSmall,            "Modules/Pulse Turret Small");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.TurretPulseMedium,           "Modules/Pulse Turret Medium");
@@ -371,8 +371,8 @@ public class CGameRegistrator : MonoBehaviour
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Dispenser            , ENetworkPrefab.Dispenser);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.NaniteSilo        	, ENetworkPrefab.NaniteSilo);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.Engine               , ENetworkPrefab.Engine);
-		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Starter              , ENetworkPrefab.Starter);
 		CModuleInterface.RegisterPrefab(CModuleInterface.EType.Prefabricator        , ENetworkPrefab.Prefabricator);
+        CModuleInterface.RegisterPrefab(CModuleInterface.EType.Thruster             , ENetworkPrefab.Thruster);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseSmall     , ENetworkPrefab.TurretPulseSmall);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretPulseMedium    , ENetworkPrefab.TurretPulseMedium);
         CModuleInterface.RegisterPrefab(CModuleInterface.EType.TurretMissleSmall    , ENetworkPrefab.TurretMissileSmall);

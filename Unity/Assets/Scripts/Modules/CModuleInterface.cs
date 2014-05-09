@@ -62,12 +62,11 @@ public class CModuleInterface : CNetworkMonoBehaviour
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
-        Starter             = 750,
+        Thruster            = 750,
         TurretPulseSmall    = 800,
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
-        TusterSmall         = 900,
 
 	}
 
@@ -252,6 +251,7 @@ public class CModuleInterface : CNetworkMonoBehaviour
             m_cPrecipitativeModel = GameObject.Instantiate(m_cPrecipitativeModel) as GameObject;
             m_cPrecipitativeModel.transform.parent = gameObject.transform;
             m_cPrecipitativeModel.transform.localPosition = Vector3.zero;
+            m_cPrecipitativeModel.transform.localRotation = Quaternion.identity;
             m_bPrecipitativeModelInstanced = true;
 
             if (m_cPrecipitativeModel.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles != null)

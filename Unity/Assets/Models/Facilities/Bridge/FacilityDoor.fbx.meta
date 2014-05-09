@@ -1,0 +1,203 @@
+fileFormatVersion: 2
+guid: 1a44e21ddb86b6049a2aa7def3d7625b
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: polySurface3223
+    100004: polySurface3225
+    100006: polySurface3226
+    100008: polySurface3227
+    100010: polySurface3228
+    100012: polySurface3229
+    100014: Circle_Latch
+    100016: Door_Left
+    100018: Door_Right
+    100020: Door_Top
+    100022: Latch_Left
+    100024: Latch_Right
+    400000: //RootNode
+    400002: polySurface3223
+    400004: polySurface3225
+    400006: polySurface3226
+    400008: polySurface3227
+    400010: polySurface3228
+    400012: polySurface3229
+    400014: Circle_Latch
+    400016: Door_Left
+    400018: Door_Right
+    400020: Door_Top
+    400022: Latch_Left
+    400024: Latch_Right
+    2300000: polySurface3223
+    2300002: polySurface3225
+    2300004: polySurface3226
+    2300006: polySurface3227
+    2300008: polySurface3228
+    2300010: polySurface3229
+    2300012: Circle_Latch
+    2300014: Door_Left
+    2300016: Door_Right
+    2300018: Door_Top
+    2300020: Latch_Left
+    2300022: Latch_Right
+    3300000: polySurface3223
+    3300002: polySurface3225
+    3300004: polySurface3226
+    3300006: polySurface3227
+    3300008: polySurface3228
+    3300010: polySurface3229
+    3300012: Circle_Latch
+    3300014: Door_Left
+    3300016: Door_Right
+    3300018: Door_Top
+    3300020: Latch_Left
+    3300022: Latch_Right
+    4300000: polySurface3223
+    4300002: polySurface3229
+    4300004: polySurface3225
+    4300006: polySurface3227
+    4300008: polySurface3226
+    4300010: polySurface3228
+    4300012: Door_Top
+    4300014: Circle_Latch
+    4300016: Door_Left
+    4300018: Latch_Right
+    4300020: Door_Right
+    4300022: Latch_Left
+    7400000: Door_Open
+    7400002: Door_Close
+    7400004: Door_Idle
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Door_Open
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Door_Left
+        weight: 1
+      - path: Door_Left/Latch_Right
+        weight: 1
+      - path: Door_Right
+        weight: 1
+      - path: Door_Right/Latch_Left
+        weight: 1
+      - path: Door_Top
+        weight: 1
+      - path: Door_Top/Circle_Latch
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Door_Close
+      takeName: Take 001
+      firstFrame: 25
+      lastFrame: 48
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Door_Left
+        weight: 1
+      - path: Door_Left/Latch_Right
+        weight: 1
+      - path: Door_Right
+        weight: 1
+      - path: Door_Right/Latch_Left
+        weight: 1
+      - path: Door_Top
+        weight: 1
+      - path: Door_Top/Circle_Latch
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

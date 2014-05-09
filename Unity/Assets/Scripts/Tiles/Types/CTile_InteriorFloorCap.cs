@@ -49,7 +49,11 @@ public class CTile_InteriorFloorCap : CTile
 	{
 		get { return(s_MetaDictionary); }
 	}
-	
+
+	public override List<EDirection> RelevantDirections
+	{
+		get { return(s_RelevantDirections); }
+	}
 	
 	// Member Methods
 	static CTile_InteriorFloorCap()

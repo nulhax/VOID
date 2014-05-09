@@ -98,6 +98,21 @@ public class CGameCameras : MonoBehaviour
 		get { return(s_OculusRiftActive); }
 	}
 
+    public static GameObject ShipCamera
+    {
+        get
+        {
+            if (MainCamera.layer == LayerMask.NameToLayer("Default"))
+            {
+                return (MainCamera);
+            }
+            else
+            {
+                return (ProjectedCamera);
+            }
+        }
+    }
+
 
 	// Member Methods
 	public void Awake()

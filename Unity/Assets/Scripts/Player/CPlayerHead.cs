@@ -191,8 +191,17 @@ public class CPlayerHead : CNetworkMonoBehaviour
             gameObject.GetComponent<CActorLocator>().EventEnterShip += OnPlayerEnterShip;
 			gameObject.GetComponent<CActorLocator>().EventLeaveShip += OnPlayerLeaveShip;
 
-            // Add audoio listener to head
-            //Head.AddComponent<AudioListener>();
+			if(gameObject == CGamePlayers.SelfActor)
+			{
+            	// Add audoio listener to head
+            	Head.AddComponent<AudioListener>();
+
+				// Add light to the head
+				Head.AddComponent<Light>();
+				Head.light.type = LightType.Point;
+				Head.light.intensity = 0.5f;
+				Head.light.range = 30.0f;
+			}
         }
 
         if (CNetwork.IsServer)

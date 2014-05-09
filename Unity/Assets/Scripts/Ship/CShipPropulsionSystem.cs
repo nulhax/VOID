@@ -55,6 +55,9 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 
 
     [AServerOnly]
+
+
+    [AServerOnly]
     public void ChangeMaxPropolsion(float _fAmount)
     {
         m_fMaxPropulsion.Value += _fAmount;
