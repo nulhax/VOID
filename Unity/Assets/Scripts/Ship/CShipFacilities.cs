@@ -22,7 +22,6 @@ using System.Collections.Generic;
 
 public class CShipFacilities : MonoBehaviour
 {
-
 	// Member Types
 
 
@@ -35,6 +34,7 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Fields
 	public CGrid m_ShipGrid = null;
+	public GameObject m_FacilityDoorPrefab = null;
 
 	private uint m_FacilityIdCount = 0;
 
@@ -68,8 +68,51 @@ public class CShipFacilities : MonoBehaviour
 		// Reconfigure the entry triggers
 		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers(this);
 
+		// Configure facility doors
+		ConfigureFacilityDoors();
+
 		// Static batch all tiles
 		//StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
+	}
+
+	private void ConfigureFacilityDoors()
+	{
+		List<KeyValuePair<CTile, CTile>> interiorDoorwayPairs = new List<KeyValuePair<CTile, CTile>>(); 
+
+		foreach(CTileInterface tileInterface in m_ShipGrid.Tiles)
+		{
+			CTile interiorWallTile = tileInterface.GetTile(CTile.EType.Interior_Wall);
+
+			if(interiorWallTile == null)
+				continue;
+
+			foreach(CTile.CModification modification in interiorWallTile.m_Modifications)
+			{
+				if(modification.m_Modification != (int)CTile_InteriorWall.EModification.Door)
+					continue;
+
+				CNeighbour neighbour = tileInterface.m_NeighbourHood.Find(n => n.m_Direction == modification.m_WorldSide);
+				if(neighbour == null)
+					continue;
+
+				CTile neighbourInteriorWall = neighbour.m_TileInterface.GetTile(CTile.EType.Interior_Wall);
+				if(neighbourInteriorWall == null)
+					continue;
+
+				if(interiorDoorwayPairs.Exists(pair => pair.Value == interiorWallTile && pair.Key == neighbourInteriorWall))
+					continue;
+
+				interiorDoorwayPairs.Add(new KeyValuePair<CTile, CTile>(interiorWallTile, neighbourInteriorWall));
+			}
+		}
+
+		foreach(KeyValuePair<CTile, CTile> pair in interiorDoorwayPairs)
+		{
+			GameObject door = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.InteriorDoor);
+			CNetworkView doorNetworkView = door.GetComponent<CNetworkView>();
+			doorNetworkView.SetPosition((pair.Key.transform.position + pair.Value.transform.position) * 0.5f);
+			doorNetworkView.SetRotation(Quaternion.LookRotation((pair.Key.transform.position - pair.Value.transform.position).normalized));
+		}
 	}
 
 	[AServerOnly]

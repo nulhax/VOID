@@ -279,13 +279,14 @@ public class CTileInterface : CNetworkMonoBehaviour
 		UpdateTileTypeMask();
 
 		// Copy all tile meta data and exemption states
-		foreach(CTile otherTile in _From.GetComponents<CTile>())
+		foreach(CTile.EType otherTileType in _From.m_TileTypes)
 		{
-			CTile tile = GetTile(otherTile.m_TileType);
+			CTile otherTile = _From.GetTile(otherTileType);
+			CTile tile = GetTile(otherTileType);
 
-			if(tile == null)
+			if(tile == null || otherTile == null)
 			{
-				Debug.LogError("Tile clone cannot happen as something went wrong with this tile type mask! Missing Type: " + otherTile.m_TileType);
+				Debug.LogError("Tile clone cannot happen as something went wrong with this tile type mask! Missing Type: " + otherTileType);
 				continue;
 			}
 

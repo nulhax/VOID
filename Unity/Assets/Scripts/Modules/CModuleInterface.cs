@@ -62,12 +62,11 @@ public class CModuleInterface : CNetworkMonoBehaviour
         Dispenser           = 600,
         NaniteSilo          = 650,
         Engine              = 700,
-        Starter             = 750,
+        Thruster            = 750,
         TurretPulseSmall    = 800,
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
-        TusterSmall         = 900,
 
 	}
 

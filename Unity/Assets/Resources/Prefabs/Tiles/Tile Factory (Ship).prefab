@@ -38,7 +38,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 210e8b1c734871f43ade5077a0022d5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TilesPrefab: {fileID: 100064, guid: bbb7ccf0084fb684d98ca74e420b2fa3, type: 2}
+  m_TilesPrefab: {fileID: 100180, guid: a512607c6837f8d42935eaf83b46b9b0, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

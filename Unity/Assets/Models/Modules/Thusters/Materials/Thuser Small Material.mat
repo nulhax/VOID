@@ -76,16 +76,8 @@ Material:
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
-          name: _DiffuseCol
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _SpecCol
-        second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
           name: _EmissiveColorR
-        second: {r: .0758619308, g: 0, b: 1, a: 1}
+        second: {r: 0, g: .337931156, b: 1, a: 1}
       data:
         first:
           name: _EmissiveColorG
@@ -98,3 +90,11 @@ Material:
         first:
           name: _EmissiveColorA
         second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}

@@ -5,6 +5,7 @@
 		_Color1("Color1", Color) = (0.0, 0.0, 0.0, 1.0)
 		_Color2("Color2", Color) = (1.0, 1.0, 1.0, 1.0)
 		_ScaleFactor("ScaleFactor", Range(0.0,5.0)) = 1.0
+		_EmmisivePower("Emmisive Power", Float) = 2.0
 	}
 
 	SubShader 
@@ -31,6 +32,7 @@
 		float4 _Color1;
 		float4 _Color2;
 		float _ScaleFactor;
+		float _EmmisivePower;
 			
 		struct Input 
 		{
@@ -42,7 +44,7 @@
 			UNITY_INITIALIZE_OUTPUT(Input, o);
 			o.noise = v.vertex.xyz;
 			o.noise += v.normal * _ScaleFactor;
-			o.noise.y += _Time.x;
+			o.noise.y -= _Time.z;
 		}	
 
 		void surf(Input IN, inout SurfaceOutput o) 
@@ -63,7 +65,7 @@
 
 			float4 c = lerp(_Color1, _Color2, sum);
 			
-			o.Emission = c;
+			o.Emission = c * _EmmisivePower;
 		}
 		ENDCG
 	}
