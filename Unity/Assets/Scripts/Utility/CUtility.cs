@@ -194,12 +194,19 @@ public class CUtility
 		_GameObject.transform.rotation = Quaternion.identity;
 
 		MeshFilter[] meshFilters = _GameObject.GetComponentsInChildren<MeshFilter>();
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		SkinnedMeshRenderer[] skinnedRenderers = _GameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length + skinnedRenderers.Length];
 		
 		for(int i = 0; i < meshFilters.Length; ++i) 
 		{
 			combine[i].mesh = meshFilters[i].sharedMesh;
 			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+		}
+
+		for(int i = 0; i < skinnedRenderers.Length; ++i) 
+		{
+			combine[meshFilters.Length + i].mesh = skinnedRenderers[i].sharedMesh;
+			combine[meshFilters.Length + i].transform = skinnedRenderers[i].transform.localToWorldMatrix;
 		}
 		
 		Mesh mesh = new Mesh();

@@ -137,7 +137,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 	private void ImportPreplacedTiles()
 	{
-		foreach(CTileInterface tile in m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.Tiles))
+		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.GridTiles);
+		foreach(CTileInterface tile in m_Grid.GridTiles)
 		{
 			// Register events
 			tile.EventTileGeometryChanged += OnTileGeometryChange;
@@ -946,7 +947,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		m_FacilityTiles.Clear();
 
 		// Find each of the tiles facility parent
-		List<CTileInterface> interiorTiles = m_Grid.Tiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.Interior_Wall));
+		List<CTileInterface> interiorTiles = m_Grid.GridTiles.FindAll(tile => tile.GetTileTypeState(CTile.EType.Interior_Wall));
 		foreach(CTileInterface tile in interiorTiles)
 		{
 			// If there are facilities then we need to check if this tile belongs in one of them
@@ -1019,7 +1020,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	[AServerOnly]
 	public void ExportTilesToShip()
 	{
-		CGameShips.Ship.GetComponent<CShipFacilities>().ImportNewGridTiles(m_Grid.Tiles, m_FacilityTiles);
+		CGameShips.Ship.GetComponent<CShipFacilities>().ImportNewGridTiles(m_Grid.GridTiles, m_FacilityTiles);
 	}
 }
 
