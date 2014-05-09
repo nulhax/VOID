@@ -229,7 +229,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CGameCameras.SetObserverSpace(false);
 			CGameCameras.SetObserverPerspective(CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>().PilotCameraPosition);
 
-			CGameHud.SetHUDState(false);
+			CGameHUD.SetHUDState(false);
 
 			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
 			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);
@@ -253,7 +253,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CGameCameras.SetObserverSpace(true);
 			CGameCameras.SetObserverPerspective(CGamePlayers.SelfActorHead);
 
-			CGameHud.SetHUDState(true);
+			CGameHUD.SetHUDState(true);
 
 			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
 			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);

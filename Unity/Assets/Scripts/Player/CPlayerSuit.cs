@@ -179,12 +179,12 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	{
 		if(!_Breathable)
 		{
-			m_PreviousVisorDownState = CGameHud.Visor.IsVisorDown;
-			CGameHud.Visor.SetVisorState(true);
+			m_PreviousVisorDownState = CGameHUD.Visor.IsVisorDown;
+			CGameHUD.Visor.SetVisorState(true);
 		}
 		else
 		{
-			CGameHud.Visor.SetVisorState(m_PreviousVisorDownState);
+			CGameHUD.Visor.SetVisorState(m_PreviousVisorDownState);
 		}
 	}
 

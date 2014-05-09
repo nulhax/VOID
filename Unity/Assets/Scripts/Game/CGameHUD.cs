@@ -21,7 +21,7 @@ using System;
 /* Implementation */
 
 
-public class CGameHud : MonoBehaviour
+public class CGameHUD : MonoBehaviour
 {
 	
 // Member Types
@@ -33,7 +33,7 @@ public class CGameHud : MonoBehaviour
 // Member Properties
 
 
-	public static CGameHud Instance
+	public static CGameHUD Instance
 	{
 		get { return(s_cInstance); }
 	}
@@ -133,7 +133,7 @@ public class CGameHud : MonoBehaviour
     CHUD3D m_cHud3d = null;
     CHUDVisor m_cHudVisor = null;
 
-    static CGameHud s_cInstance = null;
+    static CGameHUD s_cInstance = null;
 
 
 };

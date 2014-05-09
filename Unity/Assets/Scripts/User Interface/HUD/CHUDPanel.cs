@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -46,7 +46,7 @@ public class CHUDPanel : MonoBehaviour
 	private void Start()
 	{
 		// Cache the HUD camera
-		m_CachedCamera = CGameHud.Hud3D.HUDCamera.camera;
+		m_CachedCamera = CGameHUD.Hud3D.HUDCamera.camera;
 
 		// Update the scale
 		UpdateScale();

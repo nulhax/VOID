@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -94,18 +94,18 @@ public class CHUDToolTip : MonoBehaviour
 			if(m_OVRDominantEye == EDominantEye.RIGHT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraRight : CGameCameras.ProjectedCameraRight;
-				HUDCamera = CGameHud.Hud3D.HUDCameraRight.camera;
+				HUDCamera = CGameHUD.Hud3D.HUDCameraRight.camera;
 			}
 			else if(m_OVRDominantEye == EDominantEye.LEFT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraLeft : CGameCameras.ProjectedCameraLeft;
-				HUDCamera = CGameHud.Hud3D.HUDCameraLeft.camera;
+				HUDCamera = CGameHUD.Hud3D.HUDCameraLeft.camera;
 			}
 		}
 		else
 		{
 			gameCamera = useMainCamera ? CGameCameras.MainCamera.transform : CGameCameras.ProjectedCamera.transform;
-			HUDCamera = CGameHud.Hud3D.HUDCamera.camera;
+			HUDCamera = CGameHUD.Hud3D.HUDCamera.camera;
 		}
 
 		m_HUDCamera = HUDCamera;

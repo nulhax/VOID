@@ -185,7 +185,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
             CGameCameras.SetupCameras();
 
             // Setup the HUD
-            CGameHud.SetupHUD();
+            CGameHUD.SetupHUD();
 
             // Register event handler for entering/exiting ship
             gameObject.GetComponent<CActorLocator>().EventEnterShip += OnPlayerEnterShip;

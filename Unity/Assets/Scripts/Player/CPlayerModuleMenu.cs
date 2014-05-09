@@ -136,7 +136,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
 
-            m_cHudModuleMenuInterface = CGameHud.Hud2dInterface.ModuleBuildMenuInterface;
+            m_cHudModuleMenuInterface = CGameHUD.Hud2dInterface.ModuleBuildMenuInterface;
             m_cHudModuleMenuInterface.EventCreateModule += OnEventCreateModule;
         }
 	}
@@ -267,11 +267,11 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
         if (_bOpen)
         {
-            CGameHud.Hud2dInterface.OpenHud(CHud2dInterface.EHud.ModuleMenu);
+            CGameHUD.Hud2dInterface.OpenHud(CHud2dInterface.EHud.ModuleMenu);
         }
         else
         {
-            CGameHud.Hud2dInterface.CloseHud(CHud2dInterface.EHud.ModuleMenu);
+            CGameHUD.Hud2dInterface.CloseHud(CHud2dInterface.EHud.ModuleMenu);
         }
         
         // Unlock cursor if opened

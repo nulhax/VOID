@@ -78,7 +78,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 	{
         if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
-            m_cHudTurretCockpitControlInterface = CGameHud.Hud2dInterface.TurretCockpitControlInterface;
+            m_cHudTurretCockpitControlInterface = CGameHUD.Hud2dInterface.TurretCockpitControlInterface;
         }
 	}
 
@@ -127,7 +127,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
                 {
                     CUserInput.SubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
 
-                    CGameHud.Hud2dInterface.OpenHud(CHud2dInterface.EHud.TurretCockpitMenu);
+                    CGameHUD.Hud2dInterface.OpenHud(CHud2dInterface.EHud.TurretCockpitMenu);
                 }
 
                 if (EventEnterCockpit != null)
@@ -141,7 +141,7 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
                 {
                     CUserInput.UnsubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
 
-                    CGameHud.Hud2dInterface.CloseHud(CHud2dInterface.EHud.TurretCockpitMenu);
+                    CGameHUD.Hud2dInterface.CloseHud(CHud2dInterface.EHud.TurretCockpitMenu);
                 }
 
                 if (EventLeaveCockpit != null)

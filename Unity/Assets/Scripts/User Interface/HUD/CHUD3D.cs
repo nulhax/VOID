@@ -88,8 +88,8 @@ public class CHUD3D : MonoBehaviour
 		}
 
 		// Register events for UI activation from the visor
-		CGameHud.Visor.EventVisorHUDActivated += OnActivateHUD;
-		CGameHud.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
+		CGameHUD.Visor.EventVisorHUDActivated += OnActivateHUD;
+		CGameHUD.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
 	}
 
 	public void Update()
@@ -110,7 +110,7 @@ public class CHUD3D : MonoBehaviour
 		// Update reticle panel position for the rift
 		if(CGameCameras.IsOculusRiftActive)
 		{
-			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameHud.Hud3D.HUDCameraLeft.camera.fieldOfView;
+			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameHUD.Hud3D.HUDCameraLeft.camera.fieldOfView;
 			
 			if(CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().TargetActorObject != null)
 			{

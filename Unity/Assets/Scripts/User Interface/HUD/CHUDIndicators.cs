@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -40,12 +40,12 @@ public class CHUDIndicators : MonoBehaviour
 	private void Start()
 	{
 		// Register events for UI activation from the visor
-		CGameHud.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
+		CGameHUD.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
 	}
 
 	private void Update()
 	{
-		if(CGameHud.Hud3D.IsHUDActive)
+		if(CGameHUD.Hud3D.IsHUDActive)
 		{
 			UpdateIndicators();
 		}
