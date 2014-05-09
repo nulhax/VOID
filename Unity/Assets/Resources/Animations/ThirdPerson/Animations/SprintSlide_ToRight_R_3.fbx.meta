@@ -227,7 +227,28 @@ ModelImporter:
             tangentMode: 0
           preInfinity: 2
           postInfinity: 2
-      events: []
+      events:
+      - time: -Infinity
+        functionName: PlaySlideAudio
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: -Infinity
+        functionName: PlaySlideAudio
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: .160051659
+        functionName: PlaySlideAudio
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 0
       maskSource: {instanceID: 0}

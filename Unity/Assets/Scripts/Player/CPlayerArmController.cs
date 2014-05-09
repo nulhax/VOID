@@ -382,6 +382,7 @@ public class CPlayerArmController : MonoBehaviour
 		{
             m_heldTool = _Tool;
             CToolInterface toolInterface = _Tool.GetComponent<CToolInterface> ();
+            GetComponent<CAudioCue>().Play(1.0f,false,7);
 
             switch (toolInterface.m_eToolCategory)
 			{

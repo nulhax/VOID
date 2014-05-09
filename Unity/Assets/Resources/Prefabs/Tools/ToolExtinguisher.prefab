@@ -395,7 +395,7 @@ MonoBehaviour:
   m_fFadeOutTimeList:
   - 0
   m_arAudioClipPool:
-  - {fileID: 8300000, guid: 0c08df68316a2df4a8b6d7fb4622dec7, type: 3}
+  - {fileID: 8300000, guid: a405c4cd95f231740b27866402881285, type: 3}
   m_barLoopList: 00
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0

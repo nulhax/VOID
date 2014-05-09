@@ -71,6 +71,8 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 					EventOpenStart(this);
 
 				animation.CrossFadeQueued("Door_Open");
+                //play open sound effect
+                GetComponent<CAudioCue>().Play(1.0f,false,0);
 			}
 			else
 			{
@@ -78,6 +80,7 @@ public class CDoorBehaviour : CNetworkMonoBehaviour
 					EventCloseStart(this);
 				
 				animation.CrossFadeQueued("Door_Close");
+                GetComponent<CAudioCue>().Play(1.0f,false,1);
 			}
 		}
 	}

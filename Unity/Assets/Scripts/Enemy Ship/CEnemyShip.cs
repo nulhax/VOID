@@ -171,9 +171,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 		if (viewSphereRadius < maxAcceptableDistanceToTarget) Debug.LogError("CEnemyShip: View sphere radius must be greater than desired distance to target");
 
 		mTarget_InternalLastKnownPosition = ((GameObject)GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/EnemyShips/DummyTarget"))).rigidbody;	// Create the RigidBody mTarget_InternalLastKnownPosition.
-		mTarget_InternalLastKnownPosition.transform.parent = CGalaxy.instance.transform;
-
-		mAudioWeaponFireID = GetComponent<CAudioCue>().AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
+		mTarget_InternalLastKnownPosition.transform.parent = CGalaxy.instance.transform;		
 	}
 
 	void Start()

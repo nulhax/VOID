@@ -120,9 +120,9 @@ public class CAudioCue : MonoBehaviour
 	//Will play specified sound if one is set. Otherwise, a random clip will be used.
 	//A random sound can be specified be setting the index to negative one (-1).
 	//Will only work if object already has an audiosource, else use the overloaded method
-	public void Play( float volumeScale, bool loop, int index)
+	public void Play( float volumeScale, bool loop, int index, int randomRangeStart = -1, int randomRangeEnd = -1)
 	{
-		AudioSource newAudioSource = GetComponent<AudioSource>();
+		AudioSource attachedAudioSource = GetComponent<AudioSource>();
 		
 		//Make sure fade in times are set. If not, assign default values.
 		if (m_fFadeInTimeList.Length < m_arAudioClipPool.Length)
@@ -144,28 +144,35 @@ public class CAudioCue : MonoBehaviour
 			}
 		}
 		
-		//Assign a random index if one is not set.
-		if(index == -1)
-		{
-			index = Random.Range(0, m_arAudioClipPool.Length);
-		}
+		//Assign a random index if one is not set.       
+        if(index == -1 && randomRangeStart != -1       && 
+                randomRangeEnd < m_arAudioClipPool.Length   &&
+                randomRangeEnd > 0)
+        {
+            index = Random.Range(randomRangeStart, randomRangeEnd);
+        }
+
+        else  if(index == -1 && randomRangeStart == -1)
+        {
+            index = Random.Range(0, m_arAudioClipPool.Length);
+        }
 			
-		newAudioSource.clip = m_arAudioClipPool[index];
+		attachedAudioSource.clip = m_arAudioClipPool[index];
 		
 		//Allow the AudioSystem to handle the new audio source.
-		CAudioSystem.Play(	newAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
+		CAudioSystem.Play(	attachedAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 										Random.Range(m_fPitchMin, m_fpitchMax), loop,
 										m_fFadeInTimeList[index],
 										m_eSoundType, true );	
 		
 		//Add this to the list of attached audio sources.
-		m_arAttachedAudioSource.Add(newAudioSource);
+		m_arAttachedAudioSource.Add(attachedAudioSource);
 	}
 	
 	//Will play specified sound if one is set. Otherwise, a random clip will be used.
 	//A random sound can be specified be setting the index to negative one (-1).
 	//This function should only be used if the object needs to have an audiosource attached to it.
-	public void Play( Transform parent, float volumeScale, bool loop, int index)
+    public void Play( Transform parent, float volumeScale, bool loop, int index, int randomRangeStart = -1, int randomRangeEnd = -1)
 	{
 		AudioSource newAudioSource;
 		
@@ -190,11 +197,17 @@ public class CAudioCue : MonoBehaviour
 		}
 		
 		//Assign a random index if one is not set.
-		if(index == -1)
-		{
-			index = Random.Range(0, m_arAudioClipPool.Length);
-		}
-			
+        if(index == -1 && randomRangeStart != -1       && 
+           randomRangeEnd < m_arAudioClipPool.Length   &&
+           randomRangeEnd > 0)
+        {
+            index = Random.Range(randomRangeStart, randomRangeEnd);
+        }   		
+        else if(index == -1)
+        {
+            index = Random.Range(0, m_arAudioClipPool.Length);
+        }
+      
 		//Allow the AudioSystem to handle the new audio source.
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
 														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
@@ -206,7 +219,7 @@ public class CAudioCue : MonoBehaviour
 		m_arAttachedAudioSource.Add(newAudioSource);
 	}
 	
-	//Plays a random clip once, then discards it.
+	//Plays a random clip once, then discards it. Useful for sounds that will be played many times, especially if those sounds overlap
 	public void PlayOneShot( float volumeScale, AudioSource audioSource)
 	{
 		if( audioSource == null )
@@ -218,7 +231,7 @@ public class CAudioCue : MonoBehaviour
 		
 		audioSource.PlayOneShot(m_arAudioClipPool[ UnityEngine.Random.Range( 0, m_arAudioClipPool.Length) ], volume );	
 	}	
-	
+
 	//Used to check if any sounds are playing.
 	public bool IsPlaying()
 	{

@@ -31,6 +31,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 		set { m_bInputDisabled = value; }
 	}
 	
+    public bool IsPLayerJumping
+    {
+        get{return(m_bJumping);}
+    }
+
 	// Member Fields
 	
 	//Animation States
@@ -59,10 +64,16 @@ public class CThirdPersonAnimController : MonoBehaviour
 	bool m_bUsedSlide = false;
 	bool m_bHoldTool = false;
 	bool m_bInputDisabled = false;
+    bool m_bJumping = false;
+
+    float m_fTimeLastGround = 0.0f;
+    float m_fFallStateTriggerTime = 0.2f;
 	
 	//Timers
 	float m_fTimeLastGrounded = 0.0f;
-	const float m_kfFallStateEntryTime = 0.3f;
+	const float m_kfFallStateEntryTime = 0.35f;
+
+    bool bLogged = false;
 	
 	// Member Methods
 	
@@ -111,8 +122,24 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
-			
+
+            if(m_PlayerMotor.IsGrounded)
+            {
+                m_fTimeLastGround = Time.time;
+                m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded); 
+                bLogged = false;
+            }
+
+            //Only enter fall state after a small amount of time, to avoid false positives.
+            if(Time.time > m_fTimeLastGround + m_fFallStateTriggerTime)
+            {
+                m_ThirdPersonAnim.SetBool("Grounded", false); 
+                if(!bLogged)
+                {
+                    Debug.Log("Animation fall state tiggered");
+                    bLogged = true;
+                }
+            }			
 
 			if(bStrafeLeft)
 			{
@@ -252,6 +279,16 @@ public class CThirdPersonAnimController : MonoBehaviour
             m_ThirdPersonAnim.enabled = true;
         }
 	}
+
+    public void OnBeginJumpingAnimation()
+    {
+        m_bJumping = true;
+    }
+
+    public void OnEndJumpingAnimation()
+    {
+        m_bJumping = false;
+    }
 }
 
 

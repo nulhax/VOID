@@ -442,7 +442,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		foreach(RaycastHit hit in hits) 
 		{
 			if(!hit.collider.isTrigger && hit.collider != m_cCapsuleCollider) 
-			{
+			{               
 				m_bGrounded = true;
 				break;
 			}
@@ -534,7 +534,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         vMovementVelocity *= ((m_usInputStates & (uint)EInputState.Run) > 0) ? k_fSprintSpeed : k_fMoveSpeed;
 
         // Jump 
-        if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded)
+        if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded && GetComponent<CThirdPersonAnimController>().IsPLayerJumping == false)
         {
             vMovementVelocity.y = k_fJumpSpeed;
         }

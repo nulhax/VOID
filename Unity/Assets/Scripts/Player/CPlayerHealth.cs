@@ -178,9 +178,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (audioCue == null)
 			audioCue = gameObject.AddComponent<CAudioCue>();
 
-		m_PlayerForceDamageSoundIndex = audioCue.AddSound("Audio/PlayerForceDamage", 0.0f, 0.0f, false);
-		m_PlayerForceDeathSoundIndex = audioCue.AddSound("Audio/PlayerForceDeath", 0.0f, 0.0f, false);
-
 		m_EventHealthChanged += OnHealthChange;
 		m_EventHealthStateChanged += OnHealthStateChange;
 	}
