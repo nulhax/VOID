@@ -317,6 +317,8 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
                 cEffectHitParticles.SetActive(true);
 
                 GetComponent<CPlayerIKController>().SetRightHandTarget(tRaycastHit.point, qArmBandRotation, true);
+                GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_cNaniteArmBand.transform.localEulerAngles =
+                            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_vDefaultNaniteArmBandRotation + new Vector3(0.0f, 0.0f, 30.0f);
             }
             else
             {
@@ -457,6 +459,8 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
             // End arm IK
             if (m_eTargetType.Value == ETargetType.None)
             {
+                GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_cNaniteArmBand.transform.localEulerAngles = 
+                            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_vDefaultNaniteArmBandRotation;
                 GetComponent<CPlayerIKController>().EndRightHandIK();
             }
 

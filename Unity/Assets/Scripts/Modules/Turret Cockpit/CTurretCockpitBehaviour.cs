@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CCockpitBehaviour))]
+[RequireComponent(typeof(CCockpitInterface))]
 public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 {
 
@@ -107,11 +107,11 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	void Start()
 	{
         m_cModuleInterface = GetComponent<CModuleInterface>();
-        m_cCockpit = GetComponent<CCockpitBehaviour>();
+        m_cCockpitInterface = GetComponent<CCockpitInterface>();
 
         // Subscribe to cockpit events - Does not need to Unsubscribe
-        m_cCockpit.EventMounted    += OnEventCockpitMounted;
-        m_cCockpit.EventDismounted += OnEventCockpitUnmounted;
+        m_cCockpitInterface.EventMounted    += OnEventCockpitMounted;
+        m_cCockpitInterface.EventDismounted += OnEventCockpitUnmounted;
 	}
 
 
@@ -147,7 +147,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
         Quaternion qTargetRotation = Quaternion.Euler(vTargetLocalEuler.x, vTargetLocalEuler.y, 0.0f);
 
-        if (m_cCockpit.IsMounted &&
+        if (m_cCockpitInterface.IsMounted &&
             Quaternion.Angle(m_cChairModelTrans.transform.localRotation, qTargetRotation) > 90.0f)
         {
             m_cChairModelTrans.transform.localRotation = qTargetRotation;
@@ -155,7 +155,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
         else
         {
             // Rotate slower when returning to default rotation
-            float fRotationSpeed = m_cCockpit.IsMounted ? 720.0f : 180.0f;
+            float fRotationSpeed = m_cCockpitInterface.IsMounted ? 720.0f : 180.0f;
 
             m_cChairModelTrans.transform.localRotation = Quaternion.RotateTowards(m_cChairModelTrans.transform.localRotation,
                                                                                   qTargetRotation,
@@ -258,7 +258,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
     CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
 
     CModuleInterface m_cModuleInterface = null;
-    CCockpitBehaviour m_cCockpit = null;
+    CCockpitInterface m_cCockpitInterface = null;
 
 
     static CTurretCockpitBehaviour s_cLocalOwnedTurretCockpitBehaviour = null;

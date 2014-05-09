@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CCockpit.cs
+//  File Name   :   CCockpitInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 [RequireComponent(typeof(CActorInteractable))]
-public class CCockpitBehaviour : CNetworkMonoBehaviour
+public class CCockpitInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -34,6 +34,15 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
 		EnterCockpit,
 		LeaveCockpit
 	}
+
+
+    public enum EType
+    {
+        INVALID,
+
+        Pilot   = 10,
+        Turret  = 20,
+    }
 
 
 // Member Delegates & Events
@@ -70,6 +79,12 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
 			}
 		}
 	}
+
+
+    public EType CockpitType
+    {
+        get { return (m_eType); }
+    }
 
 
 	public bool IsMounted
@@ -171,7 +186,7 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
 
             GameObject cCockpitObject = CNetwork.Factory.FindGameObject(cCockpitObjectViewId);
 
-            CCockpitBehaviour cCockpit = cCockpitObject.GetComponent<CCockpitBehaviour>();
+            CCockpitInterface cCockpit = cCockpitObject.GetComponent<CCockpitInterface>();
 
             switch (eAction)
             {
@@ -213,6 +228,11 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             
+        }
+
+        if (m_eType == EType.INVALID)
+        {
+            Debug.LogError(string.Format("Cockpit gameobject({0}) has not been assigned a cockpit type.", gameObject.name));
         }
 	}
 
@@ -323,6 +343,7 @@ public class CCockpitBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public EType m_eType = EType.INVALID;
     public Transform m_cSeat = null;
     public CComponentInterface[] m_Components;
 

@@ -68,7 +68,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &100008
 GameObject:
   m_ObjectHideFlags: 1
@@ -452,7 +452,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &400000
 Transform:
   m_ObjectHideFlags: 1
@@ -780,8 +780,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: -2
-  far clip plane: 2
+  near clip plane: -.5
+  far clip plane: .5
   field of view: 60
   orthographic: 1
   orthographic size: 1
@@ -1178,7 +1178,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3005
   mAlpha: 1
   mClipping: 0
   mClipRange: {x: 0, y: 0, z: 300, w: 200}
@@ -1196,19 +1196,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 0
     absolute: 0
   rightAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 1
     absolute: 0
   bottomAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 0
     absolute: 0
   topAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 1
     absolute: 0
   showInPanelTool: 1
@@ -1218,7 +1218,7 @@ MonoBehaviour:
   alwaysOnScreen: 0
   anchorOffset: 0
   renderQueue: 0
-  startingRenderQueue: 3000
+  startingRenderQueue: 3007
   mAlpha: 1
   mClipping: 4
   mClipRange: {x: 0, y: 0, z: 960, w: 720}
@@ -1662,7 +1662,7 @@ MonoBehaviour:
   eventType: 1
   eventReceiverMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 4294967295
   debug: 0
   useMouse: 1
   useTouch: 0
@@ -1684,7 +1684,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 507, y: 352, z: 0}
+  m_ViewPortPos: {x: 514, y: 352, z: 0}
 --- !u!114 &11400236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2140,13 +2140,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: .382785499, g: .402517587, b: .441176504, a: 1}
   mPivot: 4
-  mWidth: 20
-  mHeight: 20
+  mWidth: 960
+  mHeight: 720
   mDepth: -1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 1.33333337
+  aspectRatio: 1
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Button
   mType: 1
@@ -2550,19 +2550,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   leftAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 0
     absolute: 0
   rightAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 1
     absolute: 0
   bottomAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 0
     absolute: 0
   topAnchor:
-    target: {fileID: 400076}
+    target: {fileID: 0}
     relative: 1
     absolute: 0
   showInPanelTool: 1
@@ -2575,7 +2575,7 @@ MonoBehaviour:
   startingRenderQueue: 3000
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: 0, y: 0, z: 20, w: 20}
+  mClipRange: {x: 0, y: 0, z: 960, w: 720}
   mClipSoftness: {x: 4, y: 4}
   mDepth: -1
 --- !u!114 &11400434

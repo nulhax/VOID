@@ -94,18 +94,18 @@ public class CHUDToolTip : MonoBehaviour
 			if(m_OVRDominantEye == EDominantEye.RIGHT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraRight : CGameCameras.ProjectedCameraRight;
-				HUDCamera = CGameHUD.HUD3D.HUDCameraRight.camera;
+				HUDCamera = CGameHud.Hud3D.HUDCameraRight.camera;
 			}
 			else if(m_OVRDominantEye == EDominantEye.LEFT)
 			{
 				gameCamera = useMainCamera ? CGameCameras.MainCameraLeft : CGameCameras.ProjectedCameraLeft;
-				HUDCamera = CGameHUD.HUD3D.HUDCameraLeft.camera;
+				HUDCamera = CGameHud.Hud3D.HUDCameraLeft.camera;
 			}
 		}
 		else
 		{
 			gameCamera = useMainCamera ? CGameCameras.MainCamera.transform : CGameCameras.ProjectedCamera.transform;
-			HUDCamera = CGameHUD.HUD3D.HUDCamera.camera;
+			HUDCamera = CGameHud.Hud3D.HUDCamera.camera;
 		}
 
 		m_HUDCamera = HUDCamera;

@@ -76,14 +76,14 @@ public class CTurretBehaviour : CNetworkMonoBehaviour
     }
 
 
-    public CCockpitBehaviour OwnerCockpitBehaviour
+    public CCockpitInterface OwnerCockpitBehaviour
     {
         get
         {
             if (OwnerTurretCockpit == null)
                 return (null);
 
-            return (OwnerTurretCockpit.GetComponent<CCockpitBehaviour>());
+            return (OwnerTurretCockpit.GetComponent<CCockpitInterface>());
         }
     }
 
