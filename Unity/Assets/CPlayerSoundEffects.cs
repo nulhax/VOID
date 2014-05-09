@@ -27,13 +27,11 @@ public class CPlayerSoundEffects : MonoBehaviour
 
     void PlayLandingAudio()
     {
-        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 5);
-        Debug.Log("Playing landing sound");
+        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 5);       
     }
 
     void PlaySlideAudio()
     {
-        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 6);
-        Debug.Log("Playing landing sound");
+        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 6);       
     }
 }

@@ -146,7 +146,7 @@ public class CAudioCue : MonoBehaviour
 		
 		//Assign a random index if one is not set.       
         if(index == -1 && randomRangeStart != -1       && 
-                randomRangeEnd < m_arAudioClipPool.Length   &&
+                randomRangeEnd <= m_arAudioClipPool.Length   &&
                 randomRangeEnd > 0)
         {
             index = Random.Range(randomRangeStart, randomRangeEnd);
@@ -198,14 +198,24 @@ public class CAudioCue : MonoBehaviour
 		
 		//Assign a random index if one is not set.
         if(index == -1 && randomRangeStart != -1       && 
-           randomRangeEnd < m_arAudioClipPool.Length   &&
+           randomRangeEnd <= m_arAudioClipPool.Length   &&
            randomRangeEnd > 0)
         {
             index = Random.Range(randomRangeStart, randomRangeEnd);
+            if(index == 8)
+            {
+                Debug.Log("How the fuck?");    
+                int i = 0;
+            }
         }   		
         else if(index == -1)
         {
             index = Random.Range(0, m_arAudioClipPool.Length);
+            if(index == 8)
+            {
+                Debug.Log("How the fuck?");
+                int i = 0;
+            }
         }
       
 		//Allow the AudioSystem to handle the new audio source.

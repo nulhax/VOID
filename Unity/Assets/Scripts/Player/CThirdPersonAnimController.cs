@@ -130,16 +130,7 @@ public class CThirdPersonAnimController : MonoBehaviour
                 bLogged = false;
             }
 
-            //Only enter fall state after a small amount of time, to avoid false positives.
-            if(Time.time > m_fTimeLastGround + m_fFallStateTriggerTime)
-            {
-                m_ThirdPersonAnim.SetBool("Grounded", false); 
-                if(!bLogged)
-                {
-                    Debug.Log("Animation fall state tiggered");
-                    bLogged = true;
-                }
-            }			
+           	
 
 			if(bStrafeLeft)
 			{
@@ -154,8 +145,14 @@ public class CThirdPersonAnimController : MonoBehaviour
 				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
 			}
 
-			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+            AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);  // set our currentState variable to the current state of the Base Layer (0) of animation
 			
+            //Only enter fall state after a small amount of time, to avoid false positives.
+            if(Time.time > m_fTimeLastGround + m_fFallStateTriggerTime && currentBaseState.nameHash != m_iSlideState)
+            {
+                m_ThirdPersonAnim.SetBool("Grounded", false); 
+            }       
+
 			//-------------------------------------------
 			//----------------Jump State-----------------
 			//-------------------------------------------

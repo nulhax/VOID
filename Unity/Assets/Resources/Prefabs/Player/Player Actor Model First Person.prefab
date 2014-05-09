@@ -2398,6 +2398,7 @@ MonoBehaviour:
   m_headlessAvatar: {fileID: 9000000, guid: 873759d009438c74eb042b4da538916d, type: 3}
   m_cNaniteArmBand: {fileID: 100138}
   m_cNaniteArmBandLaserNode: {fileID: 100130}
+  m_vDefaultNaniteArmBandRotation: {x: 0, y: 0, z: 0}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -2408,7 +2409,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: .119999997
+  m_Radius: .180000007
   m_Center: {x: 0, y: -.0299999993, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:
@@ -3053,7 +3054,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -1.15467347e-09, y: .53225553, z: .00352508202}
+  m_ConnectedAnchor: {x: -5.40987428e-11, y: .53225553, z: .00352506712}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -40
@@ -3087,7 +3088,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: .123231187, y: -.0284505561, z: -.0179345421}
+  m_ConnectedAnchor: {x: .123231187, y: -.0284505561, z: -.017934572}
   m_SwingAxis: {x: -1, y: 0, z: 0}
   m_LowTwistLimit:
     limit: -90
@@ -3121,7 +3122,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 0, z: 1}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.123190925, y: -.0284504369, z: -.0179345198}
+  m_ConnectedAnchor: {x: -.123190925, y: -.0284504369, z: -.0179345645}
   m_SwingAxis: {x: 1, y: 0, z: 0}
   m_LowTwistLimit:
     limit: -90
@@ -3155,7 +3156,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: .0614019781, y: .238266677, z: -.0508555248}
+  m_ConnectedAnchor: {x: .0614019744, y: .238266677, z: -.0508554801}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -70
@@ -3189,7 +3190,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.0614422597, y: .238266617, z: -.0508554578}
+  m_ConnectedAnchor: {x: -.0614422597, y: .238266617, z: -.0508554876}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -70
@@ -3223,7 +3224,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 1.02590847e-09, y: .254803419, z: .0141152572}
+  m_ConnectedAnchor: {x: -6.24953644e-10, y: .254803419, z: .0141152795}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -20
@@ -3257,7 +3258,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.413378149, y: .00222965586, z: .00828098878}
+  m_ConnectedAnchor: {x: -.413378149, y: .00222964608, z: .00828095246}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -80
@@ -3291,7 +3292,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.413336039, y: .00230456423, z: -.00826026872}
+  m_ConnectedAnchor: {x: -.413336039, y: .00230455026, z: -.00826021843}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -80
@@ -3325,7 +3326,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: .0963378921, y: -.0327325501, z: 2.70802794e-08}
+  m_ConnectedAnchor: {x: .0963378921, y: -.0327325501, z: -1.0070778e-08}
   m_SwingAxis: {x: 0, y: 0, z: -1}
   m_LowTwistLimit:
     limit: -20
@@ -3359,7 +3360,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: -1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -.0963378996, y: -.0327325352, z: 4.50821283e-08}
+  m_ConnectedAnchor: {x: -.0963378921, y: -.0327325389, z: -6.92935265e-09}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -20

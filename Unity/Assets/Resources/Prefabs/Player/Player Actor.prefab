@@ -411,6 +411,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 1434f6e0eaaee434aae2e227eac21217, type: 3}
   - {fileID: 8300000, guid: 3b09258ac9469d44688bfe14fafefd56, type: 3}
   - {fileID: 8300000, guid: 15e49dc745849fd45bf170ef621016c6, type: 3}
+  - {fileID: 8300000, guid: 64a71475f934df04e82e5722bd016836, type: 3}
+  - {fileID: 8300000, guid: 31f7d41b862cb514192d27db78315427, type: 3}
+  - {fileID: 8300000, guid: 7505a68d4263e8d488b22a230f01c2ce, type: 3}
+  - {fileID: 8300000, guid: 6b548653c8a91564c95e50ea5f0c2681, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
