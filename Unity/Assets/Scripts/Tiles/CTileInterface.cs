@@ -263,9 +263,9 @@ public class CTileInterface : CNetworkMonoBehaviour
 		if(!changed)
 			return;
 
-		// Update all neighbour meta data if the mask has changed
-		foreach(CNeighbour neighbour in m_NeighbourHood)
-			neighbour.m_TileInterface.UpdateAllCurrentTileMetaData();
+//		// Update all neighbour meta data if the mask has changed
+//		foreach(CNeighbour neighbour in m_NeighbourHood)
+//			neighbour.m_TileInterface.UpdateAllCurrentTileMetaData();
 	}
 
 	[AServerOnly]
@@ -279,14 +279,13 @@ public class CTileInterface : CNetworkMonoBehaviour
 		UpdateTileTypeMask();
 
 		// Copy all tile meta data and exemption states
-		foreach(CTile.EType otherTileType in _From.m_TileTypes)
+		foreach(CTile otherTile in _From.GetComponents<CTile>())
 		{
-			CTile otherTile = _From.GetTile(otherTileType);
-			CTile tile = GetTile(otherTileType);
+			CTile tile = GetTile(otherTile.m_TileType);
 
 			if(tile == null || otherTile == null)
 			{
-				Debug.LogError("Tile clone cannot happen as something went wrong with this tile type mask! Missing Type: " + otherTileType);
+				Debug.LogError("Tile clone cannot happen as something went wrong with this tile type mask! Missing Type: " + otherTile.m_TileType);
 				continue;
 			}
 
@@ -301,6 +300,25 @@ public class CTileInterface : CNetworkMonoBehaviour
 			tile.m_Modifications.Clear();
 			tile.m_Modifications.AddRange(otherTile.m_Modifications);
 		}
+	}
+
+	public void Release()
+	{
+		// Disable all tile types
+		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
+			SetTileTypeState((CTile.EType)i, false);
+
+		// Update the tile mask
+		UpdateTileTypeMask();
+
+		// Clear the neighbours
+		m_NeighbourHood.Clear();
+
+		// Update the neighbourhood
+		UpdateNeighbourhood();
+		
+		// Network destroy
+		CNetwork.Factory.DestoryGameObject(gameObject);
 	}
 
 	private void OnTileObjectChange(CTile _Tile)

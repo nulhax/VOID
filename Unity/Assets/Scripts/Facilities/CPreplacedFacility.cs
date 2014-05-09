@@ -31,7 +31,7 @@ public class CPreplacedFacility : MonoBehaviour
 	
 	
 	// Member Fields
-	public GameObject m_TilesCollection = null;
+	public Transform m_TilesCollection = null;
 	
 	// Member Properties
 
@@ -49,10 +49,10 @@ public class CPreplacedFacility : MonoBehaviour
 	[AServerOnly]
 	private void InitialisePreplacedTiles()
 	{
-		m_TilesCollection = (GameObject)GameObject.Instantiate(m_TilesCollection);
-
 		// Get the tiles which reside under this facility
-		List<CTileInterface> tiles = new List<CTileInterface>(m_TilesCollection.GetComponentsInChildren<CTileInterface>());
+		List<CTileInterface> tiles = new List<CTileInterface>();
+		foreach(Transform child in m_TilesCollection)
+			tiles.Add(child.GetComponent<CTileInterface>());
 		
 		// Find the tiles which are internal only
 		List<CTileInterface> interiorTiles = new List<CTileInterface>(
@@ -77,7 +77,5 @@ public class CPreplacedFacility : MonoBehaviour
 
 			module.Build(1.0f);
 		}
-
-		Destroy(m_TilesCollection);
 	}
 };

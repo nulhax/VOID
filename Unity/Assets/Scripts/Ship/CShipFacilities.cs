@@ -55,7 +55,7 @@ public class CShipFacilities : MonoBehaviour
 	public void ImportNewGridTiles(List<CTileInterface> _AllTiles, List<List<CTileInterface>> _FacilityInteriorTiles)
 	{
 		// Import all of the tiles to the ship
-		List<CTileInterface> newTiles = m_ShipGrid.ImportTileInformation(_AllTiles);
+		m_ShipGrid.ImportTileInformation(_AllTiles);
 
 		// Destoy all facilities
 		foreach(GameObject facility in Facilities)
@@ -79,7 +79,7 @@ public class CShipFacilities : MonoBehaviour
 	{
 		List<KeyValuePair<CTile, CTile>> interiorDoorwayPairs = new List<KeyValuePair<CTile, CTile>>(); 
 
-		foreach(CTileInterface tileInterface in m_ShipGrid.Tiles)
+		foreach(CTileInterface tileInterface in m_ShipGrid.GridTiles)
 		{
 			CTile interiorWallTile = tileInterface.GetTile(CTile.EType.Interior_Wall);
 
