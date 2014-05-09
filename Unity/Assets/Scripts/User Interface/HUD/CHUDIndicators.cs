@@ -40,12 +40,12 @@ public class CHUDIndicators : MonoBehaviour
 	private void Start()
 	{
 		// Register events for UI activation from the visor
-		CGameHUD.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
+		CGameHud.Visor.EventVisorHUDDeactivated += OnDeactivateHUD;
 	}
 
 	private void Update()
 	{
-		if(CGameHUD.HUD3D.IsHUDActive)
+		if(CGameHud.Hud3D.IsHUDActive)
 		{
 			UpdateIndicators();
 		}

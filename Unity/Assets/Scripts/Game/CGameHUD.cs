@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CCompoundCameraSystem.cs
+//  File Name   :   CGameHud.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -21,76 +21,89 @@ using System;
 /* Implementation */
 
 
-public class CGameHUD : MonoBehaviour
+public class CGameHud : MonoBehaviour
 {
 	
-	// Member Types
-	
-	
-	// Member Delegates & Events
-	
-	
-	// Member Fields
-	private CHUD3D m_HUD3D = null;
-	private CHUDVisor m_Visor = null;
+// Member Types
 
-	private static CGameHUD s_Instance = null;
+	
+// Member Delegates & Events
 	
 	
-	// Member Properties
-	public static CGameHUD Instance
+// Member Properties
+
+
+	public static CGameHud Instance
 	{
-		get { return(s_Instance); }
+		get { return(s_cInstance); }
 	}
 
-	public static CHUD3D HUD3D
+
+	public static CHUD3D Hud3D
 	{
-		get { return(s_Instance.m_HUD3D); }
+		get { return(s_cInstance.m_cHud3d); }
 	}
+
+
+    public static CHud2dInterface Hud2dInterface
+    {
+        get { return (s_cInstance.m_cHud2d.GetComponent<CHud2dInterface>()); }
+    }
+
 
 	public static CHUDVisor Visor
 	{
-		get { return(s_Instance.m_Visor); }
+		get { return(s_cInstance.m_cHudVisor); }
 	}
 
 
-	// Member Methods
+// Member Methods
+
+
 	public void Awake()
 	{	
-		s_Instance = this;
+		s_cInstance = this;
 
         CNetwork.Connection.EventConnectionAccepted += OnEventConnectionConnect;
         CNetwork.Connection.EventDisconnect += OnEventConnectionDisconnect;
 	}
 
+
+    public void Start()
+    {
+        m_cHud2d = GameObject.Instantiate(m_cHud2d) as GameObject;
+    }
+
+
 	public static void SetHUDState(bool _State)
 	{
-		s_Instance.m_HUD3D.gameObject.SetActive(_State);
+		s_cInstance.m_cHud3d.gameObject.SetActive(_State);
 	}
+
 
 	public static void SetupHUD()
 	{
 		// Instantiate the 3D HUD
-		if(CGameCameras.IsOculusRiftActive)
+		if (CGameCameras.IsOculusRiftActive)
 		{
-			s_Instance.m_HUD3D = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"))).GetComponent<CHUD3D>();
+			s_cInstance.m_cHud3d = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3DOVR"))).GetComponent<CHUD3D>();
 		}
 		else
 		{
-			s_Instance.m_HUD3D = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).GetComponent<CHUD3D>();
+			s_cInstance.m_cHud3d = ((GameObject)GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/HUD3D"))).GetComponent<CHUD3D>();
 		}
 
 		// Hold onto the visor
-		s_Instance.m_Visor = CGamePlayers.SelfActorHead.transform.GetComponentInChildren<CHUDVisor>();
+		s_cInstance.m_cHudVisor = CGamePlayers.SelfActorHead.transform.GetComponentInChildren<CHUDVisor>();
 
 		// Need to offset for oculus rift
-		if(!CGameCameras.IsOculusRiftActive)
+		if (!CGameCameras.IsOculusRiftActive)
 		{
-			s_Instance.m_Visor.transform.localPosition = Vector3.zero;
+			s_cInstance.m_cHudVisor.transform.localPosition = Vector3.zero;
 		}
 		else
 		{
-			s_Instance.m_Visor.transform.localPosition = Vector3.forward * -0.05f;
+			s_cInstance.m_cHudVisor.transform.localPosition = Vector3.forward * -0.05f;
 		}
 	}
 
@@ -103,12 +116,24 @@ public class CGameHUD : MonoBehaviour
 
     void OnEventConnectionDisconnect()
     {
-        if (m_HUD3D != null)
+        if (m_cHud3d != null)
         {
-            Destroy(s_Instance.m_HUD3D);
-            m_Visor = null;
+            Destroy(s_cInstance.m_cHud3d);
+            m_cHudVisor = null;
         }
     }
+
+
+// Member Fields
+
+
+    public GameObject m_cHud2d = null;   
+
+
+    CHUD3D m_cHud3d = null;
+    CHUDVisor m_cHudVisor = null;
+
+    static CGameHud s_cInstance = null;
 
 
 };

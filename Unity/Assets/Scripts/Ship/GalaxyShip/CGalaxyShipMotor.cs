@@ -51,40 +51,47 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
+
+
+    public Vector3 ThrustDirection
+    {
+        get { return (m_vThustDirection); }
+    }
+
 	
 	public float AngularAcceleration
 	{
-		get { return(m_fAngularAcceleration); }
+		get { return (m_fAngularAcceleration); }
 	}
 
 	public float AngularMaxSpeed
 	{
-		get { return(m_fAngularMaxSpeed); }
+		get { return (m_fAngularMaxSpeed); }
 	}
 
 	public float AngularVelocityDamp
 	{
-		get { return(m_fAngularVelocityDamp); }
+		get { return (m_fAngularVelocityDamp); }
 	}
 
 	public float AngularHandbreakpower
 	{
-		get { return(m_fAngularHandbreakpower); }
+		get { return (m_fAngularHandbreakpower); }
 	}
 
 	public float DirectionalMaxSpeed
 	{
-		get { return(m_fDirectionalMaxSpeed); }
+		get { return (m_fDirectionalMaxSpeed); }
 	}
 
 	public float DirectionalAcceleration
 	{
-		get { return(m_fDirectionalAcceleration); }
+		get { return (m_fDirectionalAcceleration); }
 	}
 
 	public float DirectionalHandbreakPower
 	{
-		get { return(m_fDirectionalHandbreakPower); }
+		get { return (m_fDirectionalHandbreakPower); }
 	}
 
 
@@ -133,6 +140,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
     void Update()
     {
 		UpdateVariables();
+        UpdateThrustDirection();
     }
 
 
@@ -159,10 +167,16 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 		m_fDirectionalMaxSpeed       = 400.0f;
 		m_fDirectionalAcceleration   = currentPropulsion;
-		m_fDirectionalHandbreakPower = 1.0f;
+        m_fDirectionalHandbreakPower = 1.0f;
+	}
 
-        Quaternion qThustDirection = Quaternion.identity;
+
+    void UpdateThrustDirection()
+    {
+        Quaternion qThustDirection = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        Quaternion qThustRotationDirection = Quaternion.Euler(0.0f, 0.0f, 0.0f);
         m_bThustActive = false;
+
 
         for (int i = 0; i < (int)EThrusters.MAX; ++i)
         {
@@ -195,34 +209,34 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
                         break;
 
                     case EThrusters.PitchUp:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(-45.0f, 0.0f, 0.0f);
                         break;
 
                     case EThrusters.PitchDown:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(45.0f, 0.0f, 0.0f);
                         break;
 
                     case EThrusters.RollLeft:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
                         break;
 
                     case EThrusters.RollRight:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
                         break;
 
                     case EThrusters.YawLeft:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
                         break;
 
                     case EThrusters.YawRight:
-                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
                         break;
                 }
 
                 m_bThustActive = true;
             }
         }
-	}
+    }
 
 
     void UpdateDirectionalThusters()

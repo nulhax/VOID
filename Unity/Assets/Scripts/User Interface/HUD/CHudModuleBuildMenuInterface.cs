@@ -21,7 +21,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-public class CHudModuleMenu : MonoBehaviour
+public class CHudModuleBuildMenuInterface : MonoBehaviour
 {
 
 // Member Types
@@ -30,7 +30,7 @@ public class CHudModuleMenu : MonoBehaviour
 // Member Delegates & Events
 
 
-    public delegate void CreateModuleHandler(CHudModuleMenu _cSender, CModuleInterface.EType _eType);
+    public delegate void CreateModuleHandler(CHudModuleBuildMenuInterface _cSender, CModuleInterface.EType _eType);
     public event CreateModuleHandler EventCreateModule;
 
 
@@ -158,7 +158,6 @@ public class CHudModuleMenu : MonoBehaviour
     public UILabel m_cLabelModuleDescription = null;
     public UILabel m_cLabelModuleNaniteCost = null;
     public UILabel m_cLabelShipNanites = null;
-    public Transform m_cTransModulePreview = null;
 
 
     GameObject m_cSelectedModuleItem = null;

@@ -70,7 +70,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cCockpitBehaviour = GetComponent<CCockpitBehaviour>();
+        m_cCockpitBehaviour = GetComponent<CCockpitInterface>();
 
 		m_cCockpitBehaviour.EventMounted += OnCockpitMount;
        	m_cCockpitBehaviour.EventDismounted += OnCockpitUnmount;
@@ -229,7 +229,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CGameCameras.SetObserverSpace(false);
 			CGameCameras.SetObserverPerspective(CGameShips.GalaxyShip.GetComponent<CGalaxyShipCamera>().PilotCameraPosition);
 
-			CGameHUD.SetHUDState(false);
+			CGameHud.SetHUDState(false);
 
 			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
 			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);
@@ -253,7 +253,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CGameCameras.SetObserverSpace(true);
 			CGameCameras.SetObserverPerspective(CGamePlayers.SelfActorHead);
 
-			CGameHUD.SetHUDState(true);
+			CGameHud.SetHUDState(true);
 
 			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlCamera);
 			CUserInput.UnsubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlCamera);
@@ -287,7 +287,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CCockpitBehaviour m_cCockpitBehaviour = null;
+    CCockpitInterface m_cCockpitBehaviour = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
