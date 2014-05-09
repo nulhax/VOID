@@ -299,8 +299,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af4d244ba8ca4541ba3d36be5252403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cModel: {fileID: 100000, guid: b1590879bfba7e845bdb8b9e07396592, type: 2}
-  m_cModelFirstPerson: {fileID: 100090, guid: a982c860047e7ba42ac72f1835e09210, type: 2}
+  m_cModelThirdPerson: {fileID: 100178, guid: f2a12aadc1a4a0a4abb07c4c9b44808a, type: 2}
+  m_cModelFirstPerson: {fileID: 100178, guid: abf330fe8b5980142a83f871a34593f4, type: 2}
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -390,6 +390,8 @@ MonoBehaviour:
     type: 2}
   m_cRepairingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
     type: 2}
+  m_cNaniteArmBand: {fileID: 0}
+  m_cNaniteArmBandLaserNode: {fileID: 0}
 --- !u!114 &11400052
 MonoBehaviour:
   m_ObjectHideFlags: 1

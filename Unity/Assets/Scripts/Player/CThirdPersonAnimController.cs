@@ -59,6 +59,8 @@ public class CThirdPersonAnimController : MonoBehaviour
 	bool m_bUsedSlide = false;
 	bool m_bHoldTool = false;
 	bool m_bInputDisabled = false;
+
+    CPlayerMotor.EState m_eMotorState;
 	
 	//Timers
 	float m_fTimeLastGrounded = 0.0f;
@@ -72,22 +74,36 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerMotor>();
 		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
-		
+        m_PlayerMotor.EventStateChange += NotifyStateChange;
+
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		//Get collider
-		m_physCollider = GetComponent<CapsuleCollider>();	
+		m_physCollider = GetComponent<CapsuleCollider>();
 	}
 
     void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
 	{
 		m_MovementState = _usNewSates;
-        //m_previousMovementState = _usNewSates;	
-	}	
+	}
+
+    void NotifyStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
+    {
+        m_eMotorState = _eNew;
+    }
+
 	// Update is called once per frame
 	void Update () 
 	{
+        if (m_eMotorState == CPlayerMotor.EState.AirThustersInShip ||
+            m_eMotorState == CPlayerMotor.EState.AirThustersInSpace)
+        {
+            //empty until I have animations for this case
+
+           // return;
+        }
+
 		if(m_bInputDisabled == false)
 		{			
 			bool bWalkForward;
