@@ -81,6 +81,10 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 469214604}
     m_Modifications:
+    - target: {fileID: 11400000, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
+      propertyPath: onClick.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 400002, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
       propertyPath: m_LocalPosition.x
       value: -5.09502697
@@ -258,6 +262,14 @@ Prefab:
     - target: {fileID: 100002, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
       propertyPath: m_Name
       value: Exit
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
+      propertyPath: onClick.Array.data[0].mTarget
+      value: 
+      objectReference: {fileID: 1674688263}
+    - target: {fileID: 11400000, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
+      propertyPath: onClick.Array.data[0].mMethodName
+      value: Quit
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
@@ -1269,7 +1281,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
       propertyPath: mText
-      value: Help
+      value: Instructions
       objectReference: {fileID: 0}
     - target: {fileID: 11400002, guid: 7c3a28b051e872b448d4808cfcf9199c, type: 2}
       propertyPath: mFontSize
@@ -2832,7 +2844,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 533, y: 697, z: 0}
+  m_ViewPortPos: {x: 303, y: 139, z: 0}
 --- !u!20 &1125349162
 Camera:
   m_ObjectHideFlags: 0
@@ -3401,7 +3413,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1958125758}
   m_GameObject: {fileID: 1617308221}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 43d1858a8f4cd5d41b23e44a332a6fbb, type: 3}
   m_Name: 
@@ -3413,7 +3425,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1958125758}
   m_GameObject: {fileID: 1617308221}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4ce7a48f44e1bed419435bf2802f0b3f, type: 3}
   m_Name: 
@@ -3433,7 +3445,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1958125758}
   m_GameObject: {fileID: 1617308221}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e812b02064b8454084835271c480746, type: 3}
   m_Name: 
@@ -3461,6 +3473,7 @@ GameObject:
   - 114: {fileID: 1674688262}
   - 114: {fileID: 1674688261}
   - 65: {fileID: 1674688260}
+  - 114: {fileID: 1674688263}
   m_Layer: 14
   m_Name: Exit
   m_TagString: Untagged
@@ -3511,7 +3524,10 @@ MonoBehaviour:
   duration: .200000003
   disabledColor: {r: .5, g: .5, b: .5, a: 1}
   dragHighlight: 0
-  onClick: []
+  onClick:
+  - mTarget: {fileID: 1674688263}
+    mMethodName: Quit
+    oneShot: 0
 --- !u!114 &1674688262
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3561,6 +3577,17 @@ MonoBehaviour:
   rightType: 1
   bottomType: 1
   topType: 1
+--- !u!114 &1674688263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1674688258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c7224bfa2784af46bcdc50d14d956e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1774194822
 GameObject:
   m_ObjectHideFlags: 0
@@ -4328,7 +4355,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: 719746235ccb04e49a8bf3a5c799ac40, type: 3}
   mFont: {fileID: 0}
-  mText: Help
+  mText: Instructions
   mFontSize: 100
   mFontStyle: 0
   mEncoding: 1

@@ -458,7 +458,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9dcc5e6e5bd64a4a9924802047cc3ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TilesCollection: {fileID: 101428, guid: 4be1e5098768ec64d820e3292b87fd97, type: 2}
+  m_TilesCollection: {fileID: 403350, guid: 1d08b22bcb51ce643b375047f9512fb7, type: 2}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

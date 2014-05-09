@@ -53,7 +53,7 @@ public class CGrid : MonoBehaviour
 		get { return(m_TileFactory); } 
 	}
 
-	public List<CTileInterface> Tiles
+	public List<CTileInterface> GridTiles
 	{
 		get { return(new List<CTileInterface>(m_GridBoard.Values)); }
 	}
@@ -73,7 +73,7 @@ public class CGrid : MonoBehaviour
 	private void OnPlayerJoin(ulong _PlayerId)
 	{
 		// Sync each tile to the player
-		foreach(CTileInterface tileInterface in Tiles)
+		foreach(CTileInterface tileInterface in GridTiles)
 		{
 			tileInterface.SyncAllTilesToPlayer(_PlayerId);
 		}
@@ -128,24 +128,20 @@ public class CGrid : MonoBehaviour
 		return(tile);
 	}
 
-	public List<CTileInterface> ImportTileInformation(List<CTileInterface> _Tiles)
+	public void ImportTileInformation(List<CTileInterface> _ImportTiles)
 	{
-		List<CTileInterface> newTiles = new List<CTileInterface>();
-	
 		// Remove all tiles within the grid currently
-		foreach(CTileInterface tileInterface in Tiles)
+		foreach(CTileInterface tileInterface in GridTiles)
 			RemoveTile(tileInterface.m_GridPosition);
 
-		// Iterate all the new tiles to use
-		foreach(CTileInterface tile in _Tiles)
-		{
-			// Place the tile and clone the info from the original
-			CTileInterface newTile = PlaceTile(tile.m_GridPosition);
-			newTile.Clone(tile);
-			newTiles.Add(newTile);
-		}
+		// Place the new tiles
+		Dictionary<CTileInterface, CTileInterface> newTilePairs = new Dictionary<CTileInterface, CTileInterface>();
+		foreach(CTileInterface importTileInterface in _ImportTiles)
+			newTilePairs.Add(importTileInterface, PlaceTile(importTileInterface.m_GridPosition));
 
- 		return(newTiles);
+		// Clone each of the tiles created
+		foreach(var tilePairs in newTilePairs)
+			tilePairs.Value.Clone(tilePairs.Key);
 	}
 
 	[AServerOnly]
@@ -202,15 +198,7 @@ public class CGrid : MonoBehaviour
 		// Remove from the board
 		m_GridBoard.Remove(_Position.ToString());
 
-		// Disable all tile types
-		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
-			tileInterface.SetTileTypeState((CTile.EType)i, false);
-
-		// Update the neighbourhood
-		tileInterface.UpdateNeighbourhood();
-
-		// Network destroy
-		CNetwork.Factory.DestoryGameObject(tileInterface.gameObject);
+		tileInterface.Release();
 	}
 }
 
