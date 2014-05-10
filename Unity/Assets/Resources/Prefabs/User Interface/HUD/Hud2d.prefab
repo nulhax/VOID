@@ -940,7 +940,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100044}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 162.751556, y: 81.999794, z: 0}
+  m_LocalPosition: {x: 252.91806, y: 81.999794, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400040}
@@ -952,7 +952,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100046}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -653.248169, y: 80.999794, z: 0}
+  m_LocalPosition: {x: -743.414673, y: 80.999794, z: 0}
   m_LocalScale: {x: 1.00007987, y: 1.00007987, z: 1.00007987}
   m_Children: []
   m_Father: {fileID: 400060}
@@ -976,7 +976,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100052}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -418.999939, y: -.000137329102, z: 0}
+  m_LocalPosition: {x: -508.999939, y: 1.52587891e-05, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400052}
@@ -1095,7 +1095,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100070}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 438.751709, y: -.000137329102, z: 0}
+  m_LocalPosition: {x: 528.918213, y: -.000137329102, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400064}
@@ -1386,7 +1386,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 880, y: 80, z: 0}
+  m_Size: {x: 1060, y: 80, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6500010
 BoxCollider:
@@ -1479,8 +1479,8 @@ MonoBehaviour:
   renderQueue: 0
   startingRenderQueue: 3000
   mAlpha: 1
-  mClipping: 4
-  mClipRange: {x: 0, y: 0, z: 959.999756, w: 720}
+  mClipping: 0
+  mClipRange: {x: 0, y: 0, z: 1140.33276, w: 720}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 1
 --- !u!114 &11400006
@@ -1519,7 +1519,7 @@ MonoBehaviour:
   renderQueue: 0
   startingRenderQueue: 3000
   mAlpha: 1
-  mClipping: 4
+  mClipping: 0
   mClipRange: {x: 0, y: 0, z: 959.999756, w: 720}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 0
@@ -2607,7 +2607,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 514, y: 352, z: 0}
+  m_ViewPortPos: {x: 2121, y: 835, z: 0}
 --- !u!114 &11400064
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2698,7 +2698,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 2.53488374
+  aspectRatio: 2.31914902
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -2758,7 +2758,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 4.65573788
+  aspectRatio: 4.30303049
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -2818,7 +2818,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 2.59523821
+  aspectRatio: 2.31914902
   mAtlas: {fileID: 11400000, guid: a685596dbcadfc54d9ecb13a8124abcb, type: 2}
   mSpriteName: Gradient BG
   mType: 1
@@ -2868,7 +2868,7 @@ MonoBehaviour:
   startingRenderQueue: 3002
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: -188.248306, y: 80.9998169, z: 959.999756, w: 132}
+  mClipRange: {x: -188.248306, y: 80.9998169, z: 1140.33276, w: 132}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 4
 --- !u!114 &11400076
@@ -2900,13 +2900,13 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 3
-  mWidth: 859
+  mWidth: 1039
   mHeight: 80
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 10.4875002
+  aspectRatio: 10.7375002
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
@@ -3002,7 +3002,7 @@ MonoBehaviour:
     absolute: -7
   mColor: {r: .425807029, g: .397383243, b: .772058845, a: 1}
   mPivot: 4
-  mWidth: 880
+  mWidth: 1060
   mHeight: 80
   mDepth: 0
   autoResizeBoxCollider: 1
@@ -3050,7 +3050,7 @@ MonoBehaviour:
     absolute: -50
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 1
-  mWidth: 890
+  mWidth: 1070
   mHeight: 390
   mDepth: 0
   autoResizeBoxCollider: 0
@@ -3386,7 +3386,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 1
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: .0928571448
+  aspectRatio: .120930232
   mAtlas: {fileID: 11400000, guid: 62adb30369acbf943a67cee0f69267a3, type: 2}
   mSpriteName: Button
   mType: 1
@@ -3461,7 +3461,7 @@ MonoBehaviour:
   startingRenderQueue: 3000
   mAlpha: 1
   mClipping: 2
-  mClipRange: {x: -10.2481689, y: -70, z: 959.999756, w: 580}
+  mClipRange: {x: -10.2481689, y: -70, z: 1140.33276, w: 580}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 2
 --- !u!114 &11400110
@@ -3609,6 +3609,7 @@ MonoBehaviour:
   m_cPanelModuleMenu: {fileID: 11400006}
   m_cPanelTurretCockpitMenu: {fileID: 11400004}
   m_cPanelPilotOverlay: {fileID: 11400116}
+  m_cCamera: {fileID: 2000000}
 --- !u!114 &11400120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3646,7 +3647,7 @@ MonoBehaviour:
   startingRenderQueue: 3005
   mAlpha: 1
   mClipping: 4
-  mClipRange: {x: -10.2481689, y: -10.0000763, z: 959.999756, w: 459.999847}
+  mClipRange: {x: -10.2481689, y: -10.0000763, z: 1140.33276, w: 459.999847}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 5
 --- !u!114 &11400122
@@ -3684,7 +3685,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 3.88095236
+  aspectRatio: 4.46875
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}

@@ -1,13 +1,132 @@
 fileFormatVersion: 2
-guid: b3541373ff068b349afe2537f4acf191
+guid: 4f056e36f12338b43a919f2bb5bc0049
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: polySurface899
+    100000: pCylinder1
+    100002: //RootNode
+    100004: polySurface185
+    100006: polySurface186
+    100008: polySurface187
+    100010: polySurface188
+    100012: polySurface189
+    100014: polySurface190
+    100016: polySurface191
+    100018: polySurface192
+    100020: polySurface193
+    100022: polySurface194
+    100024: polySurface195
+    100026: polySurface196
+    100028: polySurface197
+    100030: polySurface198
+    100032: polySurface199
+    100034: polySurface200
+    100036: polySurface201
+    100038: polySurface202
+    100040: polySurface203
+    100042: polySurface204
+    100044: polySurface205
+    100046: polySurface206
+    100048: polySurface207
+    100050: polySurface208
+    400000: pCylinder1
+    400002: //RootNode
+    400004: polySurface185
+    400006: polySurface186
+    400008: polySurface187
+    400010: polySurface188
+    400012: polySurface189
+    400014: polySurface190
+    400016: polySurface191
+    400018: polySurface192
+    400020: polySurface193
+    400022: polySurface194
+    400024: polySurface195
+    400026: polySurface196
+    400028: polySurface197
+    400030: polySurface198
+    400032: polySurface199
+    400034: polySurface200
+    400036: polySurface201
+    400038: polySurface202
+    400040: polySurface203
+    400042: polySurface204
+    400044: polySurface205
+    400046: polySurface206
+    400048: polySurface207
+    400050: polySurface208
+    2300000: pCylinder1
+    2300002: polySurface186
+    2300004: polySurface187
+    2300006: polySurface188
+    2300008: polySurface189
+    2300010: polySurface190
+    2300012: polySurface191
+    2300014: polySurface192
+    2300016: polySurface193
+    2300018: polySurface194
+    2300020: polySurface195
+    2300022: polySurface196
+    2300024: polySurface197
+    2300026: polySurface198
+    2300028: polySurface199
+    2300030: polySurface200
+    2300032: polySurface201
+    2300034: polySurface202
+    2300036: polySurface203
+    2300038: polySurface204
+    2300040: polySurface205
+    2300042: polySurface206
+    2300044: polySurface207
+    2300046: polySurface208
+    3300000: pCylinder1
+    3300002: polySurface186
+    3300004: polySurface187
+    3300006: polySurface188
+    3300008: polySurface189
+    3300010: polySurface190
+    3300012: polySurface191
+    3300014: polySurface192
+    3300016: polySurface193
+    3300018: polySurface194
+    3300020: polySurface195
+    3300022: polySurface196
+    3300024: polySurface197
+    3300026: polySurface198
+    3300028: polySurface199
+    3300030: polySurface200
+    3300032: polySurface201
+    3300034: polySurface202
+    3300036: polySurface203
+    3300038: polySurface204
+    3300040: polySurface205
+    3300042: polySurface206
+    3300044: polySurface207
+    3300046: polySurface208
+    4300000: polySurface186
+    4300002: polySurface187
+    4300004: polySurface188
+    4300006: polySurface189
+    4300008: polySurface190
+    4300010: polySurface191
+    4300012: polySurface192
+    4300014: polySurface193
+    4300016: polySurface194
+    4300018: polySurface195
+    4300020: polySurface196
+    4300022: polySurface197
+    4300024: polySurface198
+    4300026: polySurface199
+    4300028: polySurface200
+    4300030: polySurface201
+    4300032: polySurface202
+    4300034: polySurface203
+    4300036: polySurface204
+    4300038: polySurface205
+    4300040: polySurface206
+    4300042: polySurface207
+    4300044: polySurface208
+    4300046: pCylinder1
     9500000: //RootNode
   materials:
     importMaterials: 1
@@ -16,16 +135,18 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    optimizeGameObjects: 0
     animationCompression: 1
     animationRotationError: .5
     animationPositionError: .5
     animationScaleError: .5
     animationWrapMode: 0
+    extraExposedTransformPaths: []
     clipAnimations: []
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 1.5
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
@@ -48,7 +169,6 @@ ModelImporter:
   humanDescription:
     human: []
     skeleton: []
-    handles: []
     armTwist: .5
     foreArmTwist: .5
     upperLegTwist: .5
@@ -58,6 +178,5 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  additionalBone: 1
   animationType: 0
   userData: 
