@@ -329,7 +329,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
 		{
 			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
-			GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
             GetComponent<CAudioCue>().Play(transform, 1.0f, false, -1, 10, 12);
 		}
 	}

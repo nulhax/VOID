@@ -298,8 +298,8 @@ MonoBehaviour:
   m_strCueName: 
   m_fPitchMin: 1
   m_fpitchMax: 1
-  m_fVolumeMin: .5
-  m_fVolumeMax: .5
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
   m_fFadeInTimeList:
   - 0
   m_fFadeOutTimeList:
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_barLoopList: 00
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
-  m_eSoundType: 2
+  m_eSoundType: 0
 --- !u!114 &11400062
 MonoBehaviour:
   m_ObjectHideFlags: 1
