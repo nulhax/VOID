@@ -212,6 +212,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             !cSelfActor.GetComponent<CPlayerMotor>().IsInputDisabled)
         {
             _cStream.Write(ENetworkAction.SyncRotation);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerMotor>().m_usInputStates);
             _cStream.Write(cSelfActor.transform.position.x);
             _cStream.Write(cSelfActor.transform.position.y);
             _cStream.Write(cSelfActor.transform.position.z);
@@ -241,6 +242,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                     case ENetworkAction.SyncRotation:
                         if (!cPlayerActorMotor.IsInputDisabled)
                         {
+                            cPlayerActorMotor.m_usRemoteInputStates.Value = _cStream.Read<ushort>();
                             cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
@@ -860,12 +862,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             else
             {
                 m_usInputStates &= (ushort)~eTargetState;
-            }
-
-            // Set remote input states
-            if (CNetwork.IsServer)
-            {
-                m_usRemoteInputStates.Value = (ushort)m_usInputStates;
             }
 
             // Notify observers
