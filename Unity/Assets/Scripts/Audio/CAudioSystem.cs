@@ -41,7 +41,7 @@ public class CAudioSystem : MonoBehaviour
 		public float 		fadeOutTime 	{ get; set; }
 		public float 		fadeOutTimer 	= 0;
 		public AudioSource 	audioSource 	{ get; set; }
-       	public float 		defaultVolume 	{ get; set; }
+		public float 		defaultVolume 	= 1;
 		public GameObject  	soundLocoation	{ get; set; }
 		public SoundType	soundType;
 		public bool 		useOcclusion	{ get; set; }	
@@ -122,7 +122,7 @@ public class CAudioSystem : MonoBehaviour
 					{
 																		
 						audioClip.fadeOutTimer += Time.deltaTime;
-						float timeScale = audioClip.fadeOutTimer / audioClip.fadeOutTime;						
+						float timeScale = 1 - audioClip.fadeOutTimer / audioClip.fadeOutTime;						
 						audioClip.audioSource.volume = audioClip.defaultVolume * timeScale;
 						
 						//Remove the sound once it has faded out
@@ -360,7 +360,6 @@ public class CAudioSystem : MonoBehaviour
 		}
 		
 		s_activeAudio.Find(s => s.audioSource == _toStop).fadeOutTime = _fadeOutTime;	
-		s_activeAudio.Find(s => s.audioSource == _toStop).defaultVolume = 0.0f;
 	}
 	
 	public static void BalanceVolumes(float _musicVolume, float _effectsVolume)
