@@ -98,10 +98,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		CAudioCue audioCue = GetComponent<CAudioCue>();
-		if (audioCue == null)
-			audioCue = gameObject.AddComponent<CAudioCue>();
-		m_BulletFireSoundIndex = audioCue.AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
+		
 	}
 
 	void Start()
@@ -137,7 +134,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void ExecuteShootEffect()
 	{
-		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Ak47/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
+		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Projectiles/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
 		cBullet.rigidbody.velocity = cBullet.transform.forward * 40.0f;
 
 		GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_BulletFireSoundIndex);

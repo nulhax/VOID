@@ -127,7 +127,6 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	public void OnUseStart(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(true);
-        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
         Debug.Log("OnUseStart");
 	}
 
@@ -152,7 +151,6 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	public void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(false);
-        gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 
 
@@ -163,10 +161,12 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             if (m_bActive.Get())
             {
                 m_cSprayParticalSystem.Play();
+                gameObject.GetComponent<CAudioCue>().Play(transform, 0.8f, true, -1);
             }
             else
             {
                 m_cSprayParticalSystem.Stop();
+                gameObject.GetComponent<CAudioCue>().StopAllSound();
             }
         }
     }
