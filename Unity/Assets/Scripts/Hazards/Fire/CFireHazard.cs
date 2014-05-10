@@ -47,6 +47,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 		AttachEmitterToChildren(gameObject);
 
 		CAudioCue audioCue = gameObject.AddComponent<CAudioCue>();
+		audioCue.m_strCueName = "Fire";
 		audioClipIndex = audioCue.AddSound("Audio/Fire/Fire", 0.0f, 0.0f, true);
 	}
 
@@ -147,8 +148,18 @@ public class CFireHazard : CNetworkMonoBehaviour
 			case 0:	// Begin fire.
 				{
 					burning_internal = true;
+					
+					//Make sure to get the right audio cue!
 
-					GetComponent<CAudioCue>().Play(transform, 1.0f, true, audioClipIndex);
+					CAudioCue[] audioCues = GetComponents<CAudioCue>();
+					foreach(CAudioCue cue in audioCues)
+					{
+						if(cue.m_strCueName == "Fire")
+						{
+								cue.Play(transform, 1.0f, true, audioClipIndex);
+						}
+					}					
+					
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(true);
 
 					foreach (GameObject go in particleSystems)
@@ -162,7 +173,14 @@ public class CFireHazard : CNetworkMonoBehaviour
 				{
 					burning_internal = false;
 
-					GetComponent<CAudioCue>().StopAllSound();
+					CAudioCue[] audioCues = GetComponents<CAudioCue>();
+					foreach(CAudioCue cue in audioCues)
+					{
+						if(cue.m_strCueName == "Fire")
+						{
+							GetComponent<CAudioCue>().StopAllSound();
+						}
+					}
 					GetComponent<CActorAtmosphericConsumer>().SetAtmosphereConsumption(false);
 
 					foreach (GameObject go in particleSystems)
