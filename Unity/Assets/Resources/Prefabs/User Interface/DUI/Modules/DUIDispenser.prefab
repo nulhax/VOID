@@ -482,7 +482,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 349, y: -216, z: 0}
+  m_LocalPosition: {x: 439.166504, y: -216, z: 0}
   m_LocalScale: {x: 1.00007999, y: 1.00007999, z: 1.00007999}
   m_Children:
   - {fileID: 400000}
@@ -665,7 +665,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100132}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -426, y: -170, z: 0}
+  m_LocalPosition: {x: -516, y: -170, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400022}
@@ -687,7 +687,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100152}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -430, y: 83, z: 0}
+  m_LocalPosition: {x: -520, y: 83, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400022}
@@ -721,7 +721,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100164}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -460, y: -197, z: 0}
+  m_LocalPosition: {x: -550.166504, y: -197, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400158}
@@ -744,7 +744,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100162}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -118.5, y: -322, z: 0}
+  m_LocalPosition: {x: -118.666504, y: -322, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400156}
@@ -887,8 +887,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 142.600006, y: 30, z: 0}
-  m_Center: {x: -265.200012, y: 0, z: 0}
+  m_Size: {x: 178.600006, y: 30, z: 0}
+  m_Center: {x: -337.200012, y: 0, z: 0}
 --- !u!65 &6500048
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -899,7 +899,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 683, y: 40, z: 0}
+  m_Size: {x: 863, y: 40, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -1220,7 +1220,7 @@ MonoBehaviour:
   renderQueue: 0
   startingRenderQueue: 3007
   mAlpha: 1
-  mClipping: 4
+  mClipping: 0
   mClipRange: {x: 0, y: 0, z: 960, w: 720}
   mClipSoftness: {x: 4, y: 4}
   mDepth: 5
@@ -1629,7 +1629,7 @@ MonoBehaviour:
     absolute: -20
   mColor: {r: .382785499, g: .402517587, b: .441176504, a: 1}
   mPivot: 4
-  mWidth: 920
+  mWidth: 1100
   mHeight: 416
   mDepth: 4
   autoResizeBoxCollider: 0
@@ -1684,7 +1684,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 514, y: 352, z: 0}
+  m_ViewPortPos: {x: 1985, y: 818, z: 0}
 --- !u!114 &11400236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1928,7 +1928,7 @@ MonoBehaviour:
   startingRenderQueue: 3005
   mAlpha: 1
   mClipping: 3
-  mClipRange: {x: 341.5, y: -3.81469727e-06, z: 663, w: 190}
+  mClipRange: {x: 431.5, y: -3.81469727e-06, z: 843, w: 190}
   mClipSoftness: {x: 10, y: 10}
   mDepth: 4
 --- !u!114 &11400374
@@ -2020,7 +2020,7 @@ MonoBehaviour:
     absolute: -20
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 860
+  mWidth: 1040
   mHeight: 88
   mDepth: 5
   autoResizeBoxCollider: 0
@@ -2080,7 +2080,7 @@ MonoBehaviour:
     absolute: -125
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 0
-  mWidth: 860
+  mWidth: 1040
   mHeight: 212
   mDepth: 5
   autoResizeBoxCollider: 0
@@ -2286,7 +2286,7 @@ MonoBehaviour:
     absolute: -5
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 673
+  mWidth: 853
   mHeight: 30
   mDepth: 3
   autoResizeBoxCollider: 1
@@ -2460,7 +2460,7 @@ MonoBehaviour:
     absolute: 0
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 683
+  mWidth: 863
   mHeight: 40
   mDepth: 2
   autoResizeBoxCollider: 1
@@ -2508,7 +2508,7 @@ MonoBehaviour:
     absolute: 268
   mColor: {r: .382785469, g: .402517617, b: .441176474, a: 1}
   mPivot: 3
-  mWidth: 683
+  mWidth: 863
   mHeight: 210
   mDepth: 2
   autoResizeBoxCollider: 1
@@ -2574,7 +2574,7 @@ MonoBehaviour:
   renderQueue: 0
   startingRenderQueue: 3000
   mAlpha: 1
-  mClipping: 4
+  mClipping: 0
   mClipRange: {x: 0, y: 0, z: 960, w: 720}
   mClipSoftness: {x: 4, y: 4}
   mDepth: -1

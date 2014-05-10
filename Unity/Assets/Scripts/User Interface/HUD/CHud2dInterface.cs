@@ -96,6 +96,7 @@ public class CHud2dInterface : MonoBehaviour
         }
 
         m_eActiveHud = _eHud;
+        m_cCamera.gameObject.SetActive(true);
     }
 
 
@@ -110,8 +111,12 @@ public class CHud2dInterface : MonoBehaviour
 
     public void CloseActiveHud()
     {
-        m_cActiveHudPanel.gameObject.SetActive(false);
-        m_eActiveHud = EHud.INVALID;
+        if (m_eActiveHud != EHud.INVALID)
+        {
+            m_cActiveHudPanel.gameObject.SetActive(false);
+            m_eActiveHud = EHud.INVALID;
+            m_cCamera.gameObject.SetActive(false);
+        }
     }
 
 
@@ -136,6 +141,7 @@ public class CHud2dInterface : MonoBehaviour
         m_cPanelModuleMenu.gameObject.SetActive(false);
         m_cPanelTurretCockpitMenu.gameObject.SetActive(false);
         m_cPanelPilotOverlay.gameObject.SetActive(false);
+        m_cCamera.gameObject.SetActive(false);
     }
 
 
@@ -145,6 +151,7 @@ public class CHud2dInterface : MonoBehaviour
     public UIPanel m_cPanelModuleMenu = null;
     public UIPanel m_cPanelTurretCockpitMenu = null;
     public UIPanel m_cPanelPilotOverlay = null;
+    public Camera  m_cCamera = null;
 
 
     UIPanel m_cActiveHudPanel = null;
