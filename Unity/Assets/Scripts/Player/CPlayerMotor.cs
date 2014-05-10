@@ -109,7 +109,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     public delegate void InputStatesChangeHandler(ushort _usPreviousStates, ushort _usNewSates);
 	public event InputStatesChangeHandler EventInputStatesChange;
 
-
     public delegate void StateChangeHandler(EState _ePrevious, EState _eNew);
     public event StateChangeHandler EventStateChange;
 
@@ -213,6 +212,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         {
             _cStream.Write(ENetworkAction.SyncRotation);
             _cStream.Write(cSelfActor.GetComponent<CPlayerMotor>().m_usInputStates);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerMotor>().m_eState);
             _cStream.Write(cSelfActor.transform.position.x);
             _cStream.Write(cSelfActor.transform.position.y);
             _cStream.Write(cSelfActor.transform.position.z);
@@ -243,6 +243,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                         if (!cPlayerActorMotor.IsInputDisabled)
                         {
                             cPlayerActorMotor.m_usRemoteInputStates.Value = _cStream.Read<ushort>();
+                            cPlayerActorMotor.m_eRemoteState.Value = _cStream.Read<EState>();
                             cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
@@ -252,7 +253,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                         }
                         else
                         {
-                            _cStream.IgnoreBytes(6 * sizeof(float));
+                            _cStream.IgnoreBytes(6 * sizeof(float) + sizeof(ushort) + sizeof(EState));
                         }
                         break;
 
@@ -959,8 +960,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-        if (!CNetwork.IsServer &&
-             gameObject != CGamePlayers.SelfActor)
+        if (gameObject != CGamePlayers.SelfActor)
         {
             if (_cSyncedVar == m_usRemoteInputStates)
             {
