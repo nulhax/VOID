@@ -111,6 +111,15 @@ public class CAudioCue : MonoBehaviour
 	//This function will play all attached sounds, and will loop clips as determined by loopFlags.
 	public void PlayAll( Transform parent, float volumeScale)
 	{
+		if(m_barLoopList.Length < m_arAudioClipPool.Length)
+		{
+			m_barLoopList = new bool[m_arAudioClipPool.Length];
+			for(int i = 0; i < m_arAudioClipPool.Length; i++)
+			{
+				m_barLoopList[i] = false;
+			}
+		}
+
 		for(int i = 0; i < m_arAudioClipPool.Length; i++)
 		{
 			Play(parent, volumeScale, m_barLoopList[i], i);
