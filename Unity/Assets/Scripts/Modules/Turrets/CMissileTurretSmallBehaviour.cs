@@ -66,7 +66,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 
             ENetworkAction eAction = _cStream.Read<ENetworkAction>();
 
-            Transform cRandomProjectileNode = cBehaviour.m_cTurretBehaviour.GetRandomProjectileNode();
+            Transform cRandomProjectileNode = cBehaviour.m_cTurretInterface.GetRandomProjectileNode();
 
             switch (eAction)
             {
@@ -99,9 +99,9 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cTurretBehaviour = GetComponent<CTurretBehaviour>();
+        m_cTurretInterface = GetComponent<CTurretInterface>();
 
-        m_cTurretBehaviour.EventPrimaryFire += OnEventFirePrimary;
+        m_cTurretInterface.EventPrimaryFire += OnEventFirePrimary;
 	}
 
 
@@ -116,9 +116,9 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-    void OnEventFirePrimary(CTurretBehaviour _cSender)
+    void OnEventFirePrimary(CTurretInterface _cSender)
     {
-        RaycastHit[] taRaycastHits = m_cTurretBehaviour.ScanTargets(5000.0f);
+        RaycastHit[] taRaycastHits = m_cTurretInterface.ScanTargets(5000.0f);
         bool bTargetFound = false;
 
         foreach (RaycastHit cRaycastHit in taRaycastHits)
@@ -145,7 +145,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CTurretBehaviour m_cTurretBehaviour = null;
+    CTurretInterface m_cTurretInterface = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();

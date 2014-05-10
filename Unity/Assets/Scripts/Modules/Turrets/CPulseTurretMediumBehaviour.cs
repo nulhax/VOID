@@ -51,10 +51,10 @@ public class CPulseTurretMediumBehaviour : MonoBehaviour
 
 	void Start()
 	{
-        m_cTurretBehaviour = GetComponent<CTurretBehaviour>();
+        m_cTurretInterface = GetComponent<CTurretInterface>();
 
-        m_cTurretBehaviour.EventPrimaryFire += OnEventFirePrimary;
-        m_cTurretBehaviour.EventPrimaryFire += OnEventFireSecondary;
+        m_cTurretInterface.EventPrimaryFire += OnEventFirePrimary;
+        m_cTurretInterface.EventPrimaryFire += OnEventFireSecondary;
 	}
 
 
@@ -68,12 +68,12 @@ public class CPulseTurretMediumBehaviour : MonoBehaviour
 	}
 
 
-    void OnEventFirePrimary(CTurretBehaviour _cSender)
+    void OnEventFirePrimary(CTurretInterface _cSender)
     {
     }
 
 
-    void OnEventFireSecondary(CTurretBehaviour _cSender)
+    void OnEventFireSecondary(CTurretInterface _cSender)
     {
     }
 
@@ -81,7 +81,7 @@ public class CPulseTurretMediumBehaviour : MonoBehaviour
 // Member Fields
 
 
-    CTurretBehaviour m_cTurretBehaviour = null;
+    CTurretInterface m_cTurretInterface = null;
 
 
 };

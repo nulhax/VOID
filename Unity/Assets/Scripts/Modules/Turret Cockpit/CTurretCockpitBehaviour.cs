@@ -36,36 +36,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public GameObject Screen
-    {
-        get { return (m_cScreen); }
-    }
-
-
 // Member Properties
-
-
-	public TNetworkViewId ActiveTurretViewId
-	{
-		get 
-		{ 
-			return (m_cActiveTurretViewId.Value); 
-		}
-	}
-
-
-    public CTurretBehaviour ActiveTurretBehaviour
-    {
-        get
-        {
-            if (ActiveTurretViewId == null)
-            {
-                return (null);
-            }
-
-            return (m_cActiveTurretViewId.Value.GameObject.GetComponent<CTurretBehaviour>());
-        }
-    }
 
 
 // Member Methods
@@ -73,7 +44,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
+		// Empty
     }
 
 
@@ -117,7 +88,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateRemoteRotationAlignment();
+        // UpdateRemoteRotationAlignment()
     }
 
 
@@ -129,6 +100,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
     void UpdateRemoteRotationAlignment()
     {
+        /*
         Vector3 vTargetLocalEuler = Vector3.forward;
 
         if (ActiveTurretViewId != null)
@@ -161,107 +133,40 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
                                                                                   qTargetRotation,
                                                                                   fRotationSpeed * Time.deltaTime);
         }
+        */
     }
 
 
-	void OnEventCockpitMounted(ulong _ulPlayerId)
+    void OnEventCockpitMounted(CCockpitInterface _cSender, ulong _ulPlayerId)
 	{
-        if (_ulPlayerId == CNetwork.PlayerId)
-        {
-            Camera cam = CGameCameras.MainCamera.camera;
-            float pos = (cam.nearClipPlane + 0.01f);
-            m_cScreen.transform.position = cam.transform.position + cam.transform.forward * pos;
-            float h = Mathf.Tan(cam.fieldOfView * Mathf.Deg2Rad * 0.5f) * pos * 2f;
-            m_cScreen.transform.localScale = new Vector3(h * cam.aspect, h, 0f);
-
-            s_cLocalOwnedTurretCockpitBehaviour = this;
-        }
-
-        if (CNetwork.IsServer)
-        {
-            /*
-            List<GameObject> acTurrets = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByCategory(CModuleInterface.ECategory.Turrets);
-
-            if (acTurrets != null &&
-                acTurrets.Count > 0)
-            {
-                foreach (GameObject cTurretObject in acTurrets)
-                {
-                    if (!cTurretObject.GetComponent<CTurretBehaviour>().IsUnderControl)
-                    {
-                        m_cActiveTurretViewId.Set(cTurretObject.GetComponent<CNetworkView>().ViewId);
-                        break;
-                    }
-                }
-            }
-             * */
-        }
+        Debug.Log("Player entered cockpit");
 	}
 
 
-	void OnEventCockpitUnmounted(ulong _ulPlayerId)
+    void OnEventCockpitUnmounted(CCockpitInterface _cSender, ulong _ulPlayerId)
 	{
-        if (_ulPlayerId == CNetwork.PlayerId)
-        {
-            s_cLocalOwnedTurretCockpitBehaviour = null;
-        }
-
-        if (CNetwork.IsServer)
-        {
-            if (ActiveTurretViewId != null)
-            {
-                m_cActiveTurretViewId.Set(null);
-            }
-        }
-
-		//Debug.Log("Player left cockpit");
+		Debug.Log("Player left cockpit");
 	}
 
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		if (_cSyncedVar == m_cActiveTurretViewId)
-		{
-            HandleActiveTurretChange();
-		}
+        // Empty
 	}
-
-
-    void HandleActiveTurretChange()
-    {
-        if (CNetwork.IsServer)
-        {
-            if (m_cActiveTurretViewId.PreviousValue != null)
-            {
-                // Release control of previous turret
-                m_cActiveTurretViewId.PreviousValue.GameObject.GetComponent<CTurretBehaviour>().ReleaseControl();
-            }
-
-            if (m_cActiveTurretViewId.Value != null)
-            {
-                // Take control of turret
-                ActiveTurretViewId.GameObject.GetComponent<CTurretBehaviour>().TakeControl(NetworkViewId);
-            }
-        }
-    }
 
 
 // Member Fields
 
 
-    public GameObject m_cScreen = null;
     public Transform m_cChairModelTrans = null;
     public float m_fRotationMinX = -20.0f;
     public float m_fRotationMaxX =  15.0f;
 
-
-    CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
-
+    
     CModuleInterface m_cModuleInterface = null;
     CCockpitInterface m_cCockpitInterface = null;
 
 
-    static CTurretCockpitBehaviour s_cLocalOwnedTurretCockpitBehaviour = null;
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 

@@ -54,9 +54,9 @@ public class CHud2dInterface : MonoBehaviour
     }
 
 
-    public CHudTurretCockpitControlInterface TurretCockpitControlInterface
+    public CHudTurretCockpitInterface TurretCockpitControlInterface
     {
-        get { return (m_cPanelTurretCockpitMenu.GetComponent<CHudTurretCockpitControlInterface>()); }
+        get { return (m_cPanelTurretCockpitMenu.GetComponent<CHudTurretCockpitInterface>()); }
     }
 
 
@@ -69,7 +69,20 @@ public class CHud2dInterface : MonoBehaviour
 // Member Methods
 
 
-    public void OpenHud(EHud _eHud)
+    public void ToggleHud(EHud _eHud)
+    {
+        if (ActiveHud == _eHud)
+        {
+            HideHud(_eHud);
+        }
+        else
+        {
+            ShowHud(_eHud);
+        }
+    }
+
+
+    public void ShowHud(EHud _eHud)
     {
         HideAllHuds();
 
@@ -91,7 +104,7 @@ public class CHud2dInterface : MonoBehaviour
                 break;
 
             default:
-                Debug.LogError("Umknown hud: " + _eHud);
+                Debug.LogError("Unknown hud: " + _eHud);
                 break;
         }
 
@@ -100,7 +113,7 @@ public class CHud2dInterface : MonoBehaviour
     }
 
 
-    public void CloseHud(EHud _eHud)
+    public void HideHud(EHud _eHud)
     {
         if (ActiveHud == _eHud)
         {

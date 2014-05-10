@@ -222,7 +222,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     }
 
 
-	void OnCockpitMount(ulong _ulPlayerId)
+	void OnCockpitMount(CCockpitInterface _cSender, ulong _ulPlayerId)
 	{
 		if(CNetwork.PlayerId == _ulPlayerId)
 		{
@@ -236,8 +236,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseScroll, OnEventAxisControlCamera);
 		}
 	}
-	
-    void OnCockpitUnmount(ulong _ulPlayerId)
+
+    void OnCockpitUnmount(CCockpitInterface _cSender, ulong _ulPlayerId)
     {
 		if(CNetwork.IsServer)
 		{

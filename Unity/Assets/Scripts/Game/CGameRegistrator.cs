@@ -317,9 +317,11 @@ public class CGameRegistrator : MonoBehaviour
 		CNetworkConnection.RegisterSerializationTarget(CRatchetBehaviour.Serialize                	, CRatchetBehaviour.Unserialize);
 		CNetworkConnection.RegisterSerializationTarget(CPlayerRagdoll.Serialize                		, CPlayerRagdoll.Unserialize);
         CNetworkConnection.RegisterSerializationTarget(CTurretCockpitBehaviour.SerializeOutbound    , CTurretCockpitBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerCockpitBehaviour.SerializeOutbound    , CPlayerCockpitBehaviour.UnserializeInbound);
+        CNetworkConnection.RegisterSerializationTarget(CPlayerTurretBehaviour.SerializeOutbound     , CPlayerTurretBehaviour.UnserializeInbound);
 
 
-        CNetworkConnection.RegisterSerializationTarget(CTurretBehaviour.SerializeOutbound             , CTurretBehaviour.UnserializeInbound); // Process first so rotations can be updated before turret specialized behaviours process
+        CNetworkConnection.RegisterSerializationTarget(CTurretInterface.SerializeOutbound             , CTurretInterface.UnserializeInbound); // Process first so rotations can be updated before turret specialized behaviours process
         CNetworkConnection.RegisterSerializationTarget(CPulseTurretSmallBehaviour.SerializeOutbound   , CPulseTurretSmallBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CPulseTurretMediumBehaviour.SerializeOutbound  , CPulseTurretMediumBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CMissileTurretSmallBehaviour.SerializeOutbound , CMissileTurretSmallBehaviour.UnserializeInbound);

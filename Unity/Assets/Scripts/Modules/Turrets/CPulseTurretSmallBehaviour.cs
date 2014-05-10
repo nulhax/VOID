@@ -67,8 +67,8 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
             switch (eAction)
             {
                 case ENetworkAction.FireLaser:
-                    cBehaviour.InvokeRpcAll("RemoteFirePrimary", cBehaviour.m_cTurretBehaviour.GetRandomProjectileNode().transform.position,
-                                                                 cBehaviour.m_cTurretBehaviour.GetRandomProjectileNode().transform.eulerAngles);
+                    cBehaviour.InvokeRpcAll("RemoteFirePrimary", cBehaviour.m_cTurretInterface.GetRandomProjectileNode().transform.position,
+                                                                 cBehaviour.m_cTurretInterface.GetRandomProjectileNode().transform.eulerAngles);
                     break;
 
                 default:
@@ -81,9 +81,9 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cTurretBehaviour = GetComponent<CTurretBehaviour>();
-        m_cTurretBehaviour.EventPrimaryFire += OnEventFirePrimary;
-        m_cTurretBehaviour.EventSecondaryFire += OnEventFireSecondary;
+        m_cTurretInterface = GetComponent<CTurretInterface>();
+        m_cTurretInterface.EventPrimaryFire += OnEventFirePrimary;
+        m_cTurretInterface.EventSecondaryFire += OnEventFireSecondary;
 	}
 
 
@@ -107,7 +107,7 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-    void OnEventFirePrimary(CTurretBehaviour _cSender)
+    void OnEventFirePrimary(CTurretInterface _cSender)
     {
         s_cSerializeStream.Write(NetworkViewId);
         s_cSerializeStream.Write(ENetworkAction.FireLaser);
@@ -115,7 +115,7 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-    void OnEventFireSecondary(CTurretBehaviour _cSender)
+    void OnEventFireSecondary(CTurretInterface _cSender)
     {
     }
 
@@ -123,7 +123,7 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CTurretBehaviour m_cTurretBehaviour = null;
+    CTurretInterface m_cTurretInterface = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();

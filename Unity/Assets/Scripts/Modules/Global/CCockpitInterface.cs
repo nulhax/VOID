@@ -30,9 +30,6 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 	public enum ENetworkAction
 	{
         INVALID,
-
-		EnterCockpit,
-		LeaveCockpit
 	}
 
 
@@ -47,12 +44,12 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 
-	
-	public delegate void HandlePlayerEnter(ulong _ulPlayerId);
+
+    public delegate void HandlePlayerEnter(CCockpitInterface _cSender, ulong _ulPlayerId);
 	public event HandlePlayerEnter EventMounted;
 
 	
-	public delegate void HandlePlayerLeave(ulong _ulPlayerId);
+	public delegate void HandlePlayerLeave(CCockpitInterface _cSender, ulong _ulPlayerId);
 	public event HandlePlayerLeave EventDismounted;
 
 
@@ -93,7 +90,7 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 	}
 
 
-	public Transform Seat
+	public Transform SeatTrans
 	{
 		get { return (m_cSeat); }
 	}
@@ -109,9 +106,10 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    void EnterCockpit(ulong _ulPlayerId)
+    public bool MountPlayer(ulong _ulPlayerId)
     {
         GameObject cPlayerActor = CGamePlayers.GetPlayerActor(_ulPlayerId);
+        bool bAccessGranted = false;
 
         if ( cPlayerActor != null && 
             !IsMounted &&
@@ -136,7 +134,11 @@ public class CCockpitInterface : CNetworkMonoBehaviour
             cPlayerActor.rigidbody.isKinematic = true;
 
             m_ulMountedPlayerId.Set(_ulPlayerId);
+
+            bAccessGranted = true;
         }
+
+        return (bAccessGranted);
     }
 
 
@@ -151,7 +153,7 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 
             if (cPlayerActor != null)
             {
-                // UnParent the player to the cockpit seat
+                // Un-parent the player to the cockpit seat
                 cPlayerActor.GetComponent<CNetworkView>().SetParent(null);
 
                 // Move player back to positions when entered
@@ -182,27 +184,13 @@ public class CCockpitInterface : CNetworkMonoBehaviour
         while (_cStream.HasUnreadData)
         {
             TNetworkViewId cCockpitObjectViewId = _cStream.Read<TNetworkViewId>();
+
             ENetworkAction eAction = _cStream.Read<ENetworkAction>();
 
-            GameObject cCockpitObject = CNetwork.Factory.FindGameObject(cCockpitObjectViewId);
-
-            CCockpitInterface cCockpit = cCockpitObject.GetComponent<CCockpitInterface>();
+            CCockpitInterface cCockpit = cCockpitObjectViewId.GameObject.GetComponent<CCockpitInterface>();
 
             switch (eAction)
             {
-                case ENetworkAction.EnterCockpit:
-                    cCockpit.EnterCockpit(_cNetworkPlayer.PlayerId);
-                    break;
-
-                case ENetworkAction.LeaveCockpit:
-                    {
-                        if (_cNetworkPlayer.PlayerId == cCockpit.m_ulMountedPlayerId.Value)
-                        {
-                            cCockpit.EjectPlayer();
-                        }
-                    }
-                    break;
-
                 default:
                     Debug.LogError(string.Format("Unknown network action ({0})"));
                     break;
@@ -219,70 +207,21 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		// Sign up for event
-		gameObject.GetComponent<CActorInteractable>().EventUse += OnEventInteractionUse;
-		CNetwork.Server.EventPlayerDisconnect += OnPlayerDisconnect;
-
-        CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnInputUse);
-
-        if (CNetwork.IsServer)
-        {
-            
-        }
-
+        // Check type has been set
         if (m_eType == EType.INVALID)
-        {
             Debug.LogError(string.Format("Cockpit gameobject({0}) has not been assigned a cockpit type.", gameObject.name));
-        }
 	}
 
 
 	void OnDestroy()
 	{
-        gameObject.GetComponent<CActorInteractable>().EventUse -= OnEventInteractionUse;
+        // Empty
 	}
 
 
 	void Update()
 	{
         // Empty
-	}
-
-
-	[ALocalOnly]
-    void OnInputUse(CUserInput.EInput _eInput, bool _bDown)
-	{
-		if (_bDown &&
-		    MountedPlayerId == CNetwork.PlayerId)
-		{
-            // Request to be unmounted from the cockpit
-			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
-			s_cSerializeStream.Write(ENetworkAction.LeaveCockpit);
-		}
-	}
-
-	
-	[ALocalOnly]
-    void OnEventInteractionUse(RaycastHit _tRayHit, TNetworkViewId _cPlayerActorViewId, bool _bDown)	
-	{
-		// Check there is no one in the cockpit locally
-		if ( _bDown &&
-            !IsMounted)
-		{
-			// Request to enter the cockpit
-			s_cSerializeStream.Write(gameObject.GetComponent<CNetworkView>().ViewId);
-			s_cSerializeStream.Write(ENetworkAction.EnterCockpit);
-		}
-	}
-
-
-	[AServerOnly]
-	void OnPlayerDisconnect(CNetworkPlayer _cNetworkPlayer)
-	{
-		if (MountedPlayerId == _cNetworkPlayer.PlayerId)
-		{
-            EjectPlayer();
-		}
 	}
 
 
@@ -300,42 +239,17 @@ public class CCockpitInterface : CNetworkMonoBehaviour
         // Check player dismounted the cockpit
         if (m_ulMountedPlayerId.Value == 0)
         {
-            GameObject cPlayerActor = CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue);
-            cPlayerActor.GetComponent<CPlayerMotor>().EnableInput(this);
-            cPlayerActor.GetComponent<CPlayerHead>().EnableInput(this);
-
             // Notify obersvers
             if (EventDismounted != null)
-                EventDismounted(m_ulMountedPlayerId.PreviousValue);
-
-            if (CNetwork.IsServer &&
-                m_ulMountedPlayerId.PreviousValue != 0)
-            {
-                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(null);
-            }
+                EventDismounted(this, m_ulMountedPlayerId.PreviousValue);
         }
 
-        // Player entered the cockput
+        // Player entered the cockpit
         else
         {
-            GameObject cPlayerActor = CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.Value);
-            cPlayerActor.GetComponent<CPlayerMotor>().DisableInput(this);
-            cPlayerActor.GetComponent<CPlayerHead>().DisableInput(this);
-
             // Notify observers
             if (EventMounted != null)
-                EventMounted(m_ulMountedPlayerId.Value);
-
-            if (CNetwork.IsServer &&
-                m_ulMountedPlayerId.PreviousValue == CNetwork.PlayerId)
-            {
-                CGamePlayers.SelfActor.GetComponent<CPlayerCockpitBehaviour>();
-            }
-
-            if (CNetwork.IsServer)
-            {
-                CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.Value).GetComponent<CPlayerCockpitBehaviour>().SetMountedCockpitViewId(NetworkViewId);
-            }
+                EventMounted(this, m_ulMountedPlayerId.Value);
         }
     }
 

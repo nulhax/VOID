@@ -267,11 +267,11 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
         if (_bOpen)
         {
-            CGameHUD.Hud2dInterface.OpenHud(CHud2dInterface.EHud.ModuleMenu);
+            CGameHUD.Hud2dInterface.ShowHud(CHud2dInterface.EHud.ModuleMenu);
         }
         else
         {
-            CGameHUD.Hud2dInterface.CloseHud(CHud2dInterface.EHud.ModuleMenu);
+            CGameHUD.Hud2dInterface.HideHud(CHud2dInterface.EHud.ModuleMenu);
         }
         
         // Unlock cursor if opened
