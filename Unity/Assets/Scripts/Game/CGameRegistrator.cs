@@ -476,6 +476,7 @@ public class CGameRegistrator : MonoBehaviour
 
         CUserInput.SetKeyBinding(CUserInput.EInput.ReturnKey, KeyCode.Return);
         CUserInput.SetKeyBinding(CUserInput.EInput.Escape, KeyCode.Escape);
+		CUserInput.SetKeyBinding(CUserInput.EInput.Push_To_Talk, KeyCode.LeftAlt);
     }
 
 

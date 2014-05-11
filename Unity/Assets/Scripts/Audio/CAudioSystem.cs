@@ -330,7 +330,7 @@ public class CAudioSystem : MonoBehaviour
 	
 	private static void SetAudioSource(ref AudioSource _source, AudioClip _clip, float _volume) 
 	{
-		_source.rolloffMode = AudioRolloffMode.Logarithmic;
+		_source.rolloffMode = AudioRolloffMode.Linear;
 		_source.dopplerLevel = 0.01f;
 		_source.minDistance = 1.0f;
 		_source.maxDistance = 5.0f;

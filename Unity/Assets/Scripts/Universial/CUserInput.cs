@@ -56,6 +56,7 @@ public class CUserInput : CNetworkMonoBehaviour
                                   
 		Use,                     // F
 		Visor,                   // C
+		Push_To_Talk,		     // Alt	
                                   
 		Move_Forward,            // W
 		Move_Backwards,          // S
