@@ -26,7 +26,6 @@ GameObject:
   - 114: {fileID: 11400026}
   - 114: {fileID: 11400048}
   - 114: {fileID: 11400028}
-  - 114: {fileID: 11400024}
   - 114: {fileID: 11400036}
   - 136: {fileID: 13600000}
   - 114: {fileID: 11400052}
@@ -279,17 +278,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AtmosphericConsumptionRate: 5
   m_ConsumingAtmosphere: 1
---- !u!114 &11400024
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100078}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9dc444c93a4e575479bc80f26fb1a7f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1

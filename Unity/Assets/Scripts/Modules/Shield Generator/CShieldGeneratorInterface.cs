@@ -3,7 +3,7 @@
 //
 //  (c) 2013
 //
-//  File Name   :   CPowerStorageBehaviour.cs
+//  File Name   :   CShieldGeneratorInterface.cs
 //  Description :   --------------------------
 //
 //  Author  	:  
@@ -20,16 +20,15 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CModuleInterface))]
-public class CPowerBatteryInterface : CNetworkMonoBehaviour 
+public class CShieldGeneratorInterface : CNetworkMonoBehaviour
 {
 
 // Member Types
-	
-	
+
+
 // Member Delegates & Events
-	
-	
+
+
 // Member Properties
 
 
@@ -37,21 +36,28 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     {
         get { return (m_fInitialCapacity); }
     }
-	
-
-	public float ChargeCapacity
-	{ 
-		get { return (m_fCapacity.Value); }
-	}
 
 
-// Member Functions
-	
+    public float ChargeCapacity
+    {
+        get { return (m_fCapacity.Value); }
+    }
 
-	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
-	{
-		m_fCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-	}
+
+    public float GenerationRate
+    {
+        get { return (m_fGenerationRate.Value); }
+    }
+
+
+// Member Methods
+
+
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_fGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+    }
 
 
     void Awake()
@@ -77,7 +83,9 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     [AServerOnly]
     void OnEventBuilt(CModuleInterface _cSender)
     {
-        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeMaxCapacity(m_fInitialCapacity);
+        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeMaxGenerationRate(m_fInitialGenerationRate);
+
+        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeMaxCapacity(m_fInitialCapacity);
     }
 
 
@@ -86,10 +94,14 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     {
         if (_bEnabled)
         {
+            m_fGenerationRate.Value = m_fInitialGenerationRate * m_cModuleInterface.FunctioanlRatio;
+
             m_fCapacity.Value = m_fInitialCapacity * m_cModuleInterface.FunctioanlRatio;
         }
         else
         {
+            m_fGenerationRate.Value = 0.0f;
+
             m_fCapacity.Value = 0.0f;
         }
     }
@@ -100,6 +112,8 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     {
         if (m_cModuleInterface.IsEnabled)
         {
+            m_fGenerationRate.Value = m_fInitialGenerationRate * _fNewRatio;
+
             m_fCapacity.Value = m_fInitialCapacity * _fNewRatio;
         }
     }
@@ -107,12 +121,14 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
-        if (_cSyncedVar == m_fCapacity)
+        if (_cSyncedVar == m_fGenerationRate)
         {
-            // Update ship power capacity
+            // Update ship power system
             if (CNetwork.IsServer)
             {
-                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeCapacity(m_fCapacity.Value - m_fCapacity.PreviousValue);
+                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeGenerationRate(m_fGenerationRate.Value - m_fGenerationRate.PreviousValue);
+
+                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeCapacity(m_fCapacity.Value - m_fCapacity.PreviousValue);
             }
         }
     }
@@ -121,13 +137,15 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
+    public float m_fInitialGenerationRate = 0.0f;
     public float m_fInitialCapacity = 0.0f;
 
-    
+
+    CNetworkVar<float> m_fGenerationRate = null;
     CNetworkVar<float> m_fCapacity = null;
 
 
     CModuleInterface m_cModuleInterface = null;
 
 
-}
+};

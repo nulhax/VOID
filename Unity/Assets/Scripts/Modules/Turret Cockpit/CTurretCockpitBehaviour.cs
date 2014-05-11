@@ -88,7 +88,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
     void Update()
     {
-        // UpdateRemoteRotationAlignment()
+        UpdateRemoteRotationAlignment();
     }
 
 
@@ -100,21 +100,29 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 
     void UpdateRemoteRotationAlignment()
     {
-        /*
         Vector3 vTargetLocalEuler = Vector3.forward;
 
-        if (ActiveTurretViewId != null)
+        if (m_cCockpitInterface.IsMounted)
         {
-            if (ActiveTurretBehaviour.RotationRatioX >= 0.0f)
-            {
-                vTargetLocalEuler.x = 360.0f - (m_fRotationMaxX * ActiveTurretBehaviour.RotationRatioX);
-            }
-            else
-            {
-                vTargetLocalEuler.x = m_fRotationMinX * ActiveTurretBehaviour.RotationRatioX;
-            }
+            GameObject cMountedPlayerActor = m_cCockpitInterface.MountedPlayerActor;
 
-            vTargetLocalEuler.y = 360.0f * ActiveTurretBehaviour.RotationRatioY;
+            CPlayerTurretBehaviour cPlayerTurretBehaviour = cMountedPlayerActor.GetComponent<CPlayerTurretBehaviour>();
+
+            if (cPlayerTurretBehaviour.HasTurretControl)
+            {
+                CTurretInterface cControllingTurretInterface = cMountedPlayerActor.GetComponent<CPlayerTurretBehaviour>().ControlledTurretInterface;
+
+                if (cControllingTurretInterface.RotationRatioX >= 0.0f)
+                {
+                    vTargetLocalEuler.x = 360.0f - (m_fRotationMaxX * cControllingTurretInterface.RotationRatioX);
+                }
+                else
+                {
+                    vTargetLocalEuler.x = m_fRotationMinX * cControllingTurretInterface.RotationRatioX;
+                }
+
+                vTargetLocalEuler.y = 360.0f * cControllingTurretInterface.RotationRatioY;
+            }
         }
 
         Quaternion qTargetRotation = Quaternion.Euler(vTargetLocalEuler.x, vTargetLocalEuler.y, 0.0f);
@@ -133,7 +141,6 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
                                                                                   qTargetRotation,
                                                                                   fRotationSpeed * Time.deltaTime);
         }
-        */
     }
 
 

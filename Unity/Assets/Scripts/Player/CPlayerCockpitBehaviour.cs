@@ -138,6 +138,8 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
         {
             m_cHudTurretCockpitControlInterface = CGameHUD.Hud2dInterface.TurretCockpitControlInterface;
 
+            m_cHudTurretCockpitControlInterface.EventButtonEjectClicked += OnEventButtonEjectClicked;
+
             CUserInput.SubscribeInputChange(CUserInput.EInput.TurretMenu_ToggleDisplay, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Use, OnEventInput);
             
@@ -226,16 +228,22 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
+    public void OnEventButtonEjectClicked(CHudTurretCockpitInterface _cSender)
+    {
+        if (!IsMounted)
+            return;
+
+        s_cNetworkStream.Write(ENetworkAction.UnmountCockpit);
+    }
+
+
+    [ALocalOnly]
     void HandleUseInput(bool _bDown)
     {
         // Check key was down
         if (_bDown)
         {
-            if (IsMounted)
-            {
-                s_cNetworkStream.Write(ENetworkAction.UnmountCockpit);
-            }
-            else
+            if (!IsMounted)
             {
                 GameObject cTarget = GetComponent<CPlayerInteractor>().TargetActorObject;
 
@@ -285,10 +293,6 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
             return;
 
         CCockpitInterface cCockpitInterface = m_tMountedCockpitViewId.Value.GameObject.GetComponent<CCockpitInterface>();
-
-        // Error check
-        if (cCockpitInterface.MountedPlayerId != GetComponent<CPlayerInterface>().PlayerId)
-            Debug.LogError("Mounted cockpit player id mismatch. This should have not happened");
 
         // Eject currently player - we are subscribed to the dismount event
         cCockpitInterface.EjectPlayer();
