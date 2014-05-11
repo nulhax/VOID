@@ -102,7 +102,7 @@ public class CGameCameras : MonoBehaviour
     {
         get
         {
-            if (MainCamera.layer == LayerMask.NameToLayer("Default"))
+			if (MainCamera != null && MainCamera.layer == LayerMask.NameToLayer("Default"))
             {
                 return (MainCamera);
             }
@@ -244,6 +244,17 @@ public class CGameCameras : MonoBehaviour
 		//Debug.Log("Creating space fog");
 		s_SpaceFog = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/Cameras/SpaceFog"));
 
+		// Add light to the cameras
+		s_MainCamera.AddComponent<Light>();
+		s_MainCamera.light.type = LightType.Point;
+		s_MainCamera.light.intensity = 0.5f;
+		s_MainCamera.light.range = 30.0f;
+
+		s_ProjectedCamera.AddComponent<Light>();
+		s_ProjectedCamera.light.type = LightType.Point;
+		s_ProjectedCamera.light.intensity = 0.5f;
+		s_ProjectedCamera.light.range = 30.0f;
+
 		// Set the defult view perspective
 		SetObserverSpace(true);
 		SetObserverPerspective(CGamePlayers.SelfActorHead);
@@ -307,6 +318,10 @@ public class CGameCameras : MonoBehaviour
 		// Disable image effects
 		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
 			ieb.enabled = false;
+
+		// Change the lighting layers
+		_Camera.light.cullingMask |= CGalaxy.layerBit_All;
+		_Camera.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
 	}
 
     public static void SetCameraDefaultValues(Camera _Camera, float _Depth)
@@ -326,6 +341,10 @@ public class CGameCameras : MonoBehaviour
 		// Enable image effects
 		foreach(PostEffectsBase ieb in _Camera.GetComponents<PostEffectsBase>())
 			ieb.enabled = true;
+
+		// Change the lighting layers
+		_Camera.light.cullingMask |= (1 << LayerMask.NameToLayer("Default"));
+		_Camera.light.cullingMask &= ~CGalaxy.layerBit_All;
 	}
 	
 	private void UpdateCameraTransforms()

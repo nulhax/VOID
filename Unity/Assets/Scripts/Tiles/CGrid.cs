@@ -53,7 +53,7 @@ public class CGrid : MonoBehaviour
 		get { return(m_TileFactory); } 
 	}
 
-	public List<CTileInterface> GridTiles
+	public List<CTileInterface> TileInterfaces
 	{
 		get { return(new List<CTileInterface>(m_GridBoard.Values)); }
 	}
@@ -73,7 +73,7 @@ public class CGrid : MonoBehaviour
 	private void OnPlayerJoin(ulong _PlayerId)
 	{
 		// Sync each tile to the player
-		foreach(CTileInterface tileInterface in GridTiles)
+		foreach(CTileInterface tileInterface in TileInterfaces)
 		{
 			tileInterface.SyncAllTilesToPlayer(_PlayerId);
 		}
@@ -131,7 +131,7 @@ public class CGrid : MonoBehaviour
 	public void ImportTileInformation(List<CTileInterface> _ImportTiles)
 	{
 		// Remove all tiles within the grid currently
-		foreach(CTileInterface tileInterface in GridTiles)
+		foreach(CTileInterface tileInterface in TileInterfaces)
 			RemoveTile(tileInterface.m_GridPosition);
 
 		// Place the new tiles
@@ -199,6 +199,17 @@ public class CGrid : MonoBehaviour
 		m_GridBoard.Remove(_Position.ToString());
 
 		tileInterface.Release();
+	}
+
+	[ContextMenu("Update All Tile Interface Current Tile Meta Data")]
+	[AServerOnly]
+	public void UpdateAllTileInterfaceCurrentTileMetaData()
+	{
+		// Update all tiles meta data
+		foreach(CTileInterface tileInterface in TileInterfaces)
+		{
+			tileInterface.UpdateAllCurrentTileMetaData();
+		}
 	}
 }
 

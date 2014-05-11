@@ -177,7 +177,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         {
             GameObject cHitTile = tTileRaycastHit.transform.gameObject;
 
-            CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
+            CTile.EType eTileType = cTileInterface.GetTileObjectsType(tTileRaycastHit.transform.gameObject);
 
             if (eTileType == CTile.EType.Interior_Floor ||
                 eTileType == CTile.EType.Exterior_Upper ||

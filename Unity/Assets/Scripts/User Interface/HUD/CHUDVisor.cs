@@ -48,7 +48,7 @@ public class CHUDVisor : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+		//CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
 		m_particleEmitter = transform.FindChild("Gas Emission").particleSystem;
 	}
 
@@ -69,16 +69,16 @@ public class CHUDVisor : MonoBehaviour
 
 		m_VisorDown = _Down;
 	}
-
-	[ALocalOnly]
-	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
-	{
-		// Toggle between up/down visor
-		if(_eInput == CUserInput.EInput.Visor && _bDown)
-		{
-			SetVisorState(!m_VisorDown);
-		}
-	}
+//
+//	[ALocalOnly]
+//	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
+//	{
+//		// Toggle between up/down visor
+//		if(_eInput == CUserInput.EInput.Visor && _bDown)
+//		{
+//			SetVisorState(!m_VisorDown);
+//		}
+//	}
 
 	private void ActivateHUD()
 	{

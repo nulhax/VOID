@@ -84,7 +84,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     const float k_fAlignBodySpeedThusers = 60.0f;
 
     // Ground movement
-    const float k_fJumpSpeed    = 2.0f;
+    const float k_fJumpSpeed    = 1.0f;
     const float k_fMoveSpeed    = 6.5f;
     const float k_fSprintSpeed  = 8.0f;
 
@@ -436,20 +436,13 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void UpdateGrounded()
 	{
-		Vector3 p1 = transform.position + m_cCapsuleCollider.center + (Vector3.up * ((m_cCapsuleCollider.height * 0.5f) + 0.5f));
-		Vector3 p2 = p1 - (Vector3.up * m_cCapsuleCollider.height);
-		RaycastHit[] hits = Physics.CapsuleCastAll(p1, p2, m_cCapsuleCollider.radius * 0.5f, -transform.up, 0.35f);
+		Vector3 origin = transform.position + transform.up * (m_cCapsuleCollider.radius + 0.1f);
+		Vector3 dir = -transform.up;
 
-		m_bGrounded = false;
+		Ray ray = new Ray(origin, dir);
+		List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(ray, m_cCapsuleCollider.radius, 1.0f, 1 << gameObject.layer));
 
-		foreach(RaycastHit hit in hits) 
-		{
-			if(!hit.collider.isTrigger && hit.collider != m_cCapsuleCollider) 
-			{               
-				m_bGrounded = true;
-				break;
-			}
-		}
+		m_bGrounded = hits.Exists(hit => !hit.collider.isTrigger && hit.collider != m_cCapsuleCollider);
 	}
 
 
@@ -538,7 +531,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             vMovementVelocity *= ((m_usInputStates & (uint)EInputState.Run) > 0) ? k_fSprintSpeed : k_fMoveSpeed;
 
             // Jump 
-            if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded && GetComponent<CThirdPersonAnimController>().IsPLayerJumping == false)
+            if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded/* && GetComponent<CThirdPersonAnimController>().IsPLayerJumping == false*/)
             {
                 vMovementVelocity.y = k_fJumpSpeed;
             }
@@ -625,12 +618,15 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             rigidbody.angularDrag = 0.0f;
         }
 
-        // Set velocity
-        rigidbody.velocity = rigidbody.transform.rotation * vVelocity;
+        if (!rigidbody.isKinematic)
+        {
+            // Set velocity
+            rigidbody.velocity = rigidbody.transform.rotation * vVelocity;
 
-        // Apply force and torque
-        rigidbody.AddForce(cHeadRotation * vAcceleration, ForceMode.Acceleration);
-        rigidbody.AddTorque(cHeadRotation * vAngularAcceleration, ForceMode.Acceleration);
+            // Apply force and torque
+            rigidbody.AddForce(cHeadRotation * vAcceleration, ForceMode.Acceleration);
+            rigidbody.AddTorque(cHeadRotation * vAngularAcceleration, ForceMode.Acceleration);
+        }
     }
 
 

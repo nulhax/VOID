@@ -58,17 +58,13 @@ public class CGameRegistrator : MonoBehaviour
 		// Tiles
 		Tile					= 350,
 
-		// Facility Miniature
-		MiniFacilityBridge		= 400, 
-		MiniHallwayStraight,
-		MiniHallwayCorner,
-		MiniHallwayTSection,
-		MiniHallwayXSection,
-		
+		// Doors
+		InteriorDoor			= 400, 
+		ExteriorDoor,
+
 		// Accessories
         Alarm					= 500,
         ControlConsole,
-		InteriorDoor,
         DuiMontior,
 		
 		// Modules
@@ -210,16 +206,12 @@ public class CGameRegistrator : MonoBehaviour
 		// Tile
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Tile,              			"Tiles/Tile");
 
-		// Facilities Mini
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniFacilityBridge,           "Facilities/Bridge/BridgeMini");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayStraight,          "Facilities/Hallways/HallwayStraightMini");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayCorner,            "Facilities/Hallways/HallwayCornerMini");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayTSection,          "Facilities/Hallways/HallwayTSectionMini");
-		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.MiniHallwayXSection,          "Facilities/Hallways/HallwayXSectionMini");
+		// Doors
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.InteriorDoor,                "Doors/InteriorDoor");
+		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ExteriorDoor,                "Doors/ExteriorDoor");
 
         // Accessories
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.ControlConsole,              "Accessories/Monitors/CurvedMonitor_wide");
-        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.InteriorDoor,                "Accessories/Doors/InteriorDoor");
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.Alarm,                       "Accessories/Alarm");
 		
 		// Modules

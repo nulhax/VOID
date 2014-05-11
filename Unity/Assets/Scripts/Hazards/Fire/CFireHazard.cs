@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class CFireHazard : CNetworkMonoBehaviour
@@ -99,8 +99,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 				if(cache_FacilityAtmosphere != null)
 				{
 					float thresholdPercentage = 0.25f;
-					if (cache_FacilityAtmosphere.QuantityPercent < thresholdPercentage)
-						fireHealth.health += (1.0f / (cache_FacilityAtmosphere.QuantityPercent / thresholdPercentage)) * timeBetweenProcess;
+					if (cache_FacilityAtmosphere.Pressure < thresholdPercentage)
+						fireHealth.health += (1.0f / (cache_FacilityAtmosphere.Pressure / thresholdPercentage)) * timeBetweenProcess;
 				}
 
 				System.Collections.Generic.List<GameObject> players = CGamePlayers.PlayerActors;
