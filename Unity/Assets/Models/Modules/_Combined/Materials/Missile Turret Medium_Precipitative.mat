@@ -62,7 +62,7 @@ Material:
       data:
         first:
           name: _Amount
-        second: 1
+        second: 0
       data:
         first:
           name: _FadeDist

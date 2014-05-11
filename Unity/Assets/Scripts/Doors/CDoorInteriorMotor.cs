@@ -78,13 +78,13 @@ public class CDoorInteriorMotor : MonoBehaviour
 
 	private void OnDoorOpenStart(CDoorInterface _Self)
 	{
-		animation.CrossFadeQueued("Door_Open");
+		animation.CrossFadeQueued("Interior_Door_Open");
 		gameObject.GetComponent<CAudioCue>().Play(1.0f, false, 0);
 	}
 
 	private void OnDoorCloseStart(CDoorInterface _Self)
 	{
-		animation.CrossFadeQueued("Door_Close");
+		animation.CrossFadeQueued("Interior_Door_Close");
 		GetComponent<CAudioCue>().Play(1.0f, false, 1);
 	}
 
