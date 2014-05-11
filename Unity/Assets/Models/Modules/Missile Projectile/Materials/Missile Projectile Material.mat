@@ -64,7 +64,7 @@ Material:
       data:
         first:
           name: _EmissivePowerB
-        second: 5
+        second: 20
       data:
         first:
           name: _EmissivePowerA

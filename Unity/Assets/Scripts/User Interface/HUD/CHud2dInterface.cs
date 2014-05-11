@@ -54,9 +54,9 @@ public class CHud2dInterface : MonoBehaviour
     }
 
 
-    public CHudTurretCockpitControlInterface TurretCockpitControlInterface
+    public CHudTurretCockpitInterface TurretCockpitControlInterface
     {
-        get { return (m_cPanelTurretCockpitMenu.GetComponent<CHudTurretCockpitControlInterface>()); }
+        get { return (m_cPanelTurretCockpitMenu.GetComponent<CHudTurretCockpitInterface>()); }
     }
 
 
@@ -69,7 +69,20 @@ public class CHud2dInterface : MonoBehaviour
 // Member Methods
 
 
-    public void OpenHud(EHud _eHud)
+    public void ToggleHud(EHud _eHud)
+    {
+        if (ActiveHud == _eHud)
+        {
+            HideHud(_eHud);
+        }
+        else
+        {
+            ShowHud(_eHud);
+        }
+    }
+
+
+    public void ShowHud(EHud _eHud)
     {
         HideAllHuds();
 
@@ -91,16 +104,18 @@ public class CHud2dInterface : MonoBehaviour
                 break;
 
             default:
-                Debug.LogError("Umknown hud: " + _eHud);
+                Debug.LogError("Unknown hud: " + _eHud);
                 break;
         }
 
         m_eActiveHud = _eHud;
         m_cCamera.gameObject.SetActive(true);
+
+        CCursorControl.Instance.SetLocked(false);
     }
 
 
-    public void CloseHud(EHud _eHud)
+    public void HideHud(EHud _eHud)
     {
         if (ActiveHud == _eHud)
         {
@@ -116,6 +131,8 @@ public class CHud2dInterface : MonoBehaviour
             m_cActiveHudPanel.gameObject.SetActive(false);
             m_eActiveHud = EHud.INVALID;
             m_cCamera.gameObject.SetActive(false);
+
+            CCursorControl.Instance.SetLocked(true);
         }
     }
 

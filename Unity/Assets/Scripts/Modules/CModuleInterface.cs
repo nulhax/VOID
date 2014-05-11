@@ -67,6 +67,8 @@ public class CModuleInterface : CNetworkMonoBehaviour
         TurretPulseMedium   = 805,
         TurretMissleSmall   = 850,
         TurretMissileMedium = 855,
+        ResearchMainframe   = 900,
+        ShieldGenerator     = 950,
 
 	}
 

@@ -531,7 +531,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4482235a884723a4fb02497b0608b38d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TilesCollection: {fileID: 401996, guid: 1d08b22bcb51ce643b375047f9512fb7, type: 2}
+  m_TilesCollection: {fileID: 401908, guid: 1d08b22bcb51ce643b375047f9512fb7, type: 2}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

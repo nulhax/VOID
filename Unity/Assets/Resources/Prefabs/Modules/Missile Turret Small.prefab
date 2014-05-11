@@ -8,9 +8,8 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
-  - 20: {fileID: 2000000}
   m_Layer: 0
-  m_Name: Camera Ship
+  m_Name: CameraNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,22 +104,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &100012
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 400012}
-  - 20: {fileID: 2000002}
-  m_Layer: 0
-  m_Name: Camera Galaxy
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &100014
 GameObject:
   m_ObjectHideFlags: 1
@@ -142,8 +125,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100000}
-  m_LocalRotation: {x: .000872999721, y: 0, z: 0, w: -.999999642}
-  m_LocalPosition: {x: -.000914662087, y: -.370166361, z: -.509409308}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -.56709516, y: .819974899, z: .0246358346}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400006}
@@ -181,7 +164,6 @@ Transform:
   m_LocalPosition: {x: 9.81246377e-17, y: 1.26877952, z: .000320065505}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 400012}
   - {fileID: 400000}
   - {fileID: 400008}
   - {fileID: 400014}
@@ -209,17 +191,6 @@ Transform:
   m_Children:
   - {fileID: 400006}
   m_Father: {fileID: 400004}
---- !u!4 &400012
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100012}
-  m_LocalRotation: {x: .000872999721, y: 0, z: 0, w: -.999999642}
-  m_LocalPosition: {x: -.000914662087, y: -.370166361, z: -.509409308}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 400006}
 --- !u!4 &400014
 Transform:
   m_ObjectHideFlags: 1
@@ -227,68 +198,10 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100014}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.000914662087, y: -.798861206, z: .573275864}
+  m_LocalPosition: {x: -9.81246377e-17, y: 0, z: 1.99639368}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400006}
---- !u!20 &2000000
-Camera:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 4
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: .300000012
-  far clip plane: 5000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 100
-  m_Depth: 1
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4293915135
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_HDR: 0
-  m_OcclusionCulling: 1
---- !u!20 &2000002
-Camera:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100012}
-  m_Enabled: 1
-  serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
-  m_NormalizedViewPortRect:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
-  near clip plane: .300000012
-  far clip plane: 5000
-  field of view: 60
-  orthographic: 0
-  orthographic size: 100
-  m_Depth: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 2048
-  m_RenderingPath: -1
-  m_TargetTexture: {fileID: 0}
-  m_HDR: 0
-  m_OcclusionCulling: 1
 --- !u!23 &2300000
 Renderer:
   m_ObjectHideFlags: 1
@@ -439,8 +352,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3c392cb5db91844a880750f46a74e10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cShipCamera: {fileID: 2000000}
-  m_cGalaxyCamera: {fileID: 2000002}
+  m_cCameraNode: {fileID: 100000}
   m_cBaseTrans: {fileID: 400010}
   m_cBarrelTrans: {fileID: 400006}
   m_caProjectileNodes:
@@ -448,7 +360,7 @@ MonoBehaviour:
   m_fRotationSpeed: 2
   m_fBarrelEulerMinX: -15
   m_fBarrelEulerMaxX: 80
-  m_fPrimaryFireInterval: .100000001
+  m_fPrimaryFireInterval: 1.5
   m_fSecondaryFireInterval: .100000001
 --- !u!114 &11400002
 MonoBehaviour:

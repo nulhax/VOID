@@ -114,6 +114,22 @@ public class CGameCameras : MonoBehaviour
     }
 
 
+    public static GameObject GalaxyCamera
+    {
+        get
+        {
+            if (MainCamera.layer == LayerMask.NameToLayer("Default"))
+            {
+                return (ProjectedCamera);
+            }
+            else
+            {
+                return (MainCamera);
+            }
+        }
+    }
+
+
 	// Member Methods
 	public void Awake()
 	{	

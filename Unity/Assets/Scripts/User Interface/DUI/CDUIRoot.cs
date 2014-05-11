@@ -44,6 +44,7 @@ public class CDUIRoot : CNetworkMonoBehaviour
         FacilityDoor,
 		FacilityControl,
 		Prefabricator,
+        ShipStatuses = 50,
 
 		NOSPanelWide = 100,
 

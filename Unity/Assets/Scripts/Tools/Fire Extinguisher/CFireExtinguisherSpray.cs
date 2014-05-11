@@ -161,12 +161,21 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             if (m_bActive.Get())
             {
                 m_cSprayParticalSystem.Play();
-                gameObject.GetComponent<CAudioCue>().Play(transform, 0.8f, true, -1);
+
+				CAudioCue[] audioCues = GetComponents<CAudioCue>();
+				foreach(CAudioCue cue in audioCues)
+				{
+					if(cue.m_strCueName == "FireExtinguisherSFX")
+					{
+
+						cue.PlayAll(transform, 1.0f);
+					}
+				}
             }
             else
             {
                 m_cSprayParticalSystem.Stop();
-                gameObject.GetComponent<CAudioCue>().StopAllSound();
+                gameObject.GetComponent<CAudioCue>().FadeOut();
             }
         }
     }

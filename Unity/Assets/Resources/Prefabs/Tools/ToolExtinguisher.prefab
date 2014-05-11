@@ -65,10 +65,12 @@ GameObject:
   - 114: {fileID: 11400010}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400014}
-  - 82: {fileID: 8200000}
   - 65: {fileID: 6500000}
   - 114: {fileID: 11400016}
   - 114: {fileID: 11400018}
+  - 114: {fileID: 11400022}
+  - 82: {fileID: 8200002}
+  - 114: {fileID: 11400020}
   m_Layer: 0
   m_Name: ToolExtinguisher
   m_TagString: Untagged
@@ -266,6 +268,64 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+--- !u!82 &8200002
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!95 &9500000
 Animator:
   serializedVersion: 2
@@ -385,7 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: Fire Extinguisher Sound
+  m_strCueName: FireExtinguisherSFX
   m_fPitchMin: 1
   m_fpitchMax: 1
   m_fVolumeMin: 1
@@ -393,10 +453,12 @@ MonoBehaviour:
   m_fFadeInTimeList:
   - 0
   m_fFadeOutTimeList:
-  - 0
+  - 1
+  - 1
   m_arAudioClipPool:
-  - {fileID: 8300000, guid: a405c4cd95f231740b27866402881285, type: 3}
-  m_barLoopList: 00
+  - {fileID: 8300000, guid: 975fda853c1854e4499fb7c9df858901, type: 3}
+  - {fileID: 8300000, guid: 41f39289eea85794494bd21e4a9f2e61, type: 3}
+  m_barLoopList: 0101
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
@@ -430,6 +492,43 @@ MonoBehaviour:
   m_fThirdPersonEquipOffsetZ: .100000001
   m_fVerticalDeviation: .100000001
   m_fLateralDeviation: .100000001
+--- !u!114 &11400020
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c4628740b7b474dafff2675fb3037f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11400022
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: ImpactSFX
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList: []
+  m_fFadeOutTimeList: []
+  m_arAudioClipPool:
+  - {fileID: 8300000, guid: bace9fcdfd35b024bb4e5ad14c212b9e, type: 3}
+  - {fileID: 8300000, guid: 1c4f713568c4f6c499220e7ad3705733, type: 3}
+  - {fileID: 8300000, guid: 4adddcd909c10244ba6d166771976c98, type: 3}
+  m_barLoopList: 
+  m_bContinuousEvent: 0
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!198 &19800000
 ParticleSystem:
   m_ObjectHideFlags: 1

@@ -78,7 +78,7 @@ public class UIButton : UIButtonColor
 		else UpdateColor(false, true);
 	}
 
-	protected override void OnHover (bool isOver)
+    public override void OnHover(bool isOver)
 	{
 		if (isEnabled)
 			base.OnHover(isOver);
@@ -95,8 +95,8 @@ public class UIButton : UIButtonColor
 		if (isEnabled && (dragHighlight || UICamera.currentTouch.pressed == gameObject))
 			base.OnDragOver();
 	}
-	
-	protected override void OnDragOut ()
+
+    protected override void OnDragOut()
 	{
 		if (isEnabled && (dragHighlight || UICamera.currentTouch.pressed == gameObject))
 			base.OnDragOut();

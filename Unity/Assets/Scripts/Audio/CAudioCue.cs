@@ -111,6 +111,15 @@ public class CAudioCue : MonoBehaviour
 	//This function will play all attached sounds, and will loop clips as determined by loopFlags.
 	public void PlayAll( Transform parent, float volumeScale)
 	{
+		if(m_barLoopList.Length < m_arAudioClipPool.Length)
+		{
+			m_barLoopList = new bool[m_arAudioClipPool.Length];
+			for(int i = 0; i < m_arAudioClipPool.Length; i++)
+			{
+				m_barLoopList[i] = false;
+			}
+		}
+
 		for(int i = 0; i < m_arAudioClipPool.Length; i++)
 		{
 			Play(parent, volumeScale, m_barLoopList[i], i);
@@ -219,6 +228,7 @@ public class CAudioCue : MonoBehaviour
         }
       
 		//Allow the AudioSystem to handle the new audio source.
+        /* // This was causing a error
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
 														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 														Random.Range(m_fPitchMin, m_fpitchMax), loop,
@@ -227,7 +237,8 @@ public class CAudioCue : MonoBehaviour
 		
 		//Add this to the list of attached audio sources.
 		m_arAttachedAudioSource.Add(newAudioSource);
-	}
+         * */
+    }
 	
 	//Plays a random clip once, then discards it. Useful for sounds that will be played many times, especially if those sounds overlap
 	public void PlayOneShot( float volumeScale, AudioSource audioSource)

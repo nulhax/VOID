@@ -130,6 +130,20 @@ public class CShipFacilities : MonoBehaviour
 				DebugDrawTileInterfaceConnectionLine(tileInterface, upperNeighbourTileInterface, _Grid.m_TileSize, occlusion);
 			}
 
+			// Check lower tile ceiling occlusion
+			CTileInterface lowerNeighbourTileInterface = _Grid.GetTileInterface(new CGridPoint(tileInterface.m_GridPosition.ToVector - Vector3.up));
+			CTile interiorFloorTile = tileInterface.GetTile(CTile.EType.Interior_Floor);
+			if(interiorFloorTile != null && lowerNeighbourTileInterface != null)
+			{
+				bool occlusion = interiorFloorTile.m_CurrentTileMeta.m_MetaType == (int)CTile_InteriorFloor.EType.Middle;
+				
+				if(!occlusion)
+					FindFacilityTilesListItem(tileInterface, lowerNeighbourTileInterface, facilityTilesList, tileInterfacesFacilitiesList);
+				
+				// Debug, draw occlusion state ray
+				DebugDrawTileInterfaceConnectionLine(tileInterface, lowerNeighbourTileInterface, _Grid.m_TileSize, occlusion);
+			}
+
 			// If there was no facilities added add this to a new list
 			if(tileInterfacesFacilitiesList.Count == 0)
 			{
