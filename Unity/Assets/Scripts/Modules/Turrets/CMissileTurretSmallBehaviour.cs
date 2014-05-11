@@ -73,8 +73,8 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
                 case ENetworkAction.FireMissileTarget:
                     {
                         GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
-                        cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitWithTarget", cRandomProjectileNode.transform.position,
-                                                                                                                     cRandomProjectileNode.transform.eulerAngles,
+                        cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitWithTarget", CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cRandomProjectileNode.transform.position),
+                                                                                                                     CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cRandomProjectileNode.transform.rotation).eulerAngles,
                                                                                                                      _cStream.Read<TNetworkViewId>(),
                                                                                                                      _cStream.Read<Vector3>());
                     }
@@ -83,8 +83,8 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
                 case ENetworkAction.FireMissileNoTarget:
                     {
                         GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.MissileProjectile);
-                        cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitNoTarget", cRandomProjectileNode.transform.position,
-                                                                                                                   cRandomProjectileNode.transform.eulerAngles);
+                        cProjectile.GetComponent<CMissileProjectileBehaviour>().InvokeRpcAll("RemoteInitNoTarget", CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cRandomProjectileNode.transform.position),
+                                                                                                                   CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cRandomProjectileNode.transform.rotation).eulerAngles);
                     }
                     break;
 

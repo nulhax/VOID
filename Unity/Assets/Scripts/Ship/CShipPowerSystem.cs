@@ -176,7 +176,10 @@ public class CShipPowerSystem : CNetworkMonoBehaviour
 
 	void Update()
 	{
-        UpdateCharge();
+        if (CNetwork.IsServer)
+        {
+            UpdateCharge();
+        }
 	}
 
 

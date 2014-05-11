@@ -22,6 +22,27 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
+          name: _BG
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _BGAlphaMask
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _UI
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
           name: _Diffuse
         second:
           m_Texture: {fileID: 0}
@@ -48,52 +69,11 @@ Material:
           m_Texture: {fileID: 0}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BG
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _BGAlphaMask
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
-          name: _UI
-        second:
-          m_Texture: {fileID: 0}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _Cutoff
         second: .5
-      data:
-        first:
-          name: _SpecPower
-        second: 1
-      data:
-        first:
-          name: _EmissivePowerR
-        second: 2
-      data:
-        first:
-          name: _EmissivePowerG
-        second: 1
-      data:
-        first:
-          name: _EmissivePowerB
-        second: 1
-      data:
-        first:
-          name: _EmissivePowerA
-        second: 1
       data:
         first:
           name: _Alpha
@@ -112,6 +92,10 @@ Material:
         second: 1.5
       data:
         first:
+          name: _SpecPower
+        second: 0
+      data:
+        first:
           name: _Offset
         second: 0
       data:
@@ -122,6 +106,22 @@ Material:
         first:
           name: _Range2
         second: 1
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 2
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerB
+        second: 1
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
     m_Colors:
       data:
         first:
@@ -130,15 +130,15 @@ Material:
       data:
         first:
           name: _DiffuseCol
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _SpecCol
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorR
-        second: {r: 1, g: 0, b: 0, a: 1}
+        second: {r: .944827676, g: 1, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorG

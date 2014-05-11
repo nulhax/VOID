@@ -146,7 +146,25 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
             GetComponent<CPlayerTurretBehaviour>().EventTakeTurretControl += OnEventTakeTurretControl;
             GetComponent<CPlayerTurretBehaviour>().EventReleaseTurretControl += OnEventReleaseTurretControl;
         }
+
+        if (CNetwork.IsServer)
+        {
+            GetComponent<CPlayerHealth>().m_EventHealthStateChanged += OnEventHealthStateChange;
+        }
 	}
+
+
+    void OnEventHealthStateChange(GameObject _cSourcePlayer, CPlayerHealth.HealthState _eNewState, CPlayerHealth.HealthState _ePreviousState)
+    {
+        if (_eNewState == CPlayerHealth.HealthState.DOWNED)
+        {
+            if (IsMounted)
+            {
+                // Eject currently player - we are subscribed to the dismount event
+                MountedCockpitInterface.EjectPlayer();
+            }
+        }
+    }
 
 
 	void OnDestroy()
@@ -243,7 +261,8 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
         // Check key was down
         if (_bDown)
         {
-            if (!IsMounted)
+            if (!IsMounted &&
+                GetComponent<CPlayerHealth>().CurrentHealthState == CPlayerHealth.HealthState.ALIVE)
             {
                 GameObject cTarget = GetComponent<CPlayerInteractor>().TargetActorObject;
 
@@ -309,7 +328,8 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
 
             m_cActiveCockpitInterface = m_tMountedCockpitViewId.Value.GameObject.GetComponent<CCockpitInterface>();
 
-            if (GetComponent<CPlayerInterface>().IsOwnedByMe)
+            if (GetComponent<CPlayerInterface>().IsOwnedByMe &&
+                m_cActiveCockpitInterface.CockpitType == CCockpitInterface.EType.Turret)
             {
                 CGameHUD.Hud2dInterface.ShowHud(CHud2dInterface.EHud.TurretCockpitMenu);
             }

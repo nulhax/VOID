@@ -71,8 +71,8 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
                         Transform cRandomNode = cBehaviour.m_cTurretInterface.GetRandomProjectileNode();
 
                         GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.LaserProjectile);
-                        cProjectile.GetComponent<CNetworkView>().SetPosition(cRandomNode.position);
-                        cProjectile.GetComponent<CNetworkView>().SetRotation(cRandomNode.rotation);
+                        cProjectile.GetComponent<CNetworkView>().SetPosition(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cRandomNode.position));
+                        cProjectile.GetComponent<CNetworkView>().SetRotation(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cRandomNode.rotation));
                     }
                     break;
 

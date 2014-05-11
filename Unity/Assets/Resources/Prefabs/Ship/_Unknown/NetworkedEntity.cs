@@ -56,7 +56,8 @@ public class NetworkedEntity : CNetworkMonoBehaviour
 
 	void Start()
 	{
-		UpdateNetworkVars();
+        if (CNetwork.IsServer)
+		    UpdateNetworkVars();
 	}
 
 	void Update()
