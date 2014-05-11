@@ -175,4 +175,22 @@ public class CGalaxyNoise : CNetworkMonoBehaviour
 		mNoiseMeta[(uint)noise].noiseFunction(absoluteCell, out sample);
 		return sample;
 	}
+
+	public float SampleNoise(Vector3 absolutePoint, ENoiseLayer noiseLayer)
+	{
+		float start = mNoiseLayerMeta[(uint)noiseLayer].start;
+		float end = mNoiseLayerMeta[(uint)noiseLayer].end;
+		float sampleSize = mNoiseLayerMeta[(uint)noiseLayer].sampleSize;
+
+		float rawSample = 0.5f + 0.5f * mRawNoises[(uint)noiseLayer].Generate(absolutePoint * (sampleSize / CGalaxy.instance.galaxyRadius));
+		float filteredSample = (rawSample - start) / (end - start);
+		float saturatedSample = filteredSample < 0.0f ? 0.0f : filteredSample > 1.0f ? 1.0f : filteredSample;
+
+		return saturatedSample;
+	}
+
+	//public float SampleNoise(Vector3 absolutePoint, ENoise noise)
+	//{
+
+	//}
 }

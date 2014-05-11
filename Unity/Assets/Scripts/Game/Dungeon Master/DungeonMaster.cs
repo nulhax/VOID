@@ -72,7 +72,7 @@ public class DungeonMaster : MonoBehaviour
 
 	void Start()
 	{
-        gameObject.AddComponent<DynamicEventShipHazard>();
+		gameObject.AddComponent<DynamicEventShipHazard>();
 		new DynamicEventRogueAsteroid();
 		new DynamicEventEnemyShip();
 
@@ -85,8 +85,8 @@ public class DungeonMaster : MonoBehaviour
 
 	void Update()
 	{
-		//if(!CNetwork.IsServer)
-		//	return;
+		if(!CNetwork.IsServer)
+			return;
 
 		// Minimise performance dent by limiting how often the DM updates.
 		mTimeUntilNextUpdate -= Time.deltaTime;
@@ -102,7 +102,7 @@ public class DungeonMaster : MonoBehaviour
 			foreach (DynamicEvent dynamicEvent in mDynamicEvents)
 			{
 				float cost = 1.0f; dynamicEvent.cost(out cost);	// The cost to call the event. Todo: Have each event's cost scale by the time it last occured, to deter the DM from spamming the cheap stuff.
-                
+
 				if (mfPengar >= cost)	// If the event is affordable...
 				{
 					if (affordableEvents == null) affordableEvents = new System.Collections.Generic.SortedList<float, Behaviour>();	// Instantiate the list now, solely to minimise the number of things needed to be cleaned up by the Garbage Collector.
@@ -169,13 +169,13 @@ public class DungeonMaster : MonoBehaviour
 		mbDifficultyNeedsUpdating = false;
 	}
 
-	//void OnGUI()
-	//{
-	//    GUIStyle style = new GUIStyle();
-	//    style.alignment = TextAnchor.MiddleRight;
-	//    style.fontStyle = FontStyle.Bold;
-	//    float boxWidth = 0.1f;
-	//    float boxHeight = 0.06f;
-	//    GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((difficulty * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
-	//}
+	void OnGUI()
+	{
+		GUIStyle style = new GUIStyle();
+		style.alignment = TextAnchor.MiddleRight;
+		style.fontStyle = FontStyle.Bold;
+		float boxWidth = 0.1f;
+		float boxHeight = 0.06f;
+		GUI.Box(new Rect(Screen.width - Screen.width * boxWidth, Screen.height * 0.5f, Screen.width * boxWidth, Screen.height * boxHeight), "Difficulty: " + Mathf.RoundToInt((difficulty * 100)).ToString() + "%\nPengar: " + mfPengar.ToString("N1"));
+	}
 }
