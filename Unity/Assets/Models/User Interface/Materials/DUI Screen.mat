@@ -94,7 +94,7 @@ Material:
       data:
         first:
           name: _UIBrightness
-        second: 1.5
+        second: 2
     m_Colors:
       data:
         first:

@@ -66,21 +66,6 @@ public class CTileInterface : CNetworkMonoBehaviour
 		_Registrar.RegisterRpc(this, "RemoteSetCurrentMeta");
 	}
 
-
-    public CTile.EType GetTileType(GameObject _cUnknownObject)
-    {
-        foreach (CTile tile in GetComponents<CTile>())
-        {
-            if (tile.m_TileObject == _cUnknownObject)
-            {
-                return (tile.m_TileType);
-            }
-        }
-
-        return (CTile.EType.INVALID);
-    }
-
-
 	private void OnNetworkVarSync(INetworkVar _SynedVar)
 	{
 		if(m_RemoteTileTypeMask == _SynedVar)
@@ -137,6 +122,23 @@ public class CTileInterface : CNetworkMonoBehaviour
 	{
 		Type tileClassType = CTile.GetTileClassType(_TileType);
 		return((CTile)gameObject.GetComponent(tileClassType));
+	}
+
+	public CTile.EType GetTileObjectsType(GameObject _TileObject)
+	{
+		foreach (CTile tile in GetComponents<CTile>())
+		{
+			if(tile.m_TileObject == _TileObject)
+				return(tile.m_TileType);
+			
+			foreach(EDirection dir in tile.RelevantDirections)
+			{
+				if(tile.GetModificationObject(0, dir) == _TileObject)
+					return(tile.m_TileType);
+			}
+		}
+		
+		return(CTile.EType.INVALID);
 	}
 
 	[AServerOnly]

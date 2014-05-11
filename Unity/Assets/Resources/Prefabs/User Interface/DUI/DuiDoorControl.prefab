@@ -14,7 +14,7 @@ GameObject:
   - 54: {fileID: 5400000}
   - 114: {fileID: 11400000}
   m_Layer: 0
-  m_Name: DuiDoorControl
+  m_Name: DUIDoorControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -659,8 +659,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 313, y: 139, z: 0}
-  m_Center: {x: .5, y: -.5, z: 0}
+  m_Size: {x: 316, y: 142, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6500004
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -671,8 +671,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 313, y: 139, z: 0}
-  m_Center: {x: .5, y: -.5, z: 0}
+  m_Size: {x: 316, y: 142, z: 0}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &6500006
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -693,11 +693,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ae0e8571f4e20041906cdd205200210, type: 3}
+  m_Script: {fileID: 11500000, guid: 9695a0466c5093c47bf0cbcbe5cfe3e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cOpenPanel: {fileID: 11400048}
-  m_cClosePanel: {fileID: 11400036}
+  m_OpenPanel: {fileID: 11400048}
+  m_ClosePanel: {fileID: 11400036}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -865,7 +865,7 @@ MonoBehaviour:
     target: {fileID: 400030}
     relative: 1
     absolute: -4
-  mColor: {r: 0, g: 0, b: 0, a: .737254918}
+  mColor: {r: 1, g: 1, b: 1, a: .737254918}
   mPivot: 4
   mWidth: 308
   mHeight: 134
@@ -873,7 +873,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 2.72093034
+  aspectRatio: 2.29850745
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: 5c3334470282d36498921cbaec5debbf, type: 3}
   mFont: {fileID: 0}
@@ -883,7 +883,7 @@ MonoBehaviour:
   mEncoding: 1
   mMaxLineCount: 0
   mEffectStyle: 0
-  mEffectColor: {r: 0, g: 0, b: 0, a: 1}
+  mEffectColor: {r: 0, g: 1, b: .255172253, a: 1}
   mSymbols: 1
   mEffectDistance: {x: 1, y: 1}
   mOverflow: 0
@@ -995,7 +995,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 705, y: 413, z: 0}
+  m_ViewPortPos: {x: 632, y: 505, z: 0}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1381,7 +1381,7 @@ MonoBehaviour:
     target: {fileID: 400024}
     relative: 1
     absolute: -4
-  mColor: {r: 0, g: 0, b: 0, a: .737254918}
+  mColor: {r: 1, g: 1, b: 1, a: .737254918}
   mPivot: 4
   mWidth: 308
   mHeight: 134
@@ -1399,7 +1399,7 @@ MonoBehaviour:
   mEncoding: 1
   mMaxLineCount: 0
   mEffectStyle: 0
-  mEffectColor: {r: 0, g: 0, b: 0, a: 1}
+  mEffectColor: {r: 1, g: 0, b: 0, a: 1}
   mSymbols: 1
   mEffectDistance: {x: 1, y: 1}
   mOverflow: 0
@@ -1500,7 +1500,7 @@ MonoBehaviour:
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 2.53164554
+  aspectRatio: 5.11111116
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 12800000, guid: 5c3334470282d36498921cbaec5debbf, type: 3}
   mFont: {fileID: 0}

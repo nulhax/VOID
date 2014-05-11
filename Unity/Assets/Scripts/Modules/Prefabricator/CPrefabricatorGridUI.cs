@@ -134,8 +134,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 	private void ImportPreplacedTiles()
 	{
-		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.GridTiles);
-		foreach(CTileInterface tile in m_Grid.GridTiles)
+		m_Grid.ImportTileInformation(CGameShips.Ship.GetComponent<CShipFacilities>().m_ShipGrid.TileInterfaces);
+		foreach(CTileInterface tile in m_Grid.TileInterfaces)
 		{
 			// Register events
 			tile.EventTileGeometryChanged += OnTileGeometryChange;
@@ -732,47 +732,62 @@ public class CPrefabricatorGridUI : MonoBehaviour
 
 		List<CTile.EType> tileTypes = new List<CTile.EType>();
 
-		bool internalWallNeighbourExistsAdjacent = _TileInterface.m_NeighbourHood.Exists(
-			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall) && CTile_ExteriorWall.s_RelevantDirections.Contains(n.m_Direction));
 
-		bool internalWallNeighbourExistsDiagonal = _TileInterface.m_NeighbourHood.Exists(
-			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall) && CTile_ExteriorWallCap.s_RelevantDirections.Contains(n.m_Direction));
 
-		if(internalWallNeighbourExistsAdjacent)
-			tileTypes.Add(CTile.EType.Exterior_Wall);
+		tileTypes.Add(CTile.EType.Exterior_Wall);
+		tileTypes.Add(CTile.EType.Exterior_Wall_Inverse_Corner);
+		tileTypes.Add(CTile.EType.Exterior_Lower);
+		tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
+		tileTypes.Add(CTile.EType.Exterior_Upper);
+		tileTypes.Add(CTile.EType.Exterior_Upper_Inverse_Corner);
 
-		if(internalWallNeighbourExistsDiagonal)
-			tileTypes.Add(CTile.EType.Exterior_Wall_Inverse_Corner);
 
-		CGridPoint lowerGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector - Vector3.up);
-		CTileInterface lowerTileInterface = m_Grid.GetTileInterface(lowerGridPoint);
-		
-		CGridPoint upperGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector + Vector3.up);
-		CTileInterface upperTileInterface = m_Grid.GetTileInterface(upperGridPoint);
+//		bool internalWallNeighbourExists = _TileInterface.m_NeighbourHood.Exists(
+//			n => n.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
+//
+//		bool upperExists = m_Grid.GetTileInterface(new CGridPoint(_TileInterface.m_GridPosition.ToVector + Vector3.up)) != null;
+//	
+//		bool lowerExists = m_Grid.GetTileInterface(new CGridPoint(_TileInterface.m_GridPosition.ToVector - Vector3.up)) != null;
+//
+//		if(internalWallNeighbourExists || !upperExists || !lowerExists)
+//		{
+//			tileTypes.Add(CTile.EType.Exterior_Wall);
+//			tileTypes.Add(CTile.EType.Exterior_Wall_Inverse_Corner);
+//			tileTypes.Add(CTile.EType.Exterior_Lower);
+//			tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
+//			tileTypes.Add(CTile.EType.Exterior_Upper);
+//			tileTypes.Add(CTile.EType.Exterior_Upper_Inverse_Corner);
+//		}
 
-		bool upperContainsWall = upperTileInterface != null && 
-			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || upperTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
-
-		bool upperContainsWallCap = upperTileInterface != null && 
-			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
-
-		bool lowerContainsWall = lowerTileInterface != null &&
-			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || lowerTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
-
-		bool lowerContainsWallCap = lowerTileInterface != null &&
-			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
-
-		if(upperContainsWall)
-			tileTypes.Add(CTile.EType.Exterior_Lower);
-
-		if(upperContainsWallCap)
-			tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
-
-		if(lowerContainsWall)
-			tileTypes.Add(CTile.EType.Exterior_Upper);
-
-		if(lowerContainsWallCap)
-			tileTypes.Add(CTile.EType.Exterior_Upper_Inverse_Corner);
+//		CGridPoint lowerGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector - Vector3.up);
+//		CTileInterface lowerTileInterface = m_Grid.GetTileInterface(lowerGridPoint);
+//		
+//		CGridPoint upperGridPoint = new CGridPoint(_TileInterface.m_GridPosition.ToVector + Vector3.up);
+//		CTileInterface upperTileInterface = m_Grid.GetTileInterface(upperGridPoint);
+//
+//		bool upperContainsWall = upperTileInterface != null && 
+//			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || upperTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
+//
+//		bool upperContainsWallCap = upperTileInterface != null && 
+//			(upperTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
+//
+//		bool lowerContainsWall = lowerTileInterface != null &&
+//			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) || lowerTileInterface.GetTileTypeState(CTile.EType.Interior_Wall));
+//
+//		bool lowerContainsWallCap = lowerTileInterface != null &&
+//			(lowerTileInterface.GetTileTypeState(CTile.EType.Exterior_Wall_Inverse_Corner));
+//
+//		if(upperContainsWall)
+//			tileTypes.Add(CTile.EType.Exterior_Lower);
+//
+//		if(upperContainsWallCap)
+//			tileTypes.Add(CTile.EType.Exterior_Lower_Inverse_Corner);
+//
+//		if(lowerContainsWall)
+//			tileTypes.Add(CTile.EType.Exterior_Upper);
+//
+//		if(lowerContainsWallCap)
+//			tileTypes.Add(CTile.EType.Exterior_Upper_Inverse_Corner);
 
 		if(tileTypes.Count != 0)
 		{
@@ -939,7 +954,7 @@ public class CPrefabricatorGridUI : MonoBehaviour
 	public void ExportTilesToShip()
 	{
 		CShipFacilities shipFacility = CGameShips.Ship.GetComponent<CShipFacilities>();
-		shipFacility.ImportNewGridTiles(m_Grid.GridTiles);
+		shipFacility.ImportNewGridTiles(m_Grid.TileInterfaces);
 	}
 }
 

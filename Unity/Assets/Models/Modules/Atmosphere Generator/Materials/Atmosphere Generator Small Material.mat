@@ -52,14 +52,18 @@ Material:
         first:
           name: _Emissive
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: eca1c0e57983c854e82cdb0b7fb10af5, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
+          name: _Shininess
+        second: .078125
+      data:
+        first:
           name: _SpecPower
-        second: 1
+        second: 3
       data:
         first:
           name: _EmissivePowerR
@@ -67,7 +71,7 @@ Material:
       data:
         first:
           name: _EmissivePowerG
-        second: 1
+        second: 10
       data:
         first:
           name: _EmissivePowerB
@@ -76,15 +80,15 @@ Material:
         first:
           name: _EmissivePowerA
         second: 1
-      data:
-        first:
-          name: _Shininess
-        second: .078125
     m_Colors:
       data:
         first:
           name: _Color
         second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecColor
+        second: {r: .5, g: .5, b: .5, a: 1}
       data:
         first:
           name: _DiffuseCol
@@ -96,11 +100,11 @@ Material:
       data:
         first:
           name: _EmissiveColorR
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _EmissiveColorG
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0, g: .996078432, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorB
@@ -109,7 +113,3 @@ Material:
         first:
           name: _EmissiveColorA
         second: {r: 0, g: 0, b: 0, a: 1}
-      data:
-        first:
-          name: _SpecColor
-        second: {r: .5, g: .5, b: .5, a: 1}

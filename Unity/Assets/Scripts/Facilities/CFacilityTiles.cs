@@ -63,73 +63,31 @@ public class CFacilityTiles : MonoBehaviour
 			interiorTrigger.SetParentFacility(gameObject);
 		}
 
-//		if(m_CombinedMesh == null)
-//			Debug.LogError("Facility " + gameObject.name + " is missing its CombinedMesh instance. Ensure this is connected or the facility will be broken.");
+		// Debug: add a cube to the facilit for each tile
+//		foreach(CTileInterface tileInterface in m_InteriorTiles)
+//		{
+//			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+//
+//			cube.transform.transform.position = tileInterface.transform.position + Vector3.up * 2.0f;
+//			cube.transform.localScale = Vector3.one * 4;
+//
+//			Destroy(cube.collider);
+//
+//			Color col = Color.clear;
+//			switch(GetComponent<CFacilityInterface>().FacilityId)
+//			{
+//			case 0: col = Color.red; break;
+//			case 1: col = Color.green; break;
+//			case 2: col = Color.blue; break;
+//			case 3: col = Color.cyan; break;
+//			case 4: col = Color.magenta; break;
+//			case 5: col = Color.yellow; break;
+//			case 6: col = Color.white; break;
+//			case 7: col = Color.black; break;
+//			case 8: col = Color.grey; break;
+//			}
 //		
-//		MeshCollider mc = null;
-//		
-//		// Create the triggers/colliders
-//		GameObject internalTrigger = new GameObject("_InteriorTrigger");
-//		GameObject collider = new GameObject("_Collider");
-//		GameObject exitTrigger = new GameObject("_ExitTrigger");
-//		GameObject entryTrigger = new GameObject("_ExitTrigger");
-//		internalTrigger.tag = "GalaxyShip";
-//		collider.tag      = "GalaxyShip";
-//		exitTrigger.tag = "GalaxyShip";
-//		entryTrigger.tag = "GalaxyShip";
-//		
-//		// Create the exterior version of the facility
-//		GameObject extFacility = new GameObject("_" + gameObject.name + "Ext");
-//		
-//		// Child the exit trigger and interior trigger to the facility
-//		exitTrigger.transform.parent = transform;
-//		exitTrigger.transform.localPosition = Vector3.zero;
-//		exitTrigger.transform.localRotation = Quaternion.identity;
-//		internalTrigger.transform.parent = transform;
-//		internalTrigger.transform.localPosition = Vector3.zero;
-//		internalTrigger.transform.localRotation = Quaternion.identity;
-//		
-//		// Child the entry trigger and collider to the exterior facility
-//		entryTrigger.transform.parent = extFacility.transform;
-//		entryTrigger.transform.localPosition = Vector3.zero;
-//		entryTrigger.transform.localRotation = Quaternion.identity;
-//		collider.transform.parent = extFacility.transform;
-//		collider.transform.localPosition = Vector3.zero;
-//		collider.transform.localRotation = Quaternion.identity;
-//		
-//		// Set the exterior facility on the galaxy layer
-//		CUtility.SetLayerRecursively(extFacility, LayerMask.NameToLayer("Galaxy"));
-//		
-//		// Configure the internal trigger
-//		internalTrigger.AddComponent<CInteriorTrigger>();
-//		mc = internalTrigger.AddComponent<MeshCollider>();
-//		mc.sharedMesh = m_CombinedMesh;
-//		mc.convex = true;
-//		mc.isTrigger = true;
-//		
-//		// Configure the exit trigger
-//		exitTrigger.transform.localScale = Vector3.one * 1.02f;
-//		exitTrigger.AddComponent<CExitTrigger>();
-//		mc = exitTrigger.AddComponent<MeshCollider>();
-//		mc.sharedMesh = m_CombinedMesh;
-//		mc.convex = true;
-//		mc.isTrigger = true;
-//		
-//		// Configure the entry trigger
-//		entryTrigger.transform.localScale = Vector3.one * 1.02f;
-//		entryTrigger.AddComponent<CEntryTrigger>();
-//		mc = entryTrigger.AddComponent<MeshCollider>();
-//		mc.sharedMesh = m_CombinedMesh;
-//		mc.convex = true;
-//		mc.isTrigger = true;
-//		
-//		// Configure the collider trigger
-//		mc = collider.AddComponent<MeshCollider>();
-//		mc.sharedMesh = m_CombinedMesh;
-//		mc.convex = true;
-//		
-//		// Attach the exterior to the facility to the galaxy ship
-//		CGalaxyShipFacilities galaxyShipCollider = CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>();
-//		galaxyShipCollider.AttachNewFacility(extFacility, transform.localPosition, transform.localRotation);
+//			cube.renderer.material.color = col;
+//		}
 	}
 };
