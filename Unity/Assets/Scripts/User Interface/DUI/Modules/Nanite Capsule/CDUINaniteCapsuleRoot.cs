@@ -98,7 +98,7 @@ public class CDUINaniteCapsuleRoot : MonoBehaviour
          * */
 		
 		// Update the label
-        m_Nanites.text = CGameShips.Ship.GetComponent<CShipNaniteSystem>().NanaiteMaxRatio.ToString() + "%";
+        m_Nanites.text = CGameShips.Ship.GetComponent<CShipNaniteSystem>().NanaiteCapacityRatio.ToString() + "%";
 	}
 	
 	private void UpdateCircuitryStates()

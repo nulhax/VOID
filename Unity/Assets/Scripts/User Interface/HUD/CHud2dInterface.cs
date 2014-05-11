@@ -110,6 +110,8 @@ public class CHud2dInterface : MonoBehaviour
 
         m_eActiveHud = _eHud;
         m_cCamera.gameObject.SetActive(true);
+
+        CCursorControl.Instance.SetLocked(false);
     }
 
 
@@ -129,6 +131,8 @@ public class CHud2dInterface : MonoBehaviour
             m_cActiveHudPanel.gameObject.SetActive(false);
             m_eActiveHud = EHud.INVALID;
             m_cCamera.gameObject.SetActive(false);
+
+            CCursorControl.Instance.SetLocked(true);
         }
     }
 

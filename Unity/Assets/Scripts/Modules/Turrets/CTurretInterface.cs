@@ -162,6 +162,26 @@ public class CTurretInterface : CNetworkMonoBehaviour
     }
 
 
+    public int GetNextProjectileNodeIndex()
+    {
+        m_iProjectileNodeIndex++;
+
+        if (m_iProjectileNodeIndex >= m_caProjectileNodes.Length)
+        {
+            m_iProjectileNodeIndex = 0;
+        }
+
+        return (m_iProjectileNodeIndex);
+    }
+
+
+    
+    public int GetRandomProjectileNodeIndex()
+    {
+        return (UnityEngine.Random.Range(0, m_caProjectileNodes.Length));
+    }
+
+
     public Transform GetRandomProjectileNode()
     {
         return (m_caProjectileNodes[UnityEngine.Random.Range(0, m_caProjectileNodes.Length)]);
@@ -228,7 +248,7 @@ public class CTurretInterface : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        // Empty
+        m_fPrimaryFireTimer = m_fPrimaryFireInterval;
 	}
 	
 	
@@ -253,6 +273,7 @@ public class CTurretInterface : CNetworkMonoBehaviour
                     EventPrimaryFire(this);
 
                 m_fPrimaryFireTimer = 0.0f;
+                
             }
 
             if (m_fSecondaryFireTimer > m_fSecondaryFireInterval && 
@@ -270,6 +291,9 @@ public class CTurretInterface : CNetworkMonoBehaviour
     [ALocalOnly]
     void OnEventInputAxisChange(CUserInput.EAxis _eAxis, float _fValue)
     {
+        if (!CCursorControl.IsCursorLocked)
+            return;
+
         Vector3 vBaseLocalEuler = m_cBaseTrans.transform.localEulerAngles;
         Vector3 vBarrelLocalEuler = m_cBarrelTrans.transform.localEulerAngles;
 
@@ -322,7 +346,7 @@ public class CTurretInterface : CNetworkMonoBehaviour
         {
             CGameCameras.SetObserverSpace(true);
             CGameCameras.SetObserverPerspective(m_cCameraNode);
-            CGameHUD.SetHUDState(false);
+            CGameHUD.SetHUDState(true);
 
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseX, OnEventInputAxisChange);
             CUserInput.SubscribeAxisChange(CUserInput.EAxis.MouseY, OnEventInputAxisChange);
@@ -388,6 +412,8 @@ public class CTurretInterface : CNetworkMonoBehaviour
 
     float m_fPrimaryFireTimer = 0.0f;
     float m_fSecondaryFireTimer = 0.0f;
+
+    int m_iProjectileNodeIndex = 0;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();

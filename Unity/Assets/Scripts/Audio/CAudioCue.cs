@@ -228,6 +228,7 @@ public class CAudioCue : MonoBehaviour
         }
       
 		//Allow the AudioSystem to handle the new audio source.
+        /* // This was causing a error
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
 														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 														Random.Range(m_fPitchMin, m_fpitchMax), loop,
@@ -236,7 +237,8 @@ public class CAudioCue : MonoBehaviour
 		
 		//Add this to the list of attached audio sources.
 		m_arAttachedAudioSource.Add(newAudioSource);
-	}
+         * */
+    }
 	
 	//Plays a random clip once, then discards it. Useful for sounds that will be played many times, especially if those sounds overlap
 	public void PlayOneShot( float volumeScale, AudioSource audioSource)

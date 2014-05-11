@@ -77,7 +77,7 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
     [AServerOnly]
     void OnEventBuilt(CModuleInterface _cSender)
     {
-        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeMaxCapacity(m_fInitialCapacity);
+        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeCapacityMax(m_fInitialCapacity);
     }
 
 
@@ -112,7 +112,7 @@ public class CPowerBatteryInterface : CNetworkMonoBehaviour
             // Update ship power capacity
             if (CNetwork.IsServer)
             {
-                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeCapacity(m_fCapacity.Value - m_fCapacity.PreviousValue);
+                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeCapacityCurrent(m_fCapacity.Value - m_fCapacity.PreviousValue);
             }
         }
     }

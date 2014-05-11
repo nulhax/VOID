@@ -310,7 +310,7 @@ public class CHudTurretCockpitInterface : MonoBehaviour
     EPanel m_eActivePanel = EPanel.INVALID;
 
     float m_fUpdateInterval = 1.0f;
-    float m_fUpdateTimer = 0.0f;
+    float m_fUpdateTimer = 1.0f;
 
     Dictionary<TNetworkViewId, GameObject> m_mTurretItems = new Dictionary<TNetworkViewId, GameObject>();
 

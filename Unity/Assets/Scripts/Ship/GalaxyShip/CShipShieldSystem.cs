@@ -40,31 +40,64 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public float GenerationRate
+    public float GenerationRateAvailableRatio
     {
-        get { return (m_fCurrentGenerationRate.Value); }
+        get 
+        { 
+            if (GenerationRateMax <= 0.0f) return (0.0f); 
+            
+            return (GenerationRateCurrent / GenerationRateMax); 
+        }
+    }
+
+
+    public float GenerationRateCurrent
+    {
+        get { return (m_fGenerationRateCurrent.Value); }
     }
 
 
     public float GenerationRateMax
     {
-        get { return (m_fMaxGenerationRate.Value); }
+        get { return (m_fGenerationRateMax.Value); }
     }
 
 
-    public float Capacity
+    public float CapacityAvailableRatio
     {
-        get { return (m_fCurrentCapacity.Value); }
+        get 
+        { 
+            if (CapacityMax <= 0.0f) return (0.0f); 
+            
+            return (CapacityCurrent / CapacityMax); 
+        }
+    }
+
+
+    public float CapacityCurrent
+    {
+        get { return (m_fCapacityCurrent.Value); }
     }
 
 
     public float CapacityMax
     {
-        get { return (m_fMaxCapacity.Value); }
+        get { return (m_fCapacityMax.Value); }
     }
 
 
-    public float Charge
+    public float ChargedRatio
+    {
+        get
+        {
+            if (CapacityCurrent <= 0.0f) return (0.0f);
+
+            return (ChargeCurrent / CapacityCurrent);
+        }
+    }
+
+
+    public float ChargeCurrent
     {
         get { return (m_fCurrentCharge.Value); }
     }
@@ -72,19 +105,19 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 
     public bool IsGenerating
     {
-        get { return (GenerationRate > 0.0f); }
+        get { return (GenerationRateCurrent > 0.0f); }
     }
 
 
     public bool IsFullyCharged
     {
-        get { return (Charge == Capacity); }
+        get { return (ChargeCurrent == CapacityCurrent); }
     }
 
 
     public bool HasCapacity
     {
-        get { return (Capacity > 0.0f); }
+        get { return (CapacityCurrent > 0.0f); }
     }
 	
 
@@ -93,43 +126,43 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 
     public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-        m_fMaxGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fCurrentGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fMaxCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fCurrentCapacity = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fGenerationRateMax = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fGenerationRateCurrent = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCapacityMax = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fCapacityCurrent = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_fCurrentCharge = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
     }
 
 
-    public void ChangeMaxGenerationRate(float _fValue)
+    public void ChangeGenerationRateMax(float _fValue)
     {
-        m_fMaxGenerationRate.Value += _fValue;
+        m_fGenerationRateMax.Value += _fValue;
 
-        Debug.Log(string.Format("Ship shield generation max change({0}) max generation({1})", _fValue, m_fMaxGenerationRate.Value));
+        Debug.Log(string.Format("Ship shield generation max change({0}) max generation({1})", _fValue, m_fGenerationRateMax.Value));
     }
 
 
-    public void ChangeGenerationRate(float _fValue)
+    public void ChangeGenerationRateCurrent(float _fValue)
     {
-        m_fCurrentGenerationRate.Value += _fValue;
+        m_fGenerationRateCurrent.Value += _fValue;
 
-        Debug.Log(string.Format("Ship shield generation total change({0}) total generation({1})", _fValue, m_fCurrentGenerationRate.Value));
+        Debug.Log(string.Format("Ship shield generation total change({0}) total generation({1})", _fValue, m_fGenerationRateCurrent.Value));
     }
 
 
-    public void ChangeMaxCapacity(float _fValue)
+    public void ChangeCapacityMax(float _fValue)
     {
-        m_fMaxCapacity.Value += _fValue;
+        m_fCapacityMax.Value += _fValue;
 
-        Debug.Log(string.Format("Ship shield capacity max change({0}) max capacity({1})", _fValue, m_fMaxCapacity.Value));
+        Debug.Log(string.Format("Ship shield capacity max change({0}) max capacity({1})", _fValue, m_fCapacityMax.Value));
     }
 
 
-    public void ChangeCapacity(float _fValue)
+    public void ChangeCapacityCurrent(float _fValue)
     {
-        m_fCurrentCapacity.Value += _fValue;
+        m_fCapacityCurrent.Value += _fValue;
 
-        Debug.Log(string.Format("Ship shield capacity total change({0}) total capacity({1})", _fValue, m_fCurrentCapacity.Value));
+        Debug.Log(string.Format("Ship shield capacity total change({0}) total capacity({1})", _fValue, m_fCapacityCurrent.Value));
     }
 
 
@@ -137,7 +170,7 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
     {
         bool bReduced = false;
 
-        if (Charge > _fAmount)
+        if (ChargeCurrent > _fAmount)
         {
             m_fCurrentCharge.Value -= _fAmount;
 
@@ -175,10 +208,10 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
             return;
 
         // Calculate new charge
-        float fNewCharge = GenerationRate * Time.deltaTime;
+        float fNewCharge = ChargeCurrent + GenerationRateCurrent * Time.deltaTime;
 
         // Set new capacity if not bigger to available capacity
-        if (fNewCharge < Capacity)
+        if (fNewCharge < CapacityCurrent)
         {
             m_fCurrentCharge.Value = fNewCharge;
         }
@@ -186,7 +219,7 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
         // Set to full available capacity
         else
         {
-            m_fCurrentCharge.Value = Capacity;
+            m_fCurrentCharge.Value = CapacityCurrent;
         }
     }
 
@@ -200,10 +233,10 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<float> m_fMaxGenerationRate = null;
-    CNetworkVar<float> m_fCurrentGenerationRate = null;
-    CNetworkVar<float> m_fMaxCapacity = null;
-    CNetworkVar<float> m_fCurrentCapacity = null;
+    CNetworkVar<float> m_fGenerationRateMax = null;
+    CNetworkVar<float> m_fGenerationRateCurrent = null;
+    CNetworkVar<float> m_fCapacityMax = null;
+    CNetworkVar<float> m_fCapacityCurrent = null;
     CNetworkVar<float> m_fCurrentCharge = null;
 
 

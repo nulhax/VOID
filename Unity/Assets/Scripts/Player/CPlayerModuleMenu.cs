@@ -273,9 +273,6 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         {
             CGameHUD.Hud2dInterface.HideHud(CHud2dInterface.EHud.ModuleMenu);
         }
-        
-        // Unlock cursor if opened
-        CCursorControl.Instance.SetLocked(!_bOpen);
 
         if (_bOpen)
         {
@@ -372,7 +369,12 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             switch (_eInput)
             {
                 case CUserInput.EInput.ModuleMenu_ToggleDisplay:
-                    SetState((m_eState == EState.BrowsingMenu) ? EState.Idle : EState.BrowsingMenu);
+                    {
+                        if (!GetComponent<CPlayerCockpitBehaviour>().IsMounted)
+                        {
+                            SetState((m_eState == EState.BrowsingMenu) ? EState.Idle : EState.BrowsingMenu);
+                        }
+                    }
                     break;
 
                 case CUserInput.EInput.Primary:

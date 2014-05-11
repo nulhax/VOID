@@ -40,9 +40,14 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public float NanaiteMaxRatio
+    public float NanaiteCapacityRatio
     {
-        get { return (NanaiteQuanity / NanaiteCapacity); }
+        get 
+        {
+            if (NanaiteCapacity <= 0.0f) return (0.0f);
+
+            return (NanaiteQuanity / NanaiteCapacity); 
+        }
     }
 
 

@@ -125,6 +125,7 @@ public class CGameRegistrator : MonoBehaviour
         DuiFacilityDoor,
 		DUIFacilityControl,
 		DUIPrefabricator,
+        DuiShipStatuses         = 1050,
 
 		// NulOS
 		NOSPanelWide			= 1100,
@@ -283,7 +284,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiFacilityDoor,				"User Interface/DUI/DuiDoorControl");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIFacilityControl,			"User Interface/DUI/DUIFacilityControl");
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DUIPrefabricator,			"User Interface/DUI/Modules/DUIPrefabricator");
-
+        CNetwork.Factory.RegisterPrefab(ENetworkPrefab.DuiShipStatuses,             "User Interface/DUI/Ship/DuiShipStatuses");
 
 		// NulOS
 		CNetwork.Factory.RegisterPrefab(ENetworkPrefab.NOSPanelWide,				"User Interface/NulOS/NOSPanelWide");
@@ -414,6 +415,8 @@ public class CGameRegistrator : MonoBehaviour
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.FacilityControl 		, ENetworkPrefab.DUIFacilityControl);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.NOSPanelWide 		, ENetworkPrefab.NOSPanelWide);
 		CDUIRoot.RegisterPrefab(CDUIRoot.EType.Prefabricator  		, ENetworkPrefab.DUIPrefabricator);
+
+        CDUIRoot.RegisterPrefab(CDUIRoot.EType.ShipStatuses  		, ENetworkPrefab.DuiShipStatuses);
 	}
 
 

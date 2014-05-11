@@ -648,6 +648,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13131590d4ccc8b4b8e7e28f97a04d06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cTransInnerRotor: {fileID: 400014}
+  m_cTransMiddleRotor: {fileID: 400024}
+  m_cTransOuterRotor: {fileID: 400020}
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1

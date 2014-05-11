@@ -71,7 +71,7 @@ Renderer:
   m_LightmapIndex: 255
   m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
   m_Materials:
-  - {fileID: 2100000, guid: 3ce8d26b256dacb45a046c88bf7632e4, type: 2}
+  - {fileID: 2100000, guid: 3171e7bb27627b94da9594046e7fd75e, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InitialProjectileSpeed: 500
-  m_fLifeDuration: 5
+  m_fLifeDuration: 4
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1

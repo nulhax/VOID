@@ -83,9 +83,8 @@ public class CShieldGeneratorInterface : CNetworkMonoBehaviour
     [AServerOnly]
     void OnEventBuilt(CModuleInterface _cSender)
     {
-        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeMaxGenerationRate(m_fInitialGenerationRate);
-
-        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeMaxCapacity(m_fInitialCapacity);
+        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeGenerationRateMax(m_fInitialGenerationRate);
+        CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeCapacityMax(m_fInitialCapacity);
     }
 
 
@@ -123,12 +122,18 @@ public class CShieldGeneratorInterface : CNetworkMonoBehaviour
     {
         if (_cSyncedVar == m_fGenerationRate)
         {
-            // Update ship power system
+            // Update ship shield system
             if (CNetwork.IsServer)
             {
-                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeGenerationRate(m_fGenerationRate.Value - m_fGenerationRate.PreviousValue);
-
-                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeCapacity(m_fCapacity.Value - m_fCapacity.PreviousValue);
+                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeGenerationRateCurrent(m_fGenerationRate.Value - m_fGenerationRate.PreviousValue);
+            }
+        }
+        else if (_cSyncedVar == m_fCapacity)
+        {
+            // Update ship shield system
+            if (CNetwork.IsServer)
+            {
+                CGameShips.Ship.GetComponent<CShipShieldSystem>().ChangeCapacityCurrent(m_fCapacity.Value - m_fCapacity.PreviousValue);
             }
         }
     }

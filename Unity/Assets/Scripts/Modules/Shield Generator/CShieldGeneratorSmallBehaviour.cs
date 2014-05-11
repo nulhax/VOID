@@ -48,10 +48,18 @@ public class CShieldGeneratorSmallBehaviour : MonoBehaviour
 
 	void Update()
 	{
+        m_cTransInnerRotor.transform.Rotate(Vector3.up, 90.0f * Time.deltaTime);
+        m_cTransMiddleRotor.transform.Rotate(Vector3.up, -90.0f * Time.deltaTime);
+        m_cTransOuterRotor.transform.Rotate(Vector3.up, 90.0f * Time.deltaTime);
 	}
 
 
 // Member Fields
+
+
+    public Transform m_cTransInnerRotor = null;
+    public Transform m_cTransMiddleRotor = null;
+    public Transform m_cTransOuterRotor = null;
 
 
 };
