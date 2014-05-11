@@ -189,7 +189,10 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 
     void Update()
     {
-        UpdateCharge();
+        if (CNetwork.IsServer)
+        {
+            UpdateCharge();
+        }
     }
 
 

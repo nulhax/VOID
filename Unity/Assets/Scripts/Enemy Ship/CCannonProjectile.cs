@@ -6,6 +6,7 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 	[HideInInspector] public Rigidbody parent = null;
 	float lifetime = 4.0f;
 	float damage = 1.0f;
+    bool destroyed = false;
 
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
@@ -19,6 +20,9 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 
 	void Start()
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		Physics.IgnoreCollision(collider, parent.collider);
 		Collider[] parentColliders = parent.GetComponentsInChildren<Collider>();
 		foreach (Collider parentCollider in parentColliders)
@@ -27,13 +31,26 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 	
 	void Update()
 	{
+        if (!CNetwork.IsServer)
+            return;
+
 		lifetime -= Time.deltaTime;
-		if (lifetime <= 0.0f)
-			Destroy(gameObject);
+        if (!destroyed &&
+            lifetime <= 0.0f)
+        {
+            destroyed = true;
+            CNetwork.Factory.DestoryGameObject(NetworkViewId);
+        }	
 	}
 
 	void OnCollisionEnter(Collision collision)
 	{
+        if (!CNetwork.IsServer)
+            return;
+
+        if (destroyed)
+            return;
+
 		Rigidbody colliderRigidbody = collision.rigidbody;
 		if(colliderRigidbody == null)
 			colliderRigidbody = CUtility.FindInParents<Rigidbody>(collision.gameObject);
@@ -47,7 +64,8 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 					actorHealth.health -= damage;
 			}
 
-			Destroy(gameObject);
+            destroyed = true;
+            CNetwork.Factory.DestoryGameObject(NetworkViewId);
 		}
 	}
 }

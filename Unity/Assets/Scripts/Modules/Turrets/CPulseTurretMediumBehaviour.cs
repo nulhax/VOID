@@ -71,8 +71,8 @@ public class CPulseTurretMediumBehaviour : CNetworkMonoBehaviour
                         int iIndex = cBehaviour.m_cTurretInterface.GetNextProjectileNodeIndex();
 
                         GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.LaserProjectile);
-                        cProjectile.GetComponent<CNetworkView>().SetPosition(cBehaviour.m_cTurretInterface.m_caProjectileNodes[iIndex].position);
-                        cProjectile.GetComponent<CNetworkView>().SetRotation(cBehaviour.m_cTurretInterface.m_caProjectileNodes[iIndex].rotation);
+                        cProjectile.GetComponent<CNetworkView>().SetPosition(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cBehaviour.m_cTurretInterface.m_caProjectileNodes[iIndex].position));
+                        cProjectile.GetComponent<CNetworkView>().SetRotation(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cBehaviour.m_cTurretInterface.m_caProjectileNodes[iIndex].rotation));
                     }
                     break;
 

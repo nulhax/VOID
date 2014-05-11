@@ -76,22 +76,6 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 	}
 
 
-	[AServerOnly]
-	void OnTriggerEnter(Collider _cCollider) 
-	{
-		if (!m_bDestroyed && 
-            CNetwork.IsServer)
-		{
-            if (_cCollider.gameObject.GetComponent<CEnemyShip>() != null)
-            {
-                InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
-
-                _cCollider.gameObject.GetComponent<CActorHealth>().health -= 10.0f;
-            }
-		}
-	}
-
-
 	[ANetworkRpc]
 	void RemoteExplode(Vector3 _vHitPos, Quaternion _qHitRot)
 	{
@@ -108,6 +92,22 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
         m_bDestroyed = true;
         CNetwork.Factory.DestoryGameObject(gameObject);
 	}
+
+
+    [AServerOnly]
+    void OnTriggerEnter(Collider _cCollider)
+    {
+        if (!m_bDestroyed &&
+            CNetwork.IsServer)
+        {
+            if (_cCollider.gameObject.GetComponent<CEnemyShip>() != null)
+            {
+                InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
+
+                _cCollider.gameObject.GetComponent<CActorHealth>().health -= 5.0f;
+            }
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)

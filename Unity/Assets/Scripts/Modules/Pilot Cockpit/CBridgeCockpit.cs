@@ -70,10 +70,10 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cCockpitBehaviour = GetComponent<CCockpitInterface>();
+        m_cCockpitInterface = GetComponent<CCockpitInterface>();
 
-		m_cCockpitBehaviour.EventMounted += OnCockpitMount;
-       	m_cCockpitBehaviour.EventDismounted += OnCockpitUnmount;
+		m_cCockpitInterface.EventMounted += OnCockpitMount;
+       	m_cCockpitInterface.EventDismounted += OnCockpitUnmount;
 
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseX, OnEventAxisControlShip);
         CUserInput.SubscribeClientAxisChange(CUserInput.EAxis.MouseY, OnEventAxisControlShip);
@@ -86,6 +86,8 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_Down, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_RollLeft, OnEventInputControlShip);
         CUserInput.SubscribeClientInputChange(CUserInput.EInput.GalaxyShip_RollRight, OnEventInputControlShip);
+
+        CUserInput.SubscribeClientInputChange(CUserInput.EInput.Use, OnEventInputControlShip);
 	}               
 
 
@@ -106,12 +108,13 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 			break;
 		}
 	}
+
 		
 	[AServerOnly]
 	void OnEventAxisControlShip(CUserInput.EAxis _eAxis, ulong _ulPlayerId, float _fValue)
 	{
 		if (_ulPlayerId != 0 &&
-		    _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
+		    _ulPlayerId == m_cCockpitInterface.MountedPlayerId)
 		{
 			CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
 			
@@ -175,7 +178,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
     void OnEventInputControlShip(CUserInput.EInput _eInput, ulong _ulPlayerId, bool _bDown)
     {
         if (_ulPlayerId != 0 &&
-            _ulPlayerId == m_cCockpitBehaviour.MountedPlayerId)
+            _ulPlayerId == m_cCockpitInterface.MountedPlayerId)
         {
             CGalaxyShipMotor cGalaxyShipMotor = CGameShips.GalaxyShip.GetComponent<CGalaxyShipMotor>();
             float fPower = _bDown ? 1.0f : 0.0f;
@@ -212,6 +215,15 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
                 case CUserInput.EInput.GalaxyShip_RollRight:
                     cGalaxyShipMotor.SetThrusterEnabled(CGalaxyShipMotor.EThrusters.RollRight, fPower);
+                    break;
+
+                case CUserInput.EInput.Use:
+                    {
+                        if (_bDown)
+                        {
+                            m_cCockpitInterface.EjectPlayer();
+                        }
+                    }
                     break;
 
                 default:
@@ -264,7 +276,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
     void OnGUI()
     {
-        if (m_cCockpitBehaviour.MountedPlayerId == CNetwork.PlayerId)
+        if (m_cCockpitInterface.MountedPlayerId == CNetwork.PlayerId)
         {
             float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;
             Vector3 absShipPos = CGalaxy.instance.RelativePointToAbsolutePoint(CGameShips.GalaxyShip.transform.position);
@@ -287,7 +299,7 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CCockpitInterface m_cCockpitBehaviour = null;
+    CCockpitInterface m_cCockpitInterface = null;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
