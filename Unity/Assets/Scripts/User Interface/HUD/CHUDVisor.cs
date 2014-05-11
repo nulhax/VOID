@@ -35,6 +35,7 @@ public class CHUDVisor : MonoBehaviour
 
 	// Member Fields
 	private bool m_VisorDown = false;
+	private ParticleSystem m_particleEmitter = null;
 
 
 	// Member Properties
@@ -47,7 +48,8 @@ public class CHUDVisor : MonoBehaviour
 	// Member Methods
 	public void Start()
 	{
-		CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+		//CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
+		m_particleEmitter = transform.FindChild("Gas Emission").particleSystem;
 	}
 
 	public void SetVisorState(bool _Down)
@@ -55,24 +57,28 @@ public class CHUDVisor : MonoBehaviour
 		if(_Down && !m_VisorDown)
 		{
 			animation.CrossFade("VisorDown");
+			GetComponent<CAudioCue>().Play(1.0f,false,0);
+
  		}
 		else if(!_Down && m_VisorDown)
 		{
 			animation.CrossFade("VisorUp");
+			GetComponent<CAudioCue>().Play(1.0f,false,1);
+			m_particleEmitter.Play();
 		}
 
 		m_VisorDown = _Down;
 	}
-
-	[ALocalOnly]
-	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
-	{
-		// Toggle between up/down visor
-		if(_eInput == CUserInput.EInput.Visor && _bDown)
-		{
-			SetVisorState(!m_VisorDown);
-		}
-	}
+//
+//	[ALocalOnly]
+//	private void OnEventInput(CUserInput.EInput _eInput, bool _bDown)
+//	{
+//		// Toggle between up/down visor
+//		if(_eInput == CUserInput.EInput.Visor && _bDown)
+//		{
+//			SetVisorState(!m_VisorDown);
+//		}
+//	}
 
 	private void ActivateHUD()
 	{

@@ -158,7 +158,7 @@ public class CNetworkView : CNetworkMonoBehaviour
     // public:
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "RemoteSetPosition");
         _cRegistrar.RegisterRpc(this, "RemoteSetEuler");
@@ -233,16 +233,21 @@ public class CNetworkView : CNetworkMonoBehaviour
         cRpcStream.Write(tMethodInfo, _caParameterValues);
 
         // Send to all players
-        if (_ulPlayerId == 0)
+        if (_ulPlayerId == 0 ||
+            _ulPlayerId == ulong.MaxValue)
         {
-			// Process on server straight away
-			CNetworkView.ProcessInboundStream(0, cRpcStream);
-			cRpcStream.SetReadOffset(0);
+            // Skip server
+            if (_ulPlayerId != ulong.MaxValue)
+            {
+			    // Process on server straight away
+			    CNetworkView.ProcessInboundStream(0, cRpcStream);
+			    cRpcStream.SetReadOffset(0);
+            }
 
 			// Append rpc stream to connected non-host players
             foreach (KeyValuePair<ulong, CNetworkPlayer> tEntry in CNetwork.Server.GetNetworkPlayers())
             {
-                // Make host execute RPC straight away
+                // Server has already processed the RPC call
                 if (!tEntry.Value.IsHost)
                 {
                     // Append packet data
@@ -568,9 +573,11 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only generate dynamic view ids
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot generate network view ids!!!");
 
-        TNetworkViewId cViewId = new TNetworkViewId(m_uiNextDynamicId++, 0);
-        s_cNetworkViews.Add((ushort)(m_uiNextDynamicId - 1), null);
-        /*
+        //TNetworkViewId cViewId = new TNetworkViewId(m_uiNextDynamicId++, 0);
+        //s_cNetworkViews.Add((ushort)(m_uiNextDynamicId - 1), null);
+        
+        TNetworkViewId cViewId = null;
+
         for (ushort i = k_usMaxStaticViewId; i < k_usMaxDynamicViewId; ++i)
         {
             // Check the dynamic view id is free
@@ -584,7 +591,6 @@ public class CNetworkView : CNetworkMonoBehaviour
                 break;
             }
         }
-        */
 
 		// Ensure id was generated
 		Logger.WriteErrorOn(cViewId.Id == 0, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
@@ -619,7 +625,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 				*/
 
-                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) SubViewId({1})", _cViewId.Id, _cViewId.ChildId);
+                //Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
 
 				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 
@@ -757,10 +763,6 @@ public class CNetworkView : CNetworkMonoBehaviour
             for (int i = 0; cParent.parent != null && i < 25; ++i)
             {
                 cParent = cParent.parent;
-
-                //Logger.WriteError("Could not find parent to register for sub view id");
-                //break;
-                //}
             }
 
             // Register for sub network view id
@@ -782,12 +784,35 @@ public class CNetworkView : CNetworkMonoBehaviour
             {
                 this.ViewId = GenerateStaticViewId();
             }
+            else
+            {
+                Transform cParent = transform.parent;
 
-            if (ViewId.Id == 0)
-                Debug.LogError("I do not have a view id!");
+                for (int i = 0; cParent.parent != null && i < 25; ++i)
+                {
+                    if ( cParent.GetComponent<CNetworkView>() != null &&
+                        !cParent.GetComponent<CNetworkView>().ViewId.IsChildViewId)
+                    {
+                        break;
+                    }
+   
+                    cParent = cParent.parent;
+                }
+
+                if (cParent.GetComponent<CNetworkView>() == null || 
+                    cParent.GetComponent<CNetworkView>().ViewId.IsChildViewId)
+                {
+                    Debug.LogError("could not find parent!!!");
+                }
+                else
+                {
+                    cParent.GetComponent<CNetworkView>().RegisterChildNetworkView(this);
+                }
+            }
         }
 
-        if (!s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
+        if (!ViewId.IsChildViewId &&
+            !s_mViewIdOwnerNames.ContainsKey(ViewId.Id))
         {
             s_mViewIdOwnerNames.Add(ViewId.Id, gameObject.name);
         }
@@ -814,7 +839,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
         foreach (CNetworkMonoBehaviour cNetworkMonoBehaviour in aComponents)
         {
-            cNetworkMonoBehaviour.RegisterNetworkEntities(cRegistrar);
+            cNetworkMonoBehaviour.RegisterNetworkComponents(cRegistrar);
         }
 
         m_bReady = true;
@@ -907,7 +932,15 @@ public class CNetworkView : CNetworkMonoBehaviour
 			if (!m_mChildrenNetworkViews.ContainsKey(i))
 			{
 				m_mChildrenNetworkViews.Add(i, _cChildView);
-				_cChildView.ViewId = new TNetworkViewId(0, i);
+
+                if (ViewId == null)
+                {
+                    _cChildView.ViewId = new TNetworkViewId(0, i);
+                }
+                else
+                {
+                    _cChildView.ViewId = new TNetworkViewId(ViewId.Id, i);
+                }
 
 				//Debug.LogError(string.Format("Registered ({0}) sub newwork view with ViewId({1}) SubViewId({2})", _cSubView.gameObject.name, _cSubView.ViewId.Id, _cSubView.ViewId.ChildId));
 

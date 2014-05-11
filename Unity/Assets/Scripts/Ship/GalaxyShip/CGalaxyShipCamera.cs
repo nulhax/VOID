@@ -81,7 +81,7 @@ public class CGalaxyShipCamera : MonoBehaviour
 		m_CachedCamera.rotation = Quaternion.Lerp(m_CachedCamera.rotation, look, Time.deltaTime * m_RotationDampening);		
 		
 		// Smooth follow interpolation
-		Vector3 offset = m_CachedGalaxyShip.up * m_CurrentShipBounds.extents.y + -m_CachedGalaxyShip.forward * (m_CurrentShipBounds.extents.z + m_Distance);
+		Vector3 offset = m_CachedGalaxyShip.up * 10.0f + -m_CachedGalaxyShip.forward * (70.0f + m_Distance);
 		Vector3 dest = (m_CachedGalaxyShip.position + m_CurrentShipBounds.center) + offset;
 		m_CachedCamera.position = Vector3.Lerp(m_CachedCamera.position, dest, Time.deltaTime * m_MovementDampening);
 	}
@@ -89,7 +89,7 @@ public class CGalaxyShipCamera : MonoBehaviour
 	public void UpdateCameraBounds()
 	{
 		// Take the bounds of the shield
-		m_CurrentShipBounds = gameObject.GetComponent<CGalaxyShipShield>().m_Shield.GetComponent<MeshFilter>().mesh.bounds;
+		//m_CurrentShipBounds = gameObject.GetComponent<CShipShieldSystem>().m_Shield.GetComponent<MeshFilter>().mesh.bounds;
 	}
 
 	public void AdjustZoom(float _Delta)

@@ -42,7 +42,7 @@ public class CPowerGeneratorInterface : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
@@ -71,7 +71,7 @@ public class CPowerGeneratorInterface : CNetworkMonoBehaviour
     [AServerOnly]
     void OnEventBuilt(CModuleInterface _cSender)
     {
-        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeMaxGenerationRate(m_fInitialGenerationRate);
+        CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeGenerationRateMax(m_fInitialGenerationRate);
     }
 
 
@@ -106,7 +106,7 @@ public class CPowerGeneratorInterface : CNetworkMonoBehaviour
             // Update ship power system
             if (CNetwork.IsServer)
             {
-                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeGenerationRate(m_fGenerationRate.Value - m_fGenerationRate.PreviousValue);
+                CGameShips.Ship.GetComponent<CShipPowerSystem>().ChangeGenerationRateCurrent(m_fGenerationRate.Value - m_fGenerationRate.PreviousValue);
             }
         }
     }

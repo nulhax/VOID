@@ -1,0 +1,118 @@
+fileFormatVersion: 2
+guid: b54c5ab1033533a43a1599627a1dbaad
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Back_Hatch
+    100002: Front_Hatch
+    100004: GlassFloor
+    100006: Left_ScreenDisplayer
+    100008: MainScreen
+    100010: //RootNode
+    100012: Prefabricator
+    100014: PrefabricatorGroup
+    100016: Right_ScreenDisplayer
+    100018: Rotator
+    100020: ScreenGroup
+    100022: ToolScreen
+    100024: Prefabricator 1
+    100026: Wire
+    400000: Back_Hatch
+    400002: Front_Hatch
+    400004: GlassFloor
+    400006: Left_ScreenDisplayer
+    400008: MainScreen
+    400010: //RootNode
+    400012: Prefabricator
+    400014: PrefabricatorGroup
+    400016: Right_ScreenDisplayer
+    400018: Rotator
+    400020: ScreenGroup
+    400022: ToolScreen
+    400024: Prefabricator 1
+    400026: Wire
+    2300000: Back_Hatch
+    2300002: Front_Hatch
+    2300004: GlassFloor
+    2300006: Left_ScreenDisplayer
+    2300008: MainScreen
+    2300010: Prefabricator
+    2300012: Right_ScreenDisplayer
+    2300014: Rotator
+    2300016: ToolScreen
+    2300018: Prefabricator 1
+    2300020: Wire
+    3300000: Back_Hatch
+    3300002: Front_Hatch
+    3300004: GlassFloor
+    3300006: Left_ScreenDisplayer
+    3300008: MainScreen
+    3300010: Prefabricator
+    3300012: Right_ScreenDisplayer
+    3300014: Rotator
+    3300016: ToolScreen
+    3300018: Prefabricator 1
+    3300020: Wire
+    4300000: GlassFloor
+    4300002: Prefabricator
+    4300004: Back_Hatch
+    4300006: Front_Hatch
+    4300008: Rotator
+    4300010: Left_ScreenDisplayer
+    4300012: Right_ScreenDisplayer
+    4300014: ToolScreen
+    4300016: MainScreen
+    4300018: Wire
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .800000012
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

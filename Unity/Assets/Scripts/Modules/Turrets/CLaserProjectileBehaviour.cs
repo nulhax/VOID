@@ -36,18 +36,22 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         _cRegistrar.RegisterRpc(this, "RemoteExplode");
 	}
 	
 
-	public void Start()
+	void Start()
 	{
 		m_vInitialPosition = transform.position;
-
-        Destroy(gameObject, m_fLifeDuration);
 	}
+
+
+    void OnDestroy()
+    {
+
+    }
 
 
 	public void Update()
@@ -64,22 +68,10 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 
             if (m_fLifeTimer > m_fLifeDuration)
 			{
+                CNetwork.Factory.DestoryGameObject(gameObject);
+
 				m_bDestroyed = true;
 			}
-		}
-	}
-
-
-	[AServerOnly]
-	void OnTriggerEnter(Collider _cCollider) 
-	{
-		if (!m_bDestroyed && 
-            CNetwork.IsServer)
-		{
-            if (_cCollider.gameObject.GetComponent<CEnemyShip>() != null)
-            {
-                InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
-            }
 		}
 	}
 
@@ -87,19 +79,35 @@ public class CLaserProjectileBehaviour : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void RemoteExplode(Vector3 _vHitPos, Quaternion _qHitRot)
 	{
-		// Create hit particles
-		string sHitPartilesFile = CNetwork.Factory.GetRegisteredPrefabFile(CGameRegistrator.ENetworkPrefab.LaserHitParticles);
+        // Create hit particles
+        string sHitPartilesFile = CNetwork.Factory.GetRegisteredPrefabFile(CGameRegistrator.ENetworkPrefab.LaserHitParticles);
         GameObject cHitParticles = GameObject.Instantiate(Resources.Load(sHitPartilesFile)) as GameObject;
-		
-		cHitParticles.transform.position = _vHitPos;
-		cHitParticles.transform.rotation = _qHitRot;
 
-		// Destroy particles are 1 second
-		GameObject.Destroy(cHitParticles, cHitParticles.particleSystem.duration);
+        cHitParticles.transform.position = _vHitPos;
+        cHitParticles.transform.rotation = _qHitRot;
+
+        // Destroy particles are 1 second
+        GameObject.Destroy(cHitParticles, cHitParticles.particleSystem.duration);
 
         m_bDestroyed = true;
-        Destroy(gameObject);
+        CNetwork.Factory.DestoryGameObject(gameObject);
 	}
+
+
+    [AServerOnly]
+    void OnTriggerEnter(Collider _cCollider)
+    {
+        if (!m_bDestroyed &&
+            CNetwork.IsServer)
+        {
+            if (_cCollider.gameObject.GetComponent<CEnemyShip>() != null)
+            {
+                InvokeRpcAll("RemoteExplode", gameObject.transform.position, Quaternion.LookRotation(transform.position - _cCollider.transform.position));
+
+                _cCollider.gameObject.GetComponent<CActorHealth>().health -= 5.0f;
+            }
+        }
+    }
 
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)

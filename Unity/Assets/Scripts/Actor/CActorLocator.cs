@@ -1,4 +1,4 @@
-﻿
+
 //  Auckland
 //  New Zealand
 //
@@ -76,7 +76,7 @@ public class CActorLocator : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_tCurrentFacilityViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
 	}
@@ -163,13 +163,14 @@ public class CActorLocator : CNetworkMonoBehaviour
 
             if (cCurrentFacilityObject != null)
             {
-                sFacilityText += "Atmosphere: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Quantity, 0);
-                sFacilityText += "/" + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Volume, 0) + "\n";
-                sFacilityText += "Atmosphere: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().QuantityPercent, 1) + "%\n";
+				sFacilityText += "Atmosphere Vol: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Volume, 0) + " m3\n";
+				sFacilityText += "Atmosphere Pressure: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Pressure, 2) + " Pa\n";
+				sFacilityText += "Atmosphere Temperature: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Temperature, 2) + " K\n";
+				sFacilityText += "Atmosphere Density: " + Math.Round(cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().Density, 2) + " Kg/m3\n";
 
-                sFacilityText += "Refilling: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsRefillingEnabled ? "True" : "False") + "\n";
-                sFacilityText += "Controlled Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsDepressurizing ? "True" : "False") + "\n";
-                sFacilityText += "Explosive Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsExplosiveDepressurizing ? "True" : "False") + "\n";
+//                sFacilityText += "Refilling: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsRefillingEnabled ? "True" : "False") + "\n";
+//                sFacilityText += "Controlled Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsDepressurizing ? "True" : "False") + "\n";
+//                sFacilityText += "Explosive Decompressing: " + (cCurrentFacilityObject.GetComponent<CFacilityAtmosphere>().IsExplosiveDepressurizing ? "True" : "False") + "\n";
 
                 sFacilityText += "Power Active: " + (cCurrentFacilityObject.GetComponent<CFacilityPower>().IsPowerActive ? "True" : "False") + "\n";
             }

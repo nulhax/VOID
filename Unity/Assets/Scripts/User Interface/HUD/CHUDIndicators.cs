@@ -1,4 +1,4 @@
-﻿//  Auckland
+//  Auckland
 //  New Zealand
 //
 //  (c) 2013 VOID
@@ -45,7 +45,7 @@ public class CHUDIndicators : MonoBehaviour
 
 	private void Update()
 	{
-		if(CGameHUD.HUD3D.IsHUDActive)
+		if(CGameHUD.Hud3D.IsHUDActive)
 		{
 			UpdateIndicators();
 		}

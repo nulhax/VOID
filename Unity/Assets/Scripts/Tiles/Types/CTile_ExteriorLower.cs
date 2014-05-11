@@ -51,6 +51,10 @@ public class CTile_ExteriorLower : CTile
 		get { return(s_MetaDictionary); }
 	}
 
+	public override List<EDirection> RelevantDirections
+	{
+		get { return(s_RelevantDirections); }
+	}
 	
 	// Member Methods
 	static CTile_ExteriorLower()
@@ -93,6 +97,22 @@ public class CTile_ExteriorLower : CTile
 	{
 		int tileMask = 0;
 
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
+
+		// Get upper tile interface
 		CGridPoint upperTilePos = new CGridPoint(m_TileInterface.m_GridPosition.ToVector + Vector3.up);
 		CTileInterface upperTileInterface = m_TileInterface.m_Grid.GetTileInterface(upperTilePos);
 

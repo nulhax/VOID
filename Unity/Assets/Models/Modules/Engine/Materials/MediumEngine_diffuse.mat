@@ -52,7 +52,7 @@ Material:
       data:
         first:
           name: _SpecPower
-        second: 1
+        second: 3
       data:
         first:
           name: _EmissivePowerR
@@ -60,7 +60,7 @@ Material:
       data:
         first:
           name: _EmissivePowerG
-        second: 2
+        second: 3
       data:
         first:
           name: _EmissivePowerB
@@ -85,15 +85,15 @@ Material:
       data:
         first:
           name: _EmissiveColorR
-        second: {r: 0, g: .255172253, b: 1, a: 1}
+        second: {r: 0, g: .337931156, b: 1, a: 1}
       data:
         first:
           name: _EmissiveColorG
-        second: {r: 1, g: .641379237, b: 0, a: 1}
+        second: {r: 0, g: .337254912, b: .996078432, a: 1}
       data:
         first:
           name: _EmissiveColorB
-        second: {r: 1, g: 0, b: 0, a: 1}
+        second: {r: 0, g: .337254912, b: .992156863, a: 1}
       data:
         first:
           name: _EmissiveColorA

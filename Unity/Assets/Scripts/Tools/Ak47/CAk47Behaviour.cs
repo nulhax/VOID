@@ -48,7 +48,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bAmmo = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, m_bAmmoCapacity);
 
@@ -98,16 +98,11 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 	void Awake()
 	{
-		CAudioCue audioCue = GetComponent<CAudioCue>();
-		if (audioCue == null)
-			audioCue = gameObject.AddComponent<CAudioCue>();
-		m_BulletFireSoundIndex = audioCue.AddSound("Audio/BulletFire", 0.0f, 0.0f, false);
+		
 	}
 
 	void Start()
 	{
-		m_cNossle = transform.FindChild("Nossle").gameObject;
-
         gameObject.GetComponent<CToolInterface>().EventPrimaryActiveChange += OnEventPrimaryActiveChange;
 	}
 
@@ -139,7 +134,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 	[ANetworkRpc]
 	void ExecuteShootEffect()
 	{
-		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Ak47/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
+		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Projectiles/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
 		cBullet.rigidbody.velocity = cBullet.transform.forward * 40.0f;
 
 		GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_BulletFireSoundIndex);
@@ -165,7 +160,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-	GameObject m_cNossle = null;
+	public GameObject m_cNossle = null;
 
 
 	CNetworkVar<byte> m_bAmmo = null;

@@ -1,0 +1,203 @@
+fileFormatVersion: 2
+guid: 33c090b9cc3e8604bae8731c601ea991
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Left
+    100004: Lock_1
+    100006: Lock_2
+    100008: Right
+    100010: Ring_1
+    100012: Ring_1 1
+    100014: Ring_2
+    100016: Ring_2 1
+    100018: Top
+    400000: //RootNode
+    400002: Left
+    400004: Lock_1
+    400006: Lock_2
+    400008: Right
+    400010: Ring_1
+    400012: Ring_1 1
+    400014: Ring_2
+    400016: Ring_2 1
+    400018: Top
+    2300000: //RootNode
+    2300002: Left
+    2300004: Lock_1
+    2300006: Lock_2
+    2300008: Right
+    2300010: Ring_1
+    2300012: Ring_1 1
+    2300014: Ring_2
+    2300016: Ring_2 1
+    2300018: Top
+    3300000: //RootNode
+    3300002: Left
+    3300004: Lock_1
+    3300006: Lock_2
+    3300008: Right
+    3300010: Ring_1
+    3300012: Ring_1 1
+    3300014: Ring_2
+    3300016: Ring_2 1
+    3300018: Top
+    4300000: Interior_Door_Frame
+    4300002: Top
+    4300004: Lock_1
+    4300006: Lock_2
+    4300008: Left
+    4300010: Ring_1
+    4300012: Ring_2
+    4300014: Right
+    4300016: Ring_1
+    4300018: Ring_2
+    7400000: Interior_Door_Open
+    7400002: Interior_Door_Close
+    9500000: //RootNode
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Interior_Door_Open
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Left
+        weight: 1
+      - path: Left/Ring_1
+        weight: 1
+      - path: Left/Ring_2
+        weight: 1
+      - path: Right
+        weight: 1
+      - path: Right/Ring_1 1
+        weight: 1
+      - path: Right/Ring_2 1
+        weight: 1
+      - path: Top
+        weight: 1
+      - path: Top/Lock_1
+        weight: 1
+      - path: Top/Lock_2
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Interior_Door_Close
+      takeName: Take 001
+      firstFrame: 26
+      lastFrame: 48
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Left
+        weight: 1
+      - path: Left/Ring_1
+        weight: 1
+      - path: Left/Ring_2
+        weight: 1
+      - path: Right
+        weight: 1
+      - path: Right/Ring_1 1
+        weight: 1
+      - path: Right/Ring_2 1
+        weight: 1
+      - path: Top
+        weight: 1
+      - path: Top/Lock_1
+        weight: 1
+      - path: Top/Lock_2
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  userData: 

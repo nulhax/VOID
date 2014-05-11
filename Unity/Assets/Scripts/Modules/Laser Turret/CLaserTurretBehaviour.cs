@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CTurretBehaviour))]
+[RequireComponent(typeof(CTurretInterface))]
 public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 {
 
@@ -42,7 +42,7 @@ public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		_cRegistrar.RegisterRpc(this, "StartMuzzleFlash");
 	}

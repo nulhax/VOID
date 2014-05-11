@@ -67,8 +67,8 @@ public class CWidgetShipPower : MonoBehaviour
 	public void UpdateGenerationInformation()
 	{
 		// Get the ship generation and generation potential
-		float shipGeneration = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalCapacity;
-		float shipGenerationPotential = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalGenerationRate;
+		float shipGeneration = CGameShips.Ship.GetComponent<CShipPowerSystem>().CapacityCurrent;
+		float shipGenerationPotential = CGameShips.Ship.GetComponent<CShipPowerSystem>().GenerationRateCurrent;
 
 		// Calculate the value ratio
 		float value = shipGeneration/shipGenerationPotential;
@@ -108,8 +108,8 @@ public class CWidgetShipPower : MonoBehaviour
 	public void UpdateChargeInformation()
 	{
 		// Get the ship charge, charge capacity and charge capacity potential
-		float shipCharge = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalCapacity;
-		float shipChargeCapacity = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalCharge;
+		float shipCharge = CGameShips.Ship.GetComponent<CShipPowerSystem>().CapacityCurrent;
+		float shipChargeCapacity = CGameShips.Ship.GetComponent<CShipPowerSystem>().ChargeCurrent;
 		
 		// Calculate the value ratio
 		float value = shipCharge/shipChargeCapacity;
@@ -151,8 +151,8 @@ public class CWidgetShipPower : MonoBehaviour
 	private void UpdateConsumptionInformation()
 	{
 		// Get the ship consumption and generation rate
-		float shipConsumptionRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalConsumptionRate;
-		float shipGenerationRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().TotalCapacity;
+        float shipConsumptionRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().ConsumptionRate;
+		float shipGenerationRate = CGameShips.Ship.GetComponent<CShipPowerSystem>().CapacityCurrent;
 		int finalValue = Mathf.RoundToInt(shipGenerationRate - shipConsumptionRate);
 
 		if(finalValue > 0)

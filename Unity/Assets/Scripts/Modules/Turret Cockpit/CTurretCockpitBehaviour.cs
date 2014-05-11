@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CCockpitBehaviour))]
+[RequireComponent(typeof(CCockpitInterface))]
 public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 {
 
@@ -36,44 +36,15 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 // Member Delegates & Events
 
 
-    public GameObject Screen
-    {
-        get { return (m_cScreen); }
-    }
-
-
 // Member Properties
-
-
-	public TNetworkViewId ActiveTurretViewId
-	{
-		get 
-		{ 
-			return (m_cActiveTurretViewId.Value); 
-		}
-	}
-
-
-    public CTurretBehaviour ActiveTurretBehaviour
-    {
-        get
-        {
-            if (ActiveTurretViewId == null)
-            {
-                return (null);
-            }
-
-            return (m_cActiveTurretViewId.Value.GameObject.GetComponent<CTurretBehaviour>());
-        }
-    }
 
 
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-		m_cActiveTurretViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
+		// Empty
     }
 
 
@@ -107,11 +78,11 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
 	void Start()
 	{
         m_cModuleInterface = GetComponent<CModuleInterface>();
-        m_cCockpit = GetComponent<CCockpitBehaviour>();
+        m_cCockpitInterface = GetComponent<CCockpitInterface>();
 
         // Subscribe to cockpit events - Does not need to Unsubscribe
-        m_cCockpit.EventMounted    += OnEventCockpitMounted;
-        m_cCockpit.EventDismounted += OnEventCockpitUnmounted;
+        m_cCockpitInterface.EventMounted    += OnEventCockpitMounted;
+        m_cCockpitInterface.EventDismounted += OnEventCockpitUnmounted;
 	}
 
 
@@ -131,23 +102,32 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
     {
         Vector3 vTargetLocalEuler = Vector3.forward;
 
-        if (ActiveTurretViewId != null)
+        if (m_cCockpitInterface.IsMounted)
         {
-            if (ActiveTurretBehaviour.RotationRatioX >= 0.0f)
-            {
-                vTargetLocalEuler.x = 360.0f - (m_fRotationMaxX * ActiveTurretBehaviour.RotationRatioX);
-            }
-            else
-            {
-                vTargetLocalEuler.x = m_fRotationMinX * ActiveTurretBehaviour.RotationRatioX;
-            }
+            GameObject cMountedPlayerActor = m_cCockpitInterface.MountedPlayerActor;
 
-            vTargetLocalEuler.y = 360.0f * ActiveTurretBehaviour.RotationRatioY;
+            CPlayerTurretBehaviour cPlayerTurretBehaviour = cMountedPlayerActor.GetComponent<CPlayerTurretBehaviour>();
+
+            if (cPlayerTurretBehaviour.HasTurretControl)
+            {
+                CTurretInterface cControllingTurretInterface = cMountedPlayerActor.GetComponent<CPlayerTurretBehaviour>().ControlledTurretInterface;
+
+                if (cControllingTurretInterface.RotationRatioX >= 0.0f)
+                {
+                    vTargetLocalEuler.x = 360.0f - (m_fRotationMaxX * cControllingTurretInterface.RotationRatioX);
+                }
+                else
+                {
+                    vTargetLocalEuler.x = m_fRotationMinX * cControllingTurretInterface.RotationRatioX;
+                }
+
+                vTargetLocalEuler.y = 360.0f * cControllingTurretInterface.RotationRatioY;
+            }
         }
 
         Quaternion qTargetRotation = Quaternion.Euler(vTargetLocalEuler.x, vTargetLocalEuler.y, 0.0f);
 
-        if (m_cCockpit.IsMounted &&
+        if (m_cCockpitInterface.IsMounted &&
             Quaternion.Angle(m_cChairModelTrans.transform.localRotation, qTargetRotation) > 90.0f)
         {
             m_cChairModelTrans.transform.localRotation = qTargetRotation;
@@ -155,7 +135,7 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
         else
         {
             // Rotate slower when returning to default rotation
-            float fRotationSpeed = m_cCockpit.IsMounted ? 720.0f : 180.0f;
+            float fRotationSpeed = m_cCockpitInterface.IsMounted ? 720.0f : 180.0f;
 
             m_cChairModelTrans.transform.localRotation = Quaternion.RotateTowards(m_cChairModelTrans.transform.localRotation,
                                                                                   qTargetRotation,
@@ -164,104 +144,36 @@ public class CTurretCockpitBehaviour : CNetworkMonoBehaviour
     }
 
 
-	void OnEventCockpitMounted(ulong _ulPlayerId)
+    void OnEventCockpitMounted(CCockpitInterface _cSender, ulong _ulPlayerId)
 	{
-        if (_ulPlayerId == CNetwork.PlayerId)
-        {
-            Camera cam = CGameCameras.MainCamera.camera;
-            float pos = (cam.nearClipPlane + 0.01f);
-            m_cScreen.transform.position = cam.transform.position + cam.transform.forward * pos;
-            float h = Mathf.Tan(cam.fieldOfView * Mathf.Deg2Rad * 0.5f) * pos * 2f;
-            m_cScreen.transform.localScale = new Vector3(h * cam.aspect, h, 0f);
-
-            s_cLocalOwnedTurretCockpitBehaviour = this;
-        }
-
-        if (CNetwork.IsServer)
-        {
-            /*
-            List<GameObject> acTurrets = CGameShips.Ship.GetComponent<CShipModules>().FindModulesByCategory(CModuleInterface.ECategory.Turrets);
-
-            if (acTurrets != null &&
-                acTurrets.Count > 0)
-            {
-                foreach (GameObject cTurretObject in acTurrets)
-                {
-                    if (!cTurretObject.GetComponent<CTurretBehaviour>().IsUnderControl)
-                    {
-                        m_cActiveTurretViewId.Set(cTurretObject.GetComponent<CNetworkView>().ViewId);
-                        break;
-                    }
-                }
-            }
-             * */
-        }
+        Debug.Log("Player entered cockpit");
 	}
 
 
-	void OnEventCockpitUnmounted(ulong _ulPlayerId)
+    void OnEventCockpitUnmounted(CCockpitInterface _cSender, ulong _ulPlayerId)
 	{
-        if (_ulPlayerId == CNetwork.PlayerId)
-        {
-            s_cLocalOwnedTurretCockpitBehaviour = null;
-        }
-
-        if (CNetwork.IsServer)
-        {
-            if (ActiveTurretViewId != null)
-            {
-                m_cActiveTurretViewId.Set(null);
-            }
-        }
-
-		//Debug.Log("Player left cockpit");
+		Debug.Log("Player left cockpit");
 	}
 
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-		if (_cSyncedVar == m_cActiveTurretViewId)
-		{
-            HandleActiveTurretChange();
-		}
+        // Empty
 	}
-
-
-    void HandleActiveTurretChange()
-    {
-        if (CNetwork.IsServer)
-        {
-            if (m_cActiveTurretViewId.PreviousValue != null)
-            {
-                // Release control of previous turret
-                m_cActiveTurretViewId.PreviousValue.GameObject.GetComponent<CTurretBehaviour>().ReleaseControl();
-            }
-
-            if (m_cActiveTurretViewId.Value != null)
-            {
-                // Take control of turret
-                ActiveTurretViewId.GameObject.GetComponent<CTurretBehaviour>().TakeControl(NetworkViewId);
-            }
-        }
-    }
 
 
 // Member Fields
 
 
-    public GameObject m_cScreen = null;
     public Transform m_cChairModelTrans = null;
     public float m_fRotationMinX = -20.0f;
     public float m_fRotationMaxX =  15.0f;
 
-
-    CNetworkVar<TNetworkViewId> m_cActiveTurretViewId = null;
-
+    
     CModuleInterface m_cModuleInterface = null;
-    CCockpitBehaviour m_cCockpit = null;
+    CCockpitInterface m_cCockpitInterface = null;
 
 
-    static CTurretCockpitBehaviour s_cLocalOwnedTurretCockpitBehaviour = null;
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
 
 

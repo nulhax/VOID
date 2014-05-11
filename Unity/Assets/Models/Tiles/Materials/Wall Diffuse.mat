@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Wall Diffuse
+  m_Shader: {fileID: 4800000, guid: 31599e0812e430b41bb95fb8e833b972, type: 3}
+  m_ShaderKeywords: []
+  m_CustomRenderQueue: -1
+  m_SavedProperties:
+    serializedVersion: 2
+    m_TexEnvs:
+      data:
+        first:
+          name: _MainTex
+        second:
+          m_Texture: {fileID: 0}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Diffuse
+        second:
+          m_Texture: {fileID: 2800000, guid: d5cdcf37b490eb54f85339f473176a4c, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Normal
+        second:
+          m_Texture: {fileID: 2800000, guid: 9c35226185a5c7e4693e3c406628717f, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Specular
+        second:
+          m_Texture: {fileID: 2800000, guid: 9b148af8f77ec5442b635e9f7a804947, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _Emissive
+        second:
+          m_Texture: {fileID: 2800000, guid: 87d2f0a292f53d74b8d3946be7ce1100, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+    m_Floats:
+      data:
+        first:
+          name: _SpecPower
+        second: 3
+      data:
+        first:
+          name: _EmissivePowerR
+        second: 2
+      data:
+        first:
+          name: _EmissivePowerG
+        second: 2
+      data:
+        first:
+          name: _EmissivePowerB
+        second: .5
+      data:
+        first:
+          name: _EmissivePowerA
+        second: 1
+    m_Colors:
+      data:
+        first:
+          name: _Color
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _DiffuseCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _SpecCol
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorR
+        second: {r: 0, g: .349019617, b: .996078432, a: 1}
+      data:
+        first:
+          name: _EmissiveColorG
+        second: {r: 0, g: .349019617, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorB
+        second: {r: 1, g: 1, b: 1, a: 1}
+      data:
+        first:
+          name: _EmissiveColorA
+        second: {r: 0, g: 0, b: 0, a: 1}

@@ -71,10 +71,16 @@ public class CPlayerSuit : CNetworkMonoBehaviour
     }
 
 
+	public static float AirDensityLimit
+	{
+		get { return(0.3f); }
+	}
+
+
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
         m_fOxygen = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, k_fOxygenCapacity);
         m_EnviromentalOxygen = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, true);
@@ -110,7 +116,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
             }
             else
             {
-				if(currentFacility.GetComponent<CFacilityAtmosphere>().QuantityPercent < 25.0f)
+				if(currentFacility.GetComponent<CFacilityAtmosphere>().Density < AirDensityLimit)
                 {
 					m_AtmosphereConsumer.SetAtmosphereConsumption(false);
                     m_EnviromentalOxygen.Set(false);
@@ -177,15 +183,7 @@ public class CPlayerSuit : CNetworkMonoBehaviour
 	[ALocalOnly]
 	void OnEnviromentOxygenChange(bool _Breathable)
 	{
-		if(!_Breathable)
-		{
-			m_PreviousVisorDownState = CGameHUD.Visor.IsVisorDown;
-			CGameHUD.Visor.SetVisorState(true);
-		}
-		else
-		{
-			CGameHUD.Visor.SetVisorState(m_PreviousVisorDownState);
-		}
+		CGameHUD.Visor.SetVisorState(!_Breathable);
 	}
 
 

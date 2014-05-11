@@ -18,7 +18,7 @@ RenderSettings:
   m_FogDensity: .000199999995
   m_LinearFogStart: 0
   m_LinearFogEnd: 0
-  m_AmbientLight: {r: .227941155, g: .227941155, b: .227941155, a: 1}
+  m_AmbientLight: {r: .0735294223, g: .0735294223, b: .0735294223, a: 1}
   m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: .5
   m_FlareStrength: 1
@@ -146,6 +146,7 @@ Prefab:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+    - {fileID: 11400020, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_RootGameObject: {fileID: 1432749547}
   m_IsPrefabParent: 0
@@ -170,8 +171,8 @@ GameObject:
   - 114: {fileID: 1432749553}
   - 114: {fileID: 1432749554}
   - 114: {fileID: 1432749555}
-  - 114: {fileID: 1432749556}
   - 114: {fileID: 1432749562}
+  - 114: {fileID: 1432749556}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -287,15 +288,15 @@ MonoBehaviour:
 --- !u!114 &1432749556
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400020, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
-    type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c5ddf66bfa348f4fbe43d280992a120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cHud2d: {fileID: 100042, guid: d8b6a981729160647830fe71a9485155, type: 2}
 --- !u!114 &1432749557
 MonoBehaviour:
   m_ObjectHideFlags: 0

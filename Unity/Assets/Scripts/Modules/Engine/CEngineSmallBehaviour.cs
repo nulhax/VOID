@@ -64,7 +64,7 @@ public class CEngineSmallBehaviour: MonoBehaviour
 
     void OnEventComponentHealthChange(CActorHealth _cSender, float _fPreviousHealth, float _fNewHealth)
     {
-		if(CNetwork.IsServer)
+		if (CNetwork.IsServer)
 		{
 			// Get the combined health of the mechanical components
             //m_cEngineInterface.SetPropulsion( m_cEngineInterface.m_fInitialPropulsion * (currentCombinedHealth / combinedInitialHealth) );
@@ -74,8 +74,10 @@ public class CEngineSmallBehaviour: MonoBehaviour
 
 	void Update()
 	{
-		if(gameObject.GetComponent<CModulePrecipitation>().IsCompleted)
-			UpdateAnimation();
+        if (gameObject.GetComponent<CModuleInterface>().IsBuilt)
+        {
+            UpdateAnimation();
+        }
 	}
 
 

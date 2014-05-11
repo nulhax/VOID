@@ -17,24 +17,28 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 611bfad2ce776ff4c9fd971b5fadd896, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: 07eec16582a84ee4c91c4c7ac4efe382, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Specular
         second:
-          m_Texture: {fileID: 0}
+          m_Texture: {fileID: 2800000, guid: a082a9e6cb9242d45914619d8aba1fe5, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
+      data:
+        first:
+          name: _SpecPower
+        second: 3
       data:
         first:
           name: _Saturation
@@ -45,8 +49,8 @@ Material:
         second: 4
       data:
         first:
-          name: _SpecPower
-        second: 1
+          name: _GlowIntensity
+        second: 2
       data:
         first:
           name: _MinHeight
@@ -54,23 +58,19 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 1
+        second: 2.20000005
       data:
         first:
           name: _Amount
         second: 0
       data:
         first:
-          name: _GlowIntensity
-        second: 2
-      data:
-        first:
           name: _FadeDist
-        second: .300000012
+        second: .150000006
       data:
         first:
           name: _FadeDistRatio
-        second: .5
+        second: .797500014
       data:
         first:
           name: _NoiseFreq

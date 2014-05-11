@@ -50,7 +50,11 @@ public class CTile_ExteriorLowerCap : CTile
 		get { return(s_MetaDictionary); }
 	}
 	
-	
+	public override List<EDirection> RelevantDirections
+	{
+		get { return(s_RelevantDirections); }
+	}
+
 	// Member Methods
 	static CTile_ExteriorLowerCap()
 	{
@@ -94,6 +98,23 @@ public class CTile_ExteriorLowerCap : CTile
 	protected override int DetirmineTileMask()
 	{
 		int tileMask = 0;
+
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			bool neighbourCheck = NeighbourCheck(neighbour);
+			
+			if(!neighbourCheck)
+				continue;
+			
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
 
 		// Get lower tile interface
 		CGridPoint upperTilePos = new CGridPoint(m_TileInterface.m_GridPosition.ToVector + Vector3.up);

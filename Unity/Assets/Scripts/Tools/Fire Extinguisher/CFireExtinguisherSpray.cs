@@ -46,7 +46,7 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 // Member Functions
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_bActive = _cRegistrar.CreateReliableNetworkVar<bool>(OnNetworkVarSync, false);
 	}
@@ -127,7 +127,6 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	public void OnUseStart(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(true);
-        gameObject.GetComponent<CAudioCue>().Play(0.8f, true, 0);
         Debug.Log("OnUseStart");
 	}
 
@@ -152,7 +151,6 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
 	public void OnUseEnd(GameObject _cInteractableObject)
 	{
 		m_bActive.Set(false);
-        gameObject.GetComponent<CAudioCue>().StopAllSound();
 	}
 
 
@@ -163,10 +161,21 @@ public class CFireExtinguisherSpray : CNetworkMonoBehaviour
             if (m_bActive.Get())
             {
                 m_cSprayParticalSystem.Play();
+
+				CAudioCue[] audioCues = GetComponents<CAudioCue>();
+				foreach(CAudioCue cue in audioCues)
+				{
+					if(cue.m_strCueName == "FireExtinguisherSFX")
+					{
+
+						cue.PlayAll(transform, 1.0f);
+					}
+				}
             }
             else
             {
                 m_cSprayParticalSystem.Stop();
+                gameObject.GetComponent<CAudioCue>().FadeOut();
             }
         }
     }

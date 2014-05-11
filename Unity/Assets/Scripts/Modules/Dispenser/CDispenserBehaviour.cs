@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CModuleInterface))]
-public class CDispenserBehaviour : MonoBehaviour
+public class CDispenserBehaviour : CNetworkMonoBehaviour
 {
 
 // Member Types
@@ -36,15 +36,33 @@ public class CDispenserBehaviour : MonoBehaviour
 // Member Methods
 
 
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
+    {
+        m_tDuiConsoleViewId = _cRegistrar.CreateReliableNetworkVar<TNetworkViewId>(OnNetworkVarSync, null);
+    }
+
+
+    void Awake()
+    {
+        // Empty
+    }
+
+
 	void Start()
     {
         if (CNetwork.IsServer)
         {
-            // Register the event for building a tool
-            m_cDuiConsole.DUIRoot.GetComponent<CDUIDispenserRoot>().EventBuildToolButtonPressed += OnEventDuiButtonPressed;
-
             // Register for parent facility power active change
-            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
+            //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
+        }
+
+        if (GetComponent<CModuleInterface>().IsBuilt)
+        {
+            OnEventBuilt(GetComponent<CModuleInterface>());
+        }
+        else
+        {
+            GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
         }
     }
 
@@ -53,38 +71,85 @@ public class CDispenserBehaviour : MonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
+            //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange -= OnEventFacilityPowerActiveChange;
         }
     }
-	
 
-    [AServerOnly]
-    void SpawnTool(CToolInterface.EType _ToolType)
+
+    void Update()
     {
-        // Create a new object
-		GameObject NewTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_ToolType));
+        if (m_cPreviewTool != null)
+        {
+            m_cPreviewTool.transform.Rotate(Vector3.up, 20.0f * Time.deltaTime);
+        }
 
-        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
-
-        // Set the tool's position
-		NewTool.GetComponent<CNetworkView>().SetPosition(m_cToolSpawnLocation.position);
-		NewTool.GetComponent<CNetworkView>().SetEuler(m_cToolSpawnLocation.eulerAngles);
+        if (m_cDuiDispenserBehaviour != null &&
+            m_cDuiDispenserBehaviour.CurrentPanel == CDuiDispenserBehaviour.EPanel.BuildProgress)
+        {
+            CPrecipitativeMeshBehaviour cPrecipitativeMeshBehaviour = m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>();
+            cPrecipitativeMeshBehaviour.SetProgressRatio(m_cDuiDispenserBehaviour.BuildProgressRatio);
+        }
     }
 
 
-    [AServerOnly]
-    void OnEventDuiButtonPressed(CDUIDispenserRoot _cDui)
+    void DestroyToolPreview()
     {
-        CShipNaniteSystem cShipNaniteSystem = CGameShips.Ship.GetComponent<CShipNaniteSystem>();
-
-        // Check there is enough nanites for the selected tool
-		if(cShipNaniteSystem.NanaiteQuanity >= (float)_cDui.SelectedToolCost)
+        if (m_cPreviewTool != null)
         {
-            // Deduct the amount
-            cShipNaniteSystem.ChangeQuanity(-_cDui.SelectedToolCost);
+            Destroy(m_cPreviewTool);
+            m_cPreviewTool = null;
+        }
+    }
 
-            // Spawn the selected tool
-            SpawnTool(_cDui.SelectedToolType);
+
+    void OnEventBuilt(CModuleInterface _cSender)
+    {
+        // Create console on build
+        if (CNetwork.IsServer)
+        {
+            m_tDuiConsoleViewId.Value = m_cDuiScreen.GetComponent<CDUIConsole>().CreateUserInterface();
+        }
+    }
+
+
+    void OnEventDuiToolSelectChange(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType)
+    {
+        DestroyToolPreview();
+
+        m_cPreviewTool = CNetwork.Factory.LoadPrefab(CToolInterface.GetPrefabType(_eType));
+        m_cPreviewTool = GameObject.Instantiate(m_cPreviewTool.GetComponent<CToolInterface>().m_cPrecipitativeModel) as GameObject;
+        m_cPreviewTool.transform.parent = m_cTransToolSpawn;
+        m_cPreviewTool.transform.localPosition = Vector3.zero;
+        //m_cPreviewTool.transform.localScale = Vector3.one / 2;
+    }
+
+
+    void OnEventDuiToolBuild(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType)
+    {
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles.Play();
+
+        if ( CNetwork.IsServer &&
+            !m_bBuildingTool)
+        {
+            m_cDuiDispenserBehaviour.SimulateBuildProgress(_eType);
+            m_bBuildingTool = true;
+        }
+    }
+
+
+    void OnEventDuiBuildProgressFinished(CDuiDispenserBehaviour _cSender, CToolInterface.EType _eType)
+    {
+        gameObject.GetComponent<CAudioCue>().Play(0.3f, false, 0);
+
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().m_cParticles.Stop();
+        m_cPreviewTool.GetComponent<CPrecipitativeMeshBehaviour>().SetProgressRatio(0.0f);
+
+        if (CNetwork.IsServer)
+        {
+            GameObject cTool = CNetwork.Factory.CreateGameObject(CToolInterface.GetPrefabType(_eType));
+            cTool.GetComponent<CNetworkView>().SetPosition(m_cTransToolSpawn.position);
+
+            m_bBuildingTool = false;
         }
     }
 
@@ -96,16 +161,32 @@ public class CDispenserBehaviour : MonoBehaviour
     }
 
 
+    void OnNetworkVarSync(INetworkVar _cSyncedVar)
+    {
+        if (_cSyncedVar == m_tDuiConsoleViewId)
+        {
+            m_cDuiDispenserBehaviour = m_tDuiConsoleViewId.Value.GameObject.GetComponent<CDuiDispenserBehaviour>();
+
+            m_cDuiDispenserBehaviour.EventToolBuild += OnEventDuiToolBuild;
+            m_cDuiDispenserBehaviour.EventToolSelect += OnEventDuiToolSelectChange;
+            m_cDuiDispenserBehaviour.EventBuildProgressFinished += OnEventDuiBuildProgressFinished;
+        }
+    }
+
+
 // Member Fields
 
 
-    public CDUIConsole m_cDuiConsole = null;
-    public Transform m_cToolSpawnLocation = null;
+    public GameObject m_cDuiScreen = null;
+    public Transform m_cTransToolSpawn = null;
 
-    public CComponentInterface m_cCircuitryComponent = null;
-    public CComponentInterface m_cMechanicalComponent = null;
 
-    CDUIDispenserRoot m_DUIDispenser = null;
+    CNetworkVar<TNetworkViewId> m_tDuiConsoleViewId = null;
+
+    GameObject m_cPreviewTool = null;
+    CDuiDispenserBehaviour m_cDuiDispenserBehaviour = null;
+
+    bool m_bBuildingTool = false;
 
 
 };

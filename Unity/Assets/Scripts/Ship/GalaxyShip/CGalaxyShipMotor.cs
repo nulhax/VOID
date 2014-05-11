@@ -51,47 +51,54 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 
 // Member Properties
+
+
+    public Vector3 ThrustDirection
+    {
+        get { return (m_vThustDirection); }
+    }
+
 	
 	public float AngularAcceleration
 	{
-		get { return(m_fAngularAcceleration); }
+		get { return (m_fAngularAcceleration); }
 	}
 
 	public float AngularMaxSpeed
 	{
-		get { return(m_fAngularMaxSpeed); }
+		get { return (m_fAngularMaxSpeed); }
 	}
 
 	public float AngularVelocityDamp
 	{
-		get { return(m_fAngularVelocityDamp); }
+		get { return (m_fAngularVelocityDamp); }
 	}
 
 	public float AngularHandbreakpower
 	{
-		get { return(m_fAngularHandbreakpower); }
+		get { return (m_fAngularHandbreakpower); }
 	}
 
 	public float DirectionalMaxSpeed
 	{
-		get { return(m_fDirectionalMaxSpeed); }
+		get { return (m_fDirectionalMaxSpeed); }
 	}
 
 	public float DirectionalAcceleration
 	{
-		get { return(m_fDirectionalAcceleration); }
+		get { return (m_fDirectionalAcceleration); }
 	}
 
 	public float DirectionalHandbreakPower
 	{
-		get { return(m_fDirectionalHandbreakPower); }
+		get { return (m_fDirectionalHandbreakPower); }
 	}
 
 
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         for (int i = 0; i < (int)EThrusters.MAX; ++ i)
         {
@@ -133,6 +140,7 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
     void Update()
     {
 		UpdateVariables();
+        UpdateThrustDirection();
     }
 
 
@@ -145,9 +153,10 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         }
     }
 
+
 	void UpdateVariables()
 	{
-        float currentPropulsion = m_CachedShipPropulsionSystem.TotalPropulsion;
+        float currentPropulsion = m_CachedShipPropulsionSystem.PropulsionCurrent;
 
 		// Debug: Set the galaxy ship stuff based on the propulsion
 
@@ -158,8 +167,76 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 		m_fDirectionalMaxSpeed       = 400.0f;
 		m_fDirectionalAcceleration   = currentPropulsion;
-		m_fDirectionalHandbreakPower = 1.0f;
+        m_fDirectionalHandbreakPower = 1.0f;
 	}
+
+
+    void UpdateThrustDirection()
+    {
+        Quaternion qThustDirection = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        Quaternion qThustRotationDirection = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        m_bThustActive = false;
+
+
+        for (int i = 0; i < (int)EThrusters.MAX; ++i)
+        {
+            if (m_baThustersEnabled[i].Value)
+            {
+                switch ((EThrusters)i)
+                {
+                    case EThrusters.Forward:
+                        qThustDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.Backward:
+                        qThustDirection *= Quaternion.Euler(0.0f, 180.0f, 0.0f);
+                        break;
+
+                    case EThrusters.Up:
+                        qThustDirection *= Quaternion.Euler(-90.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.Down:
+                        qThustDirection *= Quaternion.Euler(90.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.StrafeLeft:
+                        qThustDirection *= Quaternion.Euler(0.0f, -90.0f, 0.0f);
+                        break;
+
+                    case EThrusters.StrafeRight:
+                        qThustDirection *= Quaternion.Euler(0.0f, 90.0f, 0.0f);
+                        break;
+
+                    case EThrusters.PitchUp:
+                        qThustRotationDirection *= Quaternion.Euler(-45.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.PitchDown:
+                        qThustRotationDirection *= Quaternion.Euler(45.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.RollLeft:
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.RollRight:
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.YawLeft:
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        break;
+
+                    case EThrusters.YawRight:
+                        qThustRotationDirection *= Quaternion.Euler(0.0f, 0.0f, 0.0f);
+                        break;
+                }
+
+                m_bThustActive = true;
+            }
+        }
+    }
 
 
     void UpdateDirectionalThusters()
@@ -288,22 +365,22 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
     CNetworkVar<bool>[] m_baThustersEnabled = new CNetworkVar<bool>[(int)EThrusters.MAX];
 
+    Vector3 m_vThustDirection = new Vector3();
+
+	CShipPropulsionSystem m_CachedShipPropulsionSystem = null;
 
     float[] m_faThruserPowerRatios = new float[(int)EThrusters.MAX];
-
-
-	private CShipPropulsionSystem m_CachedShipPropulsionSystem = null;
-
 
 	float m_fAngularAcceleration   = 0.0f;
 	float m_fAngularMaxSpeed       = 0.0f;
 	float m_fAngularVelocityDamp   = 0.0f;
 	float m_fAngularHandbreakpower = 0.0f;
 
-
     float m_fDirectionalMaxSpeed       = 0.0f;
     float m_fDirectionalAcceleration   = 0.0f;
     float m_fDirectionalHandbreakPower = 0.0f;
+
+    bool m_bThustActive = false;
 
 
 // Server Members Fields

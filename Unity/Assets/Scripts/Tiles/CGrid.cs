@@ -53,7 +53,7 @@ public class CGrid : MonoBehaviour
 		get { return(m_TileFactory); } 
 	}
 
-	public List<CTileInterface> Tiles
+	public List<CTileInterface> TileInterfaces
 	{
 		get { return(new List<CTileInterface>(m_GridBoard.Values)); }
 	}
@@ -73,7 +73,7 @@ public class CGrid : MonoBehaviour
 	private void OnPlayerJoin(ulong _PlayerId)
 	{
 		// Sync each tile to the player
-		foreach(CTileInterface tileInterface in Tiles)
+		foreach(CTileInterface tileInterface in TileInterfaces)
 		{
 			tileInterface.SyncAllTilesToPlayer(_PlayerId);
 		}
@@ -128,35 +128,20 @@ public class CGrid : MonoBehaviour
 		return(tile);
 	}
 
-	public List<CTileInterface> ImportTileInformation(List<CTileInterface> _Tiles)
+	public void ImportTileInformation(List<CTileInterface> _ImportTiles)
 	{
-		// Keep a list of tiles which werent modified
-		List<CTileInterface> unmodifiedTiles = Tiles;
-		List<CTileInterface> newTiles = new List<CTileInterface>();
-	
-		// Iterate all the new tiles to use
-		foreach(CTileInterface tile in _Tiles)
-		{
-			// If the tile exists, remove from the list of unmodified tiles
-			CTileInterface existingTile = GetTileInterface(tile.m_GridPosition);
-			if(existingTile != null)
-				unmodifiedTiles.Remove(existingTile);
+		// Remove all tiles within the grid currently
+		foreach(CTileInterface tileInterface in TileInterfaces)
+			RemoveTile(tileInterface.m_GridPosition);
 
-			// Place the tile and clone the info from the original
-			CTileInterface newTile = PlaceTile(tile.m_GridPosition);
-			newTile.Clone(tile);
-			newTiles.Add(newTile);
-		}
+		// Place the new tiles
+		Dictionary<CTileInterface, CTileInterface> newTilePairs = new Dictionary<CTileInterface, CTileInterface>();
+		foreach(CTileInterface importTileInterface in _ImportTiles)
+			newTilePairs.Add(importTileInterface, PlaceTile(importTileInterface.m_GridPosition));
 
-		// Remove all tiles that dont exist anymore
-		foreach(CTileInterface tile in unmodifiedTiles)
-			RemoveTile(tile.m_GridPosition);
-
-		// Update all tiles meta data
-		foreach(CTileInterface tile in newTiles)
-			tile.UpdateAllCurrentTileMetaData();
-
- 		return(newTiles);
+		// Clone each of the tiles created
+		foreach(var tilePairs in newTilePairs)
+			tilePairs.Value.Clone(tilePairs.Key);
 	}
 
 	[AServerOnly]
@@ -187,13 +172,13 @@ public class CGrid : MonoBehaviour
 
 			m_GridBoard.Add(_Position.ToString(), tileInterface);
 
-			// Update neighbours
-			tileInterface.FindNeighbours();
-			tileInterface.UpdateNeighbourhood();
-
 			if(EventTileInterfaceCreated != null)
 				EventTileInterfaceCreated(tileInterface);
 		}
+
+		// Update neighbours
+		tileInterface.FindNeighbours();
+		tileInterface.UpdateNeighbourhood();
 	
 		// Disable all tile types
 		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
@@ -206,18 +191,25 @@ public class CGrid : MonoBehaviour
 	public void RemoveTile(CGridPoint _Position)
 	{
 		CTileInterface tileInterface = GetTileInterface(_Position);
-		
-		// Create if it doesnt exist yet
+
 		if(tileInterface == null)
 			return;
 
+		// Remove from the board
 		m_GridBoard.Remove(_Position.ToString());
 
-		// Update the neighbourhood
-		tileInterface.UpdateNeighbourhood();
+		tileInterface.Release();
+	}
 
-		// Destroy
-		CNetwork.Factory.DestoryGameObject(tileInterface.gameObject);
+	[ContextMenu("Update All Tile Interface Current Tile Meta Data")]
+	[AServerOnly]
+	public void UpdateAllTileInterfaceCurrentTileMetaData()
+	{
+		// Update all tiles meta data
+		foreach(CTileInterface tileInterface in TileInterfaces)
+		{
+			tileInterface.UpdateAllCurrentTileMetaData();
+		}
 	}
 }
 

@@ -47,7 +47,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     static CNetworkStream   s_cSerializeStream = new CNetworkStream();  
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
        m_bRagdollState = _cRegistrar.CreateReliableNetworkVar<byte>(OnNetworkVarSync, (byte)ERagdollState.Invalid);
     }
@@ -115,6 +115,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     // Use this for initialization
     public void Initialise ()
 	{
+		IntitializeLimbs();
+
         SetKinematicRagdoll();		
         SetRagdollLayer();
 
@@ -204,6 +206,20 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             }
         }  
     }
+
+	void IntitializeLimbs()
+	{
+		Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
+		
+		foreach (Transform body in ragdollBones)
+		{
+			if(body.gameObject.GetComponent<Rigidbody>())
+			{
+				//Add sound effects for each limb with a rigidbody
+				body.gameObject.AddComponent<CRagDollSFX>();
+			}
+		}
+	}
 
     void SetDynamicRagdoll()
     {

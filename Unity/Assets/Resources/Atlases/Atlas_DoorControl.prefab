@@ -114,10 +114,10 @@ MonoBehaviour:
     borderRight: 15
     borderTop: 15
     borderBottom: 15
-    paddingLeft: 2
-    paddingRight: 1
-    paddingTop: 2
-    paddingBottom: 1
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
   - name: Lock Image Closed
     x: 124
     y: 86

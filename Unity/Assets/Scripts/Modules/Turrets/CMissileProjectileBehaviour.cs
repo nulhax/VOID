@@ -35,7 +35,7 @@ public class CMissileProjectileBehaviour : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
         _cRegistrar.RegisterRpc(this, "RemoteDestroy");
         _cRegistrar.RegisterRpc(this, "RemoteInitNoTarget");
@@ -167,8 +167,10 @@ public class CMissileProjectileBehaviour : CNetworkMonoBehaviour
         {
             if (_cCollider.GetComponent<CEnemyShip>() != null)
             {
-                // Destory with hit target
+                // Destroy with hit target
                 InvokeRpcAll("RemoteDestroy", _cCollider.gameObject.GetComponent<CNetworkView>().ViewId);
+
+                _cCollider.gameObject.GetComponent<CActorHealth>().health -= 70.0f;
             }
         }
     }

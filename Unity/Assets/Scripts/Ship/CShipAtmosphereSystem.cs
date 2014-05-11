@@ -32,11 +32,28 @@ public class CShipAtmosphereSystem : CNetworkMonoBehaviour
 
 // Member Properties
 
+
+    public float GenerationAvailableRatio
+    {
+        get 
+        {
+            if (GenerationRateMax == 0.0f) return (0.0f);
+
+            return (GenerationRateCurrent / GenerationRateMax); 
+        }
+    }
+
 	
-	public float GenerationRate
+	public float GenerationRateCurrent
 	{
-		get { return(m_fTotalGenerationRate.Value); }
+		get { return(m_fGenerationRateCurrent.Value); }
 	}
+
+
+    public float GenerationRateMax
+    {
+        get { return (m_fGenerationRateMax.Value); }
+    }
 	
 
 	public float Quality
@@ -48,27 +65,27 @@ public class CShipAtmosphereSystem : CNetworkMonoBehaviour
 // Member Methods
 
 
-	public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		m_fQuality = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fMaxGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-		m_fTotalGenerationRate = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fGenerationRateMax = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+		m_fGenerationRateCurrent = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
 
 
     public void ChangeMaxGenerationRate(float _fValue)
     {
-        m_fMaxGenerationRate.Value += _fValue;
+        m_fGenerationRateMax.Value += _fValue;
 
-        Debug.Log(string.Format("Ship atmosphere generation max change({0}) max generation({1})", _fValue, m_fMaxGenerationRate.Value));
+        Debug.Log(string.Format("Ship atmosphere generation max change({0}) max generation({1})", _fValue, m_fGenerationRateMax.Value));
     }
 
 
     public void ChangeGenerationRate(float _fValue)
     {
-        m_fTotalGenerationRate.Value += _fValue;
+        m_fGenerationRateCurrent.Value += _fValue;
 
-        Debug.Log(string.Format("Ship atmosphere generation total change({0}) total generation({1})", _fValue, m_fTotalGenerationRate.Value));
+        Debug.Log(string.Format("Ship atmosphere generation total change({0}) total generation({1})", _fValue, m_fGenerationRateCurrent.Value));
     }
 
 
@@ -89,8 +106,8 @@ public class CShipAtmosphereSystem : CNetworkMonoBehaviour
 
 
     CNetworkVar<float> m_fQuality = null;
-    CNetworkVar<float> m_fMaxGenerationRate = null;
-	CNetworkVar<float> m_fTotalGenerationRate = null;
+    CNetworkVar<float> m_fGenerationRateMax = null;
+	CNetworkVar<float> m_fGenerationRateCurrent = null;
 
 
 }

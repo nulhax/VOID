@@ -91,7 +91,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 // Member Methods
 
 
-    public override void RegisterNetworkEntities(CNetworkViewRegistrar _cRegistrar)
+    public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
 		m_fHeadEulerX = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
         m_fHeadEulerY = _cRegistrar.CreateUnreliableNetworkVar<float>(OnNetworkVarSync, 0.05f);
@@ -191,8 +191,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
             gameObject.GetComponent<CActorLocator>().EventEnterShip += OnPlayerEnterShip;
 			gameObject.GetComponent<CActorLocator>().EventLeaveShip += OnPlayerLeaveShip;
 
-            // Add audoio listener to head
-            //Head.AddComponent<AudioListener>();
+			if(gameObject == CGamePlayers.SelfActor)
+			{
+            	// Add audoio listener to head
+            	Head.AddComponent<AudioListener>();
+			}
         }
 
         if (CNetwork.IsServer)
