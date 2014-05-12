@@ -23,16 +23,18 @@ using System.Collections.Generic;
 public class CBulletBehaviour : MonoBehaviour
 {
 
-// Member Types
+//  Member Types
 
 
-// Member Delegates & Events
+//  Member Delegates & Events
 
 
-// Member Properties
+//  Member Properties
 
+//  Member Fields
+    bool m_bPlayedAudio = false;
 
-// Member Methods
+//  Member Methods
 
 
 	public void Start()
@@ -53,6 +55,12 @@ public class CBulletBehaviour : MonoBehaviour
 
 	void OnCollisionEnter(Collision _cCollision)
 	{
+        if(!m_bPlayedAudio)
+        {
+            m_bPlayedAudio = true;
+            GetComponent<CAudioCue>().Play(1.0f, false, -1);
+        }
+
 		if (_cCollision.gameObject.GetComponent<CToolInterface>() == null)
 		{
 			if (_cCollision.gameObject.GetComponent<CPlayerHealth>() != null)

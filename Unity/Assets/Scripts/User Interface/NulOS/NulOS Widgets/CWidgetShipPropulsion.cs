@@ -58,8 +58,8 @@ public class CWidgetShipPropulsion : MonoBehaviour
 	public void UpdatePropulsionformation()
 	{
 		// Get the ship generation and generation potential
-		float shipGeneration = CGameShips.Ship.GetComponent<CShipPropulsionSystem>().TotalPropulsion;
-		float shipGenerationPotential = CGameShips.Ship.GetComponent<CShipPropulsionSystem>().MaxPropulsion;
+		float shipGeneration = CGameShips.Ship.GetComponent<CShipPropulsionSystem>().PropulsionCurrent;
+		float shipGenerationPotential = CGameShips.Ship.GetComponent<CShipPropulsionSystem>().PropulsionMax;
 		
 		// Calculate the value ratio
 		float value = shipGeneration/shipGenerationPotential;

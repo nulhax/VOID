@@ -50,11 +50,14 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 	static SpeexJitterBuffer jitterBuffer = new SpeexJitterBuffer(m_eDecoder);
 	static int m_iFrameSize = m_cEncoder.FrameSize;
 		
-	public AudioClip m_acVoiceInput;
+	AudioClip m_acVoiceInput;
+	public bool m_bUsePushToTalk = true;
 	float m_fRecordingTimer;
 	const int m_kiRecordTime = 1;
 	const int m_kiNumDecodeThreads = 3;
 	bool m_bRecording = false;
+
+	bool m_bPushToTalkActive = false;
 	
 	static CNetworkStream s_AudioPacket = new CNetworkStream();
 	static Queue<DecodeInformation> s_decodedFrames = new Queue<DecodeInformation>();
@@ -140,60 +143,64 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 
 	void HandlePushToTalk(CUserInput.EInput _eInput, bool _bDown)
 	{
-		if(Microphone.devices.Length != 0)
-		{
-			if(m_bRecording == false && _bDown)
-			{
-				m_acVoiceInput = Microphone.Start(Microphone.devices[0], true, m_kiRecordTime, 44000);
-
-				//start timer
-				m_fRecordingTimer = 0.0f; 
-				m_bRecording = true;
-
-			}
-		}		
+		m_bPushToTalkActive = _bDown;
 	}
 
 	void UpdateRecording()
 	{
+		//Update current recording
 		if (m_bRecording) 
 		{
 			m_fRecordingTimer += Time.deltaTime;
 
 			if (m_fRecordingTimer >= (float)m_kiRecordTime) 
 			{
-					Microphone.End (Microphone.devices [0]);
-	
-					// Calculate sound size (To the nearest frame size)
-					int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
-					iAudioDataSize -= iAudioDataSize % m_iFrameSize;
-	
-					// Extract audio data through the bum
-					float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
-					m_acVoiceInput.GetData (fAudioData, 0);
-	
-					// Convert to short
-					short[] saAudioData = new short[fAudioData.Length];
-	
-					for (int i = 0; i < fAudioData.Length; ++i) 
-                    {
-							saAudioData [i] = (short)(fAudioData [i] * 32767.0f);
-					}					
-	
-					AudioData voiceData = new AudioData ();
-					voiceData.iAudioDataSize = iAudioDataSize;
-					voiceData.iFrequency = m_acVoiceInput.frequency;
-					voiceData.saData = saAudioData;				
-	
-					m_bEncoding = true;
-	
-					m_EncodeThread = new Thread (new ParameterizedThreadStart (EncodeAudio));
-					m_EncodeThread.Start ((object)voiceData);
-	
-					m_bRecording = false;
-				}
-		    }
+				Microphone.End (Microphone.devices [0]);
+
+				// Calculate sound size (To the nearest frame size)
+				int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
+				iAudioDataSize -= iAudioDataSize % m_iFrameSize;
+
+				// Extract audio data through the bum
+				float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
+				m_acVoiceInput.GetData (fAudioData, 0);
+
+				// Convert to short
+				short[] saAudioData = new short[fAudioData.Length];
+
+				for (int i = 0; i < fAudioData.Length; ++i) 
+            {
+						saAudioData [i] = (short)(fAudioData [i] * 32767.0f);
+				}					
+
+				AudioData voiceData = new AudioData ();
+				voiceData.iAudioDataSize = iAudioDataSize;
+				voiceData.iFrequency = m_acVoiceInput.frequency;
+				voiceData.saData = saAudioData;				
+
+				m_bEncoding = true;
+
+				m_EncodeThread = new Thread (new ParameterizedThreadStart (EncodeAudio));
+				m_EncodeThread.Start ((object)voiceData);
+
+				m_bRecording = false;
+			}
 		}
+
+		//return if push to talk is enabled, but key is not pressed
+		if(m_bUsePushToTalk && !m_bPushToTalkActive) return;		
+		
+		//Take new input when ready
+		if(Microphone.devices.Length != 0 && !m_bRecording)
+		{
+			m_acVoiceInput = Microphone.Start(Microphone.devices[0], true, m_kiRecordTime, 44000);
+			
+			//start timer
+			m_fRecordingTimer = 0.0f; 
+			m_bRecording = true;			
+		}
+	}
+
 	
 	void EncodingUpdate()
 	{
@@ -226,17 +233,12 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 			}
 	
 			// Play audio at location of sender
-			GameObject senderNetworkView = CNetworkView.FindUsingViewId(senderViewID).gameObject;
-			AudioSource senderAudioSource = senderNetworkView.gameObject.GetComponent<AudioSource>();
+			GameObject senderNetworkView = CNetworkView.FindUsingViewId(senderViewID).gameObject;			
 			
 			AudioClip newClip = AudioClip.Create("Test", faDecodedAudioData.Length, 1, frequency, true, false);
 			newClip.SetData(faDecodedAudioData, 0);
-						
-			senderAudioSource.clip = newClip;
-			senderAudioSource.volume = 1.0f;
-			
-			//AudioSystem.GetInstance.Play(newClip, senderNetworkView.gameObject.transform.position, 1.0f, 1.0f, false, 0.0f, AudioSystem.SoundType.SOUND_EFFECTS, true);
-			CAudioSystem.Play(senderAudioSource, 1.0f, 1.0f, false, 0.0f, CAudioSystem.SoundType.SOUND_EFFECTS, true);								
+
+			CAudioSystem.Play(newClip, senderNetworkView.gameObject.transform, 1.0f, 1.0f, false, 0.0f, CAudioSystem.SoundType.SOUND_OTHER, true);						
 		}
 		
 		if(s_framesToDecode.Count > 0)

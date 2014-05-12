@@ -826,8 +826,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
 												Vector3.one * Random.Range(5.0f, 10.0f), // Scale
-												Random.onUnitSphere * Random.Range(10.0f, 25.0f), // Linear velocity.
-												Random.onUnitSphere * Random.Range(0.25f, 0.5f), // Angular velocity.
+												Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
+                                                Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
@@ -853,8 +853,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
 													Vector3.one * Random.Range(2.0f, 8.0f), // Scale
-                                                    Random.onUnitSphere * Random.Range(10.0f, 25.0f), // Linear velocity.
-                                                    Random.onUnitSphere * Random.Range(0.25f, 0.5f), // Angular velocity.
+                                                    Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
+                                                    Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
 													));

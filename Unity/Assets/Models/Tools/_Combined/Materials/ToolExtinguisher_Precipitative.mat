@@ -49,20 +49,20 @@ Material:
         second: 4
       data:
         first:
+          name: _GlowIntensity
+        second: 2
+      data:
+        first:
           name: _MinHeight
         second: -.280000001
       data:
         first:
           name: _MaxHeight
-        second: .0500000007
+        second: .280000001
       data:
         first:
           name: _Amount
-        second: 1
-      data:
-        first:
-          name: _GlowIntensity
-        second: 2
+        second: 0
       data:
         first:
           name: _FadeDist

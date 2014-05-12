@@ -58,6 +58,12 @@ public class CPlayerSkeleton : MonoBehaviour
     {
         get { return (m_cNaniteArmBandLaserNode); }
     }
+
+    //Member methods
+    void Start()
+    {
+        m_vDefaultNaniteArmBandRotation = m_cNaniteArmBand.transform.localEulerAngles;
+    }
 	
 	//Member variables
 
@@ -70,5 +76,7 @@ public class CPlayerSkeleton : MonoBehaviour
 
     public GameObject m_cNaniteArmBand;
     public GameObject m_cNaniteArmBandLaserNode;
+
+    public Vector3 m_vDefaultNaniteArmBandRotation = new Vector3();
 
 }

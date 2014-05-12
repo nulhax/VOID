@@ -32,15 +32,26 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 // Member Properties
 
 
-	public float TotalPropulsion
+    public float PropulsionAvailableRation
+    {
+        get 
+        {
+            if (PropulsionMax <= 0.0f) return (0.0f);
+
+            return (PropulsionCurrent / PropulsionMax); 
+        }
+    }
+
+
+	public float PropulsionCurrent
 	{
-        get { return (m_fTotalPropulsion.Value); } 
+        get { return (m_fPropulsionCurrent.Value); } 
 	}
 
 
-    public float MaxPropulsion
+    public float PropulsionMax
     {
-        get { return (m_fMaxPropulsion.Value); }
+        get { return (m_fPropulsionMax.Value); }
     }
 
 
@@ -49,29 +60,26 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
-        m_fTotalPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
-        m_fMaxPropulsion = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fPropulsionCurrent = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+        m_fPropulsionMax = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 	}
-
-
-    [AServerOnly]
 
 
     [AServerOnly]
     public void ChangeMaxPropolsion(float _fAmount)
     {
-        m_fMaxPropulsion.Value += _fAmount;
+        m_fPropulsionMax.Value += _fAmount;
 
-        Debug.Log(string.Format("Ship propulsion change({0}) max propulsion({1})", _fAmount, m_fMaxPropulsion.Value));
+        Debug.Log(string.Format("Ship propulsion change({0}) max propulsion({1})", _fAmount, m_fPropulsionMax.Value));
     }
 
 
     [AServerOnly]
     public void ChangePropulsion(float _fAmount)
     {
-        m_fTotalPropulsion.Value += _fAmount;
+        m_fPropulsionCurrent.Value += _fAmount;
 
-        Debug.Log(string.Format("Ship propulsion total change({0}) total propulsion({1})", _fAmount, m_fTotalPropulsion.Value));
+        Debug.Log(string.Format("Ship propulsion total change({0}) total propulsion({1})", _fAmount, m_fPropulsionCurrent.Value));
     }
 
 	
@@ -95,8 +103,8 @@ public class CShipPropulsionSystem : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CNetworkVar<float> m_fTotalPropulsion = null;
-    CNetworkVar<float> m_fMaxPropulsion = null;
+    CNetworkVar<float> m_fPropulsionCurrent = null;
+    CNetworkVar<float> m_fPropulsionMax = null;
 
 
 }

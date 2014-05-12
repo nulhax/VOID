@@ -1514,7 +1514,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100036}
-  m_LocalRotation: {x: .677839696, y: -.32393074, z: .595496774, w: -.284580112}
+  m_LocalRotation: {x: -.391897351, y: .588571608, z: -.391897351, w: .588571608}
   m_LocalPosition: {x: -0, y: .13877441, z: -.0435418673}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1648,7 +1648,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100086}
-  m_LocalRotation: {x: .510975778, y: -.0554306582, z: -.0330433175, w: -.857169449}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.66361499, z: .100000001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -2429,6 +2429,7 @@ MonoBehaviour:
   m_headlessAvatar: {fileID: 9000000, guid: bbc63a354b778224094d3f0205d03c3c, type: 3}
   m_cNaniteArmBand: {fileID: 100140}
   m_cNaniteArmBandLaserNode: {fileID: 100148}
+  m_vDefaultNaniteArmBandRotation: {x: 0, y: 0, z: 0}
 --- !u!135 &13500000
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -31,6 +31,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 		set { m_bInputDisabled = value; }
 	}
 	
+    public bool IsPLayerJumping
+    {
+        get{return(m_bJumping);}
+    }
+
 	// Member Fields
 	
 	//Animation States
@@ -59,12 +64,16 @@ public class CThirdPersonAnimController : MonoBehaviour
 	bool m_bUsedSlide = false;
 	bool m_bHoldTool = false;
 	bool m_bInputDisabled = false;
+    bool m_bJumping = false;
 
-    CPlayerMotor.EState m_eMotorState;
+    float m_fTimeLastGround = 0.0f;
+    float m_fFallStateTriggerTime = 0.2f;
 	
 	//Timers
 	float m_fTimeLastGrounded = 0.0f;
-	const float m_kfFallStateEntryTime = 0.3f;
+	const float m_kfFallStateEntryTime = 0.35f;
+
+    bool bLogged = false;
 	
 	// Member Methods
 	
@@ -74,38 +83,29 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerMotor>();
 		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
-        m_PlayerMotor.EventStateChange += NotifyStateChange;
-
+		
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		//Get collider
-		m_physCollider = GetComponent<CapsuleCollider>();
+		m_physCollider = GetComponent<CapsuleCollider>();	
 	}
 
     void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)
 	{
 		m_MovementState = _usNewSates;
-	}
-
-    void NotifyStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
-    {
-        m_eMotorState = _eNew;
-    }
-
+        //m_previousMovementState = _usNewSates;	
+	}	
 	// Update is called once per frame
 	void Update () 
 	{
-        if (m_eMotorState == CPlayerMotor.EState.AirThustersInShip ||
-            m_eMotorState == CPlayerMotor.EState.AirThustersInSpace)
-        {
-            //empty until I have animations for this case
-
-           // return;
-        }
-
 		if(m_bInputDisabled == false)
-		{			
+		{		
+			if(CGamePlayers.SelfActor != gameObject)
+			{
+				int i = 0;
+			}
+
 			bool bWalkForward;
 			bool bWalkBack;
 			bool bSprint;
@@ -127,8 +127,13 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
 			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
-			m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded);	
-			
+
+            if(m_PlayerMotor.IsGrounded)
+            {
+                m_fTimeLastGround = Time.time;
+                m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded); 
+                bLogged = false;
+            }          	
 
 			if(bStrafeLeft)
 			{
@@ -143,8 +148,19 @@ public class CThirdPersonAnimController : MonoBehaviour
 				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
 			}
 
-			AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);	// set our currentState variable to the current state of the Base Layer (0) of animation
+            AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);  // set our currentState variable to the current state of the Base Layer (0) of animation
 			
+            //Only enter fall state after a small amount of time, to avoid false positives.
+            if(Time.time > m_fTimeLastGround + m_fFallStateTriggerTime && currentBaseState.nameHash != m_iSlideState)
+            {
+                m_ThirdPersonAnim.SetBool("Grounded", false); 
+
+				if(CGamePlayers.SelfActor != gameObject)
+				{
+					int i = 0;
+				}
+            }       
+
 			//-------------------------------------------
 			//----------------Jump State-----------------
 			//-------------------------------------------
@@ -268,6 +284,16 @@ public class CThirdPersonAnimController : MonoBehaviour
             m_ThirdPersonAnim.enabled = true;
         }
 	}
+
+    public void OnBeginJumpingAnimation()
+    {
+        m_bJumping = true;
+    }
+
+    public void OnEndJumpingAnimation()
+    {
+        m_bJumping = false;
+    }
 }
 
 

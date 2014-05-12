@@ -115,6 +115,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     // Use this for initialization
     public void Initialise ()
 	{
+		IntitializeLimbs();
+
         SetKinematicRagdoll();		
         SetRagdollLayer();
 
@@ -204,6 +206,20 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             }
         }  
     }
+
+	void IntitializeLimbs()
+	{
+		Transform[] ragdollBones = m_RootSkeleton.GetComponentsInChildren<Transform>();
+		
+		foreach (Transform body in ragdollBones)
+		{
+			if(body.gameObject.GetComponent<Rigidbody>())
+			{
+				//Add sound effects for each limb with a rigidbody
+				body.gameObject.AddComponent<CRagDollSFX>();
+			}
+		}
+	}
 
     void SetDynamicRagdoll()
     {

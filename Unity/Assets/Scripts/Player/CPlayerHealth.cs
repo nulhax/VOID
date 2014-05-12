@@ -178,9 +178,6 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (audioCue == null)
 			audioCue = gameObject.AddComponent<CAudioCue>();
 
-		m_PlayerForceDamageSoundIndex = audioCue.AddSound("Audio/PlayerForceDamage", 0.0f, 0.0f, false);
-		m_PlayerForceDeathSoundIndex = audioCue.AddSound("Audio/PlayerForceDeath", 0.0f, 0.0f, false);
-
 		m_EventHealthChanged += OnHealthChange;
 		m_EventHealthStateChanged += OnHealthStateChange;
 	}
@@ -332,7 +329,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
 		{
 			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
-			//GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDamageSoundIndex);
+            GetComponent<CAudioCue>().Play(transform, 1.0f, false, -1, 10, 12);
 		}
 	}
 
@@ -344,7 +341,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		// Play ooies.
         if (_eHealthCurrentState == HealthState.DOWNED)
         {
-            //GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_PlayerForceDeathSoundIndex);
+            GetComponent<CAudioCue>().Play(1.0f,false,8);
         }
 	}
 

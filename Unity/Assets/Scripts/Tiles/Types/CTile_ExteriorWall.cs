@@ -76,7 +76,7 @@ public class CTile_ExteriorWall : CTile
 		             new EDirection[]{ EDirection.North, EDirection.East, EDirection.South, EDirection.West });
 		
 		AddMetaEntry(EType.Hall,
-		             new EDirection[]{ EDirection.West, EDirection.East });
+		             new EDirection[]{ EDirection.North, EDirection.South });
 		
 		AddMetaEntry(EType.Edge,
 		             new EDirection[]{ EDirection.East });

@@ -39,12 +39,12 @@ public class CMetaData : MonoBehaviour
     {
         if (m_mData.ContainsKey(_sName))
         {
-            Debug.LogError(string.Format("Meta data key ({0}) already exists in directory.", _sName));
-
-            return ;
+            m_mData[_sName] = _cValue;
         }
-
-        m_mData.Add(_sName, _cValue);
+        else
+        {
+            m_mData.Add(_sName, _cValue);
+        }
     }
 
 
