@@ -196,6 +196,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
             	// Add audoio listener to head
             	Head.AddComponent<AudioListener>();
 			}
+
+			m_vInitialOffset = Head.transform.localPosition;
         }
 
         if (CNetwork.IsServer)
@@ -244,6 +246,11 @@ public class CPlayerHead : CNetworkMonoBehaviour
             GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(0.0f,
                                                                                                                                          90.0f + Head.transform.localEulerAngles.y,
                                                                                                                                         -67.31491f + Head.transform.localEulerAngles.x);
+
+		if(gameObject == CGamePlayers.SelfActor && m_bLerpInProgress)
+		{
+			LerpToOffset();
+		}
     }
 
     void FixedUpdate()
@@ -327,6 +334,42 @@ public class CPlayerHead : CNetworkMonoBehaviour
                                                                 Quaternion.Euler(m_fHeadEulerX.Value, m_fHeadEulerY.Value, 0.0f),
                                                                 360.0f * Time.fixedDeltaTime);
     }
+
+	void ShiftToRunOffset()
+	{
+		if(!m_bLerpInProgress && !m_bHeadOffset)
+		{
+			m_bHeadOffset = true;
+			m_bLerpInProgress = true;
+			m_vOffsetLerpTimer = 0.0f;
+			m_vOffsetTarget = new Vector3(m_vInitialOffset.x, m_vInitialOffset.y, m_fRunningOffsetZ);
+		}
+	}
+
+	void ShiftToStationaryOffset()
+	{
+		if(!m_bLerpInProgress && m_bHeadOffset)
+		{
+			m_bHeadOffset = false;
+			m_bLerpInProgress = true;
+			m_vOffsetLerpTimer = 0.0f;
+			m_vOffsetTarget = m_vInitialOffset;
+		}
+	}
+
+	void LerpToOffset()
+	{
+		if(m_vOffsetLerpTimer < m_fLerpDuration)
+		{			
+			m_vOffsetLerpTimer += Time.deltaTime;
+			float fLerpfactor = m_vOffsetLerpTimer / m_fLerpDuration;
+			Head.transform.localPosition = Vector3.Lerp(Head.transform.localPosition, m_vOffsetTarget, fLerpfactor);
+		}
+		else
+		{
+			m_bLerpInProgress = false;
+		}
+	}
 
 
     [ALocalOnly]
@@ -419,6 +462,15 @@ public class CPlayerHead : CNetworkMonoBehaviour
     float m_fMouseDeltaX = 0.0f;
     float m_fMouseDeltaY = 0.0f;
 	float m_fLocalXRotation = 0.0f;
+
+	//Determines where player head will be offset to on z axis when running
+	bool m_bLerpInProgress = false;
+	bool m_bHeadOffset = false;
+	float m_fRunningOffsetZ = 0.25f;
+	float m_vOffsetLerpTimer = 0;
+	float m_fLerpDuration = 0.75f;
+	Vector3 m_vInitialOffset;
+	Vector3 m_vOffsetTarget;
 
 
 };

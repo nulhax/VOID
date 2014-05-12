@@ -74,7 +74,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	const float m_kfFallStateEntryTime = 0.35f;
 
     bool bLogged = false;
-	
+
 	// Member Methods
 	
 	// Use this for initialization
@@ -126,7 +126,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 			m_ThirdPersonAnim.SetBool("WalkBack", bWalkBack);
 			m_ThirdPersonAnim.SetBool("Sprint", bSprint);
 			m_ThirdPersonAnim.SetBool("Jump", bJump);
-			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);	
+			m_ThirdPersonAnim.SetBool("Crouch", bCrouch);
 
             if(m_PlayerMotor.IsGrounded)
             {
@@ -219,6 +219,9 @@ public class CThirdPersonAnimController : MonoBehaviour
 					Quaternion newRotation = Quaternion.Euler(RagdollHeadRotation.x, PlayerHeadRotation.y, PlayerHeadRotation.z);
 
 					gameObject.GetComponent<CPlayerHead>().Head.transform.rotation = newRotation;
+					Vector3 offset = gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition;
+					offset.y += 0.3f;
+					gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition = offset;
 				}		
 				else
 				{

@@ -20,6 +20,18 @@ public class CPlayerSoundEffects : MonoBehaviour
         }
 	}
 
+//	void OnMovementStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
+//	{
+//		if(_eNew == CPlayerMotor.EState.AirThustersInSpace)
+//		{
+//			CAudioSystem.Instance.SetOccludeAll(true);
+//		}
+//		else
+//		{
+//			CAudioSystem.Instance.SetOccludeAll(false);
+//		}
+//	}
+
 	void PlayFootStep()
 	{
 		m_FootStepCue.Play(gameObject.transform, 1.0f, false, -1, 0, 3);
