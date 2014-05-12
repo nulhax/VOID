@@ -97,8 +97,12 @@ public class DynamicEventShipHazard : MonoBehaviour
             // For each component in the module
             foreach (CComponentInterface CompInt in LocalCompInterface)
             {
-                // Increment the total malfunctions counter
-                ++m_iTotalHazardsMalfunction;
+                // If the component is not functional
+                if (CompInt.IsBroken)
+                {
+                    // Increment the total malfunctions counter
+                    ++m_iTotalHazardsMalfunction;
+                }
             }
         }
 
@@ -197,7 +201,7 @@ public class DynamicEventShipHazard : MonoBehaviour
     public void Trigger(EHazardType _eBiasedType = EHazardType.NONE) 
     {
         // Quick return case
-        if (DisableRandomHazards) { return; }
+        if (DisableRandomHazards || (!CNetwork.Connection.IsConnected)) { return; }
 
         // Update current hazard totals
         UpdateHazardTotals();
@@ -477,8 +481,8 @@ public class DynamicEventShipHazard : MonoBehaviour
     int m_iTotalHazards;
     int m_iTotalHazardsMalfunction;
 
-    const float m_CostBase  = 50.0f;
-    float m_CostUseIncrease = 25.0f;
+    const float m_CostBase  = 0.0f;
+    float m_CostUseIncrease = 1.0f;
     float m_CostDecay       = 0.0f;
     float m_TimeLastUpdate  = float.PositiveInfinity;
 

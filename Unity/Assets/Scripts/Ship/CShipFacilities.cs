@@ -34,7 +34,6 @@ public class CShipFacilities : MonoBehaviour
 
 	// Member Fields
 	public CGrid m_ShipGrid = null;
-	public GameObject m_FacilityDoorPrefab = null;
 
 	public List<GameObject> m_InteriorDoors = new List<GameObject>();
 	public List<GameObject> m_ExteriorDoors = new List<GameObject>();

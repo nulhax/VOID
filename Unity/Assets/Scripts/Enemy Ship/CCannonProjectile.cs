@@ -3,7 +3,8 @@ using System.Collections;
 
 public class CCannonProjectile : CNetworkMonoBehaviour
 {
-	[HideInInspector] public Rigidbody parent = null;
+	[HideInInspector]
+	public Rigidbody parent = null;
 	float lifetime = 4.0f;
 	float damage = 1.0f;
 	bool homingMissile = false;
@@ -30,11 +31,6 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 		transform.parent = CGalaxy.instance.transform;
 	}
 
-	void Start()
-	{
-
-	}
-
 	void Update()
 	{
 		if (!CNetwork.IsServer || !initialised)
@@ -43,9 +39,17 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 		lifetime -= Time.deltaTime;
 		if (lifetime <= 0.0f)
 		{
-			CNetwork.Factory.DestoryGameObject(NetworkViewId);
-			initialised = false;
+			Destroy();
 		}
+	}
+
+	public void Destroy()
+	{
+		if (!CNetwork.IsServer)
+			return;
+
+		CNetwork.Factory.DestoryGameObject(NetworkViewId);
+		initialised = false;
 	}
 
 	void OnCollisionEnter(Collision collision)
@@ -75,7 +79,6 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 		}
 	}
 
-
 	[AServerOnly]
 	public void RpcInitialise(TNetworkViewId _parent, Vector3 _position, Vector3 _velocity, bool _homingMissile)
 	{
@@ -98,9 +101,20 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 
 		rigidbody.AddForce(_velocity, ForceMode.VelocityChange);	// 4) Velocity.
 
-		Physics.IgnoreCollision(collider, parent.collider);
-		Collider[] parentColliders = parent.GetComponentsInChildren<Collider>();
-		foreach (Collider parentCollider in parentColliders)
-			Physics.IgnoreCollision(collider, parentCollider);
+		Collider[] parentChildColliders = parent.GetComponentsInChildren<Collider>();
+		Collider[] childColliders = GetComponentsInChildren<Collider>();
+
+		Physics.IgnoreCollision(collider, parent.collider);	// This vs that.
+
+		foreach (Collider childCollider in childColliders)
+			Physics.IgnoreCollision(childCollider, parent.collider);	// This children vs that.
+
+		foreach (Collider parentChildCollider in parentChildColliders)
+		{
+			Physics.IgnoreCollision(collider, parentChildCollider);	// This vs that children.
+
+			foreach (Collider childCollider in childColliders)
+				Physics.IgnoreCollision(childCollider, parent.collider);	// This children vs that children.
+		}
 	}
 }

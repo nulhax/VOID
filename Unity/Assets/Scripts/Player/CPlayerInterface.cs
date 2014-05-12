@@ -53,7 +53,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
             }
             else
             {
-                return (m_cModel);
+                return (m_cModelThirdPerson);
             }
         }
     }
@@ -142,13 +142,13 @@ public class CPlayerInterface : CNetworkMonoBehaviour
             }
             else
             {
-                m_cModel = GameObject.Instantiate(m_cModel) as GameObject;
-                m_cModel.transform.parent = transform;
-                m_cModel.transform.localPosition = Vector3.zero;
-                m_cModel.transform.localRotation = Quaternion.identity;
+                m_cModelThirdPerson = GameObject.Instantiate(m_cModelThirdPerson) as GameObject;
+                m_cModelThirdPerson.transform.parent = transform;
+                m_cModelThirdPerson.transform.localPosition = Vector3.zero;
+                m_cModelThirdPerson.transform.localRotation = Quaternion.identity;
 
 				//Apply skeleton variables from model to ragdoll script
-				CPlayerSkeleton skeleton = m_cModel.GetComponent<CPlayerSkeleton>();
+				CPlayerSkeleton skeleton = m_cModelThirdPerson.GetComponent<CPlayerSkeleton>();
 				CPlayerRagdoll ragdoll = gameObject.GetComponent<CPlayerRagdoll>();
 				Animator animator = gameObject.GetComponent<Animator>();
 				
@@ -182,7 +182,7 @@ public class CPlayerInterface : CNetworkMonoBehaviour
 // Member Fields
 
 
-    public GameObject m_cModel = null;
+    public GameObject m_cModelThirdPerson = null;
     public GameObject m_cModelFirstPerson = null;
 
 	GameObject m_cRightHand = null;

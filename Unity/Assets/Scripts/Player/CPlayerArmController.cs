@@ -226,7 +226,8 @@ public class CPlayerArmController : MonoBehaviour
             {
                 case HoldState.OneHandedTool:
                 {
-                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.velocity * Time.fixedDeltaTime;
+                    Vector3 rightHandIKPos = GetComponent<Animator>().GetIKPosition(AvatarIKGoal.RightHand);
+                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.GetPointVelocity(rightHandIKPos) * Time.fixedDeltaTime;
 
                     m_IKController.RightHandIKPos = rightHandPos;
 					m_IKController.RightHandIKRot = m_EquipTransform.rotation;
@@ -235,15 +236,17 @@ public class CPlayerArmController : MonoBehaviour
                 }
                 case HoldState.TwoHandedTool:
                 {
-                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.velocity * Time.fixedDeltaTime;                    
+                    Vector3 rightHandIKPos = GetComponent<Animator>().GetIKPosition(AvatarIKGoal.RightHand);
+                    Vector3 rightHandPos = m_EquipTransform.position + rigidbody.GetPointVelocity(rightHandIKPos) * Time.fixedDeltaTime;                    
                     m_IKController.RightHandIKPos = rightHandPos;
                     m_IKController.RightHandIKRot = m_EquipTransform.rotation;   
                 
                     //Offhand
+                    Vector3 leftHandIKPos = GetComponent<Animator>().GetIKPosition(AvatarIKGoal.LeftHand);
                     Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
-                    m_IKController.LeftHandIKPos = leftHandPos ;//+ rigidbody.GetPointVelocity(leftHandPos) * Time.fixedDeltaTime;
+                    m_IKController.LeftHandIKPos = leftHandPos + rigidbody.GetPointVelocity(leftHandIKPos) * Time.fixedDeltaTime;
+                    m_IKController.LeftHandIKWeight = 1.0f;
                     m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;                 
-
 
                     break;
                 }
