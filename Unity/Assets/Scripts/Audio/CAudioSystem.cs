@@ -24,7 +24,7 @@ public class CAudioSystem : MonoBehaviour
 		SOUND_EFFECTS,
 		SOUND_MUSIC,
 		SOUND_AMBIENCE,
-		SOUND_OTHER,
+		SOUND_VOICE,
 	};
 	
 	public enum OcclusionState
@@ -58,8 +58,10 @@ public class CAudioSystem : MonoBehaviour
 	// Member Fields	
 	static List<ClipInfo> s_activeAudio;
 	
-	static private float musicVolume;
-	static private float effectsVolume;
+	static private float m_fMusicVolume = 0.75f;
+	static private float m_fEffectsVolume = 0.75f;
+	static private float m_fVoiceVolume = 1;
+	static private float m_fAmbienceVolume = 0.75f;
 	static private AudioListener m_listener;
 	static private OcclusionState occludeState;
 	
@@ -89,6 +91,21 @@ public class CAudioSystem : MonoBehaviour
 		{
 			ProcessActiveAudio();
 		}
+
+		//Debug grossness!
+		if(Input.GetKeyDown(KeyCode.Keypad1))
+		{
+			BalanceVolumes(-1, m_fEffectsVolume - 0.1f, -1, -1);
+		}
+		if(Input.GetKeyDown(KeyCode.Keypad2))
+		{
+			BalanceVolumes(-1, -1, m_fAmbienceVolume - 0.1f, -1);
+		}
+		if(Input.GetKeyDown(KeyCode.Keypad3))
+		{
+			BalanceVolumes(-1, -1, -1, m_fVoiceVolume - 0.1f);
+		}
+
 	}
 	
 	void ProcessActiveAudio()
@@ -104,6 +121,9 @@ public class CAudioSystem : MonoBehaviour
 	            } 
 				else
 				{
+					//process current volume scaling
+					ScaleVolume(audioClip);
+
 					//process fade in
 					if(audioClip.fadeInTimer < audioClip.fadeInTime)
 					{												
@@ -153,6 +173,39 @@ public class CAudioSystem : MonoBehaviour
 			Destroy(audioClip.soundLocoation);
 		}
     }
+
+	void ScaleVolume(ClipInfo _currentClip)
+	{
+		switch(_currentClip.soundType)
+		{
+			case SoundType.SOUND_MUSIC:
+			{
+				//scale all music sounds by the new music volume 
+				_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fMusicVolume;
+				break;
+			}
+				
+			case SoundType.SOUND_EFFECTS:
+			{
+				//scale all sound effects by the SFX volume 
+				_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fEffectsVolume;
+				break;
+			}
+
+			case SoundType.SOUND_VOICE:
+			{
+				//scale all sound effects by the SFX volume 
+				_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fVoiceVolume;
+				break;
+			}
+				
+			case SoundType.SOUND_AMBIENCE:
+			{
+				_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fAmbienceVolume;	
+				break;						
+			}	
+		}
+	}
 	
 	void ProcessAudioOcclusion(ClipInfo _audioClip)
 	{
@@ -361,49 +414,26 @@ public class CAudioSystem : MonoBehaviour
 		
 		s_activeAudio.Find(s => s.audioSource == _toStop).fadeOutTime = _fadeOutTime;	
 	}
-	
-	public static void BalanceVolumes(float _musicVolume, float _effectsVolume)
+
+	//Pass in -1 if you don't wish to change a volume
+	//For all other values, pass in a float between 0 and 1
+	public static void BalanceVolumes(float _musicVolume, float _effectsVolume, float _ambienceVolume, float _voiceVolume)
 	{
-		if(_musicVolume > 0 && _musicVolume < 1 &&
-		   _effectsVolume > 0 && _effectsVolume < 1)
+		if(_musicVolume > -1 && _musicVolume < 1)		  
 		{
-			musicVolume = _musicVolume;
-			effectsVolume = _effectsVolume;
-			
-			foreach(var audioClip in s_activeAudio) 
-			{
-				switch(audioClip.soundType)
-				{
-					case SoundType.SOUND_MUSIC:
-					{
-						//scale all music sounds by the new music volume 
-						audioClip.audioSource.volume = audioClip.defaultVolume * _musicVolume;
-						break;
-					}
-					
-					case SoundType.SOUND_EFFECTS:
-					{
-						//scale all sound effects by the SFX volume 
-						audioClip.audioSource.volume = audioClip.defaultVolume * _effectsVolume;
-						break;
-					}
-					
-					case SoundType.SOUND_AMBIENCE:
-					{
-						//Ambient sounds will only play when there is no music volume
-						if(_musicVolume == 0)
-						{
-							audioClip.audioSource.volume = audioClip.defaultVolume * _effectsVolume;
-						}
-						else
-						{
-							audioClip.audioSource.volume = 0.0f;
-						}
-						
-						break;						
-					}
-				}
-			}
+			m_fMusicVolume = _musicVolume;
+		}
+		if( _effectsVolume > -1 && _effectsVolume < 1)
+		{
+			m_fEffectsVolume = _effectsVolume;
+		}
+		if(_ambienceVolume > -1 && _ambienceVolume < 1)		  
+		{
+			m_fAmbienceVolume = _ambienceVolume;
+		}
+		if( _voiceVolume > -1 && _voiceVolume < 1)
+		{
+			m_fVoiceVolume = _voiceVolume;
 		}
 	}
 	

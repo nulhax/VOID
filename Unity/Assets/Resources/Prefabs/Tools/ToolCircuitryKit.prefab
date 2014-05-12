@@ -1198,6 +1198,7 @@ MonoBehaviour:
   m_fThirdPersonEquipOffsetX: .239999995
   m_fThirdPersonEquipOffsetY: 1.29999995
   m_fThirdPersonEquipOffsetZ: .180000007
+  m_vRotation: {x: 160, y: 0, z: 130}
   m_fVerticalDeviation: .100000001
   m_fLateralDeviation: .100000001
 --- !u!114 &11400018

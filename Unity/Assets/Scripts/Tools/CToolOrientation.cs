@@ -40,6 +40,18 @@ public class CToolOrientation : MonoBehaviour
 		get { return(m_vThirdPersonModifiedOffset);}
     }
 
+	public Vector3 RightHandRotation
+	{
+		set { m_vRightHandRotation = value;}
+		get { return(m_vRightHandRotation);}
+	}
+
+	public Vector3 LeftHandRotation
+	{
+		set { m_vLeftHandRotation = value;}
+		get { return(m_vLeftHandRotation);}
+	}
+
 	public float VerticalDeviation
 	{
 		get{ return(m_fVerticalDeviation); }
@@ -61,6 +73,10 @@ public class CToolOrientation : MonoBehaviour
 	public float m_fThirdPersonEquipOffsetX;
 	public float m_fThirdPersonEquipOffsetY;
 	public float m_fThirdPersonEquipOffsetZ;
+
+	//Rotation
+	public Vector3 m_vRightHandRotation;
+	public Vector3 m_vLeftHandRotation;
 
     //This vector will store the location where external scripts have placed the tool
     Vector3 m_vFirstPersonModifiedOffset;

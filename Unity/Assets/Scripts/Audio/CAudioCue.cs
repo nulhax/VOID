@@ -131,6 +131,15 @@ public class CAudioCue : MonoBehaviour
 	//Will only work if object already has an audiosource, else use the overloaded method
 	public void Play( float volumeScale, bool loop, int index, int randomRangeStart = -1, int randomRangeEnd = -1)
 	{
+		//Early return
+		if(m_arAudioClipPool.Length == 0 				|| 
+		   randomRangeStart > m_arAudioClipPool.Length 	||
+		   randomRangeEnd > m_arAudioClipPool.Length 	
+		   )
+		{
+			return;
+		}
+
 		AudioSource attachedAudioSource = GetComponent<AudioSource>();
 		
 		//Make sure fade in times are set. If not, assign default values.
@@ -183,6 +192,16 @@ public class CAudioCue : MonoBehaviour
 	//This function should only be used if the object needs to have an audiosource attached to it.
     public void Play( Transform parent, float volumeScale, bool loop, int index, int randomRangeStart = -1, int randomRangeEnd = -1)
 	{
+		//Early return
+		if(m_arAudioClipPool.Length == 0 				|| 
+		   randomRangeStart > m_arAudioClipPool.Length 	||
+		   randomRangeEnd > m_arAudioClipPool.Length 	
+		   )
+		{
+			return;
+		}
+
+
 		AudioSource newAudioSource;
 		
 		//Make sure fade in times are set. If not, assign default values.
@@ -210,25 +229,14 @@ public class CAudioCue : MonoBehaviour
            randomRangeEnd <= m_arAudioClipPool.Length   &&
            randomRangeEnd > 0)
         {
-            index = Random.Range(randomRangeStart, randomRangeEnd);
-            if(index == 8)
-            {
-                Debug.Log("How the fuck?");    
-                int i = 0;
-            }
+            index = Random.Range(randomRangeStart, randomRangeEnd);            
         }   		
         else if(index == -1)
         {
-            index = Random.Range(0, m_arAudioClipPool.Length);
-            if(index == 8)
-            {
-                Debug.Log("How the fuck?");
-                int i = 0;
-            }
+            index = Random.Range(0, m_arAudioClipPool.Length - 1);           
         }
-      
-		//Allow the AudioSystem to handle the new audio source.
-        /* // This was causing a error
+		      
+		//Allow the AudioSystem to handle the new audio source.        
 		newAudioSource = CAudioSystem.Play(	m_arAudioClipPool[index], parent,
 														Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 														Random.Range(m_fPitchMin, m_fpitchMax), loop,
@@ -236,8 +244,7 @@ public class CAudioCue : MonoBehaviour
 														m_eSoundType, true);	
 		
 		//Add this to the list of attached audio sources.
-		m_arAttachedAudioSource.Add(newAudioSource);
-         * */
+		m_arAttachedAudioSource.Add(newAudioSource);        
     }
 	
 	//Plays a random clip once, then discards it. Useful for sounds that will be played many times, especially if those sounds overlap

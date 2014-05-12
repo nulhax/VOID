@@ -67,6 +67,7 @@ public class CPlayerArmController : MonoBehaviour
 	int m_iRightHandVelocityIndex = 0;
 	//Left Hand velocities
 	Vector3[] m_aLeftHandVelocities = new Vector3[m_iNumVelocities];
+	Vector3 m_vPreviousPosition = new Vector3();
 	int m_iLeftHandVelocityIndex = 0;
 
 	// Use this for initialization
@@ -239,36 +240,33 @@ public class CPlayerArmController : MonoBehaviour
 					//Determine average hand velocity
 					Vector3 currentRightHandVelocity = rigidbody.GetPointVelocity(rightHandIKPos);					
 					currentRightHandVelocity = GetRightHandAverageVelocity(currentRightHandVelocity);
+					GameObject head = GetComponent<CPlayerHead>().Head;
 
 					Vector3 rightHandPos = m_EquipTransform.position + currentRightHandVelocity * Time.deltaTime;
-
-                    m_IKController.RightHandIKPos = rightHandPos;
-					m_IKController.RightHandIKRot = m_EquipTransform.rotation;
+				    m_IKController.RightHandIKPos = rightHandPos;
+					m_IKController.RightHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().RightHandRotation);
                     
                     break;  
                 }
                 case HoldState.TwoHandedTool:
                 {
+					GameObject head = GetComponent<CPlayerHead>().Head;
                     Vector3 rightHandIKPos = GetComponent<Animator>().GetIKPosition(AvatarIKGoal.RightHand);
 					Vector3 rightHandPos = m_EquipTransform.position + rigidbody.GetPointVelocity(rightHandIKPos) * Time.fixedDeltaTime;                    
                     m_IKController.RightHandIKPos = rightHandPos;
-                    m_IKController.RightHandIKRot = m_EquipTransform.rotation;   
+					m_IKController.RightHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().RightHandRotation);
                 
-                    //Offhand
+					if(!m_bInteracting)
+					{
+	                    //Offhand                    				
+						Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
+						//Vector3 averageVelocity = GetLeftHandAverageVelocity(leftHandPos);
+						Vector3 allTheVelocities = rigidbody.GetPointVelocity(leftHandPos) + rigidbody.angularVelocity;
 
-
-                    Vector3 leftHandIKPos = GetComponent<Animator>().GetIKPosition(AvatarIKGoal.LeftHand);
-					Vector3 currentLeftHandVelocity = rigidbody.GetPointVelocity(leftHandIKPos);
-
-					Debug.Log(currentLeftHandVelocity.ToString());
-
-					currentLeftHandVelocity = GetLeftHandAverageVelocity(currentLeftHandVelocity);
-
-                    Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
-					m_IKController.LeftHandIKPos = leftHandPos + currentLeftHandVelocity * Time.fixedDeltaTime;
-                    m_IKController.LeftHandIKWeight = 1.0f;
-                    m_IKController.LeftHandIKRot = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.rotation;                 
-
+						m_IKController.LeftHandIKPos = leftHandPos + allTheVelocities * Time.deltaTime;
+	                    m_IKController.LeftHandIKWeight = 1.0f;
+						m_IKController.LeftHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().LeftHandRotation);             					
+					}
                     break;
                 }
             }
@@ -468,9 +466,13 @@ public class CPlayerArmController : MonoBehaviour
 		return(rightHandAverageVelocity);
 	}
 
-	Vector3 GetLeftHandAverageVelocity(Vector3 _currentVelocity)
+	Vector3 GetLeftHandAverageVelocity(Vector3 _currentPosition)
 	{
-		m_aLeftHandVelocities[m_iLeftHandVelocityIndex] = _currentVelocity;
+
+		Vector3 currentVelocity = _currentPosition - m_vPreviousPosition;
+		m_vPreviousPosition = _currentPosition;
+
+		m_aLeftHandVelocities[m_iLeftHandVelocityIndex] = currentVelocity;
 		
 		if(m_iLeftHandVelocityIndex < m_iNumVelocities - 1)
 		{
@@ -488,7 +490,7 @@ public class CPlayerArmController : MonoBehaviour
 		}
 		
 		leftHandAverageVelocity /= m_iNumVelocities;
-		
+
 		return(leftHandAverageVelocity);
 	}
 }

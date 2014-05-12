@@ -137,7 +137,16 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Projectiles/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
 		cBullet.rigidbody.velocity = cBullet.transform.forward * 40.0f;
 
-		GetComponent<CAudioCue>().Play(transform, 1.0f, false, m_BulletFireSoundIndex);
+
+		CAudioCue[] audioCues = GetComponents<CAudioCue>();
+
+		foreach(CAudioCue cue in audioCues)
+		{
+			if(cue.m_strCueName == "GunFire")
+			{
+				cue.Play(transform, 1.0f, false, -1);
+			}
+		}
 	}
 
 
