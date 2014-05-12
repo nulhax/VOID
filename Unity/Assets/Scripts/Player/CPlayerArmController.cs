@@ -256,15 +256,17 @@ public class CPlayerArmController : MonoBehaviour
                     m_IKController.RightHandIKPos = rightHandPos;
 					m_IKController.RightHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().RightHandRotation);
                 
-                    //Offhand                    				
-					Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
-					//Vector3 averageVelocity = GetLeftHandAverageVelocity(leftHandPos);
-					Vector3 allTheVelocities = rigidbody.GetPointVelocity(leftHandPos) + rigidbody.angularVelocity;
+					if(!m_bInteracting)
+					{
+	                    //Offhand                    				
+						Vector3 leftHandPos = m_heldTool.GetComponent<CToolInterface>().m_LeftHandPos.transform.position;
+						//Vector3 averageVelocity = GetLeftHandAverageVelocity(leftHandPos);
+						Vector3 allTheVelocities = rigidbody.GetPointVelocity(leftHandPos) + rigidbody.angularVelocity;
 
-					m_IKController.LeftHandIKPos = leftHandPos + allTheVelocities * Time.deltaTime;
-                    m_IKController.LeftHandIKWeight = 1.0f;
-					m_IKController.LeftHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().LeftHandRotation);             					
-
+						m_IKController.LeftHandIKPos = leftHandPos + allTheVelocities * Time.deltaTime;
+	                    m_IKController.LeftHandIKWeight = 1.0f;
+						m_IKController.LeftHandIKRot = head.transform.rotation * Quaternion.Euler(m_heldTool.GetComponent<CToolOrientation>().LeftHandRotation);             					
+					}
                     break;
                 }
             }

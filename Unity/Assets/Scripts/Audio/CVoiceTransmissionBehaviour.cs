@@ -238,7 +238,7 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 			AudioClip newClip = AudioClip.Create("Test", faDecodedAudioData.Length, 1, frequency, true, false);
 			newClip.SetData(faDecodedAudioData, 0);
 
-			CAudioSystem.Play(newClip, senderNetworkView.gameObject.transform, 1.0f, 1.0f, false, 0.0f, CAudioSystem.SoundType.SOUND_OTHER, true);						
+			CAudioSystem.Play(newClip, senderNetworkView.gameObject.transform, 1.0f, 1.0f, false, 0.0f, CAudioSystem.SoundType.SOUND_VOICE, true);						
 		}
 		
 		if(s_framesToDecode.Count > 0)
