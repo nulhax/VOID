@@ -222,7 +222,7 @@ public abstract class CTile : MonoBehaviour
 		// Invoke neighbours to update their tile meta data
 		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
 		{
-			neighbour.m_TileInterface.UpdateAllCurrentTileMetaData();
+			//neighbour.m_TileInterface.UpdateAllCurrentTileMetaData();
 		}
 	}
 

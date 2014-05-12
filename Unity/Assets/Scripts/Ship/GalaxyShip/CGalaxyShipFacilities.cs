@@ -34,12 +34,14 @@ public class CGalaxyShipFacilities : MonoBehaviour
 
 
 	// Member Methods
-	public void ReconfigureCollidersAndTriggers(CShipFacilities _ShipFacilities)
+	public void ReconfigureCollidersAndTriggers()
 	{	
+		CShipFacilities shipFacilities = CGameShips.Ship.GetComponent<CShipFacilities>();
+
 		foreach(CInteriorTrigger interiorTrigger in m_EntryTrigger.GetComponentsInChildren<CInteriorTrigger>())
 			Destroy(interiorTrigger.gameObject);
 
-		foreach(GameObject facility in _ShipFacilities.Facilities)
+		foreach(GameObject facility in shipFacilities.Facilities)
 		{
 			foreach(CTileInterface tileInterface in facility.GetComponent<CFacilityTiles>().InteriorTiles)
 			{
@@ -65,7 +67,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 		foreach(Transform child in m_Collider.transform)
 			Destroy(child.gameObject);
 
-		foreach(CTileInterface tileInterface in _ShipFacilities.m_ShipGrid.TileInterfaces)
+		foreach(CTileInterface tileInterface in shipFacilities.m_ShipGrid.TileInterfaces)
 		{
 			if(!tileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) &&
 			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Upper) &&

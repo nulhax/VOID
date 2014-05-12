@@ -171,6 +171,9 @@ public class DungeonMaster : MonoBehaviour
 
 	void OnGUI()
 	{
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
 		GUIStyle style = new GUIStyle();
 		style.alignment = TextAnchor.MiddleRight;
 		style.fontStyle = FontStyle.Bold;

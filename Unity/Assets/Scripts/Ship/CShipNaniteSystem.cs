@@ -125,6 +125,9 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 	public void OnGUI()
 	{
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (CCursorControl.IsCursorLocked && 
             CNetwork.IsConnectedToServer)
         {

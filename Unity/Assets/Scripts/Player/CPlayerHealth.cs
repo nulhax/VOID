@@ -405,6 +405,9 @@ public class CPlayerHealth : CNetworkMonoBehaviour
     [ALocalOnly]
     void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         const float kBoxMargin = 10.0f;
         const float kBoxWidth = 200.0f;
         const float kBoxHeight = 22.0f;

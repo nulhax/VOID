@@ -99,6 +99,9 @@ public class CGame : CNetworkMonoBehaviour
 
     public void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
 		float fViewWidth = 450;
 		float fPositionX = Screen.width / 2 - fViewWidth / 2;
 		float fPositionY = Screen.height / 2 + 50;

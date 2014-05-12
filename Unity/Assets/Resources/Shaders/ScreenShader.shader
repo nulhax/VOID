@@ -19,6 +19,13 @@ Shader "VOID/Screen Shader"
 			"RenderType"="Transparent"
 		}
 		
+		Blend SrcAlpha One
+		AlphaTest Greater .01
+		ColorMask RGB
+		Cull Off 
+		Lighting Off 
+		ZWrite Off 
+		
 		CGPROGRAM
 			#pragma surface surf BlinnPhong alpha
 
@@ -39,7 +46,7 @@ Shader "VOID/Screen Shader"
 			void surf (Input IN, inout SurfaceOutput o) 
 			{
 				float4 uiCol = tex2D(_UI, IN.uv_UI);
-				uiCol = uiCol * _UIBrightness;
+				uiCol = saturate(uiCol * _UIBrightness);
 				
 				o.Emission = uiCol.rgb;
 				o.Alpha = _UIAlpha * uiCol.a;

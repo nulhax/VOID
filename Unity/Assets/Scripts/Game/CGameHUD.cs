@@ -24,13 +24,25 @@ using System;
 public class CGameHUD : MonoBehaviour
 {
 	
-// Member Types
+	// Member Types
 
 	
-// Member Delegates & Events
+	// Member Delegates & Events
 	
 	
-// Member Properties
+	// Member Fields
+	
+	
+	public GameObject m_cHud2d = null;   
+	
+	
+	CHUD3D m_cHud3d = null;
+	CHUDVisor m_cHudVisor = null;
+	
+	static CGameHUD s_cInstance = null;
+	static bool s_OnGUIEnabled = false;
+
+	// Member Properties
 
 
 	public static CGameHUD Instance
@@ -57,7 +69,13 @@ public class CGameHUD : MonoBehaviour
 	}
 
 
-// Member Methods
+	public static bool IsOnGUIEnabled
+	{
+		get { return(s_OnGUIEnabled); }
+	}
+
+
+	// Member Methods
 
 
 	public void Awake()
@@ -73,6 +91,15 @@ public class CGameHUD : MonoBehaviour
     {
         m_cHud2d = GameObject.Instantiate(m_cHud2d) as GameObject;
     }
+
+
+	public void Update()
+	{
+		if(Input.GetKeyDown(KeyCode.F2))
+		{
+			s_OnGUIEnabled = !s_OnGUIEnabled;
+		}
+	}
 
 
 	public static void SetHUDState(bool _State)
@@ -122,18 +149,4 @@ public class CGameHUD : MonoBehaviour
             m_cHudVisor = null;
         }
     }
-
-
-// Member Fields
-
-
-    public GameObject m_cHud2d = null;   
-
-
-    CHUD3D m_cHud3d = null;
-    CHUDVisor m_cHudVisor = null;
-
-    static CGameHUD s_cInstance = null;
-
-
 };

@@ -529,6 +529,9 @@ public class CGamePlayers : CNetworkMonoBehaviour
 
     void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (CNetwork.IsConnectedToServer)
         {
             GUIStyle cStyle = new GUIStyle();

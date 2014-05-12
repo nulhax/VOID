@@ -49,6 +49,9 @@ public class CActorDebugGUI : MonoBehaviour
 	
 	public void OnGUI()
 	{
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
 		if (bShowName)
 		{
 			float fScreenCenterX = Screen.width / 2;

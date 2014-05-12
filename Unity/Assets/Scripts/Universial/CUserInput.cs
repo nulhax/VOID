@@ -151,6 +151,12 @@ public class CUserInput : CNetworkMonoBehaviour
     }
 
 
+	public static KeyCode GetKeyBinding(EInput _eInput)
+	{
+		return(s_cInstance.m_aKeyBindings[(int)_eInput]);
+	}
+
+
     public static void SubscribeInputChange(EInput _eInput, NotifyInputChange _nCallback)
     {
         if (!s_cInstance.m_mInputCallbacks.ContainsKey(_eInput))

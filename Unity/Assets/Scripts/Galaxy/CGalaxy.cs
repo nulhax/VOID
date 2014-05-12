@@ -910,6 +910,9 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	void OnGUI()
 	{
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
 		if (!debug_GalaxyStuff)
 			return;
 

@@ -259,6 +259,9 @@ public class CGameChat : CNetworkMonoBehaviour
     public void OnGUI()
     {
 		return;
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (CNetwork.Connection.IsConnected)
         {
             // Game screen and chat box dimenions and positional information

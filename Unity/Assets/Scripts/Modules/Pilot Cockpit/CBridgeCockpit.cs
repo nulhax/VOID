@@ -276,6 +276,9 @@ public class CBridgeCockpit : CNetworkMonoBehaviour
 
     void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (m_cCockpitInterface.MountedPlayerId == CNetwork.PlayerId)
         {
             float shipSpeed = CGameShips.GalaxyShip.rigidbody.velocity.magnitude;

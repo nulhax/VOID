@@ -155,6 +155,9 @@ public class CActorLocator : CNetworkMonoBehaviour
 
     void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (CCursorControl.IsCursorLocked &&
             gameObject == CGamePlayers.SelfActor)
         {

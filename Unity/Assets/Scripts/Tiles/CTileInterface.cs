@@ -313,12 +313,12 @@ public class CTileInterface : CNetworkMonoBehaviour
 		// Update the tile mask
 		UpdateTileTypeMask();
 
+		// Update the neighbourhood
+		UpdateNeighbourhood();
+
 		// Clear the neighbours
 		m_NeighbourHood.Clear();
 
-		// Update the neighbourhood
-		UpdateNeighbourhood();
-		
 		// Network destroy
 		CNetwork.Factory.DestoryGameObject(gameObject);
 	}

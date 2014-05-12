@@ -22,7 +22,7 @@ using System.Linq;
 /* Implementation */
 
 
-public class CPreplacedShip : MonoBehaviour
+public class CShipPreplacedTemplate : MonoBehaviour
 {
 	// Member Types
 	
@@ -31,7 +31,7 @@ public class CPreplacedShip : MonoBehaviour
 	
 	
 	// Member Fields
-	public Transform m_TilesCollection = null;
+	public Transform m_Template = null;
 	
 	// Member Properties
 
@@ -41,9 +41,6 @@ public class CPreplacedShip : MonoBehaviour
 	{
 		if(CNetwork.IsServer)
 			InitialisePreplacedTilesAndModules();
-
-		// Destroy self
-		Destroy(gameObject);
 	}
 
 	[AServerOnly]
@@ -52,21 +49,34 @@ public class CPreplacedShip : MonoBehaviour
 		CShipModules shipModules = CGameShips.Ship.GetComponent<CShipModules>();
 		CShipFacilities shipFacilities = CGameShips.Ship.GetComponent<CShipFacilities>();
 
+		if(m_Template == null)
+			return;
+
+		// Get the tiles and modules which reside within the template
+		List<CTileInterface> tiles = new List<CTileInterface>();
+		List<CModuleInterface> modules = new List<CModuleInterface>();
+
+		foreach(Transform child in m_Template)
+		{
+			CTileInterface tileInterface = child.GetComponent<CTileInterface>();
+			if(tileInterface != null)
+				tiles.Add(tileInterface);
+
+			CModuleInterface module = child.GetComponent<CModuleInterface>();
+			if(module != null)
+				modules.Add(module);
+		}
+
 		// Create all of the preplaced modules to the ship
-		foreach(CPreplacedModule preplacedModule in gameObject.GetComponentsInChildren<CPreplacedModule>())
+		foreach(CModuleInterface preplacedModule in modules)
 		{
 			CModuleInterface module = shipModules.CreateModule(
-				preplacedModule.m_PreplacedModuleType, 
+				preplacedModule.ModuleType, 
 				preplacedModule.transform.position, 
 				preplacedModule.transform.rotation);
 			
 			module.Build(1.0f);
 		}
-
-		// Get the tiles which reside within the tiles collection resource
-		List<CTileInterface> tiles = new List<CTileInterface>();
-		foreach(Transform child in m_TilesCollection)
-			tiles.Add(child.GetComponent<CTileInterface>());
 
 		// Import the facility to the prefabricator
 		shipFacilities.ImportNewGridTiles(tiles);

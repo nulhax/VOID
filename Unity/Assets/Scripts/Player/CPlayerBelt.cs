@@ -592,6 +592,9 @@ public class CPlayerBelt : CNetworkMonoBehaviour
 
     void OnGUI()
     {
+		if(!CGameHUD.IsOnGUIEnabled)
+			return;
+
         if (CCursorControl.IsCursorLocked && 
             gameObject.GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
