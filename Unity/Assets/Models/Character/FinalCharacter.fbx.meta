@@ -1,0 +1,1473 @@
+fileFormatVersion: 2
+guid: 7a8a868be53bc134ca3106aa81019052
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: Belt
+    100002: Body
+    100004: Chest_PLate
+    100006: Face
+    100008: //RootNode
+    100010: group
+    100012: Healmet_BAck
+    100014: Jumpsuit
+    100016: left
+    100018: Left_Boot
+    100020: Left_Eye
+    100022: Left_Hand
+    100024: Left_Shoulder
+    100026: Left_Strap
+    100028: Left_Wrist
+    100030: Mining_Cockpit
+    100032: Neck
+    100034: NewArmthingy05_normalMapped:back
+    100036: O2_Pack
+    100038: pasted__Body
+    100040: pasted__Face
+    100042: pasted__Head
+    100044: pasted__HeadTop_End
+    100046: pasted__Healmet_BAck
+    100048: pasted__Left_Eye
+    100050: pasted__Neck
+    100052: pasted__Neck1
+    100054: pasted__Right_Eye
+    100056: pasted__Skeleton
+    100058: pasted__Space_Character
+    100060: pasted__Visor
+    100062: pasted__VisorScreen
+    100064: Right__Hand
+    100066: Right_boot
+    100068: Right_Eye
+    100070: Right_Shoulder
+    100072: Right_Strap
+    100074: Right_Wrist
+    100076: Skeleton
+    100078: Space_Character
+    100080: Space_Dude_Rigged:Belt
+    100082: Space_Dude_Rigged:Chest_PLate
+    100084: Space_Dude_Rigged:Hips
+    100086: Space_Dude_Rigged:Jumpsuit
+    100088: Space_Dude_Rigged:Left_Boot
+    100090: Space_Dude_Rigged:Left_Hand
+    100092: Space_Dude_Rigged:Left_Index01
+    100094: Space_Dude_Rigged:Left_Index02
+    100096: Space_Dude_Rigged:Left_Index03
+    100098: Space_Dude_Rigged:Left_Index04
+    100100: Space_Dude_Rigged:Left_Middle01
+    100102: Space_Dude_Rigged:Left_Middle02
+    100104: Space_Dude_Rigged:Left_Middle03
+    100106: Space_Dude_Rigged:Left_Middle04
+    100108: Space_Dude_Rigged:Left_Ring01
+    100110: Space_Dude_Rigged:Left_Ring02
+    100112: Space_Dude_Rigged:Left_Ring02 1
+    100114: Space_Dude_Rigged:Left_Ring03
+    100116: Space_Dude_Rigged:Left_Ring03 1
+    100118: Space_Dude_Rigged:Left_Ring04
+    100120: Space_Dude_Rigged:Left_Ring04 1
+    100122: Space_Dude_Rigged:Left_Ring05
+    100124: Space_Dude_Rigged:Left_Shoulder
+    100126: Space_Dude_Rigged:Left_Strap
+    100128: Space_Dude_Rigged:Left_Thumb01
+    100130: Space_Dude_Rigged:Left_Thumb02
+    100132: Space_Dude_Rigged:Left_Thumb03
+    100134: Space_Dude_Rigged:Left_Wrist
+    100136: Space_Dude_Rigged:LeftFoot
+    100138: Space_Dude_Rigged:LeftFootToeBase_End
+    100140: Space_Dude_Rigged:LeftLeg
+    100142: Space_Dude_Rigged:LeftShoulder
+    100144: Space_Dude_Rigged:LeftToeBase
+    100146: Space_Dude_Rigged:LeftUpLeg
+    100148: Space_Dude_Rigged:Neck
+    100150: Space_Dude_Rigged:O2_Pack
+    100152: Space_Dude_Rigged:pasted__LeftArm
+    100154: Space_Dude_Rigged:pasted__LeftForeArm
+    100156: Space_Dude_Rigged:pasted__LeftHand
+    100158: Space_Dude_Rigged:pasted__RightForeArm
+    100160: Space_Dude_Rigged:pasted__RightHand
+    100162: Space_Dude_Rigged:Right__Hand
+    100164: Space_Dude_Rigged:Right_boot
+    100166: Space_Dude_Rigged:Right_Index01
+    100168: Space_Dude_Rigged:Right_Index02
+    100170: Space_Dude_Rigged:Right_Index03
+    100172: Space_Dude_Rigged:Right_Index04
+    100174: Space_Dude_Rigged:Right_Middle01
+    100176: Space_Dude_Rigged:Right_Middle02
+    100178: Space_Dude_Rigged:Right_Middle03
+    100180: Space_Dude_Rigged:Right_Middle04
+    100182: Space_Dude_Rigged:Right_Ring01
+    100184: Space_Dude_Rigged:Right_Ring02
+    100186: Space_Dude_Rigged:Right_Ring02 1
+    100188: Space_Dude_Rigged:Right_Ring03
+    100190: Space_Dude_Rigged:Right_Ring03 1
+    100192: Space_Dude_Rigged:Right_Ring04
+    100194: Space_Dude_Rigged:Right_Ring04 1
+    100196: Space_Dude_Rigged:Right_Ring05
+    100198: Space_Dude_Rigged:Right_Shoulder
+    100200: Space_Dude_Rigged:Right_Strap
+    100202: Space_Dude_Rigged:Right_Thumb01
+    100204: Space_Dude_Rigged:Right_Thumb02
+    100206: Space_Dude_Rigged:Right_Thumb03
+    100208: Space_Dude_Rigged:RightArm
+    100210: Space_Dude_Rigged:RightFoot
+    100212: Space_Dude_Rigged:RightFootToeBase_End
+    100214: Space_Dude_Rigged:RightLeg
+    100216: Space_Dude_Rigged:RightShoulder
+    100218: Space_Dude_Rigged:RightToeBase
+    100220: Space_Dude_Rigged:RightUpLeg
+    100222: Space_Dude_Rigged:Skeleton
+    100224: Space_Dude_Rigged:Spine
+    100226: Space_Dude_Rigged:Spine1
+    100228: Space_Dude_Rigged:Spine2
+    100230: transform1
+    100232: transform10
+    100234: transform11
+    100236: transform12
+    100238: transform13
+    100240: transform14
+    100242: transform15
+    100244: transform16
+    100246: transform17
+    100248: transform18
+    100250: transform19
+    100252: transform2
+    100254: transform3
+    100256: transform4
+    100258: transform5
+    100260: transform6
+    100262: transform7
+    100264: transform8
+    100266: transform9
+    400000: Belt
+    400002: Body
+    400004: Chest_PLate
+    400006: Face
+    400008: //RootNode
+    400010: group
+    400012: Healmet_BAck
+    400014: Jumpsuit
+    400016: left
+    400018: Left_Boot
+    400020: Left_Eye
+    400022: Left_Hand
+    400024: Left_Shoulder
+    400026: Left_Strap
+    400028: Left_Wrist
+    400030: Mining_Cockpit
+    400032: Neck
+    400034: NewArmthingy05_normalMapped:back
+    400036: O2_Pack
+    400038: pasted__Body
+    400040: pasted__Face
+    400042: pasted__Head
+    400044: pasted__HeadTop_End
+    400046: pasted__Healmet_BAck
+    400048: pasted__Left_Eye
+    400050: pasted__Neck
+    400052: pasted__Neck1
+    400054: pasted__Right_Eye
+    400056: pasted__Skeleton
+    400058: pasted__Space_Character
+    400060: pasted__Visor
+    400062: pasted__VisorScreen
+    400064: Right__Hand
+    400066: Right_boot
+    400068: Right_Eye
+    400070: Right_Shoulder
+    400072: Right_Strap
+    400074: Right_Wrist
+    400076: Skeleton
+    400078: Space_Character
+    400080: Space_Dude_Rigged:Belt
+    400082: Space_Dude_Rigged:Chest_PLate
+    400084: Space_Dude_Rigged:Hips
+    400086: Space_Dude_Rigged:Jumpsuit
+    400088: Space_Dude_Rigged:Left_Boot
+    400090: Space_Dude_Rigged:Left_Hand
+    400092: Space_Dude_Rigged:Left_Index01
+    400094: Space_Dude_Rigged:Left_Index02
+    400096: Space_Dude_Rigged:Left_Index03
+    400098: Space_Dude_Rigged:Left_Index04
+    400100: Space_Dude_Rigged:Left_Middle01
+    400102: Space_Dude_Rigged:Left_Middle02
+    400104: Space_Dude_Rigged:Left_Middle03
+    400106: Space_Dude_Rigged:Left_Middle04
+    400108: Space_Dude_Rigged:Left_Ring01
+    400110: Space_Dude_Rigged:Left_Ring02
+    400112: Space_Dude_Rigged:Left_Ring02 1
+    400114: Space_Dude_Rigged:Left_Ring03
+    400116: Space_Dude_Rigged:Left_Ring03 1
+    400118: Space_Dude_Rigged:Left_Ring04
+    400120: Space_Dude_Rigged:Left_Ring04 1
+    400122: Space_Dude_Rigged:Left_Ring05
+    400124: Space_Dude_Rigged:Left_Shoulder
+    400126: Space_Dude_Rigged:Left_Strap
+    400128: Space_Dude_Rigged:Left_Thumb01
+    400130: Space_Dude_Rigged:Left_Thumb02
+    400132: Space_Dude_Rigged:Left_Thumb03
+    400134: Space_Dude_Rigged:Left_Wrist
+    400136: Space_Dude_Rigged:LeftFoot
+    400138: Space_Dude_Rigged:LeftFootToeBase_End
+    400140: Space_Dude_Rigged:LeftLeg
+    400142: Space_Dude_Rigged:LeftShoulder
+    400144: Space_Dude_Rigged:LeftToeBase
+    400146: Space_Dude_Rigged:LeftUpLeg
+    400148: Space_Dude_Rigged:Neck
+    400150: Space_Dude_Rigged:O2_Pack
+    400152: Space_Dude_Rigged:pasted__LeftArm
+    400154: Space_Dude_Rigged:pasted__LeftForeArm
+    400156: Space_Dude_Rigged:pasted__LeftHand
+    400158: Space_Dude_Rigged:pasted__RightForeArm
+    400160: Space_Dude_Rigged:pasted__RightHand
+    400162: Space_Dude_Rigged:Right__Hand
+    400164: Space_Dude_Rigged:Right_boot
+    400166: Space_Dude_Rigged:Right_Index01
+    400168: Space_Dude_Rigged:Right_Index02
+    400170: Space_Dude_Rigged:Right_Index03
+    400172: Space_Dude_Rigged:Right_Index04
+    400174: Space_Dude_Rigged:Right_Middle01
+    400176: Space_Dude_Rigged:Right_Middle02
+    400178: Space_Dude_Rigged:Right_Middle03
+    400180: Space_Dude_Rigged:Right_Middle04
+    400182: Space_Dude_Rigged:Right_Ring01
+    400184: Space_Dude_Rigged:Right_Ring02
+    400186: Space_Dude_Rigged:Right_Ring02 1
+    400188: Space_Dude_Rigged:Right_Ring03
+    400190: Space_Dude_Rigged:Right_Ring03 1
+    400192: Space_Dude_Rigged:Right_Ring04
+    400194: Space_Dude_Rigged:Right_Ring04 1
+    400196: Space_Dude_Rigged:Right_Ring05
+    400198: Space_Dude_Rigged:Right_Shoulder
+    400200: Space_Dude_Rigged:Right_Strap
+    400202: Space_Dude_Rigged:Right_Thumb01
+    400204: Space_Dude_Rigged:Right_Thumb02
+    400206: Space_Dude_Rigged:Right_Thumb03
+    400208: Space_Dude_Rigged:RightArm
+    400210: Space_Dude_Rigged:RightFoot
+    400212: Space_Dude_Rigged:RightFootToeBase_End
+    400214: Space_Dude_Rigged:RightLeg
+    400216: Space_Dude_Rigged:RightShoulder
+    400218: Space_Dude_Rigged:RightToeBase
+    400220: Space_Dude_Rigged:RightUpLeg
+    400222: Space_Dude_Rigged:Skeleton
+    400224: Space_Dude_Rigged:Spine
+    400226: Space_Dude_Rigged:Spine1
+    400228: Space_Dude_Rigged:Spine2
+    400230: transform1
+    400232: transform10
+    400234: transform11
+    400236: transform12
+    400238: transform13
+    400240: transform14
+    400242: transform15
+    400244: transform16
+    400246: transform17
+    400248: transform18
+    400250: transform19
+    400252: transform2
+    400254: transform3
+    400256: transform4
+    400258: transform5
+    400260: transform6
+    400262: transform7
+    400264: transform8
+    400266: transform9
+    2300000: pasted__Healmet_BAck
+    2300002: pasted__Left_Eye
+    2300004: pasted__Right_Eye
+    2300006: pasted__Visor
+    2300008: pasted__VisorScreen
+    3300000: pasted__Healmet_BAck
+    3300002: pasted__Left_Eye
+    3300004: pasted__Right_Eye
+    3300006: pasted__Visor
+    3300008: pasted__VisorScreen
+    4300000: Space_Dude_Rigged:Left_Boot
+    4300002: Space_Dude_Rigged:Right_boot
+    4300004: Space_Dude_Rigged:O2_Pack
+    4300006: Space_Dude_Rigged:Belt
+    4300008: Space_Dude_Rigged:Right__Hand
+    4300010: Space_Dude_Rigged:Left_Hand
+    4300012: Space_Dude_Rigged:Left_Wrist
+    4300014: Space_Dude_Rigged:Jumpsuit
+    4300016: Space_Dude_Rigged:Right_Shoulder
+    4300018: Space_Dude_Rigged:Left_Shoulder
+    4300020: Space_Dude_Rigged:Right_Strap
+    4300022: Space_Dude_Rigged:Left_Strap
+    4300024: Space_Dude_Rigged:Chest_PLate
+    4300026: pasted__Visor
+    4300028: pasted__VisorScreen
+    4300030: pasted__Right_Eye
+    4300032: pasted__Left_Eye
+    4300034: pasted__Healmet_BAck
+    4300036: pasted__Neck
+    4300038: pasted__Face
+    9500000: //RootNode
+    13700000: pasted__Face
+    13700002: pasted__Neck
+    13700004: Space_Dude_Rigged:Belt
+    13700006: Space_Dude_Rigged:Chest_PLate
+    13700008: Space_Dude_Rigged:Jumpsuit
+    13700010: Space_Dude_Rigged:Left_Boot
+    13700012: Space_Dude_Rigged:Left_Hand
+    13700014: Space_Dude_Rigged:Left_Shoulder
+    13700016: Space_Dude_Rigged:Left_Strap
+    13700018: Space_Dude_Rigged:Left_Wrist
+    13700020: Space_Dude_Rigged:O2_Pack
+    13700022: Space_Dude_Rigged:Right__Hand
+    13700024: Space_Dude_Rigged:Right_boot
+    13700026: Space_Dude_Rigged:Right_Shoulder
+    13700028: Space_Dude_Rigged:Right_Strap
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 3
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human:
+    - boneName: Space_Dude_Rigged:Hips
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftUpLeg
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightUpLeg
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftLeg
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightLeg
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftFoot
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightFoot
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Spine
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Spine1
+      humanName: Chest
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Neck
+      humanName: Neck
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pasted__Neck1
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftShoulder
+      humanName: LeftShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightShoulder
+      humanName: RightShoulder
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftArm
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightArm
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftForeArm
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__RightForeArm
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__LeftHand
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:pasted__RightHand
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:LeftToeBase
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:RightToeBase
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pasted__Left_Eye
+      humanName: LeftEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pasted__Right_Eye
+      humanName: RightEye
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: pasted__Head
+      humanName: Jaw
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb01
+      humanName: Left Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb02
+      humanName: Left Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Thumb03
+      humanName: Left Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index01
+      humanName: Left Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index02
+      humanName: Left Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Index03
+      humanName: Left Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle01
+      humanName: Left Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle02
+      humanName: Left Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Middle03
+      humanName: Left Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring01
+      humanName: Left Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring02
+      humanName: Left Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring03
+      humanName: Left Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring05
+      humanName: Left Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring02 1
+      humanName: Left Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Left_Ring03 1
+      humanName: Left Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb01
+      humanName: Right Thumb Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb02
+      humanName: Right Thumb Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Thumb03
+      humanName: Right Thumb Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index01
+      humanName: Right Index Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index02
+      humanName: Right Index Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Index03
+      humanName: Right Index Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle01
+      humanName: Right Middle Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle02
+      humanName: Right Middle Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Middle03
+      humanName: Right Middle Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring01
+      humanName: Right Ring Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring02
+      humanName: Right Ring Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring03
+      humanName: Right Ring Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring05
+      humanName: Right Little Proximal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring02 1
+      humanName: Right Little Intermediate
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: Space_Dude_Rigged:Right_Ring03 1
+      humanName: Right Little Distal
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: FinalCharacter(Clone)
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: group
+      position: {x: 0, y: 1.44396174, z: .0106472932}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Skeleton
+      position: {x: -0, y: -.579294145, z: .0912186876}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Space_Character
+      position: {x: -0, y: -1.47018158, z: -.0110745877}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: pasted__Body
+      position: {x: -0, y: .0262197796, z: .000427294959}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Face
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Neck
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: left
+      position: {x: 9.82223129, y: 0, z: 0}
+      rotation: {x: 0, y: -1.11022302e-16, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Mining_Cockpit
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: NewArmthingy05_normalMapped:back
+      position: {x: 0, y: 0, z: -1.00099993}
+      rotation: {x: 0, y: .707106829, z: 0, w: .707106829}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Skeleton
+      position: {x: 0, y: .864667654, z: .101865984}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Character
+      position: {x: -0, y: -.0262197796, z: -.000427294959}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: Body
+      position: {x: -0, y: .0262197796, z: .000427294959}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Belt
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform10
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Chest_PLate
+      position: {x: -0, y: -8.881784e-18, z: -6.93889375e-20}
+      rotation: {x: -2.96826241e-19, y: 0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform3
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Face
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform6
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Healmet_BAck
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform1
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Jumpsuit
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform15
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Boot
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform7
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Eye
+      position: {x: -.0603398979, y: -.0772492141, z: -.0331858769}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: transform4
+      position: {x: .00132219144, y: -.0405517481, z: -.00321287988}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Hand
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform12
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Shoulder
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform17
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Strap
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform19
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Left_Wrist
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform14
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Neck
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform2
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: O2_Pack
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform9
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right__Hand
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform11
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right_boot
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform8
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right_Eye
+      position: {x: -.0601582564, y: -.0757289529, z: .032230027}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: transform5
+      position: {x: -.00128410861, y: -.0405510291, z: -.00315188337}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right_Shoulder
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform16
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right_Strap
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform18
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Right_Wrist
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: transform13
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Belt
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Chest_PLate
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Jumpsuit
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Boot
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Hand
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Shoulder
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Strap
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Wrist
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:O2_Pack
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right__Hand
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_boot
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Shoulder
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Strap
+      position: {x: 0, y: .634486198, z: .0120518012}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 24.9862919, y: 24.9862919, z: 24.9862919}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Skeleton
+      position: {x: 0, y: .864667654, z: .101865984}
+      rotation: {x: 0, y: -0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Hips
+      position: {x: -3.72340422e-18, y: .0991263539, z: -.0953852162}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftUpLeg
+      position: {x: -.0963378921, y: -.0327325426, z: -7.15255721e-09}
+      rotation: {x: -.0917485952, y: -.100611672, z: .66753608, w: .732021213}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftLeg
+      position: {x: -.413336068, y: .00230454304, z: -.0082602175}
+      rotation: {x: .134425595, y: .0637926236, z: -.703801453, w: .694639325}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftFoot
+      position: {x: -.000126047133, y: -.391899973, z: -.00847686734}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftToeBase
+      position: {x: .00183286658, y: -.120640054, z: .0828226358}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftFootToeBase_End
+      position: {x: -3.5527136e-17, y: .00180875987, z: .10362336}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightUpLeg
+      position: {x: .0963378921, y: -.0327325426, z: -7.15255721e-09}
+      rotation: {x: .668183565, y: .732255816, z: -.0887397826, w: -.0972490534}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightLeg
+      position: {x: -.413378209, y: .00222968194, z: .00828094967}
+      rotation: {x: .704089165, y: .695242584, z: -.131250963, w: .0605756752}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightFoot
+      position: {x: -.00012606621, y: -.391899973, z: -.00847686734}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightToeBase
+      position: {x: .00183309556, y: -.120640054, z: .0828226358}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightFootToeBase_End
+      position: {x: -3.19480896e-05, y: .00180875987, z: .10362336}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine
+      position: {x: 2.6469779e-25, y: .0922631845, z: .0157713313}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine1
+      position: {x: 4.93038055e-34, y: .162540287, z: -.00165605545}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Spine2
+      position: {x: -4.93038055e-34, y: .136396483, z: -.0129230497}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:LeftShoulder
+      position: {x: -.0614422597, y: .101870112, z: -.0379324332}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftArm
+      position: {x: -.123190917, y: -.0284505095, z: -.0179345682}
+      rotation: {x: -.00225563836, y: -.00433302205, z: .0303345248, w: .999527931}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftForeArm
+      position: {x: -.30701977, y: .00625578733, z: .00278636394}
+      rotation: {x: .342062593, y: .0191948786, z: -.0379796252, w: .938713133}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__LeftHand
+      position: {x: -.188154429, y: 2.22044592e-17, z: 1.02140514e-16}
+      rotation: {x: .143017739, y: .374761254, z: -.276575863, w: .873273015}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index01
+      position: {x: -.113741703, y: -.0455818884, z: -.0678071752}
+      rotation: {x: .0905536562, y: -.175147772, z: .318025261, w: .927352846}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index02
+      position: {x: -.0515766591, y: 8.881784e-18, z: 4.440892e-18}
+      rotation: {x: .149506256, y: .0322713144, z: -.00638998579, w: .98821342}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index03
+      position: {x: -.0331264734, y: 2.37587712e-16, z: -1.398881e-16}
+      rotation: {x: .118905678, y: .0279041138, z: -.0127809485, w: .992431164}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Index04
+      position: {x: -.022815587, y: -1.28404226e-16, z: 6.21724896e-17}
+      rotation: {x: .177287877, y: .980667353, z: .0147351874, w: -.081507653}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle01
+      position: {x: -.0969019458, y: -.0759506598, z: -.0728959143}
+      rotation: {x: .149434969, y: -.159563988, z: .383269191, w: .897392511}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle02
+      position: {x: -.0525432713, y: .00465993304, z: 2.67627024e-06}
+      rotation: {x: .160556346, y: .0030532307, z: -.110594764, w: .98080641}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle03
+      position: {x: -.036881566, y: -.00360407564, z: .00168543414}
+      rotation: {x: .03987417, y: .0645783693, z: .0539622046, w: .995654523}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Middle04
+      position: {x: -.0264411531, y: 5.8286707e-18, z: 3.10862448e-17}
+      rotation: {x: .230763048, y: .961053789, z: .0355041213, w: -.147863239}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring01
+      position: {x: -.0718986914, y: -.088218607, z: -.0714786723}
+      rotation: {x: .198145062, y: -.139937162, z: .372156531, w: .895910501}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring02
+      position: {x: -.0584322326, y: 8.881784e-18, z: -1.99840136e-17}
+      rotation: {x: .217055723, y: .0196679384, z: -.0199943483, w: .975756228}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring03
+      position: {x: -.041919332, y: 1.13797857e-16, z: 7.54951665e-17}
+      rotation: {x: .0406480655, y: .0284523014, z: -.025735978, w: .998436749}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring04
+      position: {x: -.0236467887, y: 1.33920649e-17, z: 5.71764842e-17}
+      rotation: {x: .201879025, y: .97216028, z: .0241853483, w: -.116465963}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring05
+      position: {x: -.0416494347, y: -.100806303, z: -.0517661572}
+      rotation: {x: .0725926533, y: -.165936992, z: .369658858, w: .911343873}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring02 1
+      position: {x: -.0468357988, y: 7.31542168e-05, z: -.00257585244}
+      rotation: {x: .394132584, y: .0618245639, z: -.00861394964, w: .916931391}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring03 1
+      position: {x: -.0312654264, y: -.00193215674, z: -.00370506081}
+      rotation: {x: .0616755486, y: -.0385400169, z: .0135750743, w: .997259557}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Ring04 1
+      position: {x: -.0147825414, y: -9.7005191e-17, z: -9.48546802e-17}
+      rotation: {x: .105418064, y: .994312406, z: -.00159845501, w: .0150767677}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb01
+      position: {x: -.0823056549, y: .00462914351, z: -.00622049393}
+      rotation: {x: .0555507131, y: -.015561386, z: .00829601567, w: .998300135}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb02
+      position: {x: -.0497523248, y: -6.661338e-18, z: -1.3322676e-17}
+      rotation: {x: -.0149183506, y: -.00272788969, z: .0312792137, w: .999395669}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Left_Thumb03
+      position: {x: -.0392989144, y: 5.55111512e-17, z: 2.88657976e-17}
+      rotation: {x: .370619386, y: .818461478, z: .181108221, w: -.399952382}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Neck
+      position: {x: -0, y: .13877441, z: -.0435418673}
+      rotation: {x: -.391897261, y: .588571608, z: -.391897261, w: .588571608}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Neck1
+      position: {x: -.112459861, y: .00107364589, z: .00388402981}
+      rotation: {x: .0365654901, y: -.00619923323, z: -.144830927, w: .988761127}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Head
+      position: {x: -.153781369, y: -2.44249064e-17, z: 3.95194901e-17}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__HeadTop_End
+      position: {x: -5.17045827e-18, y: .178865969, z: .00123128889}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: pasted__Healmet_BAck
+      position: {x: .960262299, y: -.105883189, z: -3.18415276e-16}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: pasted__Left_Eye
+      position: {x: -.0603398979, y: -.0772492141, z: -.0331858769}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: pasted__Right_Eye
+      position: {x: -.0601582564, y: -.0757289529, z: .032230027}
+      rotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: pasted__Visor
+      position: {x: -.0580707639, y: .032817062, z: 1.8245991e-16}
+      rotation: {x: 2.50222466e-17, y: -.707106829, z: 2.50222466e-17, w: .707106829}
+      scale: {x: 25.0991459, y: 25.0991459, z: 25.0991459}
+      transformModified: 1
+    - name: pasted__VisorScreen
+      position: {x: -0, y: -.00121846318, z: .00471802242}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightShoulder
+      position: {x: .0614019744, y: .101870112, z: -.0379324332}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:RightArm
+      position: {x: .123231195, y: -.0284505095, z: -.0179345682}
+      rotation: {x: -.00433820765, y: .00833359919, z: -.0596670844, w: .998174131}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__RightForeArm
+      position: {x: .312018156, y: .0238427129, z: .0055709146}
+      rotation: {x: -.0641217753, y: .9324857, z: .355272263, w: .0118525177}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:pasted__RightHand
+      position: {x: -.17792207, y: -2.12191375e-16, z: 5.10702568e-17}
+      rotation: {x: -.196662232, y: -.411793947, z: -.193310991, w: .868550897}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index01
+      position: {x: -.107713446, y: -.0413124077, z: .0808762312}
+      rotation: {x: .232566893, y: .0255104471, z: .932801008, w: -.274124354}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index02
+      position: {x: .0515746623, y: -2.87021044e-06, z: 2.00590904e-07}
+      rotation: {x: .149500057, y: .0322716124, z: -.00640782434, w: .988214195}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index03
+      position: {x: .0331255905, y: -3.59744774e-07, z: 2.89400475e-07}
+      rotation: {x: .118905269, y: .0278900675, z: -.0127856927, w: .992431521}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Index04
+      position: {x: .0228159614, y: 5.37710889e-08, z: -3.68217428e-07}
+      rotation: {x: .177287877, y: .980667353, z: .0147351874, w: -.081507653}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle01
+      position: {x: -.0956035405, y: -.0742131919, z: .0824102014}
+      rotation: {x: .213579148, y: .0800900087, z: .909754753, w: -.346865773}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle02
+      position: {x: .0525433384, y: -.00465942826, z: -1.80343397e-06}
+      rotation: {x: .160557315, y: .00304583786, z: -.110589877, w: .980806828}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle03
+      position: {x: .0368819945, y: .0036041541, z: -.00168561086}
+      rotation: {x: .0398740657, y: .0645758286, z: .0539658889, w: .995654464}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Middle04
+      position: {x: .0264410637, y: -4.56530813e-07, z: -9.6567419e-08}
+      rotation: {x: .230763048, y: .961053789, z: .0355041213, w: -.147863239}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring01
+      position: {x: -.0737116486, y: -.0903446674, z: .0762270615}
+      rotation: {x: .196449563, y: .12428239, z: .91109556, w: -.340391457}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring02
+      position: {x: .0584327839, y: -1.92137133e-08, z: 2.51963343e-07}
+      rotation: {x: .217055157, y: .0196631141, z: -.0199906584, w: .975756526}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring03
+      position: {x: .0419196635, y: -3.30330096e-07, z: 4.91317742e-08}
+      rotation: {x: .0406480879, y: .0284536965, z: -.0257446412, w: .998436451}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring04
+      position: {x: .0236464273, y: 3.15105495e-07, z: -2.74258074e-08}
+      rotation: {x: .201879025, y: .97216028, z: .0241853483, w: -.116465963}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring05
+      position: {x: -.0501203239, y: -.106884286, z: .0510892235}
+      rotation: {x: .217708364, y: -.00788730104, z: .918608189, w: -.329696745}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring02 1
+      position: {x: .0468362458, y: -7.3449839e-05, z: .00257523661}
+      rotation: {x: .394130498, y: .0618328415, z: -.0086164875, w: .916931629}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring03 1
+      position: {x: .0312646441, y: .00193204579, z: .00370522263}
+      rotation: {x: .0616826378, y: -.0385743454, z: .0135762393, w: .997257769}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Ring04 1
+      position: {x: .014783036, y: -2.54549963e-08, z: -9.21133278e-07}
+      rotation: {x: .105418064, y: .994312406, z: -.00159845501, w: .0150767677}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb01
+      position: {x: -.0799799785, y: .00560712488, z: .0150568662}
+      rotation: {x: .0923762694, y: .0424022973, z: .994118273, w: .0373852775}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb02
+      position: {x: .0497541241, y: 2.90684989e-06, z: 1.39176677e-07}
+      rotation: {x: -.0149184661, y: -.00273311418, z: .0313504599, w: .999393463}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Space_Dude_Rigged:Right_Thumb03
+      position: {x: .039295435, y: -3.14893168e-06, z: -2.86934323e-07}
+      rotation: {x: .370619386, y: .818461478, z: .181108221, w: -.399952382}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 3
+  userData: 
