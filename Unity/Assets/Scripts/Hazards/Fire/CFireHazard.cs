@@ -97,7 +97,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 		if (CNetwork.IsServer && burning)
 		{
-            Debug.Log(health.health.ToString());
+            //Debug.Log(health.health.ToString());
 			float prevTime = timeUntilProcess;
 			timeUntilProcess -= Time.deltaTime;
 

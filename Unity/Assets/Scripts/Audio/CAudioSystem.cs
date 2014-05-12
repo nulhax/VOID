@@ -111,7 +111,7 @@ public class CAudioSystem : MonoBehaviour
 	void ProcessActiveAudio()
 	{ 
 	    var toRemove = new List<ClipInfo>();
-	    try 
+	    //try 
 		{
 	        foreach(ClipInfo audioClip in s_activeAudio) 
 			{
@@ -123,6 +123,12 @@ public class CAudioSystem : MonoBehaviour
 				{
 					//process current volume scaling
 					ScaleVolume(audioClip);
+
+					//Process audio occlusion
+					if(audioClip.soundType != SoundType.SOUND_AMBIENCE && audioClip.useOcclusion)			
+					{
+						ProcessAudioOcclusion(audioClip);					
+					}
 
 					//process fade in
 					if(audioClip.fadeInTimer < audioClip.fadeInTime)
@@ -152,19 +158,9 @@ public class CAudioSystem : MonoBehaviour
 						}																	
 					}					
 				}
-				
-				//Process audio occlusion
-				if(audioClip.useOcclusion)			
-				{
-					//ProcessAudioOcclusion(audioClip);					
-				}
 			}
 	    } 
-		catch 
-		{
-	        Debug.Log("Error updating active audio clips");
-	        return;
-	    }		
+			
 		    
 		// Cleanup
 	    foreach(var audioClip in toRemove) 
@@ -211,8 +207,7 @@ public class CAudioSystem : MonoBehaviour
 	{
 		//Get the audioListener in the scene
 		Vector3 listenerPos = m_listener.transform.position;
-		Vector3 sourcePos = _audioClip.audioSource.transform.position;
-	
+		Vector3 sourcePos = _audioClip.audioSource.transform.position;	
 		
 		int ignoreMask = 3 << 10;		
 		ignoreMask = ~ignoreMask;
@@ -220,66 +215,21 @@ public class CAudioSystem : MonoBehaviour
 		RaycastHit hit;
         if(Physics.Linecast(sourcePos, listenerPos, out hit, ignoreMask))
 		{
-			Debug.DrawLine(	sourcePos, listenerPos);
+			Debug.DrawLine(	sourcePos, listenerPos, Color.cyan, 1.0f);
 			
            	if(hit.collider.tag != "Listener")
-			{			
-				//TODO:
-				//For now, get every conduit in existence
-				GameObject[] conduits = GameObject.FindGameObjectsWithTag("AudioConduit");
-				bool occlude = true;
-				
-				//Before occluding, raycast from audio source to all nearby audio conduits.
-				foreach(GameObject conduit in conduits)
-				{
-					RaycastHit sourceToConduit;
-					if(Physics.Linecast(sourcePos, conduit.transform.position, out sourceToConduit))
-					{					
-						if(sourceToConduit.collider.tag == "AudioConduit")
-						{						
-							//If there is a conduit within sight of the audio source, check whether the listener has line of sight with the same conduit.				
-							RaycastHit LinstenerToConduit;
-							if(Physics.Linecast(listenerPos, conduit.transform.position, out LinstenerToConduit))
-							{							
-								if(LinstenerToConduit.collider.tag == "AudioConduit")
-								{
-									Debug.DrawLine(	sourcePos, conduit.transform.position, Color.red);
-									Debug.DrawLine(	conduit.transform.position, listenerPos, Color.blue);
-									
-									occlude = false;
-									_audioClip.audioSource.volume = _audioClip.defaultVolume / 2;
-									
-									if(occludeState != OcclusionState.OCCLUSION_PARTIAL)
-									{
-										occludeState = OcclusionState.OCCLUSION_PARTIAL;
-										Debug.Log("Partial Occlusion");
-									}									
-								}
-							}
-						}
-					}
-				}				
-				
+			{	
 				AudioLowPassFilter audioFilter = _audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>(); 
-				
-				if(occlude)
+								
+				if(audioFilter == null)
 				{
-					if(audioFilter == null)
-					{
-						AudioLowPassFilter filter =_audioClip.audioSource.gameObject.AddComponent<AudioLowPassFilter>();
-						filter.cutoffFrequency = 2000; 
-					}
-					
-					_audioClip.audioSource.volume = _audioClip.defaultVolume / 10;
-					
-					if(occludeState != OcclusionState.OCCLUSION_FULL)
-					{
-						occludeState = OcclusionState.OCCLUSION_FULL;
-						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
-					}					
-				}							
-			}	
-		
+					AudioLowPassFilter filter =_audioClip.audioSource.gameObject.AddComponent<AudioLowPassFilter>();
+					filter.cutoffFrequency = 2000; 
+					_audioClip.audioSource.volume = _audioClip.defaultVolume * 0.5f;
+					//Debug.Log (_audioClip.audioSource.clip.name + " occluded");
+				}
+
+			}			
 			else
 			{	
 				if(_audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>() != null)
@@ -291,12 +241,85 @@ public class CAudioSystem : MonoBehaviour
 				if(occludeState != OcclusionState.OCCLUSION_FALSE)
 				{
 					occludeState = OcclusionState.OCCLUSION_FALSE;
-					Debug.Log("No Occlusion");
+					//Debug.Log("No Occlusion");
 				}	
 			}
+
+//				//TODO:
+//				//For now, get every conduit in existence
+//				GameObject[] conduits = GameObject.FindGameObjectsWithTag("AudioConduit");
+//				bool occlude = true;
+//				
+//				//Before occluding, raycast from audio source to all nearby audio conduits.
+//				foreach(GameObject conduit in conduits)
+//				{
+//					RaycastHit sourceToConduit;
+//					if(Physics.Linecast(sourcePos, conduit.transform.position, out sourceToConduit))
+//					{					
+//						if(sourceToConduit.collider.tag == "AudioConduit")
+//						{						
+//							//If there is a conduit within sight of the audio source, check whether the listener has line of sight with the same conduit.				
+//							RaycastHit LinstenerToConduit;
+//							if(Physics.Linecast(listenerPos, conduit.transform.position, out LinstenerToConduit))
+//							{							
+//								if(LinstenerToConduit.collider.tag == "AudioConduit")
+//								{
+//									Debug.DrawLine(	sourcePos, conduit.transform.position, Color.red);
+//									Debug.DrawLine(	conduit.transform.position, listenerPos, Color.blue);
+//									
+//									occlude = false;
+//									_audioClip.audioSource.volume = _audioClip.defaultVolume / 2;
+//									
+//									if(occludeState != OcclusionState.OCCLUSION_PARTIAL)
+//									{
+//										occludeState = OcclusionState.OCCLUSION_PARTIAL;
+//										Debug.Log("Partial Occlusion");
+//									}									
+//								}
+//							}
+//						}
+//					}
+//				}				
+//				
+//				AudioLowPassFilter audioFilter = _audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>(); 
+//				
+//				if(occlude)
+//				{
+//					if(audioFilter == null)
+//					{
+//						AudioLowPassFilter filter =_audioClip.audioSource.gameObject.AddComponent<AudioLowPassFilter>();
+//						filter.cutoffFrequency = 2000; 
+//					}
+//					
+//					_audioClip.audioSource.volume = _audioClip.defaultVolume / 10;
+//					
+//					if(occludeState != OcclusionState.OCCLUSION_FULL)
+//					{
+//						occludeState = OcclusionState.OCCLUSION_FULL;
+//						Debug.Log("Full Occlusion.  " + hit.collider.gameObject.name + " is blocking audio");
+//					}					
+//				}		
 					 
 		}
 	}
+
+//	public void SetOccludeAll(bool _bOccludeAll)
+//	{
+//		if(_bOccludeAll)
+//		{
+//			if(m_listener.gameObject.GetComponent<AudioLowPassFilter>() == null)
+//			{
+//				//m_listener.gameObject.AddComponent<AudioLowPassFilter>();
+//			}
+//		}
+//		else
+//		{
+//			if(m_listener.gameObject.GetComponent<AudioLowPassFilter>() != null)
+//			{
+//				///Destroy(m_listener.gameObject.GetComponent<AudioLowPassFilter>());
+//			}
+//		}
+//	}
 	
 	public static AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop,
 							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 

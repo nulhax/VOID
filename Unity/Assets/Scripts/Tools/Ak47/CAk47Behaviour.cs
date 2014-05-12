@@ -137,6 +137,10 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 		GameObject cBullet = (GameObject)GameObject.Instantiate((GameObject)Resources.Load("Prefabs/Tools/Projectiles/Bullet", typeof(GameObject)), m_cNossle.transform.position, m_cNossle.transform.rotation);
 		cBullet.rigidbody.velocity = cBullet.transform.forward * 40.0f;
 
+		if(m_particleEmitter != null)
+		{
+			m_particleEmitter.Play();
+		}
 
 		CAudioCue[] audioCues = GetComponents<CAudioCue>();
 
@@ -170,7 +174,7 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 
 	public GameObject m_cNossle = null;
-
+	public  ParticleSystem m_particleEmitter = null;
 
 	CNetworkVar<byte> m_bAmmo = null;
 
@@ -183,7 +187,6 @@ public class CAk47Behaviour : CNetworkMonoBehaviour
 
 
 	bool m_bShoot = false;
-
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();
 

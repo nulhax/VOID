@@ -160,7 +160,7 @@ public class CPlayerHeadBob : MonoBehaviour {
 	public void ResetHeadPos()
 	{
 		//Set position to inital offset
-		gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition = m_initialOffset;
+		//gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition = m_initialOffset;
 
 		Vector3 headRotation = gameObject.GetComponent<CPlayerHead> ().Head.transform.localRotation.eulerAngles;
 		//Reset roll
