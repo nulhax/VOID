@@ -133,6 +133,7 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
         m_fCurrentCharge = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
 
         _cRegistrar.RegisterRpc(this, "RemoteShowShieldHit");
+        _cRegistrar.RegisterRpc(this, "RemoteShowHitNoShield");
     }
 
 
@@ -168,6 +169,7 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
     }
 
 
+    [AServerOnly]
     public bool ProjectileHit(float _fDamage, Vector3 _vPosition, Vector3 _vEurler)
     {
         bool bReduced = false;
@@ -182,6 +184,13 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
         }
 
         return (bReduced);
+    }
+
+
+    [AServerOnly]
+    public void ProjectileHitNoShield(Vector3 _vPosition, Vector3 _vEurler)
+    {
+        InvokeRpcAll("RemoteShowHitNoShield", _vPosition, _vEurler);
     }
 
 
@@ -243,8 +252,19 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
         GameObject cShipHitEffect = Resources.Load("Prefabs/Ship/Shield Hit", typeof(GameObject)) as GameObject;
         cShipHitEffect = GameObject.Instantiate(cShipHitEffect) as GameObject;
 
-        cShipHitEffect.transform.position = _vPosition;
-        cShipHitEffect.transform.eulerAngles = _vEulerRotation;
+        cShipHitEffect.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(_vPosition);
+        cShipHitEffect.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.Euler(_vEulerRotation));
+    }
+
+
+    [ANetworkRpc]
+    void RemoteShowHitNoShield(Vector3 _vPosition, Vector3 _vEulerRotation)
+    {
+        GameObject cShipHitEffect = Resources.Load("Prefabs/Galaxy/Enemy Hit Particles", typeof(GameObject)) as GameObject;
+        cShipHitEffect = GameObject.Instantiate(cShipHitEffect) as GameObject;
+
+        cShipHitEffect.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(_vPosition);
+        cShipHitEffect.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.Euler(_vEulerRotation));
     }
 	
 	
