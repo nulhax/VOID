@@ -39,6 +39,9 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 	CFacilityAtmosphere m_FacilityAtmosphere = null;
 	CFacilityTiles m_FacilityTiles = null;
 
+	private static float k_AlarmAnimationSpeed = 5.0f;
+	private static float k_AlarmColorPower = 5.0f;
+
 
 	// Member Properties
 
@@ -89,7 +92,7 @@ public class CFacilityWarningSystem : CNetworkMonoBehaviour
 			return;
 
 		Color alarmColor = GetAlarmColor(highestSeverity);
-		float alarmColorPower = Mathf.Sign(Mathf.Sin(Time.time * 5.0f)) * 10.0f;
+		float alarmColorPower = Mathf.Sign(Mathf.Sin(Time.time * k_AlarmAnimationSpeed)) * k_AlarmColorPower;
 		if(alarmColorPower < 0.0f)
 			alarmColorPower = 0.0f;
 

@@ -60,7 +60,7 @@ Material:
       data:
         first:
           name: _EmissivePowerG
-        second: 1
+        second: 3
       data:
         first:
           name: _EmissivePowerB
@@ -89,7 +89,7 @@ Material:
       data:
         first:
           name: _EmissiveColorG
-        second: {r: 0, g: 0, b: 0, a: 1}
+        second: {r: 0, g: .462068558, b: 1, a: 1}
       data:
         first:
           name: _EmissiveColorB
