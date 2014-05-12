@@ -47,5 +47,5 @@ public class PhysicalForceDamage : MonoBehaviour
 		
 	}
 	
-	float m_fForceDamageThreshold = 700;
+	float m_fForceDamageThreshold = 870;
 }

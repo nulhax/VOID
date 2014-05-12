@@ -119,6 +119,12 @@ public class CPlayerHeadBob : MonoBehaviour {
 		bStrafeRight = ((m_MovementState & (uint)CPlayerMotor.EInputState.StrafeRight) > 0) ? true : false;
 		bSprint      = ((m_MovementState & (uint)CPlayerMotor.EInputState.Run)         > 0) ? true : false;   
 		
+        if (bJump)
+        {
+            ResetHeadPos();
+            return;
+        }
+
 		//Determine head bob amount
 		if((bRunForward || bWalkBack || bStrafeLeft || bStrafeRight) && !bJump)
 		{

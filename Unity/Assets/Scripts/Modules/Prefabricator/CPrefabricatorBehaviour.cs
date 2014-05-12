@@ -36,12 +36,12 @@ public class CPrefabricatorBehaviour: MonoBehaviour
 	// Member Properties
 	public CDUIPrefabricator PrefabricatorUI
 	{
-		get { return(m_ConstructionInterface.DuiRoot.GetComponent<CDUIPrefabricator>()); }
+		get { return(m_ConstructionInterface.DUIRoot.GetComponent<CDUIPrefabricator>()); }
 	}
 	
 	// Member Methods
 	public void Start()
 	{
-		m_ConstructionInterface.DuiRoot.GetComponent<CDUIPrefabricator>().RegisterGridUI(m_GridUI, m_GridUI.GetComponent<CGrid>());
+		m_ConstructionInterface.DUIRoot.GetComponent<CDUIPrefabricator>().RegisterGridUI(m_GridUI, m_GridUI.GetComponent<CGrid>());
 	}
 }

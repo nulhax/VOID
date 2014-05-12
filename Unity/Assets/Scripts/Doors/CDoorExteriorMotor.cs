@@ -53,12 +53,12 @@ public class CDoorExteriorMotor : MonoBehaviour
 		m_DoorInterface.EventOpenStart += OnDoorOpenStart;
 		m_DoorInterface.EventCloseStart += OnDoorCloseStart;
 
-		m_DoorControlInner = m_DoorControlPanelInner.DuiRoot.GetComponent<CDUIDoorControl>();
+		m_DoorControlInner = m_DoorControlPanelInner.DUIRoot.GetComponent<CDUIDoorControl>();
 
 		m_DoorControlInner.EventOpenDoorButtonPressed += OnDoorControlOpenPressed;
 		m_DoorControlInner.EventCloseDoorButtonPressed += OnDoorControlClosePressed;
 
-		m_DoorControlOuter = m_DoorControlPanelOuter.DuiRoot.GetComponent<CDUIDoorControl>();
+		m_DoorControlOuter = m_DoorControlPanelOuter.DUIRoot.GetComponent<CDUIDoorControl>();
 		
 		m_DoorControlOuter.EventOpenDoorButtonPressed += OnDoorControlOpenPressed;
 		m_DoorControlOuter.EventCloseDoorButtonPressed += OnDoorControlClosePressed;

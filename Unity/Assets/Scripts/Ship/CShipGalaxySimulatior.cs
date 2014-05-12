@@ -57,7 +57,6 @@ public class CShipGalaxySimulatior : MonoBehaviour
 		// Add galaxy layer and remove the default layer + player
 		m_GalaxyLight.light.cullingMask |= CGalaxy.layerBit_All;
 		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Default"));
-		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
 		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 	}
 
