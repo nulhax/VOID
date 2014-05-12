@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Sheild
-  m_Shader: {fileID: 4800000, guid: b7787ad515bc2414ea18fde89c35b973, type: 3}
+  m_Shader: {fileID: 4800000, guid: dfbcd0fd98a11924cb161ebc4886e0e9, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -69,6 +69,13 @@ Material:
           m_Texture: {fileID: 2800000, guid: 3c6f121126a7bcb40adee1c74cb3e990, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _EmissiveTex
+        second:
+          m_Texture: {fileID: 2800000, guid: 3c6f121126a7bcb40adee1c74cb3e990, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
@@ -118,6 +125,14 @@ Material:
         first:
           name: _Range2
         second: 50
+      data:
+        first:
+          name: _EmissivePower
+        second: 5
+      data:
+        first:
+          name: _TimeAlive
+        second: 0
     m_Colors:
       data:
         first:
@@ -147,3 +162,7 @@ Material:
         first:
           name: _EmissiveColorA
         second: {r: 0, g: 0, b: 0, a: 1}
+      data:
+        first:
+          name: _CenterPos
+        second: {r: 0, g: 0, b: 0, a: 0}

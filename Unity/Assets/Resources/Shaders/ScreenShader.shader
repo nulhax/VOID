@@ -1,4 +1,4 @@
-Shader "ScreenShader"
+Shader "VOID/Screen Shader"
 {
 	Properties 
 	{
@@ -39,7 +39,7 @@ Shader "ScreenShader"
 			void surf (Input IN, inout SurfaceOutput o) 
 			{
 				float4 uiCol = tex2D(_UI, IN.uv_UI);
-				uiCol = saturate(uiCol * _UIBrightness);
+				uiCol = uiCol * _UIBrightness;
 				
 				o.Emission = uiCol.rgb;
 				o.Alpha = _UIAlpha * uiCol.a;

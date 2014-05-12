@@ -49,7 +49,7 @@ public class CShieldHitBehaviour : MonoBehaviour
 	{
         m_fAliveTimer += Time.deltaTime;
 
-        renderer.material.SetFloat("_UIAlpha", 1.0f - (m_fAliveTimer / m_fAliveDuration));
+		renderer.material.SetFloat("_TimeAlive", 1.0f - (m_fAliveTimer / m_fAliveDuration));
 
         if (m_fAliveTimer > m_fAliveDuration)
         {
