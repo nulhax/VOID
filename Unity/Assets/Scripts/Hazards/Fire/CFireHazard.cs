@@ -3,6 +3,10 @@ using System.Collections;
 
 public class CFireHazard : CNetworkMonoBehaviour
 {
+    // DEBUG DELETE ME
+    public bool Active = false;
+    // DEBUG DELETE ME
+
 	private static System.Collections.Generic.List<CFireHazard> allInstances = new System.Collections.Generic.List<CFireHazard>();
 
 	private int audioClipIndex = -1;
@@ -83,6 +87,10 @@ public class CFireHazard : CNetworkMonoBehaviour
 	
 	void Update()
 	{
+        // DEBUG DELETE ME
+        if (Active) { fireHealth.health = fireHealth.health_min; }
+        // DEBUG DELETE ME
+
 		if (Input.GetKeyDown(KeyCode.L))
 			fireHealth.health = fireHealth.health_min;
 

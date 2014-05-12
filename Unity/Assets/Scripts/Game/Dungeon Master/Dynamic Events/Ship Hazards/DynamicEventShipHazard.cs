@@ -98,7 +98,7 @@ public class DynamicEventShipHazard : MonoBehaviour
             foreach (CComponentInterface CompInt in LocalCompInterface)
             {
                 // If the component is not functional
-                if (!CompInt.IsFunctional)
+                if (CompInt.IsBroken)
                 {
                     // Increment the total malfunctions counter
                     ++m_iTotalHazardsMalfunction;
