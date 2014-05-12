@@ -34,6 +34,16 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
 
 // Member Methods
 
+	void Awake()
+	{
+		if (CNetwork.IsServer)
+		{
+			m_SphereCollider = gameObject.AddComponent<SphereCollider>();
+			m_SphereCollider.radius = 10.0f;
+			m_SphereCollider.isTrigger = true;
+		}
+	}
+
 
 	void Start()
 	{
@@ -55,16 +65,20 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            // Notify parent
-            transform.parent.GetComponent<CCannonProjectile>().NotifyHitShipShield(_cCollider);
+			bool bAbsorbed = CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHit(5.0f, transform.position, Quaternion.LookRotation((transform.position - _cCollider.gameObject.transform.position).normalized).eulerAngles);
+
+			if (bAbsorbed)
+			{
+				GetComponent<CCannonProjectile>().Destroy();
+			}
 
             // Turn off collider
-            gameObject.collider.enabled = false;
+			m_SphereCollider.enabled = false;
         }
     }
 
 
 // Member Fields
-
+	SphereCollider m_SphereCollider = null;
 
 };

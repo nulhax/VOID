@@ -102,7 +102,7 @@ public class CEnemyShip : CNetworkMonoBehaviour
 	public float mTimeUntilScannedTargetExpires = 30.0f;	// X seconds to reach the target location, after which mTimeUntilHostileTargetExpires will take over while it is in view.
 	public float mTimeUntilHostileTargetExpires = 20.0f;	// X seconds after the target disappears from view, the target will expire.
 	public float mTimeUntilExaminedTargetExpires = 5.0f;
-	public float mTimeBetweenWeaponFire = 1.0f / 3.0f;
+	public float mTimeBetweenWeaponFire = 1.0f / 1.0f;
 	public float mMinVelocityOfSuspiciousGubbin = 5.0f;
 	public float mTimeUntilSuspiciousGubbinExpires = 15.0f;
 
