@@ -131,6 +131,8 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
         m_fCapacityMax = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_fCapacityCurrent = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
         m_fCurrentCharge = _cRegistrar.CreateReliableNetworkVar<float>(OnNetworkVarSync, 0.0f);
+
+        _cRegistrar.RegisterRpc(this, "RemoteShowShieldHit");
     }
 
 
@@ -166,13 +168,15 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
     }
 
 
-    public bool ReduceCharge(float _fAmount)
+    public bool ProjectileHit(float _fDamage, Vector3 _vPosition, Vector3 _vEurler)
     {
         bool bReduced = false;
 
-        if (ChargeCurrent > _fAmount)
+        if (ChargeCurrent > _fDamage)
         {
-            m_fCurrentCharge.Value -= _fAmount;
+            m_fCurrentCharge.Value -= _fDamage;
+
+            InvokeRpcAll("RemoteShowShieldHit", _vPosition, _vEurler);
 
             bReduced = true;
         }
@@ -231,6 +235,17 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 	{
         // Empty
 	}
+
+
+    [ANetworkRpc]
+    void RemoteShowShieldHit(Vector3 _vPosition, Vector3 _vEulerRotation)
+    {
+        GameObject cShipHitEffect = Resources.Load("Prefabs/Ship/Shield Hit", typeof(GameObject)) as GameObject;
+        cShipHitEffect = GameObject.Instantiate(cShipHitEffect) as GameObject;
+
+        cShipHitEffect.transform.position = _vPosition;
+        cShipHitEffect.transform.eulerAngles = _vEulerRotation;
+    }
 	
 	
 // Member Fields
