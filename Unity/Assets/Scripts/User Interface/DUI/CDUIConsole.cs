@@ -54,7 +54,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 	}
 
 
-	public GameObject DuiRoot
+	public GameObject DUIRoot
 	{
 		get
 		{
@@ -184,7 +184,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
         if (_cSyncedVar == m_tDuiViewId)
         {
             // Cache the duiroot
-            m_cDuiRoot = DuiRoot.GetComponent<CDUIRoot>();
+            m_cDuiRoot = DUIRoot.GetComponent<CDUIRoot>();
         }
     }
 

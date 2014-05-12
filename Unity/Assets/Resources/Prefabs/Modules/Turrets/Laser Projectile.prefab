@@ -28,7 +28,7 @@ GameObject:
   - 4: {fileID: 400002}
   - 33: {fileID: 3300000}
   - 23: {fileID: 2300000}
-  - 64: {fileID: 6400000}
+  - 65: {fileID: 6500000}
   m_Layer: 11
   m_Name: Beam
   m_TagString: Untagged
@@ -102,8 +102,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!64 &6400000
-MeshCollider:
+--- !u!65 &6500000
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -112,9 +112,8 @@ MeshCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_SmoothSphereCollisions: 0
-  m_Convex: 1
-  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  m_Size: {x: 1.00000012, y: 2.00000095, z: 1.00000072}
+  m_Center: {x: 5.96046448e-08, y: 0, z: -8.94070098e-08}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1

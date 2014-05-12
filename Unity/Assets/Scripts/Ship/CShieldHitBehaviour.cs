@@ -53,7 +53,7 @@ public class CShieldHitBehaviour : MonoBehaviour
 
         if (m_fAliveTimer > m_fAliveDuration)
         {
-            Destroy(gameObject);
+            Destroy(transform.parent.gameObject);
         }
 	}
 

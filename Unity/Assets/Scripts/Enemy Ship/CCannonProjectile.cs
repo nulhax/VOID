@@ -13,6 +13,26 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 
 	}
 
+
+    [AServerOnly]
+    public void NotifyHitShip()
+    {
+        Destroy();
+    }
+
+    
+    [AServerOnly]
+    public void NotifyHitShipShield(Collider _cOther)
+    {
+        bool bAbsorbed = CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHit(5.0f, transform.position, Quaternion.LookRotation((transform.position - _cOther.gameObject.transform.position).normalized).eulerAngles);
+
+        if (bAbsorbed)
+        {
+            Destroy();
+        }
+    }
+
+
 	void Awake()
 	{
 		transform.parent = CGalaxy.instance.transform;
@@ -23,10 +43,14 @@ public class CCannonProjectile : CNetworkMonoBehaviour
         if (!CNetwork.IsServer)
             return;
 
-		Physics.IgnoreCollision(collider, parent.collider);
-		Collider[] parentColliders = parent.GetComponentsInChildren<Collider>();
-		foreach (Collider parentCollider in parentColliders)
-			Physics.IgnoreCollision(collider, parentCollider);
+        foreach (Collider cChildCollider in GetComponentsInChildren<Collider>())
+        {
+            Physics.IgnoreCollision(cChildCollider, parent.collider);
+
+            Collider[] parentColliders = parent.GetComponentsInChildren<Collider>();
+            foreach (Collider parentCollider in parentColliders)
+                Physics.IgnoreCollision(cChildCollider, parentCollider);
+        }
 	}
 	
 	void Update()
@@ -38,11 +62,23 @@ public class CCannonProjectile : CNetworkMonoBehaviour
         if (!destroyed &&
             lifetime <= 0.0f)
         {
-            destroyed = true;
-            CNetwork.Factory.DestoryGameObject(NetworkViewId);
+            Destroy();
         }	
 	}
 
+    void Destroy()
+    {
+        if (!CNetwork.IsServer)
+            return;
+
+        if (destroyed)
+            return;
+
+        destroyed = true;
+        CNetwork.Factory.DestoryGameObject(NetworkViewId);
+    }
+
+    /*
 	void OnCollisionEnter(Collision collision)
 	{
         if (!CNetwork.IsServer)
@@ -68,4 +104,5 @@ public class CCannonProjectile : CNetworkMonoBehaviour
             CNetwork.Factory.DestoryGameObject(NetworkViewId);
 		}
 	}
+     * */
 }

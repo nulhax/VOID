@@ -84,7 +84,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     const float k_fAlignBodySpeedThusers = 60.0f;
 
     // Ground movement
-    const float k_fJumpSpeed    = 1.0f;
+    const float k_fJumpSpeed    = 1.5f;
     const float k_fMoveSpeed    = 6.5f;
     const float k_fSprintSpeed  = 8.0f;
 
@@ -441,7 +441,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 		Vector3 dir = -transform.up;
 
 		Ray ray = new Ray(origin, dir);
-		List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(ray, m_cCapsuleCollider.radius, 1.0f, 1 << gameObject.layer));
+		List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(ray, m_cCapsuleCollider.radius, 0.5f, 1 << gameObject.layer));
 
 		m_bGrounded = hits.Exists(hit => !hit.collider.isTrigger && hit.collider != m_cCapsuleCollider);
 	}
