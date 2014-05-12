@@ -1078,8 +1078,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_FirstConnectedFacility: {fileID: 0}
   m_SecondConnectedFacility: {fileID: 0}
-  m_OpenAnimation: {fileID: 0}
-  m_CloseAnimation: {fileID: 0}
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1133,7 +1131,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DoorControlPanelInner: {fileID: 11400020}
   m_DoorControlPanelOuter: {fileID: 11400010}
-  m_DistanceToActivateUI: 10
+  m_DistanceToActivateUI: 5
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1

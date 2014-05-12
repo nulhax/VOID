@@ -45,9 +45,6 @@ public class CDoorInterface : CNetworkMonoBehaviour
 	public GameObject m_FirstConnectedFacility = null;
 	public GameObject m_SecondConnectedFacility = null;
 
-	public AnimationClip m_OpenAnimation = null;
-	public AnimationClip m_CloseAnimation = null;
-
 	private CNetworkVar<bool> m_Opened = null;
 	private float m_OpenTimer = 0.0f;
 	private float m_OrificeArea = 0.0f;

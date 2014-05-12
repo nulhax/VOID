@@ -85,7 +85,7 @@ Material:
       data:
         first:
           name: _EmissiveColorR
-        second: {r: 0, g: .349019617, b: .996078432, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
       data:
         first:
           name: _EmissiveColorG

@@ -100,7 +100,12 @@ public class CThirdPersonAnimController : MonoBehaviour
 	void Update () 
 	{
 		if(m_bInputDisabled == false)
-		{			
+		{		
+			if(CGamePlayers.SelfActor != gameObject)
+			{
+				int i = 0;
+			}
+
 			bool bWalkForward;
 			bool bWalkBack;
 			bool bSprint;
@@ -128,9 +133,7 @@ public class CThirdPersonAnimController : MonoBehaviour
                 m_fTimeLastGround = Time.time;
                 m_ThirdPersonAnim.SetBool("Grounded", m_PlayerMotor.IsGrounded); 
                 bLogged = false;
-            }
-
-           	
+            }          	
 
 			if(bStrafeLeft)
 			{
@@ -151,6 +154,11 @@ public class CThirdPersonAnimController : MonoBehaviour
             if(Time.time > m_fTimeLastGround + m_fFallStateTriggerTime && currentBaseState.nameHash != m_iSlideState)
             {
                 m_ThirdPersonAnim.SetBool("Grounded", false); 
+
+				if(CGamePlayers.SelfActor != gameObject)
+				{
+					int i = 0;
+				}
             }       
 
 			//-------------------------------------------

@@ -37,6 +37,9 @@ public class CHUDVisor : MonoBehaviour
 	private bool m_VisorDown = false;
 	private ParticleSystem m_particleEmitter = null;
 
+	private static string k_UpAnimation = "VisorUp";
+	private static string k_DownAnimation = "VisorDown";
+
 
 	// Member Properties
 	public bool IsVisorDown
@@ -50,20 +53,35 @@ public class CHUDVisor : MonoBehaviour
 	{
 		//CUserInput.SubscribeInputChange(CUserInput.EInput.Visor, OnEventInput);
 		m_particleEmitter = transform.FindChild("Gas Emission").particleSystem;
+
+		SetVisorState(false);
 	}
 
 	public void SetVisorState(bool _Down)
 	{
-		if(_Down && !m_VisorDown)
+		if(!_Down)
 		{
-			animation.CrossFade("VisorDown");
-			GetComponent<CAudioCue>().Play(1.0f,false,0);
+			if(animation.IsPlaying(k_UpAnimation))
+				return;
+
+			float startTime = animation.IsPlaying(k_DownAnimation) ? 
+				animation[k_UpAnimation].length - animation[k_DownAnimation].time : 0.0f;
+			
+			animation.Play(k_UpAnimation, PlayMode.StopSameLayer);
+			animation[k_UpAnimation].time = startTime;
 
  		}
-		else if(!_Down && m_VisorDown)
+		else
 		{
-			animation.CrossFade("VisorUp");
-			GetComponent<CAudioCue>().Play(1.0f,false,1);
+			if(animation.IsPlaying(k_DownAnimation))
+				return;
+			
+			float startTime = animation.IsPlaying(k_UpAnimation) ? 
+				animation[k_DownAnimation].length - animation[k_UpAnimation].time : 0.0f;
+			
+			animation.Play(k_DownAnimation, PlayMode.StopSameLayer);
+			animation[k_DownAnimation].time = startTime;
+
 			m_particleEmitter.Play();
 		}
 
