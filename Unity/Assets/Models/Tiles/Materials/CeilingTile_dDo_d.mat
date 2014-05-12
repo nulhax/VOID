@@ -24,21 +24,21 @@ Material:
         first:
           name: _Diffuse
         second:
-          m_Texture: {fileID: 2800000, guid: 78b8df3f763f305429f82f960cc44ac5, type: 3}
+          m_Texture: {fileID: 2800000, guid: 1f3d146d21dae53419c9d4639a878231, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Normal
         second:
-          m_Texture: {fileID: 2800000, guid: 1924c523ff26b4644864140f8fd6af58, type: 3}
+          m_Texture: {fileID: 2800000, guid: 6f1075657b600a34ead2e33558d74e14, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
         first:
           name: _Specular
         second:
-          m_Texture: {fileID: 2800000, guid: 66ebfea83fad37840baea29bc0349e3a, type: 3}
+          m_Texture: {fileID: 2800000, guid: 714900a372d7a1c459980a81d8ad705f, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -52,7 +52,7 @@ Material:
       data:
         first:
           name: _SpecPower
-        second: 3
+        second: 1
       data:
         first:
           name: _EmissivePowerR

@@ -2481,7 +2481,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: ac44b8a25154a9d40a172ab5851e0986, type: 2}
-  mText: Nanaites
+  mText: Nanites
   mFontSize: 50
   mFontStyle: 0
   mEncoding: 1
@@ -4270,7 +4270,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 1127, y: 652, z: 0}
+  m_ViewPortPos: {x: 2885, y: 503, z: 0}
 --- !u!114 &11400096
 MonoBehaviour:
   m_ObjectHideFlags: 1

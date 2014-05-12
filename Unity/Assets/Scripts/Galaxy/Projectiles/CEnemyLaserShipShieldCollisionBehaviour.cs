@@ -72,7 +72,7 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
 
 			if (bAbsorbed)
 			{
-				GetComponent<CCannonProjectile>().Destroy();
+				transform.parent.GetComponent<CCannonProjectile>().Destroy();
 			}
 
             // Turn off collider

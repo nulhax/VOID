@@ -823,8 +823,18 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		EDirection dir1 = neighbour1.m_Direction;
 		EDirection dir2 = neighbour2.m_Direction;
 
-		wall1.AddTileModification((int)_Modifier, dir1, _State);
-		wall2.AddTileModification((int)_Modifier, dir2, _State);
+		if(wall1.m_TileType == CTile.EType.Interior_Wall && wall2.m_TileType == CTile.EType.Interior_Wall)
+		{
+			if(!wall1.GetNeighbourExemptionState(dir1) || !wall2.GetNeighbourExemptionState(dir2))
+			{
+				wall1.SetTileModification((int)_Modifier, dir1, false);
+				wall2.SetTileModification((int)_Modifier, dir2, false);
+				return;
+			}
+		}
+
+		wall1.SetTileModification((int)_Modifier, dir1, _State);
+		wall2.SetTileModification((int)_Modifier, dir2, _State);
 	}
 
 	[AServerOnly]
