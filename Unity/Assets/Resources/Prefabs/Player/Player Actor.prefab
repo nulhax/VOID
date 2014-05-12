@@ -289,8 +289,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af4d244ba8ca4541ba3d36be5252403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cModelThirdPerson: {fileID: 100000, guid: b1590879bfba7e845bdb8b9e07396592, type: 2}
-  m_cModelFirstPerson: {fileID: 100090, guid: abf330fe8b5980142a83f871a34593f4, type: 2}
+  m_cModelThirdPerson: {fileID: 100018, guid: 74be29eef8478ec45a53d72d728b9802, type: 2}
+  m_cModelFirstPerson: {fileID: 100140, guid: eb96da8debf9ea242bd595b97316a876, type: 2}
 --- !u!114 &11400028
 MonoBehaviour:
   m_ObjectHideFlags: 1
