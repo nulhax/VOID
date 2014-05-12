@@ -261,7 +261,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 			// Get the opening area
 			float openingArea = doorInterface.DoorOrificeArea;
 
-			if(!doorInterface.IsOpened && openingArea > 0.0f)
+			if(!doorInterface.IsOpened || openingArea == 0.0f)
 				continue;
 			
 			GameObject neighbourFacility = doorInterface.m_FirstConnectedFacility == gameObject ? 
@@ -319,7 +319,7 @@ public class CFacilityAtmosphere : CNetworkMonoBehaviour
 			// Get the opening area
 			float openingArea = doorInterface.DoorOrificeArea;
 
-			if(!doorInterface.IsOpened && openingArea > 0.0f)
+			if(!doorInterface.IsOpened || openingArea == 0.0f)
 				continue;
 
 			if(Density < 0.0001f)
