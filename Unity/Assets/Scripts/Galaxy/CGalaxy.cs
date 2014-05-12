@@ -816,6 +816,16 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	private void LoadSparseAsteroids(SCellPos absoluteCell)
 	{
+        Vector3 LinVel = Vector3.zero;
+        LinVel.x = Random.Range(10.0f, 25.0f);
+        LinVel.y = Random.Range(10.0f, 25.0f);
+        LinVel.z = Random.Range(10.0f, 25.0f);
+
+        Vector3 AngVel = Vector3.zero;
+        AngVel.x = Random.Range(0.25f, 0.5f);
+        AngVel.y = Random.Range(0.25f, 0.5f);
+        AngVel.z = Random.Range(0.25f, 0.5f);
+
 		float fCellRadius = cellRadius;
 
 		uint uiNumAsteroids = SparseAsteroidCount(absoluteCell);
@@ -826,8 +836,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 												new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius)), // Position within parent cell.
 												Random.rotationUniform, // Rotation.
 												Vector3.one * Random.Range(5.0f, 10.0f), // Scale
-												Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
-                                                Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
+                                                LinVel, // Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
+                                                AngVel, // Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
 												true,   // Has NetworkedEntity script.
 												true    // Has a rigid body.
 												));
@@ -846,6 +856,16 @@ public class CGalaxy : CNetworkMonoBehaviour
 			uint uiNumAsteroidsInCluster = (uint)Random.Range(6, 21);
 			for (uint uiAsteroid = 0; uiAsteroid < uiNumAsteroidsInCluster; ++uiAsteroid)
 			{
+                Vector3 LinVel = Vector3.zero;
+                LinVel.x = Random.Range(10.0f, 25.0f);
+                LinVel.y = Random.Range(10.0f, 25.0f);
+                LinVel.z = Random.Range(10.0f, 25.0f);
+
+                Vector3 AngVel = Vector3.zero;
+                AngVel.x = Random.Range(0.25f, 0.5f);
+                AngVel.y = Random.Range(0.25f, 0.5f);
+                AngVel.z = Random.Range(0.25f, 0.5f);
+
 				Vector3 clusterCentre = new Vector3(Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius), Random.Range(-fCellRadius, fCellRadius));
 
 				mGubbinsToLoad.Add(new CGubbinMeta((CGameRegistrator.ENetworkPrefab)Random.Range((ushort)CGameRegistrator.ENetworkPrefab.Asteroid_FIRST, (ushort)CGameRegistrator.ENetworkPrefab.Asteroid_LAST + 1),    // Random asteroid prefab.
@@ -853,8 +873,8 @@ public class CGalaxy : CNetworkMonoBehaviour
 													clusterCentre + Random.onUnitSphere * Random.Range(0.0f, fCellRadius * 0.25f), // Position within parent cell.
 													Random.rotationUniform, // Rotation.
 													Vector3.one * Random.Range(2.0f, 8.0f), // Scale
-                                                    Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
-                                                    Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
+                                                    LinVel, // Vector3.zero, // Linear velocity.Random.onUnitSphere * Random.Range(10.0f, 25.0f)
+                                                    AngVel, // Vector3.zero, // Angular velocity.Random.onUnitSphere * Random.Range(0.25f, 0.5f)
 													true,   // Has NetworkedEntity script.
 													true    // Has a rigid body.
 													));
