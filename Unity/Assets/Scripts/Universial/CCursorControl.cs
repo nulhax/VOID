@@ -91,6 +91,7 @@ public class CCursorControl : MonoBehaviour
         // Lock Cursor toggle
         if (Input.GetKeyDown(KeyCode.F1))
         {
+			m_bLocked = !m_bLocked;
             Screen.lockCursor = !Screen.lockCursor;
         }
 	}

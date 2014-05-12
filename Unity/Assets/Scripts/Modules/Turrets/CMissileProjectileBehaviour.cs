@@ -167,8 +167,10 @@ public class CMissileProjectileBehaviour : CNetworkMonoBehaviour
         {
             if (_cCollider.GetComponent<CEnemyShip>() != null)
             {
-                // Destory with hit target
+                // Destroy with hit target
                 InvokeRpcAll("RemoteDestroy", _cCollider.gameObject.GetComponent<CNetworkView>().ViewId);
+
+                _cCollider.gameObject.GetComponent<CActorHealth>().health -= 70.0f;
             }
         }
     }

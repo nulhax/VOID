@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /* Implementation */
 
 
-[RequireComponent(typeof(CTurretBehaviour))]
+[RequireComponent(typeof(CTurretInterface))]
 public class CLaserTurretBehaviour : CNetworkMonoBehaviour
 {
 

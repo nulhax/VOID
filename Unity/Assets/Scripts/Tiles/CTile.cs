@@ -370,6 +370,9 @@ public abstract class CTile : MonoBehaviour
 		if(enumModType == null)
 			return(null);
 
+		if(m_TileObject == null)
+			return(null);
+
 		string modName =  Enum.GetName(enumTileMetaTypes, m_CurrentTileMeta.m_MetaType) + "_" + Enum.GetName(enumModType, _ModificationType) + "_" + _LocalSide;
 		Transform child = m_TileObject.transform.FindChild(modName);
 		

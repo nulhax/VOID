@@ -43,7 +43,7 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
     public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
-        _cRegistrar.RegisterRpc(this, "RemoteFirePrimary");
+        //_cRegistrar.RegisterRpc(this, "RemoteFirePrimary");
     }
 
 
@@ -67,8 +67,13 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
             switch (eAction)
             {
                 case ENetworkAction.FireLaser:
-                    cBehaviour.InvokeRpcAll("RemoteFirePrimary", cBehaviour.m_cTurretBehaviour.GetRandomProjectileNode().transform.position,
-                                                                 cBehaviour.m_cTurretBehaviour.GetRandomProjectileNode().transform.eulerAngles);
+                    {
+                        Transform cRandomNode = cBehaviour.m_cTurretInterface.GetRandomProjectileNode();
+
+                        GameObject cProjectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.LaserProjectile);
+                        cProjectile.GetComponent<CNetworkView>().SetPosition(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cRandomNode.position));
+                        cProjectile.GetComponent<CNetworkView>().SetRotation(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cRandomNode.rotation));
+                    }
                     break;
 
                 default:
@@ -81,9 +86,9 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
 	void Start()
 	{
-        m_cTurretBehaviour = GetComponent<CTurretBehaviour>();
-        m_cTurretBehaviour.EventPrimaryFire += OnEventFirePrimary;
-        m_cTurretBehaviour.EventSecondaryFire += OnEventFireSecondary;
+        m_cTurretInterface = GetComponent<CTurretInterface>();
+        m_cTurretInterface.EventPrimaryFire += OnEventFirePrimary;
+        m_cTurretInterface.EventSecondaryFire += OnEventFireSecondary;
 	}
 
 
@@ -94,28 +99,33 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 
 	void Update()
 	{
-        // Empty
+        if (m_bRotateBarrel)
+        {
+            m_cBarrel.localEulerAngles = m_cBarrel.localEulerAngles + new Vector3(0.0f, 0.0f, -720.0f * Time.deltaTime);
+
+            m_bRotateBarrel = false;
+        }
 	}
 
 
     [ANetworkRpc]
     void RemoteFirePrimary(Vector3 _vSpawnPosition, Vector3 _vDirection)
     {   
-        GameObject cProjectile = Resources.Load(CNetwork.Factory.GetRegisteredPrefabFile(CGameRegistrator.ENetworkPrefab.LaserProjectile), typeof(GameObject)) as GameObject;
-        cProjectile = GameObject.Instantiate(cProjectile, _vSpawnPosition, Quaternion.Euler(_vDirection)) as GameObject;
     }
 
 
     [ALocalOnly]
-    void OnEventFirePrimary(CTurretBehaviour _cSender)
+    void OnEventFirePrimary(CTurretInterface _cSender)
     {
         s_cSerializeStream.Write(NetworkViewId);
         s_cSerializeStream.Write(ENetworkAction.FireLaser);
+
+        m_bRotateBarrel = true;
     }
 
 
     [ALocalOnly]
-    void OnEventFireSecondary(CTurretBehaviour _cSender)
+    void OnEventFireSecondary(CTurretInterface _cSender)
     {
     }
 
@@ -123,7 +133,13 @@ public class CPulseTurretSmallBehaviour : CNetworkMonoBehaviour
 // Member Fields
 
 
-    CTurretBehaviour m_cTurretBehaviour = null;
+    public Transform m_cBarrel = null;
+
+
+    CTurretInterface m_cTurretInterface = null;
+
+
+    bool m_bRotateBarrel = false;
 
 
     static CNetworkStream s_cSerializeStream = new CNetworkStream();

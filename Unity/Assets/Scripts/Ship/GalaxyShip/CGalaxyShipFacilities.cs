@@ -65,7 +65,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 		foreach(Transform child in m_Collider.transform)
 			Destroy(child.gameObject);
 
-		foreach(CTileInterface tileInterface in _ShipFacilities.m_ShipGrid.Tiles)
+		foreach(CTileInterface tileInterface in _ShipFacilities.m_ShipGrid.TileInterfaces)
 		{
 			if(!tileInterface.GetTileTypeState(CTile.EType.Exterior_Wall) &&
 			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Upper) &&

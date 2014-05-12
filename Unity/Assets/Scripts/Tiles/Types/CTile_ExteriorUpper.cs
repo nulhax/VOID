@@ -97,6 +97,21 @@ public class CTile_ExteriorUpper : CTile
 	{
 		int tileMask = 0;
 
+		// Define the tile mask given its relevant directions, relevant type and neighbour mask state.
+		foreach(CNeighbour neighbour in m_TileInterface.m_NeighbourHood)
+		{
+			if(!s_RelevantDirections.Contains(neighbour.m_Direction))
+				continue;
+			
+			if(!neighbour.m_TileInterface.GetTileTypeState(CTile.EType.Interior_Wall))
+				continue;
+			
+			if(GetNeighbourExemptionState(neighbour.m_Direction))
+				continue;
+			
+			tileMask |= 1 << (int)neighbour.m_Direction;
+		}
+
 		// Get lower tile interface
 		CGridPoint lowerTilePos = new CGridPoint(m_TileInterface.m_GridPosition.ToVector - Vector3.up);
 		CTileInterface lowerTileInterface = m_TileInterface.m_Grid.GetTileInterface(lowerTilePos);

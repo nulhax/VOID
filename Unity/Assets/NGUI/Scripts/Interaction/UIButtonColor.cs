@@ -162,7 +162,7 @@ public class UIButtonColor : UIWidgetContainer
 		}
 	}
 
-	protected virtual void OnHover (bool isOver)
+    public virtual void OnHover(bool isOver)
 	{
 		if (enabled)
 		{

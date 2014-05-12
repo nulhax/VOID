@@ -573,9 +573,11 @@ public class CNetworkView : CNetworkMonoBehaviour
 		// Ensure servers only generate dynamic view ids
 		Logger.WriteErrorOn(!CNetwork.IsServer, "Clients cannot generate network view ids!!!");
 
-        TNetworkViewId cViewId = new TNetworkViewId(m_uiNextDynamicId++, 0);
-        s_cNetworkViews.Add((ushort)(m_uiNextDynamicId - 1), null);
-        /*
+        //TNetworkViewId cViewId = new TNetworkViewId(m_uiNextDynamicId++, 0);
+        //s_cNetworkViews.Add((ushort)(m_uiNextDynamicId - 1), null);
+        
+        TNetworkViewId cViewId = null;
+
         for (ushort i = k_usMaxStaticViewId; i < k_usMaxDynamicViewId; ++i)
         {
             // Check the dynamic view id is free
@@ -589,7 +591,6 @@ public class CNetworkView : CNetworkMonoBehaviour
                 break;
             }
         }
-        */
 
 		// Ensure id was generated
 		Logger.WriteErrorOn(cViewId.Id == 0, "Oh shit, the network view id generator ran out of ids. The game is now broken. GG");
@@ -624,7 +625,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 				}
 				*/
 
-                Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
+                //Logger.WriteErrorOn(cNetworkView == null, "Could not find child network view. ViewId({0}) IdOwnerName() SubViewId({1})", _cViewId.Id, s_mViewIdOwnerNames[_cViewId.Id], _cViewId.ChildId);
 
 				cNetworkView = cNetworkView.FindChildNetworkView(_cViewId.ChildId);
 

@@ -1,0 +1,208 @@
+fileFormatVersion: 2
+guid: b3c4af5ffed4d6643af478b412630b2d
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Exterior_Door_Frame
+    100004: Left_Door
+    100006: Left_Grabber
+    100008: Left_Lock
+    100010: Left_Window
+    100012: Right_Door
+    100014: Right_Grabber
+    100016: Right_Lock
+    100018: Right_Sign
+    100020: Right_Window
+    400000: //RootNode
+    400002: Exterior_Door_Frame
+    400004: Left_Door
+    400006: Left_Grabber
+    400008: Left_Lock
+    400010: Left_Window
+    400012: Right_Door
+    400014: Right_Grabber
+    400016: Right_Lock
+    400018: Right_Sign
+    400020: Right_Window
+    2300000: Exterior_Door_Frame
+    2300002: Left_Door
+    2300004: Left_Grabber
+    2300006: Left_Lock
+    2300008: Left_Window
+    2300010: Right_Door
+    2300012: Right_Grabber
+    2300014: Right_Lock
+    2300016: Right_Sign
+    2300018: Right_Window
+    3300000: Exterior_Door_Frame
+    3300002: Left_Door
+    3300004: Left_Grabber
+    3300006: Left_Lock
+    3300008: Left_Window
+    3300010: Right_Door
+    3300012: Right_Grabber
+    3300014: Right_Lock
+    3300016: Right_Sign
+    3300018: Right_Window
+    4300000: Exterior_Door_Frame
+    4300002: Left_Door
+    4300004: Left_Window
+    4300006: Left_Lock
+    4300008: Left_Grabber
+    4300010: Right_Door
+    4300012: Right_Window
+    4300014: Right_Lock
+    4300016: Right_Grabber
+    4300018: Right_Sign
+    7400000: Exterior_Door_Open
+    7400002: Exterior_Door_Close
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Exterior_Door_Open
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 86
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Exterior_Door_Frame
+        weight: 1
+      - path: Left_Door
+        weight: 1
+      - path: Left_Door/Left_Grabber
+        weight: 1
+      - path: Left_Door/Left_Lock
+        weight: 1
+      - path: Left_Door/Left_Window
+        weight: 1
+      - path: Right_Door
+        weight: 1
+      - path: Right_Door/Right_Grabber
+        weight: 1
+      - path: Right_Door/Right_Lock
+        weight: 1
+      - path: Right_Door/Right_Sign
+        weight: 1
+      - path: Right_Door/Right_Window
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    - serializedVersion: 16
+      name: Exterior_Door_Close
+      takeName: Take 001
+      firstFrame: 86
+      lastFrame: 170
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Exterior_Door_Frame
+        weight: 1
+      - path: Left_Door
+        weight: 1
+      - path: Left_Door/Left_Grabber
+        weight: 1
+      - path: Left_Door/Left_Lock
+        weight: 1
+      - path: Left_Door/Left_Window
+        weight: 1
+      - path: Right_Door
+        weight: 1
+      - path: Right_Door/Right_Grabber
+        weight: 1
+      - path: Right_Door/Right_Lock
+        weight: 1
+      - path: Right_Door/Right_Sign
+        weight: 1
+      - path: Right_Door/Right_Window
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  userData: 

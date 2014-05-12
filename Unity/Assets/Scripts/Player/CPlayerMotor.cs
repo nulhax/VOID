@@ -84,7 +84,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     const float k_fAlignBodySpeedThusers = 60.0f;
 
     // Ground movement
-    const float k_fJumpSpeed    = 2.0f;
+    const float k_fJumpSpeed    = 1.0f;
     const float k_fMoveSpeed    = 6.5f;
     const float k_fSprintSpeed  = 8.0f;
 
@@ -108,7 +108,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
     public delegate void InputStatesChangeHandler(ushort _usPreviousStates, ushort _usNewSates);
 	public event InputStatesChangeHandler EventInputStatesChange;
-
 
     public delegate void StateChangeHandler(EState _ePrevious, EState _eNew);
     public event StateChangeHandler EventStateChange;
@@ -212,6 +211,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             !cSelfActor.GetComponent<CPlayerMotor>().IsInputDisabled)
         {
             _cStream.Write(ENetworkAction.SyncRotation);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerMotor>().m_usInputStates);
+            _cStream.Write(cSelfActor.GetComponent<CPlayerMotor>().m_eState);
             _cStream.Write(cSelfActor.transform.position.x);
             _cStream.Write(cSelfActor.transform.position.y);
             _cStream.Write(cSelfActor.transform.position.z);
@@ -241,6 +242,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                     case ENetworkAction.SyncRotation:
                         if (!cPlayerActorMotor.IsInputDisabled)
                         {
+                            cPlayerActorMotor.m_usRemoteInputStates.Value = _cStream.Read<ushort>();
+                            cPlayerActorMotor.m_eRemoteState.Value = _cStream.Read<EState>();
                             cPlayerActorMotor.m_fRemotePositionX.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionY.Value = _cStream.Read<float>();
                             cPlayerActorMotor.m_fRemotePositionZ.Value = _cStream.Read<float>();
@@ -250,7 +253,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                         }
                         else
                         {
-                            _cStream.IgnoreBytes(6 * sizeof(float));
+                            _cStream.IgnoreBytes(6 * sizeof(float) + sizeof(ushort) + sizeof(EState));
                         }
                         break;
 
@@ -433,20 +436,13 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void UpdateGrounded()
 	{
-		Vector3 p1 = transform.position + m_cCapsuleCollider.center + (Vector3.up * ((m_cCapsuleCollider.height * 0.5f) + 0.5f));
-		Vector3 p2 = p1 - (Vector3.up * m_cCapsuleCollider.height);
-		RaycastHit[] hits = Physics.CapsuleCastAll(p1, p2, m_cCapsuleCollider.radius * 0.5f, -transform.up, 0.35f);
+		Vector3 origin = transform.position + transform.up * (m_cCapsuleCollider.radius + 0.1f);
+		Vector3 dir = -transform.up;
 
-		m_bGrounded = false;
+		Ray ray = new Ray(origin, dir);
+		List<RaycastHit> hits = new List<RaycastHit>(Physics.SphereCastAll(ray, m_cCapsuleCollider.radius, 1.0f, 1 << gameObject.layer));
 
-		foreach(RaycastHit hit in hits) 
-		{
-			if(!hit.collider.isTrigger && hit.collider != m_cCapsuleCollider) 
-			{
-				m_bGrounded = true;
-				break;
-			}
-		}
+		m_bGrounded = hits.Exists(hit => !hit.collider.isTrigger && hit.collider != m_cCapsuleCollider);
 	}
 
 
@@ -517,26 +513,28 @@ public class CPlayerMotor : CNetworkMonoBehaviour
     [ALocalOnly]
 	void UpdateGroundMovement()
 	{
-        if (IsInputDisabled)
-            return;
-
         Quaternion vHeadRotation = Quaternion.Euler(0.0f, GetComponent<CPlayerHead>().Head.transform.localEulerAngles.y, 0.0f);
 
         // Direction movement
         Vector3 vMovementVelocity = new Vector3();
-        vMovementVelocity += IsInputStateActive(EInputState.Forward)     ? transform.forward : Vector3.zero;
-        vMovementVelocity -= IsInputStateActive(EInputState.Backward)    ? transform.forward : Vector3.zero;
-        vMovementVelocity -= IsInputStateActive(EInputState.StrafeLeft)  ? transform.right   : Vector3.zero;
-        vMovementVelocity += IsInputStateActive(EInputState.StrafeRight) ? transform.right   : Vector3.zero;
 
-        // Apply direction movement speed
-        vMovementVelocity = vMovementVelocity.normalized;
-        vMovementVelocity *= ((m_usInputStates & (uint)EInputState.Run) > 0) ? k_fSprintSpeed : k_fMoveSpeed;
 
-        // Jump 
-        if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded)
+        if (!IsInputDisabled)
         {
-            vMovementVelocity.y = k_fJumpSpeed;
+            vMovementVelocity += IsInputStateActive(EInputState.Forward) ? transform.forward : Vector3.zero;
+            vMovementVelocity -= IsInputStateActive(EInputState.Backward) ? transform.forward : Vector3.zero;
+            vMovementVelocity -= IsInputStateActive(EInputState.StrafeLeft) ? transform.right : Vector3.zero;
+            vMovementVelocity += IsInputStateActive(EInputState.StrafeRight) ? transform.right : Vector3.zero;
+
+            // Apply direction movement speed
+            vMovementVelocity = vMovementVelocity.normalized;
+            vMovementVelocity *= ((m_usInputStates & (uint)EInputState.Run) > 0) ? k_fSprintSpeed : k_fMoveSpeed;
+
+            // Jump 
+            if ((m_usInputStates & (uint)EInputState.Jump) > 0 && IsGrounded/* && GetComponent<CThirdPersonAnimController>().IsPLayerJumping == false*/)
+            {
+                vMovementVelocity.y = k_fJumpSpeed;
+            }
         }
 
         if (!rigidbody.isKinematic)
@@ -555,10 +553,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
     [ALocalOnly]
     void UpdateThustersMovement()
-    {
-        if (IsInputDisabled)
-            return;
-        
+    {   
         CPlayerHead cPlayerHead = GetComponent<CPlayerHead>();
         Quaternion cHeadRotation = cPlayerHead.HeadRotation;
 
@@ -567,20 +562,21 @@ public class CPlayerMotor : CNetworkMonoBehaviour
         Vector3 vAcceleration        = Vector3.zero;
         Vector3 vAngularAcceleration = Vector3.zero;
 
-        // Apply roll
-        ComputeDirectionalSpeed(EInputState.RollLeft, EInputState.RollRight, -k_fThusterMaxSpeedRoll, -k_fThusterAccelerationRoll, vAngularVelocity.z, ref vAngularAcceleration.z);
-        ComputeDirectionalSpeed(EInputState.RollRight, EInputState.RollLeft,  k_fThusterMaxSpeedRoll,  k_fThusterAccelerationRoll, vAngularVelocity.z, ref vAngularAcceleration.z);
+        if (!IsInputDisabled)
+        {
+            // Apply roll
+            ComputeDirectionalSpeed(EInputState.RollLeft, EInputState.RollRight, -k_fThusterMaxSpeedRoll, -k_fThusterAccelerationRoll, vAngularVelocity.z, ref vAngularAcceleration.z);
+            ComputeDirectionalSpeed(EInputState.RollRight, EInputState.RollLeft, k_fThusterMaxSpeedRoll, k_fThusterAccelerationRoll, vAngularVelocity.z, ref vAngularAcceleration.z);
 
-        // Apply pitch & yaw
-        ComputeDirectionalSpeed(EInputState.INVALID, EInputState.INVALID, (m_fMouseDeltaX > 0) ? k_fThusterMaxSpeedRoll : -k_fThusterMaxSpeedRoll, m_fMouseDeltaX, vAngularVelocity.y, ref vAngularAcceleration.y);
-        ComputeDirectionalSpeed(EInputState.INVALID, EInputState.INVALID, (m_fMouseDeltaY > 0) ? k_fThusterMaxSpeedRoll : -k_fThusterMaxSpeedRoll, m_fMouseDeltaY, vAngularVelocity.x, ref vAngularAcceleration.x);
+            // Apply pitch & yaw
+            ComputeDirectionalSpeed(EInputState.INVALID, EInputState.INVALID, (m_fMouseDeltaX > 0) ? k_fThusterMaxSpeedRoll : -k_fThusterMaxSpeedRoll, m_fMouseDeltaX, vAngularVelocity.y, ref vAngularAcceleration.y);
+            ComputeDirectionalSpeed(EInputState.INVALID, EInputState.INVALID, (m_fMouseDeltaY > 0) ? k_fThusterMaxSpeedRoll : -k_fThusterMaxSpeedRoll, m_fMouseDeltaY, vAngularVelocity.x, ref vAngularAcceleration.x);
+        }
             
         // Apply directional movement
-        if (!IsInputStateActive(EInputState.Stabilize))
+        if (!IsInputDisabled &&
+            !IsInputStateActive(EInputState.Stabilize))
         {
-            rigidbody.drag = 0.0f;
-            rigidbody.angularDrag = 0.0f;
-
             ComputeDirectionalSpeed(EInputState.Forward,  EInputState.Backward,  k_fThusterMaxSpeedForward,  k_fThusterAccelerationForward, vVelocity.z, ref vAcceleration.z);
             ComputeDirectionalSpeed(EInputState.Backward, EInputState.Forward,  -k_fThusterMaxSpeedBack,    -k_fThusterAccelerationBack,    vVelocity.z, ref vAcceleration.z);
             ComputeDirectionalSpeed(EInputState.StrafeLeft,  EInputState.StrafeRight, -k_fThusterMaxSpeedStrafe, -k_fThusterAccelerationStrafe, vVelocity.x, ref vAcceleration.x);
@@ -588,25 +584,49 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             ComputeDirectionalSpeed(EInputState.FlyUp, EInputState.FlyDown,  k_fThusterMaxSpeedVertical,  k_fThusterAccelerationVertical, vVelocity.y, ref vAcceleration.y);
             ComputeDirectionalSpeed(EInputState.FlyDown, EInputState.FlyUp, -k_fThusterMaxSpeedVertical, -k_fThusterAccelerationVertical, vVelocity.y, ref vAcceleration.y);
         }
-        else
+
+        if (vAcceleration == Vector3.zero)
         {
-            // Apply drag
-            rigidbody.drag = 2.0f;
-            rigidbody.angularDrag = 2.0f;
+            if (IsInputStateActive(EInputState.Stabilize))
+            {
+                // Apply large drag
+                rigidbody.drag = 2.0f;
+                rigidbody.angularDrag = 2.0f;
+            }
+            else
+            {
+                // Apply small drag
+                rigidbody.drag = 0.25f;
+                rigidbody.angularDrag = 0.25f;
+            }
 
             // Stop
-            if (vVelocity.magnitude < 0.2f)
+            if (vVelocity.magnitude < 0.5f)
             {
                 vVelocity = Vector3.zero;
             }
+
+            // Stop
+            if (vAngularVelocity.magnitude < 0.5f)
+            {
+                vAngularVelocity = Vector3.zero;
+            }
+        }
+        else
+        {
+            rigidbody.drag = 0.0f;
+            rigidbody.angularDrag = 0.0f;
         }
 
-        // Set velocity
-        rigidbody.velocity = rigidbody.transform.rotation * vVelocity;
+        if (!rigidbody.isKinematic)
+        {
+            // Set velocity
+            rigidbody.velocity = rigidbody.transform.rotation * vVelocity;
 
-        // Apply froce and torque
-        rigidbody.AddForce(cHeadRotation * vAcceleration, ForceMode.Acceleration);
-        rigidbody.AddTorque(cHeadRotation * vAngularAcceleration, ForceMode.Acceleration);
+            // Apply force and torque
+            rigidbody.AddForce(cHeadRotation * vAcceleration, ForceMode.Acceleration);
+            rigidbody.AddTorque(cHeadRotation * vAngularAcceleration, ForceMode.Acceleration);
+        }
     }
 
 
@@ -862,12 +882,6 @@ public class CPlayerMotor : CNetworkMonoBehaviour
                 m_usInputStates &= (ushort)~eTargetState;
             }
 
-            // Set remote input states
-            if (CNetwork.IsServer)
-            {
-                m_usRemoteInputStates.Value = (ushort)m_usInputStates;
-            }
-
             // Notify observers
             if (EventInputStatesChange != null) EventInputStatesChange(usPreviousInputStates, m_usInputStates);
         }
@@ -963,8 +977,7 @@ public class CPlayerMotor : CNetworkMonoBehaviour
 
 	void OnNetworkVarSync(INetworkVar _cSyncedVar)
 	{
-        if (!CNetwork.IsServer &&
-             gameObject != CGamePlayers.SelfActor)
+        if (gameObject != CGamePlayers.SelfActor)
         {
             if (_cSyncedVar == m_usRemoteInputStates)
             {

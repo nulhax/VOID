@@ -42,6 +42,12 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
     }
 
 
+    void Awake()
+    {
+        // Empty
+    }
+
+
 	void Start()
     {
         if (CNetwork.IsServer)
@@ -50,7 +56,14 @@ public class CDispenserBehaviour : CNetworkMonoBehaviour
             //GetComponent<CModuleInterface>().ParentFacility.GetComponent<CFacilityPower>().EventFacilityPowerActiveChange += OnEventFacilityPowerActiveChange;
         }
 
-		GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
+        if (GetComponent<CModuleInterface>().IsBuilt)
+        {
+            OnEventBuilt(GetComponent<CModuleInterface>());
+        }
+        else
+        {
+            GetComponent<CModuleInterface>().EventBuilt += OnEventBuilt;
+        }
     }
 
 

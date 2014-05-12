@@ -110,7 +110,7 @@ public class CHUD3D : MonoBehaviour
 		// Update reticle panel position for the rift
 		if(CGameCameras.IsOculusRiftActive)
 		{
-			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameHUD.HUD3D.HUDCameraLeft.camera.fieldOfView;
+			float fovCoefficient = CGameCameras.MainCameraLeft.camera.fieldOfView / CGameHUD.Hud3D.HUDCameraLeft.camera.fieldOfView;
 			
 			if(CGamePlayers.SelfActor.GetComponent<CPlayerInteractor>().TargetActorObject != null)
 			{

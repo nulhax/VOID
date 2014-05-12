@@ -53,12 +53,6 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 // Member Properties
 
 
-    public bool IsMenuOpen
-    {
-        get { return (m_cModuleMenu.activeSelf); }
-    }
-
-
 // Member Methods
 
 
@@ -142,10 +136,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
 
-            m_cModuleMenu = GameObject.Instantiate(m_cModuleMenu) as GameObject;
-            m_cModuleMenu.SetActive(false);
-
-            m_cModuleMenu.GetComponent<CHudModuleMenu>().EventCreateModule += OnEventCreateModule;
+            m_cHudModuleMenuInterface = CGameHUD.Hud2dInterface.ModuleBuildMenuInterface;
+            m_cHudModuleMenuInterface.EventCreateModule += OnEventCreateModule;
         }
 	}
 
@@ -158,8 +150,6 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
-
-            Destroy(m_cModuleMenu);
         }
 	}
 
@@ -187,7 +177,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
         {
             GameObject cHitTile = tTileRaycastHit.transform.gameObject;
 
-            CTile.EType eTileType = cTileInterface.GetTileType(tTileRaycastHit.transform.gameObject);
+            CTile.EType eTileType = cTileInterface.GetTileObjectsType(tTileRaycastHit.transform.gameObject);
 
             if (eTileType == CTile.EType.Interior_Floor ||
                 eTileType == CTile.EType.Exterior_Upper ||
@@ -275,10 +265,14 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             m_eState == EState.BrowsingMenu)
             return;
 
-        m_cModuleMenu.SetActive(_bOpen);
-        
-        // Unlock cursor if opened
-        CCursorControl.Instance.SetLocked(!_bOpen);
+        if (_bOpen)
+        {
+            CGameHUD.Hud2dInterface.ShowHud(CHud2dInterface.EHud.ModuleMenu);
+        }
+        else
+        {
+            CGameHUD.Hud2dInterface.HideHud(CHud2dInterface.EHud.ModuleMenu);
+        }
 
         if (_bOpen)
         {
@@ -358,7 +352,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 
 
     [ALocalOnly]
-    void OnEventCreateModule(CHudModuleMenu _cSender, CModuleInterface.EType _eModuleType)
+    void OnEventCreateModule(CHudModuleBuildMenuInterface _cSender, CModuleInterface.EType _eModuleType)
     {
         if (_eModuleType == CModuleInterface.EType.INVALID)
             return;
@@ -375,7 +369,12 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             switch (_eInput)
             {
                 case CUserInput.EInput.ModuleMenu_ToggleDisplay:
-                    SetState((m_eState == EState.BrowsingMenu) ? EState.Idle : EState.BrowsingMenu);
+                    {
+                        if (!GetComponent<CPlayerCockpitBehaviour>().IsMounted)
+                        {
+                            SetState((m_eState == EState.BrowsingMenu) ? EState.Idle : EState.BrowsingMenu);
+                        }
+                    }
                     break;
 
                 case CUserInput.EInput.Primary:
@@ -410,7 +409,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
 // Member Fields
 
 
-    public GameObject m_cModuleMenu = null;
+    CHudModuleBuildMenuInterface m_cHudModuleMenuInterface = null;
 
 
     EState m_eState = EState.INVALID;

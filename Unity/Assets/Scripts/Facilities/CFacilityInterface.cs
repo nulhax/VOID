@@ -44,7 +44,10 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
 	// Member Fields
 	private CNetworkVar<uint> m_FacilityId = null;
-	
+
+	public List<GameObject> m_InteriorDoors = new List<GameObject>();
+	public List<GameObject> m_ExteriorDoors = new List<GameObject>();
+
 	private Dictionary<CAccessoryInterface.EType, List<GameObject>> m_Accessories = new Dictionary<CAccessoryInterface.EType, List<GameObject>>();
 	private Dictionary<CModuleInterface.EType, List<GameObject>> m_Modules = new Dictionary<CModuleInterface.EType, List<GameObject>>();
 
@@ -81,6 +84,17 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 		}
 	}
 
+	public List<GameObject> AllDoors
+	{
+		get
+		{
+			List<GameObject> doors = new List<GameObject>();
+			doors.AddRange(m_InteriorDoors);
+			doors.AddRange(m_ExteriorDoors);
+			return(doors);
+		}
+	}
+
 
 	// Member Methods
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
@@ -107,6 +121,18 @@ public class CFacilityInterface : CNetworkMonoBehaviour
 
         return (m_Modules[_eModuleType]);
     }
+
+	public void RegisterInteriorDoor(CDoorInterface _DoorInterface)
+	{
+		if(!m_InteriorDoors.Contains(_DoorInterface.gameObject))
+			m_InteriorDoors.Add(_DoorInterface.gameObject);
+	}
+
+	public void RegisterExteriorDoor(CDoorInterface _DoorInterface)
+	{
+		if(!m_ExteriorDoors.Contains(_DoorInterface.gameObject))
+			m_ExteriorDoors.Add(_DoorInterface.gameObject);
+	}
 	
     public void RegisterAccessory(CAccessoryInterface _cAccessoryInterface)
     {
