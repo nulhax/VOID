@@ -249,7 +249,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
             case ETargetType.Minerals:
                 {
-                    Target.GetComponent<CMineralsBehaviour>().DecrementQuanity(k_fMineRate * Time.deltaTime);
+                    float fMinedMineralsAmount = Target.GetComponent<CMineralsBehaviour>().DecrementQuanity(k_fMineRate * Time.deltaTime);
 
                     if (Target.GetComponent<CMineralsBehaviour>().IsDepleted)
                     {
@@ -302,9 +302,8 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         {
             cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
         }
-        
 
-        if (Target.collider.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
+        if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
         {
             Quaternion qArmBandRotation = cActorHead.transform.rotation;
             qArmBandRotation *= Quaternion.Euler(0.0f, 0.0f, 30.0f);

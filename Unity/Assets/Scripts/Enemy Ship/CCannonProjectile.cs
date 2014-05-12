@@ -15,8 +15,13 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 
 
     [AServerOnly]
-    public void NotifyHitShip()
+    public void NotifyHitShip(Collider _cOther)
     {
+        if (destroyed)
+            return;
+
+        CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHitNoShield(transform.position, Quaternion.LookRotation((transform.position - _cOther.gameObject.transform.position).normalized).eulerAngles);
+
         Destroy();
     }
 
@@ -24,6 +29,9 @@ public class CCannonProjectile : CNetworkMonoBehaviour
     [AServerOnly]
     public void NotifyHitShipShield(Collider _cOther)
     {
+        if (destroyed)
+            return;
+
         bool bAbsorbed = CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHit(5.0f, transform.position, Quaternion.LookRotation((transform.position - _cOther.gameObject.transform.position).normalized).eulerAngles);
 
         if (bAbsorbed)
