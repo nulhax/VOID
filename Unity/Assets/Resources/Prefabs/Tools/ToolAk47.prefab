@@ -135,8 +135,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100004}
-  m_LocalRotation: {x: 5.38847871e-07, y: 3.11277375e-07, z: .687021434, w: .726637244}
-  m_LocalPosition: {x: -.0465306453, y: .0761594325, z: .362324387}
+  m_LocalRotation: {x: 0, y: 0, z: .692844212, w: .721087337}
+  m_LocalPosition: {x: -.0594919883, y: .0761594772, z: .208338618}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 400008}
@@ -302,7 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: 
+  m_strCueName: GunFire
   m_fPitchMin: 1
   m_fpitchMax: 1
   m_fVolumeMin: 1
@@ -314,8 +314,10 @@ MonoBehaviour:
   - 0
   - 0
   m_arAudioClipPool:
-  - {fileID: 8300000, guid: 3dfa40bf3afccb342b8cafb023fa6cc3, type: 3}
-  - {fileID: 8300000, guid: 3dfa40bf3afccb342b8cafb023fa6cc3, type: 3}
+  - {fileID: 8300000, guid: 934c940b0aabd98429207aa366e80edc, type: 3}
+  - {fileID: 8300000, guid: 360ba1438579fc44d9ec786ad88cc16d, type: 3}
+  - {fileID: 8300000, guid: a2eb96c2c8b692044b1a48a8236135e6, type: 3}
+  - {fileID: 8300000, guid: e4ffa32be73587a48a44f741983a1be1, type: 3}
   m_barLoopList: 0000
   m_bContinuousEvent: 0
   m_fPlayFrequency: 0
@@ -443,6 +445,8 @@ MonoBehaviour:
   m_fThirdPersonEquipOffsetX: .170000002
   m_fThirdPersonEquipOffsetY: 1.11000001
   m_fThirdPersonEquipOffsetZ: .140000001
+  m_vRightHandRotation: {x: 0, y: 0, z: -45}
+  m_vLeftHandRotation: {x: 0, y: 0, z: 95}
   m_fVerticalDeviation: .300000012
   m_fLateralDeviation: .200000003
 --- !u!114 &11400020
