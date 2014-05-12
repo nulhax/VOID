@@ -70,9 +70,14 @@ public class CCannonProjectile : CNetworkMonoBehaviour
 					CActorHealth actorHealth = colliderRigidbody.GetComponent<CActorHealth>();
 					if (actorHealth != null)
 						actorHealth.health -= damage;
+
+					if (colliderRigidbody == CGameShips.GalaxyShip.rigidbody)
+					{
+						CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHitNoShield(transform.position, Quaternion.LookRotation((transform.position - collision.gameObject.transform.position).normalized).eulerAngles);
+					}
 				}
 
-				CNetwork.Factory.DestoryGameObject(NetworkViewId);
+				Destroy();
 			}
 
 			initialised = false;

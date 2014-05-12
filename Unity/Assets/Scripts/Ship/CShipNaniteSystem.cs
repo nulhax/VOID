@@ -80,36 +80,24 @@ public class CShipNaniteSystem : CNetworkMonoBehaviour
 
 
 	[AServerOnly]
-	public float ChangeQuanity(float _fNumNanites)
+	public void ChangeQuanity(float _fNumNanites)
 	{
-        float fChangeQuanity = 0.0f;
         float fNewQuanity = m_fNanaiteQuantity.Value + _fNumNanites;
 
         // Check new quantity will be higher then capacity
         if (fNewQuanity > m_fNanaiteCapacity.Value)
         {
-            fChangeQuanity = fNewQuanity - m_fNanaiteCapacity.Value;
+            fNewQuanity = m_fNanaiteCapacity.Value;
         }
 
         // Check new quanity will be lower then zero
         else if (fNewQuanity < 0.0f)
         {
-            fChangeQuanity = m_fNanaiteQuantity.Value;
-        }
-
-        // All nanites accepted
-        else
-        {
-            fChangeQuanity = _fNumNanites;
+            fNewQuanity = 0.0f;
         }
 
         // Make quanity change
-        if (fChangeQuanity != 0.0f)
-        {
-            m_fNanaiteQuantity.Value += fChangeQuanity;
-        }
-
-        return (fChangeQuanity);
+        m_fNanaiteQuantity.Value = fNewQuanity;
 	}
 
 

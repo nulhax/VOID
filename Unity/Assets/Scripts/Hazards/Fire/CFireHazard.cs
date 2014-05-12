@@ -10,8 +10,8 @@ public class CFireHazard : CNetworkMonoBehaviour
 	private static System.Collections.Generic.List<CFireHazard> allInstances = new System.Collections.Generic.List<CFireHazard>();
 
 	private int audioClipIndex = -1;
-	private float spreadRadius = 6.0f;
-	private float maxDamagePerSecond = 5.0f;
+	private float spreadRadius = 2.0f;
+	private float maxDamagePerSecond = 1.5f;
 	private float damageExponentiation = 1.0f / 3.0f;	// Damage dealt by fire is scaled by proximity^this. 1 is linear, <1 damage drops at the end, >1 damage drops off at the start.
 	private float emissionsPerUnitOfSurfaceArea = 1;
 	private float emissionsPerUnitOfSurfaceAreaDiscrepancy = 0.05f;	// Variance percentage in particle emission rate.
@@ -97,6 +97,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 
 		if (CNetwork.IsServer && burning)
 		{
+            Debug.Log(health.health.ToString());
 			float prevTime = timeUntilProcess;
 			timeUntilProcess -= Time.deltaTime;
 

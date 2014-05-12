@@ -611,7 +611,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bcd4f9cc68aca048a0d3334480ace3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_fStartNanaiteCapacity: 1500
+  m_fStartNanaiteCapacity: 3000
   m_fStartNanaiteQuantity: 1500
 --- !u!114 &11400016
 MonoBehaviour:
