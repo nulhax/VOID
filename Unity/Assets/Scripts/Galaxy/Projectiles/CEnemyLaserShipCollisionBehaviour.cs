@@ -55,7 +55,7 @@ public class CEnemyLaserShipCollisionBehaviour : MonoBehaviour
     {
         if (CNetwork.IsServer)
         {
-            transform.parent.GetComponent<CCannonProjectile>().NotifyHitShip();
+            transform.parent.GetComponent<CCannonProjectile>().Destroy();
 
             gameObject.collider.enabled = false;
         }
