@@ -9,6 +9,9 @@ public class CCannon : MonoBehaviour
 	public void Fire(Vector3 targetPos)
 	{
 		GameObject projectile = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.CannonProjectile);
-		projectile.GetComponent<CNetworkMonoBehaviour>().InvokeRpcAll("RpcInitialise", parent.GetComponent<CNetworkView>().NetworkViewId, transform.position, (targetPos - gameObject.transform.position).normalized * velocity, false);
+		projectile.transform.position = transform.position;
+		projectile.transform.rotation = Quaternion.LookRotation((targetPos - gameObject.transform.position).normalized);
+		projectile.rigidbody.AddForce((targetPos - gameObject.transform.position).normalized * velocity, ForceMode.VelocityChange);
+		projectile.GetComponent<CCannonProjectile>().parent = parent;
 	}
 }

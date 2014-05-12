@@ -53,19 +53,19 @@ public class CEnemyLaserShipCollisionBehaviour : MonoBehaviour
 	}
 
 
-    //[AServerOnly]
-    //void OnTriggerEnter(Collider _cCollider)
-    //{
-    //    if (CNetwork.IsServer &&
-    //        _cCollider.gameObject.transform.parent != null &&
-    //        _cCollider.gameObject.transform.parent.parent != null &&
-    //        _cCollider.gameObject.transform.parent.parent.GetComponent<CGalaxyShipFacilities>() != null)
-    //    {
-    //        transform.parent.GetComponent<CCannonProjectile>().NotifyHitShip(_cCollider);
+    [AServerOnly]
+    void OnTriggerEnter(Collider _cCollider)
+    {
+        if (CNetwork.IsServer &&
+            _cCollider.gameObject.transform.parent != null &&
+            _cCollider.gameObject.transform.parent.parent != null &&
+            _cCollider.gameObject.transform.parent.parent.GetComponent<CGalaxyShipFacilities>() != null)
+        {
+            transform.parent.GetComponent<CCannonProjectile>().NotifyHitShip(_cCollider);
 
-    //        gameObject.collider.enabled = false;
-    //    }
-    //}
+            gameObject.collider.enabled = false;
+        }
+    }
 
 
 // Member Fields

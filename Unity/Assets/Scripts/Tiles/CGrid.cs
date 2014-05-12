@@ -180,6 +180,24 @@ public class CGrid : MonoBehaviour
 		tileInterface.FindNeighbours();
 		tileInterface.UpdateNeighbourhood();
 	
+//		// Remove all modifications
+//		foreach(CTile tile in tileInterface.GetComponents<CTile>())
+//		{
+//			foreach(CTile.CModification modification in tile.m_Modifications)
+//			{
+//				// Get the modification neighbour
+//				CNeighbour neighbour = tile.m_NeighbourExemptions.Find(dir => dir = modification.m_WorldSide);
+//
+//				if(neighbour == null)
+//					continue;
+//
+//				CTile neighbourTile = neighbour.m_TileInterface.GetTile();
+//			}
+//
+//			// Clear the modifications
+//			tile.m_Modifications.Clear();
+//		}
+
 		// Disable all tile types
 		for(int i = (int)CTile.EType.INVALID + 1; i < (int)CTile.EType.MAX; ++i)
 			tileInterface.SetTileTypeState((CTile.EType)i, false);

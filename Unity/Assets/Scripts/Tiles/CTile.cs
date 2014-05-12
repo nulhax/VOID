@@ -383,7 +383,7 @@ public abstract class CTile : MonoBehaviour
 	}
 
 	[AServerOnly]
-	public void AddTileModification(int _ModificationType, EDirection _WorldSide, bool _State)
+	public void SetTileModification(int _ModificationType, EDirection _WorldSide, bool _State)
 	{
 		if(_State)
 		{

@@ -63,13 +63,16 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
     [AServerOnly]
     void OnTriggerEnter(Collider _cCollider)
     {
-		if (_cCollider.attachedRigidbody == CGameShips.GalaxyShip.rigidbody)
+        if (CNetwork.IsServer &&
+            _cCollider.gameObject.transform.parent != null &&
+            _cCollider.gameObject.transform.parent.parent != null &&
+            _cCollider.gameObject.transform.parent.parent.GetComponent<CGalaxyShipFacilities>() != null)
         {
 			bool bAbsorbed = CGameShips.Ship.GetComponent<CShipShieldSystem>().ProjectileHit(5.0f, transform.position, Quaternion.LookRotation((transform.position - _cCollider.gameObject.transform.position).normalized).eulerAngles);
 
 			if (bAbsorbed)
 			{
-				GetComponent<CCannonProjectile>().Destroy();
+				transform.parent.GetComponent<CCannonProjectile>().Destroy();
 			}
 
             // Turn off collider
