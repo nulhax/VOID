@@ -8,8 +8,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 400000}
-  - 33: {fileID: 3300000}
-  - 23: {fileID: 2300000}
   - 114: {fileID: 11400002}
   - 114: {fileID: 11400000}
   - 114: {fileID: 11400014}
@@ -20,8 +18,9 @@ GameObject:
   - 114: {fileID: 11400018}
   - 114: {fileID: 11400012}
   - 114: {fileID: 11400004}
-  - 114: {fileID: 11400020}
   - 114: {fileID: 11400022}
+  - 114: {fileID: 11400020}
+  - 114: {fileID: 11400024}
   m_Layer: 0
   m_Name: Game Singleton
   m_TagString: Untagged
@@ -40,34 +39,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
---- !u!23 &2300000
-Renderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_LightmapIndex: 255
-  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
-  m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
-  m_SubsetIndices: 
-  m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 0
-  m_LightProbeAnchor: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_SortingLayerID: 0
---- !u!33 &3300000
-MeshFilter:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 100000}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -90,6 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f917699cabd55384c8c5a658728dfdbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InitialiseDungeonMaster: 1
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -193,6 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5ddf66bfa348f4fbe43d280992a120, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cHud2d: {fileID: 100042, guid: d8b6a981729160647830fe71a9485155, type: 2}
 --- !u!114 &11400022
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -201,10 +174,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 100000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b08fb94cc802f7c41a73a60e2efeaf16, type: 3}
+  m_Script: {fileID: 11500000, guid: f95cae0accf0a2844a8e6a26cf4efcca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inheritMeshFromParent: 0
+--- !u!114 &11400024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62df12c8e42bb2a4f947a24a4820be01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_bUsePushToTalk: 1
+  m_bReturnToSender: 1
+  m_bLogging: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

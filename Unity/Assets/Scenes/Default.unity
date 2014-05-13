@@ -101,7 +101,7 @@ NavMeshSettings:
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
   m_NavMesh: {fileID: 0}
---- !u!1001 &996471907
+--- !u!1001 &590776990
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -136,19 +136,7 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-    - {fileID: 11400020, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-    - {fileID: 2300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-    - {fileID: 3300000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
   m_RootGameObject: {fileID: 1432749547}
   m_IsPrefabParent: 0
@@ -157,7 +145,7 @@ Prefab:
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 100000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1432749551}
@@ -186,7 +174,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -197,7 +185,7 @@ MonoBehaviour:
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 400000, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 100, y: 0, z: 0}
@@ -209,7 +197,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400002, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -222,7 +210,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400018, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -234,7 +222,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400012, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -249,7 +237,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400004, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -259,8 +247,9 @@ MonoBehaviour:
 --- !u!114 &1432749556
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabParentObject: {fileID: 11400020, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
+    type: 2}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -273,7 +262,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400006, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -285,7 +274,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400008, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -297,7 +286,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400010, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -309,7 +298,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400016, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -322,7 +311,7 @@ MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 11400014, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
     type: 2}
-  m_PrefabInternal: {fileID: 996471907}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -332,8 +321,9 @@ MonoBehaviour:
 --- !u!114 &1432749562
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabParentObject: {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
+    type: 2}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -343,8 +333,9 @@ MonoBehaviour:
 --- !u!114 &1432749563
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabParentObject: {fileID: 11400024, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3,
+    type: 2}
+  m_PrefabInternal: {fileID: 590776990}
   m_GameObject: {fileID: 1432749547}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -353,3 +344,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_bUsePushToTalk: 1
   m_bReturnToSender: 1
+  m_bLogging: 0

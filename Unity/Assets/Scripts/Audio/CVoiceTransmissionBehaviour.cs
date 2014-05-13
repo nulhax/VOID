@@ -52,12 +52,16 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		
 	AudioClip m_acVoiceInput;
 	public bool m_bUsePushToTalk = true;
+	public bool m_bReturnToSender = true;
+	public bool m_bLogging = false;
+
+	bool m_bEncoding = false;
+	bool m_bRecording = false;
+	bool m_bPushToTalkActive = false;
+
 	float m_fRecordingTimer;
 	const int m_kiRecordTime = 1;
 	const int m_kiNumDecodeThreads = 3;
-	bool m_bRecording = false;
-
-	bool m_bPushToTalkActive = false;
 	
 	static CNetworkStream s_AudioPacket = new CNetworkStream();
 	static Queue<DecodeInformation> s_decodedFrames = new Queue<DecodeInformation>();
@@ -65,9 +69,6 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 	
 	Thread m_EncodeThread;
 	Thread[] m_DecodeThreads;
-	bool m_bEncoding = false;
-	
-	public bool m_bReturnToSender = true;
 	
 	// Use this for initialization
 	void Start () 
@@ -161,15 +162,20 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 				int iAudioDataSize = m_acVoiceInput.samples * m_acVoiceInput.channels * sizeof(float);
 				iAudioDataSize -= iAudioDataSize % m_iFrameSize;
 
-				// Extract audio data through the bum
+				// Extract audio data
 				float[] fAudioData = new float[iAudioDataSize / sizeof(float)];
 				m_acVoiceInput.GetData (fAudioData, 0);
+
+				if(m_bLogging)
+				{
+					Debug.Log("Raw data size = " + fAudioData.Length * sizeof(float));
+				}
 
 				// Convert to short
 				short[] saAudioData = new short[fAudioData.Length];
 
 				for (int i = 0; i < fAudioData.Length; ++i) 
-            {
+            	{
 						saAudioData [i] = (short)(fAudioData [i] * 32767.0f);
 				}					
 
@@ -273,6 +279,11 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		s_AudioPacket.Write(iAudioDataSize);
 		s_AudioPacket.Write(iTotalNumEncodedBytes);
 		s_AudioPacket.Write(baEncodedData, iTotalNumEncodedBytes);	
+
+		if(m_bLogging)
+		{
+			Debug.Log("Encoded size = " + iTotalNumEncodedBytes);
+		}
 	}
 	
 	void DecodeAudio(object _rawData)
@@ -302,3 +313,6 @@ public class CVoiceTransmissionBehaviour : MonoBehaviour
 		s_decodedFrames.Enqueue(decodedFrameInfo);	
 	}
 }
+
+
+
