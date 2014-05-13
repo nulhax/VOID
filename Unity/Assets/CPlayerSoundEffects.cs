@@ -5,6 +5,7 @@ public class CPlayerSoundEffects : MonoBehaviour
 {
 
     CAudioCue m_FootStepCue = null;
+	public Transform m_soundLocation = null;
 
 	// Use this for initialization
 	void Start () 
@@ -36,16 +37,16 @@ public class CPlayerSoundEffects : MonoBehaviour
 
 	void PlayFootStep()
 	{
-		m_FootStepCue.Play(gameObject.transform, 1.0f, false, -1, 0, 3);
+		m_FootStepCue.Play(m_soundLocation, 1.0f, false, -1, 0, 3);
 	}
 
     void PlayLandingAudio()
     {
-        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 5);       
+		m_FootStepCue.Play(m_soundLocation, 1.0f, false, 5);       
     }
 
     void PlaySlideAudio()
     {
-        m_FootStepCue.Play(gameObject.transform, 1.0f, false, 6);       
+		m_FootStepCue.Play(m_soundLocation, 1.0f, false, 6);       
     }
 }
