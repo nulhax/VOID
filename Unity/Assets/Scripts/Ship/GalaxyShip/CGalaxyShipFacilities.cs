@@ -33,6 +33,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 	// Member Properies
 
 
+
 	// Member Methods
 	public void ReconfigureCollidersAndTriggers()
 	{	
@@ -79,8 +80,6 @@ public class CGalaxyShipFacilities : MonoBehaviour
 			collider.transform.localPosition = Vector3.zero;
 			collider.transform.rotation = Quaternion.identity;
 			collider.layer = gameObject.layer;
-
-			tileInterface.UpdateAllTileObjects();
 
 			foreach(Collider tileCollider in tileInterface.GetComponentsInChildren<Collider>())
 			{
