@@ -70,6 +70,9 @@ public class CHUDVisor : MonoBehaviour
 			animation.Play(k_UpAnimation, PlayMode.StopSameLayer);
 			animation[k_UpAnimation].time = startTime;
 
+			//Play audio...
+			GetComponent<CAudioCue>().Play(1.0f, false, 1);
+
  		}
 		else
 		{
@@ -82,6 +85,7 @@ public class CHUDVisor : MonoBehaviour
 			animation.Play(k_DownAnimation, PlayMode.StopSameLayer);
 			animation[k_DownAnimation].time = startTime;
 
+			GetComponent<CAudioCue>().Play(1.0f, false, 0);
 			m_particleEmitter.Play();
 		}
 

@@ -127,7 +127,7 @@ public class CAudioSystem : MonoBehaviour
 					//Process audio occlusion
 					if(audioClip.soundType != SoundType.SOUND_AMBIENCE && audioClip.useOcclusion)			
 					{
-						ProcessAudioOcclusion(audioClip);					
+						//ProcessAudioOcclusion(audioClip);					
 					}
 
 					//process fade in
@@ -213,7 +213,9 @@ public class CAudioSystem : MonoBehaviour
 		ignoreMask = ~ignoreMask;
 		
 		RaycastHit hit;
-        if(Physics.Linecast(sourcePos, listenerPos, out hit, ignoreMask))
+
+		Vector3 direction = listenerPos - sourcePos;
+		if(Physics.SphereCast(sourcePos, 20.0f, direction, out hit, 20))
 		{
 			Debug.DrawLine(	sourcePos, listenerPos, Color.cyan, 1.0f);
 			
@@ -236,12 +238,13 @@ public class CAudioSystem : MonoBehaviour
 				{
 					Destroy(_audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>());
 					_audioClip.audioSource.volume = _audioClip.defaultVolume;
+					Debug.Log("No Occlusion");
 				}
 				
 				if(occludeState != OcclusionState.OCCLUSION_FALSE)
 				{
 					occludeState = OcclusionState.OCCLUSION_FALSE;
-					//Debug.Log("No Occlusion");
+					//
 				}	
 			}
 

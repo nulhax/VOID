@@ -180,6 +180,8 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			return;
 
 		mBoundingRadius = CUtility.GetBoundingRadius(gameObject);
+
+		GetComponent<CActorHealth>().EventOnSetHealth += HandleHealthChange;
 	}
 
 	void OnDestroy()
@@ -192,6 +194,16 @@ public class CEnemyShip : CNetworkMonoBehaviour
 			galaxy.eventPreGalaxyShift -= OnPreGalaxyShift;
 
 		Destroy(mTarget_InternalLastKnownPosition);	// Destroy the GameObject mTarget_InternalLastKnownPosition.
+	}
+
+	void HandleHealthChange(CActorHealth _cSender, float prevHealth, float currHealth)
+	{
+		if(currHealth == 0)
+		{
+			//Play explosion
+			GameObject explosion = (GameObject)GameObject.Instantiate(Resources.Load("Prefabs/EnemyShips/ShipDestruction"));
+			explosion.transform.position = transform.position;
+		}
 	}
 
 	void Update()
