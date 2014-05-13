@@ -208,8 +208,8 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
         GameObject cNewTargetActorObject = null;
         RaycastHit cTargetRaycastHit = new RaycastHit();
 
-        //Debug.DrawRay(cMainCameraRay.origin, cMainCameraRay.direction, Color.red, 0.5f);
-        //Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
+        Debug.DrawRay(cMainCameraRay.origin, cMainCameraRay.direction, Color.red, 0.5f);
+        Debug.DrawRay(cProjectedCameraRay.origin, cProjectedCameraRay.direction, Color.green, 0.5f);
 
         // Do the ray cast against all objects in path
         RaycastHit[] cMainCameraRaycastHits = Physics.RaycastAll(cMainCameraRay, s_fRayRange, 1 << CGameCameras.MainCamera.layer);
@@ -266,6 +266,12 @@ public class CPlayerInteractor : CNetworkMonoBehaviour
 
         if (cNewTargetActorObject != m_cTargetActorObject)
         {
+            /*
+            if (cNewTargetActorObject != null)
+                Debug.LogError("Im looking at: " + cNewTargetActorObject.name + " Layer: " + cNewTargetActorObject.layer);
+            else
+                Debug.LogError("Null");
+            */
             s_cSerializeStream.Write((byte)ENetworkAction.UpdateTarget);
 
             if (cNewTargetActorObject == null)

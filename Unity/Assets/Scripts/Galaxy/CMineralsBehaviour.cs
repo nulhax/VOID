@@ -39,8 +39,8 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 
 
 	public float Quantity
-	{ 
-		set { m_fQuantity.Set(value); }
+	{
+        set { m_fQuantity.Set(value); }
 		
 		get { return m_fQuantity.Get(); } 
 	}
@@ -71,21 +71,18 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
         {
             if (_fQuantity <= m_fQuantity.Get())
             {
-                m_fQuantity.Set(m_fQuantity.Get() - _fQuantity);
+                m_fQuantity.Value -= _fQuantity;
             }
             else
             {
                 _fQuantity = m_fQuantity.Get();
-                m_fQuantity.Set(0.0f);
-                m_bDepleted = true;
-
-                CNetwork.Factory.DestoryGameObject(gameObject);
+                m_fQuantity.Value = 0.0f;
             }
 
             CGameShips.Ship.GetComponent<CShipNaniteSystem>().ChangeQuanity(_fQuantity);
         }
 
-        return (m_fQuantity.Get());
+        return (_fQuantity);
 	}
 
 
@@ -114,7 +111,14 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 		{
             if (m_fQuantity.Get() <= 0.0f)
             {
+                m_bDepleted = true;
+
                 if (EventDeplete != null) EventDeplete(gameObject);
+
+                if (CNetwork.IsServer)
+                {
+                    CNetwork.Factory.DestoryGameObject(gameObject);
+                }
             }
 			//gameObject.GetComponentInChildren<Renderer>.material.SetColor("_Color", new Color(1.0f - Quantity, 1.0f - Quantity, 1.0f));
 		}
@@ -130,7 +134,7 @@ public class CMineralsBehaviour : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fQuantity = null;
 
 
-    bool m_bDepleted = false;
+    bool  m_bDepleted = false;
 
 
 };
