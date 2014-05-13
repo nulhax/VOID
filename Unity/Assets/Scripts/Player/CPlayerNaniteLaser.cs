@@ -152,7 +152,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         }
 
         // Load mining effects
-        m_cBuildingHitParticles = GameObject.Instantiate(m_cMingingHitParticles) as GameObject;
+        m_cBuildingHitParticles = GameObject.Instantiate(m_cBuildingHitParticles) as GameObject;
         m_cBuildingHitParticles.SetActive(false);
 
         // Load mining effects
@@ -209,7 +209,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         }
 
         // Check we are still in range of minerals
-        else if (TargetType == ETargetType.Minerals != null &&
+        else if (TargetType == ETargetType.Minerals &&
                  cTargetRaycastHit.distance > k_fMineRange)
         {
             SetTarget(ETargetType.None, null);
@@ -267,6 +267,9 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
     void UpdateEffects()
     {
+        Debug.Log(Target);
+        Debug.Log(m_eTargetType);
+
         if (TargetType == ETargetType.None)
             return;
 
@@ -293,15 +296,41 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         Ray cRay;
         RaycastHit tRaycastHit = new RaycastHit();
 
-        if (cActorHead.layer != LayerMask.NameToLayer("Default"))
+        // Check player is within the ship
+        if (cActorHead.layer == LayerMask.NameToLayer("Default"))
         {
-            cRay = new Ray(CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(cActorHead.transform.position),
-                           CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(cActorHead.transform.rotation) * new Vector3(0, 0, 1));
+            // Check target is within the ship
+            if (Target.layer == LayerMask.NameToLayer("Default"))
+            {
+                cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+            }
+
+            // Target is in the galaxy
+            else
+            {
+                // Convert ray from simulation to galaxy
+                cRay = new Ray(CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(cActorHead.transform.position),
+                               CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(cActorHead.transform.rotation) * new Vector3(0, 0, 1));
+            }
         }
         else
         {
-            cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+            // Check target is within ship
+            if (Target.layer == LayerMask.NameToLayer("Default"))
+            {
+                // Convert ray from galaxy to ship
+                cRay = new Ray(CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(cActorHead.transform.position),
+                               CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(cActorHead.transform.rotation) * new Vector3(0, 0, 1));
+            }
+            else
+            {
+                // Target is in galaxy
+                cRay = new Ray(cActorHead.transform.position, cActorHead.transform.forward);
+            }
         }
+
+
+        
 
         if (Physics.Raycast(cRay, out tRaycastHit, CPlayerInteractor.RayRange))
         {
@@ -311,8 +340,8 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
             // Make particles visible
             if (!cEffectHitParticles.activeSelf)
             {
-                //cEffectHitParticles.layer = cActorHead.layer;
-                cEffectHitParticles.layer = LayerMask.NameToLayer("Default");
+                cEffectHitParticles.layer = Target.layer;
+                //cEffectHitParticles.layer = LayerMask.NameToLayer("Default");
                 cEffectHitParticles.SetActive(true);
 
                 GetComponent<CPlayerIKController>().SetRightHandTarget(tRaycastHit.point, qArmBandRotation, true);
@@ -369,14 +398,14 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         // Start building
         if ( cTargetActor.GetComponent<CModuleInterface>() != null &&
             !cTargetActor.GetComponent<CModuleInterface>().IsBuilt &&
-                cTargetRaycastHit.distance < k_fBuildRange)
+             cTargetRaycastHit.distance < k_fBuildRange)
         {
             SetTarget(ETargetType.Module, cTargetActor);
         }
 
         // Start mining
         else if (cTargetActor.GetComponent<CMineralsBehaviour>() != null &&
-                    cTargetRaycastHit.distance < k_fMineRange)
+                 cTargetRaycastHit.distance < k_fMineRange)
         {
             SetTarget(ETargetType.Minerals, cTargetActor);
         }
@@ -405,7 +434,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         if (CNetwork.IsServer)
         {
             m_eTargetType.Value = _eTargetType;
-
+            
             if (_cTargetObject == null)
             {
                 m_tTargetViewId.Value = null;
@@ -417,6 +446,8 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         }
         else if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
+            Debug.LogError("Target Type: " + _eTargetType + " GameObject: " + _cTargetObject);
+
             switch (_eTargetType)
             {
                 case ETargetType.Module:

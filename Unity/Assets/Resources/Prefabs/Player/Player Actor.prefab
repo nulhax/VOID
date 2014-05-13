@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b50961b9b5d1d4194497f36acf0f1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cBuildingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
+  m_cBuildingHitParticles: {fileID: 100002, guid: 7f8c5b6337f174646af2dad82dac2f12,
     type: 2}
   m_cMingingHitParticles: {fileID: 100002, guid: a37b634014fafe341afde878103a614c,
     type: 2}

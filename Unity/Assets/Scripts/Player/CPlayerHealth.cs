@@ -314,7 +314,23 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         {
             UpdateAtmosphereEffects();
         }
+
+        if (!m_bVisorHeatlhLightOn &&
+            Health < 20.0f)
+        {
+            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().Visor.renderer.material.SetFloat("_EmissivePowerB", 1.2f);
+            m_bVisorHeatlhLightOn = true;
+        }
+        else if (m_bVisorHeatlhLightOn &&
+                 Health > 20.0f)
+        {
+            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().Visor.renderer.material.SetFloat("_EmissivePowerB", 0.0f);
+            m_bVisorHeatlhLightOn = false;
+        }
 	}
+
+
+    bool m_bVisorHeatlhLightOn = false;
 
 
     [AServerOnly]
