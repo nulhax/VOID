@@ -83,7 +83,7 @@ public class CGalaxyShipCamera : MonoBehaviour
 		// Smooth follow interpolation
 		Vector3 offset = m_CachedGalaxyShip.up * 10.0f + -m_CachedGalaxyShip.forward * (70.0f + m_Distance);
 		Vector3 dest = (m_CachedGalaxyShip.position + m_CurrentShipBounds.center) + offset;
-		m_CachedCamera.position = Vector3.Lerp(m_CachedCamera.position, dest, Time.deltaTime * m_MovementDampening);
+		m_CachedCamera.position = dest;// Vector3.Lerp(m_CachedCamera.position, dest, Time.deltaTime * m_MovementDampening);
 	}
 
 	public void UpdateCameraBounds()
