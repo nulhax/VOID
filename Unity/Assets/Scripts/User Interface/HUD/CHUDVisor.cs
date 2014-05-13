@@ -71,7 +71,7 @@ public class CHUDVisor : MonoBehaviour
 			animation[k_UpAnimation].time = startTime;
 
 			//Play audio...
-			GetComponent<CAudioCue>().Play(1.0f, false, 1);
+			//GetComponent<CAudioCue>().Play(1.0f, false, 1);
 
  		}
 		else
