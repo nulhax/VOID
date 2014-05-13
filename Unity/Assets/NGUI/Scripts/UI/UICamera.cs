@@ -1046,17 +1046,17 @@ public class UICamera : MonoBehaviour
 		}
 
 		// Process "Use" key
-		if (Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
-		{
-			currentScheme = ControlScheme.Mouse;
-			justPressed = true;
-			isPressed = true;
-		}
-		else if (Input.GetKey(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
-		{
-			currentScheme = ControlScheme.Mouse;
-			isPressed = true;
-		}
+//		if (Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
+//		{
+//			currentScheme = ControlScheme.Mouse;
+//			justPressed = true;
+//			isPressed = true;
+//		}
+//		else if (Input.GetKey(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
+//		{
+//			currentScheme = ControlScheme.Mouse;
+//			isPressed = true;
+//		}
 
 		// No need to perform raycasts every frame
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
