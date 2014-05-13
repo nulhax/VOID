@@ -97,174 +97,174 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
-    public void OnGUI()
-    {
-		if(!CGameHUD.IsOnGUIEnabled)
-			return;
+//    public void OnGUI()
+//    {
+//		if(!CGameHUD.IsOnGUIEnabled)
+//			return;
+//
+//		float fViewWidth = 450;
+//		float fPositionX = Screen.width / 2 - fViewWidth / 2;
+//		float fPositionY = Screen.height / 2 + 50;
+//		float fScreenCenterX = Screen.width / 2;
+//		float fScreenCenterY = Screen.height / 2;
+//
+//		// Host server
+//		if (!CNetwork.Connection.IsConnected && 
+//            !CNetwork.Server.IsActive)
+//        {
+//			GUI.Label(new Rect(fPositionX, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Server Title");
+//            m_sServerTitle = GUI.TextField(new Rect(fPositionX, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sServerTitle, 32);
+//			m_fNumSlots = GUI.HorizontalSlider(new Rect(fScreenCenterX - 230, fScreenCenterY - 50, 200, 30), m_fNumSlots, 1.0f, 32.0f);
+//			GUI.Label(new Rect(fScreenCenterX - 158, fScreenCenterY - 80, 100, 30), "Slots: " + ((uint)m_fNumSlots).ToString());
+//
+//
+//
+//			if (GUI.Button(new Rect(fScreenCenterX + 60, fScreenCenterY - 80, 160, 50), "Start Server") &&
+//				m_sServerTitle.Length > 1 &&
+//				m_fNumSlots > 0)
+//			{
+//				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
+//			}
+//        }
+//
+//		// Shutdown server
+//        if (CNetwork.IsServer &&
+//            GUI.Button(new Rect(140, 20, 130, 50), "Shutdown Server"))
+//        {
+//            CNetwork.Server.Shutdown();
+//        }
+//
+//        // Disconnection from server
+//        if (CNetwork.Connection.IsConnected &&
+//            GUI.Button(new Rect(20, 20, 100, 50), "Disconnect"))
+//        {
+//            CNetwork.Connection.Disconnect();
+//        }
+//
+//        // Draw lan server list
+//		if (!CNetwork.Connection.IsConnected)
+//        {
+//			DrawLobbyGui();
+//        }
+//    }
 
-		float fViewWidth = 450;
-		float fPositionX = Screen.width / 2 - fViewWidth / 2;
-		float fPositionY = Screen.height / 2 + 50;
-		float fScreenCenterX = Screen.width / 2;
-		float fScreenCenterY = Screen.height / 2;
 
-		// Host server
-		if (!CNetwork.Connection.IsConnected && 
-            !CNetwork.Server.IsActive)
-        {
-			GUI.Label(new Rect(fPositionX, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Server Title");
-            m_sServerTitle = GUI.TextField(new Rect(fPositionX, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sServerTitle, 32);
-			m_fNumSlots = GUI.HorizontalSlider(new Rect(fScreenCenterX - 230, fScreenCenterY - 50, 200, 30), m_fNumSlots, 1.0f, 32.0f);
-			GUI.Label(new Rect(fScreenCenterX - 158, fScreenCenterY - 80, 100, 30), "Slots: " + ((uint)m_fNumSlots).ToString());
-
-
-
-			if (GUI.Button(new Rect(fScreenCenterX + 60, fScreenCenterY - 80, 160, 50), "Start Server") &&
-				m_sServerTitle.Length > 1 &&
-				m_fNumSlots > 0)
-			{
-				CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
-			}
-        }
-
-		// Shutdown server
-        if (CNetwork.IsServer &&
-            GUI.Button(new Rect(140, 20, 130, 50), "Shutdown Server"))
-        {
-            CNetwork.Server.Shutdown();
-        }
-
-        // Disconnection from server
-        if (CNetwork.Connection.IsConnected &&
-            GUI.Button(new Rect(20, 20, 100, 50), "Disconnect"))
-        {
-            CNetwork.Connection.Disconnect();
-        }
-
-        // Draw lan server list
-		if (!CNetwork.Connection.IsConnected)
-        {
-			DrawLobbyGui();
-        }
-    }
-
-
-	void DrawLobbyGui()
-	{
-		float fViewWidth = 450;
-		float fViewHeight = 150;
-		float fPositionX = Screen.width / 2 - fViewWidth / 2;
-		float fPositionY = Screen.height / 2 + 50;
-		float fScreenCenterX = Screen.width / 2;
-		float fScreenCenterY = Screen.height / 2;
-
-		// Player Naming
-
-        GUI.Label(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Player Name");
-
-        string sPlayerName = GUI.TextField(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sPlayerName, 32);
-		//PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
-		
-		if(PlayerName != sPlayerName)
-		{
-			PlayerName = sPlayerName;
-			EventNameChange(PlayerName);
-		}
-
-		// Tab
-		m_iActiveTab = GUI.Toolbar(new Rect(fPositionX, fPositionY - 30, 250, 30), m_iActiveTab, m_saTabTitles);
-
-		// Set the active server list to draw
-		List<CNetworkScanner.TServer> aServerList = null;
-
-		// Set to online servers
-		if (m_iActiveTab == 0)
-		{
-			aServerList = CNetwork.Scanner.GetOnlineServers();
-
-			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Online Servers"))
-			{
-				CNetwork.Scanner.RefreshOnlineServers();
-			}
-		}
-
-		// Set to lan servers
-		else
-		{
-			aServerList = CNetwork.Scanner.GetLanServers();
-
-			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Lan Servers"))
-			{
-				CNetwork.Scanner.RefreshLanServers(kusServerPort);
-			}
-		}
-
-		// Background image
-		GUI.Box(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), "");
-
-		// Start scroll box
-		//GUI.BeginScrollView(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), Vector2.zero, new Rect(0, 0, fViewWidth - 20, fViewHeight + 1), false, true);
-		//GUILayout.BeginScrollView(new Vector2(fPositionX, fPositionY), GUILayout.Width(fViewWidth), GUILayout.Height(fViewHeight));
-		GUILayout.BeginArea(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight));
-		GUILayout.BeginVertical();
-		GUILayout.Space(14);
-		
-
-		foreach (CNetworkScanner.TServer tServer in aServerList)
-		{
-			GUILayout.Space(10);
-			GUILayout.BeginHorizontal();
-			GUILayout.Space(14);
-
-			// Title
-			GUILayout.Label(tServer.tServerInfo.sTitle);
-			GUILayout.Space(5);
-
-			// Slots
-			GUILayout.Label(tServer.tServerInfo.bNumAvaiableSlots + " / " + tServer.tServerInfo.bNumSlots);
-			GUILayout.Space(5);
-
-			// Latency
-			GUILayout.Label(tServer.uiLatency.ToString());
-			GUILayout.Space(5);
-
-			// Connect button
-			if ((CNetwork.IsServer &&
-				tServer.cGuid.g == CNetwork.Server.RakPeer.GetMyGUID().g ||
-				!CNetwork.IsServer) &&
-				GUILayout.Button("Connect"))
-			{
-				CNetwork.Connection.ConnectToServer(tServer.sIp, tServer.usPort, "");
-			}
-
-			GUILayout.Space(14);
-			GUILayout.EndHorizontal();
-		}
-
-		GUILayout.Space(14);
-		GUILayout.EndVertical();
-		GUILayout.EndArea();
-
-        // Text field for IP input
-        m_strRemoteServerIP = GUI.TextField(new Rect(10, 200, 200, 20), m_strRemoteServerIP);
-
-        // Text field for port input
-        m_strRemoteServerPort = GUI.TextField(new Rect(10, 225, 200, 20), m_strRemoteServerPort);
-
-        // Convert text string of port number to ushort
-        ushort.TryParse(m_strRemoteServerPort, out m_usRemoteServerPort);
-
-        // If the port is above 999
-        if (m_usRemoteServerPort >= 1000)
-        {
-            // if GUI.Button "Connect" is pressed
-            if (GUI.Button(new Rect(10, 250, 200, 20), "Connect"))
-            {
-                // Attempt to connect to server using the above text fields
-                CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
-            }
-        }
-	}
+//	void DrawLobbyGui()
+//	{
+//		float fViewWidth = 450;
+//		float fViewHeight = 150;
+//		float fPositionX = Screen.width / 2 - fViewWidth / 2;
+//		float fPositionY = Screen.height / 2 + 50;
+//		float fScreenCenterX = Screen.width / 2;
+//		float fScreenCenterY = Screen.height / 2;
+//
+//		// Player Naming
+//
+//        GUI.Label(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextLayoutOffset, m_fInputFieldWidth, m_fInputFieldHeight), "Player Name");
+//
+//        string sPlayerName = GUI.TextField(new Rect(fPositionX + fViewWidth - m_fInputFieldWidth, fPositionY - m_fTextFieldOffset, m_fInputFieldWidth, m_fInputFieldHeight), m_sPlayerName, 32);
+//		//PlayerName = GUI.TextField(new Rect(fScreenCenterX + 230, fScreenCenterY - 150, 200, 30), m_sPlayerName, 32);
+//		
+//		if(PlayerName != sPlayerName)
+//		{
+//			PlayerName = sPlayerName;
+//			EventNameChange(PlayerName);
+//		}
+//
+//		// Tab
+//		m_iActiveTab = GUI.Toolbar(new Rect(fPositionX, fPositionY - 30, 250, 30), m_iActiveTab, m_saTabTitles);
+//
+//		// Set the active server list to draw
+//		List<CNetworkScanner.TServer> aServerList = null;
+//
+//		// Set to online servers
+//		if (m_iActiveTab == 0)
+//		{
+//			aServerList = CNetwork.Scanner.GetOnlineServers();
+//
+//			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Online Servers"))
+//			{
+//				CNetwork.Scanner.RefreshOnlineServers();
+//			}
+//		}
+//
+//		// Set to lan servers
+//		else
+//		{
+//			aServerList = CNetwork.Scanner.GetLanServers();
+//
+//			if (GUI.Button(new Rect(fPositionX + fViewWidth / 4, fPositionY + fViewHeight, 225, 30), "Refresh Lan Servers"))
+//			{
+//				CNetwork.Scanner.RefreshLanServers(kusServerPort);
+//			}
+//		}
+//
+//		// Background image
+//		GUI.Box(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), "");
+//
+//		// Start scroll box
+//		//GUI.BeginScrollView(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight), Vector2.zero, new Rect(0, 0, fViewWidth - 20, fViewHeight + 1), false, true);
+//		//GUILayout.BeginScrollView(new Vector2(fPositionX, fPositionY), GUILayout.Width(fViewWidth), GUILayout.Height(fViewHeight));
+//		GUILayout.BeginArea(new Rect(fPositionX, fPositionY, fViewWidth, fViewHeight));
+//		GUILayout.BeginVertical();
+//		GUILayout.Space(14);
+//		
+//
+//		foreach (CNetworkScanner.TServer tServer in aServerList)
+//		{
+//			GUILayout.Space(10);
+//			GUILayout.BeginHorizontal();
+//			GUILayout.Space(14);
+//
+//			// Title
+//			GUILayout.Label(tServer.tServerInfo.sTitle);
+//			GUILayout.Space(5);
+//
+//			// Slots
+//			GUILayout.Label(tServer.tServerInfo.bNumAvaiableSlots + " / " + tServer.tServerInfo.bNumSlots);
+//			GUILayout.Space(5);
+//
+//			// Latency
+//			GUILayout.Label(tServer.uiLatency.ToString());
+//			GUILayout.Space(5);
+//
+//			// Connect button
+//			if ((CNetwork.IsServer &&
+//				tServer.cGuid.g == CNetwork.Server.RakPeer.GetMyGUID().g ||
+//				!CNetwork.IsServer) &&
+//				GUILayout.Button("Connect"))
+//			{
+//				CNetwork.Connection.ConnectToServer(tServer.sIp, tServer.usPort, "");
+//			}
+//
+//			GUILayout.Space(14);
+//			GUILayout.EndHorizontal();
+//		}
+//
+//		GUILayout.Space(14);
+//		GUILayout.EndVertical();
+//		GUILayout.EndArea();
+//
+//        // Text field for IP input
+//        m_strRemoteServerIP = GUI.TextField(new Rect(10, 200, 200, 20), m_strRemoteServerIP);
+//
+//        // Text field for port input
+//        m_strRemoteServerPort = GUI.TextField(new Rect(10, 225, 200, 20), m_strRemoteServerPort);
+//
+//        // Convert text string of port number to ushort
+//        ushort.TryParse(m_strRemoteServerPort, out m_usRemoteServerPort);
+//
+//        // If the port is above 999
+//        if (m_usRemoteServerPort >= 1000)
+//        {
+//            // if GUI.Button "Connect" is pressed
+//            if (GUI.Button(new Rect(10, 250, 200, 20), "Connect"))
+//            {
+//                // Attempt to connect to server using the above text fields
+//                CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+//            }
+//        }
+//	}
 
 
 	void DebugProcessInputs()
