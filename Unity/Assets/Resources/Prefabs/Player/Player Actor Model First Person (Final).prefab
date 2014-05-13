@@ -3932,6 +3932,7 @@ MonoBehaviour:
   m_playerNeck: {fileID: 0}
   m_playerRightHand: {fileID: 100022}
   m_headlessAvatar: {fileID: 9000000, guid: 7a8a868be53bc134ca3106aa81019052, type: 3}
+  m_Visor: {fileID: 100006}
   m_cNaniteArmBand: {fileID: 100012}
   m_cNaniteArmBandLaserNode: {fileID: 100016}
   m_vDefaultNaniteArmBandRotation: {x: 0, y: 0, z: 0}

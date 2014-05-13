@@ -59,6 +59,12 @@ public class CPlayerSkeleton : MonoBehaviour
         get { return (m_cNaniteArmBandLaserNode); }
     }
 
+
+    public GameObject Visor
+    {
+        get { return (m_Visor); }
+    }
+
     //Member methods
     void Start()
     {
@@ -73,6 +79,7 @@ public class CPlayerSkeleton : MonoBehaviour
     public GameObject   m_playerNeck;
 	public GameObject   m_playerRightHand;
 	public Avatar		m_headlessAvatar;
+    public GameObject   m_Visor;
 
     public GameObject m_cNaniteArmBand;
     public GameObject m_cNaniteArmBandLaserNode;
