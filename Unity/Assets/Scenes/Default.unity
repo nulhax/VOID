@@ -144,6 +144,10 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11400002, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
+      propertyPath: InitialiseDungeonMaster
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400022, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
     - {fileID: 11400020, guid: 25d4a6b4e1c5abb40ac9937d894aa1c3, type: 2}
@@ -216,7 +220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f917699cabd55384c8c5a658728dfdbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InitialiseDungeonMaster: 1
+  InitialiseDungeonMaster: 0
 --- !u!114 &1432749553
 MonoBehaviour:
   m_ObjectHideFlags: 0

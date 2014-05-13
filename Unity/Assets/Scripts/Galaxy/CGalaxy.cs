@@ -889,6 +889,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 
 	private void LoadEnemyShips(SCellPos absoluteCell)
 	{
+		return;
 		float fCellRadius = cellRadius;
 		uint uiNumEnemyShips = EnemyShipCount(absoluteCell);
 

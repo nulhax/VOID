@@ -267,9 +267,6 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
     void UpdateEffects()
     {
-        Debug.Log(Target);
-        Debug.Log(m_eTargetType);
-
         if (TargetType == ETargetType.None)
             return;
 
