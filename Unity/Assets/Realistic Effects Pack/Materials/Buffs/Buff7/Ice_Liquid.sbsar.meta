@@ -1,0 +1,177 @@
+fileFormatVersion: 2
+guid: 43b09fbeeab2a064bb373f5230828fa3
+SubstanceImporter:
+  serializedVersion: 5
+  materialInstances:
+  - serializedVersion: 10
+    name: Ice_Liquid
+    prototypeName: Electric_Liquid
+    shaderName: Particles/Additive
+    inputs:
+    - name: $outputsize
+      value:
+        scalar[0]: 9
+        scalar[1]: 9
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: $randomseed
+      value:
+        scalar[0]: 5144
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Flow
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Glow_Intensity
+      value:
+        scalar[0]: 1
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Glow_Size
+      value:
+        scalar[0]: 5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Liquid_Color
+      value:
+        scalar[0]: .338235319
+        scalar[1]: .338235319
+        scalar[2]: .338235319
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Hue_Shift
+      value:
+        scalar[0]: 0
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Saturation
+      value:
+        scalar[0]: .5
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Luminosity
+      value:
+        scalar[0]: .400000006
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    - name: Contrast
+      value:
+        scalar[0]: .264999986
+        scalar[1]: 0
+        scalar[2]: 0
+        scalar[3]: 0
+        texture: {instanceID: 0}
+    materialInformation:
+      serializedVersion: 5
+      offset: {x: 0, y: 0}
+      scale: {x: 1, y: 1}
+      generateAllOutputs: 0
+      animationUpdateRate: 0
+    materialProperties:
+      serializedVersion: 2
+      texEnvs:
+        data:
+          first:
+            name: _MainTex
+          second:
+            texture: {instanceID: 0}
+            scale: {x: 1, y: 2}
+            offset: {x: 0, y: 0}
+      floats:
+        data:
+          first:
+            name: _Cutoff
+          second: 1
+        data:
+          first:
+            name: _Shininess
+          second: 3.00000072
+        data:
+          first:
+            name: _InvFade
+          second: 3
+        data:
+          first:
+            name: _Height
+          second: .300000012
+        data:
+          first:
+            name: _OffsetXHeightMap
+          second: 0
+        data:
+          first:
+            name: _OffsetYHeightMap
+          second: 0
+        data:
+          first:
+            name: _FPOW
+          second: 5
+        data:
+          first:
+            name: _R0
+          second: .0500000007
+        data:
+          first:
+            name: _BumpAmt
+          second: 0
+        data:
+          first:
+            name: _Cutout
+          second: 1
+        data:
+          first:
+            name: _GlowStrength
+          second: 1.10000002
+      colors:
+        data:
+          first:
+            name: _Color
+          second: {r: 1, g: 1, b: 1, a: 1}
+        data:
+          first:
+            name: _SpecColor
+          second: {r: .5, g: .5, b: .5, a: 1}
+        data:
+          first:
+            name: _TintColor
+          second: {r: .088343434, g: .174762875, b: .316176474, a: .235294119}
+        data:
+          first:
+            name: _ReflectColor
+          second: {r: 1, g: 1, b: 1, a: .5}
+        data:
+          first:
+            name: _GlowColor
+          second: {r: 1, g: 1, b: 1, a: 1}
+    textureParameters:
+    - name: Ice_Liquid_Emissive
+      alphaSource: 0
+      filterMode: 1
+      aniso: 1
+      wrapMode: 0
+    buildTargetSettings:
+    - serializedVersion: 2
+      buildTarget: 
+      textureWidth: 256
+      textureHeight: 256
+      textureFormat: 0
+      loadingBehavior: 1
+  deletedPrototypes: []
+  userData: 
