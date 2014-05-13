@@ -64,6 +64,8 @@ public class CAudioSystem : MonoBehaviour
 	static private float m_fAmbienceVolume = 0.75f;
 	static private AudioListener m_listener;
 	static private OcclusionState occludeState;
+
+	bool m_bOccludeAll = false;
 	
 	static CAudioSystem s_cInstance = null;
 	
@@ -263,7 +265,7 @@ public class CAudioSystem : MonoBehaviour
 			}					 
 		}
 
-		if(bOccluded)
+		if(bOccluded || m_bOccludeAll)
 		{
 			//Add Occlusion
 			AudioLowPassFilter audioFilter = _audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>(); 
@@ -289,23 +291,10 @@ public class CAudioSystem : MonoBehaviour
 		}
 	}
 
-//	public void SetOccludeAll(bool _bOccludeAll)
-//	{
-//		if(_bOccludeAll)
-//		{
-//			if(m_listener.gameObject.GetComponent<AudioLowPassFilter>() == null)
-//			{
-//				//m_listener.gameObject.AddComponent<AudioLowPassFilter>();
-//			}
-//		}
-//		else
-//		{
-//			if(m_listener.gameObject.GetComponent<AudioLowPassFilter>() != null)
-//			{
-//				///Destroy(m_listener.gameObject.GetComponent<AudioLowPassFilter>());
-//			}
-//		}
-//	}
+	public void SetOccludeAll(bool _bOccludeAll)
+	{
+		m_bOccludeAll = _bOccludeAll;
+	}
 	
 	public static AudioSource Play(AudioClip _clip, Vector3 _soundOrigin, float _volume, float _pitch, bool _loop,
 							float _fadeInTime, SoundType _soundType, bool _useOcclusion) 

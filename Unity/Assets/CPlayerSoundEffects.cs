@@ -18,19 +18,21 @@ public class CPlayerSoundEffects : MonoBehaviour
                 m_FootStepCue = cue;
             }
         }
+
+		GetComponent<CPlayerMotor>().EventStateChange += OnMovementStateChange;
 	}
 
-//	void OnMovementStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
-//	{
-//		if(_eNew == CPlayerMotor.EState.AirThustersInSpace)
-//		{
-//			CAudioSystem.Instance.SetOccludeAll(true);
-//		}
-//		else
-//		{
-//			CAudioSystem.Instance.SetOccludeAll(false);
-//		}
-//	}
+	void OnMovementStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
+	{
+		if(_eNew == CPlayerMotor.EState.AirThustersInSpace)
+		{
+			CAudioSystem.Instance.SetOccludeAll(true);
+		}
+		else
+		{
+			CAudioSystem.Instance.SetOccludeAll(false);
+		}
+	}
 
 	void PlayFootStep()
 	{
