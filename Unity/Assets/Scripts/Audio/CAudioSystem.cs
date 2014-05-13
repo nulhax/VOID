@@ -105,6 +105,18 @@ public class CAudioSystem : MonoBehaviour
 		{
 			BalanceVolumes(-1, -1, -1, m_fVoiceVolume - 0.1f);
 		}
+		if(Input.GetKeyDown(KeyCode.Keypad4))
+		{
+			BalanceVolumes(-1, m_fEffectsVolume + 0.1f, -1, -1);
+		}
+		if(Input.GetKeyDown(KeyCode.Keypad5))
+		{
+			BalanceVolumes(-1, -1, m_fAmbienceVolume + 0.1f, -1);
+		}
+		if(Input.GetKeyDown(KeyCode.Keypad6))
+		{
+			BalanceVolumes(-1, -1, -1, m_fVoiceVolume + 0.1f);
+		}
 
 	}
 	
@@ -208,27 +220,30 @@ public class CAudioSystem : MonoBehaviour
 		//Get the audioListener in the scene
 		Vector3 listenerPos = m_listener.transform.position;
 		Vector3 sourcePos = _audioClip.audioSource.transform.position;	
-		
-		int ignoreMask = 3 << 10;		
-		ignoreMask = ~ignoreMask;
-		
-		RaycastHit hit;
 
-		Vector3 direction = listenerPos - sourcePos;
-		if(Physics.SphereCast(sourcePos, 20.0f, direction, out hit, 20))
+		if(_audioClip.audioSource.transform.parent != null)
 		{
-			Debug.DrawLine(	sourcePos, listenerPos, Color.cyan, 1.0f);
+			sourcePos = _audioClip.audioSource.transform.parent.position;
+		}
+
+		int ignoreLayer = 1 << 15;
+
+		RaycastHit hit;
+		if(Physics.Linecast(listenerPos, sourcePos, out hit, ignoreLayer))
+		{
+			//Debug.DrawLine(sourcePos, listenerPos, Color.cyan, 1.0f);
+			Debug.DrawLine(listenerPos, sourcePos, Color.black, 0.05f);
 			
-           	if(hit.collider.tag != "Listener")
+           	if(hit.collider.GetComponent<AudioSource>() == null)
 			{	
 				AudioLowPassFilter audioFilter = _audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>(); 
 								
 				if(audioFilter == null)
 				{
 					AudioLowPassFilter filter =_audioClip.audioSource.gameObject.AddComponent<AudioLowPassFilter>();
-					filter.cutoffFrequency = 2000; 
+					filter.cutoffFrequency = 2500; 
 					_audioClip.audioSource.volume = _audioClip.defaultVolume * 0.5f;
-					//Debug.Log (_audioClip.audioSource.clip.name + " occluded");
+					Debug.Log (_audioClip.audioSource.clip.name + " occluded by " + hit.collider.gameObject.name);
 				}
 
 			}			
@@ -238,14 +253,8 @@ public class CAudioSystem : MonoBehaviour
 				{
 					Destroy(_audioClip.audioSource.gameObject.GetComponent<AudioLowPassFilter>());
 					_audioClip.audioSource.volume = _audioClip.defaultVolume;
-					Debug.Log("No Occlusion");
+					Debug.Log(_audioClip.audioSource.clip.name + " No Occlusion");
 				}
-				
-				if(occludeState != OcclusionState.OCCLUSION_FALSE)
-				{
-					occludeState = OcclusionState.OCCLUSION_FALSE;
-					//
-				}	
 			}
 
 //				//TODO:

@@ -19,9 +19,9 @@ public class CAudioCue : MonoBehaviour
 	public CAudioSystem.SoundType m_eSoundType;
 	private List<AudioSource> m_arAttachedAudioSource = new List<AudioSource>();
 	
-	void Update()
+	void Start()
 	{
-		
+
 	}
 
 	/// <summary>

@@ -242,6 +242,19 @@ public class CCockpitInterface : CNetworkMonoBehaviour
             // Notify obersvers
             if (EventDismounted != null)
                 EventDismounted(this, m_ulMountedPlayerId.PreviousValue);
+
+			//Set dummy to visible
+			if(m_cDummyPilot != null)
+			{
+				m_cDummyPilot.SetActive(false);
+			}
+			//Set play to invisible
+			Renderer[] renderers = CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.PreviousValue).GetComponentsInChildren<Renderer>();
+			
+			foreach(Renderer renderer in renderers)
+			{
+				renderer.enabled = true;
+			}
         }
 
         // Player entered the cockpit
@@ -250,6 +263,19 @@ public class CCockpitInterface : CNetworkMonoBehaviour
             // Notify observers
             if (EventMounted != null)
                 EventMounted(this, m_ulMountedPlayerId.Value);
+
+			//Set dummy to visible
+			if(m_cDummyPilot != null)
+			{
+				m_cDummyPilot.SetActive(true);
+			}
+			//Set play to invisible
+			Renderer[] renderers = CGamePlayers.GetPlayerActor(m_ulMountedPlayerId.Value).GetComponentsInChildren<Renderer>();
+
+			foreach(Renderer renderer in renderers)
+			{
+				renderer.enabled = false;
+			}
         }
     }
 
@@ -259,6 +285,7 @@ public class CCockpitInterface : CNetworkMonoBehaviour
 
     public EType m_eType = EType.INVALID;
     public Transform m_cSeat = null;
+	public GameObject m_cDummyPilot = null;
     public CComponentInterface[] m_Components;
 
 
