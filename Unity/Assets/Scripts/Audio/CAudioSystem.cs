@@ -73,14 +73,36 @@ public class CAudioSystem : MonoBehaviour
 	
 	void Awake() 
 	{
-		s_cInstance = this;
-		
-        //Debug.Log("AudioManager Initialising");
+		s_cInstance = this;        
        		
 		s_activeAudio = new List<ClipInfo>();
 		m_listener = (AudioListener) FindObjectOfType(typeof(AudioListener));
 		
 		occludeState = OcclusionState.OCCLUSION_FALSE;
+
+		m_fAmbienceVolume = PlayerPrefs.GetFloat("AmbienceVolume");
+		if(m_fAmbienceVolume < 0)
+		{
+			PlayerPrefs.SetFloat("AmbienceVolume", 0.75f);
+		}
+
+		m_fEffectsVolume = PlayerPrefs.GetFloat("EffectsVolume");
+		if(m_fEffectsVolume < 0)
+		{
+			PlayerPrefs.SetFloat("EffectsVolume", 0.75f);
+		}
+
+		m_fVoiceVolume = PlayerPrefs.GetFloat("VoiceVolume");
+		if(m_fVoiceVolume < 0)
+		{
+			PlayerPrefs.SetFloat("VoiceVolume", 1.0f);
+		}
+
+		m_fMusicVolume = PlayerPrefs.GetFloat("MusicVolume");
+		if(m_fMusicVolume < 0)
+		{
+			PlayerPrefs.SetFloat("MusicVolume", 0.75f);
+		}
     }
 	
 	void Update() 
