@@ -46,6 +46,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	static int m_iWalkBackState = Animator.StringToHash("Base Layer.WalkBack");
 	static int m_iSlideState = Animator.StringToHash("Base Layer.Slide");
 	static int m_iFallState = Animator.StringToHash("Base Layer.Fall");
+    static int m_iSpaceWalkState = Animator.StringToHash("Base Layer.Space Walk");
 	
 	//Player motor
 	CPlayerMotor m_PlayerMotor;
@@ -65,6 +66,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 	bool m_bHoldTool = false;
 	bool m_bInputDisabled = false;
     bool m_bJumping = false;
+    bool m_bSpaceWalk = false;
 
     float m_fTimeLastGround = 0.0f;
     float m_fFallStateTriggerTime = 0.2f;
@@ -99,6 +101,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 		{
 			m_ThirdPersonAnim.SetLayerWeight(1,0.5f);
             m_ThirdPersonAnim.SetBool("Space Walk", true);
+            m_bSpaceWalk = true;
 		}
 		else
 		{
@@ -163,6 +166,11 @@ public class CThirdPersonAnimController : MonoBehaviour
 			{
 				m_ThirdPersonAnim.SetFloat("Direction", 0.0f);	       
 			}
+
+            if(m_bSpaceWalk)
+            {
+                //if(
+            }
 
             AnimatorStateInfo currentBaseState = m_ThirdPersonAnim.GetCurrentAnimatorStateInfo(0);  // set our currentState variable to the current state of the Base Layer (0) of animation
 			
