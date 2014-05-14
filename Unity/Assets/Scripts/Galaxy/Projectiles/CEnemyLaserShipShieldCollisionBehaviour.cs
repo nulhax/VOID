@@ -38,9 +38,9 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
 	{
 		if (CNetwork.IsServer)
 		{
-			m_SphereCollider = gameObject.AddComponent<SphereCollider>();
-			m_SphereCollider.radius = 10.0f;
-			m_SphereCollider.isTrigger = true;
+//			m_SphereCollider = gameObject.AddComponent<SphereCollider>();
+//			m_SphereCollider.radius = 10.0f;
+//			m_SphereCollider.isTrigger = true;
 		}
 	}
 
@@ -76,12 +76,11 @@ public class CEnemyLaserShipShieldCollisionBehaviour : MonoBehaviour
 			}
 
             // Turn off collider
-			m_SphereCollider.enabled = false;
+			collider.enabled = false;
         }
     }
 
 
 // Member Fields
-	SphereCollider m_SphereCollider = null;
 
 };

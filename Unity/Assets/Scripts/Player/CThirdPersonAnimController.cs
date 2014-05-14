@@ -83,12 +83,26 @@ public class CThirdPersonAnimController : MonoBehaviour
 		//Sign up to state change event in GroundMotor script
 		m_PlayerMotor = gameObject.GetComponent<CPlayerMotor>();
 		m_PlayerMotor.EventInputStatesChange += NotifyMovementStateChange;
+		m_PlayerMotor.EventStateChange += NotifyMotorStateChange;
 		
 		//Get players animator
 		m_ThirdPersonAnim = GetComponent<Animator>();
 		
 		//Get collider
 		m_physCollider = GetComponent<CapsuleCollider>();	
+	}
+
+	void NotifyMotorStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew) 
+	{
+		if(_eNew == CPlayerMotor.EState.AirThustersInSpace ||
+		   _eNew == CPlayerMotor.EState.AirThustersInShip)
+		{
+			m_ThirdPersonAnim.SetLayerWeight(1,0.5f);
+		}
+		else
+		{
+			m_ThirdPersonAnim.SetLayerWeight(1,0);
+		}
 	}
 
     void NotifyMovementStateChange(ushort _usPreviousStates, ushort _usNewSates)

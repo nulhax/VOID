@@ -81,8 +81,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
             // Transfer the actor to ship space
             CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
 
-            // Set the compensation velocity of the actor
-            rigidbody.velocity = transferedVelocity;
+			if(rigidbody.isKinematic == false)
+			{
+	            // Set the compensation velocity of the actor
+	            rigidbody.velocity = transferedVelocity;
+			}
         }
     }
 
@@ -109,8 +112,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
             Vector3 currentVelocity = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(Quaternion.identity) * rigidbody.velocity;
             transferedVelocity += currentVelocity;
 
-            // Set the compensation velocity of the actor
-            rigidbody.velocity = transferedVelocity;
+			if(rigidbody.isKinematic == false)
+			{
+            	// Set the compensation velocity of the actor
+            	rigidbody.velocity = transferedVelocity;
+			}
         }
     }
 

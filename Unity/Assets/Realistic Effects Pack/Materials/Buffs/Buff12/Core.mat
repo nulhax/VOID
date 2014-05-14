@@ -103,16 +103,16 @@ Material:
         second: .5
       data:
         first:
-          name: _GlowBorderOffset
-        second: 4.46000004
-      data:
-        first:
           name: _AlphPower
         second: 2
       data:
         first:
           name: _AlphaMin
         second: 0
+      data:
+        first:
+          name: _GlowBorderOffset
+        second: 4.46000004
     m_Colors:
       data:
         first:
