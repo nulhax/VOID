@@ -25,7 +25,39 @@ public class CServerMenu : CNetworkMonoBehaviour
 	public GameObject ServerItem;
 	GameObject ServerClone;
 
+	public GameObject AmbientSlider;
+	public GameObject EffectSlider;
+	public GameObject VoiceSlider;
+	public GameObject MusicSlider;
+
 	public const ushort kusServerPort = 1337;
+
+	// Input from Sound Options
+	public void Ambient()
+	{
+		UISlider slider = AmbientSlider.GetComponent<UISlider>();
+		PlayerPrefs.SetFloat("AmbienceVolume", slider.value);
+	}
+	
+	public void Effects()
+	{
+		UISlider slider = EffectSlider.GetComponent<UISlider>();
+		PlayerPrefs.SetFloat("EffectsVolume", slider.value);
+	}
+	
+	public void Voice()
+	{
+		UISlider slider = VoiceSlider.GetComponent<UISlider>();
+		PlayerPrefs.SetFloat("VoiceVolume", slider.value);
+	}
+	
+	public void Music()
+	{
+		UISlider slider = MusicSlider.GetComponent<UISlider>();
+		PlayerPrefs.SetFloat("MusicVolume", slider.value);
+
+		GetComponent<AudioSource>().volume = slider.value;
+	}
 
 	// Text inputs from NGUI
 	public void ServerName()
@@ -45,6 +77,14 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void RefreshButton()
 	{
+		List<Transform> children = ServerTable.GetComponent<UITable>().children;
+		foreach(Transform child in children)
+		{
+			Destroy(child.gameObject);
+		}
+		ServerTable.GetComponent<UITable>().children.Clear();
+		ServerTable.GetComponent<UITable>().Reposition();
+
 		CNetwork.Scanner.RefreshLanServers(kusServerPort);
 
 		aServerList = CNetwork.Scanner.GetLanServers();
@@ -64,6 +104,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 		Label.text = "Title: " + _tServer.tServerInfo.sTitle + "\t\t" + _tServer.tServerInfo.bNumSlots + "/" + _tServer.tServerInfo.bNumAvaiableSlots;
 
 		ServerTable.GetComponent<UITable>().Reposition();
+
 	}
 
 	public void CreateServer()
@@ -80,11 +121,14 @@ public class CServerMenu : CNetworkMonoBehaviour
 			
 			string sPort = port.ToString();
 
-			// Save variables for the CGame to use when starting the default s
+			// Save variables for the CGame to use when starting the default scene
 			PlayerPrefs.SetString("IP Address", ip);
 			PlayerPrefs.SetString("Server Port", sPort); 
 			PlayerPrefs.SetString("Server Password", pw);
 
+			m_Server = 1;
+
+			PlayerPrefs.SetInt("Server", m_Server);
 			if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
 			{
 				Application.LoadLevel("Default");
@@ -107,7 +151,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 		ushort port = serverItem.usServerPort;
 		string pw = serverItem.sServerPassword;
 
-		CNetwork.Connection.ConnectToServer(ip, port, pw);
+		//CNetwork.Connection.ConnectToServer(ip, port, pw);
 
 		string sPort = port.ToString();
 
@@ -144,6 +188,37 @@ public class CServerMenu : CNetworkMonoBehaviour
 //		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
 		// CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
+
+		UISlider slider = AmbientSlider.GetComponent<UISlider>();
+		slider.value = PlayerPrefs.GetFloat("AmbienceVolume");
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
+		slider = EffectSlider.GetComponent<UISlider>();
+		slider.value = PlayerPrefs.GetFloat("EffectsVolume");
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
+		slider = MusicSlider.GetComponent<UISlider>();
+		slider.value = PlayerPrefs.GetFloat("MusicVolume");
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
+		GetComponent<AudioSource>().volume = slider.value;
+
+		slider = VoiceSlider.GetComponent<UISlider>();
+		slider.value = PlayerPrefs.GetFloat("VoiceVolume");
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+		
 	}
 
 	void OnServerStartUp()
@@ -175,6 +250,9 @@ public class CServerMenu : CNetworkMonoBehaviour
 	}
 
 	// Private members
+
+	int m_Server = 0;
+
 	List<CNetworkScanner.TServer> aServerList = null;
 
 	string m_sServerTitle = System.Environment.UserDomainName + ": " + System.Environment.UserName;

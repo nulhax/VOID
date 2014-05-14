@@ -52,7 +52,7 @@ public class CGame : CNetworkMonoBehaviour
 
     public DungeonMaster DungeonMasterInstance { get { return m_DungeonMaster; } }
 
-// Member Functions
+	// Member Functions
 
 
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
@@ -68,6 +68,8 @@ public class CGame : CNetworkMonoBehaviour
 		string port = PlayerPrefs.GetString("Server Port");
 		ushort.TryParse(port, out m_usRemoteServerPort);
 
+		m_Server = PlayerPrefs.GetInt("Server");
+
 		Application.runInBackground = true;
         s_cInstance = this;
     }
@@ -80,11 +82,18 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	
-		// Start server (Development Only)
-		CNetwork.Server.Startup(m_usRemoteServerPort, m_sServerTitle, "DefaultName", 8);
-	
-		// Connect to server (Development Only)
-		CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+		// Start server Host only
+		if(m_Server == 1)
+		{
+			// Host join
+			CNetwork.Server.Startup(m_usRemoteServerPort, m_sServerTitle, "DefaultName", 16);
+			CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+		}
+		else
+		{
+			// Client join
+			CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+		}
 
         // Initialise the dungeon master
         // Note: This may need to be moved should the lobby system change
@@ -315,11 +324,14 @@ public class CGame : CNetworkMonoBehaviour
 	string m_sPlayerName = "Enter name";
 	string[] m_saTabTitles = { "Online Servers", "Lan Servers" };
 
-
 	float m_fNumSlots = 16.0f;
 	
 
 	int m_iActiveTab = 1;
+
+	// Can't save bool in PlayerPref, use int 0 - 1
+	int m_Client = 0;
+	int m_Server = 0;
 
     // Manual server connection variables
     string m_strRemoteServerIP = "127.0.0.1";
