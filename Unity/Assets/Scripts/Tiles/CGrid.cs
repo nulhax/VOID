@@ -73,6 +73,15 @@ public class CGrid : MonoBehaviour
 	}
 
 	[AServerOnly]
+	public void SyncAllTilesToAllPlayers()
+	{
+		foreach(ulong playerId in CGamePlayers.Players)
+		{
+			OnPlayerJoin(playerId);
+		}
+	}
+
+	[AServerOnly]
 	private void OnPlayerJoin(ulong _PlayerId)
 	{
 		// Sync each tile to the player

@@ -43,13 +43,6 @@ Material:
           m_Offset: {x: 0, y: 0}
       data:
         first:
-          name: _GlossMap
-        second:
-          m_Texture: {fileID: 2800000, guid: 5cc28bceff05e1944836e09f360fb6c3, type: 3}
-          m_Scale: {x: 1, y: 1}
-          m_Offset: {x: 0, y: 0}
-      data:
-        first:
           name: _NormalMap
         second:
           m_Texture: {fileID: 0}
@@ -58,6 +51,13 @@ Material:
       data:
         first:
           name: _ReflectionMap
+        second:
+          m_Texture: {fileID: 2800000, guid: 5cc28bceff05e1944836e09f360fb6c3, type: 3}
+          m_Scale: {x: 1, y: 1}
+          m_Offset: {x: 0, y: 0}
+      data:
+        first:
+          name: _GlossMap
         second:
           m_Texture: {fileID: 2800000, guid: 5cc28bceff05e1944836e09f360fb6c3, type: 3}
           m_Scale: {x: 1, y: 1}
@@ -101,10 +101,6 @@ Material:
         second: 8
       data:
         first:
-          name: _Amount
-        second: .5
-      data:
-        first:
           name: _Opacity
         second: .678571403
       data:
@@ -131,6 +127,10 @@ Material:
         first:
           name: _RefractiveStrength
         second: 1
+      data:
+        first:
+          name: _Amount
+        second: .5
     m_Colors:
       data:
         first:

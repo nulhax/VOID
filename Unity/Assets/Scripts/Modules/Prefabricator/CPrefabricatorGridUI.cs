@@ -564,6 +564,8 @@ public class CPrefabricatorGridUI : MonoBehaviour
 		// Move the tiles along the x, z
 		m_TilesOffset = m_DragMovementStart - (Quaternion.Inverse(rotY) * new Vector3(diff.x, 0.0f, diff.z)) / m_GridScale;
 		m_Grid.TileContainer.transform.localPosition = m_TilesOffset;
+
+		Debug.Log (point1 + ", " + point2 + ", offset: " + m_TilesOffset);
 	}
 
 	[AServerOnly]

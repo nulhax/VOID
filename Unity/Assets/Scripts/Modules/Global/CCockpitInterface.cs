@@ -131,7 +131,7 @@ public class CCockpitInterface : CNetworkMonoBehaviour
             cPlayerActor.GetComponent<CPlayerHead>().SetLookDirection(0.0f, 0.0f);
             
             // Set the player kinematic
-            cPlayerActor.rigidbody.isKinematic = true;
+            //cPlayerActor.rigidbody.isKinematic = true;
 
             m_ulMountedPlayerId.Set(_ulPlayerId);
 
@@ -162,7 +162,7 @@ public class CCockpitInterface : CNetworkMonoBehaviour
                 cPlayerActor.GetComponent<CNetworkView>().GetComponent<CPlayerHead>().SetLookDirection(m_vRemoteHeadEuler.x, m_vRemoteHeadEuler.y);
 
                 // Turn of kinematic
-                cPlayerActor.rigidbody.isKinematic = false;
+				//cPlayerActor.rigidbody.isKinematic = false;
             }
 
             m_ulMountedPlayerId.Set(0);

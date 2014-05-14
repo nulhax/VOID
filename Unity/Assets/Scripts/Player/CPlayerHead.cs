@@ -243,9 +243,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
     void Update()
     {
         if (gameObject != CGamePlayers.SelfActor)
-            GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(0.0f,
-                                                                                                                                         90.0f + Head.transform.localEulerAngles.y,
-                                                                                                                                        -67.31491f + Head.transform.localEulerAngles.x);
+			GetComponent<CPlayerInterface>().Model.GetComponent<CPlayerSkeleton>().m_playerNeck.transform.localEulerAngles = new Vector3(4.043472f + Head.transform.localEulerAngles.y,
+			                                                                                                                            -1.312622f,
+			                                                                                                                             -16.71289f + Head.transform.localEulerAngles.x);
 
 		if(gameObject == CGamePlayers.SelfActor && m_bLerpInProgress)
 		{
