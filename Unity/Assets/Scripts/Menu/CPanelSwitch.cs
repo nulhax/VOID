@@ -11,7 +11,6 @@ public class CPanelSwitch : MonoBehaviour {
 		NGUITools.SetActive(nextPanelObject, true);
 		NGUITools.SetActive(currentPanelObject, false);
 	}
-
 	// Use this for initialization
 	void Start () 
 	{

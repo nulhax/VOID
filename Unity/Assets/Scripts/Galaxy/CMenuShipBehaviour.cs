@@ -7,6 +7,7 @@ public class CMenuShipBehaviour : MonoBehaviour {
 	public float SpawnFreq = 15.0f;
 	public float fSpawnTimer = 0.0f;
 
+	public float fSpinSpeed = 1.0f;
 
 
 	// Use this for initialization
@@ -56,14 +57,18 @@ public class CMenuShipBehaviour : MonoBehaviour {
 			TriggerDummyMovement();
 			fSpawnTimer = 0.0f;
 		}
+
+		// Spin the Camera
+		m_fY += fSpinSpeed * Time.deltaTime;
+		gameObject.transform.rotation = Quaternion.Euler(0.0f, m_fY, 0.0f);
 	}
 
 	void TriggerDummyMovement()
 	{
 		m_ShipArray[m_iCurrentShipIndex].GetComponent<CLerpShip>().BeginShipMove();
-		Debug.Log("Dummy " + m_iCurrentShipIndex.ToString() + " now active");
 	}
 
+	private float m_fY = 0.0f;
 	private GameObject[] m_ShipArray = new GameObject[3];
 	private int m_iCurrentShipIndex = 0;
 }
