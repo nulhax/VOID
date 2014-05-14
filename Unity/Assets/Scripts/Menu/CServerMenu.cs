@@ -36,24 +36,48 @@ public class CServerMenu : CNetworkMonoBehaviour
 	public void Ambient()
 	{
 		UISlider slider = AmbientSlider.GetComponent<UISlider>();
+
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
 		PlayerPrefs.SetFloat("AmbienceVolume", slider.value);
 	}
 	
 	public void Effects()
 	{
 		UISlider slider = EffectSlider.GetComponent<UISlider>();
+
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
 		PlayerPrefs.SetFloat("EffectsVolume", slider.value);
 	}
 	
 	public void Voice()
 	{
 		UISlider slider = VoiceSlider.GetComponent<UISlider>();
+
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
 		PlayerPrefs.SetFloat("VoiceVolume", slider.value);
 	}
 	
 	public void Music()
 	{
 		UISlider slider = MusicSlider.GetComponent<UISlider>();
+
+		if(slider.value < 0)
+		{
+			slider.value = 0.75f;
+		}
+
 		PlayerPrefs.SetFloat("MusicVolume", slider.value);
 
 		GetComponent<AudioSource>().volume = slider.value;
@@ -190,34 +214,51 @@ public class CServerMenu : CNetworkMonoBehaviour
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		UISlider slider = AmbientSlider.GetComponent<UISlider>();
-		slider.value = PlayerPrefs.GetFloat("AmbienceVolume");
-		if(slider.value < 0)
+		if (PlayerPrefs.HasKey ("AmbienceVolume")) 
 		{
+            slider.value = PlayerPrefs.GetFloat("AmbienceVolume");
+		}
+		else
+        {
+			PlayerPrefs.SetFloat("AmbienceVolume", 0.75f);
 			slider.value = 0.75f;
 		}
 
 		slider = EffectSlider.GetComponent<UISlider>();
-		slider.value = PlayerPrefs.GetFloat("EffectsVolume");
-		if(slider.value < 0)
-		{
-			slider.value = 0.75f;
-		}
 
-		slider = MusicSlider.GetComponent<UISlider>();
-		slider.value = PlayerPrefs.GetFloat("MusicVolume");
-		if(slider.value < 0)
-		{
-			slider.value = 0.75f;
-		}
+        if (PlayerPrefs.HasKey ("EffectsVolume")) 
+        {
+            slider.value = PlayerPrefs.GetFloat("EffectsVolume");
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("EffectsVolume", 0.75f);
+            slider.value = 0.75f;
+        }
+
+		slider = MusicSlider.GetComponent<UISlider>();	
+        if (PlayerPrefs.HasKey ("MusicVolume")) 
+        {
+            slider.value = PlayerPrefs.GetFloat("MusicVolume");
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("MusicVolume", 0.75f);
+            slider.value = 0.75f;
+        }
 
 		GetComponent<AudioSource>().volume = slider.value;
 
-		slider = VoiceSlider.GetComponent<UISlider>();
-		slider.value = PlayerPrefs.GetFloat("VoiceVolume");
-		if(slider.value < 0)
-		{
-			slider.value = 0.75f;
-		}
+		slider = VoiceSlider.GetComponent<UISlider>();	
+        if (PlayerPrefs.HasKey ("VoiceVolume")) 
+        {
+            slider.value = PlayerPrefs.GetFloat("VoiceVolume");
+        }
+        else
+        {
+            PlayerPrefs.SetFloat("VoiceVolume", 1.0f);
+            slider.value = 0.75f;
+        }
 		
 	}
 
@@ -247,6 +288,10 @@ public class CServerMenu : CNetworkMonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		if (Input.GetKeyDown (KeyCode.T))
+		{
+			PlayerPrefs.DeleteAll();
+		}
 	}
 
 	// Private members
