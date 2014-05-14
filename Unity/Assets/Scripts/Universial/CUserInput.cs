@@ -125,6 +125,7 @@ public class CUserInput : CNetworkMonoBehaviour
 
 // Member Properties
 
+	public static CUserInput Instance { get{return(s_cInstance); } }
 
 	public static float SensitivityX { get; set; }
 	public static float SensitivityY { get; set; }

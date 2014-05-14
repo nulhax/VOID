@@ -1046,17 +1046,20 @@ public class UICamera : MonoBehaviour
 		}
 
 		// Process "Use" key
-//		if (Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
-//		{
-//			currentScheme = ControlScheme.Mouse;
-//			justPressed = true;
-//			isPressed = true;
-//		}
-//		else if (Input.GetKey(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
-//		{
-//			currentScheme = ControlScheme.Mouse;
-//			isPressed = true;
-//		}
+		if(CUserInput.Instance != null)
+		{
+			if (Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
+			{
+				currentScheme = ControlScheme.Mouse;
+				justPressed = true;
+				isPressed = true;
+			}
+			else if (Input.GetKey(CUserInput.GetKeyBinding(CUserInput.EInput.Use)))
+			{
+				currentScheme = ControlScheme.Mouse;
+				isPressed = true;
+			}
+		}
 
 		// No need to perform raycasts every frame
 		if (isPressed || posChanged || mNextRaycast < RealTime.time)
@@ -1120,24 +1123,27 @@ public class UICamera : MonoBehaviour
 		}
 		currentTouch = null;
 
-		// Process "Use" key as individual inputs
-		bool pressedUse = Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use));
-		bool unpressedUse = Input.GetKeyUp(CUserInput.GetKeyBinding(CUserInput.EInput.Use));
-		
-		if (pressedUse || unpressedUse) currentScheme = ControlScheme.Mouse;
-		
-		currentTouch = mMouse[0];
-		currentTouchID = -1 - 0;
-		currentKey = KeyCode.Mouse0 + 0;
-		
-		// We don't want to update the last camera while there is a touch happening
-		if (pressedUse) currentTouch.pressedCam = currentCamera;
-		else if (currentTouch.pressed != null) currentCamera = currentTouch.pressedCam;
-		
-		// Process the mouse events
-		ProcessTouch(pressedUse, unpressedUse);
-		currentKey = KeyCode.None;
-		currentTouch = null;
+		if(CUserInput.Instance != null)
+		{
+			// Process "Use" key as individual inputs
+			bool pressedUse = Input.GetKeyDown(CUserInput.GetKeyBinding(CUserInput.EInput.Use));
+			bool unpressedUse = Input.GetKeyUp(CUserInput.GetKeyBinding(CUserInput.EInput.Use));
+			
+			if (pressedUse || unpressedUse) currentScheme = ControlScheme.Mouse;
+			
+			currentTouch = mMouse[0];
+			currentTouchID = -1 - 0;
+			currentKey = KeyCode.Mouse0 + 0;
+			
+			// We don't want to update the last camera while there is a touch happening
+			if (pressedUse) currentTouch.pressedCam = currentCamera;
+			else if (currentTouch.pressed != null) currentCamera = currentTouch.pressedCam;
+			
+			// Process the mouse events
+			ProcessTouch(pressedUse, unpressedUse);
+			currentKey = KeyCode.None;
+			currentTouch = null;
+		}
 
 		// If nothing is pressed and there is an object under the touch, highlight it
 		if (!isPressed && highlightChanged)
