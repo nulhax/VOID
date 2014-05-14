@@ -63,6 +63,11 @@ public class CGame : CNetworkMonoBehaviour
 
     public void Awake()
     {
+		// Load in variables from Main menu server connection
+		m_strRemoteServerIP = PlayerPrefs.GetString("IP Address");
+		string port = PlayerPrefs.GetString("Server Port");
+		ushort.TryParse(port, out m_usRemoteServerPort);
+
 		Application.runInBackground = true;
         s_cInstance = this;
     }
@@ -76,10 +81,10 @@ public class CGame : CNetworkMonoBehaviour
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	
 		// Start server (Development Only)
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, "DefaultName", 8);
-
+		CNetwork.Server.Startup(m_usRemoteServerPort, m_sServerTitle, "DefaultName", 8);
+	
 		// Connect to server (Development Only)
-		CNetwork.Connection.ConnectToServer("localhost", kusServerPort, "");
+		CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
 
         // Initialise the dungeon master
         // Note: This may need to be moved should the lobby system change

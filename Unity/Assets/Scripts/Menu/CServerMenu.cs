@@ -21,11 +21,9 @@ using System.Xml.Linq;
 /* Implementation */
 public class CServerMenu : CNetworkMonoBehaviour 
 {
-
-
 	public GameObject ServerTable;
 	public GameObject ServerItem;
-	public GameObject ServerChild;
+	GameObject ServerClone;
 
 	public const ushort kusServerPort = 1337;
 
@@ -33,13 +31,6 @@ public class CServerMenu : CNetworkMonoBehaviour
 	public void ServerName()
 	{
 		m_sServerTitle = UIInput.current.value;
-	}
-
-	public void Port()
-	{
-		m_strRemoteServerPort = UIInput.current.value;
-		
-		ushort.TryParse(m_strRemoteServerPort, out m_usRemoteServerPort);
 	}
 
 	public void ServerIPAddress()
@@ -55,39 +46,51 @@ public class CServerMenu : CNetworkMonoBehaviour
 	public void RefreshButton()
 	{
 		CNetwork.Scanner.RefreshLanServers(kusServerPort);
+
+		aServerList = CNetwork.Scanner.GetLanServers();
 	}
 
 	// User select Inputs from NGUI
 	void RefreshServerList(CNetworkScanner.TServer _tServer)
 	{
-		if(ServerItem == null)
-		{
-			// do nothing
-		}
-		else
-		{
-			ServerChild = NGUITools.AddChild(ServerTable, ServerItem);
-			ServerChild.SetActive(true);
+		ServerClone = NGUITools.AddChild(ServerTable, ServerItem);
+		ServerClone.SetActive(true);
 
-			UILabel Label = ServerChild.GetComponentInChildren<UILabel>();
+		ServerClone.GetComponent<CServerItem>().sServerIP = _tServer.sIp;
+		ServerClone.GetComponent<CServerItem>().usServerPort = _tServer.usPort;
+		ServerClone.GetComponent<CServerItem>().m_ServerMenu = this;
 
-			Label.text = "ServerInfo " + _tServer.tServerInfo.sTitle;
-		
-			ServerTable.GetComponent<UITable>().Reposition();
-		}
+		UILabel Label = ServerClone.GetComponentInChildren<UILabel>();
+		Label.text = "Title: " + _tServer.tServerInfo.sTitle + "\t\t" + _tServer.tServerInfo.bNumSlots + "/" + _tServer.tServerInfo.bNumAvaiableSlots;
+
+		ServerTable.GetComponent<UITable>().Reposition();
 	}
 
 	public void CreateServer()
 	{
-		ServerChild = NGUITools.AddChild(ServerTable, ServerItem);
-		ServerChild.SetActive(true);
+		if (!CNetwork.Connection.IsConnected && 
+		    !CNetwork.Server.IsActive)
+		{
+			// Host creates server
+			CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
 
-		UILabel Label = ServerChild.GetComponentInChildren<UILabel>();
-		Label.text = "Server/Port " + m_sServerTitle + m_strRemoteServerPort;
+			string ip = m_strRemoteServerIP;
+			ushort port = kusServerPort;
+			string pw = "";
+			
+			string sPort = port.ToString();
 
-		ServerTable.GetComponent<UITable>().Reposition();
+			// Save variables for the CGame to use when starting the default s
+			PlayerPrefs.SetString("IP Address", ip);
+			PlayerPrefs.SetString("Server Port", sPort); 
+			PlayerPrefs.SetString("Server Password", pw);
 
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
+			if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
+			{
+				Application.LoadLevel("Default");
+			}
+		}
+
 	}
 
 	public void ShutdownServer()
@@ -97,15 +100,32 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void Connect()
 	{
-		CNetwork.Server.Startup(kusServerPort, m_sServerTitle, m_sPlayerName, (uint)m_fNumSlots);
+		UIButton current = UIButton.current;
+		CServerItem serverItem = CUtility.FindInParents<CServerItem>(current.gameObject);
 
-		Application.LoadLevel("Default");
+		string ip = serverItem.sServerIP;
+		ushort port = serverItem.usServerPort;
+		string pw = serverItem.sServerPassword;
 
+		CNetwork.Connection.ConnectToServer(ip, port, pw);
+
+		string sPort = port.ToString();
+
+		// Save variables for the CGame to use when starting the default s
+		PlayerPrefs.SetString("IP Address", ip);
+		PlayerPrefs.SetString("Server Port", sPort); 
+		PlayerPrefs.SetString("Server Password", pw); 
+
+		if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
+		{
+			Application.LoadLevel("Default");
+		}
 	}
 
 	public void DisconnectServer()
 	{
 		CNetwork.Connection.Disconnect();
+		OnDisconnect();
 	}
 
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
@@ -116,34 +136,42 @@ public class CServerMenu : CNetworkMonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		List<CNetworkScanner.TServer> aServerList = null;
+		Debug.Log(gameObject.name);
+
+		List<CNetworkScanner.TServer> aServerList = new List<CNetworkScanner.TServer>();
 
 		CNetwork.Scanner.EventFoundServer += RefreshServerList;
+//		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
+		// CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
+		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 	}
-	
+
+	void OnServerStartUp()
+	{
+
+	}
+
+	void OnConnect()
+	{
+
+	}
+
+	void ConnectToServer(CNetworkScanner.TServer _tServer)
+	{
+
+	}
+
+	void OnDisconnect()
+	{
+		if(!CNetwork.IsServer)
+		{
+			CUserInput.UnsubscribeAll();
+		}
+	}
+
 	// Update is called once per frame
 	void Update () 
 	{
-	}
-
-
-	void ServerSetUp()
-	{
-		// Set the active server list to draw
-
-		// Set to online servers tab
-
-		// Set to lan servers
-
-		// Title
-		
-		// Slots
-		
-		// Latency
-		
-		// Connect button
-
-		// If the port is above 999
 	}
 
 	// Private members
@@ -155,6 +183,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	int m_iServerListSize = 0;
 	bool m_bIsDisplayed = false;
+
+	bool m_bConnectPressed = false;
 
 	float m_fNumSlots = 16.0f;
 
