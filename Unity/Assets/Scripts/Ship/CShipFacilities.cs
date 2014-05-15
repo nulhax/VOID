@@ -82,7 +82,7 @@ public class CShipFacilities : MonoBehaviour
 		//m_ShipGrid.SyncAllTilesToAllPlayers();
 
 		// Static batch all tiles
-		StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
+		//StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
 	}
 
 	[AServerOnly]
@@ -322,6 +322,7 @@ public class CShipFacilities : MonoBehaviour
 
 		// Give the facility its tiles
 		newFacility.GetComponent<CFacilityTiles>().InteriorTiles = interiorTiles;
+		newFacility.GetComponent<CFacilityTiles>().ConfigureFacilityTiles();
 
 		// Give facility an id
 		uint facilityId = ++m_FacilityIdCount;

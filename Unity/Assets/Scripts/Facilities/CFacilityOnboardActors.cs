@@ -28,68 +28,88 @@ public class CFacilityOnboardActors : MonoBehaviour
 	
 	
 // Member Delegates & Events
-	public delegate void FacilityActorEnterExit(GameObject _Facility, GameObject _Actor);
+	public delegate void FacilityActorEnterExit(GameObject _Facility, CActorLocator _ActorLocator);
 	
 	public event FacilityActorEnterExit EventActorEnteredFacility;
 	public event FacilityActorEnterExit EventActorExitedFacility;
 
 
 // Member Fields
-	Dictionary<GameObject, int> m_ContainingActors = new Dictionary<GameObject, int>();
+    Dictionary<GameObject, List<Collider>> m_OnboardActors = new Dictionary<GameObject, List<Collider>>();
+
+    Dictionary<GameObject, Dictionary<Collider, GameObject>> m_DebugTriggers = new Dictionary<GameObject, Dictionary<Collider,GameObject>>();
 
 
 // Member Properties
     [AServerOnly]
 	public List<GameObject> ActorsOnboard
 	{
-		get { return(new List<GameObject>(m_ContainingActors.Keys)); }
+		get { return(new List<GameObject>(m_OnboardActors.Keys)); }
 	}
 
 
 // Member Methods
     [AServerOnly]
-	public void OnActorEnteredFacilityTrigger(GameObject _Actor)
+	public void OnActorEnteredFacilityTrigger(CActorLocator _ActorLocator, Collider _InteriorTrigger)
 	{
         // Check actor is not already contained in this facility
-		if(!m_ContainingActors.ContainsKey(_Actor))
+		if(!m_OnboardActors.ContainsKey(_ActorLocator.gameObject))
 		{
-			m_ContainingActors.Add(_Actor, 0);
+            m_OnboardActors.Add(_ActorLocator.gameObject, new List<Collider>());
+            //m_DebugTriggers.Add(_ActorLocator.gameObject, new Dictionary<Collider, GameObject>());
 
 			// Tell actor 
-			if(_Actor.GetComponent<CActorLocator>() != null)
-				_Actor.GetComponent<CActorLocator>().NotifyEnteredFacility(gameObject);
+			_ActorLocator.NotifyEnteredFacility(gameObject);
 
 			// Fire the actor entered facility event
 			if(EventActorEnteredFacility != null)
-				EventActorEnteredFacility(gameObject, _Actor);
+				EventActorEnteredFacility(gameObject, _ActorLocator);
 		}
 
 		// Increment the count to the containing actor
-		m_ContainingActors[_Actor] += 1;
+		if(!m_OnboardActors[_ActorLocator.gameObject].Contains(_InteriorTrigger))
+        	m_OnboardActors[_ActorLocator.gameObject].Add(_InteriorTrigger);
+
+//		if(!m_DebugTriggers[_ActorLocator.gameObject].ContainsKey(_InteriorTrigger))
+//		{
+//			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+//			cube.transform.transform.position = _InteriorTrigger.transform.position + Vector3.up * 2.0f;
+//			cube.transform.localScale = Vector3.one * 4;
+//			Destroy(cube.collider);
+//			cube.renderer.material.color = Color.green;
+//			cube.transform.parent = _InteriorTrigger.transform;
+//        	m_DebugTriggers[_ActorLocator.gameObject].Add(_InteriorTrigger, cube);
+//		}
+//        
+//        Debug.Log("Trigger Entered: " + _InteriorTrigger.name + " " + _InteriorTrigger.GetComponent<CTileInterface>().m_GridPosition + " - Facility: " + gameObject.name);
 	}
 
-
     [AServerOnly]
-	public void OnActorExitedFacilityTrigger(GameObject _Actor)
+    public void OnActorExitedFacilityTrigger(CActorLocator _ActorLocator, Collider _InteriorTrigger)
 	{
-		if(!m_ContainingActors.ContainsKey(_Actor))
+		if(!m_OnboardActors.ContainsKey(_ActorLocator.gameObject))
 			return;
 
 		// Decrement the count to the containing actor
-		m_ContainingActors[_Actor] -= 1;
+		m_OnboardActors[_ActorLocator.gameObject].Remove(_InteriorTrigger);
+        
+//		Destroy(m_DebugTriggers[_ActorLocator.gameObject][_InteriorTrigger]);
+//		m_DebugTriggers[_ActorLocator.gameObject].Remove(_InteriorTrigger);
 
 		// If count is zero, remove the actor
-		if(m_ContainingActors[_Actor] == 0)
+		if(m_OnboardActors[_ActorLocator.gameObject].Count == 0)
 		{
-			m_ContainingActors.Remove(_Actor);
+			m_OnboardActors.Remove(_ActorLocator.gameObject);
+			//m_DebugTriggers.Remove(_ActorLocator.gameObject);
 			
 			// Call ActorExitedFacility for the locator
-			if(_Actor.GetComponent<CActorLocator>() != null)
-				_Actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
+			_ActorLocator.NotifyExitedFacility(gameObject);
 			
 			if(EventActorExitedFacility != null)
-				EventActorExitedFacility(gameObject, _Actor);
+				EventActorExitedFacility(gameObject, _ActorLocator);
 		}
+
+       // Debug.Log("Trigger Exited: " + _InteriorTrigger.name + " " + _InteriorTrigger.GetComponent<CTileInterface>().m_GridPosition + " - Facility: " + gameObject.name);
 	}
 
 
@@ -99,17 +119,15 @@ public class CFacilityOnboardActors : MonoBehaviour
     }
 
 
-	 void OnPreDestroy(GameObject _cSender)
+	void OnPreDestroy(GameObject _cSender)
     {
-		foreach(GameObject actor in ActorsOnboard)
+		Dictionary<GameObject, List<Collider>> tempDic = new Dictionary<GameObject, List<Collider>>(m_OnboardActors);
+		foreach(KeyValuePair<GameObject, List<Collider>> onboardActor in tempDic)
         {
-			if (actor != null)	// During shutdown, lists of GameObject may have null elements (if they got destroyed before this).
+			List<Collider> tempList = new List<Collider>(onboardActor.Value);
+			foreach(Collider trigger in tempList)
 			{
-				if (actor.GetComponent<CActorLocator>() != null)
-					actor.GetComponent<CActorLocator>().NotifyExitedFacility(gameObject);
-
-				if (EventActorExitedFacility != null)
-					EventActorExitedFacility(gameObject, actor);
+				OnActorExitedFacilityTrigger(onboardActor.Key.GetComponent<CActorLocator>(), trigger);
 			}
 		}
 	}

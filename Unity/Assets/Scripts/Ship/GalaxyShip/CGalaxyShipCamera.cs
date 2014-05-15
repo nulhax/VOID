@@ -58,6 +58,11 @@ public class CGalaxyShipCamera : MonoBehaviour
 		m_Distance = m_InitialZoom;
 	}
 
+    void OnDestroy()
+    {
+        Destroy(m_PilotCameraPosition);
+    }
+
 	public void LateUpdate()
 	{
 		if(!CNetwork.IsServer)

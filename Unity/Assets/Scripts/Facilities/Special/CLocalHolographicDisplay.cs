@@ -97,7 +97,7 @@ public class CLocalHolographicDisplay : MonoBehaviour
 		
 		// Get the current angular velocity of the ship
 		Vector3 shipAVelocity = Quaternion.Inverse(m_CachedShipMotor.rigidbody.rotation) * m_CachedShipMotor.rigidbody.angularVelocity;
-		float maxAVelocity = m_CachedShipMotor.AngularMaxSpeed;
+		float maxAVelocity = 10.0f;
 		
 		// Pitch amount
 		float pitchAmount = shipAVelocity.x / maxAVelocity;

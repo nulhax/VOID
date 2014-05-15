@@ -72,6 +72,12 @@ public class CGrid : MonoBehaviour
 		CGamePlayers.Instance.EventPlayerJoin += OnPlayerJoin;
 	}
 
+    void OnDestroy()
+    {
+        // Register for when players join
+        CGamePlayers.Instance.EventPlayerJoin -= OnPlayerJoin;
+    }
+
 	[AServerOnly]
 	public void SyncAllTilesToAllPlayers()
 	{

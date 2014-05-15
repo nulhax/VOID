@@ -265,6 +265,8 @@ public class CShipShieldSystem : CNetworkMonoBehaviour
 
         cShipHitEffect.transform.position = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(_vPosition);
         cShipHitEffect.transform.rotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(Quaternion.Euler(_vEulerRotation));
+
+		Destroy(cShipHitEffect, 1.0f);
     }
 	
 	

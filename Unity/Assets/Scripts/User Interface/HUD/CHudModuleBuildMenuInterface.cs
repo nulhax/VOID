@@ -101,6 +101,7 @@ public class CHudModuleBuildMenuInterface : MonoBehaviour
 
 	void OnDestroy()
 	{
+        Destroy(m_cTemplateModuleGridItem);
 	}
 
 

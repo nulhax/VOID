@@ -72,7 +72,7 @@ public class CShipPreplacedTemplate : MonoBehaviour
 		{
 			CModuleInterface module = shipModules.CreateModule(
 				preplacedModule.ModuleType, 
-				preplacedModule.transform.position, 
+				preplacedModule.transform.position + CGameShips.Ship.transform.position, 
 				preplacedModule.transform.rotation);
 			
 			module.Build(1.0f);

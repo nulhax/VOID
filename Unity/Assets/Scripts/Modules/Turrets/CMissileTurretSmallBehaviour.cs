@@ -118,7 +118,7 @@ public class CMissileTurretSmallBehaviour : CNetworkMonoBehaviour
     [ALocalOnly]
     void OnEventFirePrimary(CTurretInterface _cSender)
     {
-        RaycastHit[] taRaycastHits = m_cTurretInterface.ScanTargets(5000.0f);
+        RaycastHit[] taRaycastHits = m_cTurretInterface.ScanTargets(500.0f);
         bool bTargetFound = false;
 
         foreach (RaycastHit cRaycastHit in taRaycastHits)

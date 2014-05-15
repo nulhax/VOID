@@ -62,6 +62,12 @@ public class CPlayerCockpitBehaviour : CNetworkMonoBehaviour
     }
 
 
+    public TNetworkViewId MountedCockpitViewId
+    {
+        get { return (m_tMountedCockpitViewId.Value); }
+    }
+
+
     public CCockpitInterface MountedCockpitInterface
     {
         get

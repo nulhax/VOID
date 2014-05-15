@@ -224,7 +224,7 @@ public class CGameCameras : MonoBehaviour
 
 			// Instantiate the background camera
 			s_BackgroundCamera = (GameObject)GameObject.Instantiate(s_ProjectedCamera); 
-			s_BackgroundCamera.name = s_BackgroundCamera.name = "Camera_Background";
+			s_BackgroundCamera.name = "Camera_Background";
 
 			// Remove all image effects for background camera
 			foreach(PostEffectsBase ieb in s_BackgroundCamera.GetComponents<PostEffectsBase>())
@@ -259,6 +259,15 @@ public class CGameCameras : MonoBehaviour
 		SetObserverSpace(true);
 		SetObserverPerspective(CGamePlayers.SelfActorHead);
 	}
+
+
+    public static void DestroyCameras()
+    {
+        Destroy(s_MainCamera);
+        Destroy(s_ProjectedCamera);
+        Destroy(s_BackgroundCamera);
+        Destroy(s_SpaceFog);
+    }
 
 	public static void SetObserverPerspective(GameObject _LookingFrom)
 	{

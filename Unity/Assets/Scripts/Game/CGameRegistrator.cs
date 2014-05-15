@@ -336,7 +336,7 @@ public class CGameRegistrator : MonoBehaviour
         CNetworkConnection.RegisterSerializationTarget(CFireExtinguisherSpray.SerializeOutbound     , CFireExtinguisherSpray.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CMedicalSpray.SerializeOutbound              , CMedicalSpray.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CTorchLight.SerializeOutbound                , CTorchLight.UnserializeInbound);
-        CNetworkConnection.RegisterSerializationTarget(CModuleGunBehaviour.SerializeOutbound        , CModuleGunBehaviour.UnserializeInbound);
+        //CNetworkConnection.RegisterSerializationTarget(CModuleGunBehaviour.SerializeOutbound        , CModuleGunBehaviour.UnserializeInbound);
         CNetworkConnection.RegisterSerializationTarget(CMiningDrillBehaviour.SerializeOutbound      , CMiningDrillBehaviour.UnserializeInbound);
 	}
 

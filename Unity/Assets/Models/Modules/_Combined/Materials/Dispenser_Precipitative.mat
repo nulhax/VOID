@@ -37,16 +37,16 @@ Material:
     m_Floats:
       data:
         first:
-          name: _SpecPower
-        second: 3
-      data:
-        first:
           name: _Saturation
         second: .5
       data:
         first:
           name: _Brightness
         second: 4
+      data:
+        first:
+          name: _SpecPower
+        second: 1
       data:
         first:
           name: _GlowIntensity
@@ -58,11 +58,11 @@ Material:
       data:
         first:
           name: _MaxHeight
-        second: 2.94649291
+        second: 2.99000001
       data:
         first:
           name: _Amount
-        second: 0
+        second: 1
       data:
         first:
           name: _FadeDist
@@ -70,7 +70,7 @@ Material:
       data:
         first:
           name: _FadeDistRatio
-        second: .88499999
+        second: .832500041
       data:
         first:
           name: _NoiseFreq
@@ -82,13 +82,13 @@ Material:
     m_Colors:
       data:
         first:
+          name: _Tint
+        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
+      data:
+        first:
           name: _DiffuseCol
         second: {r: 1, g: 1, b: 1, a: 1}
       data:
         first:
           name: _SpecCol
         second: {r: 1, g: 1, b: 1, a: 1}
-      data:
-        first:
-          name: _Tint
-        second: {r: .400000006, g: .699999988, b: 1, a: .100000001}
