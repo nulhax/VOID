@@ -101,6 +101,8 @@ public class CThirdPersonAnimController : MonoBehaviour
 		{
 			m_ThirdPersonAnim.SetLayerWeight(1,0.5f);
             m_bSpaceWalk = true;
+			gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
+			gameObject.GetComponent<CPlayerHeadBob>().ResetHeadRot();
 		}
 		else
 		{
@@ -185,6 +187,8 @@ public class CThirdPersonAnimController : MonoBehaviour
             if(m_bSpaceWalk && currentBaseState.nameHash != m_iSpaceWalkState)
             {
                 m_ThirdPersonAnim.SetBool("Space Walk", true);
+				gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
+				gameObject.GetComponent<CPlayerHeadBob>().ResetHeadRot();
             }
             else
             {
@@ -257,7 +261,7 @@ public class CThirdPersonAnimController : MonoBehaviour
 				{
 					//Reset collider
 					m_fColliderLerpTimer = 0.0f;
-					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
+					gameObject.GetComponent<CPlayerHeadBob>().ResetHeadRot();
 				}
 			}
 
