@@ -364,12 +364,14 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
         {
             if(thrustEngaged.Get())
             {
-                EventShipThrustChanged(true);
+				if(EventShipThrustChanged != null)
+                	EventShipThrustChanged(true);
                 break;
             }
             else
             {
-                EventShipThrustChanged(false);
+				if(EventShipThrustChanged != null)
+                	EventShipThrustChanged(false);
                 break;
             }
         }

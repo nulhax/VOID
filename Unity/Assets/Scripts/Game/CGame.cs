@@ -119,7 +119,7 @@ public class CGame : CNetworkMonoBehaviour
 			CNetwork.Connection.Disconnect();
 
 			#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
+			//UnityEditor.EditorApplication.isPlaying = false;
 			#endif
 		}
 	}

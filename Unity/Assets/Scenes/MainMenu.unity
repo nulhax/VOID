@@ -13870,7 +13870,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 0, y: 0, z: 0}
+  m_ViewPortPos: {x: 2853, y: 968, z: 0}
 --- !u!20 &1125349162
 Camera:
   m_ObjectHideFlags: 0
