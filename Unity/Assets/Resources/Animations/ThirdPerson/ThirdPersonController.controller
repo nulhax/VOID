@@ -110,6 +110,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: Space Walk Exit
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 3
     m_Name: Base Layer
@@ -410,7 +416,7 @@ Transition:
   m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 5
-    m_ConditionEvent: 
+    m_ConditionEvent: Space Walk Exit
     m_EventTreshold: 0
     m_ExitTime: .949579835
   m_Atomic: 1
@@ -485,6 +491,24 @@ Transition:
     m_ConditionEvent: WalkBack
     m_EventTreshold: -.100000001
     m_ExitTime: .964285731
+  m_Atomic: 1
+  m_Solo: 0
+  m_Mute: 0
+--- !u!1101 &110147587
+Transition:
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_SrcState: {fileID: 110273196}
+  m_DstState: {fileID: 110200000}
+  m_TransitionDuration: .0504201651
+  m_TransitionOffset: 0
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: Space Walk Exit
+    m_EventTreshold: 0
+    m_ExitTime: .0500000007
   m_Atomic: 1
   m_Solo: 0
   m_Mute: 0
@@ -626,7 +650,7 @@ Transition:
   m_TransitionOffset: 0
   m_Conditions:
   - m_ConditionMode: 5
-    m_ConditionEvent: 
+    m_ConditionEvent: Space Walk Exit
     m_EventTreshold: 0
     m_ExitTime: .899999976
   m_Atomic: 1
@@ -676,7 +700,7 @@ State:
   m_Motions:
   - {fileID: 7400000, guid: a52bbd9b2801de9489880bc84b71daa1, type: 3}
   m_ParentStateMachine: {fileID: 110700000}
-  m_Position: {x: 312, y: 144, z: 0}
+  m_Position: {x: 312, y: 204, z: 0}
   m_IKOnFeet: 0
   m_Mirror: 0
   m_Tag: 
@@ -886,7 +910,7 @@ State:
   m_Motions:
   - {fileID: 7400000, guid: a52bbd9b2801de9489880bc84b71daa1, type: 3}
   m_ParentStateMachine: {fileID: 110700000}
-  m_Position: {x: 612, y: 144, z: 0}
+  m_Position: {x: 612, y: 192, z: 0}
   m_IKOnFeet: 0
   m_Mirror: 0
   m_Tag: 
@@ -960,10 +984,6 @@ StateMachine:
   m_ChildStateMachinePosition: []
   m_OrderedTransitions:
     data:
-      first: {fileID: 110200416}
-      second:
-      - {fileID: 110194163}
-    data:
       first: {fileID: 0}
       second:
       - {fileID: 110169052}
@@ -977,9 +997,9 @@ StateMachine:
       - {fileID: 110197562}
       - {fileID: 110176528}
     data:
-      first: {fileID: 110237181}
+      first: {fileID: 110200416}
       second:
-      - {fileID: 110112739}
+      - {fileID: 110194163}
     data:
       first: {fileID: 110220068}
       second:
@@ -987,21 +1007,19 @@ StateMachine:
       - {fileID: 110116909}
       - {fileID: 110162443}
     data:
-      first: {fileID: 110272518}
-      second:
-      - {fileID: 110187952}
-    data:
-      first: {fileID: 110288397}
-      second:
-      - {fileID: 110182141}
-    data:
-      first: {fileID: 110270756}
-      second:
-      - {fileID: 110103005}
-    data:
       first: {fileID: 110227245}
       second:
       - {fileID: 110165813}
+    data:
+      first: {fileID: 110237181}
+      second:
+      - {fileID: 110112739}
+    data:
+      first: {fileID: 110244110}
+      second:
+      - {fileID: 110128355}
+      - {fileID: 110139023}
+      - {fileID: 110100000}
     data:
       first: {fileID: 110259640}
       second:
@@ -1011,15 +1029,22 @@ StateMachine:
       second:
       - {fileID: 110134159}
     data:
-      first: {fileID: 110244110}
+      first: {fileID: 110270756}
       second:
-      - {fileID: 110128355}
-      - {fileID: 110139023}
-      - {fileID: 110100000}
+      - {fileID: 110103005}
+    data:
+      first: {fileID: 110272518}
+      second:
+      - {fileID: 110187952}
     data:
       first: {fileID: 110273196}
       second:
       - {fileID: 110133489}
+      - {fileID: 110147587}
+    data:
+      first: {fileID: 110288397}
+      second:
+      - {fileID: 110182141}
   m_MotionSetCount: 1
   m_AnyStatePosition: {x: 624, y: -12, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
@@ -1073,10 +1098,10 @@ StateMachine:
       second:
       - {fileID: 110100982}
     data:
-      first: {fileID: 110266718}
+      first: {fileID: 110225236}
       second: []
     data:
-      first: {fileID: 110225236}
+      first: {fileID: 110266718}
       second: []
   m_MotionSetCount: 1
   m_AnyStatePosition: {x: 50, y: 20, z: 0}

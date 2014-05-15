@@ -103,11 +103,13 @@ public class CThirdPersonAnimController : MonoBehaviour
             m_bSpaceWalk = true;
 			gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
 			gameObject.GetComponent<CPlayerHeadBob>().ResetHeadRot();
+			m_ThirdPersonAnim.SetBool("Space Walk Exit", false);
 		}
 		else
 		{
 			m_ThirdPersonAnim.SetLayerWeight(1,0);
             m_ThirdPersonAnim.SetBool("Space Walk", false);
+			m_ThirdPersonAnim.SetBool("Space Walk Exit", true);
             m_bSpaceWalk = false;
 		}
 	}

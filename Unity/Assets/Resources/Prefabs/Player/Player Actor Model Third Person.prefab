@@ -162,6 +162,24 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &100020
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 400020}
+  - 33: {fileID: 3300008}
+  - 135: {fileID: 13500002}
+  - 23: {fileID: 2300008}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &100030
 GameObject:
   m_ObjectHideFlags: 1
@@ -1704,6 +1722,17 @@ Transform:
   - {fileID: 400016}
   - {fileID: 400014}
   m_Father: {fileID: 0}
+--- !u!4 &400020
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100020}
+  m_LocalRotation: {x: -.39134419, y: .0327755101, z: .0173559152, w: .919496775}
+  m_LocalPosition: {x: -.00124443369, y: -.137791261, z: -.0284890365}
+  m_LocalScale: {x: .150523514, y: .239999995, z: .150523514}
+  m_Children: []
+  m_Father: {fileID: 400162}
 --- !u!4 &400030
 Transform:
   m_ObjectHideFlags: 1
@@ -2509,11 +2538,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100092}
-  m_LocalRotation: {x: .472517788, y: -.526048481, z: .472517788, w: .526048481}
-  m_LocalPosition: {x: -.153781369, y: -2.44249064e-17, z: 3.95194901e-17}
+  m_LocalRotation: {x: -.468605548, y: .529580474, z: -.46910581, w: -.529049337}
+  m_LocalPosition: {x: -.153810933, y: .00150876073, z: -.000111979971}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400036}
+  - {fileID: 400020}
   m_Father: {fileID: 400164}
 --- !u!4 &400164
 Transform:
@@ -2521,8 +2551,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100094}
-  m_LocalRotation: {x: .0365654901, y: -.00619923323, z: -.144830927, w: .988761127}
-  m_LocalPosition: {x: -.112459861, y: .00107364589, z: .00388402981}
+  m_LocalRotation: {x: .0365827084, y: -.00609747553, z: -.142079502, w: .98916024}
+  m_LocalPosition: {x: -.121833071, y: -.000636648794, z: .00388402981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 400162}
@@ -2908,6 +2938,27 @@ Renderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortingLayerID: 0
+--- !u!23 &2300008
+Renderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100020}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortingLayerID: 0
 --- !u!23 &2300010
 Renderer:
   m_ObjectHideFlags: 1
@@ -3041,6 +3092,13 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 100016}
   m_Mesh: {fileID: 4300004, guid: 1198af42f727d684d97367b73458e886, type: 3}
+--- !u!33 &3300008
+MeshFilter:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100020}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &3300010
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -3347,6 +3405,18 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: .100000001
   m_Center: {x: 0, y: -.0500000007, z: 0}
+--- !u!135 &13500002
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100020}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -4081,7 +4151,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: .00362760038, y: .395882785, z: .0149541283}
+  m_ConnectedAnchor: {x: .00362769142, y: .399187744, z: .0348740816}
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_LowTwistLimit:
     limit: -40
