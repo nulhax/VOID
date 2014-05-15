@@ -150,6 +150,8 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
+
+            m_cHudModuleMenuInterface.EventCreateModule -= OnEventCreateModule;
         }
 	}
 

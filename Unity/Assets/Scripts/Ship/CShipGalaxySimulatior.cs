@@ -60,6 +60,11 @@ public class CShipGalaxySimulatior : MonoBehaviour
 		m_GalaxyLight.light.cullingMask &= ~(1 << LayerMask.NameToLayer("HUD"));
 	}
 
+    void OnDestroy()
+    {
+        Destroy(m_GalaxyLight);
+    }
+
 	public void Update()
 	{
 		// Update the simulation light rotation

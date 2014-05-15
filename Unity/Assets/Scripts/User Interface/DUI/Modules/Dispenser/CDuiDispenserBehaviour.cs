@@ -127,6 +127,12 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
     }
 
 
+    void OnDestroy()
+    {
+        Destroy(m_cTemplateGridToolItem);
+    }
+
+
     void Update()
     {
         if (m_eCurrentPanel == EPanel.BuildProgress)

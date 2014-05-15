@@ -173,6 +173,10 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
             GetComponent<CPlayerInteractor>().EventTargetChange -= OnEventActorInteractableTargetChange;
         }
+
+        Destroy(m_cBuildingHitParticles);
+        Destroy(m_cMingingHitParticles);
+        Destroy(m_cRepairingHitParticles);
 	}
 
 

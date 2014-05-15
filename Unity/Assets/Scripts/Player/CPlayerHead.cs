@@ -179,7 +179,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void Start()
     {
-        if (CGamePlayers.SelfActor == gameObject)
+        if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Setup the game cameras
             CGameCameras.SetupCameras();
@@ -219,8 +219,12 @@ public class CPlayerHead : CNetworkMonoBehaviour
     void OnDestroy()
     {
         // Unregister
-        if (CGamePlayers.SelfActor == gameObject)
+        if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
+            CGameCameras.DestroyCameras();
+
+            CGameHUD.DestoryHUD();
+
 			gameObject.GetComponent<CActorLocator>().EventEnterShip -= OnPlayerEnterShip;
 			gameObject.GetComponent<CActorLocator>().EventLeaveShip -= OnPlayerLeaveShip;
         }
