@@ -178,13 +178,9 @@ public class CThirdPersonAnimController : MonoBehaviour
             {
                 m_ThirdPersonAnim.SetBool("Grounded", false); 
 
-				if(CGamePlayers.SelfActor != gameObject)
-				{
-					int i = 0;
-				}
             }  
 
-            if(m_bSpaceWalk && currentBaseState.nameHash != m_iSpaceWalkState)
+			if(m_bSpaceWalk && currentBaseState.nameHash != m_iSpaceWalkState && currentBaseState.nameHash != m_iSlideState )
             {
                 m_ThirdPersonAnim.SetBool("Space Walk", true);
 				gameObject.GetComponent<CPlayerHeadBob>().ResetHeadPos();
