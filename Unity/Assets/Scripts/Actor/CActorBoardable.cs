@@ -63,7 +63,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
     public void BoardActor()
     {
         // Check if this actor isnt a child of another boardable actor
-        if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
+        if (CUtility.FindInParents<CActorBoardable>(gameObject) == null && m_CanBoard)
         {
 			if(rigidbody.isKinematic || m_BoardingState.Value == EBoardingState.Onboard)
 				return;
@@ -99,7 +99,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
     public void DisembarkActor()
     {
         // Check if this actor isnt a child of another boardable actor
-        if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
+		if (CUtility.FindInParents<CActorBoardable>(gameObject) == null && m_CanDisembark)
         {
 			if(rigidbody.isKinematic || m_BoardingState.Value == EBoardingState.Offboard)
 				return;
@@ -177,13 +177,11 @@ public class CActorBoardable : CNetworkMonoBehaviour
 		// Boarding state
 		if (_SyncedVar == m_BoardingState)
 		{
-			if (BoardingState == EBoardingState.Onboard && 
-			    m_CanBoard)
+			if (BoardingState == EBoardingState.Onboard)
 			{
 				SetOriginalLayer();
 			}
-			else if (BoardingState == EBoardingState.Offboard && 
-			         m_CanDisembark)
+			else if (BoardingState == EBoardingState.Offboard)
 			{
 				SetGalaxyLayer();
 			}

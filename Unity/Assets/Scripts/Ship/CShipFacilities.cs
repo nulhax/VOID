@@ -55,6 +55,13 @@ public class CShipFacilities : MonoBehaviour
 	[AServerOnly]
 	public void ImportNewGridTiles(List<CTileInterface> _AllTiles)
 	{
+		// Disable all players disembarking
+		foreach(GameObject playerActor in CGamePlayers.PlayerActors)
+		{
+			CActorBoardable actorBoardable = playerActor.GetComponent<CActorBoardable>();
+			actorBoardable.m_CanDisembark = false;
+		}
+
 		// Import all of the tiles to the ship
 		m_ShipGrid.ImportTileInformation(_AllTiles);
 
@@ -77,6 +84,13 @@ public class CShipFacilities : MonoBehaviour
 
 		// Reconfigure the entry triggers
 		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers();
+
+		// Disable all players disembarking
+		foreach(GameObject playerActor in CGamePlayers.PlayerActors)
+		{
+			CActorBoardable actorBoardable = playerActor.GetComponent<CActorBoardable>();
+			actorBoardable.m_CanDisembark = true;
+		}
 
 		// Sync each tile to the player
 		//m_ShipGrid.SyncAllTilesToAllPlayers();
