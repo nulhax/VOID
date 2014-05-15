@@ -153,12 +153,12 @@ public class CServerMenu : CNetworkMonoBehaviour
 			m_Server = 1;
 
 			PlayerPrefs.SetInt("Server", m_Server);
+
 			if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
 			{
 				Application.LoadLevel("Default");
 			}
 		}
-
 	}
 
 	public void ShutdownServer()
@@ -183,6 +183,9 @@ public class CServerMenu : CNetworkMonoBehaviour
 		PlayerPrefs.SetString("IP Address", ip);
 		PlayerPrefs.SetString("Server Port", sPort); 
 		PlayerPrefs.SetString("Server Password", pw); 
+
+		m_Server = 0;
+		PlayerPrefs.SetInt("Server", m_Server);
 
 		if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
 		{

@@ -1,4 +1,18 @@
-﻿using UnityEngine;
+﻿//  Auckland
+//  New Zealand
+//
+//  (c) 2013
+//
+//  File Name   :   CMenuToolTip.cs
+//  Description :   Allows buttons to show tool tips next to them on hover.
+//
+//  Author  	:  Scott Emery
+//  Mail    	:  scott.ipod@gmail.com
+//
+
+
+// Namespaces
+using UnityEngine;
 using System.Collections;
 
 public class CMenuToolTip : MonoBehaviour {
@@ -19,7 +33,6 @@ public class CMenuToolTip : MonoBehaviour {
 
 	void OnHover(bool _bool)
 	{
-		Label.enabled = false; 
 
 		if(_bool)
 		{

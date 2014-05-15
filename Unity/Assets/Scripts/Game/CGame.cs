@@ -71,6 +71,7 @@ public class CGame : CNetworkMonoBehaviour
 		m_Server = PlayerPrefs.GetInt("Server");
 
 		Application.runInBackground = true;
+
         s_cInstance = this;
     }
 
@@ -109,11 +110,7 @@ public class CGame : CNetworkMonoBehaviour
 	{
 		DebugProcessInputs();
 	}
-
-
-
-
-
+	
 	void DebugProcessInputs()
 	{
 		// Quick quit game
