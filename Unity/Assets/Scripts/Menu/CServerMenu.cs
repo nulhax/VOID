@@ -158,7 +158,6 @@ public class CServerMenu : CNetworkMonoBehaviour
 				Application.LoadLevel("Default");
 			}
 		}
-
 	}
 
 	public void ShutdownServer()
