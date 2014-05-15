@@ -69,14 +69,20 @@ public class CShipFacilities : MonoBehaviour
 		foreach(List<CTileInterface> facility in facilitTiles)
 			CreateFacility(facility);
 
+		foreach(CTileInterface tileInterface in m_ShipGrid.TileInterfaces)
+			tileInterface.UpdateAllTileObjects();
+
 		// Configure doors
 		ConfigureDoors();
 
 		// Reconfigure the entry triggers
 		CGameShips.GalaxyShip.GetComponent<CGalaxyShipFacilities>().ReconfigureCollidersAndTriggers();
 
+		// Sync each tile to the player
+		//m_ShipGrid.SyncAllTilesToAllPlayers();
+
 		// Static batch all tiles
-		//StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
+		StaticBatchingUtility.Combine(m_ShipGrid.m_TileContainer.gameObject);
 	}
 
 	[AServerOnly]

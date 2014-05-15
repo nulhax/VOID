@@ -194,10 +194,6 @@ public abstract class CTile : MonoBehaviour
 
 		// Update the visible tile object
 		UpdateTileObject();
-
-		// Invoke network RPC to update current meta for all clients
-		if(CNetwork.IsServer)
-			m_TileInterface.InvokeTileCurrentMetaUpdate(this);
 	}
 
 	protected void OnDestroy()
@@ -295,6 +291,10 @@ public abstract class CTile : MonoBehaviour
 		
 		// Update the tiles active meta data
 		m_ActiveTileMeta = new CTile.CMeta(m_CurrentTileMeta);
+
+		// Invoke network RPC to update current meta for all clients
+		if(CNetwork.IsServer)
+			m_TileInterface.InvokeTileCurrentMetaUpdate(this);
 	}
 
 	protected void UpdateTileModifications()

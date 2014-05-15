@@ -47,21 +47,21 @@ public class CInteriorTrigger : MonoBehaviour
     [AServerOnly]
 	void OnTriggerEnter(Collider _cOther)
 	{
-        if (!CNetwork.IsServer)
+        if(!CNetwork.IsServer)
             return;
 
-		Rigidbody cRigidbody = _cOther.rigidbody;
+		Rigidbody rigidBody = _cOther.rigidbody;
 
         // Find rigid body in parnet
-        if (cRigidbody == null)
+        if (rigidBody == null)
         {
-            cRigidbody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+            rigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
         }
 
         // Notify facility that a actor entered
-		if(cRigidbody != null)
+		if(rigidBody != null)
 		{
-			m_cFacilityOnboardActors.OnActorEnteredFacilityTrigger(cRigidbody.gameObject);
+			m_cFacilityOnboardActors.OnActorEnteredFacilityTrigger(rigidBody.gameObject);
 		}
 	}
 
@@ -72,18 +72,18 @@ public class CInteriorTrigger : MonoBehaviour
         if (!CNetwork.IsServer)
             return;
 
-		Rigidbody cRigidBody = _cOther.rigidbody;
+		Rigidbody rigidBody = _cOther.rigidbody;
 
         // Find rigid body in parent
-        if (cRigidBody == null)
+        if (rigidBody == null)
         {
-            cRigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+            rigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
         }
 		
         // Notify facility that a actor left
-		if(cRigidBody != null)
+		if(rigidBody != null)
 		{
-			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(cRigidBody.gameObject);
+			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(rigidBody.gameObject);
 		}
 	}
 }

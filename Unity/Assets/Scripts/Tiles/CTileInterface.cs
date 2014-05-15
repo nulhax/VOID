@@ -164,6 +164,13 @@ public class CTileInterface : CNetworkMonoBehaviour
 	private void RemoteSetCurrentMeta(CTile.EType _TileType, int _TileMask, int _MetaType, int _Rotations, int _ModificationMask)
 	{
 		CTile tile = GetTile(_TileType);
+
+		if(tile == null)
+		{
+			CreateTileComponent(_TileType);
+			tile = GetTile(_TileType);
+		}
+
 		tile.m_CurrentTileMeta.m_TileMask = _TileMask;
 		tile.m_CurrentTileMeta.m_MetaType = _MetaType;
 		tile.m_CurrentTileMeta.m_Rotations = _Rotations;
