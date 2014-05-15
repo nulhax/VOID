@@ -133,6 +133,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void CreateServer()
 	{
+		PlayerPrefs.DeleteAll();
+
 		if (!CNetwork.Connection.IsConnected && 
 		    !CNetwork.Server.IsActive)
 		{
@@ -153,12 +155,12 @@ public class CServerMenu : CNetworkMonoBehaviour
 			m_Server = 1;
 
 			PlayerPrefs.SetInt("Server", m_Server);
+
 			if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
 			{
 				Application.LoadLevel("Default");
 			}
 		}
-
 	}
 
 	public void ShutdownServer()
@@ -168,6 +170,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void Connect()
 	{
+		PlayerPrefs.DeleteAll();
+
 		UIButton current = UIButton.current;
 		CServerItem serverItem = CUtility.FindInParents<CServerItem>(current.gameObject);
 
@@ -183,6 +187,10 @@ public class CServerMenu : CNetworkMonoBehaviour
 		PlayerPrefs.SetString("IP Address", ip);
 		PlayerPrefs.SetString("Server Port", sPort); 
 		PlayerPrefs.SetString("Server Password", pw); 
+
+		m_Server = 0;
+
+		PlayerPrefs.SetInt("Server", m_Server);
 
 		if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
 		{
@@ -209,8 +217,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 		List<CNetworkScanner.TServer> aServerList = new List<CNetworkScanner.TServer>();
 
 		CNetwork.Scanner.EventFoundServer += RefreshServerList;
-//		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
-		// CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
+
 		CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
 
 		UISlider slider = AmbientSlider.GetComponent<UISlider>();
@@ -296,6 +303,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	// Private members
 
+	// Transfer this accross scenes to load either client or host server connection
 	int m_Server = 0;
 
 	List<CNetworkScanner.TServer> aServerList = null;
@@ -316,8 +324,3 @@ public class CServerMenu : CNetworkMonoBehaviour
 	string m_strRemoteServerPort = "1337";
 	ushort m_usRemoteServerPort = 0;
 }
-
-// NGUI help
-// http://www.tasharen.com/forum/index.php?topic=1501.0
-// http://www.tasharen.com/forum/index.php?topic=6752.0
-// http://www.tasharen.com/?page_id=693

@@ -4,7 +4,7 @@ using System.Collections;
 public class CFireHazard : CNetworkMonoBehaviour
 {
     // DEBUG DELETE ME
-    public bool Active = false;
+    //public bool Active = false;
     // DEBUG DELETE ME
 
 	private static System.Collections.Generic.List<CFireHazard> allInstances = new System.Collections.Generic.List<CFireHazard>();
@@ -89,7 +89,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 	void Update()
 	{
         // DEBUG DELETE ME
-        if (Active) { fireHealth.health = fireHealth.health_min; }
+        //if (Active) { fireHealth.health = fireHealth.health_min; }
         // DEBUG DELETE ME
 
 		if (Input.GetKeyDown(KeyCode.L))
@@ -211,8 +211,7 @@ public class CFireHazard : CNetworkMonoBehaviour
 			AttachEmitterToChildren(child.gameObject);
 
 		MeshFilter mf = go.GetComponent<MeshFilter>();
-		if (mf == null ||
-            mf.sharedMesh == null)
+		if (mf == null || mf.sharedMesh == null)
 			return;
 
 		float emissionRate = emissionsPerUnitOfSurfaceArea * CUtility.GetMeshSurfaceArea(mf.sharedMesh, go.transform.lossyScale);
