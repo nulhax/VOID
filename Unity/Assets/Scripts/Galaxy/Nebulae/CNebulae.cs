@@ -70,6 +70,8 @@ public class CNebulae : MonoBehaviour
 
 		if(CGalaxy.instance && CGameCameras.MainCamera)
 			m_OffsetFrom = CGalaxy.instance.RelativePointToAbsolutePoint(CGameCameras.MainCamera.transform.position) * m_OffsetScale;
+        else if(Camera.main)
+            m_OffsetFrom = Camera.main.transform.position;
 
 		renderer.material.SetVector("_Offset", m_OffsetFrom);
 

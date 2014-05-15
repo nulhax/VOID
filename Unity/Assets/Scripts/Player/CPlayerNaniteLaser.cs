@@ -446,7 +446,7 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
         }
         else if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
-            Debug.LogError("Target Type: " + _eTargetType + " GameObject: " + _cTargetObject);
+            //Debug.LogError("Target Type: " + _eTargetType + " GameObject: " + _cTargetObject);
 
             switch (_eTargetType)
             {
