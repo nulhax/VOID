@@ -123,6 +123,8 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
 
         LoadToolGridItems();
 
+        m_cScrollView.ResetPosition();
+
         SetPanel(EPanel.ToolMenu);
     }
 
@@ -248,6 +250,8 @@ public class CDuiDispenserBehaviour : CNetworkMonoBehaviour
     public UIPanel m_cPanelBuildProgress = null;
 
     public UIProgressBar m_cProgressBarBuildProgress = null;
+
+    public UIScrollView m_cScrollView = null;
 
 
     CNetworkVar<CToolInterface.EType> m_eSelectedToolType = null;

@@ -198,12 +198,6 @@ public class CServerMenu : CNetworkMonoBehaviour
 		}
 	}
 
-	public void DisconnectServer()
-	{
-		CNetwork.Connection.Disconnect();
-		OnDisconnect();
-	}
-
 	public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
 	{
 		// Empty
@@ -212,6 +206,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		Screen.lockCursor = false;
+
 		Debug.Log(gameObject.name);
 
 		List<CNetworkScanner.TServer> aServerList = new List<CNetworkScanner.TServer>();
@@ -288,7 +284,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 	{
 		if(!CNetwork.IsServer)
 		{
-			CUserInput.UnsubscribeAll();
+			Application.LoadLevel("MainMenu");
 		}
 	}
 

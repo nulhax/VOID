@@ -689,7 +689,7 @@ public class CNetworkView : CNetworkMonoBehaviour
 
             if (cNetworkView == null)
             {
-                Debug.LogWarning(string.Format("Network view id invalid. NetworkViewId({0}) OwnerObjectName({1})", cNetworkViewId.Id, s_mViewIdOwnerNames[cNetworkViewId.Id]));
+                Debug.LogWarning(string.Format("Network view id invalid. NetworkViewId({0})", cNetworkViewId.Id));
                 continue;
             }
 			

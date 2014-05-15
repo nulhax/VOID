@@ -31,7 +31,7 @@ public class CInteriorTrigger : MonoBehaviour
 	
 
 	// Member Fields
-	private CFacilityOnboardActors m_cFacilityOnboardActors = null;
+	public CFacilityOnboardActors m_FacilityOnboardActors = null;
 
 	
 	// Member Properties
@@ -40,50 +40,64 @@ public class CInteriorTrigger : MonoBehaviour
 	// Member Methods
 	public void SetParentFacility(GameObject _Facility)
 	{
-		m_cFacilityOnboardActors = _Facility.GetComponent<CFacilityOnboardActors>();
+		m_FacilityOnboardActors = _Facility.GetComponent<CFacilityOnboardActors>();
 	}
 
 
     [AServerOnly]
-	void OnTriggerEnter(Collider _cOther)
+	private void OnTriggerEnter(Collider _Collider)
 	{
-        if(!CNetwork.IsServer)
+		if(!CNetwork.IsServer)
             return;
 
-		Rigidbody rigidBody = _cOther.rigidbody;
+		Rigidbody rigidBody = _Collider.rigidbody;
 
         // Find rigid body in parnet
         if (rigidBody == null)
         {
-            rigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+            rigidBody = CUtility.FindInParents<Rigidbody>(_Collider.gameObject);
         }
 
         // Notify facility that a actor entered
 		if(rigidBody != null)
 		{
-			m_cFacilityOnboardActors.OnActorEnteredFacilityTrigger(rigidBody.gameObject);
+			CActorLocator actorLocator = rigidBody.GetComponent<CActorLocator>();
+			if (actorLocator == null)
+				return;
+		
+			NotifyActorEnteredTrigger(actorLocator);
 		}
 	}
 
 
     [AServerOnly]
-	void OnTriggerExit(Collider _cOther)
+	private void OnTriggerExit(Collider _Collider)
 	{
-        if (!CNetwork.IsServer)
+		if (!CNetwork.IsServer)
             return;
 
-		Rigidbody rigidBody = _cOther.rigidbody;
+		Rigidbody rigidBody = _Collider.rigidbody;
 
         // Find rigid body in parent
         if (rigidBody == null)
         {
-            rigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+            rigidBody = CUtility.FindInParents<Rigidbody>(_Collider.gameObject);
         }
 		
         // Notify facility that a actor left
 		if(rigidBody != null)
 		{
-			m_cFacilityOnboardActors.OnActorExitedFacilityTrigger(rigidBody.gameObject);
+			CActorLocator actorLocator = rigidBody.GetComponent<CActorLocator>();
+			if (actorLocator == null)
+				return;
+
+			m_FacilityOnboardActors.OnActorExitedFacilityTrigger(actorLocator, collider);
 		}
+	}
+
+	[AServerOnly]
+	public void NotifyActorEnteredTrigger(CActorLocator _ActorLocator)
+	{
+		m_FacilityOnboardActors.OnActorEnteredFacilityTrigger(_ActorLocator, collider);
 	}
 }

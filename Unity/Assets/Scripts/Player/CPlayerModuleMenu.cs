@@ -135,6 +135,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.SubscribeInputChange(CUserInput.EInput.Primary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.SubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
+            CUserInput.SubscribeInputChange(CUserInput.EInput.Tool_Reload, OnEventInput);
 
             m_cHudModuleMenuInterface = CGameHUD.Hud2dInterface.ModuleBuildMenuInterface;
             m_cHudModuleMenuInterface.EventCreateModule += OnEventCreateModule;
@@ -151,6 +152,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Secondary, OnEventInput);
             CUserInput.UnsubscribeInputChange(CUserInput.EInput.Escape, OnEventInput);
 
+            CUserInput.UnsubscribeInputChange(CUserInput.EInput.Tool_Reload, OnEventInput);
             m_cHudModuleMenuInterface.EventCreateModule -= OnEventCreateModule;
         }
 	}
@@ -190,6 +192,7 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                 m_cPreviewModulePrecipitative.transform.position = tTileRaycastHit.point;
                 m_cPreviewModulePrecipitative.SetActive(true);
                 m_cPreviewModulePrecipitative.transform.rotation = Quaternion.FromToRotation(Vector3.up, tTileRaycastHit.normal);
+                m_cPreviewModulePrecipitative.transform.Rotate(Vector3.up, m_fRotationY);
 
                 float fSphereRadius = 0.0f;
     
@@ -390,6 +393,10 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
                 case CUserInput.EInput.Escape:
                     SetState(EState.Idle);
                     break;
+
+                case CUserInput.EInput.Tool_Reload:
+                    m_fRotationY += 90.0f;
+                    break;
             }
         }
     }
@@ -420,6 +427,9 @@ public class CPlayerModuleMenu : CNetworkMonoBehaviour
     CModuleInterface.EType m_ePreviewModuleType = CModuleInterface.EType.INVALID;
     CModuleInterface.ESize m_ePreviewModuleSize = CModuleInterface.ESize.INVALID;
     GameObject m_cPreviewModulePrecipitative = null;
+
+    float m_fRotationY = 0.0f;
+
     bool m_bPreviewModuleInternal = false;
     bool m_bPreviewPlacementValid = false;
 

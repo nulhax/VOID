@@ -30,22 +30,34 @@ public class CEntryTrigger : MonoBehaviour
 	
 		
 	// Member Fields
-	
-	
+	public CInteriorTrigger m_ReferencedInteriorTrigger = null;
+
+
 	// Member Properties
 	
 	
 	// Member Methods
-	[AServerOnly]
-	private void OnTriggerEnter(Collider _Other)
+	private void OnTriggerEnter(Collider _cOther)
 	{
-		if(_Other.rigidbody != null && CNetwork.IsServer)
+		if(!CNetwork.IsServer)
+			return;
+		
+		Rigidbody rigidBody = _cOther.rigidbody;
+		
+		// Find rigid body in parnet
+		if (rigidBody == null)
 		{
-			CActorBoardable dynamicActor = _Other.rigidbody.GetComponent<CActorBoardable>();
-			if(dynamicActor != null)
-			{			
-				dynamicActor.BoardActor();
-			}
+			rigidBody = CUtility.FindInParents<Rigidbody>(_cOther.gameObject);
+		}
+		
+		// Notify facility that a actor entered
+		if(rigidBody != null)
+		{
+			CActorLocator actorLocator = rigidBody.GetComponent<CActorLocator>();
+			if (actorLocator == null)
+				return;
+
+			m_ReferencedInteriorTrigger.NotifyActorEnteredTrigger(actorLocator);
 		}
 	}
 }

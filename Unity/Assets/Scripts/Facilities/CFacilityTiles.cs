@@ -41,13 +41,7 @@ public class CFacilityTiles : MonoBehaviour
 	}
 
 	// Member Methods
-	private void Start()
-	{
-		// Configure the interior tiles to have volume and triggers
-		ConfigureFacilityTiles();
-	}
-
-	private void ConfigureFacilityTiles()
+	public void ConfigureFacilityTiles()
 	{
 		// Add an interior trigger to all interior tiles
 		foreach(CTileInterface tile in m_InteriorTiles)

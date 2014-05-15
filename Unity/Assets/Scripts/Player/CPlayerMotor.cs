@@ -351,7 +351,8 @@ public class CPlayerMotor : CNetworkMonoBehaviour
             gameObject.GetComponent<CPlayerHead>().EventRotationYOverflow -= OnEventHeadRotationYOverflow;
         }
     }
-	
+
+	static Vector3 pos;
 	
 	void Update()
 	{

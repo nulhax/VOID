@@ -116,7 +116,7 @@ public class CGame : CNetworkMonoBehaviour
 		// Quick quit game
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
-			Application.Quit();
+			CNetwork.Connection.Disconnect();
 
 			#if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;
@@ -140,9 +140,17 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnDisconnect()
 	{
+
 		if(!CNetwork.IsServer)
 		{
 			CUserInput.UnsubscribeAll();
+			Application.LoadLevel("MainMenu");
+		}
+
+		if(CNetwork.IsServer)
+		{
+			CNetwork.Server.Shutdown();
+			Application.LoadLevel("MainMenu");
 		}
 	}
 
