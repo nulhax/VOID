@@ -49,6 +49,9 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
 // Member Delegates & Events
 
+    //Will be fired every time any thruster is engaged
+    public delegate void OnShipThrust(bool _bThrustEngaged);
+    public event OnShipThrust EventShipThrustChanged;
 
 // Member Properties
 
@@ -357,6 +360,19 @@ public class CGalaxyShipMotor : CNetworkMonoBehaviour
 
     void OnNetworkVarSync(INetworkVar _cSyncedVar)
     {
+        foreach(CNetworkVar<bool> thrustEngaged in m_baThustersEnabled)
+        {
+            if(thrustEngaged.Get())
+            {
+                EventShipThrustChanged(true);
+                break;
+            }
+            else
+            {
+                EventShipThrustChanged(false);
+                break;
+            }
+        }
     }
 
 
