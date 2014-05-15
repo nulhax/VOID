@@ -19,7 +19,7 @@ RenderSettings:
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientLight: {r: .200000003, g: .200000003, b: .200000003, a: 1}
-  m_SkyboxMaterial: {fileID: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: d52f2bdbf8d95f149b2d1e21301b37fe, type: 2}
   m_HaloStrength: .5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -7594,7 +7594,11 @@ Prefab:
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 11400002, guid: a4c232b2fa58fea478f78a92ebf3c0da, type: 2}
+    - {fileID: 11400026, guid: a4c232b2fa58fea478f78a92ebf3c0da, type: 2}
+    - {fileID: 11400004, guid: a4c232b2fa58fea478f78a92ebf3c0da, type: 2}
+    - {fileID: 11400000, guid: a4c232b2fa58fea478f78a92ebf3c0da, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: a4c232b2fa58fea478f78a92ebf3c0da, type: 2}
   m_RootGameObject: {fileID: 1987369737}
   m_IsPrefabParent: 0
@@ -13866,7 +13870,7 @@ MonoBehaviour:
   cancelKey0: 27
   cancelKey1: 331
   m_IsDUI: 0
-  m_ViewPortPos: {x: 621, y: 327, z: 0}
+  m_ViewPortPos: {x: 0, y: 0, z: 0}
 --- !u!20 &1125349162
 Camera:
   m_ObjectHideFlags: 0
@@ -25349,10 +25353,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1987369738}
-  - 114: {fileID: 1987369742}
-  - 114: {fileID: 1987369741}
-  - 114: {fileID: 1987369740}
-  - 114: {fileID: 1987369739}
   m_Layer: 11
   m_Name: Galaxy
   m_TagString: Untagged
@@ -25372,62 +25372,6 @@ Transform:
   m_Children:
   - {fileID: 1147454026}
   m_Father: {fileID: 0}
---- !u!114 &1987369739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400026, guid: a4c232b2fa58fea478f78a92ebf3c0da,
-    type: 2}
-  m_PrefabInternal: {fileID: 869162969}
-  m_GameObject: {fileID: 1987369737}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43d1858a8f4cd5d41b23e44a332a6fbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1987369740
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400002, guid: a4c232b2fa58fea478f78a92ebf3c0da,
-    type: 2}
-  m_PrefabInternal: {fileID: 869162969}
-  m_GameObject: {fileID: 1987369737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ce7a48f44e1bed419435bf2802f0b3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mfTimeBetweenUpdateCellLoadUnloadQueues: .150000006
-  mfTimeBetweenCellLoads: .100000001
-  mfTimeBetweenCellUnloads: .100000001
-  mfTimeBetweenUpdateGubbinUnloadQueue: .150000006
-  mfTimeBetweenGubbinLoads: .0250000004
-  mfTimeBetweenGubbinUnloads: .0250000004
-  mfTimeBetweenShiftTests: .5
-  debug_GalaxyStuff: 0
---- !u!114 &1987369741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400004, guid: a4c232b2fa58fea478f78a92ebf3c0da,
-    type: 2}
-  m_PrefabInternal: {fileID: 869162969}
-  m_GameObject: {fileID: 1987369737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0e812b02064b8454084835271c480746, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1987369742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 11400000, guid: a4c232b2fa58fea478f78a92ebf3c0da,
-    type: 2}
-  m_PrefabInternal: {fileID: 869162969}
-  m_GameObject: {fileID: 1987369737}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1994862973
 GameObject:
   m_ObjectHideFlags: 0
