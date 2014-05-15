@@ -133,6 +133,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void CreateServer()
 	{
+		PlayerPrefs.DeleteAll();
+
 		if (!CNetwork.Connection.IsConnected && 
 		    !CNetwork.Server.IsActive)
 		{
@@ -168,6 +170,8 @@ public class CServerMenu : CNetworkMonoBehaviour
 
 	public void Connect()
 	{
+		PlayerPrefs.DeleteAll();
+
 		UIButton current = UIButton.current;
 		CServerItem serverItem = CUtility.FindInParents<CServerItem>(current.gameObject);
 
@@ -185,6 +189,7 @@ public class CServerMenu : CNetworkMonoBehaviour
 		PlayerPrefs.SetString("Server Password", pw); 
 
 		m_Server = 0;
+
 		PlayerPrefs.SetInt("Server", m_Server);
 
 		if(PlayerPrefs.HasKey("IP Address") && PlayerPrefs.HasKey("Server Port") && PlayerPrefs.HasKey("Server Password"))
