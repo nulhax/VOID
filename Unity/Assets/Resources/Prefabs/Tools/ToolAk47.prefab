@@ -407,6 +407,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: e4ffa32be73587a48a44f741983a1be1, type: 3}
   m_barLoopList: 0000
   m_bContinuousEvent: 0
+  m_bUseOcclusion: 1
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!114 &11400002
@@ -572,6 +573,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 4adddcd909c10244ba6d166771976c98, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
+  m_bUseOcclusion: 1
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!198 &19800000

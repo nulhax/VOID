@@ -54,7 +54,13 @@ public class CAudioSystem : MonoBehaviour
 	{
 		get { return (s_cInstance); }
 	}	
-	
+
+	public float SoundMediumDensity
+	{
+		get { return (m_soundMediumDensity); }
+		set { m_soundMediumDensity = value ; }
+	}
+
 	// Member Fields	
 	static List<ClipInfo> s_activeAudio;
 	
@@ -64,6 +70,7 @@ public class CAudioSystem : MonoBehaviour
 	static private float m_fAmbienceVolume = 0.75f;
 	static private AudioListener m_listener;
 	static private OcclusionState occludeState;
+	static private float m_soundMediumDensity = 1.0f;
 
 	bool m_bOccludeAll = false;
 	
@@ -141,7 +148,6 @@ public class CAudioSystem : MonoBehaviour
 		{
 			BalanceVolumes(-1, -1, -1, m_fVoiceVolume + 0.1f);
 		}
-
 	}
 	
 	void ProcessActiveAudio()
@@ -157,6 +163,9 @@ public class CAudioSystem : MonoBehaviour
 	            } 
 				else
 				{
+					//Reset volume.
+					audioClip.audioSource.volume = 0;
+
 					//process current volume scaling
 					ScaleVolume(audioClip);
 
@@ -220,7 +229,19 @@ public class CAudioSystem : MonoBehaviour
 			case SoundType.SOUND_EFFECTS:
 			{
 				//scale all sound effects by the SFX volume 
-				_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fEffectsVolume;
+				if(m_bOccludeAll && _currentClip.useOcclusion)
+				{
+					_currentClip.audioSource.volume = _currentClip.defaultVolume * 0;
+				}	
+				else if(!m_bOccludeAll && _currentClip.useOcclusion)
+				{
+					_currentClip.audioSource.volume = _currentClip.defaultVolume * SoundMediumDensity;
+				}
+				else
+				{
+					_currentClip.audioSource.volume = _currentClip.defaultVolume * m_fEffectsVolume;
+				}
+
 				break;
 			}
 

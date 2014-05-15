@@ -3902,6 +3902,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 29ed7c456e821ce419b0f9c71650bcf3, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
+  m_bUseOcclusion: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!114 &11400002
@@ -3946,7 +3947,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: .150000006
+  m_Radius: .209999993
   m_Center: {x: -.180000007, y: 0, z: 0}
 --- !u!136 &13600000
 CapsuleCollider:

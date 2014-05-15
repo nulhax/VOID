@@ -125,7 +125,7 @@ AudioSource:
   serializedVersion: 3
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -208,6 +208,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 432f7c5af17e7574e9f98118bb44dfd9, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
+  m_bUseOcclusion: 1
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!1001 &100100000

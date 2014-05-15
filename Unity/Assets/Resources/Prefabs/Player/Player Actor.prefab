@@ -51,6 +51,7 @@ GameObject:
   - 114: {fileID: 11400040}
   - 114: {fileID: 11400042}
   - 114: {fileID: 11400044}
+  - 114: {fileID: 11400024}
   m_Layer: 0
   m_Name: Player Actor
   m_TagString: Listener
@@ -305,6 +306,35 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AtmosphericConsumptionRate: 5
   m_ConsumingAtmosphere: 1
+--- !u!114 &11400024
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: PersonalSFX
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList: []
+  m_fFadeOutTimeList: []
+  m_arAudioClipPool:
+  - {fileID: 8300000, guid: 15e49dc745849fd45bf170ef621016c6, type: 3}
+  - {fileID: 8300000, guid: 64a71475f934df04e82e5722bd016836, type: 3}
+  - {fileID: 8300000, guid: 31f7d41b862cb514192d27db78315427, type: 3}
+  - {fileID: 8300000, guid: 7505a68d4263e8d488b22a230f01c2ce, type: 3}
+  - {fileID: 8300000, guid: 6b548653c8a91564c95e50ea5f0c2681, type: 3}
+  m_barLoopList: 
+  m_bContinuousEvent: 0
+  m_bUseOcclusion: 0
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -412,9 +442,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: FootSteps
+  m_strCueName: PlayerSFX
   m_fPitchMin: .100000001
-  m_fpitchMax: .200000003
+  m_fpitchMax: 1
   m_fVolumeMin: 1
   m_fVolumeMax: 1
   m_fFadeInTimeList: []
@@ -432,8 +462,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 31f7d41b862cb514192d27db78315427, type: 3}
   - {fileID: 8300000, guid: 7505a68d4263e8d488b22a230f01c2ce, type: 3}
   - {fileID: 8300000, guid: 6b548653c8a91564c95e50ea5f0c2681, type: 3}
+  - {fileID: 8300000, guid: ed606e09f2f4026419673f8737bfeeec, type: 3}
+  - {fileID: 8300000, guid: 8f2104e758512314f97a4722a1c454ff, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
+  m_bUseOcclusion: 1
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!114 &11400044

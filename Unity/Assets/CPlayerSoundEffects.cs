@@ -14,30 +14,30 @@ public class CPlayerSoundEffects : MonoBehaviour
 
         foreach(CAudioCue cue in audioCues)
         {
-            if(cue.m_strCueName == "FootSteps")
+            if(cue.m_strCueName == "PlayerSFX")
             {
                 m_FootStepCue = cue;
             }
         }
-
-		GetComponent<CPlayerMotor>().EventStateChange += OnMovementStateChange;
 	}
 
-	void OnMovementStateChange(CPlayerMotor.EState _ePrevious, CPlayerMotor.EState _eNew)
+	void Update()
 	{
-		if(_eNew == CPlayerMotor.EState.AirThustersInSpace)
-		{
-			CAudioSystem.Instance.SetOccludeAll(true);
-		}
-		else
-		{
-			CAudioSystem.Instance.SetOccludeAll(false);
-		}
-	}
+		GameObject currentFacility = gameObject.GetComponent<CActorLocator>().CurrentFacility;
+		float density = 0;
 
+		if (currentFacility != null)
+		{
+			density = currentFacility.GetComponent<CFacilityAtmosphere>().Density;			
+		}
+
+		Mathf.Clamp(density, 0.1f, 1);
+		CAudioSystem.Instance.SoundMediumDensity = density;
+	}
+		
 	void PlayFootStep()
 	{
-		m_FootStepCue.Play(m_soundLocation, 1.0f, false, -1, 0, 3);
+			m_FootStepCue.Play(m_soundLocation, 1.0f, false, -1, 0, 3);
 	}
 
     void PlayLandingAudio()

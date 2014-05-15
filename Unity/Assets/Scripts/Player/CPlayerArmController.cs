@@ -44,7 +44,7 @@ public class CPlayerArmController : MonoBehaviour
 	CPlayerIKController		m_IKController;
     bool                    m_bInteracting;
 	bool 					m_bRighthanded;
-    const float             m_kfInteractionDistance = 1.5f;
+    const float             m_kfInteractionDistance = 2.0f;
     GameObject              m_heldTool = null;
 
     Vector3 m_vInitialToolEquipedPosition;
@@ -331,6 +331,15 @@ public class CPlayerArmController : MonoBehaviour
 		    _cRaycastHit.distance < m_kfInteractionDistance)
         {
             m_bInteracting = true;
+
+			//Play Sound
+			foreach(CAudioCue cue in GetComponents<CAudioCue>())
+			{
+				if(cue.m_strCueName == "PlayerSFX")
+				{
+					cue.Play(transform, 1.0f, false, 12);
+				}
+			}
            
             switch (m_eHoldState)
             {

@@ -346,7 +346,27 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		if (_fHealthCurrentValue < _fHealthPreviousValue && m_PlayerForceDamageSoundIndex_Time <= Time.time && CurrentHealthState != HealthState.DOWNED)
 		{
 			m_PlayerForceDamageSoundIndex_Time = Time.time + 0.5f;
-            GetComponent<CAudioCue>().Play(transform, 1.0f, false, -1, 10, 12);
+
+			if(_TargetPlayer == CGamePlayers.SelfActor)
+			{
+				foreach(CAudioCue cue in GetComponents<CAudioCue>())
+				{
+					if(cue.m_strCueName == "PersonalSFX")
+					{
+						cue.Play(transform, 1.0f, false, -1, 2, 4);
+					}
+				}
+			}
+			else
+			{
+				foreach(CAudioCue cue in GetComponents<CAudioCue>())
+				{
+					if(cue.m_strCueName == "PlayerSFX")
+					{
+						cue.Play(transform, 1.0f, false, -1, 10, 12);
+					}
+				}
+			}
 		}
 	}
 
@@ -358,8 +378,28 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 		// Play ooies.
         if (_eHealthCurrentState == HealthState.DOWNED)
         {
-            GetComponent<CAudioCue>().Play(1.0f,false,8);
+			if(_SourcePlayer == CGamePlayers.SelfActor)
+			{
+				foreach(CAudioCue cue in GetComponents<CAudioCue>())
+				{
+					if(cue.m_strCueName == "PersonalSFX")
+					{
+           				cue.Play(transform, 1.0f, false, 1);
+					}
+				}
+			}
+			else
+			{
+				foreach(CAudioCue cue in GetComponents<CAudioCue>())
+				{
+					if(cue.m_strCueName == "PlayerSFX")
+					{
+						cue.Play(transform, 1.0f, false, 8);
+					}
+				}
+			}
         }
+
 	}
 
     void OnNetworkVarSync(INetworkVar _cVarInstance)
