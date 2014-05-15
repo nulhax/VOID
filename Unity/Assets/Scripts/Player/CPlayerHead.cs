@@ -470,9 +470,9 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	//Determines where player head will be offset to on z axis when running
 	bool m_bLerpInProgress = false;
 	bool m_bHeadOffset = false;
-	float m_fRunningOffsetZ = 0.25f;
+	float m_fRunningOffsetZ = 0.15f;
 	float m_vOffsetLerpTimer = 0;
-	float m_fLerpDuration = 0.75f;
+	float m_fLerpDuration = 0.2f;
 	Vector3 m_vInitialOffset;
 	Vector3 m_vOffsetTarget;
 
