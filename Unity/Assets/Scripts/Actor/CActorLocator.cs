@@ -123,13 +123,15 @@ public class CActorLocator : CNetworkMonoBehaviour
             if (m_tCurrentFacilityViewId.Value == null)
             {
                 // Notify observers that actor left ship
-                if (EventLeaveShip != null) EventLeaveShip(gameObject);
+                if (EventLeaveShip != null) 
+                    EventLeaveShip(gameObject);
 
                 // Check we were in a facility
                 if (m_tCurrentFacilityViewId.PreviousValue != null)
                 {
                     // Notify observers about leaving the facility
-                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, null);
+                    if (EventFacilityChangeHandler != null)
+                        EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, null);
                 }
             }
             else
@@ -138,15 +140,18 @@ public class CActorLocator : CNetworkMonoBehaviour
                 if (m_tCurrentFacilityViewId.PreviousValue == null)
                 {
                     // Notify observers about entering the ship
-                    if (EventEnterShip != null) EventEnterShip(gameObject);
+                    if (EventEnterShip != null) 
+                        EventEnterShip(gameObject);
 
                     // Notify observers about entering a facility
-                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(null, m_tCurrentFacilityViewId.Value.GameObject);
+                    if (EventFacilityChangeHandler != null) 
+                        EventFacilityChangeHandler(null, m_tCurrentFacilityViewId.Value.GameObject);
                 }
                 else
                 {
                     // Notify observers about entering a facility
-                    if (EventFacilityChangeHandler != null) EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, m_tCurrentFacilityViewId.Value.GameObject);
+                    if (EventFacilityChangeHandler != null) 
+                        EventFacilityChangeHandler(m_tCurrentFacilityViewId.PreviousValue.GameObject, m_tCurrentFacilityViewId.Value.GameObject);
                 }
             }
         }

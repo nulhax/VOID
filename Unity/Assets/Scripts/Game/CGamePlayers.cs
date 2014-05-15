@@ -406,20 +406,20 @@ public class CGamePlayers : CNetworkMonoBehaviour
 		//Place module gun
 		//GameObject tool = CNetwork.Factory.CreateObject(CGameRegistrator.ENetworkPrefab.ToolModuleGun);
 		//tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, -8.0f, -13.0f));
-        GameObject tool = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
-		tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
-		//Place Ratchet
-        GameObject ratchet = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
-		ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
-        //Place extinguisher
-        GameObject extinguisher = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
-        extinguisher.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
-        //Place circuitry tool?
-        GameObject circuitry = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolCircuitryKit);
-        circuitry.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
-        //Place torch
-        GameObject torch = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
-        torch.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        //GameObject tool = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolAk47);
+        //tool.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        ////Place Ratchet
+        //GameObject ratchet = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolRatchet);
+        //ratchet.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        ////Place extinguisher
+        //GameObject extinguisher = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolExtinguisher);
+        //extinguisher.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        ////Place circuitry tool?
+        //GameObject circuitry = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolCircuitryKit);
+        //circuitry.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
+        ////Place torch
+        //GameObject torch = CNetwork.Factory.CreateGameObject(CGameRegistrator.ENetworkPrefab.ToolTorch);
+        //torch.GetComponent<CNetworkView>().SetPosition(new Vector3(-10.0f, 0.0f, -13.0f));
 
 
 		m_aUnspawnedPlayers.Add(_cPlayer.PlayerId);
