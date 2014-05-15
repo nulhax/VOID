@@ -25,10 +25,10 @@
 		{
 			"RenderType"="Opaque"
 			"IgnoreProjector"="False"
-			"Queue"="Geometry+200" 
+			"Queue"="Geometry+1" 
 		}
 
-		Cull Off
+		Cull Back
 		ZWrite On
 		ZTest Always 
 		ColorMask RGBA
