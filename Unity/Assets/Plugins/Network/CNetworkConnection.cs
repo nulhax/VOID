@@ -600,14 +600,20 @@ public class CNetworkConnection : CNetworkMonoBehaviour
 
     bool StartupPeer()
     {
+		UnityEngine.Random.seed = (int)Time.time;
+
         m_cRnPeer = new RakNet.RakPeer();
-        m_usPort = (ushort)UnityEngine.Random.Range(10000, 30000);
 
-
-        RakNet.SocketDescriptor tSocketDesc = new RakNet.SocketDescriptor((ushort)m_usPort, "");
-        RakNet.StartupResult eStartupResult = m_cRnPeer.Startup(1, tSocketDesc, 1);
+        RakNet.SocketDescriptor tSocketDesc = new RakNet.SocketDescriptor(0, "");
+		RakNet.StartupResult eStartupResult = RakNet.StartupResult.INVALID_SOCKET_DESCRIPTORS;
         bool bPeerStarted = false;
 
+		for(int i = 0; i < 100 && eStartupResult != RakNet.StartupResult.RAKNET_STARTED; ++i)
+		{
+			m_usPort = (ushort)UnityEngine.Random.Range(10000, 30000);
+			tSocketDesc = new RakNet.SocketDescriptor((ushort)m_usPort, "");
+			eStartupResult = m_cRnPeer.Startup(1, tSocketDesc, 1);
+		}
 
         if (eStartupResult != RakNet.StartupResult.RAKNET_STARTED)
         {

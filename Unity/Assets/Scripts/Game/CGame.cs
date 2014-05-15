@@ -82,19 +82,25 @@ public class CGame : CNetworkMonoBehaviour
 		CNetwork.Server.EventStartup += new CNetworkServer.NotifyStartup(OnServerStartup);
         CNetwork.Connection.EventConnectionAccepted += new CNetworkConnection.OnConnect(OnConnect);
         CNetwork.Connection.EventDisconnect += new CNetworkConnection.OnDisconnect(OnDisconnect);
-	
+
+		bool connectionState = false;
+
 		// Start server Host only
 		if(m_Server == 1)
 		{
 			// Host join
 			CNetwork.Server.Startup(m_usRemoteServerPort, m_sServerTitle, "DefaultName", 16);
-			CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+			connectionState = CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+			CNetwork.Server.EventShutdown += OnServerShutdown;
 		}
 		else
 		{
 			// Client join
-			CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
+			connectionState = CNetwork.Connection.ConnectToServer(m_strRemoteServerIP, m_usRemoteServerPort, "");
 		}
+
+		if(!connectionState)
+			OnDisconnect();
 
         // Initialise the dungeon master
         // Note: This may need to be moved should the lobby system change
@@ -117,10 +123,6 @@ public class CGame : CNetworkMonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Escape))
 		{
 			CNetwork.Connection.Disconnect();
-
-			#if UNITY_EDITOR
-			//UnityEditor.EditorApplication.isPlaying = false;
-			#endif
 		}
 	}
 
@@ -132,6 +134,12 @@ public class CGame : CNetworkMonoBehaviour
 	}
 
 
+	void OnServerShutdown()
+	{
+		Application.LoadLevel("MainMenu");
+	}
+
+
     void OnConnect()
     {
 
@@ -140,17 +148,15 @@ public class CGame : CNetworkMonoBehaviour
 
 	void OnDisconnect()
 	{
+		CUserInput.UnsubscribeAll();
 
 		if(!CNetwork.IsServer)
 		{
-			CUserInput.UnsubscribeAll();
 			Application.LoadLevel("MainMenu");
 		}
-
-		if(CNetwork.IsServer)
+		else
 		{
 			CNetwork.Server.Shutdown();
-			Application.LoadLevel("MainMenu");
 		}
 	}
 

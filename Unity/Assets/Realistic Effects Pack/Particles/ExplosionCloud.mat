@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Particles
-  m_Shader: {fileID: 4800000, guid: e3b36c7226acbd34096371aea15f3d93, type: 3}
+  m_Name: ExplosionCloud
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -17,18 +17,14 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: cf4a652edef34ad4997ac942a20ee05a, type: 3}
+          m_Texture: {fileID: 2800000, guid: be59394794691bb418b5668d574d8046, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
     m_Floats:
       data:
         first:
           name: _InvFade
-        second: 3
-      data:
-        first:
-          name: _CutOutLightCore
-        second: .5
+        second: 1
     m_Colors:
       data:
         first:
@@ -37,4 +33,4 @@ Material:
       data:
         first:
           name: _TintColor
-        second: {r: .889705896, g: .889705896, b: .889705896, a: .176470593}
+        second: {r: .323529422, g: .113793097, b: 0, a: .501960814}

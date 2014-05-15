@@ -89,7 +89,7 @@ public class CGameHUD : MonoBehaviour
 
     public void Start()
     {
-        m_cHud2d = GameObject.Instantiate(m_cHud2d) as GameObject;
+        
     }
 
 
@@ -132,7 +132,17 @@ public class CGameHUD : MonoBehaviour
 		{
 			s_cInstance.m_cHudVisor.transform.localPosition = Vector3.forward * -0.05f;
 		}
+
+        s_cInstance.m_cHud2d = GameObject.Instantiate(Resources.Load("Prefabs/User Interface/HUD/Hud2d")) as GameObject;
 	}
+
+
+    public static void DestoryHUD()
+    {
+        Destroy(s_cInstance.m_cHud3d.gameObject);
+        Destroy(s_cInstance.m_cHud2d);
+        s_cInstance.m_cHudVisor = null;
+    }
 
 
     void OnEventConnectionConnect()
@@ -143,10 +153,12 @@ public class CGameHUD : MonoBehaviour
 
     void OnEventConnectionDisconnect()
     {
+        /*
         if (m_cHud3d != null)
         {
             Destroy(s_cInstance.m_cHud3d);
             m_cHudVisor = null;
         }
+         * */
     }
 };

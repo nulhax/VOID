@@ -133,7 +133,7 @@ public class CDUIConsole : CNetworkMonoBehaviour
 
     void Update()
     {
-        if (!IsDuiCreated)
+        if (!IsDuiCreated || CNetwork.IsConnectedToServer)
             return;
 
 		// Render the UI if the screen is in view

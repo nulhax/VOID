@@ -173,6 +173,10 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 
             GetComponent<CPlayerInteractor>().EventTargetChange -= OnEventActorInteractableTargetChange;
         }
+
+        Destroy(m_cBuildingHitParticles);
+        Destroy(m_cMingingHitParticles);
+        Destroy(m_cRepairingHitParticles);
 	}
 
 
@@ -512,9 +516,9 @@ public class CPlayerNaniteLaser : CNetworkMonoBehaviour
 // Member Fields
 
 
-    const float k_fBuildSpeed       = 0.50f; // 5% per sec
+    const float k_fBuildSpeed       = 0.2f; // 5% per sec
     const float k_fBuildRange       = 4.0f;
-    const float k_fMineRate         = 5.0f;
+    const float k_fMineRate         = 20.0f;
     const float k_fMineRange        = 10.0f;
     const float k_fHullRepaireRange = 5.0f;
 
