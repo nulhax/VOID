@@ -121,7 +121,7 @@ public class CPlayerHeadBob : MonoBehaviour {
 		
         if (bJump)
         {
-            ResetHeadPos();
+            ResetHeadRot();
             return;
         }
 
@@ -130,13 +130,13 @@ public class CPlayerHeadBob : MonoBehaviour {
 		{
 			m_fHeadBobAmount = m_fHeadBobRunAmount;
 			m_fHeadBobSpeed = m_fHeadBobRunSpeed;
-			ResetHeadPos();
+			ResetHeadRot();
 		}
 		if((bSprint && bRunForward) && !bJump)
 		{
 			m_fHeadBobAmount = m_fHeadBobSprintAmount;
 			m_fHeadBobSpeed = m_fHeadBobSprintSpeed;
-			ResetHeadPos();
+			ResetHeadRot();
 		}
 		
 		//Only apply head bob if character is moving
@@ -153,11 +153,11 @@ public class CPlayerHeadBob : MonoBehaviour {
 		else
 		{
 			//Reset head bob
-			ResetHeadPos();
+			ResetHeadRot();
 		}
 	}
 
-	public void ResetHeadPos()
+	public void ResetHeadRot()
 	{
 		//Set position to inital offset
 		//gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition = m_initialOffset;
@@ -166,6 +166,12 @@ public class CPlayerHeadBob : MonoBehaviour {
 		//Reset roll
 		headRotation.z = 0;
 		gameObject.GetComponent<CPlayerHead> ().Head.transform.localRotation = Quaternion.Euler(headRotation);
+	}
+
+	public void ResetHeadPos()
+	{
+		//Set position to inital offset
+		gameObject.GetComponent<CPlayerHead>().Head.transform.localPosition = m_initialOffset;
 	}
 
 }
