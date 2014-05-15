@@ -159,6 +159,9 @@ public class CGameRegistrator : MonoBehaviour
 
 	void Start()
 	{
+		if(s_Initialised)
+			return;
+
 		RegisterSerailizationTargets();
         RegisterAccessories();
         RegisterModules();
@@ -167,11 +170,14 @@ public class CGameRegistrator : MonoBehaviour
 		RegisterNulOSWidgets();
         RegisterKeyBindings();
 		RegisterTools();
+
+		s_Initialised = true;
 	}
 
 
 	void OnDestroy()
 	{
+
 	}
 
 
@@ -477,6 +483,6 @@ public class CGameRegistrator : MonoBehaviour
 
 
 // Member Fields
-
+	static bool s_Initialised = false;
 
 };
