@@ -65,7 +65,7 @@ public class CActorBoardable : CNetworkMonoBehaviour
         // Check if this actor isnt a child of another boardable actor
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
-			if(rigidbody.isKinematic)
+			if(rigidbody.isKinematic || m_BoardingState.Value == EBoardingState.Onboard)
 				return;
 
 			// Set the boarding state
@@ -79,7 +79,12 @@ public class CActorBoardable : CNetworkMonoBehaviour
             transferedVelocity += currentVelocity;
 
             // Transfer the actor to ship space
-            CGameShips.ShipGalaxySimulator.TransferFromGalaxyToSimulation(transform.position, transform.rotation, transform);
+			Vector3 newPosition = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationPos(transform.position);
+			Quaternion newRotation = CGameShips.ShipGalaxySimulator.GetGalaxyToSimulationRot(transform.rotation);
+
+			CNetworkView nv = GetComponent<CNetworkView>();
+			nv.SetPosition(newPosition);
+			nv.SetRotation(newRotation);
 
 			if(rigidbody.isKinematic == false)
 			{
@@ -96,14 +101,19 @@ public class CActorBoardable : CNetworkMonoBehaviour
         // Check if this actor isnt a child of another boardable actor
         if (CUtility.FindInParents<CActorBoardable>(gameObject) == null)
         {
-			if(rigidbody.isKinematic)
+			if(rigidbody.isKinematic || m_BoardingState.Value == EBoardingState.Offboard)
 				return;
 
             // Set the boarding state
             m_BoardingState.Set(EBoardingState.Offboard);
 
             // Transfer the actor to galaxy ship space
-            CGameShips.ShipGalaxySimulator.TransferFromSimulationToGalaxy(transform.position, transform.rotation, transform);
+			Vector3 newPosition = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(transform.position);
+			Quaternion newRotation = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(transform.rotation);
+
+			CNetworkView nv = GetComponent<CNetworkView>();
+			nv.SetPosition(newPosition);
+			nv.SetRotation(newRotation);
 
             // Get the relative velocity of the actor disembarking and apply the compensation force to the actor
             Vector3 transferedVelocity = CGameShips.ShipGalaxySimulator.GetGalaxyVelocityRelativeToShip(transform.position);

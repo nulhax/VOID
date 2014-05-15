@@ -39,8 +39,8 @@ public class CGalaxyShipFacilities : MonoBehaviour
 	{	
 		CShipFacilities shipFacilities = CGameShips.Ship.GetComponent<CShipFacilities>();
 
-		foreach(CInteriorTrigger interiorTrigger in m_EntryTrigger.GetComponentsInChildren<CInteriorTrigger>())
-			Destroy(interiorTrigger.gameObject);
+		foreach(CEntryTrigger entryTrigger in m_EntryTrigger.GetComponentsInChildren<CEntryTrigger>())
+			Destroy(entryTrigger.gameObject);
 
 		foreach(GameObject facility in shipFacilities.Facilities)
 		{
@@ -49,19 +49,20 @@ public class CGalaxyShipFacilities : MonoBehaviour
 				Vector3 pos = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyPos(tileInterface.transform.position);
 				Quaternion rot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(tileInterface.transform.rotation);
 
-				GameObject entryTrigger = new GameObject("Trigger");
-				entryTrigger.transform.parent = m_EntryTrigger.transform;
-				entryTrigger.transform.position = pos;
-				entryTrigger.transform.rotation = rot;
-				entryTrigger.layer = gameObject.layer;
+				GameObject trigger = new GameObject("Trigger");
+				trigger.transform.parent = m_EntryTrigger.transform;
+				trigger.transform.position = pos;
+				trigger.transform.rotation = rot;
+				trigger.layer = gameObject.layer;
 
-				BoxCollider boxCollider = entryTrigger.AddComponent<BoxCollider>();
+				BoxCollider boxCollider = trigger.AddComponent<BoxCollider>();
 				boxCollider.center = new Vector3(0.0f, 2.0f, 0.0f);
-				boxCollider.size = new Vector3(4.0f, 4.0f, 4.0f);
+				boxCollider.size = new Vector3(3.9f, 3.9f, 3.9f);
 				boxCollider.isTrigger = true;
 
-				CInteriorTrigger interiorTrigger = entryTrigger.AddComponent<CInteriorTrigger>();
-				interiorTrigger.SetParentFacility(facility);
+				CEntryTrigger entryTrigger = trigger.AddComponent<CEntryTrigger>();
+				CInteriorTrigger interiorTrigger = tileInterface.GetComponent<CInteriorTrigger>();
+				entryTrigger.m_ReferencedInteriorTrigger = interiorTrigger;
 			}
 		}
 
@@ -75,10 +76,13 @@ public class CGalaxyShipFacilities : MonoBehaviour
 			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Lower))
 				continue;
 
+			Vector3 pos = -CGameShips.Ship.transform.position;
+			Quaternion rot = Quaternion.Inverse(CGameShips.Ship.transform.rotation);
+			
 			GameObject collider = new GameObject("Collider");
 			collider.transform.parent = m_Collider.transform;
-			collider.transform.localPosition = Vector3.zero;
-			collider.transform.rotation = Quaternion.identity;
+			collider.transform.position = pos;
+			collider.transform.rotation = rot;
 			collider.layer = gameObject.layer;
 
 			foreach(Collider tileCollider in tileInterface.GetComponentsInChildren<Collider>())

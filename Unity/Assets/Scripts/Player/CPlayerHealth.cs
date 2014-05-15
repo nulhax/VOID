@@ -311,9 +311,10 @@ public class CPlayerHealth : CNetworkMonoBehaviour
         UpdateHealthStateDowned();
 
         if (CNetwork.IsServer)
-        {
             UpdateAtmosphereEffects();
-        }
+
+		if(CGamePlayers.SelfActor != gameObject)
+			return;
 
         if (!m_bVisorHeatlhLightOn &&
             Health < 20.0f)
