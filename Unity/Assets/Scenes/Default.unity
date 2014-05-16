@@ -343,5 +343,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_bUsePushToTalk: 1
-  m_bReturnToSender: 0
+  m_bReturnToSender: 1
   m_bLogging: 0

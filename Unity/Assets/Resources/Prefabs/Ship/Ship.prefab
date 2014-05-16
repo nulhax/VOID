@@ -21,6 +21,8 @@ GameObject:
   - 82: {fileID: 8200000}
   - 114: {fileID: 11400044}
   - 114: {fileID: 11400002}
+  - 114: {fileID: 11400006}
+  - 114: {fileID: 11400022}
   m_Layer: 0
   m_Name: Ship
   m_TagString: Untagged
@@ -335,6 +337,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ddd36b4aef3e8644a6fbfd2d09331d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11400006
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: Thruster Idle
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList:
+  - 1
+  - 1
+  m_fFadeOutTimeList:
+  - 1
+  - 1
+  m_arAudioClipPool:
+  - {fileID: 8300000, guid: f62f6b35ab2984b438f109f29a2b9afb, type: 3}
+  - {fileID: 8300000, guid: 28cb2bbff86f0fb458afbfd0cd1c8dc2, type: 3}
+  m_barLoopList: 0101
+  m_bContinuousEvent: 0
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -418,6 +449,35 @@ MonoBehaviour:
   m_TileSize: 4
   m_TileFactoryPrefab: {fileID: 100000, guid: 6fe6203b03357864484ac067a3ed7659, type: 2}
   m_TileContainer: {fileID: 100016}
+--- !u!114 &11400022
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 100000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_strCueName: Thruster Active
+  m_fPitchMin: 1
+  m_fpitchMax: 1
+  m_fVolumeMin: 1
+  m_fVolumeMax: 1
+  m_fFadeInTimeList:
+  - 1
+  - 1
+  m_fFadeOutTimeList:
+  - 1
+  - 1
+  m_arAudioClipPool:
+  - {fileID: 8300000, guid: 83faa6f9eb9c1544584ae1f01ad4670b, type: 3}
+  - {fileID: 8300000, guid: 0ac4b705d7779fe47aea9a034d1572e0, type: 3}
+  m_barLoopList: 0101
+  m_bContinuousEvent: 1
+  m_fPlayFrequency: 0
+  m_eSoundType: 0
 --- !u!114 &11400026
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -498,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 168f777aa3bbbff4ca9acbcb990df806, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_strCueName: 
+  m_strCueName: Ambience
   m_fPitchMin: 1
   m_fpitchMax: 1
   m_fVolumeMin: .75
