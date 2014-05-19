@@ -68,7 +68,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	{
 		get 
         { 
-            return (GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject); 
+			return( m_Head ); 
         }
 	}
 
@@ -179,6 +179,8 @@ public class CPlayerHead : CNetworkMonoBehaviour
 
     void Start()
     {
+		m_Head = GetComponent<CPlayerInterface>().Model.transform.FindChild("Head").gameObject; 
+
         if (GetComponent<CPlayerInterface>().IsOwnedByMe)
         {
             // Setup the game cameras
@@ -462,6 +464,7 @@ public class CPlayerHead : CNetworkMonoBehaviour
 	CNetworkVar<float> m_fHeadEulerX = null;
     CNetworkVar<float> m_fHeadEulerY = null;
 
+	GameObject m_Head = null;
 
     float m_fMouseDeltaX = 0.0f;
     float m_fMouseDeltaY = 0.0f;

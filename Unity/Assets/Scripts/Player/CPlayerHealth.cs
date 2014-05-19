@@ -384,7 +384,7 @@ public class CPlayerHealth : CNetworkMonoBehaviour
 				{
 					if(cue.m_strCueName == "PersonalSFX")
 					{
-           				cue.Play(transform, 1.0f, false, 1);
+           				cue.Play( 1.0f, false, 1);
 					}
 				}
 			}

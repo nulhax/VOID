@@ -43,9 +43,14 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
     private Vector3 m_initialOffset = new Vector3(0,0,0);
 
+	private Vector3 m_headInitialOffset = new Vector3(0, 1.6f, 0.05f);
+	private Vector3 m_headRagdollOffset = new Vector3(-0.13f , -0.03f, 0.05f);
+
     CNetworkVar<byte>       m_bRagdollState;
 
     static CNetworkStream   s_cSerializeStream = new CNetworkStream();  
+
+	bool m_bRagdolling = false;
 
     public override void RegisterNetworkComponents(CNetworkViewRegistrar _cRegistrar)
     {
@@ -125,6 +130,7 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
         gameObject.GetComponent<CPlayerHealth>().m_EventHealthStateChanged += OnHealthStateChanged;
 
 		m_initialOffset = m_RootSkeleton.localPosition;
+		m_bRagdolling = false;
 
 		//Disable client side rigidbody
 		if (!CNetwork.IsServer) 
@@ -134,9 +140,21 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
     }
 	
 	// Update is called once per frame
-	void LateUpdate () 
+	void Update () 
 	{
-
+		if(Input.GetKeyDown(KeyCode.R))
+		{
+			if(m_bRagdolling)
+			{
+				DeactivateRagdoll();
+				m_bRagdolling = false;
+			}
+			else
+			{
+				SetRagdollActive();
+				m_bRagdolling = true;
+			}
+		}
 	}
 
     [AServerOnly]
@@ -169,7 +187,9 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
 		if (CGamePlayers.SelfActor == gameObject) 
 		{
-			CGameCameras.SetMainCameraParent (m_RagdollHead);
+			//Set head parent
+			m_PlayerHead.transform.parent = m_RagdollHead.transform;
+			m_PlayerHead.transform.localPosition = m_headRagdollOffset;
 		}
     }
 
@@ -180,8 +200,8 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
 
 		if (CGamePlayers.SelfActor == gameObject) 
 		{
-			CGameCameras.SetMainCameraParent (m_PlayerHead);
-			CGameCameras.ResetCamera ();
+			m_PlayerHead.transform.parent = transform;
+			m_PlayerHead.transform.localPosition = m_headInitialOffset;
 		}
 
 		m_RagdollHead.transform.rotation = Quaternion.identity;
@@ -204,7 +224,9 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             {
                 body.collider.enabled = false;
             }
-        }  
+        } 
+
+		rigidbody.collider.enabled = true;
     }
 
 	void IntitializeLimbs()
@@ -230,15 +252,25 @@ public class CPlayerRagdoll : CNetworkMonoBehaviour
             if(body.gameObject.GetComponent<Rigidbody>())
             {
                 body.rigidbody.isKinematic = false;
-				body.rigidbody.useGravity = true;
                 body.rigidbody.velocity = rigidbody.velocity;
 				body.rigidbody.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+				if(GetComponent<CActorBoardable>().BoardingState == CActorBoardable.EBoardingState.Onboard)
+				{
+					body.rigidbody.useGravity = true;
+				}
+				else
+				{
+					body.rigidbody.useGravity = false;
+				}
             }
             if(body.gameObject.GetComponent<Collider>())
             {
                 body.collider.enabled = true;
             }
         }
+
+		rigidbody.collider.enabled = false;
 	}
 
     public void SetRagdollLayer()

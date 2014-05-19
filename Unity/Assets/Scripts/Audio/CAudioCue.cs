@@ -15,6 +15,7 @@ public class CAudioCue : MonoBehaviour
 	public AudioClip[] m_arAudioClipPool = new AudioClip[0];
 	public bool[] m_barLoopList = new bool[0]; //Determines which sounds should be looped.
 	public bool m_bContinuousEvent = false; // if this is set to true, the audiocue will start a new clip after a specified amount of time.
+	public bool m_bUseOcclusion = true; 
 	public float m_fPlayFrequency; //if an audio cue is a continuous event, this determines how often a new sound will be played. 
 	public CAudioSystem.SoundType m_eSoundType;
 	private List<AudioSource> m_arAttachedAudioSource = new List<AudioSource>();
@@ -181,7 +182,7 @@ public class CAudioCue : MonoBehaviour
 		CAudioSystem.Play(	attachedAudioSource, Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 		                  Random.Range(m_fPitchMin, m_fpitchMax), loop,
 		                  m_fFadeInTimeList[index],
-		                  m_eSoundType, true );	
+		                  m_eSoundType, m_bUseOcclusion );	
 		
 		//Add this to the list of attached audio sources.
 		m_arAttachedAudioSource.Add(attachedAudioSource);
@@ -241,7 +242,7 @@ public class CAudioCue : MonoBehaviour
 		                                   Random.Range(m_fVolumeMin, m_fVolumeMax) * volumeScale,
 		                                   Random.Range(m_fPitchMin, m_fpitchMax), loop,
 		                                   m_fFadeInTimeList[index],
-		                                   m_eSoundType, true);	
+		                                   m_eSoundType, m_bUseOcclusion);	
 		
 		//Add this to the list of attached audio sources.
 		m_arAttachedAudioSource.Add(newAudioSource);

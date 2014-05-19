@@ -466,7 +466,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 8f2104e758512314f97a4722a1c454ff, type: 3}
   m_barLoopList: 
   m_bContinuousEvent: 0
-  m_bUseOcclusion: 1
+  m_bUseOcclusion: 0
   m_fPlayFrequency: 0
   m_eSoundType: 0
 --- !u!114 &11400044
