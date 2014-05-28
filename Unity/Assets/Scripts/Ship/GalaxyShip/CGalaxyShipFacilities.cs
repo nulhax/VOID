@@ -76,8 +76,8 @@ public class CGalaxyShipFacilities : MonoBehaviour
 			   !tileInterface.GetTileTypeState(CTile.EType.Exterior_Lower))
 				continue;
 
-			Vector3 pos = -CGameShips.Ship.transform.position;
-			Quaternion rot = Quaternion.Inverse(CGameShips.Ship.transform.rotation);
+			Vector3 pos = Vector3.zero;
+			Quaternion rot = CGameShips.ShipGalaxySimulator.GetSimulationToGalaxyRot(tileInterface.transform.rotation);
 			
 			GameObject collider = new GameObject("Collider");
 			collider.transform.parent = m_Collider.transform;
@@ -91,7 +91,7 @@ public class CGalaxyShipFacilities : MonoBehaviour
 				{
 					BoxCollider boxCollider = collider.AddComponent<BoxCollider>();
 					boxCollider.size = tileCollider.bounds.size;
-					boxCollider.center = tileCollider.bounds.center;
+					boxCollider.center = tileCollider.bounds.center - CGameShips.Ship.transform.position;
 				}
 			}
 		}

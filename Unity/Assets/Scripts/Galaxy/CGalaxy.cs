@@ -642,7 +642,7 @@ public class CGalaxy : CNetworkMonoBehaviour
 		//else    // This cell is not on file, so it has not been visited...
 		{
 			// Generate the content in the cell.
-			//LoadEnemyShips(absoluteCell);
+			LoadEnemyShips(absoluteCell);
 			LoadAsteroidClusters(absoluteCell);
 			LoadSparseAsteroids(absoluteCell);
 			LoadDebris(absoluteCell);

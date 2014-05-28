@@ -334,14 +334,14 @@ public class CShipFacilities : MonoBehaviour
 		newFacility.transform.localPosition = Vector3.zero;
 		newFacility.transform.localRotation = Quaternion.identity;
 
+		// Give facility an id
+		uint facilityId = ++m_FacilityIdCount;
+		newFacility.GetComponent<CFacilityInterface>().FacilityId = facilityId;
+
 		// Give the facility its tiles
 		newFacility.GetComponent<CFacilityTiles>().InteriorTiles = interiorTiles;
 		newFacility.GetComponent<CFacilityTiles>().ConfigureFacilityTiles();
 
-		// Give facility an id
-		uint facilityId = ++m_FacilityIdCount;
-		newFacility.GetComponent<CFacilityInterface>().FacilityId = facilityId;
-		
 		// Add facility to dictionaries
 		m_FacilityObjects.Add(facilityId, newFacility);
 		

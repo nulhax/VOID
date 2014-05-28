@@ -289,7 +289,7 @@ public class CAudioSystem : MonoBehaviour
 		classicHits = Physics.RaycastAll(listenerPos, direction, direction.magnitude);
 		{
 			//Debug.DrawLine(sourcePos, listenerPos, Color.cyan, 1.0f);
-			Debug.DrawLine(listenerPos, sourcePos, Color.yellow, 1.0f);
+			//Debug.DrawLine(listenerPos, sourcePos, Color.yellow, 1.0f);
 			foreach(RaycastHit hit in classicHits)
 			{	
 	           	if(hit.collider.gameObject != _audioClip.audioSource.gameObject && 
